@@ -129,6 +129,10 @@ class _SpriteViewState extends State<SpriteView>
   SpriteRowDef? _row;
   ui.Image? _img;
   AnimationController? _ctrl;
+  // Load-generation token: only the most recent _load() may commit results
+  // or create an AnimationController, so overlapping loads (rapid
+  // didUpdateWidget) can never leak a second ticker.
+  int _loadGen = 0;
 
   @override
   void initState() {
@@ -150,13 +154,14 @@ class _SpriteViewState extends State<SpriteView>
   }
 
   Future<void> _load() async {
+    final gen = ++_loadGen;
     final id = widget.spriteId;
     try {
       final meta = await SpriteMeta.load();
       final def = meta.sheet(id);
-      if (def == null || !mounted) return;
+      if (def == null || !mounted || gen != _loadGen) return;
       final img = await _loadSheetImage(def.assetPath);
-      if (!mounted || widget.spriteId != id) return;
+      if (!mounted || gen != _loadGen || widget.spriteId != id) return;
       final row = def.row(widget.state) ?? def.row('idle');
       setState(() {
         _def = def;
