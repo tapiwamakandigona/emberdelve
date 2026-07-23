@@ -21,6 +21,15 @@ jobs:
         run: sudo apt-get update -q && sudo apt-get install -y -q lua5.4
       - name: Run simulation test suite
         run: lua5.4 tests/run_tests.lua
+        env:
+          # M1 golden (SIM_VERSION 2, re-anchored 2026-07-23 after balance pass)
+          EMBERDELVE_GOLDEN: "311044885"
+      - name: Run map property tests
+        run: lua5.4 tests/map_tests.lua
+      - name: Run content tests
+        run: lua5.4 tests/content_tests.lua
+      - name: Run 100-seed autoplayer
+        run: lua5.4 tests/autoplay.lua
 
   build-android:
     name: Bundle Android debug APK

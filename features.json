@@ -40,15 +40,15 @@
       "id": "M1-1",
       "title": "StS-style layered node map generation",
       "acceptance": "sim/map.lua generates a connected layered map from the map stream; property tests: all paths reach boss, node counts within spec, same seed => same map",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "tests/map_tests.lua: 12/12 property tests over 200 seeds (connectivity both ways, all paths reach boss, layer/node bounds, elite/rest placement, determinism from fresh and mid-consumed streams); run locally lua5.4 + enforced in CI test job"
     },
     {
       "id": "M1-2",
       "title": "Dice-builder combat v1 (10 dice variants, 3 enemies, 1 boss)",
       "acceptance": "Content defined as data modules under data/; headless autoplayer completes 100 seeded runs without error; win rate within 20-80% band",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "data/dice.lua (12 dice) + data/enemies.lua (4 regular, 2 elite, 1 boss); tests/content_tests.lua 21/21; tests/autoplay.lua: 100 seeded runs all terminal <=3000 cmds, 0 invalid_command, snapshot/restore twin-hash identical seeds 1..10, wins=59 losses=41 (in 20-80 band); enforced in CI test job"
     },
     {
       "id": "M1-3",
