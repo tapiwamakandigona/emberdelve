@@ -105,7 +105,7 @@ Map<int, dynamic> _intKeyed(dynamic v) {
 }
 
 /// Deep copy as a string-keyed map tree (nested maps become
-/// Map<String, dynamic>, which combat.dart's casts require). Snapshots are
+/// `Map<String, dynamic>`, which combat.dart's casts require). Snapshots are
 /// null-free by construction (snapshot() strips nils like Lua), so the
 /// null-dropping _jsonCopy is an exact deep copy here.
 Map<String, dynamic> _strMap(dynamic v) =>
@@ -218,7 +218,7 @@ class Sim {
       if (combatOver != null) 'combat_over': combatOver,
       'event_hash': eventHash,
       'event_count': eventCount,
-      'rng': {for (final name in _streams) name: this.rng[name]!.snapshot()},
+      'rng': {for (final name in _streams) name: rng[name]!.snapshot()},
     };
     return snap;
   }
