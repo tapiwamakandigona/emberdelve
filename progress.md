@@ -33,3 +33,19 @@ Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
 - Launcher icons all densities (tool/gen_launcher_icons.py).
 - Tests: +3 asset-integrity tests (28 total). Sim core untouched; golden
   513683311 unmoved.
+
+2026-07-23 (later): Review fixes + v0.2.0 release + emulator live test.
+- Reviewer verdict APPROVE-WITH-NITS (0 blocking); 4 should-fixes applied
+  (a51dc69): audio fade-timer race, SpriteView controller leak via load-token,
+  settings sliders persist on drag-end only, added PROVENANCE.md.
+- Merged assets-integration into main (01bc2f4); CI green (30011499453,
+  30011501605). Released v0.2.0 (GitHub release + release APK).
+- Emulator live test (API 33 headless swiftshader): full flow VERIFIED
+  (title→charselect→map→event(+12 gold)→fight: roll/select/attack/end-turn).
+  Image-decode errors + idle audio players proven EMULATOR-ONLY (see
+  checkpoints/03-assets-and-release.md — on-device ImageDecoder/BitmapFactory
+  probe decodes our PNGs fine; AVD runs -no-audio). Real-device check is
+  owner-gated.
+- All 75 asset PNGs re-encoded canonically (PIL optimize, smaller files);
+  added test/decode_probe_test.dart (engine-codec decode of every bundled
+  PNG). 29 tests green, analyze clean, golden 513683311 unmoved.

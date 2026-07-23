@@ -55,7 +55,7 @@
       "title": "Full seeded run playable on device",
       "acceptance": "Debug APK: map -> fights -> boss -> run summary with placeholder art; manual play-through video or device log as evidence",
       "passes": false,
-      "evidence": "OWNER-GATED: needs an on-device install/playthrough by owner. Build path ready (CI build-android job -> flutter build apk)."
+      "evidence": "PARTIAL (emulator): debug+release APK installed on API-33 AVD; played title->character select->map->event (Broken Cart, +12 gold applied)->fight (Soot Shade: roll 1/6/6, dice select, Attack/Block, End turn). Screenshots in orchestrator evidence dir. Emulator cannot render Flutter-decoded images / has -no-audio (proven env-only, checkpoints/03). Full boss->summary playthrough on a real device remains OWNER-GATED."
     },
     {
       "id": "M1-4",
@@ -105,6 +105,13 @@
       "acceptance": "Workflow: flutter analyze + flutter test pass, then flutter build apk uploads artifact",
       "passes": true,
       "evidence": "CI run 30004629450 (commit 2ed37a1) fully green: 'Analyze + test (headless)' success (flutter analyze + 25/25 tests), 'Build Android debug APK' success -> artifact emberdelve-debug-apk (89.2MB, not expired). https://github.com/tapiwamakandigona/emberdelve/actions/runs/30004629450"
+    },
+    {
+      "id": "M4-1",
+      "title": "Curated art/audio/animation integration + v0.2.0 release",
+      "acceptance": "All screens use curated CC0/CC-BY assets; sprite animations with SFX synced to contact frames; per-screen music; credits + provenance shipped; release APK published on GitHub Releases",
+      "passes": true,
+      "evidence": "Merge 01bc2f4 + fixes a51dc69: 75 images + 26 audio (PROVENANCE.md, CREDITS.md, in-app credits screen), SpriteView 8fps idle loops, combat lunge/hit-flash/death choreography with whoosh at contact-250ms per SYNC_POINTS.md, AudioService crossfaded music + 20 SFX, settings persistence, launcher icons. Independent review APPROVE (0 blocking). CI green runs 30011499453/30011501605; 29 tests. Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.2.0"
     }
   ]
 }
