@@ -14,6 +14,7 @@ class Art {
     switch (phase) {
       case 'player_turn':
         return bossFight ? bgBoss : bgCombat;
+      case 'boon':
       case 'map':
       case 'reward':
       case 'rest':

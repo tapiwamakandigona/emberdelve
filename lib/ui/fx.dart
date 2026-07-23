@@ -293,6 +293,97 @@ class _DamagePopState extends State<DamagePop>
 }
 
 // ---------------------------------------------------------------------------
+// Text pop — DamagePop's language for words: pop in with overshoot, drift up,
+// fade. Used for combo call-outs, exact-kill/overkill moments, burn ticks.
+// ---------------------------------------------------------------------------
+class TextPop extends StatefulWidget {
+  final String text;
+  final Color color;
+  final double fontSize;
+  final IconData? icon;
+  final VoidCallback onDone;
+  const TextPop(
+      {super.key,
+      required this.text,
+      required this.onDone,
+      this.color = EmberColors.gold,
+      this.fontSize = 18,
+      this.icon});
+
+  @override
+  State<TextPop> createState() => _TextPopState();
+}
+
+class _TextPopState extends State<TextPop>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _t = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1000))
+    ..forward().whenComplete(widget.onDone);
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _t,
+      builder: (context, _) {
+        final f = _t.value;
+        // Pop in (overshoot), drift up, fade in the last 35%.
+        final scale = f < 0.16
+            ? 0.5 + (f / 0.16) * 0.75 // 0.5 -> 1.25
+            : 1.25 - Curves.easeOut.transform((f - 0.16) / 0.84) * 0.25;
+        final dy = -34 * Curves.easeOut.transform(f);
+        final alpha = f < 0.65 ? 1.0 : 1.0 - (f - 0.65) / 0.35;
+        return Transform.translate(
+          offset: Offset(0, dy),
+          child: Transform.scale(
+            scale: scale,
+            child: Opacity(
+              opacity: alpha.clamp(0.0, 1.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.icon != null) ...[
+                    Icon(widget.icon,
+                        size: widget.fontSize + 2,
+                        color: widget.color,
+                        shadows: const [
+                          Shadow(color: Colors.black, blurRadius: 4),
+                        ]),
+                    const SizedBox(width: 4),
+                  ],
+                  Text(
+                    widget.text,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: widget.fontSize,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                      color: widget.color,
+                      shadows: const [
+                        Shadow(color: Colors.black, blurRadius: 4),
+                        Shadow(
+                            color: Colors.black,
+                            offset: Offset(0, 2),
+                            blurRadius: 2),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Vignette — soft dark edges; sells "lit from the middle/below".
 // ---------------------------------------------------------------------------
 class Vignette extends StatelessWidget {
