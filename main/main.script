@@ -1,51 +1,12 @@
--- main/main.script — M0 boot proof: run a scripted fight through the sealed
--- sim core on-device and display the resulting event hash. If the hash on
--- screen matches the CI golden hash, sim determinism holds on Android too.
---
--- PRESENTATION LAYER RULE (docs/architecture.md): this layer only sends
--- commands and renders events. It never reaches into sim internals to
--- mutate state.
+-- main/main.script — bootstrap: acquire input focus for the GO (the gui
+-- component on this GO receives touch input through it) and kick the
+-- resume-on-boot check. All screen logic lives in main/game.gui_script;
+-- the sim instance lives in the shared module main/game.lua.
 
-local Sim = require "sim.init"
-
-local FIXED_SEED = 20260723
-
-local SCRIPT = {
-  { type = "start_encounter" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "block" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-}
+local game = require "main.game"
 
 function init(self)
-  local sim = Sim.new(FIXED_SEED)
-  local n_events = 0
-  for _, cmd in ipairs(SCRIPT) do
-    local events = sim:apply(cmd)
-    n_events = n_events + #events
-    for _, ev in ipairs(events) do
-      print("[sim] " .. ev.type)
-    end
-  end
-  local text = string.format(
-    "EMBERDELVE\nM0 skeleton\n\nseed %d\nphase: %s\nevents: %d\nhash: %.0f",
-    FIXED_SEED, sim.phase, n_events, sim.event_hash)
-  label.set_text("#label", text)
-  print("[emberdelve] " .. text:gsub("\n", " | "))
+  msg.post(".", "acquire_input_focus")
+  -- Idempotent: whichever component initializes first performs the restore.
+  game.resume()
 end

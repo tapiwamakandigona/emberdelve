@@ -1,4 +1,4 @@
--- tests/run_tests.lua — Emberdelve sim test suite.
+-- tests/run_tests.lua — Emberdelve sim test suite (M1, sim v2).
 -- Runs on plain Lua 5.4 (CI) and LuaJIT — no external deps.
 -- Usage: lua5.4 tests/run_tests.lua   (from repo root)
 
@@ -6,6 +6,7 @@ package.path = "./?.lua;./?/init.lua;" .. package.path
 
 local Sim = require "sim.init"
 local RNG = require "sim.rng"
+local dice_data = require "data.dice"
 
 -- ---------------------------------------------------------------------------
 -- Micro test runner
@@ -35,42 +36,112 @@ local function neq(a, b, msg)
   end
 end
 
--- Scripted command sequence exercising a full mini-fight.
-local SCRIPT = {
-  { type = "start_encounter" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "block" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-  { type = "end_turn" },
-  { type = "roll" },
-  { type = "assign", die = 1, action = "attack" },
-  { type = "assign", die = 2, action = "attack" },
-  { type = "assign", die = 3, action = "attack" },
-}
+-- ---------------------------------------------------------------------------
+-- Deterministic greedy driver (public v2 command set only).
+-- A pure function of sim:state() -> next command, so the same seed always
+-- produces the same command sequence; `drive` records every applied command
+-- so a twin sim can replay them verbatim.
+-- ---------------------------------------------------------------------------
+local function next_cmd(sim)
+  local st = sim:state()
+  local phase = st.phase
+  if phase == "idle" then
+    return { type = "start_run" }
+  elseif phase == "map" then
+    local edges = st.map.edges[st.map.position]
+    local want_rest = st.player.hp * 2 < st.player.max_hp
+    local pick
+    for i = 1, #edges do
+      local kind = st.map.nodes[edges[i]].kind
+      if want_rest and kind == "rest" then pick = edges[i]; break end
+      if not want_rest and kind ~= "rest" and not pick then pick = edges[i] end
+    end
+    return { type = "choose_node", node = pick or edges[1] }
+  elseif phase == "player_turn" then
+    if not st.player.rolled then return { type = "roll" } end
+    for i = 1, #st.player.rolled do
+      if not st.player.assigned[i] then
+        local mods = dice_data[st.player.dice[i]].mods
+        local intent = st.enemy.intent
+        local incoming = 0
+        if intent.kind == "attack" or intent.kind == "attack_block" then
+          incoming = intent.amount
+        end
+        local action
+        if incoming > st.player.block and not mods.attack_only then
+          action = "block"
+        elseif not mods.block_only then
+          action = "attack"
+        else
+          action = "block"
+        end
+        return { type = "assign", die = i, action = action }
+      end
+    end
+    return { type = "end_turn" }
+  elseif phase == "reward" then
+    return { type = "choose_reward", index = 1 }
+  elseif phase == "rest" then
+    return { type = "rest" }
+  end
+  return nil -- terminal
+end
 
-local function run_script(sim, script)
+--- Drive `sim` for up to `max_cmds` commands (default: to terminal).
+--- Returns (all_events, applied_commands).
+local function drive(sim, max_cmds)
+  max_cmds = max_cmds or 3000
+  local all, cmds = {}, {}
+  for _ = 1, max_cmds do
+    local cmd = next_cmd(sim)
+    if not cmd then break end
+    cmds[#cmds + 1] = cmd
+    local evs = sim:apply(cmd)
+    for _, e in ipairs(evs) do all[#all + 1] = e end
+  end
+  return all, cmds
+end
+
+local function replay(sim, cmds)
   local all = {}
-  for _, cmd in ipairs(script) do
-    -- Commands after victory/defeat are legal no-ops (invalid_command events).
+  for _, cmd in ipairs(cmds) do
     local evs = sim:apply(cmd)
     for _, e in ipairs(evs) do all[#all + 1] = e end
   end
   return all
 end
 
+--- Deterministic seed search (style: tests/content_tests.lua).
+local function find_seed(pred)
+  for seed = 1, 20000 do
+    if pred(seed) then return seed end
+  end
+  error("no seed found in [1,20000]")
+end
+
+--- Fresh sim advanced into its first fight node. Returns sim plus the
+--- events of the node entry (encounter_started, intent_shown...).
+local function enter_first_fight(seed)
+  local sim = Sim.new(seed)
+  sim:apply({ type = "start_run" })
+  local edges = sim.map.edges[sim.map.position]
+  for i = 1, #edges do
+    if sim.map.nodes[edges[i]].kind == "fight" then
+      return sim, sim:apply({ type = "choose_node", node = edges[i] })
+    end
+  end
+  return nil -- first layer had no plain fight edge for this seed
+end
+
+local function find_event(evs, etype)
+  for i = 1, #evs do
+    if evs[i].type == etype then return evs[i] end
+  end
+  return nil
+end
+
 -- ---------------------------------------------------------------------------
--- Tests
+-- Tests: RNG (unchanged from M0)
 -- ---------------------------------------------------------------------------
 
 test("rng: die rolls stay in bounds and hit all faces", function()
@@ -105,10 +176,15 @@ test("rng: snapshot/restore continues identically", function()
   end
 end)
 
+-- ---------------------------------------------------------------------------
+-- Tests: sim v2 determinism + persistence
+-- ---------------------------------------------------------------------------
+
 test("sim: same seed + same commands => identical event and state hashes", function()
-  local a, b = Sim.new(123456), Sim.new(123456)
-  run_script(a, SCRIPT)
-  run_script(b, SCRIPT)
+  local a = Sim.new(123456)
+  local _, cmds = drive(a)
+  local b = Sim.new(123456)
+  replay(b, cmds)
   eq(a.event_hash, b.event_hash, "event hashes differ")
   eq(a.event_count, b.event_count, "event counts differ")
   eq(a:state_hash(), b:state_hash(), "state hashes differ")
@@ -116,108 +192,251 @@ end)
 
 test("sim: different seeds => different runs", function()
   local a, b = Sim.new(1), Sim.new(2)
-  run_script(a, SCRIPT)
-  run_script(b, SCRIPT)
+  drive(a)
+  drive(b)
   neq(a.event_hash, b.event_hash, "event hashes should differ across seeds")
 end)
 
-test("sim: snapshot mid-fight, restore, continue => identical", function()
+test("sim: snapshot mid-run, restore, continue => identical", function()
   local a = Sim.new(777)
-  -- play half the script
-  for i = 1, 8 do a:apply(SCRIPT[i]) end
+  drive(a, 30) -- into the run: map + combat state live
   local b = Sim.restore(a:snapshot())
-  for i = 9, #SCRIPT do
-    a:apply(SCRIPT[i])
-    b:apply(SCRIPT[i])
-  end
+  local _, tail = drive(a) -- finish a with the policy, recording commands
+  replay(b, tail)          -- twin replays the exact same commands
   eq(a.event_hash, b.event_hash, "event hashes diverged after restore")
   eq(a:state_hash(), b:state_hash(), "state hashes diverged after restore")
+  eq(a.phase, b.phase, "phases diverged after restore")
 end)
 
-test("sim: full fight reaches a terminal phase with consistent state", function()
-  -- 3d6 all-attack averages ~10.5 dmg/turn vs 14 hp: the scripted fight must
-  -- end in victory (or defeat is impossible: enemy deals max 6/turn vs 30 hp
-  -- across 4 turns). Verify terminal state, not luck.
-  local sim = Sim.new(20260723)
-  local events = run_script(sim, SCRIPT)
-  eq(sim.phase, "victory", "expected victory, got " .. sim.phase)
-  assert(sim.enemy.hp <= 0, "enemy hp should be <= 0, is " .. sim.enemy.hp)
-  local won, loot = false, false
-  for _, e in ipairs(events) do
-    if e.type == "encounter_won" then won = true end
-    if e.type == "loot_dropped" then loot = true end
-  end
-  assert(won, "no encounter_won event")
-  assert(loot, "no loot_dropped event")
+test("sim: restore rejects non-v2 snapshots", function()
+  local sim = Sim.new(5)
+  local snap = sim:snapshot()
+  snap.version = 1
+  local ok, err = pcall(Sim.restore, snap)
+  assert(not ok, "restore accepted a v1 snapshot")
+  assert(tostring(err):find("SIM_VERSION"), "error message unclear: " .. tostring(err))
 end)
 
-test("sim: enemy intent is visible before every player turn", function()
-  local sim = Sim.new(555)
-  local events = sim:apply({ type = "start_encounter" })
-  local shown = false
-  for _, e in ipairs(events) do
-    if e.type == "intent_shown" then
-      shown = true
-      assert(e.amount >= 4 and e.amount <= 6, "intent amount out of range")
-    end
-  end
-  assert(shown, "intent not shown at encounter start")
+-- ---------------------------------------------------------------------------
+-- Tests: run layer
+-- ---------------------------------------------------------------------------
+
+test("sim: start_run builds the map, run ledger, and map phase", function()
+  local sim = Sim.new(2026)
+  local evs = sim:apply({ type = "start_run" })
+  local started = find_event(evs, "run_started")
+  assert(started, "no run_started event")
+  eq(started.seed, 2026, "run_started.seed wrong")
+  assert(started.nodes > 0 and started.layers == 9, "run_started shape wrong")
+  local st = sim:state()
+  eq(st.phase, "map", "phase should be map")
+  eq(st.map.position, st.map.start, "position not at start")
+  eq(#st.map.visited, 1, "visited should hold only the start node")
+  eq(st.map.visited[1], st.map.start, "visited[1] must be start")
+  eq(st.run.embers, 0, "embers not zeroed")
+  eq(st.run.fights_won, 0, "fights_won not zeroed")
+  -- second start_run is invalid and mutates nothing
+  local before = sim:state_hash()
+  local evs2 = sim:apply({ type = "start_run" })
+  eq(evs2[1].type, "invalid_command", "second start_run should be invalid")
+  eq(sim:state_hash(), before, "state changed by invalid start_run")
+end)
+
+test("sim: choose_node accepts only edges of the current position", function()
+  local sim = Sim.new(4242)
+  sim:apply({ type = "start_run" })
+  local before = sim:state_hash()
+  -- non-adjacent: the boss node is never one hop from start (9 layers)
+  local evs = sim:apply({ type = "choose_node", node = sim.map.boss })
+  eq(evs[1].type, "invalid_command", "boss node should not be adjacent")
+  eq(evs[1].reason, "not_adjacent", "wrong reason")
+  eq(sim:state_hash(), before, "state changed by invalid choose_node")
+  -- adjacent node enters and emits node_entered with kind + layer
+  local target = sim.map.edges[sim.map.position][1]
+  local evs2 = sim:apply({ type = "choose_node", node = target })
+  local entered = find_event(evs2, "node_entered")
+  assert(entered, "no node_entered event")
+  eq(entered.node, target, "wrong node entered")
+  eq(entered.layer, 2, "first hop must reach layer 2")
+  eq(sim.map.position, target, "position not updated")
+  eq(sim.map.visited[2], target, "visited not updated")
+end)
+
+test("sim: entering a fight node auto-starts the encounter with visible intent", function()
+  local seed = find_seed(function(s) return enter_first_fight(s) ~= nil end)
+  local sim, evs = enter_first_fight(seed)
+  local started = find_event(evs, "encounter_started")
+  assert(started, "no encounter_started event")
+  eq(started.elite, false, "regular fight flagged elite")
+  assert(find_event(evs, "intent_shown"), "intent not shown at encounter start")
+  eq(sim.phase, "player_turn", "phase should be player_turn")
+  eq(sim.turn, 1, "turn should be 1")
 end)
 
 test("sim: intent resolves exactly as shown (deterministic resolution)", function()
-  local sim = Sim.new(31337)
-  local shown_amount
-  for _, e in ipairs(sim:apply({ type = "start_encounter" })) do
-    if e.type == "intent_shown" then shown_amount = e.amount end
-  end
+  local seed = find_seed(function(s)
+    local sim, evs = enter_first_fight(s)
+    if not sim then return false end
+    local intent = find_event(evs, "intent_shown")
+    return intent and intent.kind == "attack"
+  end)
+  local sim, evs = enter_first_fight(seed)
+  local shown = find_event(evs, "intent_shown")
   sim:apply({ type = "roll" })
-  for _, e in ipairs(sim:apply({ type = "end_turn" })) do
-    if e.type == "enemy_attacked" then
-      eq(e.amount, shown_amount, "enemy attack differs from shown intent")
-    end
-  end
-end)
-
-test("sim: invalid commands emit events but never mutate state", function()
-  local sim = Sim.new(42)
-  sim:apply({ type = "start_encounter" })
-  local before = sim:state_hash()
-  local cases = {
-    { type = "assign", die = 1, action = "attack" }, -- roll first
-    { type = "start_encounter" },                    -- already running
-    { type = "nonsense" },                           -- unknown
-  }
-  for _, cmd in ipairs(cases) do
-    local evs = sim:apply(cmd)
-    eq(evs[1].type, "invalid_command", "expected invalid_command for " .. cmd.type)
-  end
-  eq(sim:state_hash(), before, "state changed by invalid commands")
+  local hit = find_event(sim:apply({ type = "end_turn" }), "enemy_attacked")
+  assert(hit, "no enemy_attacked event")
+  eq(hit.amount, shown.amount, "enemy attack differs from shown intent")
 end)
 
 test("sim: block reduces incoming damage", function()
-  local sim = Sim.new(9001)
-  sim:apply({ type = "start_encounter" })
-  local intent = sim.enemy.intent.amount
+  local seed = find_seed(function(s)
+    local sim, evs = enter_first_fight(s)
+    if not sim then return false end
+    local intent = find_event(evs, "intent_shown")
+    return intent and intent.kind == "attack"
+  end)
+  local sim, evs = enter_first_fight(seed)
+  local intent = find_event(evs, "intent_shown").amount
   sim:apply({ type = "roll" })
-  -- block with all three dice
   sim:apply({ type = "assign", die = 1, action = "block" })
   sim:apply({ type = "assign", die = 2, action = "block" })
   sim:apply({ type = "assign", die = 3, action = "block" })
   local block = sim.player.block
   assert(block >= 3, "expected at least 3 block")
-  for _, e in ipairs(sim:apply({ type = "end_turn" })) do
-    if e.type == "enemy_attacked" then
-      eq(e.blocked, math.min(intent, block), "blocked amount wrong")
-      eq(e.damage, intent - math.min(intent, block), "damage after block wrong")
-    end
+  local hit = find_event(sim:apply({ type = "end_turn" }), "enemy_attacked")
+  assert(hit, "no enemy_attacked event")
+  eq(hit.blocked, math.min(intent, block), "blocked amount wrong")
+  eq(hit.damage, intent - math.min(intent, block), "damage after block wrong")
+end)
+
+test("sim: won fight pays embers and offers 2-3 rewards; choosing grows the pool", function()
+  local sim = Sim.new(31337)
+  local all = drive(sim) -- full run
+  local offered = find_event(all, "reward_offered")
+  assert(offered, "no reward_offered event in a full run")
+  assert(offered.o1 and offered.o2, "offer needs at least o1 and o2")
+  assert(dice_data[offered.o1] and dice_data[offered.o2], "offers must be die ids")
+  -- replay the same run and stop AT the first reward phase to inspect it
+  local sim2 = Sim.new(31337)
+  for _ = 1, 3000 do
+    if sim2.phase == "reward" then break end
+    sim2:apply(next_cmd(sim2))
   end
+  eq(sim2.phase, "reward", "never reached reward phase")
+  local st = sim2:state()
+  assert(#st.offers >= 2 and #st.offers <= 3, "offers must be 2-3, got " .. #st.offers)
+  assert(st.run.embers >= 8, "won fight must pay >= 8 embers")
+  eq(st.run.fights_won, 1, "fights_won must be 1 after first win")
+  local pool_before = #st.player.dice
+  local evs = sim2:apply({ type = "choose_reward", index = 1 })
+  local chosen = find_event(evs, "reward_chosen")
+  assert(chosen, "no reward_chosen event")
+  eq(#sim2.player.dice, pool_before + 1, "die pool did not grow")
+  eq(sim2.player.dice[#sim2.player.dice], chosen.die, "wrong die added")
+  eq(sim2.phase, "map", "phase should return to map")
+  eq(sim2:state().offers, nil, "offers must clear after choosing")
+end)
+
+test("sim: choose_reward index 0 skips without growing the pool", function()
+  local sim = Sim.new(31337)
+  for _ = 1, 3000 do
+    if sim.phase == "reward" then break end
+    sim:apply(next_cmd(sim))
+  end
+  eq(sim.phase, "reward", "never reached reward phase")
+  local pool_before = #sim.player.dice
+  local evs = sim:apply({ type = "choose_reward", index = 0 })
+  assert(find_event(evs, "reward_skipped"), "no reward_skipped event")
+  eq(#sim.player.dice, pool_before, "skip must not grow the pool")
+  eq(sim.phase, "map", "phase should return to map")
+end)
+
+test("sim: rest heals 30% of max hp, floored and capped", function()
+  -- Drive a wounded run until the policy takes a rest node.
+  local seed = find_seed(function(s)
+    local sim = Sim.new(s)
+    for _ = 1, 3000 do
+      if sim.phase == "rest" then return true end
+      local cmd = next_cmd(sim)
+      if not cmd then return false end
+      sim:apply(cmd)
+    end
+    return false
+  end)
+  local sim = Sim.new(seed)
+  for _ = 1, 3000 do
+    if sim.phase == "rest" then break end
+    sim:apply(next_cmd(sim))
+  end
+  eq(sim.phase, "rest", "never reached rest phase")
+  local hp, max_hp = sim.player.hp, sim.player.max_hp
+  local expect = math.min(math.floor(max_hp * 3 / 10), max_hp - hp)
+  local rested = find_event(sim:apply({ type = "rest" }), "rested")
+  assert(rested, "no rested event")
+  eq(rested.healed, expect, "healed amount wrong")
+  eq(rested.hp, hp + expect, "hp after rest wrong")
+  eq(sim.player.hp, math.min(hp + expect, max_hp), "hp overshot max")
+  eq(sim.phase, "map", "phase should return to map")
+end)
+
+test("sim: full run reaches a terminal phase with a consistent ledger", function()
+  local sim = Sim.new(20260723)
+  local all = drive(sim)
+  assert(sim.phase == "run_won" or sim.phase == "run_lost",
+    "expected terminal phase, got " .. sim.phase)
+  local terminal = find_event(all, sim.phase) -- run_won / run_lost event
+  assert(terminal, "no " .. sim.phase .. " event")
+  eq(terminal.embers, sim.run.embers, "event embers != ledger embers")
+  eq(terminal.fights_won, sim.run.fights_won, "event fights_won != ledger")
+  if sim.phase == "run_won" then
+    assert(find_event(all, "boss_defeated"), "run_won without boss_defeated")
+    assert(terminal.turns_total > 0, "turns_total must be positive")
+    assert(sim.run.embers >= 40, "boss bonus missing from embers")
+  else
+    assert(terminal.layer >= 2, "run_lost.layer must be a middle+ layer")
+  end
+  -- terminal phases are dead: every further command is invalid, state frozen
+  local before = sim:state_hash()
+  for _, cmd in ipairs({ { type = "start_run" }, { type = "roll" },
+                         { type = "choose_node", node = sim.map.start } }) do
+    local evs = sim:apply(cmd)
+    eq(evs[1].type, "invalid_command", "terminal phase accepted " .. cmd.type)
+  end
+  eq(sim:state_hash(), before, "terminal state mutated")
+end)
+
+test("sim: invalid commands emit events but never mutate state", function()
+  local sim = Sim.new(42)
+  sim:apply({ type = "start_run" })
+  local before = sim:state_hash()
+  local cases = {
+    { type = "roll" },                        -- not in combat
+    { type = "assign", die = 1, action = "attack" },
+    { type = "end_turn" },
+    { type = "choose_reward", index = 1 },    -- no offers
+    { type = "rest" },                        -- not at a rest node
+    { type = "start_run" },                   -- already running
+    { type = "choose_node", node = -1 },      -- no such edge
+    { type = "nonsense" },                    -- unknown
+  }
+  for _, cmd in ipairs(cases) do
+    local evs = sim:apply(cmd)
+    eq(evs[1].type, "invalid_command", "expected invalid_command for " .. cmd.type)
+    eq(#evs, 1, "invalid command must emit exactly one event")
+  end
+  eq(sim:state_hash(), before, "state changed by invalid commands")
 end)
 
 test("sim: golden determinism anchor (cross-VM regression guard)", function()
   -- If this hash ever changes, sim behavior changed for existing seeds:
-  -- bump SIM_VERSION and document in progress.md. Value captured at M0.
+  -- bump SIM_VERSION and document in progress.md.
+  -- GOLDEN = nil -- re-anchored by orchestrator (via EMBERDELVE_GOLDEN env)
   local sim = Sim.new(20260723)
-  run_script(sim, SCRIPT)
+  drive(sim)
+  -- self-consistency: the same seed + same commands must reproduce the hash
+  local twin = Sim.new(20260723)
+  drive(twin)
+  eq(sim.event_hash, twin.event_hash, "golden run is not self-consistent")
   local golden = tonumber(os.getenv("EMBERDELVE_GOLDEN") or "0")
   if golden ~= 0 then
     eq(sim.event_hash, golden, "event hash drifted from golden value")

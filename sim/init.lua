@@ -19,20 +19,26 @@
 
 local RNG = require "sim.rng"
 local combat = require "sim.combat"
+local run = require "sim.run"
 
 local Sim = {}
 Sim.__index = Sim
 
-local SIM_VERSION = 1
+local SIM_VERSION = 2
 local MOD = 2147483647
 
 local STREAMS = { "map", "combat", "loot", "shuffle" }
 
+-- v2 public command set (docs/m1-contract.md §2). start_encounter is gone:
+-- encounters auto-start when a fight/elite/boss node is entered.
 local HANDLERS = {
-  start_encounter = combat.start_encounter,
+  start_run = run.start_run,
+  choose_node = run.choose_node,
   roll = combat.roll,
   assign = combat.assign,
   end_turn = combat.end_turn,
+  choose_reward = run.choose_reward,
+  rest = run.rest,
 }
 
 -- ---------------------------------------------------------------------------
@@ -82,13 +88,18 @@ function Sim.new(run_seed)
     self.rng[name] = RNG.new(run_seed, name)
   end
   self.turn = 0
-  self.phase = "idle" -- idle | player_turn | victory | defeat
+  self.phase = "idle" -- idle|map|player_turn|reward|rest|run_won|run_lost
   self.player = {
     hp = 30, max_hp = 30, block = 0,
-    dice = { 6, 6, 6 }, -- die sizes; the "dice-builder" axis grows here
+    dice = { "d6", "d6", "d6" }, -- die ids into data/dice.lua (dice-builder axis)
     rolled = nil, assigned = {},
   }
   self.enemy = nil
+  self.map = nil        -- set by start_run (incl. position + visited)
+  self.offers = nil     -- die ids while phase == "reward"
+  self.run = nil        -- { embers, fights_won } run ledger
+  self.turns_total = 0  -- combat turns accumulated across encounters
+  self.combat_over = nil -- transient "won"|"lost" flag consumed by run.post
   self.event_hash = 0
   self.event_count = 0
   return self
@@ -102,6 +113,11 @@ function Sim:snapshot()
     phase = self.phase,
     player = deep_copy(self.player),
     enemy = deep_copy(self.enemy),
+    map = deep_copy(self.map),
+    offers = deep_copy(self.offers),
+    run = deep_copy(self.run),
+    turns_total = self.turns_total,
+    combat_over = self.combat_over,
     event_hash = self.event_hash,
     event_count = self.event_count,
     rng = {},
@@ -114,7 +130,8 @@ end
 
 function Sim.restore(snap)
   assert(snap.version == SIM_VERSION,
-    "snapshot version " .. tostring(snap.version) .. " != " .. SIM_VERSION)
+    "cannot restore snapshot: version " .. tostring(snap.version) ..
+    " is not SIM_VERSION " .. SIM_VERSION .. " (stale save; start a new run)")
   local self = setmetatable(deep_copy(snap), Sim)
   self.rng = {}
   for _, name in ipairs(STREAMS) do
@@ -138,6 +155,10 @@ function Sim:apply(cmd)
   else
     handler(self, cmd, events)
   end
+  -- Contract §1: after EVERY dispatched command (valid or not) the run
+  -- layer's post hook consumes sim.combat_over and performs all run-level
+  -- phase transitions. Its events join this command's batch (hashed below).
+  run.post(self, events)
   for _, ev in ipairs(events) do
     self.event_hash = hash_value(self.event_hash, ev)
     self.event_count = self.event_count + 1
@@ -151,6 +172,9 @@ function Sim:state()
     phase = self.phase,
     player = self.player,
     enemy = self.enemy,
+    map = self.map,       -- incl. position + visited (contract §5)
+    offers = self.offers, -- only while phase == "reward"
+    run = self.run,
   }
 end
 
@@ -160,6 +184,11 @@ function Sim:state_hash()
   h = hash_value(h, self.phase)
   h = hash_value(h, self.player)
   h = hash_value(h, self.enemy or "none")
+  h = hash_value(h, self.map or "none")
+  h = hash_value(h, self.offers or "none")
+  h = hash_value(h, self.run or "none")
+  h = hash_value(h, self.turns_total)
+  h = hash_value(h, self.combat_over or "none")
   for _, name in ipairs(STREAMS) do
     h = hash_value(h, self.rng[name]:snapshot())
   end
