@@ -1,20 +1,24 @@
-// sim/combat.dart — Encounter layer.
+// sim/combat.dart — Encounter layer (v3).
 // SEALED SIM MODULE: pure Dart, no Flutter imports, no dart:io, no Random.
 //
-// Seam rules (docs/m2-contract.md §1 — LAW):
+// Seam rules (docs/m3-contract.md §1 — LAW):
 //   * encounter layer ONLY: never imports run_layer.dart or map_gen.dart,
-//     never generates rewards/loot, never sets run-level phases.
-//   * on encounter end it pushes encounter_won/encounter_lost (plus
-//     boss_defeated for the boss), sets sim.combatOver = "won"|"lost",
-//     and does NOT touch sim.phase — runPost performs phase transitions.
+//     never generates rewards/reward offers, never sets run-level phases.
+//   * on encounter end it sets sim.combatOver = "won"|"lost" and pushes
+//     events; runPost performs the phase transition.
+//   * Relic hooks (data/relics.dart) are read via relic_hooks.dart. The one
+//     deliberate exception to "combat never touches run": on_max_gold credits
+//     run['gold'] during a roll (incidental economy, not a phase/reward
+//     transition) — documented here and in the contract.
 //
 // Fair-play pillars (docs/spec.md §Ethics):
 //   * enemy intent is ALWAYS visible before the player commits
-//   * the shown intent resolves EXACTLY as shown — never rerolled
+//   * the shown intent resolves EXACTLY as shown — never rerolled by the game
 //   * randomness decides what you roll, never how a stated action resolves
 
 import '../data/dice.dart';
 import '../data/enemies.dart';
+import 'relic_hooks.dart';
 import 'sim.dart';
 
 void _push(List<Map<String, Object?>> events, Map<String, Object?> ev) =>
@@ -23,8 +27,6 @@ void _push(List<Map<String, Object?>> events, Map<String, Object?> ev) =>
 void _invalid(List<Map<String, Object?>> events, String reason) =>
     _push(events, {'type': 'invalid_command', 'reason': reason});
 
-// Event for the currently shown intent. For attack_block the block amount
-// rides along as an additional scalar field.
 Map<String, Object?> _intentEvent(Map<String, dynamic> enemy) {
   final intent = enemy['intent'] as Map;
   return {
@@ -36,15 +38,42 @@ Map<String, Object?> _intentEvent(Map<String, dynamic> enemy) {
   };
 }
 
+bool _isTough(Map<String, dynamic> enemy) =>
+    enemy['elite'] == true || enemy['boss'] == true;
+
+// Apply the per-turn-start relic block (turn_block). Called for turn 1 in
+// combatBegin and for every subsequent turn in end_turn.
+void _applyTurnBlock(Sim sim, List<Map<String, Object?>> events) {
+  final tb = relicSum(sim, 'turn_block');
+  if (tb > 0) {
+    sim.player['block'] = (sim.player['block'] as int) + tb;
+    _push(events, {
+      'type': 'block_gained',
+      'amount': tb,
+      'total_block': sim.player['block'],
+      'source': 'relic',
+    });
+  }
+}
+
 // ---------------------------------------------------------------------------
 // internal seam — called by the run layer, NOT a public command
 // ---------------------------------------------------------------------------
 
-/// Begin an encounter against [enemyId]. `elite` is carried onto the
-/// encounter_started event.
 void combatBegin(
     Sim sim, String enemyId, bool elite, List<Map<String, Object?>> events) {
   final def = enemyDef(enemyId);
+  final ascAmount = (sim.run?['ascension'] as int? ?? 0);
+  // Ascension raises enemy attack/block amounts by a fixed integer per rung
+  // (deterministic, no RNG). Applied here so the sim stays pure.
+  final pattern = [
+    for (final it in def.pattern)
+      {
+        'kind': it.kind,
+        'amount': it.amount + (it.amount > 0 ? ascAmount : 0),
+        if (it.kind == 'attack_block') 'block': it.block + ascAmount,
+      }
+  ];
   final enemy = <String, dynamic>{
     'id': def.id,
     'name': def.name,
@@ -53,10 +82,10 @@ void combatBegin(
     'block': 0,
     'boss': def.boss,
     'elite': def.elite,
-    'pattern': [for (final it in def.pattern) it.toMap()],
+    'pattern': pattern,
     'pattern_index': 1,
   };
-  enemy['intent'] = Map<String, Object?>.from(enemy['pattern'][0] as Map);
+  enemy['intent'] = Map<String, Object?>.from(pattern[0]);
   sim.enemy = enemy;
   sim.combatOver = null;
   sim.phase = 'player_turn';
@@ -65,6 +94,7 @@ void combatBegin(
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
   sim.player['assigned'] = <String, String>{};
+  sim.player['rerolls_left'] = relicSum(sim, 'rerolls');
   _push(events, {
     'type': 'encounter_started',
     'enemy': enemy['id'],
@@ -72,11 +102,12 @@ void combatBegin(
     'turn': sim.turn,
     'elite': elite,
   });
+  _applyTurnBlock(sim, events);
   _push(events, _intentEvent(enemy));
 }
 
 // ---------------------------------------------------------------------------
-// shared end-of-encounter protocol (seam rule: flag + events, never phase)
+// shared end-of-encounter protocol
 // ---------------------------------------------------------------------------
 
 void _encounterWon(Sim sim, List<Map<String, Object?>> events) {
@@ -90,6 +121,34 @@ void _encounterWon(Sim sim, List<Map<String, Object?>> events) {
 void _encounterLost(Sim sim, List<Map<String, Object?>> events) {
   sim.combatOver = 'lost';
   _push(events, {'type': 'encounter_lost', 'turns': sim.turn});
+}
+
+// Roll one die id, applying its own min_value and the relic min_roll floor,
+// and (for on_max_gold) crediting gold when the natural face is the max.
+int _rollOne(Sim sim, String id, List<bool> maxedOut,
+    List<Map<String, Object?>> events) {
+  final def = dieDef(id);
+  final raw = sim.rng['combat']!.die(def.size);
+  final isMax = raw == def.size;
+  maxedOut.add(isMax);
+  if (isMax) {
+    final g = relicSum(sim, 'on_max_gold');
+    if (g > 0 && sim.run != null) {
+      sim.run!['gold'] = (sim.run!['gold'] as int) + g;
+      _push(events, {
+        'type': 'gold_gained',
+        'amount': g,
+        'total': sim.run!['gold'],
+        'source': 'relic',
+      });
+    }
+  }
+  var v = raw;
+  final minValue = def.mods['min_value'] as int?;
+  if (minValue != null && v < minValue) v = minValue;
+  final minRoll = relicSum(sim, 'min_roll');
+  if (minRoll > 0 && v < minRoll) v = minRoll;
+  return v;
 }
 
 // ---------------------------------------------------------------------------
@@ -108,12 +167,7 @@ void combatRoll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final values = <int>[];
   final maxed = <bool>[];
   for (final id in poolIds) {
-    final def = dieDef(id);
-    var raw = sim.rng['combat']!.die(def.size);
-    maxed.add(raw == def.size);
-    final minValue = def.mods['min_value'] as int?;
-    if (minValue != null && raw < minValue) raw = minValue;
-    values.add(raw);
+    values.add(_rollOne(sim, id, maxed, events));
   }
   sim.player['rolled'] = values;
   sim.player['rolled_max'] = maxed;
@@ -123,6 +177,38 @@ void combatRoll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     ev['d${i + 1}'] = values[i];
   }
   _push(events, ev);
+}
+
+/// cmd: { type:"reroll", die:<1-based index> } — costs one reroll charge.
+void combatReroll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
+  if (sim.phase != 'player_turn' || sim.enemy == null) {
+    return _invalid(events, 'not_player_turn');
+  }
+  if (sim.combatOver != null) return _invalid(events, 'encounter_over');
+  final rolled = (sim.player['rolled'] as List?)?.cast<int>();
+  if (rolled == null) return _invalid(events, 'roll_first');
+  final die = cmd['die'];
+  if (die is! int || die < 1 || die > rolled.length) {
+    return _invalid(events, 'no_such_die');
+  }
+  if ((sim.player['assigned'] as Map)['$die'] != null) {
+    return _invalid(events, 'die_already_assigned');
+  }
+  final left = sim.player['rerolls_left'] as int? ?? 0;
+  if (left <= 0) return _invalid(events, 'no_rerolls_left');
+  final maxed = (sim.player['rolled_max'] as List).cast<bool>();
+  final tmp = <bool>[];
+  final newVal = _rollOne(sim, (sim.player['dice'] as List)[die - 1] as String,
+      tmp, events);
+  rolled[die - 1] = newVal;
+  maxed[die - 1] = tmp.first;
+  sim.player['rerolls_left'] = left - 1;
+  _push(events, {
+    'type': 'reroll_used',
+    'die': die,
+    'value': newVal,
+    'left': sim.player['rerolls_left'],
+  });
 }
 
 /// cmd: { type:"assign", die:<1-based index>, action:"attack"|"block" }
@@ -149,12 +235,13 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final action = cmd['action'];
 
   if (action == 'attack') {
-    if (mods['block_only'] == true) {
-      return _invalid(events, 'die_is_block_only');
-    }
-    final value = rolled[die - 1] + (mods['attack_bonus'] as int? ?? 0) + bonus;
+    if (mods['block_only'] == true) return _invalid(events, 'die_is_block_only');
+    var value = rolled[die - 1] +
+        (mods['attack_bonus'] as int? ?? 0) +
+        bonus +
+        relicSum(sim, 'attack_flat');
+    if (_isTough(enemy)) value += relicSum(sim, 'elite_damage');
     assigned['$die'] = 'attack';
-    // Enemy block absorbs player damage this turn; resets at enemy turn start.
     var absorbed = value;
     final enemyBlock = enemy['block'] as int;
     if (absorbed > enemyBlock) absorbed = enemyBlock;
@@ -174,7 +261,10 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     if (mods['attack_only'] == true) {
       return _invalid(events, 'die_is_attack_only');
     }
-    final value = rolled[die - 1] + (mods['block_bonus'] as int? ?? 0) + bonus;
+    final value = rolled[die - 1] +
+        (mods['block_bonus'] as int? ?? 0) +
+        bonus +
+        relicSum(sim, 'block_flat');
     assigned['$die'] = 'block';
     sim.player['block'] = (sim.player['block'] as int) + value;
     _push(events,
@@ -195,9 +285,7 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   }
   if (sim.combatOver != null) return _invalid(events, 'encounter_over');
   final enemy = sim.enemy!;
-  // Enemy turn start: leftover enemy block from last turn expires.
   enemy['block'] = 0;
-  // Enemy resolves its VISIBLE intent — exactly as shown. Never rerolled.
   final intent = enemy['intent'] as Map;
   final kind = intent['kind'];
   if (kind == 'attack' || kind == 'attack_block') {
@@ -219,6 +307,20 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       ev['block'] = intent['block'];
     }
     _push(events, ev);
+    // Thorns: attackers take damage after resolving an attack intent.
+    final thorns = relicSum(sim, 'thorns');
+    if (thorns > 0) {
+      enemy['hp'] = (enemy['hp'] as int) - thorns;
+      _push(events, {
+        'type': 'thorns_dealt',
+        'amount': thorns,
+        'enemy_hp': enemy['hp'],
+      });
+      if ((enemy['hp'] as int) <= 0) {
+        _encounterWon(sim, events);
+        return;
+      }
+    }
   } else if (kind == 'block') {
     enemy['block'] = (enemy['block'] as int) + (intent['amount'] as int);
     _push(events, {
@@ -232,7 +334,6 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     _encounterLost(sim, events);
     return;
   }
-  // Next turn: advance the pattern cycle deterministically (no RNG).
   sim.turn += 1;
   sim.player['block'] = 0;
   sim.player['rolled'] = null;
@@ -243,5 +344,6 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   enemy['intent'] =
       Map<String, Object?>.from(pattern[(enemy['pattern_index'] as int) - 1] as Map);
   _push(events, {'type': 'turn_started', 'turn': sim.turn});
+  _applyTurnBlock(sim, events);
   _push(events, _intentEvent(enemy));
 }
