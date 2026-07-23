@@ -1,0 +1,6 @@
+build/
+.internal/
+bob.jar
+*.apk
+*.aab
+.DS_Store

@@ -1,0 +1,68 @@
+{
+  "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
+  "features": [
+    {
+      "id": "M0-1",
+      "title": "Repo scaffold with AI-handoff state files",
+      "acceptance": "PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/ exist at repo root and describe the project accurately",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M0-2",
+      "title": "Sealed sim core with deterministic RNG streams",
+      "acceptance": "sim/ contains pure-Lua Sim with new/apply/state/snapshot/restore/state_hash; no engine APIs, os, io, or math.random anywhere under sim/ (grep clean)",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M0-3",
+      "title": "Headless sim test suite passes",
+      "acceptance": "lua5.4 tests/run_tests.lua exits 0 with >=10 passing tests covering determinism, stream independence, snapshot round-trip, intent-resolution fairness, and invalid-command safety",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M0-4",
+      "title": "CI test gate green on GitHub Actions",
+      "acceptance": "Workflow run on main: 'test' job passes on ubuntu-latest",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M0-5",
+      "title": "CI produces installable debug APK",
+      "acceptance": "Workflow run on main: 'build-android' job bundles arm64+armv7 debug APK via pinned bob.jar and uploads it as an artifact",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M1-1",
+      "title": "StS-style layered node map generation",
+      "acceptance": "sim/map.lua generates a connected layered map from the map stream; property tests: all paths reach boss, node counts within spec, same seed => same map",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M1-2",
+      "title": "Dice-builder combat v1 (10 dice variants, 3 enemies, 1 boss)",
+      "acceptance": "Content defined as data modules under data/; headless autoplayer completes 100 seeded runs without error; win rate within 20-80% band",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M1-3",
+      "title": "Full seeded run playable on device",
+      "acceptance": "Debug APK: map -> fights -> boss -> run summary with placeholder art; manual play-through video or device log as evidence",
+      "passes": false,
+      "evidence": null
+    },
+    {
+      "id": "M1-4",
+      "title": "Autosave every action + resume",
+      "acceptance": "Kill the app mid-fight, relaunch: game resumes into the exact pending decision; snapshot round-trip test in engine",
+      "passes": false,
+      "evidence": null
+    }
+  ]
+}
