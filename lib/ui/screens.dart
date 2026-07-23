@@ -10,6 +10,8 @@ import '../data/events.dart';
 import '../data/relics.dart';
 import '../game/controller.dart';
 import 'art.dart';
+import 'fx.dart';
+
 import 'settings_screen.dart';
 import 'sprites.dart';
 import 'theme.dart';
@@ -454,12 +456,23 @@ class _CombatScreenState extends State<CombatScreen> {
   int? selected; // 1-based die index
   bool _busy = false; // input lock while a choreography sequence plays
 
-  // Choreography flags (attack = lunge tween + hit-flash + knockback;
-  // death = flash + fade/collapse — the sheets have no attack/death frames).
+  // Choreography flags (attack = squash + lunge tween + hit-flash + knockback;
+  // death = flash + ember-dissolve — the sheets have no attack/death frames).
   bool _playerLunge = false, _enemyLunge = false;
   bool _playerFlash = false, _enemyFlash = false;
   bool _playerKnock = false, _enemyKnock = false;
   bool _playerDying = false, _enemyDying = false;
+  bool _playerSquash = false, _enemySquash = false;
+
+  // Juice: roll generation triggers the dice tumble; shake key drives screen
+  // shake; pops are floating damage numbers over the stage.
+  int _rollGen = 0;
+  final GlobalKey<ShakeBoxState> _shakeKey = GlobalKey<ShakeBoxState>();
+  final List<_Pop> _pops = [];
+  int _popId = 0;
+
+  // Boss/elite name-plate splash, shown once when the encounter opens.
+  bool _splash = false;
 
   // Cached combat view-model: during the end-of-encounter notify hold the sim
   // has already left combat (enemy == null), but we keep rendering the stage.
@@ -468,9 +481,36 @@ class _CombatScreenState extends State<CombatScreen> {
 
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
   static const _contact = Duration(milliseconds: 250);
+  static const _squashTime = Duration(milliseconds: 90);
+  static const _hitStop = Duration(milliseconds: 80);
   static const _knockTime = Duration(milliseconds: 140);
   static const _flashTail = Duration(milliseconds: 120);
   static const _deathTime = Duration(milliseconds: 700);
+
+  @override
+  void initState() {
+    super.initState();
+    final enemy = widget.c.state?['enemy'] as Map?;
+    if (enemy != null && (enemy['boss'] == true || enemy['elite'] == true)) {
+      _splash = true;
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        if (mounted) setState(() => _splash = false);
+      });
+    }
+  }
+
+  void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
+    setState(() =>
+        _pops.add(_Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked)));
+  }
+
+  /// Shake scaled by damage relative to the victim's max HP; hits at or above
+  /// 25% of max HP also earn an ~80 ms hit-stop (design-system §5).
+  bool _impact(int amount, int victimMaxHp) {
+    final frac = victimMaxHp <= 0 ? 0.0 : amount / victimMaxHp;
+    _shakeKey.currentState?.shake((0.25 + frac * 2.2).clamp(0.0, 1.0));
+    return frac >= 0.25;
+  }
 
   AudioService? get _audio => widget.c.audio;
 
@@ -511,17 +551,30 @@ class _CombatScreenState extends State<CombatScreen> {
       if (mounted) setState(() {});
       return;
     }
+    // Anticipation squash before the lunge (visuals.md #9).
+    setState(() => _playerSquash = true);
+    await _sleep(_squashTime);
+    if (!mounted) return;
     _audio?.playSfx('whoosh');
-    setState(() => _playerLunge = true);
+    setState(() {
+      _playerSquash = false;
+      _playerLunge = true;
+    });
     await _sleep(_contact);
     if (!mounted) return;
     final amount = dmg['amount'] as int? ?? 0;
     final absorbed = dmg['blocked'] as int? ?? 0;
+    final landed = amount - absorbed;
     _audio?.playSfx(absorbed >= amount ? 'block' : 'enemy_hit');
-    setState(() {
-      _enemyFlash = true;
-      _enemyKnock = true;
-    });
+    _spawnPop(landed > 0 ? landed : amount,
+        onPlayer: false, blocked: landed <= 0);
+    final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
+    final bigHit = _impact(landed, enemyMax);
+    setState(() => _enemyFlash = true);
+    // Hit-stop: the frame freezes on contact before the knockback releases.
+    if (bigHit) await _sleep(_hitStop);
+    if (!mounted) return;
+    setState(() => _enemyKnock = true);
     await _sleep(_knockTime);
     if (!mounted) return;
     setState(() {
@@ -554,16 +607,26 @@ class _CombatScreenState extends State<CombatScreen> {
         terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
+      setState(() => _enemySquash = true);
+      await _sleep(_squashTime);
+      if (!mounted) return;
       _audio?.playSfx('whoosh');
-      setState(() => _enemyLunge = true);
+      setState(() {
+        _enemySquash = false;
+        _enemyLunge = true;
+      });
       await _sleep(_contact);
       if (!mounted) return;
       final damage = atk['damage'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
-      setState(() {
-        _playerFlash = true;
-        _playerKnock = true;
-      });
+      _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
+      final playerMax =
+          ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
+      final bigHit = _impact(damage, playerMax);
+      setState(() => _playerFlash = true);
+      if (bigHit) await _sleep(_hitStop);
+      if (!mounted) return;
+      setState(() => _playerKnock = true);
       await _sleep(_knockTime);
       if (!mounted) return;
       setState(() {
@@ -611,9 +674,9 @@ class _CombatScreenState extends State<CombatScreen> {
     final rerolls = player['rerolls_left'] as int? ?? 0;
     final enemyHp = (enemy['hp'] as int).clamp(0, enemy['max_hp'] as int);
 
-    return Column(children: [
+    final combat = Column(children: [
       _TopBar(c),
-      // Enemy header: name + intent + HP
+      // Enemy header: name + HP (intent lives on the stage, over the enemy).
       Padding(
         padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
         child: Panel(
@@ -628,7 +691,6 @@ class _CombatScreenState extends State<CombatScreen> {
                               : enemy['elite'] == true
                                   ? EmberColors.kindElite
                                   : EmberColors.textPrimary))),
-              _IntentBadge(intent),
             ]),
             const SizedBox(height: Space.s),
             StatBar(
@@ -641,7 +703,7 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
       ),
       // The stage: hero (left) vs enemy (right), animated sprite loops.
-      Expanded(child: _stage(enemy)),
+      Expanded(child: _stage(enemy, intent)),
       // Player HP
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -667,6 +729,9 @@ class _CombatScreenState extends State<CombatScreen> {
                   assigned: assigned['$i'] != null,
                   selected: selected == i,
                   maxed: maxed != null && maxed[i - 1],
+                  rollToken: _rollGen,
+                  // 50 ms cascade so the tumble reads left-to-right.
+                  tumbleDelayMs: (i - 1) * 50,
                   onTap: rolled == null || _busy
                       ? null
                       : () => setState(
@@ -687,7 +752,10 @@ class _CombatScreenState extends State<CombatScreen> {
                     onTap: _busy
                         ? null
                         : () {
-                            setState(() => selected = null);
+                            setState(() {
+                              selected = null;
+                              _rollGen++; // trigger the dice tumble cascade
+                            });
                             c.apply({'type': 'roll'});
                           }))
             : Column(children: [
@@ -723,59 +791,138 @@ class _CombatScreenState extends State<CombatScreen> {
               ]),
       ),
     ]);
+
+    return ShakeBox(
+      key: _shakeKey,
+      child: Stack(fit: StackFit.expand, children: [
+        combat,
+        if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+      ]),
+    );
   }
 
-  /// Hero vs enemy, bottom-aligned; lunges slide the combatant toward the
-  /// other side, knockback nudges away, death fades + sinks the sprite.
-  Widget _stage(Map enemy) {
+  /// Layer of the node the delver stands on (for the boss name-plate).
+  int _currentLayer(Map st) {
+    final map = st['map'] as Map?;
+    if (map == null) return 1;
+    final nodes = (map['nodes'] as Map?)?.cast<String, Map>();
+    final pos = map['position'];
+    return (nodes?['$pos']?['layer'] as int?) ?? 1;
+  }
+
+  /// Hero vs enemy, bottom-aligned on a grounded floor plane (shadow
+  /// ellipses); lunges slide the combatant toward the other side, knockback
+  /// nudges away, deaths dissolve into embers. Damage numbers pop over the
+  /// stage; the enemy's next intent floats above it as an icon badge.
+  Widget _stage(Map enemy, Map intent) {
     final enemyId = enemy['id'] as String? ?? '';
     final big = enemy['boss'] == true || enemy['elite'] == true;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: Space.s),
-            child: _combatant(
-              sprite: SpriteView(_characterId,
-                  key: ValueKey('hero-$_characterId'), height: 104),
-              lungeToward: 1,
-              lunge: _playerLunge,
-              knock: _playerKnock,
-              flash: _playerFlash,
-              dying: _playerDying,
+      child: Stack(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.s),
+              child: _combatant(
+                sprite: SpriteView(_characterId,
+                    key: ValueKey('hero-$_characterId'), height: 104),
+                spriteHeight: 104,
+                lungeToward: 1,
+                lunge: _playerLunge,
+                knock: _playerKnock,
+                flash: _playerFlash,
+                dying: _playerDying,
+                squash: _playerSquash,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.s),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Intent as an icon badge floating above the enemy.
+                  _IntentBadge(intent),
+                  const SizedBox(height: Space.s),
+                  _combatant(
+                    sprite: SpriteView(enemyId,
+                        key: ValueKey('enemy-$enemyId'),
+                        height: big ? 128 : 96,
+                        flipX: true),
+                    spriteHeight: big ? 128 : 96,
+                    // Slight depth scale: the enemy stands a step closer.
+                    depthScale: big ? 1.02 : 1.06,
+                    lungeToward: -1,
+                    lunge: _enemyLunge,
+                    knock: _enemyKnock,
+                    flash: _enemyFlash,
+                    dying: _enemyDying,
+                    squash: _enemySquash,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        // Floating damage numbers (player pops left, enemy pops right).
+        for (final p in _pops)
+          Positioned(
+            left: p.onPlayer ? 24 : null,
+            right: p.onPlayer ? null : 24,
+            bottom: 120,
+            child: DamagePop(
+              key: ValueKey('pop-${p.id}'),
+              amount: p.amount,
+              blocked: p.blocked,
+              onPlayer: p.onPlayer,
+              onDone: () {
+                if (mounted) setState(() => _pops.remove(p));
+              },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: Space.s),
-            child: _combatant(
-              sprite: SpriteView(enemyId,
-                  key: ValueKey('enemy-$enemyId'),
-                  height: big ? 128 : 96,
-                  flipX: true),
-              lungeToward: -1,
-              lunge: _enemyLunge,
-              knock: _enemyKnock,
-              flash: _enemyFlash,
-              dying: _enemyDying,
-            ),
-          ),
-        ],
-      ),
+      ]),
     );
   }
 
   Widget _combatant({
     required Widget sprite,
+    required double spriteHeight,
     required int lungeToward, // +1 lunges right, -1 lunges left
     required bool lunge,
     required bool knock,
     required bool flash,
     required bool dying,
+    required bool squash,
+    double depthScale = 1.0,
   }) {
     Widget w = sprite;
+    // Grounding: soft shadow ellipse under the feet (+ ember dissolve cloud
+    // while dying).
+    w = Stack(clipBehavior: Clip.none, alignment: Alignment.bottomCenter,
+        children: [
+      Positioned(
+        bottom: -4,
+        child: AnimatedOpacity(
+          duration: _deathTime,
+          opacity: dying ? 0.0 : 1.0,
+          child: Container(
+            width: spriteHeight * 0.7,
+            height: spriteHeight * 0.14,
+            decoration: BoxDecoration(
+              borderRadius:
+                  BorderRadius.all(Radius.elliptical(spriteHeight, 20)),
+              color: Colors.black.withValues(alpha: 0.38),
+            ),
+          ),
+        ),
+      ),
+      w,
+      if (dying)
+        Positioned.fill(
+            child: EmberBurst(duration: _deathTime, count: 30)),
+    ]);
     // Hit-flash: paint the sprite solid white for a beat.
     w = AnimatedSwitcher(
       duration: const Duration(milliseconds: 60),
@@ -787,7 +934,7 @@ class _CombatScreenState extends State<CombatScreen> {
               child: w)
           : KeyedSubtree(key: const ValueKey('plain'), child: w),
     );
-    // Death: fade out while sinking (collapse).
+    // Death: fade out while sinking (collapse) into the ember cloud.
     w = AnimatedOpacity(
       opacity: dying ? 0.0 : 1.0,
       duration: _deathTime,
@@ -796,6 +943,21 @@ class _CombatScreenState extends State<CombatScreen> {
         offset: dying ? const Offset(0, 0.35) : Offset.zero,
         duration: _deathTime,
         curve: Curves.easeIn,
+        child: w,
+      ),
+    );
+    // Anticipation squash (bottom-anchored) right before the lunge, and the
+    // slight depth scale that grounds the enemy a step closer to the camera.
+    w = Transform.scale(
+      alignment: Alignment.bottomCenter,
+      scale: depthScale,
+      child: AnimatedContainer(
+        duration: _squashTime,
+        curve: Curves.easeOut,
+        transformAlignment: Alignment.bottomCenter,
+        transform: squash
+            ? (Matrix4.identity()..scale(1.08, 0.86))
+            : Matrix4.identity(),
         child: w,
       ),
     );
@@ -810,6 +972,74 @@ class _CombatScreenState extends State<CombatScreen> {
       duration: lunge ? _contact : _knockTime,
       curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
       child: w,
+    );
+  }
+}
+
+/// One floating damage number's spawn record.
+class _Pop {
+  final int id;
+  final int amount;
+  final bool onPlayer;
+  final bool blocked;
+  _Pop(this.id, this.amount, {required this.onPlayer, required this.blocked});
+}
+
+/// Boss/elite name-plate splash: "SOOT SHADE — LAYER 1" over a charred band.
+class _NamePlate extends StatelessWidget {
+  final Map enemy;
+  final int layer;
+  const _NamePlate({required this.enemy, required this.layer});
+  @override
+  Widget build(BuildContext context) {
+    final boss = enemy['boss'] == true;
+    return IgnorePointer(
+      child: Center(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 1600),
+          builder: (context, f, child) {
+            // In 0-15%, hold, out 85-100%.
+            final a = f < 0.15
+                ? f / 0.15
+                : f > 0.85
+                    ? (1 - f) / 0.15
+                    : 1.0;
+            final scale = 1.15 - 0.15 * Curves.easeOut.transform(
+                (f / 0.2).clamp(0.0, 1.0));
+            return Opacity(
+                opacity: a.clamp(0.0, 1.0),
+                child: Transform.scale(scale: scale, child: child));
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: Space.xl),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Colors.transparent,
+                Colors.black.withValues(alpha: 0.85),
+                Colors.black.withValues(alpha: 0.85),
+                Colors.transparent,
+              ], stops: const [0.0, 0.18, 0.82, 1.0]),
+              border: const Border(
+                top: BorderSide(color: EmberColors.ember, width: 1),
+                bottom: BorderSide(color: EmberColors.ember, width: 1),
+              ),
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text((enemy['name'] as String? ?? '').toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: EmberText.h1.copyWith(
+                      color:
+                          boss ? EmberColors.kindBoss : EmberColors.kindElite,
+                      letterSpacing: 3)),
+              const SizedBox(height: Space.xs),
+              Text(boss ? 'LAYER $layer · BOSS' : 'LAYER $layer · ELITE',
+                  style: EmberText.micro.copyWith(letterSpacing: 3)),
+            ]),
+          ),
+        ),
+      ),
     );
   }
 }
