@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/boons.dart';
 import 'package:emberdelve/data/dice.dart';
 import 'package:emberdelve/data/enemies.dart';
+import 'package:emberdelve/data/relics.dart';
 import 'package:emberdelve/sim/combat.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/sim/combos.dart';
@@ -474,4 +475,81 @@ void main() {
       expect(checked, greaterThan(0), reason: 'no losses in 60 seeds?');
     });
   });
+
+  group('zombie-win fix (v0.3.2) — player death beats thorns/burn', () {
+    // Drive a real run to its first fight, then force the razor's edge state
+    // directly (the sim is a plain object; this is exactly the state a real
+    // run can reach).
+    Sim simInFight(int seed) {
+      final sim = Sim(seed);
+      sim.apply({'type': 'start_run'});
+      while (sim.phase == 'map') {
+        final map = sim.map!;
+        final out =
+            ((map['edges'] as Map)['${map['position']}'] as List).cast<int>();
+        final fight = out.where((n) =>
+            ((map['nodes'] as Map)['$n'] as Map)['kind'] == 'fight');
+        sim.apply(
+            {'type': 'choose_node', 'node': fight.isNotEmpty ? fight.first : out.first});
+      }
+      expect(sim.phase, equals('player_turn'),
+          reason: 'seed $seed did not reach a fight directly');
+      return sim;
+    }
+
+    test('lethal attack + same-tick burn kill = run lost, not reward', () {
+      final sim = simInFight(42);
+      sim.player['hp'] = 1;
+      sim.player['block'] = 0;
+      sim.enemy!['hp'] = 1;
+      sim.enemy!['burn'] = 1;
+      sim.enemy!['intent'] = {'kind': 'attack', 'amount': 5};
+      final events = sim.apply({'type': 'end_turn'});
+      expect(events.any((e) => e['type'] == 'encounter_lost'), isTrue);
+      expect(events.any((e) => e['type'] == 'encounter_won'), isFalse);
+      expect(events.any((e) => e['type'] == 'burn_tick'), isFalse,
+          reason: 'a dead delver has no burn tick');
+      expect(sim.phase, equals('run_lost'));
+    });
+
+    test('lethal attack + same-tick thorns kill = run lost, not reward', () {
+      final sim = simInFight(42);
+      final thornsRelic = relicsOrderWithThorns();
+      expect(thornsRelic, isNotNull, reason: 'no thorns relic in data');
+      sim.run!['relics'] = <String>[thornsRelic!];
+      sim.player['hp'] = 1;
+      sim.player['block'] = 0;
+      sim.enemy!['hp'] = 1;
+      sim.enemy!['burn'] = 0;
+      sim.enemy!['intent'] = {'kind': 'attack', 'amount': 5};
+      final events = sim.apply({'type': 'end_turn'});
+      expect(events.any((e) => e['type'] == 'encounter_lost'), isTrue);
+      expect(events.any((e) => e['type'] == 'encounter_won'), isFalse);
+      expect(events.any((e) => e['type'] == 'thorns_dealt'), isFalse,
+          reason: 'a dead delver deals no thorns');
+      expect(sim.phase, equals('run_lost'));
+    });
+
+    test('non-lethal attack still lets burn finish the enemy (win intact)',
+        () {
+      final sim = simInFight(42);
+      sim.player['hp'] = 10;
+      sim.player['block'] = 0;
+      sim.enemy!['hp'] = 1;
+      sim.enemy!['burn'] = 1;
+      sim.enemy!['intent'] = {'kind': 'attack', 'amount': 5};
+      final events = sim.apply({'type': 'end_turn'});
+      expect(events.any((e) => e['type'] == 'burn_tick'), isTrue);
+      expect(events.any((e) => e['type'] == 'encounter_won'), isTrue);
+      expect(sim.phase, equals('reward'));
+    });
+  });
+}
+
+/// First relic id whose hooks include thorns, or null if none exists.
+String? relicsOrderWithThorns() {
+  for (final id in relicsOrder) {
+    if ((relics[id]!.hooks['thorns'] ?? 0) > 0) return id;
+  }
+  return null;
 }
