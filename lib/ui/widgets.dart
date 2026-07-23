@@ -1,5 +1,6 @@
 // lib/ui/widgets.dart — shared UI atoms built to the design system.
 import 'package:flutter/material.dart';
+import '../audio/audio_service.dart';
 import '../data/dice.dart';
 import 'theme.dart';
 
@@ -44,7 +45,12 @@ class _EmberButtonState extends State<EmberButton> {
       onTapDown: enabled ? (_) => setState(() => _down = true) : null,
       onTapUp: enabled ? (_) => setState(() => _down = false) : null,
       onTapCancel: enabled ? () => setState(() => _down = false) : null,
-      onTap: widget.onTap,
+      onTap: enabled
+          ? () {
+              AudioService.instance?.playSfx('ui_tap', volume: 0.8);
+              widget.onTap!();
+            }
+          : null,
       child: AnimatedScale(
         scale: _down ? 0.96 : 1.0,
         duration: const Duration(milliseconds: 80),
@@ -87,12 +93,17 @@ class ResourcePip extends StatelessWidget {
   final Color color;
   final int value;
   final String label;
+  final String? imageAsset; // painted currency icon; falls back to [icon]
   const ResourcePip(this.icon, this.color, this.value, this.label,
-      {super.key});
+      {super.key, this.imageAsset});
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icon, size: 18, color: color),
+      if (imageAsset != null)
+        Image.asset(imageAsset!,
+            width: 18, height: 18, filterQuality: FilterQuality.medium)
+      else
+        Icon(icon, size: 18, color: color),
       const SizedBox(width: Space.xs),
       Text('$value',
           style: EmberText.value.copyWith(fontSize: 18, color: color)),
