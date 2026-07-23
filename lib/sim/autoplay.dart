@@ -13,7 +13,10 @@ import 'sim.dart';
 /// v4: it also takes a starting boon, risky-rerolls dead dice (1s), and hunts
 /// exact kills when attacking (docs/m4-sim-contract.md).
 Map<String, Object?>? botCmd(Sim sim,
-    {String? character, int ascension = 0, bool boons = true}) {
+    {String? character,
+    int ascension = 0,
+    bool boons = true,
+    String difficulty = 'normal'}) {
   final phase = sim.phase;
   switch (phase) {
     case 'idle':
@@ -22,6 +25,7 @@ Map<String, Object?>? botCmd(Sim sim,
         if (character != null) 'character': character,
         'ascension': ascension,
         if (boons) 'boons': true,
+        if (difficulty != 'normal') 'difficulty': difficulty,
       };
     case 'boon':
       // Prefer a die boon (permanent pool value), else take the first.
@@ -187,13 +191,17 @@ RunResult playRun(int seed,
     {String? character,
     int ascension = 0,
     bool boons = true,
+    String difficulty = 'normal',
     int? snapAt,
     int maxCmds = 4000}) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
   while (applied < maxCmds) {
-    final cmd =
-        botCmd(sim, character: character, ascension: ascension, boons: boons);
+    final cmd = botCmd(sim,
+        character: character,
+        ascension: ascension,
+        boons: boons,
+        difficulty: difficulty);
     if (cmd == null) break;
     final evs = sim.apply(cmd);
     applied += 1;

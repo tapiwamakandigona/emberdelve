@@ -103,9 +103,16 @@ class TitleScreen extends StatelessWidget {
     return Stack(fit: StackFit.expand, children: [
       const Vignette(strength: 0.55),
       const EmberDrift(count: 30),
-      Padding(
-        padding: const EdgeInsets.all(Space.xl),
-        child: Column(children: [
+      // Scroll-safe shell: on tall phones the Spacers breathe as before; on
+      // short screens (<=320x568) the column scrolls instead of overflowing.
+      LayoutBuilder(builder: (context, box) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: box.maxHeight),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.all(Space.xl),
+                child: Column(children: [
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
@@ -146,6 +153,11 @@ class TitleScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: Space.xxl),
+          // Difficulty selector (v0.3.2): sticky, honest about the trade —
+          // easier fights pay fewer embers, harder fights pay more. The
+          // Daily Delve ignores it (shared seed, level field for everyone).
+          _DifficultySelector(c),
+          const SizedBox(height: Space.m),
           // Primary CTA in the thumb zone.
           SizedBox(
             width: double.infinity,
@@ -172,8 +184,12 @@ class TitleScreen extends StatelessWidget {
                 onTap: () => Navigator.of(context)
                     .push(emberRoute((_) => CharacterScreen(c)))),
           ),
-        ]),
-      ),
+                ]),
+              ),
+            ),
+          ),
+        );
+      }),
     ]);
   }
 
@@ -191,6 +207,73 @@ class TitleScreen extends StatelessWidget {
     ];
     final now = DateTime.now();
     return '${months[now.month - 1]} ${now.day}';
+  }
+}
+
+/// Three-segment easy/normal/hard switch (v0.3.2). Sticky via MetaState and
+/// honest about the trade (easier foes pay fewer embers, harder pay more) so
+/// the choice is informed, never a trap. Daily Delve always runs on normal.
+class _DifficultySelector extends StatelessWidget {
+  final GameController c;
+  const _DifficultySelector(this.c);
+
+  static const _options = [
+    ('easy', 'EASY', 'gentler foes · embers ×0.75'),
+    ('normal', 'NORMAL', 'the delve as intended'),
+    ('hard', 'HARD', 'brutal foes · embers ×1.25'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final current = c.meta.preferredDifficulty;
+    final hint =
+        _options.firstWhere((o) => o.$1 == current, orElse: () => _options[1]);
+    return Column(children: [
+      Container(
+        decoration: BoxDecoration(
+          color: EmberColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: EmberColors.line),
+        ),
+        padding: const EdgeInsets.all(3),
+        child: Row(children: [
+          for (final (id, label, _) in _options)
+            Expanded(
+              child: GestureDetector(
+                key: ValueKey('difficulty-$id'),
+                onTap: () {
+                  AudioService.instance?.playSfx('ui_tap');
+                  c.setPreferredDifficulty(id);
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(vertical: Space.s),
+                  decoration: BoxDecoration(
+                    color: id == current
+                        ? EmberColors.raised
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                        color: id == current
+                            ? EmberColors.ember
+                            : Colors.transparent),
+                  ),
+                  child: Text(label,
+                      textAlign: TextAlign.center,
+                      style: EmberText.micro.copyWith(
+                          color: id == current
+                              ? EmberColors.textPrimary
+                              : EmberColors.textDim,
+                          fontWeight: FontWeight.w700)),
+                ),
+              ),
+            ),
+        ]),
+      ),
+      const SizedBox(height: Space.xs),
+      Text(hint.$3,
+          style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+    ]);
   }
 }
 
@@ -1221,18 +1304,25 @@ class _CombatScreenState extends State<CombatScreen> {
     final riskyUsed = player['risky_used'] == true;
     final freeReroll = player['free_reroll'] == true;
     final enemyHp = (enemy['hp'] as int).clamp(0, enemy['max_hp'] as int);
+    // Compact mode for short phones: tighter chrome and smaller sprites so
+    // the fixed sections never overflow the column (measured: the roomy
+    // chrome needs ~700px once the tray wraps to two rows).
+    final compact = MediaQuery.sizeOf(context).height < 700;
 
     final combat = Column(children: [
       _TopBar(c),
       // Enemy header: name + HP (intent lives on the stage, over the enemy).
       Padding(
-        padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
+        padding: EdgeInsets.fromLTRB(Space.l, compact ? Space.s : Space.l,
+            Space.l, compact ? Space.xs : Space.s),
         child: Panel(
-          padding: const EdgeInsets.all(Space.m),
+          padding: EdgeInsets.all(compact ? Space.s : Space.m),
           child: Column(children: [
             Row(children: [
               Expanded(
                   child: Text(enemy['name'] as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: EmberText.h2.copyWith(
                           color: enemy['boss'] == true
                               ? EmberColors.kindBoss
@@ -1251,7 +1341,7 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
       ),
       // The stage: hero (left) vs enemy (right), animated sprite loops.
-      Expanded(child: _stage(enemy, intent)),
+      Expanded(child: _stage(enemy, intent, compact: compact)),
       // Player HP
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -1262,16 +1352,22 @@ class _CombatScreenState extends State<CombatScreen> {
             color: EmberColors.hp,
             label: 'YOUR HP'),
       ),
-      const SizedBox(height: Space.m),
+      SizedBox(height: compact ? Space.s : Space.m),
       // Dice tray (combo call-outs pop over it; in reroll mode taps pick the
       // unassigned dice to risk — assigned dice never join the selection).
+      // Bounded + scrollable: a fat late-run pool can wrap to many rows, so
+      // past ~2 rows the tray scrolls instead of squeezing the stage out and
+      // overflowing the column on short screens.
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
         child: Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
-            Wrap(
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: compact ? 112 : 256),
+              child: SingleChildScrollView(
+                child: Wrap(
               spacing: Space.s,
               runSpacing: Space.s,
               alignment: WrapAlignment.center,
@@ -1307,7 +1403,9 @@ class _CombatScreenState extends State<CombatScreen> {
                                       setState(() => selected =
                                           selected == i ? null : i);
                                     })
-              ],
+                  ],
+                ),
+              ),
             ),
             for (final (idx, n)
                 in _notes.where((n) => !n.onEnemy).toList().indexed)
@@ -1327,15 +1425,17 @@ class _CombatScreenState extends State<CombatScreen> {
           ],
         ),
       ),
-      const SizedBox(height: Space.m),
+      SizedBox(height: compact ? Space.s : Space.m),
       // Action zone (thumb reach)
       Padding(
-        padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.l),
+        padding: EdgeInsets.fromLTRB(
+            Space.l, 0, Space.l, compact ? Space.s : Space.l),
         child: rolled == null
             ? SizedBox(
                 width: double.infinity,
                 child: EmberButton('Roll',
                     primary: true,
+                    dense: compact,
                     icon: Icons.casino,
                     onTap: _busy
                         ? null
@@ -1368,6 +1468,7 @@ class _CombatScreenState extends State<CombatScreen> {
                       Expanded(
                           child: EmberButton('Cancel',
                               ghost: true,
+                              dense: compact,
                               onTap: () => setState(() {
                                     _rerollMode = false;
                                     _rerollSel.clear();
@@ -1377,6 +1478,7 @@ class _CombatScreenState extends State<CombatScreen> {
                           child: EmberButton(
                               'Reroll (${_rerollSel.length})',
                               primary: true,
+                              dense: compact,
                               icon: Icons.casino,
                               onTap: _rerollSel.isNotEmpty && !_busy
                                   ? _doRiskyReroll
@@ -1389,19 +1491,22 @@ class _CombatScreenState extends State<CombatScreen> {
                       // one-slot queue instead of being dropped (F2).
                       Expanded(
                           child: EmberButton('Attack',
+                              dense: compact,
                               icon: Icons.gps_fixed,
                               onTap: selected != null ? _attack : null)),
                       const SizedBox(width: Space.m),
                       Expanded(
                           child: EmberButton('Block',
+                              dense: compact,
                               icon: Icons.shield,
                               onTap: selected != null ? _block : null)),
                     ]),
-                    const SizedBox(height: Space.m),
+                    SizedBox(height: compact ? Space.s : Space.m),
                     Row(children: [
                       if (rerolls > 0)
                         Expanded(
                             child: EmberButton('Reroll ($rerolls)',
+                                dense: compact,
                                 icon: Icons.replay,
                                 onTap: selected != null && !_busy
                                     ? () {
@@ -1420,6 +1525,7 @@ class _CombatScreenState extends State<CombatScreen> {
                                   : freeReroll
                                       ? 'Risky reroll · FREE'
                                       : 'Risky reroll · −1 pip',
+                              dense: compact,
                               icon: Icons.casino,
                               onTap: riskyUsed || _busy
                                   ? null
@@ -1429,11 +1535,11 @@ class _CombatScreenState extends State<CombatScreen> {
                                         selected = null;
                                       }))),
                     ]),
-                    const SizedBox(height: Space.m),
+                    SizedBox(height: compact ? Space.s : Space.m),
                     SizedBox(
                         width: double.infinity,
                         child: EmberButton('End turn',
-                            primary: true, onTap: _endTurn)),
+                            primary: true, dense: compact, onTap: _endTurn)),
                   ]),
       ),
     ]);
@@ -1476,12 +1582,16 @@ class _CombatScreenState extends State<CombatScreen> {
   /// ellipses); lunges slide the combatant toward the other side, knockback
   /// nudges away, deaths dissolve into embers. Damage numbers pop over the
   /// stage; the enemy's next intent floats above it as an icon badge.
-  Widget _stage(Map enemy, Map intent) {
+  Widget _stage(Map enemy, Map intent, {bool compact = false}) {
     final enemyId = enemy['id'] as String? ?? '';
     final big = enemy['boss'] == true || enemy['elite'] == true;
+    final heroH = compact ? 72.0 : 104.0;
+    final enemyH = compact ? (big ? 96.0 : 72.0) : (big ? 128.0 : 96.0);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-      child: Stack(children: [
+      // Clip.none: on short screens the shrunken stage lets sprites/intent
+      // badges overlap the header gracefully instead of being cut off.
+      child: Stack(clipBehavior: Clip.none, children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -1490,8 +1600,8 @@ class _CombatScreenState extends State<CombatScreen> {
               padding: const EdgeInsets.only(bottom: Space.s),
               child: _combatant(
                 sprite: SpriteView(_characterId,
-                    key: ValueKey('hero-$_characterId'), height: 104),
-                spriteHeight: 104,
+                    key: ValueKey('hero-$_characterId'), height: heroH),
+                spriteHeight: heroH,
                 lungeToward: 1,
                 lunge: _playerLunge,
                 knock: _playerKnock,
@@ -1509,9 +1619,9 @@ class _CombatScreenState extends State<CombatScreen> {
                   _combatant(
                     sprite: SpriteView(enemyId,
                         key: ValueKey('enemy-$enemyId'),
-                        height: big ? 128 : 96,
+                        height: enemyH,
                         flipX: true),
-                    spriteHeight: big ? 128 : 96,
+                    spriteHeight: enemyH,
                     // Slight depth scale: the enemy stands a step closer.
                     depthScale: big ? 1.02 : 1.06,
                     lungeToward: -1,
@@ -1818,7 +1928,11 @@ class RewardScreen extends StatelessWidget {
   const RewardScreen(this.c, {super.key});
   @override
   Widget build(BuildContext context) {
-    final offers = ((c.state!['offers']) as List).cast<String>();
+    // Stale-frame guard (same as Shop/Event): offers is null for one frame
+    // right after choose_reward while the phase cross-fade still shows this
+    // screen — without the guard that frame throws a null cast.
+    final offers = (c.state?['offers'] as List?)?.cast<String>();
+    if (offers == null) return const SizedBox.shrink();
     var recIdx = 0, recSize = -1;
     for (var i = 0; i < offers.length; i++) {
       if (dieDef(offers[i]).size > recSize) {
@@ -1833,12 +1947,29 @@ class RewardScreen extends StatelessWidget {
       const SizedBox(height: Space.xs),
       Text('It joins your pool for the rest of the run.',
           style: EmberText.bodyDim),
-      const Spacer(),
-      for (var i = 0; i < offers.length; i++)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
-          child: _dieOffer(offers[i], i + 1, i == recIdx),
-        ),
+      // Offers stay thumb-anchored at the bottom on tall screens and become
+      // scrollable on short ones instead of overflowing.
+      Expanded(
+        child: LayoutBuilder(builder: (context, box) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: box.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(height: Space.m),
+                  for (var i = 0; i < offers.length; i++)
+                    Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
+                      child: _dieOffer(offers[i], i + 1, i == recIdx),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
       const SizedBox(height: Space.s),
       Padding(
         padding: const EdgeInsets.all(Space.l),
@@ -1863,7 +1994,13 @@ class RewardScreen extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text(def.name, style: EmberText.h2),
+                // Flexible + ellipsis: long die names share the row with the
+                // RECOMMENDED chip instead of overflowing on narrow screens.
+                Flexible(
+                    child: Text(def.name,
+                        style: EmberText.h2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis)),
                 if (recommended) ...[
                   const SizedBox(width: Space.s),
                   Container(
@@ -2086,18 +2223,22 @@ class EventScreen extends StatelessWidget {
     return Column(children: [
       _TopBar(c),
       const SizedBox(height: Space.xl),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.l),
-        child: Column(children: [
-          Image.asset(Art.eventIcon(def.id),
-              width: 96, height: 96, filterQuality: FilterQuality.medium),
-          const SizedBox(height: Space.l),
-          Text(def.name, style: EmberText.h1, textAlign: TextAlign.center),
-          const SizedBox(height: Space.m),
-          Text(def.text, style: EmberText.body, textAlign: TextAlign.center),
-        ]),
+      // Long event prose scrolls on short screens; the choice buttons stay
+      // pinned in the thumb zone below.
+      Expanded(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: Space.l),
+          child: Column(children: [
+            Image.asset(Art.eventIcon(def.id),
+                width: 96, height: 96, filterQuality: FilterQuality.medium),
+            const SizedBox(height: Space.l),
+            Text(def.name, style: EmberText.h1, textAlign: TextAlign.center),
+            const SizedBox(height: Space.m),
+            Text(def.text, style: EmberText.body, textAlign: TextAlign.center),
+          ]),
+        ),
       ),
-      const Spacer(),
+      const SizedBox(height: Space.m),
       for (var i = 0; i < def.options.length; i++)
         Padding(
           padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
@@ -2130,7 +2271,14 @@ class SummaryScreen extends StatelessWidget {
       // The designed moment: embers rise in triumph, or sink and die.
       Vignette(strength: won ? 0.45 : 0.7),
       EmberDrift(count: won ? 44 : 12, falling: !won, opacity: won ? 1 : 0.7),
-      Padding(
+      // Scroll-safe shell (same as TitleScreen): the ledger + insight panel
+      // can outgrow short screens, so scroll instead of overflowing.
+      LayoutBuilder(builder: (context, box) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: box.maxHeight),
+            child: IntrinsicHeight(
+              child: Padding(
       padding: const EdgeInsets.all(Space.xl),
       child: Column(children: [
         const Spacer(),
@@ -2189,7 +2337,11 @@ class SummaryScreen extends StatelessWidget {
               ghost: true, onTap: () => c.endToTitle()),
         ),
       ]),
-      ),
+              ),
+            ),
+          ),
+        );
+      }),
     ]);
   }
 
@@ -2220,13 +2372,24 @@ class _TopBar extends StatelessWidget {
         border: Border(bottom: BorderSide(color: EmberColors.line)),
       ),
       child: Row(children: [
-        ResourcePip(Icons.circle, EmberColors.gold, run['gold'] as int, 'GOLD',
-            imageAsset: Art.currencyCoin),
-        const SizedBox(width: Space.xl),
-        ResourcePip(Icons.local_fire_department, EmberColors.ember,
-            run['embers'] as int, 'EMBERS',
-            imageAsset: Art.currencyEmber),
-        const Spacer(),
+        // Flexible + FittedBox: on narrow screens (320dp) with fat purses the
+        // pips scale down instead of overflowing the bar on the right.
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              ResourcePip(
+                  Icons.circle, EmberColors.gold, run['gold'] as int, 'GOLD',
+                  imageAsset: Art.currencyCoin),
+              const SizedBox(width: Space.xl),
+              ResourcePip(Icons.local_fire_department, EmberColors.ember,
+                  run['embers'] as int, 'EMBERS',
+                  imageAsset: Art.currencyEmber),
+            ]),
+          ),
+        ),
+        const SizedBox(width: Space.s),
         if (c.dailyDate != null) ...[
           Text('DAILY ${c.dailyDate}',
               style: EmberText.micro.copyWith(color: EmberColors.gold)),
