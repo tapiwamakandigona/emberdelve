@@ -53,14 +53,14 @@ jobs:
             --architectures armv7-android,arm64-android \
             --variant debug \
             --bundle-format apk \
-            --bundle-output build/bundle \
+            --bundle-output dist/bundle \
             resolve build bundle
       - name: List bundle output
-        run: find build/bundle -type f | sort
+        run: find dist/bundle -type f | sort
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: emberdelve-debug-apk
-          path: build/bundle/**/*.apk
+          path: dist/bundle/**/*.apk
           if-no-files-found: error
           retention-days: 30

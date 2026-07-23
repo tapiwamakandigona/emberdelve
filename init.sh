@@ -25,7 +25,7 @@ if command -v java >/dev/null 2>&1; then
     curl -sSL -o bob.jar "https://d.defold.com/archive/${DEFOLD_SHA1}/bob/bob.jar"
   fi
   java -jar bob.jar --version
-  echo "-- to build:  java -jar bob.jar --archive --platform armv7-android --architectures armv7-android,arm64-android --variant debug --bundle-format apk --bundle-output build/bundle resolve build bundle"
+  echo "-- to build:  java -jar bob.jar --archive --platform armv7-android --architectures armv7-android,arm64-android --variant debug --bundle-format apk --bundle-output dist/bundle resolve build bundle"
 else
   echo "-- java not found: skipping engine build (sim tests are the gate; CI builds the APK)"
 fi
