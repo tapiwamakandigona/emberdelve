@@ -28,10 +28,17 @@ jobs:
       - name: Test (sim determinism, map, content, autoplay balance, UI smoke)
         run: flutter test
 
-  build-android:
-    name: Build Android debug APK
+  build-android-release:
+    name: Build signed Android release (APK + AAB)
     needs: test
+    # Signed release builds on main pushes and manual dispatches only
+    # (PRs from forks have no access to the signing secrets).
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
+    env:
+      # Permanent upload key cert SHA-256 (keytool/apksigner, hex, no colons).
+      # If this check ever fails, FIX THE PLUMBING — never regenerate the key.
+      EXPECTED_CERT_SHA256: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -45,12 +52,54 @@ jobs:
           cache: true
       - name: Pub get
         run: flutter pub get
-      - name: Build debug APK
-        run: flutter build apk --debug
-      - name: Upload APK artifact
+      - name: Materialize signing config (from repo secrets)
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          set -euo pipefail
+          umask 077
+          KS_FILE="$RUNNER_TEMP/upload.keystore"
+          printf '%s' "$KS_B64" | base64 -d > "$KS_FILE"
+          {
+            printf 'storePassword=%s\n' "$KS_PASS"
+            printf 'keyPassword=%s\n'   "$KS_PASS"
+            printf 'keyAlias=%s\n'      "$KS_ALIAS"
+            printf 'storeFile=%s\n'     "$KS_FILE"
+          } > android/key.properties
+      - name: Build release APK
+        run: flutter build apk --release
+      - name: Build release AAB
+        run: flutter build appbundle --release
+      - name: Verify APK signing certificate (must be the permanent upload key)
+        run: |
+          set -euo pipefail
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -1)"
+          ACTUAL="$("$APKSIGNER" verify --print-certs "$APK" \
+            | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
+          echo "APK cert SHA-256:      $ACTUAL"
+          echo "Expected (permanent):  $EXPECTED_CERT_SHA256"
+          if [ "$ACTUAL" != "$EXPECTED_CERT_SHA256" ]; then
+            echo "::error::APK is NOT signed with the permanent upload key. Do NOT deliver this build. Fix the signing plumbing — never regenerate the keystore."
+            exit 1
+          fi
+          echo "Signature OK: APK is signed with the permanent upload key."
+      - name: Clean up signing material
+        if: always()
+        run: rm -f android/key.properties "$RUNNER_TEMP/upload.keystore"
+      - name: Upload release APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: emberdelve-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: emberdelve-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload release AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: emberdelve-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
