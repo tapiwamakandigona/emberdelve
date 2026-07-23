@@ -69,8 +69,11 @@ Everything below "NOT STARTED" in the original list is now DONE:
 - Meta layer (lib/meta/) — DONE.
 - Full Flutter UI (lib/ui/, lib/game/controller.dart) — all 9 screen types — DONE.
 - Dart tests + autoplay balance — DONE (25 tests green, 53.5% win band, deterministic).
-- CI rewritten for Flutter (analyze+test+build apk) — DONE (green run pending push/Actions).
+- CI rewritten for Flutter (analyze+test+build apk) — DONE and **CONFIRMED GREEN**:
+  run 30004629450 (commit 2ed37a1), both jobs success, debug APK artifact
+  `emberdelve-debug-apk` (89.2MB) produced.
 - features.json M2/M3 entries + checkpoint 02 — DONE.
 Golden v3 = 513683311. `flutter test` is the gate. See checkpoints/02-flutter-full-game.md.
-Remaining = OWNER-GATED only: on-device playthrough + screenshots, CI green confirmation,
-IAP, cloud save, Play closed test, paid art/audio.
+Remaining = OWNER-GATED only: on-device playthrough + screenshots (install the
+CI APK artifact from run 30004629450), IAP full-unlock, GPGS cloud save, Play
+closed test, paid art/audio, flip repo private once Actions billing is fixed.
