@@ -120,19 +120,117 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Icon(icon, size: 20, color: EmberColors.textDim),
         const SizedBox(width: Space.m),
         Expanded(child: Text(label, style: EmberText.body)),
-        Switch(
-          value: !muted,
-          activeColor: EmberColors.ember,
-          onChanged: onMute,
-        ),
+        _EmberToggle(value: !muted, onChanged: onMute),
       ]),
-      Slider(
-        value: value,
-        onChanged: muted ? null : onVolume,
-        onChangeEnd: muted ? null : onVolumeEnd,
-        activeColor: EmberColors.ember,
-        inactiveColor: EmberColors.raised,
+      SliderTheme(
+        data: SliderThemeData(
+          trackHeight: 8,
+          activeTrackColor: EmberColors.ember,
+          inactiveTrackColor: const Color(0xFF171021),
+          thumbShape: const _EmberThumb(),
+          overlayShape: SliderComponentShape.noOverlay,
+          trackShape: const RoundedRectSliderTrackShape(),
+        ),
+        child: Slider(
+          value: value,
+          onChanged: muted ? null : onVolume,
+          onChangeEnd: muted ? null : onVolumeEnd,
+        ),
       ),
     ]);
+  }
+}
+
+/// Skinned slider thumb: a glowing ember bead with a charcoal rim (no stock
+/// Material thumb/overlay).
+class _EmberThumb extends SliderComponentShape {
+  const _EmberThumb();
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
+      const Size(22, 22);
+
+  @override
+  void paint(PaintingContext context, Offset center,
+      {required Animation<double> activationAnimation,
+      required Animation<double> enableAnimation,
+      required bool isDiscrete,
+      required TextPainter labelPainter,
+      required RenderBox parentBox,
+      required SliderThemeData sliderTheme,
+      required TextDirection textDirection,
+      required double value,
+      required double textScaleFactor,
+      required Size sizeWithOverflow}) {
+    final canvas = context.canvas;
+    final enabled = enableAnimation.value > 0.5;
+    if (enabled) {
+      canvas.drawCircle(
+          center,
+          10,
+          Paint()
+            ..color = EmberColors.ember.withValues(alpha: 0.4)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+    }
+    canvas.drawCircle(
+        center,
+        8,
+        Paint()
+          ..shader = RadialGradient(colors: [
+            const Color(0xFFFFD98A),
+            enabled ? EmberColors.ember : EmberColors.textDisabled,
+          ]).createShader(Rect.fromCircle(center: center, radius: 8)));
+    canvas.drawCircle(
+        center,
+        8,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2
+          ..color = const Color(0xFF17110A));
+  }
+}
+
+/// Drawn on/off toggle: an ember coal that lights when on (replaces the stock
+/// Material Switch).
+class _EmberToggle extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  const _EmberToggle({required this.value, required this.onChanged});
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        width: 46,
+        height: 26,
+        padding: const EdgeInsets.all(3),
+        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+        decoration: BoxDecoration(
+          color: const Color(0xFF171021),
+          borderRadius: BorderRadius.circular(13),
+          border: Border.all(
+              color: value ? EmberColors.ember : EmberColors.line, width: 1.4),
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          width: 18,
+          height: 18,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(colors: [
+              value ? const Color(0xFFFFD98A) : EmberColors.textDisabled,
+              value ? EmberColors.ember : const Color(0xFF3A3148),
+            ]),
+            boxShadow: value
+                ? [
+                    BoxShadow(
+                        color: EmberColors.ember.withValues(alpha: 0.6),
+                        blurRadius: 8)
+                  ]
+                : null,
+          ),
+        ),
+      ),
+    );
   }
 }
