@@ -125,7 +125,7 @@
       "title": "Visual overhaul: de-Flutter presentation pass + mechanics wired into painted UI",
       "acceptance": "Painted UI kit (no stock-Flutter look): pip die faces + tumble, segmented HP bars w/ ghost trail, hit-stop/shake/damage pops/ember deaths, map medallions + fog + reward telegraph badges, drawn logotype + camp-fire title, flame-wipe transitions; combo/burn/exact-kill call-outs, risky-reroll control (gated), boon pick screen, Daily Delve entry, fast Delve-again, stale v3 save recovery; zero new binary assets",
       "passes": true,
-      "evidence": "lib/ui/fx.dart, logo.dart, screens/widgets repaint (branches visual-overhaul + ui-wiring, all programmatic); flutter analyze clean; 54/54 tests incl. widget tests for reroll gating, boon pick/skip, daily seed, delve-again, stale-save recovery"
+      "evidence": "lib/ui/fx.dart, logo.dart, screens/widgets repaint (branches visual-overhaul + ui-wiring, all programmatic); flutter analyze clean; 56/56 tests incl. widget tests for reroll gating, boon pick/skip, daily seed, delve-again, stale-save recovery, and phase-transition stale-frame regressions (post-review)"
     },
     {
       "id": "M5-3",

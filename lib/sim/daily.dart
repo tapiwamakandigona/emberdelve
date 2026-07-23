@@ -5,8 +5,9 @@
 
 import 'rng.dart';
 
-/// Deterministic seed for the daily run of [year]-[month]-[day] (UTC date by
-/// convention — the controller passes DateTime.now().toUtc() components).
+/// Deterministic seed for the daily run of [year]-[month]-[day]. The caller
+/// chooses the calendar convention; the shipped controller passes the
+/// device's LOCAL date (owner decision v0.3.0 — see docs/m4-sim-contract.md).
 /// Pure: same date -> same seed, on every device. Result in [1, 2^31-2].
 int dailySeed(int year, int month, int day) {
   assert(month >= 1 && month <= 12, 'dailySeed: bad month');

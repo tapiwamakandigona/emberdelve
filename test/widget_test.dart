@@ -37,7 +37,7 @@ void main() {
     expect(find.text('Delve'), findsOneWidget);
 
     // Start a run directly (avoids the wall-clock seed path being flaky).
-    c.startRun(character: 'kindler');
+    c.startRun(character: 'kindler', seed: 1); // pinned for determinism
     await pumpFor(tester, 800);
 
     // Map phase renders the top bar resources.
@@ -54,7 +54,9 @@ void main() {
       theme: buildEmberTheme(),
       home: GameRoot(c),
     ));
-    c.startRun(character: 'kindler');
+    // Pinned seed: keep this test deterministic (seed 1's first reachable
+    // node is a fight, so the walk below always lands in combat).
+    c.startRun(character: 'kindler', seed: 1);
     await pumpFor(tester, 700);
 
     // Walk into the first reachable node until a fight starts.
