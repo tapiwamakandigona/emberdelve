@@ -13,6 +13,7 @@ import '../data/relics.dart';
 import '../game/controller.dart';
 import 'art.dart';
 import 'fx.dart';
+import 'haptics.dart';
 import 'logo.dart';
 import 'settings_screen.dart';
 import 'sprites.dart';
@@ -847,6 +848,15 @@ class _CombatScreenState extends State<CombatScreen> {
   int? selected; // 1-based die index
   bool _busy = false; // input lock while a choreography sequence plays
 
+  // One-slot action queue (v0.3.1 F2): actions tapped while a choreography
+  // sequence plays are remembered (latest wins) and run when it finishes —
+  // fast play stops silently eating taps. Die *selection* is pure UI state
+  // and is allowed during choreography outright.
+  (String, int?)? _queued; // (action, die) — 'attack' | 'block' | 'end_turn'
+
+  // First-fight tutorial (v0.3.1 F11): -1 = off, 0..2 = current step.
+  int _tutStep = -1;
+
   // Risky-reroll multi-select: while [_rerollMode] is on, taps on UNASSIGNED
   // dice toggle membership in [_rerollSel]; confirm sends `reroll_risky`.
   bool _rerollMode = false;
@@ -890,6 +900,8 @@ class _CombatScreenState extends State<CombatScreen> {
   @override
   void initState() {
     super.initState();
+    // First-ever fight: run the 3-step onboarding overlay (F11).
+    if (!widget.c.meta.tutorialSeen) _tutStep = 0;
     final enemy = widget.c.state?['enemy'] as Map?;
     if (enemy != null && (enemy['boss'] == true || enemy['elite'] == true)) {
       _splash = true;
@@ -981,9 +993,38 @@ class _CombatScreenState extends State<CombatScreen> {
 
   Future<void> _sleep(Duration d) => Future.delayed(d);
 
+  /// Run the queued action once the current choreography finishes (F2).
+  /// Guarded: the encounter must still be running, and a queued assign only
+  /// fires if its die is still rolled and unassigned.
+  void _drainQueue() {
+    final q = _queued;
+    _queued = null;
+    if (q == null || !mounted || _busy) return;
+    final st = widget.c.state;
+    if (st == null || st['enemy'] == null || widget.c.phase != 'player_turn') {
+      return;
+    }
+    final (action, die) = q;
+    if (action == 'end_turn') {
+      _endTurn();
+      return;
+    }
+    final player = st['player'] as Map;
+    if (player['rolled'] == null) return;
+    final assigned = (player['assigned'] as Map?) ?? const {};
+    if (die == null || assigned['$die'] != null) return;
+    selected = die;
+    if (action == 'attack') {
+      _attack();
+    } else {
+      _block();
+    }
+  }
+
   Future<void> _enemyDeath(List<Map<String, Object?>> events) async {
     if (_find(events, 'encounter_won') == null) return;
     _audio?.playSfx(_enemy?['boss'] == true ? 'boss_death' : 'enemy_death');
+    Haptics.heavy();
     if (!mounted) return;
     setState(() {
       _enemyFlash = false;
@@ -996,7 +1037,11 @@ class _CombatScreenState extends State<CombatScreen> {
   /// frames, then enemy_hit/block + hit-flash + knockback on the contact
   /// frame; enemy_death/boss_death + fade-collapse if the blow kills.
   Future<void> _attack() async {
-    if (_busy || selected == null) return;
+    if (selected == null) return;
+    if (_busy) {
+      _queued = ('attack', selected); // F2: remember, don't drop
+      return;
+    }
     _busy = true;
     final events = widget.c.apply(
         {'type': 'assign', 'die': selected, 'action': 'attack'},
@@ -1024,6 +1069,7 @@ class _CombatScreenState extends State<CombatScreen> {
     final absorbed = dmg['blocked'] as int? ?? 0;
     final landed = amount - absorbed;
     _audio?.playSfx(absorbed >= amount ? 'block' : 'enemy_hit');
+    Haptics.medium();
     _spawnPop(landed > 0 ? landed : amount,
         onPlayer: false, blocked: landed <= 0);
     final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
@@ -1059,18 +1105,27 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     _busy = false;
     if (mounted) setState(() {});
+    _drainQueue();
   }
 
   void _block() {
-    if (_busy || selected == null) return;
+    if (selected == null) return;
+    if (_busy) {
+      _queued = ('block', selected); // F2: remember, don't drop
+      return;
+    }
     widget.c.apply({'type': 'assign', 'die': selected, 'action': 'block'});
+    Haptics.light();
     setState(() => selected = null);
   }
 
   /// Enemy turn: mirrored choreography — enemy lunges, player_hit/block on
   /// contact, defeat sting + player fade-collapse if the run ends here.
   Future<void> _endTurn() async {
-    if (_busy) return;
+    if (_busy) {
+      _queued = ('end_turn', null); // F2: remember, don't drop
+      return;
+    }
     _busy = true;
     setState(() {
       selected = null;
@@ -1093,6 +1148,7 @@ class _CombatScreenState extends State<CombatScreen> {
       if (!mounted) return;
       final damage = atk['damage'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
+      Haptics.medium();
       _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
@@ -1109,6 +1165,7 @@ class _CombatScreenState extends State<CombatScreen> {
       });
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
+        Haptics.heavy();
         setState(() {
           _playerFlash = false;
           _playerDying = true;
@@ -1139,6 +1196,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (mounted) await _enemyDeath(events);
     _busy = false;
     if (mounted) setState(() {});
+    _drainQueue();
   }
 
   @override
@@ -1229,17 +1287,26 @@ class _CombatScreenState extends State<CombatScreen> {
                       rollToken: _rollGen,
                       // 50 ms cascade so the tumble reads left-to-right.
                       tumbleDelayMs: (i - 1) * 50,
-                      onTap: rolled == null || _busy
+                      // v0.3.1 F1/F2: selection is pure UI state, so dice
+                      // stay tappable during choreography; a spent die
+                      // answers with an explicit call-out instead of
+                      // silently eating the tap.
+                      onTap: rolled == null
                           ? null
-                          : _rerollMode
-                              ? (assigned['$i'] != null
-                                  ? null
-                                  : () => setState(() =>
+                          : assigned['$i'] != null
+                              ? () => _note('ALREADY ASSIGNED',
+                                  color: EmberColors.textDim,
+                                  icon: Icons.do_not_disturb_alt)
+                              : _rerollMode
+                                  ? () => setState(() =>
                                       _rerollSel.contains(i)
                                           ? _rerollSel.remove(i)
-                                          : _rerollSel.add(i)))
-                              : () => setState(() =>
-                                  selected = selected == i ? null : i))
+                                          : _rerollSel.add(i))
+                                  : () {
+                                      Haptics.light();
+                                      setState(() => selected =
+                                          selected == i ? null : i);
+                                    })
               ],
             ),
             for (final (idx, n)
@@ -1273,6 +1340,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     onTap: _busy
                         ? null
                         : () {
+                            Haptics.light();
                             setState(() {
                               selected = null;
                               _rollGen++; // trigger the dice tumble cascade
@@ -1317,17 +1385,17 @@ class _CombatScreenState extends State<CombatScreen> {
                   ])
                 : Column(children: [
                     Row(children: [
+                      // Enabled during choreography too: taps land in the
+                      // one-slot queue instead of being dropped (F2).
                       Expanded(
                           child: EmberButton('Attack',
                               icon: Icons.gps_fixed,
-                              onTap:
-                                  selected != null && !_busy ? _attack : null)),
+                              onTap: selected != null ? _attack : null)),
                       const SizedBox(width: Space.m),
                       Expanded(
                           child: EmberButton('Block',
                               icon: Icons.shield,
-                              onTap:
-                                  selected != null && !_busy ? _block : null)),
+                              onTap: selected != null ? _block : null)),
                     ]),
                     const SizedBox(height: Space.m),
                     Row(children: [
@@ -1365,7 +1433,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     SizedBox(
                         width: double.infinity,
                         child: EmberButton('End turn',
-                            primary: true, onTap: _busy ? null : _endTurn)),
+                            primary: true, onTap: _endTurn)),
                   ]),
       ),
     ]);
@@ -1375,6 +1443,22 @@ class _CombatScreenState extends State<CombatScreen> {
       child: Stack(fit: StackFit.expand, children: [
         combat,
         if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+        if (_tutStep >= 0)
+          _TutorialOverlay(
+            step: _tutStep,
+            onNext: () => setState(() {
+              if (_tutStep >= 2) {
+                _tutStep = -1;
+                widget.c.markTutorialSeen();
+              } else {
+                _tutStep++;
+              }
+            }),
+            onSkip: () => setState(() {
+              _tutStep = -1;
+              widget.c.markTutorialSeen();
+            }),
+          ),
       ]),
     );
   }
@@ -1691,35 +1775,36 @@ class _IntentBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final kind = intent['kind'];
-    IconData icon;
-    String text;
-    Color color;
-    switch (kind) {
-      case 'attack':
-        icon = Icons.gps_fixed;
-        color = EmberColors.danger;
-        text = '${intent['amount']}';
-        break;
-      case 'block':
-        icon = Icons.shield;
-        color = EmberColors.block;
-        text = '${intent['amount']}';
-        break;
-      default: // attack_block
-        icon = Icons.flash_on;
-        color = EmberColors.kindElite;
-        text = '${intent['amount']}/${intent['block']}';
-    }
+    // v0.3.1 F6: attack_block reads as two explicit chips (attack amount +
+    // block amount) — one lightning icon over two bare numbers was
+    // undecodable without reading the sim.
+    final parts = <(IconData, Color, String)>[
+      if (kind == 'attack' || kind == 'attack_block')
+        (Icons.gps_fixed, EmberColors.danger, '${intent['amount']}'),
+      if (kind == 'block')
+        (Icons.shield, EmberColors.block, '${intent['amount']}'),
+      if (kind == 'attack_block')
+        (Icons.shield, EmberColors.block, '${intent['block']}'),
+    ];
+    final border = kind == 'attack_block'
+        ? EmberColors.kindElite
+        : kind == 'block'
+            ? EmberColors.block
+            : EmberColors.danger;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s),
       decoration: BoxDecoration(
           color: EmberColors.raised,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color)),
+          border: Border.all(color: border)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
-        Icon(icon, size: 18, color: color),
-        const SizedBox(width: Space.xs),
-        Text(text, style: EmberText.value.copyWith(fontSize: 18, color: color)),
+        for (final (i, part) in parts.indexed) ...[
+          if (i > 0) const SizedBox(width: Space.m),
+          Icon(part.$1, size: 18, color: part.$2),
+          const SizedBox(width: Space.xs),
+          Text(part.$3,
+              style: EmberText.value.copyWith(fontSize: 18, color: part.$2)),
+        ],
       ]),
     );
   }
@@ -1829,6 +1914,8 @@ class RestScreen extends StatelessWidget {
     for (var i = 0; i < dice0.length; i++) {
       if (dieDef(dice0[i]).forgeTo.isNotEmpty) forgeable.add(i);
     }
+    // v0.3.1 F9: never offer a heal that heals nothing.
+    final fullHp = (player['hp'] as int) >= (player['max_hp'] as int);
     return Stack(fit: StackFit.expand, children: [
       const EmberDrift(count: 16, opacity: 0.6),
       Column(children: [
@@ -1843,10 +1930,11 @@ class RestScreen extends StatelessWidget {
         padding: const EdgeInsets.all(Space.l),
         child: SizedBox(
           width: double.infinity,
-          child: EmberButton('Rest — heal 30%',
-              primary: true,
+          child: EmberButton(
+              fullHp ? 'Fully rested — forge or move on' : 'Rest — heal 30%',
+              primary: !fullHp,
               icon: Icons.local_fire_department,
-              onTap: () => c.apply({'type': 'rest'})),
+              onTap: fullHp ? null : () => c.apply({'type': 'rest'})),
         ),
       ),
       if (forgeable.isNotEmpty)
@@ -2147,7 +2235,179 @@ class _TopBar extends StatelessWidget {
         Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
         const SizedBox(width: 4),
         Text('${(run['relics'] as List).length}', style: EmberText.label),
+        const SizedBox(width: Space.m),
+        // v0.3.1 F10: in-run pause menu — settings (volume!) and a way out
+        // of a delve were unreachable before the run ended.
+        GestureDetector(
+          onTap: () {
+            AudioService.instance?.playSfx('ui_tap');
+            showPauseMenu(context, c);
+          },
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: Space.xs),
+            child: Icon(Icons.settings, size: 18, color: EmberColors.textDim),
+          ),
+        ),
       ]),
+    );
+  }
+}
+
+/// In-run pause menu (v0.3.1 F10): Resume / Settings / Abandon run.
+/// Abandoning is voluntary (unlike death) — it discards the run without
+/// banking embers, behind an explicit confirm.
+void showPauseMenu(BuildContext context, GameController c) {
+  showDialog<void>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.72),
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: Panel(
+        padding: const EdgeInsets.all(Space.l),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('PAUSED', style: EmberText.h2),
+          const SizedBox(height: Space.l),
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Resume', primary: true, icon: Icons.play_arrow,
+                onTap: () => Navigator.of(ctx).pop()),
+          ),
+          const SizedBox(height: Space.m),
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Settings', icon: Icons.settings, onTap: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context)
+                  .push(emberRoute((_) => const SettingsScreen()));
+            }),
+          ),
+          const SizedBox(height: Space.m),
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Abandon run', danger: true, icon: Icons.close,
+                onTap: () {
+              Navigator.of(ctx).pop();
+              _confirmAbandon(context, c);
+            }),
+          ),
+        ]),
+      ),
+    ),
+  );
+}
+
+void _confirmAbandon(BuildContext context, GameController c) {
+  showDialog<void>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.72),
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: Panel(
+        padding: const EdgeInsets.all(Space.l),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('Abandon this delve?', style: EmberText.h2,
+              textAlign: TextAlign.center),
+          const SizedBox(height: Space.s),
+          Text(
+              'The run ends here — embers gathered this run are lost. '
+              'Dying keeps half; walking away keeps nothing.',
+              style: EmberText.bodyDim, textAlign: TextAlign.center),
+          const SizedBox(height: Space.l),
+          Row(children: [
+            Expanded(
+                child: EmberButton('Keep delving', primary: true,
+                    onTap: () => Navigator.of(ctx).pop())),
+            const SizedBox(width: Space.m),
+            Expanded(
+                child: EmberButton('Abandon', danger: true, onTap: () {
+              Navigator.of(ctx).pop();
+              c.abandonRun();
+            })),
+          ]),
+        ]),
+      ),
+    ),
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// First-fight tutorial (v0.3.1 F11) — three dismissible cards, shown once
+// ever (MetaState.tutorialSeen). No forced taps, always skippable (§Ethics).
+// ---------------------------------------------------------------------------
+class _TutorialOverlay extends StatelessWidget {
+  final int step;
+  final VoidCallback onNext;
+  final VoidCallback onSkip;
+  const _TutorialOverlay(
+      {required this.step, required this.onNext, required this.onSkip});
+
+  static const _cards = [
+    (
+      Icons.visibility,
+      'THE DARK FIGHTS FAIR',
+      'The badge above the enemy is its next move — attack damage, shield '
+          'block, or both. It always resolves exactly as shown.'
+    ),
+    (
+      Icons.casino,
+      'ROLL, THEN SPEND',
+      'Roll your dice, tap one, then ATTACK or BLOCK with its value. Each '
+          'die is spent once per turn; a reroll can save a bad face.'
+    ),
+    (
+      Icons.local_fire_department,
+      'MATCHING FACES PAY',
+      'A PAIR adds +2, a TRIPLE ignites the enemy with burn, and a straight '
+          'earns a FREE risky reroll. Forge dice bigger at rest fires.'
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, title, body) = _cards[step];
+    // Dim everything; the card sits near what it explains (intent up top,
+    // dice tray at the bottom, combos mid-stage).
+    final align = switch (step) {
+      0 => Alignment.topCenter,
+      1 => Alignment.bottomCenter,
+      _ => Alignment.center,
+    };
+    return Positioned.fill(
+      child: GestureDetector(
+        onTap: onNext, // tapping anywhere advances — never traps the player
+        child: Container(
+          color: Colors.black.withValues(alpha: 0.62),
+          padding: EdgeInsets.only(
+              left: Space.l,
+              right: Space.l,
+              top: step == 0 ? 120 : Space.l,
+              bottom: step == 1 ? 210 : Space.l),
+          child: Align(
+            alignment: align,
+            child: Panel(
+              padding: const EdgeInsets.all(Space.l),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Icon(icon, color: EmberColors.ember, size: 28),
+                const SizedBox(height: Space.s),
+                Text(title, style: EmberText.h2, textAlign: TextAlign.center),
+                const SizedBox(height: Space.s),
+                Text(body,
+                    style: EmberText.bodyDim, textAlign: TextAlign.center),
+                const SizedBox(height: Space.l),
+                Row(mainAxisSize: MainAxisSize.min, children: [
+                  EmberButton('Skip', ghost: true, onTap: onSkip),
+                  const SizedBox(width: Space.m),
+                  EmberButton(step >= 2 ? 'Got it' : 'Next',
+                      primary: true, onTap: onNext),
+                ]),
+                const SizedBox(height: Space.s),
+                Text('${step + 1} / 3', style: EmberText.micro),
+              ]),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -85,6 +85,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ]),
           ),
           const SizedBox(height: Space.xl),
+          Text('FEEDBACK', style: EmberText.micro),
+          const SizedBox(height: Space.s),
+          Panel(
+            child: Row(children: [
+              const Icon(Icons.vibration,
+                  color: EmberColors.textDim, size: 20),
+              const SizedBox(width: Space.m),
+              Expanded(child: Text('Haptics', style: EmberText.body)),
+              _EmberToggle(
+                  value: _s.haptics,
+                  onChanged: (v) {
+                    _s.haptics = v;
+                    _changed(preview: true);
+                  }),
+            ]),
+          ),
+          const SizedBox(height: Space.xl),
           Text('ABOUT', style: EmberText.micro),
           const SizedBox(height: Space.s),
           Panel(

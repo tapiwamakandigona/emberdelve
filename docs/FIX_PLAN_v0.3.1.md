@@ -56,11 +56,14 @@ Music keeps playing after Home/lock/calls.
 First fights (map layer 2) can serve 29–36 HP enemies cycling 15–23 damage vs a
 30 HP / 3×d6 start.
 - "Early mercy", deterministic, sim-side: `combatBegin` gains a `layer` param
-  (regular fights only, pre-ascension): layer ≤ 2 → HP capped at 26 and intent
-  amounts −4 (min 1); layer 3 → intent amounts −2 (min 1). Elites/boss and
-  layers 4+ unchanged; late-band identity untouched.
+  (regular fights only, pre-ascension). **Tuned by measurement**, not the
+  review's first guess: baseline bot winrate 53.5% with ~44% of all bot losses
+  on the first fight; the review's cap-26/−4 numbers pushed the bot to 82%
+  (outside the fair band). Landed: layer 2 only → HP capped at 28 and intent
+  amounts −2 (min 1) ⇒ 74.0% bot winrate, layers 3+ and elites/boss untouched.
 - Gate: 200-seed autoplay win rate stays inside the fair band (20–80%) and does
-  not *drop*; sim tests assert the mercy numbers.
+  not *drop*; sim tests assert the mercy numbers. Revisit with human telemetry
+  before v0.4.0 (bot-optimal 74% ≈ human first-session far lower).
 
 ### F8 · Fightless deaths pay 0 embers (breaks the fair-death pillar)
 - `runPost` loss branch: `embers = max(embers ~/ 2, 5 + layer reached)` — every

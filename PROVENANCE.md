@@ -153,7 +153,7 @@ SFX q4–5), 44.1 kHz, SFX mono / music stereo. All music decodes with peak ≤
 | reroll.ogg | dice-shake-1.ogg | K-CAS |
 | player_hit.ogg | impactPunch_heavy_000.ogg | K-IMP |
 | enemy_hit.ogg | sfx100v2_hit_01.ogg | RD-100 |
-| block.ogg | impactMetal_heavy_002.ogg | K-IMP |
+| block.ogg | impactMetal_heavy_002.ogg + pitch-down (0.55×) body layer, limited −1.4 dB peak (v0.3.1: was too quiet next to hits) | K-IMP |
 | enemy_death.ogg | monster_04.ogg | RD-CRE |
 | boss_death.ogg | roar_02.ogg layered with pitch-down (0.72×) copy of itself | RD-CRE |
 | victory.ogg | fanfare #3 (20.58–25.36 s cut of pack file) | SS-FAN |

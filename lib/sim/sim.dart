@@ -21,7 +21,10 @@ import 'hashing.dart';
 import 'rng.dart';
 import 'run_layer.dart';
 
-const int simVersion = 4;
+// 5: v0.3.1 balance pass — early-mercy shave on layer-2/3 regular fights and
+// the ember floor on death (5 + layer). Same seeds now produce different
+// runs, so mid-flight v4 saves are cleanly discarded at boot.
+const int simVersion = 5;
 
 const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
 
