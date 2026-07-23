@@ -1,0 +1,31 @@
+name: emberdelve
+description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
+publish_to: 'none'
+
+# versionName+versionCode for Android.
+version: 0.2.0+2
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Save-file location for autosave/meta persistence (no other runtime deps —
+  # the sim core is sealed pure Dart).
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Cinzel
+      fonts:
+        - asset: assets/fonts/Cinzel-Variable.ttf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
