@@ -18,6 +18,9 @@ class MetaState {
   int runsPlayed;
   int runsWon;
   bool tutorialSeen; // v0.3.1 F11: first-fight overlay shown once, ever
+  // v0.3.2: sticky easy/normal/hard preference for the title-screen selector.
+  // Pure convenience — the sim only ever sees it as a start_run param.
+  String preferredDifficulty;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -25,6 +28,7 @@ class MetaState {
     this.runsPlayed = 0,
     this.runsWon = 0,
     this.tutorialSeen = false,
+    this.preferredDifficulty = 'normal',
   }) : unlockedCharacters = unlocked ?? {defaultCharacter};
 
   Map<String, Object?> toJson() => {
@@ -34,6 +38,7 @@ class MetaState {
         'runsPlayed': runsPlayed,
         'runsWon': runsWon,
         'tutorialSeen': tutorialSeen,
+        'preferredDifficulty': preferredDifficulty,
       };
 
   factory MetaState.fromJson(Map<String, dynamic> j) => MetaState(
@@ -44,6 +49,10 @@ class MetaState {
         runsPlayed: j['runsPlayed'] as int? ?? 0,
         runsWon: j['runsWon'] as int? ?? 0,
         tutorialSeen: j['tutorialSeen'] as bool? ?? false,
+        preferredDifficulty: const {'easy', 'normal', 'hard'}
+                .contains(j['preferredDifficulty'])
+            ? j['preferredDifficulty'] as String
+            : 'normal',
       );
 
   bool isUnlocked(String characterId) =>
