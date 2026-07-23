@@ -259,12 +259,14 @@ void runChooseNode(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     case 'fight':
       final pool = _regularsFor(layer);
       combatBegin(sim, pool[sim.rng['combat']!.range(1, pool.length) - 1],
-          false, events);
+          false, events,
+          layer: layer);
       break;
     case 'elite':
       final pool = _elitesFor(layer);
       combatBegin(sim, pool[sim.rng['combat']!.range(1, pool.length) - 1],
-          true, events);
+          true, events,
+          layer: layer);
       break;
     case 'boss':
       combatBegin(sim, _boss, false, events);
@@ -623,7 +625,11 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     }
   } else {
     // "lost": death ledger keeps half the embers + a fair-death insight.
-    run['embers'] = (run['embers'] as int) ~/ 2;
+    // Ember floor (v0.3.1 F8, fair-death pillar): every death banks at least
+    // 5 + the layer reached, so even a node-one death pays something.
+    final kept = (run['embers'] as int) ~/ 2;
+    final floor = 5 + layer;
+    run['embers'] = kept > floor ? kept : floor;
     final bucket = insightBucket(layer, node['kind'] == 'boss');
     final lines = insights[bucket]!;
     final insight = lines[sim.rng['loot']!.range(1, lines.length) - 1];
