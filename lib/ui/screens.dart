@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
+import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
@@ -38,6 +39,9 @@ class GameRoot extends StatelessWidget {
         final phase = c.phase;
         Widget screen;
         switch (phase) {
+          case 'boon':
+            screen = BoonScreen(c);
+            break;
           case 'map':
             screen = MapScreen(c);
             break;
@@ -147,7 +151,17 @@ class TitleScreen extends StatelessWidget {
             child: EmberButton('Delve',
                 primary: true,
                 icon: Icons.bolt,
-                onTap: () => c.startRun(character: defaultCharacter)),
+                onTap: () =>
+                    c.startRun(character: defaultCharacter, boons: true)),
+          ),
+          const SizedBox(height: Space.m),
+          // Daily Delve: one shared seed per local calendar date — everyone
+          // gets the same delve. No streaks, no expiry pressure (§Ethics).
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Daily Delve — ${_dailyLabel()}',
+                icon: Icons.today,
+                onTap: () => c.startDailyRun(character: defaultCharacter)),
           ),
           const SizedBox(height: Space.m),
           SizedBox(
@@ -167,6 +181,88 @@ class TitleScreen extends StatelessWidget {
             Text(v, style: EmberText.value.copyWith(fontSize: 18)),
             Text(l, style: EmberText.micro),
           ]);
+
+  /// Local calendar date the daily seed is drawn from, e.g. "Jul 24".
+  static String _dailyLabel() {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    final now = DateTime.now();
+    return '${months[now.month - 1]} ${now.day}';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Boon pick — 1-of-3 starting blessing, always skippable (spec §Ethics: no
+// timer, no decay; the offer is exactly what the sim telegraphed).
+// ---------------------------------------------------------------------------
+class BoonScreen extends StatelessWidget {
+  final GameController c;
+  const BoonScreen(this.c, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    final boonIds = ((c.state!['boons']) as List?)?.cast<String>() ?? const [];
+    return Stack(fit: StackFit.expand, children: [
+      const Vignette(strength: 0.5),
+      const EmberDrift(count: 16, opacity: 0.6),
+      Column(children: [
+        _TopBar(c),
+        const SizedBox(height: Space.xl),
+        Text('Choose a boon', style: EmberText.h1),
+        const SizedBox(height: Space.xs),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+          child: Text('A blessing for this delve — or walk in unaided.',
+              style: EmberText.bodyDim, textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: Space.l),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            children: [
+              for (var i = 0; i < boonIds.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.m),
+                  child: _boonCard(context, boonIds[i], i + 1),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(Space.l),
+          child: SizedBox(
+            width: double.infinity,
+            child: EmberButton('Skip — delve unaided',
+                key: const ValueKey('boon-skip'),
+                onTap: () => c.apply({'type': 'choose_boon', 'index': 0})),
+          ),
+        ),
+      ]),
+    ]);
+  }
+
+  Widget _boonCard(BuildContext context, String id, int index) {
+    final def = boonDef(id);
+    return GestureDetector(
+      key: ValueKey('boon-$index'),
+      onTap: () => c.apply({'type': 'choose_boon', 'index': index}),
+      child: Panel(
+        child: Row(children: [
+          const Icon(Icons.auto_awesome, color: EmberColors.gold, size: 28),
+          const SizedBox(width: Space.l),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(def.name, style: EmberText.h2),
+              const SizedBox(height: Space.xs),
+              Text(def.text, style: EmberText.bodyDim),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -290,7 +386,8 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     primary: id == defaultCharacter,
                     onTap: () {
                       Navigator.of(context).pop();
-                      c.startRun(character: id, ascension: ascension);
+                      c.startRun(
+                          character: id, ascension: ascension, boons: true);
                     })
                 : EmberButton(
                     canAfford ? 'Unlock (${def.unlockEmbers} embers)' : 'Locked',
@@ -384,6 +481,12 @@ class _MapScreenState extends State<MapScreen>
                   for (final e in nodes.entries)
                     _nodeWidget(context, e.value, cns.maxWidth, position,
                         reachable),
+                  // Honest reward telegraphs: the sim pre-resolves each
+                  // fight/elite node's offers at start_run; the badge shows
+                  // its `reward_preview` verbatim (never invented here).
+                  for (final e in nodes.entries)
+                    if (e.value['reward_preview'] is String)
+                      _telegraphBadge(e.value, cns.maxWidth, reachable),
                   _delverMarker(nodes, cns.maxWidth, h, position, characterId),
                 ]),
               ),
@@ -439,6 +542,42 @@ class _MapScreenState extends State<MapScreen>
             ),
           ),
         ]),
+      ),
+    );
+  }
+
+  /// Compact reward telegraph under a fight/elite medallion: die size tinted
+  /// by tier (tier 3 gold — the elite's guaranteed rare reads at a glance).
+  Widget _telegraphBadge(Map node, double w, Set<int> reachable) {
+    final id = node['id'] as int;
+    final center = _center(node, w);
+    final preview = node['reward_preview'] as String;
+    final def = dieDef(preview);
+    final tierColor = switch (def.tier) {
+      3 => EmberColors.gold,
+      2 => EmberColors.ember,
+      _ => EmberColors.textDim,
+    };
+    final lit = reachable.contains(id);
+    return Positioned(
+      left: center.dx - 24,
+      bottom: center.dy - _nodeSize / 2 - 15,
+      width: 48,
+      child: IgnorePointer(
+        child: Opacity(
+          opacity: lit ? 1.0 : 0.55,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.casino, size: 9, color: tierColor),
+            const SizedBox(width: 2),
+            Text('d${def.size}',
+                style: EmberText.micro.copyWith(
+                    color: tierColor,
+                    fontSize: 9,
+                    shadows: const [
+                      Shadow(color: Colors.black, blurRadius: 3),
+                    ])),
+          ]),
+        ),
       ),
     );
   }
@@ -708,6 +847,15 @@ class _CombatScreenState extends State<CombatScreen> {
   int? selected; // 1-based die index
   bool _busy = false; // input lock while a choreography sequence plays
 
+  // Risky-reroll multi-select: while [_rerollMode] is on, taps on UNASSIGNED
+  // dice toggle membership in [_rerollSel]; confirm sends `reroll_risky`.
+  bool _rerollMode = false;
+  final Set<int> _rerollSel = {};
+
+  // Combo / kill call-outs: transient TextPops over the tray or the enemy.
+  final List<_Note> _notes = [];
+  int _noteId = 0;
+
   // Choreography flags (attack = squash + lunge tween + hit-flash + knockback;
   // death = flash + ember-dissolve — the sheets have no attack/death frames).
   bool _playerLunge = false, _enemyLunge = false;
@@ -773,6 +921,62 @@ class _CombatScreenState extends State<CombatScreen> {
     return null;
   }
 
+  void _note(String text,
+      {Color color = EmberColors.gold, IconData? icon, bool onEnemy = false}) {
+    if (!mounted) return;
+    setState(() =>
+        _notes.add(_Note(_noteId++, text, color, icon, onEnemy: onEnemy)));
+  }
+
+  /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
+  /// pair/triple/straight get distinct call-outs over the dice tray; ignite
+  /// flames the enemy; straight announces the earned free reroll.
+  void _announceCombos(List<Map<String, Object?>> events) {
+    for (final e in events) {
+      switch (e['type']) {
+        case 'combo_pair':
+          _note('PAIR +${e['bonus']}', icon: Icons.casino);
+          break;
+        case 'combo_triple':
+          _note('TRIPLE — IGNITE!',
+              color: EmberColors.danger, icon: Icons.local_fire_department);
+          break;
+        case 'burn_applied':
+          _note('+${e['stacks']} BURN',
+              color: EmberColors.ember,
+              icon: Icons.local_fire_department,
+              onEnemy: true);
+          break;
+        case 'combo_straight':
+          _note('STRAIGHT!', color: EmberColors.kindElite,
+              icon: Icons.trending_up);
+          break;
+        case 'free_reroll_earned':
+          _note('FREE REROLL NEXT TURN',
+              color: EmberColors.success, icon: Icons.replay);
+          break;
+        case 'free_reroll_granted':
+          _note('FREE REROLL READY',
+              color: EmberColors.success, icon: Icons.replay);
+          break;
+      }
+    }
+  }
+
+  void _doRiskyReroll() {
+    if (_busy || _rerollSel.isEmpty) return;
+    final dice = _rerollSel.toList()..sort();
+    final events = widget.c.apply({'type': 'reroll_risky', 'dice': dice});
+    setState(() {
+      _rerollMode = false;
+      _rerollSel.clear();
+      if (_find(events, 'risky_reroll') != null) {
+        _rollGen++; // retumble the tray on a successful reroll
+      }
+    });
+    _announceCombos(events);
+  }
+
   Future<void> _sleep(Duration d) => Future.delayed(d);
 
   Future<void> _enemyDeath(List<Map<String, Object?>> events) async {
@@ -833,6 +1037,18 @@ class _CombatScreenState extends State<CombatScreen> {
       _playerLunge = false;
       _enemyKnock = false;
     });
+    // Exact-kill / overkill moments (m4 contract §4): arithmetic pays off.
+    final exact = _find(events, 'exact_kill');
+    if (exact != null) {
+      _audio?.playSfx('ember_gain');
+      _note('+${exact['embers']} EMBERS — EXACT!',
+          icon: Icons.local_fire_department, onEnemy: true);
+    }
+    final over = _find(events, 'overkill');
+    if (over != null) {
+      _note('OVERKILL +${over['surplus']} → NEXT FOE',
+          color: EmberColors.ember, icon: Icons.double_arrow, onEnemy: true);
+    }
     if (_find(events, 'encounter_won') != null) {
       await _enemyDeath(events);
     } else {
@@ -854,7 +1070,11 @@ class _CombatScreenState extends State<CombatScreen> {
   Future<void> _endTurn() async {
     if (_busy) return;
     _busy = true;
-    setState(() => selected = null);
+    setState(() {
+      selected = null;
+      _rerollMode = false;
+      _rerollSel.clear();
+    });
     final events = widget.c.apply({'type': 'end_turn'},
         terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
@@ -899,7 +1119,21 @@ class _CombatScreenState extends State<CombatScreen> {
     } else if (_find(events, 'enemy_blocked') != null) {
       _audio?.playSfx('block', volume: 0.5);
     }
-    // Thorns relics can kill the enemy during its own turn.
+    // Burn ticks after the enemy acts: flame call-out + damage pop reusing
+    // the existing pop primitive (m4 contract §3).
+    final burnTick = _find(events, 'burn_tick');
+    if (burnTick != null && mounted) {
+      _audio?.playSfx('enemy_hit', volume: 0.5);
+      _spawnPop(burnTick['amount'] as int? ?? 0, onPlayer: false);
+      _note('BURN',
+          color: EmberColors.ember,
+          icon: Icons.local_fire_department,
+          onEnemy: true);
+      await _sleep(const Duration(milliseconds: 350));
+    }
+    // A straight last turn grants this turn's free reroll — announce it.
+    _announceCombos(events);
+    // Thorns relics and burn can kill the enemy during its own turn.
     if (mounted) await _enemyDeath(events);
     _busy = false;
     if (mounted) setState(() {});
@@ -924,6 +1158,8 @@ class _CombatScreenState extends State<CombatScreen> {
     final dice0 = (player['dice'] as List).cast<String>();
     final intent = (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0};
     final rerolls = player['rerolls_left'] as int? ?? 0;
+    final riskyUsed = player['risky_used'] == true;
+    final freeReroll = player['free_reroll'] == true;
     final enemyHp = (enemy['hp'] as int).clamp(0, enemy['max_hp'] as int);
 
     final combat = Column(children: [
@@ -967,27 +1203,58 @@ class _CombatScreenState extends State<CombatScreen> {
             label: 'YOUR HP'),
       ),
       const SizedBox(height: Space.m),
-      // Dice tray
+      // Dice tray (combo call-outs pop over it; in reroll mode taps pick the
+      // unassigned dice to risk — assigned dice never join the selection).
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
-        child: Wrap(
-          spacing: Space.s,
-          runSpacing: Space.s,
-          alignment: WrapAlignment.center,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
           children: [
-            for (var i = 1; i <= dice0.length; i++)
-              DieChip(dice0[i - 1],
-                  value: rolled != null ? rolled[i - 1] : null,
-                  assigned: assigned['$i'] != null,
-                  selected: selected == i,
-                  maxed: maxed != null && maxed[i - 1],
-                  rollToken: _rollGen,
-                  // 50 ms cascade so the tumble reads left-to-right.
-                  tumbleDelayMs: (i - 1) * 50,
-                  onTap: rolled == null || _busy
-                      ? null
-                      : () => setState(
-                          () => selected = selected == i ? null : i))
+            Wrap(
+              spacing: Space.s,
+              runSpacing: Space.s,
+              alignment: WrapAlignment.center,
+              children: [
+                for (var i = 1; i <= dice0.length; i++)
+                  DieChip(dice0[i - 1],
+                      value: rolled != null ? rolled[i - 1] : null,
+                      assigned: assigned['$i'] != null,
+                      selected: _rerollMode
+                          ? _rerollSel.contains(i)
+                          : selected == i,
+                      maxed: maxed != null && maxed[i - 1],
+                      rollToken: _rollGen,
+                      // 50 ms cascade so the tumble reads left-to-right.
+                      tumbleDelayMs: (i - 1) * 50,
+                      onTap: rolled == null || _busy
+                          ? null
+                          : _rerollMode
+                              ? (assigned['$i'] != null
+                                  ? null
+                                  : () => setState(() =>
+                                      _rerollSel.contains(i)
+                                          ? _rerollSel.remove(i)
+                                          : _rerollSel.add(i)))
+                              : () => setState(() =>
+                                  selected = selected == i ? null : i))
+              ],
+            ),
+            for (final (idx, n)
+                in _notes.where((n) => !n.onEnemy).toList().indexed)
+              Positioned(
+                top: -30.0 - idx * 24,
+                child: TextPop(
+                  key: ValueKey('note-${n.id}'),
+                  text: n.text,
+                  color: n.color,
+                  icon: n.icon,
+                  fontSize: 16,
+                  onDone: () {
+                    if (mounted) setState(() => _notes.remove(n));
+                  },
+                ),
+              ),
           ],
         ),
       ),
@@ -1008,39 +1275,96 @@ class _CombatScreenState extends State<CombatScreen> {
                               selected = null;
                               _rollGen++; // trigger the dice tumble cascade
                             });
-                            c.apply({'type': 'roll'});
+                            final events = c.apply({'type': 'roll'});
+                            // Combo call-outs land after the tumble reads.
+                            Future.delayed(
+                                const Duration(milliseconds: 550), () {
+                              if (mounted) _announceCombos(events);
+                            });
                           }))
-            : Column(children: [
-                Row(children: [
-                  Expanded(
-                      child: EmberButton('Attack',
-                          icon: Icons.gps_fixed,
-                          onTap: selected != null && !_busy ? _attack : null)),
-                  const SizedBox(width: Space.m),
-                  Expanded(
-                      child: EmberButton('Block',
-                          icon: Icons.shield,
-                          onTap: selected != null && !_busy ? _block : null)),
-                ]),
-                const SizedBox(height: Space.m),
-                Row(children: [
-                  if (rerolls > 0)
-                    Expanded(
-                        child: EmberButton('Reroll ($rerolls)',
-                            icon: Icons.replay,
-                            onTap: selected != null && !_busy
-                                ? () {
-                                    c.apply({'type': 'reroll', 'die': selected});
-                                    setState(() {});
-                                  }
-                                : null)),
-                  if (rerolls > 0) const SizedBox(width: Space.m),
-                  Expanded(
-                      child: EmberButton('End turn',
-                          primary: true,
-                          onTap: _busy ? null : _endTurn)),
-                ]),
-              ]),
+            : _rerollMode
+                // Risky-reroll confirm: pick unassigned dice, then commit.
+                ? Column(children: [
+                    Text(
+                        freeReroll
+                            ? 'Pick dice to reroll — FREE this turn'
+                            : 'Pick dice to reroll — each lands −1 pip',
+                        style: EmberText.micro.copyWith(
+                            color: freeReroll
+                                ? EmberColors.success
+                                : EmberColors.textDim)),
+                    const SizedBox(height: Space.s),
+                    Row(children: [
+                      Expanded(
+                          child: EmberButton('Cancel',
+                              ghost: true,
+                              onTap: () => setState(() {
+                                    _rerollMode = false;
+                                    _rerollSel.clear();
+                                  }))),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                          child: EmberButton(
+                              'Reroll (${_rerollSel.length})',
+                              primary: true,
+                              icon: Icons.casino,
+                              onTap: _rerollSel.isNotEmpty && !_busy
+                                  ? _doRiskyReroll
+                                  : null)),
+                    ]),
+                  ])
+                : Column(children: [
+                    Row(children: [
+                      Expanded(
+                          child: EmberButton('Attack',
+                              icon: Icons.gps_fixed,
+                              onTap:
+                                  selected != null && !_busy ? _attack : null)),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                          child: EmberButton('Block',
+                              icon: Icons.shield,
+                              onTap:
+                                  selected != null && !_busy ? _block : null)),
+                    ]),
+                    const SizedBox(height: Space.m),
+                    Row(children: [
+                      if (rerolls > 0)
+                        Expanded(
+                            child: EmberButton('Reroll ($rerolls)',
+                                icon: Icons.replay,
+                                onTap: selected != null && !_busy
+                                    ? () {
+                                        c.apply(
+                                            {'type': 'reroll', 'die': selected});
+                                        setState(() {});
+                                      }
+                                    : null)),
+                      if (rerolls > 0) const SizedBox(width: Space.m),
+                      // Risky reroll (m4 contract §1): once per turn, −1 pip
+                      // per rerolled die — waived after a straight (FREE).
+                      Expanded(
+                          child: EmberButton(
+                              riskyUsed
+                                  ? 'Reroll spent'
+                                  : freeReroll
+                                      ? 'Risky reroll · FREE'
+                                      : 'Risky reroll · −1 pip',
+                              icon: Icons.casino,
+                              onTap: riskyUsed || _busy
+                                  ? null
+                                  : () => setState(() {
+                                        _rerollMode = true;
+                                        _rerollSel.clear();
+                                        selected = null;
+                                      }))),
+                    ]),
+                    const SizedBox(height: Space.m),
+                    SizedBox(
+                        width: double.infinity,
+                        child: EmberButton('End turn',
+                            primary: true, onTap: _busy ? null : _endTurn)),
+                  ]),
       ),
     ]);
 
@@ -1112,13 +1436,40 @@ class _CombatScreenState extends State<CombatScreen> {
                     squash: _enemySquash,
                   ),
                   // Intent as an icon badge floating above the enemy
-                  // (overlaid, so it never adds layout height).
-                  Positioned(top: -44, child: _IntentBadge(intent)),
+                  // (overlaid, so it never adds layout height). Burn stacks
+                  // sit beside it while the enemy is alight.
+                  Positioned(
+                    top: -44,
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      _IntentBadge(intent),
+                      if ((enemy['burn'] as int? ?? 0) > 0) ...[
+                        const SizedBox(width: Space.xs),
+                        _BurnBadge(enemy['burn'] as int),
+                      ],
+                    ]),
+                  ),
                 ],
               ),
             ),
           ],
         ),
+        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
+        for (final (idx, n)
+            in _notes.where((n) => n.onEnemy).toList().indexed)
+          Positioned(
+            right: 12,
+            bottom: 150.0 + idx * 24,
+            child: TextPop(
+              key: ValueKey('note-${n.id}'),
+              text: n.text,
+              color: n.color,
+              icon: n.icon,
+              fontSize: 15,
+              onDone: () {
+                if (mounted) setState(() => _notes.remove(n));
+              },
+            ),
+          ),
         // Floating damage numbers (player pops left, enemy pops right).
         for (final p in _pops)
           Positioned(
@@ -1229,6 +1580,16 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 }
 
+/// One transient combat call-out (combo, burn tick, exact-kill, overkill).
+class _Note {
+  final int id;
+  final String text;
+  final Color color;
+  final IconData? icon;
+  final bool onEnemy; // anchors near the enemy instead of the dice tray
+  _Note(this.id, this.text, this.color, this.icon, {required this.onEnemy});
+}
+
 /// One floating damage number's spawn record.
 class _Pop {
   final int id;
@@ -1293,6 +1654,31 @@ class _NamePlate extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Burn stacks on the enemy: small flame + count, ticking down each turn.
+class _BurnBadge extends StatelessWidget {
+  final int stacks;
+  const _BurnBadge(this.stacks);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.s),
+      decoration: BoxDecoration(
+          color: EmberColors.raised,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: EmberColors.ember)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.local_fire_department,
+            size: 16, color: EmberColors.ember),
+        const SizedBox(width: 2),
+        Text('$stacks',
+            style: EmberText.value
+                .copyWith(fontSize: 15, color: EmberColors.ember)),
+      ]),
     );
   }
 }
@@ -1691,10 +2077,18 @@ class SummaryScreen extends StatelessWidget {
           ),
         ],
         const Spacer(),
+        // Fast restart (backlog #8): straight into a new run — boon pick
+        // included — without a detour through the title.
         SizedBox(
           width: double.infinity,
-          child: EmberButton('Continue',
-              primary: true, onTap: () => c.endToTitle()),
+          child: EmberButton('Delve again',
+              primary: true, icon: Icons.bolt, onTap: () => c.delveAgain()),
+        ),
+        const SizedBox(height: Space.m),
+        SizedBox(
+          width: double.infinity,
+          child: EmberButton('Back to the fire',
+              ghost: true, onTap: () => c.endToTitle()),
         ),
       ]),
       ),
@@ -1735,6 +2129,11 @@ class _TopBar extends StatelessWidget {
             run['embers'] as int, 'EMBERS',
             imageAsset: Art.currencyEmber),
         const Spacer(),
+        if (c.dailyDate != null) ...[
+          Text('DAILY ${c.dailyDate}',
+              style: EmberText.micro.copyWith(color: EmberColors.gold)),
+          const SizedBox(width: Space.m),
+        ],
         Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
         const SizedBox(width: 4),
         Text('${(run['relics'] as List).length}', style: EmberText.label),
