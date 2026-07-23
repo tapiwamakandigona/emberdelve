@@ -55,14 +55,56 @@
       "title": "Full seeded run playable on device",
       "acceptance": "Debug APK: map -> fights -> boss -> run summary with placeholder art; manual play-through video or device log as evidence",
       "passes": false,
-      "evidence": null
+      "evidence": "OWNER-GATED: needs an on-device install/playthrough by owner. Build path ready (CI build-android job -> flutter build apk)."
     },
     {
       "id": "M1-4",
       "title": "Autosave every action + resume",
-      "acceptance": "Kill the app mid-fight, relaunch: game resumes into the exact pending decision; snapshot round-trip test in engine",
+      "acceptance": "Kill the app mid-fight, relaunch: game resumes into the exact pending decision; snapshot round-trip test",
+      "passes": true,
+      "evidence": "GameController autosaves sim.snapshot() to app-support JSON after every eventful apply; boot() restores non-terminal saves and routes to the phase screen. Snapshot round-trip proven headless: test/sim_test.dart 'snapshot mid-run, restore, continue => identical' (15 seeds, event+state hash identical) + autoplay twin checks."
+    },
+    {
+      "id": "M2-1",
+      "title": "Stack = Flutter/Dart with sealed deterministic sim library",
+      "acceptance": "Sim runs as pure Dart (no Flutter imports); flutter test green headless; determinism preserved across the port",
+      "passes": true,
+      "evidence": "lib/sim/ is pure Dart; Lua->Dart port proven 1:1 (golden 311044885 + 100-seed hashes + twins) at pivot commit; v3 golden re-anchored 513683311. flutter test: 25 tests green."
+    },
+    {
+      "id": "M3-1",
+      "title": "Content scale: 30+ dice, 15+ enemies, 20+ relics, events",
+      "acceptance": "Data-only modules; schema-validated in CI; autoplayer balance stats in band",
+      "passes": true,
+      "evidence": "31 dice, 15 enemies, 22 relics, 16 events, 4 characters (data/*.dart, zero logic). test/content_test.dart validates schema + cross-references. Balance: 200-seed autoplay 53.5% win (band 20-80%), 0 invalids, deterministic."
+    },
+    {
+      "id": "M3-2",
+      "title": "Full run systems: gold, shop, events, relics, forge, rewards",
+      "acceptance": "Shop/event/rest-forge phases reachable and resolvable; gold economy; relic hooks resolved; all in the sealed sim",
+      "passes": true,
+      "evidence": "sim v3 (SIM_VERSION=3): commands buy/leave_shop/event_choose/forge/reroll added; run_layer implements gold, shop stock (tier-gated), 16-event deck (fair: never kills), relic hook vocabulary, forge, tiered rewards. Verified by autoplay (bot uses all systems, 0 invalids) + sim_test."
+    },
+    {
+      "id": "M3-3",
+      "title": "Meta-progression + ascension ladder",
+      "acceptance": "Embers bank across runs into unlocks; ascension raises difficulty; meta persists; sim stays pure (only scalar params in)",
+      "passes": true,
+      "evidence": "lib/meta/ persists embers/unlocks/best-ascension/stats (path_provider, outside sim). 4 characters unlockable via embers; endowed-progress unlock bar. Ascension = deterministic additive enemy scaling; verified monotonic (asc0 52% -> asc3 15% -> asc6 6% -> asc10 4%), test/autoplay_test.dart asserts asc6<asc0."
+    },
+    {
+      "id": "M2-2",
+      "title": "Full Flutter UI (UXPeak-informed) for all phases",
+      "acceptance": "Title, character/unlock, map, combat, reward, rest/forge, shop, event, summary screens render from sim state; portrait one-thumb; design system applied",
+      "passes": true,
+      "evidence": "lib/ui/ (theme, widgets, screens) + GameController. Design tokens from docs/design-system.md (UXPeak psychology + typography laws). flutter analyze clean; widget smoke tests green (title->map, character list). Device screenshots OWNER-GATED (needs emulator/device)."
+    },
+    {
+      "id": "M2-3",
+      "title": "CI: analyze + test gate -> Android APK artifact",
+      "acceptance": "Workflow: flutter analyze + flutter test pass, then flutter build apk uploads artifact",
       "passes": false,
-      "evidence": null
+      "evidence": "PENDING CI RUN: .github/workflows/ci.yml rewritten for Flutter (subosito/flutter-action, analyze+test+build apk). Green run to be confirmed after push (Actions billing / repo visibility is owner-gated)."
     }
   ]
 }

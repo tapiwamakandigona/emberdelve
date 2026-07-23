@@ -60,3 +60,15 @@ Owner instructions this session (DM 2026-07-23):
 ## Owner-gated / blocked items (need owner, do NOT self-approve)
 - Device install test (M1-3/M1-4 evidence), Play Console upload, IAP wiring,
   paid art/audio purchases, flipping repo private (Actions billing).
+
+## UPDATE 2026-07-23 (checkpoint 02 — Flutter full game complete headlessly)
+Everything below "NOT STARTED" in the original list is now DONE:
+- Sim v3 systems (gold/shop/events/relics/forge/characters/ascension/insight) — DONE, committed.
+- Meta layer (lib/meta/) — DONE.
+- Full Flutter UI (lib/ui/, lib/game/controller.dart) — all 9 screen types — DONE.
+- Dart tests + autoplay balance — DONE (25 tests green, 53.5% win band, deterministic).
+- CI rewritten for Flutter (analyze+test+build apk) — DONE (green run pending push/Actions).
+- features.json M2/M3 entries + checkpoint 02 — DONE.
+Golden v3 = 513683311. `flutter test` is the gate. See checkpoints/02-flutter-full-game.md.
+Remaining = OWNER-GATED only: on-device playthrough + screenshots, CI green confirmation,
+IAP, cloud save, Play closed test, paid art/audio.
