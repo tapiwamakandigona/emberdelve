@@ -77,7 +77,6 @@ class AudioService {
   AudioPlayer? _music;
   String? _musicKey;
   AudioPlayer? _ambience;
-  Timer? _fadeTimer;
 
   final List<AudioPlayer> _sfxPool = [];
   int _sfxNext = 0;
@@ -134,8 +133,10 @@ class AudioService {
 
   void _fadeOutAndDispose(AudioPlayer p) {
     var v = settings.effectiveMusic;
-    _fadeTimer?.cancel();
-    _fadeTimer = Timer.periodic(const Duration(milliseconds: 50), (t) async {
+    // One timer per faded player: rapid consecutive music switches each get
+    // their own fade, so an earlier fading player can never be orphaned
+    // mid-fade (which would leave it looping at partial volume).
+    Timer.periodic(const Duration(milliseconds: 50), (t) async {
       v -= 0.12;
       if (v <= 0) {
         t.cancel();

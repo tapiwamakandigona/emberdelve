@@ -19,9 +19,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       AudioService.instance?.settings ?? _fallback;
   static final AudioSettings _fallback = AudioSettings();
 
-  void _changed({bool preview = false}) {
+  void _changed({bool preview = false, bool persist = true}) {
     AudioService.instance?.applySettings();
-    SettingsStore.save(_s);
+    if (persist) SettingsStore.save(_s);
     if (preview) AudioService.instance?.playSfx('ui_tap');
     setState(() {});
   }
@@ -48,7 +48,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: 'Music',
                 value: _s.musicVolume,
                 muted: _s.musicMuted,
+                // Live volume preview while dragging; persist once on release.
                 onVolume: (v) {
+                  _s.musicVolume = v;
+                  _changed(persist: false);
+                },
+                onVolumeEnd: (v) {
                   _s.musicVolume = v;
                   _changed();
                 },
@@ -63,7 +68,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 label: 'Sound effects',
                 value: _s.sfxVolume,
                 muted: _s.sfxMuted,
+                // No SFX per drag tick; single confirm tap + save on release.
                 onVolume: (v) {
+                  _s.sfxVolume = v;
+                  _changed(persist: false);
+                },
+                onVolumeEnd: (v) {
                   _s.sfxVolume = v;
                   _changed(preview: true);
                 },
@@ -102,6 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required double value,
     required bool muted,
     required ValueChanged<double> onVolume,
+    required ValueChanged<double> onVolumeEnd,
     required ValueChanged<bool> onMute,
   }) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -118,6 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       Slider(
         value: value,
         onChanged: muted ? null : onVolume,
+        onChangeEnd: muted ? null : onVolumeEnd,
         activeColor: EmberColors.ember,
         inactiveColor: EmberColors.raised,
       ),
