@@ -49,3 +49,5 @@ Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
 - All 75 asset PNGs re-encoded canonically (PIL optimize, smaller files);
   added test/decode_probe_test.dart (engine-codec decode of every bundled
   PNG). 29 tests green, analyze clean, golden 513683311 unmoved.
+
+2026-07-23 IMPROVEMENT BACKLOG (owner-requested handoff for a future agent): docs/improvements/gameplay-depth.md (12 fair-addictive gameplay measures, v0.3.0 order: combos → risky reroll → restart flow → juice → daily seed) + docs/improvements/visuals.md ("de-Flutter" presentation pass, order: combat dice/juice → map scene → title → chrome → transitions). Proposals only — no code changed; sim core untouched.
