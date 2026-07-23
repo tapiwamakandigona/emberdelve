@@ -21,9 +21,9 @@ import 'hashing.dart';
 import 'rng.dart';
 import 'run_layer.dart';
 
-const int simVersion = 3;
+const int simVersion = 4;
 
-const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle'];
+const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
 
 typedef Handler = void Function(Sim, Map, List<Map<String, Object?>>);
 
@@ -33,6 +33,7 @@ final Map<String, Handler> _handlers = {
   'roll': combatRoll,
   'assign': combatAssign,
   'reroll': combatReroll,
+  'reroll_risky': combatRerollRisky,
   'end_turn': combatEndTurn,
   'choose_reward': runChooseReward,
   'rest': runRest,
@@ -40,6 +41,7 @@ final Map<String, Handler> _handlers = {
   'buy': runBuy,
   'leave_shop': runLeaveShop,
   'event_choose': runEventChoose,
+  'choose_boon': runChooseBoon,
 };
 
 class Sim {
@@ -47,11 +49,12 @@ class Sim {
   final int runSeed;
   final Map<String, Rng> rng = {};
   int turn = 0;
-  String phase = 'idle'; // idle|map|player_turn|reward|rest|run_won|run_lost
+  String phase = 'idle'; // idle|boon|map|player_turn|reward|rest|run_won|run_lost
   Map<String, dynamic> player = {};
   Map<String, dynamic>? enemy;
   Map<String, dynamic>? map;
   List<String>? offers; // die ids while phase == "reward"
+  List<String>? boons; // boon ids while phase == "boon"
   Map<String, dynamic>? shop; // stock map while phase == "shop"
   String? event; // current event id while phase == "event"
   Map<String, dynamic>? run; // run ledger (embers, gold, relics, ...)
@@ -85,6 +88,7 @@ class Sim {
       'enemy': deepCopy(enemy),
       'map': deepCopy(map),
       'offers': deepCopy(offers),
+      'boons': deepCopy(boons),
       'shop': deepCopy(shop),
       'event': event,
       'run': deepCopy(run),
@@ -115,6 +119,8 @@ class Sim {
         : (deepCopy(snap['map']) as Map).cast<String, dynamic>();
     sim.offers =
         snap['offers'] == null ? null : (snap['offers'] as List).cast<String>().toList();
+    sim.boons =
+        snap['boons'] == null ? null : (snap['boons'] as List).cast<String>().toList();
     sim.shop = snap['shop'] == null
         ? null
         : (deepCopy(snap['shop']) as Map).cast<String, dynamic>();
@@ -167,6 +173,7 @@ class Sim {
         'enemy': enemy,
         'map': map,
         'offers': offers,
+        'boons': boons,
         'shop': shop,
         'event': event,
         'run': run,
@@ -180,6 +187,7 @@ class Sim {
     h = hashValue(h, enemy ?? 'none');
     h = hashValue(h, map ?? 'none');
     h = hashValue(h, offers ?? 'none');
+    h = hashValue(h, boons ?? 'none');
     h = hashValue(h, shop ?? 'none');
     h = hashValue(h, event ?? 'none');
     h = hashValue(h, run ?? 'none');
