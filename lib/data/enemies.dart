@@ -12,8 +12,12 @@
 // `enemiesOrder` lists every id in deterministic authoring order. Consumers
 // iterate via enemiesOrder, never unordered map iteration.
 //
-// Balance: the roster carries the measured x2.75 M1 scaling; late-band regulars
-// threaten ~13-18/turn, elites ~16-22, boss ~16-25 with a block cycle.
+// Balance: v0.3.0 gameplay-depth rebalance (measured, not guessed): the v0.2.0
+// roster was rescaled hp x2.4, attack +7, block +5 to absorb the player-power
+// gains from combos, the risky reroll, starting boons, overkill splash, and
+// the smarter greedy bot. 200-seed autoplay win rate: 53.5% (was 53.5% before
+// the v0.3.0 features; it had drifted to 100% pre-rebalance). Late-band
+// regulars threaten ~19-28/turn, elites ~21-31, boss ~23-32 with a block cycle.
 
 class Intent {
   final String kind; // attack | block | attack_block
@@ -56,90 +60,90 @@ const List<String> enemiesOrder = [
 
 const Map<String, EnemyDef> enemies = {
   // ---- regulars, early band (layer 2+) ---------------------------------------
-  'cinder_wisp': EnemyDef('cinder_wisp', 'Cinder Wisp', 12, pattern: [
-    Intent('attack', 11),
-    Intent('attack', 14),
-    Intent('attack', 8),
+  'cinder_wisp': EnemyDef('cinder_wisp', 'Cinder Wisp', 29, pattern: [
+    Intent('attack', 18),
+    Intent('attack', 21),
+    Intent('attack', 15),
   ]),
-  'ash_rat': EnemyDef('ash_rat', 'Ash Rat', 10, pattern: [
-    Intent('attack', 8),
-    Intent('attack', 8),
-    Intent('attack_block', 11, 8),
+  'ash_rat': EnemyDef('ash_rat', 'Ash Rat', 24, pattern: [
+    Intent('attack', 15),
+    Intent('attack', 15),
+    Intent('attack_block', 18, 14),
   ]),
-  'soot_shade': EnemyDef('soot_shade', 'Soot Shade', 13, pattern: [
-    Intent('attack_block', 8, 8),
-    Intent('attack', 14),
+  'soot_shade': EnemyDef('soot_shade', 'Soot Shade', 31, pattern: [
+    Intent('attack_block', 15, 14),
+    Intent('attack', 21),
   ]),
-  'ember_beetle': EnemyDef('ember_beetle', 'Ember Beetle', 15, pattern: [
-    Intent('block', 14),
-    Intent('attack', 16),
+  'ember_beetle': EnemyDef('ember_beetle', 'Ember Beetle', 36, pattern: [
+    Intent('block', 20),
+    Intent('attack', 23),
   ]),
 
   // ---- regulars, late band (layer 5+) ----------------------------------------
-  'soot_hound': EnemyDef('soot_hound', 'Soot Hound', 18, fromLayer: 5, pattern: [
-    Intent('attack', 13),
-    Intent('attack', 13),
-    Intent('attack_block', 10, 10),
+  'soot_hound': EnemyDef('soot_hound', 'Soot Hound', 43, fromLayer: 5, pattern: [
+    Intent('attack', 20),
+    Intent('attack', 20),
+    Intent('attack_block', 17, 16),
   ]),
-  'ash_wraith': EnemyDef('ash_wraith', 'Ash Wraith', 16, fromLayer: 5, pattern: [
-    Intent('block', 16),
-    Intent('attack', 18),
-    Intent('attack', 12),
+  'ash_wraith': EnemyDef('ash_wraith', 'Ash Wraith', 38, fromLayer: 5, pattern: [
+    Intent('block', 22),
+    Intent('attack', 25),
+    Intent('attack', 19),
   ]),
   'cinder_crawler':
-      EnemyDef('cinder_crawler', 'Cinder Crawler', 20, fromLayer: 5, pattern: [
-    Intent('attack_block', 11, 11),
-    Intent('attack_block', 11, 11),
-    Intent('attack', 17),
+      EnemyDef('cinder_crawler', 'Cinder Crawler', 48, fromLayer: 5, pattern: [
+    Intent('attack_block', 18, 17),
+    Intent('attack_block', 18, 17),
+    Intent('attack', 24),
   ]),
-  'ember_moth': EnemyDef('ember_moth', 'Ember Moth', 14, fromLayer: 5, pattern: [
-    Intent('attack', 16),
-    Intent('block', 12),
-    Intent('attack', 18),
-  ]),
-  'slag_brute': EnemyDef('slag_brute', 'Slag Brute', 24, fromLayer: 6, pattern: [
+  'ember_moth': EnemyDef('ember_moth', 'Ember Moth', 34, fromLayer: 5, pattern: [
+    Intent('attack', 23),
     Intent('block', 18),
-    Intent('attack', 21),
+    Intent('attack', 25),
+  ]),
+  'slag_brute': EnemyDef('slag_brute', 'Slag Brute', 58, fromLayer: 6, pattern: [
+    Intent('block', 24),
+    Intent('attack', 28),
   ]),
 
   // ---- elites ------------------------------------------------------------------
   'pyre_howler':
-      EnemyDef('pyre_howler', 'Pyre Howler', 20, elite: true, pattern: [
-    Intent('attack', 16),
-    Intent('attack_block', 14, 11),
-    Intent('attack', 19),
+      EnemyDef('pyre_howler', 'Pyre Howler', 48, elite: true, pattern: [
+    Intent('attack', 23),
+    Intent('attack_block', 21, 17),
+    Intent('attack', 26),
   ]),
-  'kiln_golem': EnemyDef('kiln_golem', 'Kiln Golem', 24, elite: true, pattern: [
-    Intent('block', 16),
-    Intent('attack', 19),
-    Intent('attack_block', 14, 14),
+  'kiln_golem': EnemyDef('kiln_golem', 'Kiln Golem', 58, elite: true, pattern: [
+    Intent('block', 22),
+    Intent('attack', 26),
+    Intent('attack_block', 21, 20),
   ]),
   'ash_reaper':
-      EnemyDef('ash_reaper', 'Ash Reaper', 26, elite: true, fromLayer: 5, pattern: [
-    Intent('attack', 20),
-    Intent('attack', 14),
-    Intent('attack_block', 17, 13),
+      EnemyDef('ash_reaper', 'Ash Reaper', 62, elite: true, fromLayer: 5, pattern: [
+    Intent('attack', 27),
+    Intent('attack', 21),
+    Intent('attack_block', 24, 19),
   ]),
-  'forge_warden': EnemyDef('forge_warden', 'Forge Warden', 30,
+  'forge_warden': EnemyDef('forge_warden', 'Forge Warden', 72,
       elite: true, fromLayer: 5, pattern: [
-    Intent('block', 20),
-    Intent('attack_block', 15, 15),
-    Intent('attack', 22),
+    Intent('block', 26),
+    Intent('attack_block', 22, 21),
+    Intent('attack', 29),
   ]),
   'molten_maw':
-      EnemyDef('molten_maw', 'Molten Maw', 28, elite: true, fromLayer: 6, pattern: [
-    Intent('attack', 24),
-    Intent('block', 18),
-    Intent('attack', 18),
+      EnemyDef('molten_maw', 'Molten Maw', 67, elite: true, fromLayer: 6, pattern: [
+    Intent('attack', 31),
+    Intent('block', 24),
+    Intent('attack', 25),
   ]),
 
   // ---- boss (exactly one in act 1) -----------------------------------------------
   'ember_tyrant':
-      EnemyDef('ember_tyrant', 'Ember Tyrant', 42, boss: true, pattern: [
-    Intent('attack', 16),
-    Intent('block', 22),
-    Intent('attack_block', 19, 14),
-    Intent('attack', 25),
+      EnemyDef('ember_tyrant', 'Ember Tyrant', 101, boss: true, pattern: [
+    Intent('attack', 23),
+    Intent('block', 28),
+    Intent('attack_block', 26, 20),
+    Intent('attack', 32),
   ]),
 };
 
