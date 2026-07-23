@@ -17,9 +17,16 @@
 
 import 'rng.dart';
 
-const int elitePct = 16; // r in [1..16]  -> elite (on eligible layers)
-const int restLo = 17; //   r in [17..30] -> rest (if no rest parent)
-const int restHi = 30;
+// Kind roll bands (percent out of 100; one roll per middle node). Order of
+// checks matters — see the sprinkle step. rest requires no rest parent; shop
+// only on shopFromLayer+; event on eventFromLayer+.
+const int elitePct = 16; //  r in [1..16]   -> elite (eligible layers)
+const int restLo = 17; //    r in [17..28]  -> rest (if no rest parent)
+const int restHi = 28;
+const int shopLo = 29; //    r in [29..40]  -> shop (shopFrom+)
+const int shopHi = 40;
+const int eventLo = 41; //   r in [41..56]  -> event (eventFrom+)
+const int eventHi = 56;
 
 class MapCfg {
   final int layers;
@@ -27,12 +34,18 @@ class MapCfg {
   final int maxNodes;
   final int eliteFromLayer;
   final int restGuaranteeLayer;
+  final int shopFromLayer;
+  final int shopGuaranteeLayer;
+  final int eventFromLayer;
   const MapCfg({
     this.layers = 9,
     this.minNodes = 2,
     this.maxNodes = 4,
     this.eliteFromLayer = 4,
     this.restGuaranteeLayer = 6,
+    this.shopFromLayer = 3,
+    this.shopGuaranteeLayer = 3,
+    this.eventFromLayer = 2,
   });
 }
 
@@ -42,6 +55,9 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
   final maxNodes = cfg.maxNodes;
   final eliteFrom = cfg.eliteFromLayer;
   final restFrom = cfg.restGuaranteeLayer;
+  final shopFrom = cfg.shopFromLayer;
+  final shopGuarantee = cfg.shopGuaranteeLayer;
+  final eventFrom = cfg.eventFromLayer;
   assert(layers >= 3, 'map: need at least 3 layers');
   assert(minNodes >= 1 && maxNodes >= minNodes, 'map: bad node bounds');
   assert(eliteFrom >= 2 && eliteFrom < layers, 'map: eliteFrom out of range');
@@ -123,6 +139,10 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
       n['kind'] = 'elite';
     } else if (r >= restLo && r <= restHi && !hasRestParent(id)) {
       n['kind'] = 'rest';
+    } else if (layer >= shopFrom && r >= shopLo && r <= shopHi) {
+      n['kind'] = 'shop';
+    } else if (layer >= eventFrom && r >= eventLo && r <= eventHi) {
+      n['kind'] = 'event';
     }
   }
 
@@ -166,6 +186,26 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
     }
     assert(cands.isNotEmpty, 'map: no candidate for guaranteed elite');
     nodes['${cands[rng.range(1, cands.length) - 1]}']!['kind'] = 'elite';
+  }
+
+  // ---- 6. Guarantee: >=1 shop on layer shopGuarantee+ ---------------------
+  // Convert a fight (no adjacency constraint on shops). Non-empty because
+  // shopGuarantee <= layers-1 always has fight-or-convertible nodes.
+  var haveShop = false;
+  for (var id = 2; id <= nextId - 2; id++) {
+    if (nodes['$id']!['kind'] == 'shop') haveShop = true;
+  }
+  if (!haveShop) {
+    final cands = <int>[];
+    for (var id = 2; id <= nextId - 2; id++) {
+      final n = nodes['$id']!;
+      if ((n['layer'] as int) >= shopGuarantee && n['kind'] == 'fight') {
+        cands.add(id);
+      }
+    }
+    if (cands.isNotEmpty) {
+      nodes['${cands[rng.range(1, cands.length) - 1]}']!['kind'] = 'shop';
+    }
   }
 
   return {

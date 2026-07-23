@@ -21,7 +21,7 @@ import 'hashing.dart';
 import 'rng.dart';
 import 'run_layer.dart';
 
-const int simVersion = 2;
+const int simVersion = 3;
 
 const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle'];
 
@@ -32,9 +32,14 @@ final Map<String, Handler> _handlers = {
   'choose_node': runChooseNode,
   'roll': combatRoll,
   'assign': combatAssign,
+  'reroll': combatReroll,
   'end_turn': combatEndTurn,
   'choose_reward': runChooseReward,
   'rest': runRest,
+  'forge': runForge,
+  'buy': runBuy,
+  'leave_shop': runLeaveShop,
+  'event_choose': runEventChoose,
 };
 
 class Sim {
@@ -47,7 +52,9 @@ class Sim {
   Map<String, dynamic>? enemy;
   Map<String, dynamic>? map;
   List<String>? offers; // die ids while phase == "reward"
-  Map<String, dynamic>? run; // { embers, fights_won } run ledger
+  Map<String, dynamic>? shop; // stock map while phase == "shop"
+  String? event; // current event id while phase == "event"
+  Map<String, dynamic>? run; // run ledger (embers, gold, relics, ...)
   int turnsTotal = 0; // combat turns accumulated across encounters
   String? combatOver; // transient "won"|"lost" flag consumed by runPost
   int eventHash = 0;
@@ -78,6 +85,8 @@ class Sim {
       'enemy': deepCopy(enemy),
       'map': deepCopy(map),
       'offers': deepCopy(offers),
+      'shop': deepCopy(shop),
+      'event': event,
       'run': deepCopy(run),
       'turns_total': turnsTotal,
       'combat_over': combatOver,
@@ -106,6 +115,10 @@ class Sim {
         : (deepCopy(snap['map']) as Map).cast<String, dynamic>();
     sim.offers =
         snap['offers'] == null ? null : (snap['offers'] as List).cast<String>().toList();
+    sim.shop = snap['shop'] == null
+        ? null
+        : (deepCopy(snap['shop']) as Map).cast<String, dynamic>();
+    sim.event = snap['event'] as String?;
     sim.run = snap['run'] == null
         ? null
         : (deepCopy(snap['run']) as Map).cast<String, dynamic>();
@@ -154,6 +167,8 @@ class Sim {
         'enemy': enemy,
         'map': map,
         'offers': offers,
+        'shop': shop,
+        'event': event,
         'run': run,
       };
 
@@ -165,6 +180,8 @@ class Sim {
     h = hashValue(h, enemy ?? 'none');
     h = hashValue(h, map ?? 'none');
     h = hashValue(h, offers ?? 'none');
+    h = hashValue(h, shop ?? 'none');
+    h = hashValue(h, event ?? 'none');
     h = hashValue(h, run ?? 'none');
     h = hashValue(h, turnsTotal);
     h = hashValue(h, combatOver ?? 'none');
