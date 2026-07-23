@@ -112,6 +112,27 @@
       "acceptance": "All screens use curated CC0/CC-BY assets; sprite animations with SFX synced to contact frames; per-screen music; credits + provenance shipped; release APK published on GitHub Releases",
       "passes": true,
       "evidence": "Merge 01bc2f4 + fixes a51dc69: 75 images + 26 audio (PROVENANCE.md, CREDITS.md, in-app credits screen), SpriteView 8fps idle loops, combat lunge/hit-flash/death choreography with whoosh at contact-250ms per SYNC_POINTS.md, AudioService crossfaded music + 20 SFX, settings persistence, launcher icons. Independent review APPROVE (0 blocking). CI green runs 30011499453/30011501605; 29 tests. Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.2.0"
+    },
+    {
+      "id": "M5-1",
+      "title": "Gameplay depth v0.3.0: combos, risky reroll, exact-kill/overkill, honest telegraphs, boons, daily seed",
+      "acceptance": "SIM_VERSION 4 in sealed sim: pair/triple/straight combos, reroll_risky (-1 pip, once/turn, free after straight), exact-0 kill +5 embers + capped overkill splash, offer-stream reward telegraphs (elites guarantee tier-3), 1-of-3 starting boons (skippable), dailySeed(y,m,d); determinism + golden re-anchored; balance in 20-80% band over 200 seeds",
+      "passes": true,
+      "evidence": "lib/sim/ v4 (golden 1117081416, was 513683311); sim_test v4 suites (combos pure-function, reroll gating/determinism, telegraph honesty, boons, daily seed, exact/overkill observed over 60 bot runs); autoplay 200 seeds win 53.5%, 0 invalids; branch gameplay-sim merged via v030-integration"
+    },
+    {
+      "id": "M5-2",
+      "title": "Visual overhaul: de-Flutter presentation pass + mechanics wired into painted UI",
+      "acceptance": "Painted UI kit (no stock-Flutter look): pip die faces + tumble, segmented HP bars w/ ghost trail, hit-stop/shake/damage pops/ember deaths, map medallions + fog + reward telegraph badges, drawn logotype + camp-fire title, flame-wipe transitions; combo/burn/exact-kill call-outs, risky-reroll control (gated), boon pick screen, Daily Delve entry, fast Delve-again, stale v3 save recovery; zero new binary assets",
+      "passes": true,
+      "evidence": "lib/ui/fx.dart, logo.dart, screens/widgets repaint (branches visual-overhaul + ui-wiring, all programmatic); flutter analyze clean; 54/54 tests incl. widget tests for reroll gating, boon pick/skip, daily seed, delve-again, stale-save recovery"
+    },
+    {
+      "id": "M5-3",
+      "title": "Permanent release signing: keystore + signed CI builds",
+      "acceptance": "Upload keystore recovered and stored outside repo; Gradle release signingConfig (key.properties, debug fallback); CI job builds signed APK+AAB on main pushes/dispatch with apksigner cert-fingerprint gate; updates install over previous release-signed installs without uninstall",
+      "passes": true,
+      "evidence": "CI run 30018705918 green (build-android-release, fingerprint gate passed); cert SHA-256 03:1A:CB:...:7A:0D valid to 2066; docs/release.md; keystore held privately by owner-side orchestrator (never committed)"
     }
   ]
 }
