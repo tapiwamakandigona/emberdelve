@@ -50,6 +50,9 @@ void main() {
   testWidgets('combat renders die faces and rolling triggers the tray',
       (tester) async {
     final c = GameController();
+    // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
+    // absorbs taps; this test drives combat directly, so mark it seen.
+    c.meta.tutorialSeen = true;
     await tester.pumpWidget(MaterialApp(
       theme: buildEmberTheme(),
       home: GameRoot(c),
@@ -131,6 +134,9 @@ void main() {
   testWidgets('risky reroll: gated to unassigned dice, once per turn',
       (tester) async {
     final c = GameController();
+    // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
+    // absorbs taps; this test drives combat directly, so mark it seen.
+    c.meta.tutorialSeen = true;
     await tester.pumpWidget(MaterialApp(
       theme: buildEmberTheme(),
       home: GameRoot(c),

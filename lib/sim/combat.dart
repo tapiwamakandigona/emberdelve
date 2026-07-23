@@ -65,25 +65,47 @@ void _applyTurnBlock(Sim sim, List<Map<String, Object?>> events) {
 // internal seam — called by the run layer, NOT a public command
 // ---------------------------------------------------------------------------
 
+/// Early-mercy stat shave for REGULAR fights on layer 2 — the first combat
+/// row (v0.3.1 F7): the shared roster stays intact, but node-one fights stop
+/// being a coin-flip against a fresh 30 HP / 3xd6 delver. Deterministic,
+/// pre-ascension, regulars only (elites/boss are opt-in risk).
+/// Tuned by measurement (bin/autoplay.dart, 200 seeds): baseline bot winrate
+/// 53.5% with ~44% of ALL bot losses on the first fight; shave 2 + HP cap 28
+/// on layer 2 only => 74.0% bot winrate (band 20-80), layers 3+ untouched.
+/// Stronger variants (shave 3-4, cap 26, layer-3 shave) hit 79-82% — too
+/// soft overall. Revisit with human telemetry before v0.4.0.
+int earlyMercyAttackShave(int layer) => layer <= 2 ? 2 : 0;
+int earlyMercyHpCap(int layer) => layer <= 2 ? 28 : 1 << 30;
+
 void combatBegin(
-    Sim sim, String enemyId, bool elite, List<Map<String, Object?>> events) {
+    Sim sim, String enemyId, bool elite, List<Map<String, Object?>> events,
+    {int layer = 99}) {
   final def = enemyDef(enemyId);
   final ascAmount = (sim.run?['ascension'] as int? ?? 0);
+  final mercy = (!elite && !def.boss) ? earlyMercyAttackShave(layer) : 0;
+  final hpCap = (!elite && !def.boss) ? earlyMercyHpCap(layer) : (1 << 30);
+  final hp = def.hp > hpCap ? hpCap : def.hp;
+  int shaved(int amount) {
+    final v = amount - mercy;
+    return v < 1 ? 1 : v;
+  }
+
   // Ascension raises enemy attack/block amounts by a fixed integer per rung
-  // (deterministic, no RNG). Applied here so the sim stays pure.
+  // (deterministic, no RNG). Applied here so the sim stays pure. The early
+  // mercy shave applies to the base amount, before the ascension bonus.
   final pattern = [
     for (final it in def.pattern)
       {
         'kind': it.kind,
-        'amount': it.amount + (it.amount > 0 ? ascAmount : 0),
+        'amount': shaved(it.amount) + (it.amount > 0 ? ascAmount : 0),
         if (it.kind == 'attack_block') 'block': it.block + ascAmount,
       }
   ];
   final enemy = <String, dynamic>{
     'id': def.id,
     'name': def.name,
-    'hp': def.hp,
-    'max_hp': def.hp,
+    'hp': hp,
+    'max_hp': hp,
     'block': 0,
     'boss': def.boss,
     'elite': def.elite,

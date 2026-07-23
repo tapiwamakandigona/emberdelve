@@ -5,18 +5,24 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/boons.dart';
 import 'package:emberdelve/data/dice.dart';
+import 'package:emberdelve/data/enemies.dart';
+import 'package:emberdelve/sim/combat.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/sim/combos.dart';
 import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/rng.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 
-// The v4 golden, deliberately re-anchored for the gameplay-depth milestone
-// (combos, risky reroll, telegraphs, boons, exact-kill/overkill; SIM_VERSION
-// 3 -> 4). Old v3 golden: 513683311 (docs/m4-sim-contract.md documents the
-// old->new move). If this changes again, sim behavior for existing seeds
-// changed: bump SIM_VERSION and document.
-const int goldenV4 = 1117081416;
+// The v5 golden, deliberately re-anchored for the v0.3.1 balance pass
+// (early-mercy on layer-2/3 regulars + ember floor on death; SIM_VERSION
+// 4 -> 5). Old goldens: v3 513683311, v4 1117081416 (docs/m4-sim-contract.md
+// documents the v3->v4 move; docs/FIX_PLAN_v0.3.1.md the v4->v5 one). If this
+// changes again, sim behavior for existing seeds changed: bump SIM_VERSION
+// and document.
+// Note: numerically equal to the v4 golden — measured, not assumed: seed
+// 20260723's bot path meets no layer-2 regular fight, so the mercy shave
+// never touches its event stream (verified by zeroing the shave: same hash).
+const int goldenV5 = 1117081416;
 
 void main() {
   group('rng', () {
@@ -84,7 +90,7 @@ void main() {
 
     test('golden determinism anchor (regression guard)', () {
       final sim = playRun(20260723).sim;
-      expect(sim.eventHash, equals(goldenV4));
+      expect(sim.eventHash, equals(goldenV5));
     });
   });
 
@@ -402,6 +408,70 @@ void main() {
         }
       }
       fail('no overkill->splash sequence observed in 60 runs');
+    });
+  });
+  group('v0.3.1 balance pass (F7 early mercy + F8 ember floor)', () {
+    test('early mercy: regular fights on layer <= 2 are softened', () {
+      expect(earlyMercyAttackShave(2), equals(2));
+      expect(earlyMercyAttackShave(3), equals(0));
+      expect(earlyMercyAttackShave(4), equals(0));
+      expect(earlyMercyHpCap(2), equals(28));
+      // Find a seed whose first fight is soot_shade-class and verify the
+      // spawned enemy is capped and shaved vs its roster definition.
+      for (var seed = 1; seed <= 400; seed++) {
+        final sim = Sim(seed);
+        sim.apply({'type': 'start_run'});
+        final start = sim.map!['position'] as int;
+        final edges =
+            ((sim.map!['edges'] as Map)['$start'] as List).cast<int>();
+        int? fight;
+        for (final e in edges) {
+          if ((sim.map!['nodes'] as Map)['$e']!['kind'] == 'fight') {
+            fight = e;
+            break;
+          }
+        }
+        if (fight == null) continue;
+        sim.apply({'type': 'choose_node', 'node': fight});
+        final enemy = sim.enemy!;
+        final def = enemies[enemy['id']]!;
+        // Layer-2 regulars: HP capped at 28, every intent amount shaved by 2
+        // (min 1) relative to the roster definition.
+        expect(enemy['max_hp'] as int, lessThanOrEqualTo(28),
+            reason: 'seed $seed ${enemy['id']}');
+        final pattern = (enemy['pattern'] as List).cast<Map>();
+        for (var i = 0; i < def.pattern.length; i++) {
+          final want = def.pattern[i].amount - 2;
+          expect(pattern[i]['amount'], equals(want < 1 ? 1 : want),
+              reason: 'seed $seed ${enemy['id']} intent $i');
+        }
+        return;
+      }
+      fail('no fight-adjacent start node found in 400 seeds');
+    });
+
+    test('elites and the boss never get the mercy shave', () {
+      final sim = Sim(1);
+      sim.apply({'type': 'start_run'});
+      final events = <Map<String, Object?>>[];
+      combatBegin(sim, 'pyre_howler', true, events, layer: 2);
+      final def = enemies['pyre_howler']!;
+      expect(sim.enemy!['max_hp'], equals(def.hp));
+      expect((sim.enemy!['pattern'] as List).cast<Map>()[0]['amount'],
+          equals(def.pattern[0].amount));
+    });
+
+    test('ember floor: every death banks at least 5 + layer reached', () {
+      var checked = 0;
+      for (var seed = 1; seed <= 60; seed++) {
+        final r = playRun(seed);
+        if (r.sim.phase != 'run_lost') continue;
+        checked++;
+        final run = r.sim.run!;
+        expect(run['embers'] as int, greaterThanOrEqualTo(5 + 2),
+            reason: 'seed $seed banked ${run['embers']}');
+      }
+      expect(checked, greaterThan(0), reason: 'no losses in 60 seeds?');
     });
   });
 }

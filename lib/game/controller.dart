@@ -9,6 +9,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
+import '../data/dice.dart';
+import '../data/relics.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
 import '../sim/sim.dart';
@@ -160,6 +162,15 @@ class GameController extends ChangeNotifier {
 
   void _handleFlash(List<Map<String, Object?>> events) {
     flash = null;
+    // v0.3.1 F5: events used to resolve with zero feedback — you only found
+    // out what the ghost took mid-fight. Summarize the concrete effects.
+    if (events.any((e) => e['type'] == 'event_resolved')) {
+      final summary = _eventSummary(events);
+      if (summary != null) {
+        flash = summary;
+        return;
+      }
+    }
     for (final e in events) {
       switch (e['type']) {
         case 'invalid_command':
@@ -182,6 +193,72 @@ class GameController extends ChangeNotifier {
           break;
       }
     }
+  }
+
+  /// One-line outcome of an event choice, from its effect events.
+  String? _eventSummary(List<Map<String, Object?>> events) {
+    final parts = <String>[];
+    String dieName(Object? id) =>
+        id is String ? dieDef(id).name : 'a die';
+    for (final e in events) {
+      switch (e['type']) {
+        case 'die_lost':
+          parts.add('Lost ${dieName(e['die'])}');
+          break;
+        case 'die_gained':
+          parts.add('Gained ${dieName(e['die'])}');
+          break;
+        case 'relic_gained':
+          final id = e['relic'];
+          parts.add('Relic: ${id is String ? relicDef(id).name : 'gained'}');
+          break;
+        case 'gold_gained':
+          parts.add('+${e['amount']} gold');
+          break;
+        case 'gold_spent':
+          parts.add('−${e['amount']} gold');
+          break;
+        case 'hp_lost':
+          parts.add('−${e['amount']} HP');
+          break;
+        case 'healed':
+          if ((e['amount'] as int? ?? 0) > 0) {
+            parts.add('+${e['amount']} HP');
+          }
+          break;
+        case 'max_hp_changed':
+          final a = e['amount'] as int? ?? 0;
+          parts.add('${a > 0 ? '+' : ''}$a max HP');
+          break;
+        case 'embers_gained':
+          parts.add('+${e['amount']} embers');
+          break;
+      }
+    }
+    if (parts.isEmpty) return null;
+    return parts.join(' · ');
+  }
+
+  /// v0.3.1 F11: persist that the first-fight tutorial has been seen.
+  void markTutorialSeen() {
+    if (meta.tutorialSeen) return;
+    meta.tutorialSeen = true;
+    MetaStore.save(meta);
+  }
+
+  /// v0.3.1 F10: voluntary mid-run exit from the pause menu. Discards the
+  /// run and its save without banking (death banks half + floor; walking
+  /// away banks nothing) but still counts the run as played.
+  void abandonRun() {
+    if (sim == null) return;
+    meta.runsPlayed += 1;
+    MetaStore.save(meta);
+    _clearSave();
+    sim = null;
+    dailyDate = null;
+    _bankedThisRun = false;
+    notifyListeners();
+    _syncAudio();
   }
 
   String _reason(String? r) {

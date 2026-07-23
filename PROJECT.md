@@ -1,6 +1,6 @@
 # PROJECT.md — Emberdelve
 
-**Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Defold. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
+**Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Flutter. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
 
 **Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built and orchestrated by Viktor (AI). This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
 
@@ -22,7 +22,7 @@
    seam discipline as before. CI: `flutter analyze` + `flutter test` → `flutter
    build apk`. The Defold-era Lua core was ported to Dart with proven 1:1 hash
    parity (commit history), so the deterministic guarantees carry over.
-2. **Repo:** private (paid art/audio licenses forbid public raw-file redistribution). Releases may be public. CI runs on private-repo free minutes (2,000/mo); if exhausted, split a public build repo containing **no licensed assets**.
+2. **Repo:** public (all shipped assets are CC0/CC-BY with attribution shipped in-app — see PROVENANCE.md; no license forbids redistribution). Releases are public on GitHub Releases.
 3. **Architecture:** sealed pure-Lua simulation core (`sim/`) — commands in, events out, zero engine APIs inside. Presentation (Defold) renders events only. Never violate this seam.
 4. **Determinism:** all randomness via per-domain seeded streams (`sim/rng.lua`). Same seed + same commands ⇒ identical event/state hashes on every Lua VM. CI enforces it.
 5. **Mechanic:** dice-builder combat (roll dice pool → assign dice to actions; grow/upgrade dice across the run). Enemy intent always visible; randomness in *offerings*, never in *resolution*.

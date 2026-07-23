@@ -17,12 +17,14 @@ class MetaState {
   int bestAscension;
   int runsPlayed;
   int runsWon;
+  bool tutorialSeen; // v0.3.1 F11: first-fight overlay shown once, ever
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
     this.bestAscension = 0,
     this.runsPlayed = 0,
     this.runsWon = 0,
+    this.tutorialSeen = false,
   }) : unlockedCharacters = unlocked ?? {defaultCharacter};
 
   Map<String, Object?> toJson() => {
@@ -31,6 +33,7 @@ class MetaState {
         'bestAscension': bestAscension,
         'runsPlayed': runsPlayed,
         'runsWon': runsWon,
+        'tutorialSeen': tutorialSeen,
       };
 
   factory MetaState.fromJson(Map<String, dynamic> j) => MetaState(
@@ -40,6 +43,7 @@ class MetaState {
         bestAscension: j['bestAscension'] as int? ?? 0,
         runsPlayed: j['runsPlayed'] as int? ?? 0,
         runsWon: j['runsWon'] as int? ?? 0,
+        tutorialSeen: j['tutorialSeen'] as bool? ?? false,
       );
 
   bool isUnlocked(String characterId) =>
