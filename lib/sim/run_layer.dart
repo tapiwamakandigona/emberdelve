@@ -96,6 +96,13 @@ void _gainGold(Sim sim, int amount, List<Map<String, Object?>> events,
 void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (sim.phase != 'idle') return _invalid(events, 'not_idle');
   final ascension = (cmd['ascension'] is int) ? cmd['ascension'] as int : 0;
+  // Difficulty (v0.3.2): easy / normal / hard. Unknown or missing values fall
+  // back to 'normal', so old saves and old command scripts replay unchanged
+  // (no simVersion bump; the golden anchor proves normal ≡ pre-difficulty).
+  const difficulties = {'easy', 'normal', 'hard'};
+  final difficulty = difficulties.contains(cmd['difficulty'])
+      ? cmd['difficulty'] as String
+      : 'normal';
   final charId = cmd['character'] as String?;
   final ch = characterDef(charId);
   // Apply character loadout.
@@ -112,6 +119,7 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'pending_splash': 0,
     'ascension': ascension,
     'character': ch.id,
+    'difficulty': difficulty,
   };
   sim.turnsTotal = 0;
   if (ch.startRelic != null) {
@@ -130,6 +138,9 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'layers': map['layers'],
     'character': ch.id,
     'ascension': ascension,
+    // Only stamped when off-normal so pre-difficulty event logs (and the
+    // golden hash) stay byte-identical for normal runs.
+    if (difficulty != 'normal') 'difficulty': difficulty,
   });
   if (cmd['boons'] == true) {
     // Restart flow (m4 §6): deterministic 1-of-3 starting-boon offering from
@@ -578,6 +589,11 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     _gainGold(sim, gold, events, 'fight');
     var embers = _rollEmbers(sim) + relicSum(sim, 'ember_bonus');
     if (isBoss) embers += 40;
+    // Difficulty (v0.3.2): fight payouts scale with the risk taken. Shown
+    // honestly on the title-screen selector — no hidden math (§Ethics).
+    final difficulty = run['difficulty'] as String? ?? 'normal';
+    if (difficulty == 'easy') embers = (embers * 0.75).round();
+    if (difficulty == 'hard') embers = (embers * 1.25).round();
     run['embers'] = (run['embers'] as int) + embers;
     // heal_after_fight relic.
     final hf = relicSum(sim, 'heal_after_fight');

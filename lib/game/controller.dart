@@ -92,19 +92,34 @@ class GameController extends ChangeNotifier {
       int ascension = 0,
       bool boons = false,
       int? seed,
-      String? daily}) {
+      String? daily,
+      String? difficulty}) {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun].
     final s = seed ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
     sim = Sim(s);
     _bankedThisRun = false;
     dailyDate = daily;
+    // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
+    // exact same delve, so it always runs on normal (spec §Ethics fairness).
+    final diff =
+        daily != null ? 'normal' : (difficulty ?? meta.preferredDifficulty);
     apply({
       'type': 'start_run',
       if (character != null) 'character': character,
       'ascension': ascension,
       if (boons) 'boons': true,
+      if (diff != 'normal') 'difficulty': diff,
     });
+  }
+
+  /// Sticky difficulty preference behind the title-screen selector.
+  void setPreferredDifficulty(String d) {
+    if (!const {'easy', 'normal', 'hard'}.contains(d)) return;
+    if (meta.preferredDifficulty == d) return;
+    meta.preferredDifficulty = d;
+    MetaStore.save(meta);
+    notifyListeners();
   }
 
   /// Daily Delve: everyone starts from the same seed for the device's local
@@ -129,7 +144,8 @@ class GameController extends ChangeNotifier {
     startRun(
         character: run?['character'] as String?,
         ascension: run?['ascension'] as int? ?? 0,
-        boons: true);
+        boons: true,
+        difficulty: run?['difficulty'] as String? ?? 'normal');
   }
 
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.

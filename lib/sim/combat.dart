@@ -82,9 +82,22 @@ void combatBegin(
     {int layer = 99}) {
   final def = enemyDef(enemyId);
   final ascAmount = (sim.run?['ascension'] as int? ?? 0);
+  // Difficulty (v0.3.2): deterministic flat/scalar adjustments, no RNG, so
+  // determinism and replays are untouched. 'normal' is byte-identical to the
+  // pre-difficulty sim (golden anchor). Tuned by measurement (bin/autoplay):
+  // easy = enemy HP x0.8 and attacks -2 (min 1); hard = HP x1.25, amounts +2.
+  final difficulty = sim.run?['difficulty'] as String? ?? 'normal';
+  final diffAmount = difficulty == 'easy'
+      ? -2
+      : difficulty == 'hard'
+          ? 2
+          : 0;
   final mercy = (!elite && !def.boss) ? earlyMercyAttackShave(layer) : 0;
   final hpCap = (!elite && !def.boss) ? earlyMercyHpCap(layer) : (1 << 30);
-  final hp = def.hp > hpCap ? hpCap : def.hp;
+  var hp = def.hp > hpCap ? hpCap : def.hp;
+  if (difficulty == 'easy') hp = (hp * 0.8).round();
+  if (difficulty == 'hard') hp = (hp * 1.25).round();
+  if (hp < 1) hp = 1;
   int shaved(int amount) {
     final v = amount - mercy;
     return v < 1 ? 1 : v;
@@ -93,12 +106,22 @@ void combatBegin(
   // Ascension raises enemy attack/block amounts by a fixed integer per rung
   // (deterministic, no RNG). Applied here so the sim stays pure. The early
   // mercy shave applies to the base amount, before the ascension bonus.
+  // The difficulty delta stacks the same way and clamps at 1 so easy mode
+  // never zeroes an intent (the shown intent still resolves exactly as shown).
+  int adjusted(int base) {
+    final v = shaved(base) + (base > 0 ? ascAmount + diffAmount : 0);
+    return v < 1 ? 1 : v;
+  }
+
   final pattern = [
     for (final it in def.pattern)
       {
         'kind': it.kind,
-        'amount': shaved(it.amount) + (it.amount > 0 ? ascAmount : 0),
-        if (it.kind == 'attack_block') 'block': it.block + ascAmount,
+        'amount': adjusted(it.amount),
+        if (it.kind == 'attack_block')
+          'block': (it.block + ascAmount + diffAmount) < 0
+              ? 0
+              : it.block + ascAmount + diffAmount,
       }
   ];
   final enemy = <String, dynamic>{

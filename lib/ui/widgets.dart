@@ -18,13 +18,17 @@ class EmberButton extends StatefulWidget {
   final bool danger;
   final bool ghost;
   final IconData? icon;
+
+  /// Compact vertical padding for short screens (combat action zone).
+  final bool dense;
   const EmberButton(this.label,
       {super.key,
       this.onTap,
       this.primary = false,
       this.danger = false,
       this.ghost = false,
-      this.icon});
+      this.icon,
+      this.dense = false});
 
   @override
   State<EmberButton> createState() => _EmberButtonState();
@@ -65,8 +69,9 @@ class _EmberButtonState extends State<EmberButton> {
         child: CustomPaint(
           painter: _ButtonPainter(tier: tier, enabled: enabled, down: _down),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: Space.xl, vertical: Space.l),
+            padding: EdgeInsets.symmetric(
+                horizontal: Space.xl,
+                vertical: widget.dense ? Space.m : Space.l),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
