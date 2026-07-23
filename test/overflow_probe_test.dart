@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/ui/ledger_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/settings_screen.dart';
 import 'package:emberdelve/ui/theme.dart';
@@ -184,6 +185,35 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         theme: buildEmberTheme(),
         home: const SettingsScreen(),
+      ));
+      _drain(tester);
+      await pumpFor(tester, 400);
+      expect(problems, isEmpty,
+          reason: 'layout problems:\n${problems.join('\n')}');
+    });
+
+    testWidgets('ledger screen fits at $size', (tester) async {
+      tester.view.physicalSize = size * tester.view.devicePixelRatio;
+      addTearDown(tester.view.resetPhysicalSize);
+      problems.clear();
+      ctx('ledger@$size');
+      // Big numbers + every theme owned = the widest the rows ever get.
+      final c = GameController();
+      c.meta
+        ..embers = 88888
+        ..lifetimeEmbers = 1234567
+        ..runsPlayed = 1042
+        ..runsWon = 993
+        ..bestAscension = 12
+        ..exactKills = 4821
+        ..bestExactStreak = 23
+        ..charRuns.addAll({'kindler': 500, 'warden': 300, 'gambler': 242})
+        ..charWins.addAll({'kindler': 480, 'warden': 290, 'gambler': 223})
+        ..ownedThemes.addAll({'frostfire', 'witchlight', 'goldvein'})
+        ..activeTheme = 'witchlight';
+      await tester.pumpWidget(MaterialApp(
+        theme: buildEmberTheme(),
+        home: LedgerScreen(c),
       ));
       _drain(tester);
       await pumpFor(tester, 400);

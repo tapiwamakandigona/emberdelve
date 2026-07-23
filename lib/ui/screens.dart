@@ -10,10 +10,12 @@ import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
 import '../data/relics.dart';
+import '../data/themes.dart';
 import '../game/controller.dart';
 import 'art.dart';
 import 'fx.dart';
 import 'haptics.dart';
+import 'ledger_screen.dart';
 import 'logo.dart';
 import 'settings_screen.dart';
 import 'sprites.dart';
@@ -100,9 +102,15 @@ class TitleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = c.meta;
+    // Hearth colors (v0.3.3): the active theme retints the title hearth.
+    // The default theme passes null tints => byte-identical classic render.
+    final theme = hearthThemeDef(m.activeTheme);
+    final themed = theme.id != defaultTheme;
+    final warm = themed ? Color(theme.warmArgb) : null;
+    final bright = themed ? Color(theme.brightArgb) : null;
     return Stack(fit: StackFit.expand, children: [
       const Vignette(strength: 0.55),
-      const EmberDrift(count: 30),
+      EmberDrift(count: 30, warm: warm, bright: bright),
       // Scroll-safe shell: on tall phones the Spacers breathe as before; on
       // short screens (<=320x568) the column scrolls instead of overflowing.
       LayoutBuilder(builder: (context, box) {
@@ -115,16 +123,30 @@ class TitleScreen extends StatelessWidget {
                 child: Column(children: [
           Align(
             alignment: Alignment.topRight,
-            child: IconButton(
-              icon: const Icon(Icons.settings,
-                  color: EmberColors.textDim, size: 26),
-              tooltip: 'Settings',
-              onPressed: () {
-                AudioService.instance?.playSfx('ui_tap');
-                Navigator.of(context)
-                    .push(emberRoute((_) => const SettingsScreen()));
-              },
-            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              // The Ledger (v0.3.3): lifetime stats + hearth colors.
+              IconButton(
+                key: const ValueKey('ledger-button'),
+                icon: const Icon(Icons.menu_book,
+                    color: EmberColors.textDim, size: 26),
+                tooltip: 'The Ledger',
+                onPressed: () {
+                  AudioService.instance?.playSfx('ui_tap');
+                  Navigator.of(context)
+                      .push(emberRoute((_) => LedgerScreen(c)));
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings,
+                    color: EmberColors.textDim, size: 26),
+                tooltip: 'Settings',
+                onPressed: () {
+                  AudioService.instance?.playSfx('ui_tap');
+                  Navigator.of(context)
+                      .push(emberRoute((_) => const SettingsScreen()));
+                },
+              ),
+            ]),
           ),
           const Spacer(),
           // Drawn logotype: glow bloom + charred-top/molten-bottom fill +
@@ -146,10 +168,10 @@ class TitleScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
-              SpriteView(defaultCharacter, height: 72),
-              SizedBox(width: Space.l),
-              CampFire(size: 40),
+            children: [
+              const SpriteView(defaultCharacter, height: 72),
+              const SizedBox(width: Space.l),
+              CampFire(size: 40, warm: warm, bright: bright),
             ],
           ),
           const SizedBox(height: Space.xxl),
@@ -226,8 +248,14 @@ class _DifficultySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final current = c.meta.preferredDifficulty;
-    final hint =
-        _options.firstWhere((o) => o.$1 == current, orElse: () => _options[1]);
+    // First-run on-ramp (v0.3.3, analysis caveat 1): a brand-new profile is
+    // steered to easy on the VISIBLE selector with an honest caption — 58%
+    // of bot deaths on normal happen before a single fight is won, so new
+    // players get an on-ramp, never a silent switch. One tap ends it.
+    final hint = c.meta.steerToEasy && current == 'easy'
+        ? ('easy', 'EASY', 'recommended for your first delve')
+        : _options.firstWhere((o) => o.$1 == current,
+            orElse: () => _options[1]);
     return Column(children: [
       Container(
         decoration: BoxDecoration(

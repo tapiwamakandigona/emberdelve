@@ -15,8 +15,17 @@ class EmberDrift extends StatefulWidget {
   final int count;
   final double opacity;
   final bool falling; // defeat variant: embers sink and die instead of rise
+  // Hearth colors (v0.3.3): optional cosmetic tint. Null = the classic
+  // emberglow palette, byte-identical to pre-theme rendering.
+  final Color? warm;
+  final Color? bright;
   const EmberDrift(
-      {super.key, this.count = 26, this.opacity = 1.0, this.falling = false});
+      {super.key,
+      this.count = 26,
+      this.opacity = 1.0,
+      this.falling = false,
+      this.warm,
+      this.bright});
 
   @override
   State<EmberDrift> createState() => _EmberDriftState();
@@ -40,7 +49,10 @@ class _EmberDriftState extends State<EmberDrift>
       child: RepaintBoundary(
         child: CustomPaint(
           painter: _EmberDriftPainter(_t, widget.count,
-              opacity: widget.opacity, falling: widget.falling),
+              opacity: widget.opacity,
+              falling: widget.falling,
+              warm: widget.warm,
+              bright: widget.bright),
           size: Size.infinite,
         ),
       ),
@@ -53,10 +65,14 @@ class _EmberDriftPainter extends CustomPainter {
   final int count;
   final double opacity;
   final bool falling;
+  final Color warm;
+  final Color bright;
   final Paint _p = Paint();
   _EmberDriftPainter(this.t, this.count,
-      {this.opacity = 1.0, this.falling = false})
-      : super(repaint: t);
+      {this.opacity = 1.0, this.falling = false, Color? warm, Color? bright})
+      : warm = warm ?? const Color(0xFF7A3A16),
+        bright = bright ?? EmberColors.gold,
+        super(repaint: t);
 
   // Deterministic per-particle pseudo-random from index (no Random allocs).
   double _h(int i, int salt) {
@@ -80,8 +96,7 @@ class _EmberDriftPainter extends CustomPainter {
           0.35 + 0.65 * (0.5 + 0.5 * math.sin(time * 6.28 * 3 + i * 1.7));
       // Embers cool as they climb (or as they die, when falling).
       final heat = falling ? frac : 1.0 - frac * 0.7;
-      final color = Color.lerp(
-          const Color(0xFF7A3A16), EmberColors.gold, heat * _h(i, 6))!;
+      final color = Color.lerp(warm, bright, heat * _h(i, 6))!;
       final a = (flicker * heat * opacity).clamp(0.0, 1.0);
       if (a <= 0.01) continue;
       _p.color = color.withValues(alpha: a);
@@ -583,7 +598,10 @@ Route<T> emberRoute<T>(WidgetBuilder builder) {
 /// Used on the title screen next to the idling delver.
 class CampFire extends StatefulWidget {
   final double size;
-  const CampFire({super.key, this.size = 44});
+  // Hearth colors (v0.3.3): optional cosmetic tint. Null = classic flame.
+  final Color? warm;
+  final Color? bright;
+  const CampFire({super.key, this.size = 44, this.warm, this.bright});
   @override
   State<CampFire> createState() => _CampFireState();
 }
@@ -604,7 +622,7 @@ class _CampFireState extends State<CampFire>
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: CustomPaint(
-        painter: _CampFirePainter(_t),
+        painter: _CampFirePainter(_t, warm: widget.warm, bright: widget.bright),
         size: Size(widget.size, widget.size * 1.3),
       ),
     );
@@ -613,8 +631,26 @@ class _CampFireState extends State<CampFire>
 
 class _CampFirePainter extends CustomPainter {
   final Animation<double> t;
+  // Flame layer palette: deep outer, mid body, hot core, ground glow.
+  final Color outer;
+  final Color mid;
+  final Color core;
+  final Color glow;
   final Paint _p = Paint();
-  _CampFirePainter(this.t) : super(repaint: t);
+  _CampFirePainter(this.t, {Color? warm, Color? bright})
+      : outer = warm != null
+            ? Color.lerp(warm, Colors.black, 0.25)!
+            : const Color(0xFF9C3A10),
+        mid = warm != null && bright != null
+            ? Color.lerp(warm, bright, 0.55)!
+            : EmberColors.ember,
+        core = bright != null
+            ? Color.lerp(bright, Colors.white, 0.35)!
+            : const Color(0xFFFFD98A),
+        glow = warm != null && bright != null
+            ? Color.lerp(warm, bright, 0.55)!
+            : EmberColors.ember,
+        super(repaint: t);
 
   void _flame(Canvas canvas, Size s, double phase, double w, double h,
       Color color, double a) {
@@ -637,7 +673,7 @@ class _CampFirePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Ground glow.
-    _p.color = EmberColors.ember.withValues(
+    _p.color = glow.withValues(
         alpha: 0.18 + 0.06 * math.sin(t.value * math.pi * 4));
     canvas.drawOval(
         Rect.fromCenter(
@@ -666,11 +702,11 @@ class _CampFirePainter extends CustomPainter {
     canvas.restore();
     // Flame layers: deep red -> ember -> hot gold core.
     _flame(canvas, size, 0.0, size.width * 0.72, size.height * 0.78,
-        const Color(0xFF9C3A10), 0.9);
+        outer, 0.9);
     _flame(canvas, size, 1.6, size.width * 0.5, size.height * 0.6,
-        EmberColors.ember, 0.95);
+        mid, 0.95);
     _flame(canvas, size, 3.1, size.width * 0.28, size.height * 0.4,
-        const Color(0xFFFFD98A), 1.0);
+        core, 1.0);
   }
 
   @override

@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
+import '../data/themes.dart';
 
 class MetaState {
   int embers;
@@ -21,6 +22,22 @@ class MetaState {
   // v0.3.2: sticky easy/normal/hard preference for the title-screen selector.
   // Pure convenience — the sim only ever sees it as a start_run param.
   String preferredDifficulty;
+  // v0.3.3: true once the player has TAPPED the selector at least once.
+  // While false and runsPlayed == 0, the title steers a brand-new profile
+  // toward easy (first-run on-ramp) — never silently after that.
+  bool difficultyChosen;
+  // v0.3.3 ledger stats — all real, never faked (§Ethics honesty):
+  // per-character runs/wins, lifetime embers banked, exact-kill counters.
+  Map<String, int> charRuns;
+  Map<String, int> charWins;
+  int lifetimeEmbers;
+  int exactKills;
+  int exactStreak; // current consecutive fights ended with an exact kill
+  int bestExactStreak;
+  // v0.3.3 hearth colors — ember-priced cosmetic tints for the title hearth.
+  // Pure ember sink after all delvers unlock; no gameplay effect, no FOMO.
+  Set<String> ownedThemes;
+  String activeTheme;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -29,7 +46,19 @@ class MetaState {
     this.runsWon = 0,
     this.tutorialSeen = false,
     this.preferredDifficulty = 'normal',
-  }) : unlockedCharacters = unlocked ?? {defaultCharacter};
+    this.difficultyChosen = false,
+    Map<String, int>? charRuns,
+    Map<String, int>? charWins,
+    this.lifetimeEmbers = 0,
+    this.exactKills = 0,
+    this.exactStreak = 0,
+    this.bestExactStreak = 0,
+    Set<String>? ownedThemes,
+    this.activeTheme = defaultTheme,
+  })  : unlockedCharacters = unlocked ?? {defaultCharacter},
+        charRuns = charRuns ?? {},
+        charWins = charWins ?? {},
+        ownedThemes = ownedThemes ?? {defaultTheme};
 
   Map<String, Object?> toJson() => {
         'embers': embers,
@@ -39,7 +68,19 @@ class MetaState {
         'runsWon': runsWon,
         'tutorialSeen': tutorialSeen,
         'preferredDifficulty': preferredDifficulty,
+        'difficultyChosen': difficultyChosen,
+        'charRuns': charRuns,
+        'charWins': charWins,
+        'lifetimeEmbers': lifetimeEmbers,
+        'exactKills': exactKills,
+        'exactStreak': exactStreak,
+        'bestExactStreak': bestExactStreak,
+        'ownedThemes': ownedThemes.toList(),
+        'activeTheme': activeTheme,
       };
+
+  static Map<String, int> _intMap(Object? v) =>
+      (v as Map?)?.map((k, n) => MapEntry('$k', (n as num).toInt())) ?? {};
 
   factory MetaState.fromJson(Map<String, dynamic> j) => MetaState(
         embers: j['embers'] as int? ?? 0,
@@ -53,7 +94,40 @@ class MetaState {
                 .contains(j['preferredDifficulty'])
             ? j['preferredDifficulty'] as String
             : 'normal',
+        // Pre-v0.3.3 saves lack the flag; a veteran profile (runs played)
+        // must never be steered, so treat it as already chosen.
+        difficultyChosen: j['difficultyChosen'] as bool? ??
+            ((j['runsPlayed'] as int? ?? 0) > 0),
+        charRuns: _intMap(j['charRuns']),
+        charWins: _intMap(j['charWins']),
+        lifetimeEmbers: j['lifetimeEmbers'] as int? ?? 0,
+        exactKills: j['exactKills'] as int? ?? 0,
+        exactStreak: j['exactStreak'] as int? ?? 0,
+        bestExactStreak: j['bestExactStreak'] as int? ?? 0,
+        ownedThemes: ((j['ownedThemes'] as List?)?.cast<String>().toSet()
+              ?..add(defaultTheme)) ??
+            {defaultTheme},
+        activeTheme: hearthThemes.containsKey(j['activeTheme'])
+            ? j['activeTheme'] as String
+            : defaultTheme,
       );
+
+  /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched
+  /// the selector is steered toward easy — visibly, on the selector itself,
+  /// with an honest "recommended" caption. One explicit tap ends it forever.
+  bool get steerToEasy => !difficultyChosen && runsPlayed == 0;
+  String get effectiveDifficulty =>
+      steerToEasy ? 'easy' : preferredDifficulty;
+
+  /// Try to buy a hearth theme with embers; returns true on success.
+  bool tryBuyTheme(String id) {
+    final t = hearthThemes[id];
+    if (t == null || ownedThemes.contains(id)) return false;
+    if (embers < t.costEmbers) return false;
+    embers -= t.costEmbers;
+    ownedThemes.add(id);
+    return true;
+  }
 
   bool isUnlocked(String characterId) =>
       unlockedCharacters.contains(characterId) ||
