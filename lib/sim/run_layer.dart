@@ -12,7 +12,10 @@
 //   combat  -> dice rolls + enemy spawn pick
 //   loot    -> ember/gold amounts, reward + shop + event + insight picks
 //   shuffle -> event deck order + random die/relic grants inside events
+//   offer   -> map reward telegraphs (per-node offers precomputed at start_run)
+//   boon    -> starting-boon 1-of-3 offering (start_run {boons:true})
 
+import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/enemies.dart';
@@ -106,6 +109,7 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'relics': <String>[],
     'insight': null,
     'seen_events': <String>[],
+    'pending_splash': 0,
     'ascension': ascension,
     'character': ch.id,
   };
@@ -116,8 +120,8 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final map = generateMap(sim.rng['map']!);
   map['position'] = map['start'];
   map['visited'] = <int>[map['start'] as int];
+  _resolveRewardTelegraphs(sim, map);
   sim.map = map;
-  sim.phase = 'map';
   final nodeCount = (map['nodes'] as Map).length;
   _push(events, {
     'type': 'run_started',
@@ -127,6 +131,109 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'character': ch.id,
     'ascension': ascension,
   });
+  if (cmd['boons'] == true) {
+    // Restart flow (m4 §6): deterministic 1-of-3 starting-boon offering from
+    // the seeded `boon` stream (without replacement over boonsOrder).
+    final pool = List<String>.from(boonsOrder);
+    final picks = <String>[];
+    for (var k = 0; k < 3 && pool.isNotEmpty; k++) {
+      picks.add(pool.removeAt(sim.rng['boon']!.range(1, pool.length) - 1));
+    }
+    sim.boons = picks;
+    sim.phase = 'boon';
+    _push(events, {
+      'type': 'boon_offered',
+      'b1': picks[0],
+      'b2': picks.length > 1 ? picks[1] : null,
+      if (picks.length > 2) 'b3': picks[2],
+    });
+  } else {
+    sim.phase = 'map';
+  }
+}
+
+/// cmd: { type:"choose_boon", index:<0 skip | 1-based pick> }
+void runChooseBoon(Sim sim, Map cmd, List<Map<String, Object?>> events) {
+  if (sim.phase != 'boon' || sim.boons == null) {
+    return _invalid(events, 'not_boon_phase');
+  }
+  final i = cmd['index'];
+  final picks = sim.boons!;
+  if (i is! int || i < 0 || i > picks.length) {
+    return _invalid(events, 'no_such_boon');
+  }
+  if (i == 0) {
+    _push(events, {'type': 'boon_skipped'});
+  } else {
+    final def = boonDef(picks[i - 1]);
+    final gold = (def.effects['gold'] as int?) ?? 0;
+    if (gold > 0) _gainGold(sim, gold, events, 'boon');
+    final maxHp = (def.effects['max_hp'] as int?) ?? 0;
+    if (maxHp > 0) {
+      sim.player['max_hp'] = (sim.player['max_hp'] as int) + maxHp;
+      sim.player['hp'] = (sim.player['hp'] as int) + maxHp;
+      _push(events, {
+        'type': 'max_hp_changed',
+        'amount': maxHp,
+        'max_hp': sim.player['max_hp'],
+      });
+    }
+    final gainDie = def.effects['gain_die'] as String?;
+    if (gainDie != null) {
+      (sim.player['dice'] as List).add(gainDie);
+      _push(events, {'type': 'die_gained', 'die': gainDie});
+    }
+    final embers = (def.effects['embers'] as int?) ?? 0;
+    if (embers > 0) {
+      sim.run!['embers'] = (sim.run!['embers'] as int) + embers;
+      _push(events, {
+        'type': 'embers_gained',
+        'amount': embers,
+        'total': sim.run!['embers'],
+      });
+    }
+    _push(events, {'type': 'boon_chosen', 'boon': def.id});
+  }
+  sim.boons = null;
+  sim.phase = 'map';
+}
+
+// Reward telegraphs (m4 §5): pre-resolve every combat node's die offers from
+// the seeded `offer` stream at start_run (node-id order), and stamp an honest
+// `reward_preview` on the node — the exact best die the fight will offer.
+// Elites always carry one guaranteed tier-3 (rare) die. runPost serves these
+// stored offers verbatim, so the preview can never lie.
+void _resolveRewardTelegraphs(Sim sim, Map<String, Object?> map) {
+  final offer = sim.rng['offer']!;
+  final nodes = (map['nodes'] as Map).cast<String, Map>();
+  final count = nodes.length;
+  for (var id = 1; id <= count; id++) {
+    final node = nodes['$id']!;
+    final kind = node['kind'];
+    if (kind != 'fight' && kind != 'elite') continue;
+    final layer = node['layer'] as int;
+    final ceiling = _tierCeiling(layer);
+    final pool =
+        [for (final d in diceOrder) if (dice[d]!.tier <= ceiling) d];
+    final offers = <String>[];
+    if (kind == 'elite') {
+      final rares = [for (final d in diceOrder) if (dice[d]!.tier == 3) d];
+      offers.add(rares[offer.range(1, rares.length) - 1]);
+    }
+    final n = offer.range(2, 3);
+    final rest = [for (final d in pool) if (!offers.contains(d)) d];
+    while (offers.length < n && rest.isNotEmpty) {
+      offers.add(rest.removeAt(offer.range(1, rest.length) - 1));
+    }
+    node['offers'] = offers;
+    // Preview = the single best die on offer (highest tier, then size).
+    var best = offers[0];
+    for (final d in offers) {
+      final a = dice[d]!, b = dice[best]!;
+      if (a.tier > b.tier || (a.tier == b.tier && a.size > b.size)) best = d;
+    }
+    node['reward_preview'] = best;
+  }
 }
 
 void runChooseNode(Sim sim, Map cmd, List<Map<String, Object?>> events) {
@@ -489,16 +596,21 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
         'gold': run['gold'],
       });
     } else {
-      // Reward offers: 2–3 distinct die ids from the layer-tier-gated pool
-      // (loot stream, without replacement).
-      final ceiling = _tierCeiling(layer);
-      final poolIds =
-          [for (final id in diceOrder) if (dice[id]!.tier <= ceiling) id];
-      final count = sim.rng['loot']!.range(2, 3);
-      final pool = List<String>.from(poolIds);
-      final offers = <String>[];
-      for (var k = 0; k < count && pool.isNotEmpty; k++) {
-        offers.add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
+      // Reward offers were pre-resolved at start_run from the `offer` stream
+      // and telegraphed on the map node (m4 §5) — serve them verbatim so the
+      // preview is honest. Fallback (never expected) keeps old behavior.
+      var offers = (node['offers'] as List?)?.cast<String>().toList();
+      if (offers == null || offers.isEmpty) {
+        final ceiling = _tierCeiling(layer);
+        final poolIds =
+            [for (final id in diceOrder) if (dice[id]!.tier <= ceiling) id];
+        final count = sim.rng['loot']!.range(2, 3);
+        final pool = List<String>.from(poolIds);
+        offers = <String>[];
+        for (var k = 0; k < count && pool.isNotEmpty; k++) {
+          offers
+              .add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
+        }
       }
       sim.offers = offers;
       sim.phase = 'reward';

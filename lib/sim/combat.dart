@@ -18,8 +18,13 @@
 
 import '../data/dice.dart';
 import '../data/enemies.dart';
+import 'combos.dart';
 import 'relic_hooks.dart';
 import 'sim.dart';
+
+// Exact-kill / overkill tuning (docs/m4-sim-contract.md §4).
+const int exactKillEmbers = 5; // ember bonus for a kill at exactly 0 hp
+const int overkillSplashCap = 5; // surplus damage carried to the next enemy
 
 void _push(List<Map<String, Object?>> events, Map<String, Object?> ev) =>
     events.add(ev);
@@ -95,6 +100,12 @@ void combatBegin(
   sim.player['rolled_max'] = null;
   sim.player['assigned'] = <String, String>{};
   sim.player['rerolls_left'] = relicSum(sim, 'rerolls');
+  sim.player['combo_bonus'] = null;
+  sim.player['risky_used'] = false;
+  sim.player['free_reroll'] = false;
+  sim.player['free_reroll_next'] = false;
+  sim.player['ignited'] = false;
+  enemy['burn'] = 0;
   _push(events, {
     'type': 'encounter_started',
     'enemy': enemy['id'],
@@ -103,7 +114,75 @@ void combatBegin(
     'elite': elite,
   });
   _applyTurnBlock(sim, events);
+  // Overkill splash carried over from the previous encounter (m4 §4).
+  final splash = sim.run?['pending_splash'] as int? ?? 0;
+  if (splash > 0) {
+    sim.run!['pending_splash'] = 0;
+    var dmg = splash;
+    final hp = enemy['hp'] as int;
+    if (dmg >= hp) dmg = hp - 1; // splash softens, never pre-kills
+    if (dmg > 0) {
+      enemy['hp'] = hp - dmg;
+      _push(events, {
+        'type': 'splash_damage',
+        'amount': dmg,
+        'enemy_hp': enemy['hp'],
+      });
+    }
+  }
   _push(events, _intentEvent(enemy));
+}
+
+// ---------------------------------------------------------------------------
+// combos (m4 §3) — pure function of the rolled pool; NO RNG consumed here
+// ---------------------------------------------------------------------------
+
+// Detect combos over the current rolled values and (re)apply their effects.
+// Pair bonuses are recomputed in full; ignite fires at most once per turn.
+void _detectAndApplyCombos(Sim sim, List<Map<String, Object?>> events) {
+  final rolled = (sim.player['rolled'] as List).cast<int>();
+  final combos = detectCombos(rolled);
+  sim.player['combo_bonus'] = combos.bonus;
+  for (final pair in combos.pairs) {
+    _push(events, {
+      'type': 'combo_pair',
+      'value': pair.value,
+      'd1': pair.dice[0],
+      'd2': pair.dice[1],
+      'bonus': pairBonusPerDie * 2,
+    });
+  }
+  for (final triple in combos.triples) {
+    _push(events, {
+      'type': 'combo_triple',
+      'value': triple.value,
+      'count': triple.dice.length,
+    });
+  }
+  if (combos.hasTriple && sim.player['ignited'] != true) {
+    sim.player['ignited'] = true;
+    final enemy = sim.enemy!;
+    enemy['burn'] = (enemy['burn'] as int? ?? 0) + igniteBurnStacks;
+    _push(events, {
+      'type': 'burn_applied',
+      'stacks': igniteBurnStacks,
+      'total_burn': enemy['burn'],
+      'target': enemy['id'],
+    });
+  }
+  if (combos.hasStraight) {
+    final st = combos.straight!;
+    _push(events, {
+      'type': 'combo_straight',
+      'low': st.low,
+      'high': st.high,
+      'length': st.length,
+    });
+    if (sim.player['free_reroll_next'] != true) {
+      sim.player['free_reroll_next'] = true;
+      _push(events, {'type': 'free_reroll_earned'});
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -177,6 +256,64 @@ void combatRoll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     ev['d${i + 1}'] = values[i];
   }
   _push(events, ev);
+  _detectAndApplyCombos(sim, events);
+}
+
+/// cmd: { type:"reroll_risky", dice:[<1-based index>...] } — reroll any
+/// non-empty subset of unassigned dice, at most ONCE per turn. Cost: every
+/// rerolled die lands at its new face MINUS 1 pip (floor 1) — unless this
+/// turn's reroll is free (earned by a straight last turn). Consumes the
+/// seeded combat stream, one draw per die in ascending die order, so replays
+/// stay deterministic given the same commands. (docs/m4-sim-contract.md §2)
+void combatRerollRisky(Sim sim, Map cmd, List<Map<String, Object?>> events) {
+  if (sim.phase != 'player_turn' || sim.enemy == null) {
+    return _invalid(events, 'not_player_turn');
+  }
+  if (sim.combatOver != null) return _invalid(events, 'encounter_over');
+  final rolled = (sim.player['rolled'] as List?)?.cast<int>();
+  if (rolled == null) return _invalid(events, 'roll_first');
+  if (sim.player['risky_used'] == true) {
+    return _invalid(events, 'risky_reroll_used');
+  }
+  final raw = cmd['dice'];
+  if (raw is! List || raw.isEmpty) return _invalid(events, 'no_dice_chosen');
+  final picks = <int>[];
+  for (final d in raw) {
+    if (d is! int || d < 1 || d > rolled.length) {
+      return _invalid(events, 'no_such_die');
+    }
+    if (picks.contains(d)) return _invalid(events, 'duplicate_die');
+    if ((sim.player['assigned'] as Map)['$d'] != null) {
+      return _invalid(events, 'die_already_assigned');
+    }
+    picks.add(d);
+  }
+  picks.sort(); // ascending order = deterministic stream consumption
+  final free = sim.player['free_reroll'] == true;
+  final penalty = free ? 0 : 1;
+  final maxed = (sim.player['rolled_max'] as List).cast<bool>();
+  final ev = <String, Object?>{
+    'type': 'risky_reroll',
+    'count': picks.length,
+    'free': free,
+    'penalty': penalty,
+  };
+  for (var k = 0; k < picks.length; k++) {
+    final die = picks[k];
+    final tmp = <bool>[];
+    var v = _rollOne(
+        sim, (sim.player['dice'] as List)[die - 1] as String, tmp, events);
+    v -= penalty;
+    if (v < 1) v = 1;
+    rolled[die - 1] = v;
+    maxed[die - 1] = tmp.first && penalty == 0;
+    ev['r${k + 1}'] = die;
+    ev['v${k + 1}'] = v;
+  }
+  sim.player['risky_used'] = true;
+  sim.player['free_reroll'] = false;
+  _push(events, ev);
+  _detectAndApplyCombos(sim, events);
 }
 
 /// cmd: { type:"reroll", die:<1-based index> } — costs one reroll charge.
@@ -236,9 +373,11 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 
   if (action == 'attack') {
     if (mods['block_only'] == true) return _invalid(events, 'die_is_block_only');
+    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
     var value = rolled[die - 1] +
         (mods['attack_bonus'] as int? ?? 0) +
         bonus +
+        (combo != null ? combo[die - 1] : 0) +
         relicSum(sim, 'attack_flat');
     if (_isTough(enemy)) value += relicSum(sim, 'elite_damage');
     assigned['$die'] = 'attack';
@@ -256,14 +395,41 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       'blocked': absorbed,
       'enemy_hp': enemy['hp'],
     });
-    if ((enemy['hp'] as int) <= 0) _encounterWon(sim, events);
+    final hpAfter = enemy['hp'] as int;
+    if (hpAfter <= 0) {
+      if (hpAfter == 0) {
+        // Exact kill: small ember bonus (m4 §4). Pure arithmetic, no RNG.
+        if (sim.run != null) {
+          sim.run!['embers'] = (sim.run!['embers'] as int) + exactKillEmbers;
+          _push(events, {
+            'type': 'exact_kill',
+            'embers': exactKillEmbers,
+            'total': sim.run!['embers'],
+          });
+        }
+      } else {
+        // Overkill: surplus (capped) splashes into the next encounter's
+        // enemy — encounters are single-enemy, so "next living enemy" is
+        // the next one you meet (m4 §4).
+        var surplus = -hpAfter;
+        if (surplus > overkillSplashCap) surplus = overkillSplashCap;
+        if (sim.run != null) {
+          sim.run!['pending_splash'] =
+              (sim.run!['pending_splash'] as int? ?? 0) + surplus;
+          _push(events, {'type': 'overkill', 'surplus': surplus});
+        }
+      }
+      _encounterWon(sim, events);
+    }
   } else if (action == 'block') {
     if (mods['attack_only'] == true) {
       return _invalid(events, 'die_is_attack_only');
     }
+    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
     final value = rolled[die - 1] +
         (mods['block_bonus'] as int? ?? 0) +
         bonus +
+        (combo != null ? combo[die - 1] : 0) +
         relicSum(sim, 'block_flat');
     assigned['$die'] = 'block';
     sim.player['block'] = (sim.player['block'] as int) + value;
@@ -330,6 +496,23 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       'enemy_block': enemy['block'],
     });
   }
+  // Burn DoT (triple ignite) ticks at end of the enemy's action: damage =
+  // current stacks, then stacks decay by 1. Deterministic, no RNG.
+  final burn = enemy['burn'] as int? ?? 0;
+  if (burn > 0) {
+    enemy['hp'] = (enemy['hp'] as int) - burn;
+    enemy['burn'] = burn - 1;
+    _push(events, {
+      'type': 'burn_tick',
+      'amount': burn,
+      'stacks_left': enemy['burn'],
+      'enemy_hp': enemy['hp'],
+    });
+    if ((enemy['hp'] as int) <= 0) {
+      _encounterWon(sim, events);
+      return;
+    }
+  }
   if ((sim.player['hp'] as int) <= 0) {
     _encounterLost(sim, events);
     return;
@@ -339,11 +522,19 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
   sim.player['assigned'] = <String, String>{};
+  sim.player['combo_bonus'] = null;
+  sim.player['risky_used'] = false;
+  sim.player['ignited'] = false;
+  sim.player['free_reroll'] = sim.player['free_reroll_next'] == true;
+  sim.player['free_reroll_next'] = false;
   final pattern = enemy['pattern'] as List;
   enemy['pattern_index'] = ((enemy['pattern_index'] as int) % pattern.length) + 1;
   enemy['intent'] =
       Map<String, Object?>.from(pattern[(enemy['pattern_index'] as int) - 1] as Map);
   _push(events, {'type': 'turn_started', 'turn': sim.turn});
+  if (sim.player['free_reroll'] == true) {
+    _push(events, {'type': 'free_reroll_granted'});
+  }
   _applyTurnBlock(sim, events);
   _push(events, _intentEvent(enemy));
 }
