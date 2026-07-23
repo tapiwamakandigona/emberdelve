@@ -16,3 +16,20 @@
 2026-07-23 TESTS: flutter test green — 23 tests across sim (determinism/rules/persistence/golden), map (200-seed properties), content (schema), autoplay (balance band + ascension monotonicity). dart analyze clean (info lints only).
 2026-07-23 FULL FLUTTER UI + meta layer landed: lib/ui (theme/widgets/screens), lib/game/controller.dart (autosave+resume+ember banking), lib/meta (embers/unlocks/ascension via path_provider). 9 screen types, UXPeak-informed design system. flutter test 25/25 green (added widget smoke tests); flutter analyze clean. CI rewritten for Flutter (subosito/flutter-action: analyze+test -> build apk artifact). init.sh + PROJECT.md decision #1 updated for Flutter. Checkpoint 02 written. Remaining work is OWNER-GATED (device playthrough, CI green confirm, IAP, cloud save, paid assets).
 2026-07-23 FLUTTER CI GREEN: run 30004629450 (commit 2ed37a1) — analyze+test job success (flutter analyze clean, 25/25 tests), build job success -> debug APK artifact emberdelve-debug-apk (89.2MB). features.json CI entry passes=true. All remaining work is OWNER-GATED (device playthrough+screenshots, IAP, cloud save, Play closed test, paid art/audio, repo re-privatization after Actions billing).
+
+## 2026-07-23 — assets-integration branch (integration worker)
+Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
+- assets/images (sprite sheets, backgrounds, UI icons, sprite_meta.json) +
+  assets/audio (6 music, 20 SFX); ~15.5MB added; registered in pubspec.
+- SpriteView widget: sprite_meta-driven idle loops @8fps, FilterQuality.none.
+- Combat choreography: lunge + hit-flash + knockback; death = flash/fade
+  collapse (sheets have no attack/death frames — tween substitute, per plan).
+- AudioService (audioplayers ^6.1.0): per-screen music loops w/ crossfade,
+  boss_combat for elite/boss, victory/defeat stings, ember ambience bed,
+  20 SFX mapped to events; SYNC_POINTS.md timings honored in combat.
+- Settings screen (music/SFX volume + mutes, persisted JSON like MetaStore;
+  NOTE: repo uses path_provider JSON, not shared_preferences) + in-app
+  Credits & Licenses screen (bundled CREDITS.md; CC-BY ships in-app).
+- Launcher icons all densities (tool/gen_launcher_icons.py).
+- Tests: +3 asset-integrity tests (28 total). Sim core untouched; golden
+  513683311 unmoved.
