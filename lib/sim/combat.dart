@@ -518,6 +518,15 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       ev['block'] = intent['block'];
     }
     _push(events, ev);
+    // Player death resolves BEFORE thorns and burn (v0.3.2 zombie-win fix):
+    // the shown intent lands first, so a delver dropped to 0 by it is dead
+    // before their passive effects tick. Previously a thorns/burn kill on
+    // this same tick hit _encounterWon first and the run continued with the
+    // player at negative HP.
+    if ((sim.player['hp'] as int) <= 0) {
+      _encounterLost(sim, events);
+      return;
+    }
     // Thorns: attackers take damage after resolving an attack intent.
     final thorns = relicSum(sim, 'thorns');
     if (thorns > 0) {

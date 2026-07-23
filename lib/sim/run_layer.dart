@@ -352,14 +352,14 @@ void _openShop(Sim sim, int layer, List<Map<String, Object?>> events) {
   final discount = relicSum(sim, 'shop_discount');
   int price(int base) => (base * (100 - discount)) ~/ 100;
 
-  // 3 dice from diceOrder with tier <= ceiling (with replacement is fine; use
-  // distinct picks without replacement for variety).
+  // 3 dice from diceOrder with tier <= ceiling. Picked WITH replacement —
+  // duplicate stock is deliberate (buying two copies of the same die is
+  // legitimate in a dice-builder), and switching to without-replacement now
+  // would shift every seed's shop stream.
   final diePool = [for (final id in diceOrder) if (dice[id]!.tier <= ceiling) id];
   final dieSlots = <Map<String, Object?>>[];
-  final chosen = <String>[];
   for (var k = 0; k < 3 && diePool.isNotEmpty; k++) {
     final id = diePool[loot.range(1, diePool.length) - 1];
-    chosen.add(id);
     dieSlots.add({
       'kind': 'die',
       'id': id,
