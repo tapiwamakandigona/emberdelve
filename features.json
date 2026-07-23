@@ -103,8 +103,8 @@
       "id": "M2-3",
       "title": "CI: analyze + test gate -> Android APK artifact",
       "acceptance": "Workflow: flutter analyze + flutter test pass, then flutter build apk uploads artifact",
-      "passes": false,
-      "evidence": "PENDING CI RUN: .github/workflows/ci.yml rewritten for Flutter (subosito/flutter-action, analyze+test+build apk). Green run to be confirmed after push (Actions billing / repo visibility is owner-gated)."
+      "passes": true,
+      "evidence": "CI run 30004629450 (commit 2ed37a1) fully green: 'Analyze + test (headless)' success (flutter analyze + 25/25 tests), 'Build Android debug APK' success -> artifact emberdelve-debug-apk (89.2MB, not expired). https://github.com/tapiwamakandigona/emberdelve/actions/runs/30004629450"
     }
   ]
 }
