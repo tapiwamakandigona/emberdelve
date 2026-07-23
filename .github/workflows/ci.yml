@@ -7,32 +7,29 @@ on:
   workflow_dispatch:
 
 env:
-  # Defold 1.13.0 — pinned. Update sha1 + version together (d.defold.com/stable/info.json).
-  DEFOLD_SHA1: f735c12192bf95684e6ae1ae27c400b8170fc6d8
-  DEFOLD_VERSION: 1.13.0
+  # Flutter stable pinned. Update deliberately (channel stable, Dart >= 3.8.1).
+  FLUTTER_VERSION: 3.32.7
 
 jobs:
   test:
-    name: Sim tests (headless)
+    name: Analyze + test (headless)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Lua 5.4
-        run: sudo apt-get update -q && sudo apt-get install -y -q lua5.4
-      - name: Run simulation test suite
-        run: lua5.4 tests/run_tests.lua
-        env:
-          # M1 golden (SIM_VERSION 2, re-anchored 2026-07-23 after balance pass)
-          EMBERDELVE_GOLDEN: "311044885"
-      - name: Run map property tests
-        run: lua5.4 tests/map_tests.lua
-      - name: Run content tests
-        run: lua5.4 tests/content_tests.lua
-      - name: Run 100-seed autoplayer
-        run: lua5.4 tests/autoplay.lua
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Pub get
+        run: flutter pub get
+      - name: Analyze (fatal on warnings)
+        run: flutter analyze
+      - name: Test (sim determinism, map, content, autoplay balance, UI smoke)
+        run: flutter test
 
   build-android:
-    name: Bundle Android debug APK
+    name: Build Android debug APK
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -40,36 +37,20 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '25'
-      - name: Cache bob.jar
-        id: cache-bob
-        uses: actions/cache@v4
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
         with:
-          path: bob.jar
-          key: bob-${{ env.DEFOLD_SHA1 }}
-      - name: Download bob.jar
-        if: steps.cache-bob.outputs.cache-hit != 'true'
-        run: curl -sSL -o bob.jar "https://d.defold.com/archive/${DEFOLD_SHA1}/bob/bob.jar"
-      - name: Verify bob version
-        run: java -jar bob.jar --version
-      - name: Resolve dependencies
-        run: java -jar bob.jar resolve
-      - name: Build and bundle (debug APK, arm64 + armv7)
-        run: |
-          java -jar bob.jar \
-            --archive \
-            --platform armv7-android \
-            --architectures armv7-android,arm64-android \
-            --variant debug \
-            --bundle-format apk \
-            --bundle-output dist/bundle \
-            resolve build bundle
-      - name: List bundle output
-        run: find dist/bundle -type f | sort
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Pub get
+        run: flutter pub get
+      - name: Build debug APK
+        run: flutter build apk --debug
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: emberdelve-debug-apk
-          path: dist/bundle/**/*.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
           retention-days: 30

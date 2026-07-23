@@ -206,7 +206,7 @@ void runRest(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   sim.phase = 'map';
 }
 
-/// cmd: { type:"forge", die:<pool index 1-based>, into:<die id> }
+/// cmd: `{ type:"forge", die:<pool index 1-based>, into:<die id> }`
 void runForge(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (sim.phase != 'rest') return _invalid(events, 'not_rest_phase');
   final pool = sim.player['dice'] as List;

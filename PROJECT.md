@@ -14,7 +14,14 @@
 | Dev environment | `init.sh` |
 
 ## Standing decisions (do not relitigate without owner)
-1. **Engine:** Defold **1.13.0**, pinned by sha1 in `.github/workflows/ci.yml`. bob.jar requires OpenJDK 25.
+1. **Engine:** **Flutter/Dart** (stable 3.32.7, Dart ≥3.8.1). *Changed by owner
+   2026-07-23 ("remember we making this using flutter") for consistency with
+   their other apps (lanlink, quick bucks). Supersedes the original Defold
+   decision.* The sim core is a **sealed pure-Dart library** under `lib/sim/`
+   (no Flutter imports) so it stays deterministic and headless-testable — same
+   seam discipline as before. CI: `flutter analyze` + `flutter test` → `flutter
+   build apk`. The Defold-era Lua core was ported to Dart with proven 1:1 hash
+   parity (commit history), so the deterministic guarantees carry over.
 2. **Repo:** private (paid art/audio licenses forbid public raw-file redistribution). Releases may be public. CI runs on private-repo free minutes (2,000/mo); if exhausted, split a public build repo containing **no licensed assets**.
 3. **Architecture:** sealed pure-Lua simulation core (`sim/`) — commands in, events out, zero engine APIs inside. Presentation (Defold) renders events only. Never violate this seam.
 4. **Determinism:** all randomness via per-domain seeded streams (`sim/rng.lua`). Same seed + same commands ⇒ identical event/state hashes on every Lua VM. CI enforces it.
