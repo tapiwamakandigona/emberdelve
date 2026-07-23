@@ -5,3 +5,7 @@ pubspec.lock
 *.jks
 *.p12
 key.properties
+
+# Flutter generated
+.flutter-plugins-dependencies
+*.iml
