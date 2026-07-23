@@ -79,12 +79,25 @@ class GameController extends ChangeNotifier {
   String? get phase => sim?.phase;
   Map<String, Object?>? get state => sim?.state();
 
-  Future<void> _autosave() async {
-    if (sim == null) return;
-    try {
-      final f = await _runFile();
-      await f.writeAsString(jsonEncode(sim!.snapshot()));
-    } catch (_) {}
+  /// Serialized, atomic autosave: the snapshot is captured synchronously (so
+  /// it matches the state the command produced, even if `sim` moves on or is
+  /// dropped before the write lands), writes are chained on a queue (so two
+  /// rapid commands can't interleave bytes in one file), and each save goes
+  /// to a temp file first and is renamed into place (so a crash mid-write
+  /// can never leave a truncated save — boot would silently discard it).
+  Future<void> _saveQueue = Future.value();
+  Future<void> _autosave() {
+    if (sim == null) return Future.value();
+    final snap = jsonEncode(sim!.snapshot());
+    _saveQueue = _saveQueue.then((_) async {
+      try {
+        final f = await _runFile();
+        final tmp = File('${f.path}.tmp');
+        await tmp.writeAsString(snap, flush: true);
+        await tmp.rename(f.path);
+      } catch (_) {}
+    });
+    return _saveQueue;
   }
 
   void startRun(
@@ -318,11 +331,16 @@ class GameController extends ChangeNotifier {
     _clearSave();
   }
 
-  Future<void> _clearSave() async {
-    try {
-      final f = await _runFile();
-      if (await f.exists()) await f.delete();
-    } catch (_) {}
+  /// Chained on the same queue as [_autosave], so a pending queued save can
+  /// never resurrect a run the player just abandoned or finished.
+  Future<void> _clearSave() {
+    _saveQueue = _saveQueue.then((_) async {
+      try {
+        final f = await _runFile();
+        if (await f.exists()) await f.delete();
+      } catch (_) {}
+    });
+    return _saveQueue;
   }
 
   /// After a terminal screen, drop the sim so boot() -> title.
