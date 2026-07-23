@@ -9,7 +9,7 @@ State as of branch `v030-integration` (version `0.3.0+3`). Read alongside progre
 - **Release signing (permanent)**: Gradle `key.properties` signingConfig (debug fallback when absent); CI `build-android-release` (main pushes + dispatch, never PRs) builds signed APK+AAB, gated on apksigner cert fingerprint. Cert SHA-256 `03:1A:CB:42:56:6A:51:D5:B5:9F:FD:5D:EB:17:3F:1B:0E:81:7A:9E:DF:F1:BB:69:79:F6:85:64:D4:4B:7A:0D` (valid 2066). Keystore lives OUTSIDE the repo (owner-side, private). See `docs/release.md`.
 
 ## Verification (all reproduced by the integrator, not just workers)
-- `flutter analyze`: clean. `flutter test`: 54/54.
+- `flutter analyze`: clean. `flutter test`: 56/56 (post-review; earlier 54-test suite had one wall-clock-seeded flake, now pinned).
 - Autoplay 200 seeds: win 53.5% (band 20–80%), 0 invalid commands.
 - Signed-build CI run 30018705918 green; fingerprint gate passed.
 

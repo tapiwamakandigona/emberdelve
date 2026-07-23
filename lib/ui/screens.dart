@@ -938,11 +938,13 @@ class _CombatScreenState extends State<CombatScreen> {
           _note('PAIR +${e['bonus']}', icon: Icons.casino);
           break;
         case 'combo_triple':
-          _note('TRIPLE — IGNITE!',
-              color: EmberColors.danger, icon: Icons.local_fire_department);
+          // Ignite is announced by burn_applied (it only fires when the sim
+          // actually applies burn) — claiming IGNITE here would exaggerate.
+          _note('TRIPLE!',
+              color: EmberColors.danger, icon: Icons.casino);
           break;
         case 'burn_applied':
-          _note('+${e['stacks']} BURN',
+          _note('IGNITE +${e['stacks']} BURN',
               color: EmberColors.ember,
               icon: Icons.local_fire_department,
               onEnemy: true);
@@ -1895,7 +1897,11 @@ class ShopScreen extends StatelessWidget {
   const ShopScreen(this.c, {super.key});
   @override
   Widget build(BuildContext context) {
-    final slots = ((c.state!['shop'] as Map)['slots'] as List).cast<Map>();
+    // After leave_shop the PhaseSwitcher cross-fade keeps this screen mounted
+    // briefly while state['shop'] is already null — render nothing then.
+    final shop = c.state?['shop'] as Map?;
+    if (shop == null) return const SizedBox.shrink();
+    final slots = (shop['slots'] as List).cast<Map>();
     final gold = (c.state!['run'] as Map)['gold'] as int;
     return Column(children: [
       _TopBar(c),
@@ -1984,7 +1990,11 @@ class EventScreen extends StatelessWidget {
   const EventScreen(this.c, {super.key});
   @override
   Widget build(BuildContext context) {
-    final def = eventDef(c.state!['event'] as String);
+    // Same stale-frame guard as ShopScreen: event is null right after
+    // event_choose while the cross-fade is still showing this screen.
+    final eventId = c.state?['event'] as String?;
+    if (eventId == null) return const SizedBox.shrink();
+    final def = eventDef(eventId);
     return Column(children: [
       _TopBar(c),
       const SizedBox(height: Space.xl),

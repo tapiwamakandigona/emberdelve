@@ -128,7 +128,8 @@ clean.
 ## 7. Daily seed (backlog #9, sim part)
 
 `lib/sim/daily.dart`: `int dailySeed(int year, int month, int day)` — pure
-(no `DateTime.now()`, caller supplies the UTC date), returns a valid LCG seed
+(no `DateTime.now()`, caller supplies the date; the shipped controller uses
+the device's **local** calendar date), returns a valid LCG seed
 in `[1, 2^31−2]` via `hashDomainString('emberdelve-daily:YYYY-MM-DD')`. The
 controller starts "today's run" with `Sim(dailySeed(...))` (+ `boons:true` if
 desired) and every player gets the identical run.
@@ -183,7 +184,9 @@ the roster (elite/boss included; ascension schedule unchanged).
   needs a die multi-select + confirm that sends
   `{'type':'reroll_risky','dice':[...]}`, disabled once
   `player.risky_used == true`; show "FREE" when `player.free_reroll == true`.
-- Daily run: `dailySeed(y,m,d)` with the device's **UTC** date.
+- Daily run: `dailySeed(y,m,d)` with the device's **local** calendar date
+  (owner decision v0.3.0: local beats UTC so "today" matches the player's
+  clock; flip to `.toUtc()` in `startDailyRun` if global sync ever matters).
 - Saves: v3 snapshots are rejected (version 4); clear stale autosaves on
   upgrade like the 2→3 bump did.
 - Ghost-preview (#12) inputs: `player.combo_bonus[die-1]` + die mods + relic
