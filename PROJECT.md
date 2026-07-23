@@ -14,7 +14,7 @@
 | Dev environment | `init.sh` |
 
 ## Standing decisions (do not relitigate without owner)
-1. **Engine:** Defold **1.13.0**, pinned by sha1 in `.github/workflows/ci.yml`. bob.jar requires OpenJDK 25.
+1. **Engine:** **Flutter** (owner decision 2026-07-23, replacing Defold — she ships her other apps with it and wants its UI toolchain). Old Defold code is preserved read-only at `legacy/defold/` as the behavioral oracle; the Dart sim must stay bit-identical to it (see `docs/flutter-port-contract.md`). Signing/keystore locations for builds: `docs/release.md` — the permanent upload key already exists, **never generate a new one**.
 2. **Repo:** private (paid art/audio licenses forbid public raw-file redistribution). Releases may be public. CI runs on private-repo free minutes (2,000/mo); if exhausted, split a public build repo containing **no licensed assets**.
 3. **Architecture:** sealed pure-Lua simulation core (`sim/`) — commands in, events out, zero engine APIs inside. Presentation (Defold) renders events only. Never violate this seam.
 4. **Determinism:** all randomness via per-domain seeded streams (`sim/rng.lua`). Same seed + same commands ⇒ identical event/state hashes on every Lua VM. CI enforces it.
