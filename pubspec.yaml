@@ -11,9 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Save-file location for autosave/meta persistence (no other runtime deps —
-  # the sim core is sealed pure Dart).
+  # Save-file location for autosave/meta persistence (the sim core stays
+  # sealed pure Dart with zero runtime deps).
   path_provider: ^2.1.4
+  # Music loops + SFX one-shots (assets-integration).
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +24,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - CREDITS.md
+    - assets/images/sprite_meta.json
+    - assets/images/enemies/
+    - assets/images/characters/
+    - assets/images/backgrounds/
+    - assets/images/ui/
+    - assets/images/ui/dice/
+    - assets/images/ui/currency/
+    - assets/images/ui/events/
+    - assets/images/ui/nodes/
+    - assets/images/ui/relics/
+    - assets/audio/music/
+    - assets/audio/sfx/
   fonts:
     - family: Cinzel
       fonts:

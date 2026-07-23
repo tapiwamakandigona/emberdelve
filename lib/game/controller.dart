@@ -8,12 +8,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import '../audio/audio_service.dart';
 import '../meta/meta.dart';
 import '../sim/sim.dart';
 
 class GameController extends ChangeNotifier {
   Sim? sim;
   MetaState meta = MetaState();
+
+  /// Wired by main(); null in tests, so gameplay never depends on audio.
+  AudioService? audio;
   String? flash; // transient toast (invalid reasons, rewards, heals)
   bool _bankedThisRun = false;
 
@@ -40,7 +44,15 @@ class GameController extends ChangeNotifier {
       }
     } catch (_) {/* corrupt/absent save => title screen */}
     notifyListeners();
+    _syncAudio();
   }
+
+  bool get _bossFight {
+    final e = sim?.enemy;
+    return e != null && (e['boss'] == true || e['elite'] == true);
+  }
+
+  void _syncAudio() => audio?.syncPhase(phase, bossFight: _bossFight);
 
   String? get phase => sim?.phase;
   Map<String, Object?>? get state => sim?.state();
@@ -67,13 +79,30 @@ class GameController extends ChangeNotifier {
   }
 
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.
-  List<Map<String, Object?>> apply(Map<String, Object?> cmd) {
+  ///
+  /// [terminalHold]: when the command ends the encounter (won or lost), delay
+  /// the rebuild-notify by this long so the combat screen can finish its death
+  /// choreography before the phase switches. State/saves update immediately;
+  /// only the listener notification (and music change) is held.
+  List<Map<String, Object?>> apply(Map<String, Object?> cmd,
+      {Duration? terminalHold}) {
     if (sim == null) return const [];
     final events = sim!.apply(cmd);
     _handleFlash(events);
     if (_terminal.contains(sim!.phase)) _bankRun();
     _autosave();
-    notifyListeners();
+    audio?.handleEvents(events);
+    final ended = events.any((e) =>
+        e['type'] == 'encounter_won' || e['type'] == 'encounter_lost');
+    if (terminalHold != null && ended) {
+      Future.delayed(terminalHold, () {
+        notifyListeners();
+        _syncAudio();
+      });
+    } else {
+      notifyListeners();
+      _syncAudio();
+    }
     return events;
   }
 
@@ -144,11 +173,15 @@ class GameController extends ChangeNotifier {
   void endToTitle() {
     sim = null;
     notifyListeners();
+    _syncAudio();
   }
 
   bool unlock(String characterId) {
     final ok = meta.tryUnlock(characterId);
-    if (ok) MetaStore.save(meta);
+    if (ok) {
+      MetaStore.save(meta);
+      audio?.playSfx('unlock');
+    }
     notifyListeners();
     return ok;
   }

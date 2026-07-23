@@ -1,12 +1,17 @@
 // lib/ui/screens.dart — every screen, routed by sim.phase. Screens render only
 // from controller.state() and never poke sim internals. Layout is portrait,
 // one-thumb: the primary action lives in the bottom zone on every screen.
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
 import '../data/relics.dart';
 import '../game/controller.dart';
+import 'art.dart';
+import 'settings_screen.dart';
+import 'sprites.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -55,12 +60,18 @@ class GameRoot extends StatelessWidget {
           default:
             screen = TitleScreen(c);
         }
+        final enemy = c.state?['enemy'] as Map?;
+        final bossFight = enemy != null &&
+            (enemy['boss'] == true || enemy['elite'] == true);
         return Scaffold(
-          body: SafeArea(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              child: KeyedSubtree(
-                  key: ValueKey(phase ?? 'title'), child: screen),
+          body: ScreenBackground(
+            asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+            child: SafeArea(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: KeyedSubtree(
+                    key: ValueKey(phase ?? 'title'), child: screen),
+              ),
             ),
           ),
         );
@@ -81,6 +92,19 @@ class TitleScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(Space.xl),
       child: Column(children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: IconButton(
+            icon: const Icon(Icons.settings,
+                color: EmberColors.textDim, size: 26),
+            tooltip: 'Settings',
+            onPressed: () {
+              AudioService.instance?.playSfx('ui_tap');
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const SettingsScreen()));
+            },
+          ),
+        ),
         const Spacer(),
         Text('EMBERDELVE', style: EmberText.display, textAlign: TextAlign.center),
         const SizedBox(height: Space.s),
@@ -89,7 +113,8 @@ class TitleScreen extends StatelessWidget {
         const SizedBox(height: Space.xxl),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           ResourcePip(Icons.local_fire_department, EmberColors.ember,
-              m.embers, 'EMBERS'),
+              m.embers, 'EMBERS',
+              imageAsset: Art.currencyEmber),
           const SizedBox(width: Space.xl),
           _statText('${m.runsWon}/${m.runsPlayed}', 'WINS'),
         ]),
@@ -140,7 +165,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
     return Scaffold(
       appBar: AppBar(
           title: Text('Choose a delver', style: EmberText.h2),
-          backgroundColor: EmberColors.bg),
+          backgroundColor: EmberColors.bg,
+          leading: BackButton(onPressed: () {
+            AudioService.instance?.playSfx('ui_back');
+            Navigator.of(context).pop();
+          })),
       body: SafeArea(
         child: ListView(padding: const EdgeInsets.all(Space.l), children: [
           _nextUnlockBar(m),
@@ -209,6 +238,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
       child: Panel(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
+            // Static portrait frame from the character sheet (idle frame 0);
+            // animation stays reserved for the combat stage.
+            Opacity(
+              opacity: unlocked ? 1 : 0.45,
+              child: SpriteView(id, height: 56, animate: false),
+            ),
+            const SizedBox(width: Space.m),
             Expanded(child: Text(def.name, style: EmberText.h2)),
             if (!unlocked)
               Row(children: [
@@ -336,14 +372,22 @@ class MapScreen extends StatelessWidget {
                     ]
                   : null,
             ),
-            child: Center(
-              child: Icon(_kindIcon(kind), size: 20, color: Colors.white),
-            ),
+            child: Center(child: _nodeIcon(kind)),
           ),
         ),
       ),
     );
   }
+}
+
+/// Painted node icon when we have one; material glyph fallback (start node).
+Widget _nodeIcon(String kind) {
+  final asset = Art.nodeIcons[kind];
+  if (asset == null) {
+    return Icon(_kindIcon(kind), size: 20, color: Colors.white);
+  }
+  return Image.asset(asset,
+      width: 26, height: 26, filterQuality: FilterQuality.medium);
 }
 
 IconData _kindIcon(String kind) {
@@ -408,26 +452,172 @@ class CombatScreen extends StatefulWidget {
 
 class _CombatScreenState extends State<CombatScreen> {
   int? selected; // 1-based die index
+  bool _busy = false; // input lock while a choreography sequence plays
+
+  // Choreography flags (attack = lunge tween + hit-flash + knockback;
+  // death = flash + fade/collapse — the sheets have no attack/death frames).
+  bool _playerLunge = false, _enemyLunge = false;
+  bool _playerFlash = false, _enemyFlash = false;
+  bool _playerKnock = false, _enemyKnock = false;
+  bool _playerDying = false, _enemyDying = false;
+
+  // Cached combat view-model: during the end-of-encounter notify hold the sim
+  // has already left combat (enemy == null), but we keep rendering the stage.
+  Map? _enemy;
+  String _characterId = defaultCharacter;
+
+  // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
+  static const _contact = Duration(milliseconds: 250);
+  static const _knockTime = Duration(milliseconds: 140);
+  static const _flashTail = Duration(milliseconds: 120);
+  static const _deathTime = Duration(milliseconds: 700);
+
+  AudioService? get _audio => widget.c.audio;
+
+  Map<String, Object?>? _find(List<Map<String, Object?>> events, String type) {
+    for (final e in events) {
+      if (e['type'] == type) return e;
+    }
+    return null;
+  }
+
+  Future<void> _sleep(Duration d) => Future.delayed(d);
+
+  Future<void> _enemyDeath(List<Map<String, Object?>> events) async {
+    if (_find(events, 'encounter_won') == null) return;
+    _audio?.playSfx(_enemy?['boss'] == true ? 'boss_death' : 'enemy_death');
+    if (!mounted) return;
+    setState(() {
+      _enemyFlash = false;
+      _enemyDying = true;
+    });
+    await _sleep(_deathTime);
+  }
+
+  /// Player attack: lunge toward the enemy, whoosh leading contact by ~2
+  /// frames, then enemy_hit/block + hit-flash + knockback on the contact
+  /// frame; enemy_death/boss_death + fade-collapse if the blow kills.
+  Future<void> _attack() async {
+    if (_busy || selected == null) return;
+    _busy = true;
+    final events = widget.c.apply(
+        {'type': 'assign', 'die': selected, 'action': 'attack'},
+        terminalHold: const Duration(milliseconds: 1300));
+    selected = null;
+    final dmg = _find(events, 'damage_dealt');
+    if (dmg == null) {
+      // invalid command (e.g. block-only die): no swing
+      _busy = false;
+      if (mounted) setState(() {});
+      return;
+    }
+    _audio?.playSfx('whoosh');
+    setState(() => _playerLunge = true);
+    await _sleep(_contact);
+    if (!mounted) return;
+    final amount = dmg['amount'] as int? ?? 0;
+    final absorbed = dmg['blocked'] as int? ?? 0;
+    _audio?.playSfx(absorbed >= amount ? 'block' : 'enemy_hit');
+    setState(() {
+      _enemyFlash = true;
+      _enemyKnock = true;
+    });
+    await _sleep(_knockTime);
+    if (!mounted) return;
+    setState(() {
+      _playerLunge = false;
+      _enemyKnock = false;
+    });
+    if (_find(events, 'encounter_won') != null) {
+      await _enemyDeath(events);
+    } else {
+      await _sleep(_flashTail);
+      if (mounted) setState(() => _enemyFlash = false);
+    }
+    _busy = false;
+    if (mounted) setState(() {});
+  }
+
+  void _block() {
+    if (_busy || selected == null) return;
+    widget.c.apply({'type': 'assign', 'die': selected, 'action': 'block'});
+    setState(() => selected = null);
+  }
+
+  /// Enemy turn: mirrored choreography — enemy lunges, player_hit/block on
+  /// contact, defeat sting + player fade-collapse if the run ends here.
+  Future<void> _endTurn() async {
+    if (_busy) return;
+    _busy = true;
+    setState(() => selected = null);
+    final events = widget.c.apply({'type': 'end_turn'},
+        terminalHold: const Duration(milliseconds: 1450));
+    final atk = _find(events, 'enemy_attacked');
+    if (atk != null) {
+      _audio?.playSfx('whoosh');
+      setState(() => _enemyLunge = true);
+      await _sleep(_contact);
+      if (!mounted) return;
+      final damage = atk['damage'] as int? ?? 0;
+      _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
+      setState(() {
+        _playerFlash = true;
+        _playerKnock = true;
+      });
+      await _sleep(_knockTime);
+      if (!mounted) return;
+      setState(() {
+        _enemyLunge = false;
+        _playerKnock = false;
+      });
+      if (_find(events, 'encounter_lost') != null) {
+        _audio?.playSfx('defeat');
+        setState(() {
+          _playerFlash = false;
+          _playerDying = true;
+        });
+        await _sleep(const Duration(milliseconds: 800));
+      } else {
+        await _sleep(_flashTail);
+        if (mounted) setState(() => _playerFlash = false);
+      }
+    } else if (_find(events, 'enemy_blocked') != null) {
+      _audio?.playSfx('block', volume: 0.5);
+    }
+    // Thorns relics can kill the enemy during its own turn.
+    if (mounted) await _enemyDeath(events);
+    _busy = false;
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     final c = widget.c;
     final st = c.state!;
+    final liveEnemy = st['enemy'] as Map?;
+    if (liveEnemy != null) _enemy = liveEnemy;
+    final run = st['run'] as Map?;
+    if (run != null && run['character'] is String) {
+      _characterId = run['character'] as String;
+    }
+    final enemy = _enemy;
+    if (enemy == null) return const SizedBox.shrink();
     final player = st['player'] as Map;
-    final enemy = st['enemy'] as Map;
     final rolled = (player['rolled'] as List?)?.cast<int>();
-    final assigned = player['assigned'] as Map;
+    final assigned = (player['assigned'] as Map?) ?? const {};
     final maxed = (player['rolled_max'] as List?)?.cast<bool>();
     final dice0 = (player['dice'] as List).cast<String>();
-    final intent = enemy['intent'] as Map;
+    final intent = (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0};
     final rerolls = player['rerolls_left'] as int? ?? 0;
+    final enemyHp = (enemy['hp'] as int).clamp(0, enemy['max_hp'] as int);
 
     return Column(children: [
       _TopBar(c),
-      // Enemy zone
+      // Enemy header: name + intent + HP
       Padding(
-        padding: const EdgeInsets.all(Space.l),
+        padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
         child: Panel(
+          padding: const EdgeInsets.all(Space.m),
           child: Column(children: [
             Row(children: [
               Expanded(
@@ -440,28 +630,29 @@ class _CombatScreenState extends State<CombatScreen> {
                                   : EmberColors.textPrimary))),
               _IntentBadge(intent),
             ]),
-            const SizedBox(height: Space.m),
+            const SizedBox(height: Space.s),
             StatBar(
-                value: enemy['hp'] as int,
+                value: enemyHp,
                 max: enemy['max_hp'] as int,
-                block: enemy['block'] as int,
+                block: enemy['block'] as int? ?? 0,
                 color: EmberColors.danger,
                 label: 'ENEMY HP · TURN ${st['turn']}'),
           ]),
         ),
       ),
-      const Spacer(),
+      // The stage: hero (left) vs enemy (right), animated sprite loops.
+      Expanded(child: _stage(enemy)),
       // Player HP
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
         child: StatBar(
-            value: player['hp'] as int,
+            value: (player['hp'] as int).clamp(0, player['max_hp'] as int),
             max: player['max_hp'] as int,
             block: player['block'] as int,
             color: EmberColors.hp,
             label: 'YOUR HP'),
       ),
-      const SizedBox(height: Space.l),
+      const SizedBox(height: Space.m),
       // Dice tray
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -476,41 +667,40 @@ class _CombatScreenState extends State<CombatScreen> {
                   assigned: assigned['$i'] != null,
                   selected: selected == i,
                   maxed: maxed != null && maxed[i - 1],
-                  onTap: rolled == null
+                  onTap: rolled == null || _busy
                       ? null
-                      : () => setState(() => selected = selected == i ? null : i))
+                      : () => setState(
+                          () => selected = selected == i ? null : i))
           ],
         ),
       ),
-      const SizedBox(height: Space.l),
+      const SizedBox(height: Space.m),
       // Action zone (thumb reach)
       Padding(
-        padding: const EdgeInsets.all(Space.l),
+        padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.l),
         child: rolled == null
             ? SizedBox(
                 width: double.infinity,
                 child: EmberButton('Roll',
                     primary: true,
                     icon: Icons.casino,
-                    onTap: () {
-                      setState(() => selected = null);
-                      c.apply({'type': 'roll'});
-                    }))
+                    onTap: _busy
+                        ? null
+                        : () {
+                            setState(() => selected = null);
+                            c.apply({'type': 'roll'});
+                          }))
             : Column(children: [
                 Row(children: [
                   Expanded(
                       child: EmberButton('Attack',
                           icon: Icons.gps_fixed,
-                          onTap: selected != null
-                              ? () => _assign('attack')
-                              : null)),
+                          onTap: selected != null && !_busy ? _attack : null)),
                   const SizedBox(width: Space.m),
                   Expanded(
                       child: EmberButton('Block',
                           icon: Icons.shield,
-                          onTap: selected != null
-                              ? () => _assign('block')
-                              : null)),
+                          onTap: selected != null && !_busy ? _block : null)),
                 ]),
                 const SizedBox(height: Space.m),
                 Row(children: [
@@ -518,7 +708,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     Expanded(
                         child: EmberButton('Reroll ($rerolls)',
                             icon: Icons.replay,
-                            onTap: selected != null
+                            onTap: selected != null && !_busy
                                 ? () {
                                     c.apply({'type': 'reroll', 'die': selected});
                                     setState(() {});
@@ -528,19 +718,99 @@ class _CombatScreenState extends State<CombatScreen> {
                   Expanded(
                       child: EmberButton('End turn',
                           primary: true,
-                          onTap: () {
-                            setState(() => selected = null);
-                            c.apply({'type': 'end_turn'});
-                          })),
+                          onTap: _busy ? null : _endTurn)),
                 ]),
               ]),
       ),
     ]);
   }
 
-  void _assign(String action) {
-    widget.c.apply({'type': 'assign', 'die': selected, 'action': action});
-    setState(() => selected = null);
+  /// Hero vs enemy, bottom-aligned; lunges slide the combatant toward the
+  /// other side, knockback nudges away, death fades + sinks the sprite.
+  Widget _stage(Map enemy) {
+    final enemyId = enemy['id'] as String? ?? '';
+    final big = enemy['boss'] == true || enemy['elite'] == true;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: Space.s),
+            child: _combatant(
+              sprite: SpriteView(_characterId,
+                  key: ValueKey('hero-$_characterId'), height: 104),
+              lungeToward: 1,
+              lunge: _playerLunge,
+              knock: _playerKnock,
+              flash: _playerFlash,
+              dying: _playerDying,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: Space.s),
+            child: _combatant(
+              sprite: SpriteView(enemyId,
+                  key: ValueKey('enemy-$enemyId'),
+                  height: big ? 128 : 96,
+                  flipX: true),
+              lungeToward: -1,
+              lunge: _enemyLunge,
+              knock: _enemyKnock,
+              flash: _enemyFlash,
+              dying: _enemyDying,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _combatant({
+    required Widget sprite,
+    required int lungeToward, // +1 lunges right, -1 lunges left
+    required bool lunge,
+    required bool knock,
+    required bool flash,
+    required bool dying,
+  }) {
+    Widget w = sprite;
+    // Hit-flash: paint the sprite solid white for a beat.
+    w = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 60),
+      child: flash
+          ? ColorFiltered(
+              key: const ValueKey('flash'),
+              colorFilter:
+                  const ColorFilter.mode(Colors.white, BlendMode.srcATop),
+              child: w)
+          : KeyedSubtree(key: const ValueKey('plain'), child: w),
+    );
+    // Death: fade out while sinking (collapse).
+    w = AnimatedOpacity(
+      opacity: dying ? 0.0 : 1.0,
+      duration: _deathTime,
+      curve: Curves.easeIn,
+      child: AnimatedSlide(
+        offset: dying ? const Offset(0, 0.35) : Offset.zero,
+        duration: _deathTime,
+        curve: Curves.easeIn,
+        child: w,
+      ),
+    );
+    // Lunge toward the opponent / knockback away from them.
+    final dx = lunge
+        ? 1.15 * lungeToward
+        : knock
+            ? -0.22 * lungeToward
+            : 0.0;
+    return AnimatedSlide(
+      offset: Offset(dx, 0),
+      duration: lunge ? _contact : _knockTime,
+      curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
+      child: w,
+    );
   }
 }
 
@@ -800,7 +1070,8 @@ class ShopScreen extends StatelessWidget {
     } else if (kind == 'relic') {
       title = relicDef(id).name;
       desc = relicDef(id).text;
-      lead = const Icon(Icons.diamond, color: EmberColors.gold, size: 40);
+      lead = Image.asset(Art.relicIcon(id),
+          width: 44, height: 44, filterQuality: FilterQuality.medium);
     } else {
       title = 'Field Rations';
       desc = 'Heal ${slot['amount']} HP';
@@ -848,6 +1119,9 @@ class EventScreen extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
         child: Column(children: [
+          Image.asset(Art.eventIcon(def.id),
+              width: 96, height: 96, filterQuality: FilterQuality.medium),
+          const SizedBox(height: Space.l),
           Text(def.name, style: EmberText.h1, textAlign: TextAlign.center),
           const SizedBox(height: Space.m),
           Text(def.text, style: EmberText.body, textAlign: TextAlign.center),
@@ -954,10 +1228,12 @@ class _TopBar extends StatelessWidget {
         border: Border(bottom: BorderSide(color: EmberColors.line)),
       ),
       child: Row(children: [
-        ResourcePip(Icons.circle, EmberColors.gold, run['gold'] as int, 'GOLD'),
+        ResourcePip(Icons.circle, EmberColors.gold, run['gold'] as int, 'GOLD',
+            imageAsset: Art.currencyCoin),
         const SizedBox(width: Space.xl),
         ResourcePip(Icons.local_fire_department, EmberColors.ember,
-            run['embers'] as int, 'EMBERS'),
+            run['embers'] as int, 'EMBERS',
+            imageAsset: Art.currencyEmber),
         const Spacer(),
         Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
         const SizedBox(width: 4),
