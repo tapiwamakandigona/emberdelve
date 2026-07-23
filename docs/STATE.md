@@ -77,3 +77,16 @@ Golden v3 = 513683311. `flutter test` is the gate. See checkpoints/02-flutter-fu
 Remaining = OWNER-GATED only: on-device playthrough + screenshots (install the
 CI APK artifact from run 30004629450), IAP full-unlock, GPGS cloud save, Play
 closed test, paid art/audio, flip repo private once Actions billing is fixed.
+
+## UPDATE 2026-07-23 (checkpoint 03 — assets integrated, v0.2.0 released)
+- Curated CC0/CC-BY art/audio/animations fully integrated and merged to main
+  (01bc2f4 + fixes a51dc69); independent review APPROVE, 0 blocking.
+- **Release v0.2.0 live**: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.2.0
+  (release APK attached). CI green (30011499453, 30011501605). 29 tests.
+- Emulator live test: full flow VERIFIED (title→charselect→map→event→fight
+  incl. roll/attack UI). Image-decode failures + idle audio on the headless
+  swiftshader AVD are proven EMULATOR-ONLY — see checkpoints/03-assets-and-
+  release.md before "fixing" anything there. Real-device confirmation of art
+  + audio rendering is OWNER-GATED.
+- Asset PNGs are canonical-encoded; test/decode_probe_test.dart guards decode
+  integrity of every bundled image. Golden v3 = 513683311 unmoved.
