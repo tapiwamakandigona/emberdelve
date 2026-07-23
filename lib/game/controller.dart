@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
 import '../meta/meta.dart';
+import '../sim/daily.dart';
 import '../sim/sim.dart';
 
 class GameController extends ChangeNotifier {
@@ -21,12 +22,22 @@ class GameController extends ChangeNotifier {
   String? flash; // transient toast (invalid reasons, rewards, heals)
   bool _bankedThisRun = false;
 
+  /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
+  /// Presentation-only label (not persisted with the save — a resumed run
+  /// simply loses the badge, never any state).
+  String? dailyDate;
+
+  /// Tests inject a temp directory here; production uses path_provider.
+  final String? saveDirOverride;
+  GameController({this.saveDirOverride});
+
   static const _saveFile = 'emberdelve_run.json';
   static const _terminal = {'idle', 'run_won', 'run_lost'};
 
   Future<File> _runFile() async {
-    final dir = await getApplicationSupportDirectory();
-    return File('${dir.path}/$_saveFile');
+    final dir =
+        saveDirOverride ?? (await getApplicationSupportDirectory()).path;
+    return File('$dir/$_saveFile');
   }
 
   /// Boot: load meta, then resume a saved run if one is mid-flight.
@@ -40,9 +51,18 @@ class GameController extends ChangeNotifier {
             !_terminal.contains(snap['phase'])) {
           sim = Sim.restore(snap);
           _bankedThisRun = false;
+        } else {
+          // Stale (older SIM_VERSION) or already-finished save: clear it so
+          // the player lands on the title and starts fresh — no error wall.
+          await f.delete();
         }
       }
-    } catch (_) {/* corrupt/absent save => title screen */}
+    } catch (_) {
+      // Corrupt or restore-rejected save => title screen, and drop the file
+      // so the failure can't repeat on every boot.
+      sim = null;
+      await _clearSave();
+    }
     notifyListeners();
     _syncAudio();
   }
@@ -65,17 +85,49 @@ class GameController extends ChangeNotifier {
     } catch (_) {}
   }
 
-  void startRun({String? character, int ascension = 0}) {
+  void startRun(
+      {String? character,
+      int ascension = 0,
+      bool boons = false,
+      int? seed,
+      String? daily}) {
     // Deterministic-enough seed for real play; runs are still fully replayable
-    // from their seed. (Daily-seed mode can pin this later.)
-    final seed = DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
-    sim = Sim(seed);
+    // from their seed. Daily runs pin [seed] via [startDailyRun].
+    final s = seed ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    sim = Sim(s);
     _bankedThisRun = false;
+    dailyDate = daily;
     apply({
       'type': 'start_run',
       if (character != null) 'character': character,
       'ascension': ascension,
+      if (boons) 'boons': true,
     });
+  }
+
+  /// Daily Delve: everyone starts from the same seed for the device's local
+  /// calendar date (same map, same offers, same boon offering). No streaks,
+  /// no expiry — just a shared delve (spec §Ethics).
+  void startDailyRun({String? character}) {
+    final now = DateTime.now();
+    final label = '${now.year}-'
+        '${now.month.toString().padLeft(2, '0')}-'
+        '${now.day.toString().padLeft(2, '0')}';
+    startRun(
+        character: character,
+        seed: dailySeed(now.year, now.month, now.day),
+        boons: true,
+        daily: label);
+  }
+
+  /// Fast restart from the death/victory ledger: a new run (fresh seed) with
+  /// the same delver and ascension, straight into the boon pick.
+  void delveAgain() {
+    final run = sim?.run;
+    startRun(
+        character: run?['character'] as String?,
+        ascension: run?['ascension'] as int? ?? 0,
+        boons: true);
   }
 
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.
@@ -125,6 +177,9 @@ class GameController extends ChangeNotifier {
         case 'reward_skipped':
           flash = 'Reward skipped';
           break;
+        case 'splash_damage':
+          flash = 'Overkill splash — ${e['amount']} damage carried in';
+          break;
       }
     }
   }
@@ -141,6 +196,14 @@ class GameController extends ChangeNotifier {
         return 'Your pool is too small';
       case 'illegal_forge':
         return "That die can't be forged that way";
+      case 'risky_reroll_used':
+        return 'Risky reroll already spent this turn';
+      case 'die_already_assigned':
+        return "Assigned dice can't be rerolled";
+      case 'no_dice_chosen':
+        return 'Pick at least one die to reroll';
+      case 'roll_first':
+        return 'Roll before rerolling';
       default:
         return 'Not allowed';
     }
@@ -172,6 +235,7 @@ class GameController extends ChangeNotifier {
   /// After a terminal screen, drop the sim so boot() -> title.
   void endToTitle() {
     sim = null;
+    dailyDate = null;
     notifyListeners();
     _syncAudio();
   }
