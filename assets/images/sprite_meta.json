@@ -1,0 +1,381 @@
+{
+ "enemies": [
+  {
+   "id": "cinder_wisp",
+   "source_base": "imp",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ash_rat",
+   "source_base": "tiny_zombie",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "soot_shade",
+   "source_base": "zombie",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 3,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ember_beetle",
+   "source_base": "tiny_slug",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "soot_hound",
+   "source_base": "chort",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ash_wraith",
+   "source_base": "necromancer",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "cinder_crawler",
+   "source_base": "swampy",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ember_moth",
+   "source_base": "angel",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "slag_brute",
+   "source_base": "orc_warrior",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "pyre_howler",
+   "source_base": "wogol",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "kiln_golem",
+   "source_base": "big_zombie",
+   "frame_w": 64,
+   "frame_h": 72,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 2
+  },
+  {
+   "id": "ash_reaper",
+   "source_base": "skelet",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "forge_warden",
+   "source_base": "masked_orc",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "molten_maw",
+   "source_base": "big_demon",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ember_tyrant",
+   "source_base": "ogre",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  }
+ ],
+ "characters": [
+  {
+   "id": "kindler",
+   "source_base": "wizzard_m",
+   "frame_w": 48,
+   "frame_h": 84,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    },
+    {
+     "state": "hit",
+     "frames": 1,
+     "row": 2
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "warden",
+   "source_base": "knight_m",
+   "frame_w": 48,
+   "frame_h": 84,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    },
+    {
+     "state": "hit",
+     "frames": 1,
+     "row": 2
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "gambler",
+   "source_base": "elf_m",
+   "frame_w": 48,
+   "frame_h": 84,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    },
+    {
+     "state": "hit",
+     "frames": 1,
+     "row": 2
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ascetic",
+   "source_base": "doc",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  }
+ ]
+}
