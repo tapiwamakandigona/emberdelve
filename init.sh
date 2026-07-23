@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # init.sh — bring the Emberdelve (Flutter) dev environment up and prove it works.
-# Safe to re-run. Requires: bash, curl, git. Installs Flutter locally if missing.
+# Safe to re-run. Requires: bash, curl, git, and Flutter 3.32.7 on PATH.
 set -euo pipefail
 cd "$(dirname "$0")"
 
