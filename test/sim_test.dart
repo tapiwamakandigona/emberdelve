@@ -3,14 +3,20 @@
 // so these assertions also hold on any Dart VM.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/data/boons.dart';
+import 'package:emberdelve/data/dice.dart';
 import 'package:emberdelve/sim/sim.dart';
+import 'package:emberdelve/sim/combos.dart';
+import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/rng.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 
-// The v3 golden, re-anchored after the balance pass (see progress.md).
-// If this changes, sim behavior for existing seeds changed: bump SIM_VERSION
-// and document. Kept in sync with test/autoplay_test.dart.
-const int goldenV3 = 513683311;
+// The v4 golden, deliberately re-anchored for the gameplay-depth milestone
+// (combos, risky reroll, telegraphs, boons, exact-kill/overkill; SIM_VERSION
+// 3 -> 4). Old v3 golden: 513683311 (docs/m4-sim-contract.md documents the
+// old->new move). If this changes again, sim behavior for existing seeds
+// changed: bump SIM_VERSION and document.
+const int goldenV4 = 1117081416;
 
 void main() {
   group('rng', () {
@@ -78,7 +84,7 @@ void main() {
 
     test('golden determinism anchor (regression guard)', () {
       final sim = playRun(20260723).sim;
-      expect(sim.eventHash, equals(goldenV3));
+      expect(sim.eventHash, equals(goldenV4));
     });
   });
 
@@ -144,6 +150,258 @@ void main() {
         expect(r.sim.run!['embers'] >= 0, isTrue);
         expect(r.sim.run!['gold'] >= 0, isTrue);
       }
+    });
+  });
+
+  group('combos (v4) — pure function of the pool', () {
+    test('pair: exactly two equal values give +1 each (+2 total)', () {
+      final c = detectCombos([5, 5, 3]);
+      expect(c.pairs.length, equals(1));
+      expect(c.pairs[0].value, equals(5));
+      expect(c.pairs[0].dice, equals([1, 2]));
+      expect(c.bonus, equals([1, 1, 0]));
+      expect(c.hasTriple, isFalse);
+    });
+
+    test('triple: three+ equal values ignite (no pair bonus)', () {
+      final c = detectCombos([4, 4, 4]);
+      expect(c.hasTriple, isTrue);
+      expect(c.triples[0].value, equals(4));
+      expect(c.pairs, isEmpty);
+      expect(c.bonus, equals([0, 0, 0]));
+    });
+
+    test('straight: 3+ consecutive values detected, pairs coexist', () {
+      final c = detectCombos([2, 3, 4, 4]);
+      expect(c.hasStraight, isTrue);
+      expect(c.straight!.low, equals(2));
+      expect(c.straight!.high, equals(4));
+      expect(c.pairs.length, equals(1)); // the two 4s
+    });
+
+    test('no combo on all-distinct non-consecutive values', () {
+      final c = detectCombos([1, 3, 6]);
+      expect(c.pairs, isEmpty);
+      expect(c.hasTriple, isFalse);
+      expect(c.hasStraight, isFalse);
+    });
+
+    test('same pool always yields identical combos (pure, no RNG)', () {
+      final a = detectCombos([2, 2, 5, 6]);
+      final b = detectCombos([2, 2, 5, 6]);
+      expect(a.bonus, equals(b.bonus));
+      expect(a.pairs.length, equals(b.pairs.length));
+    });
+  });
+
+  group('risky reroll (v4)', () {
+    // Drive a bot run into the first player_turn with a fresh roll.
+    Sim intoRolledTurn(int seed) {
+      final sim = Sim(seed);
+      while (true) {
+        final cmd = botCmd(sim);
+        if (cmd == null) fail('run ended before combat (seed $seed)');
+        if (cmd['type'] == 'roll') {
+          sim.apply(cmd);
+          return sim;
+        }
+        sim.apply(cmd);
+      }
+    }
+
+    test('max once per turn; consumes the seeded combat stream', () {
+      final sim = intoRolledTurn(1);
+      final ev1 = sim.apply({'type': 'reroll_risky', 'dice': [1]});
+      expect(ev1.any((e) => e['type'] == 'risky_reroll'), isTrue);
+      final ev2 = sim.apply({'type': 'reroll_risky', 'dice': [2]});
+      expect(ev2.first['type'], equals('invalid_command'));
+      expect(ev2.first['reason'], equals('risky_reroll_used'));
+    });
+
+    test('rejects assigned dice, bad indices, empty and duplicate subsets',
+        () {
+      final sim = intoRolledTurn(1);
+      sim.apply({'type': 'assign', 'die': 1, 'action': 'block'});
+      expect(sim.apply({'type': 'reroll_risky', 'dice': [1]}).first['reason'],
+          equals('die_already_assigned'));
+      expect(sim.apply({'type': 'reroll_risky', 'dice': [99]}).first['reason'],
+          equals('no_such_die'));
+      expect(sim.apply({'type': 'reroll_risky', 'dice': []}).first['reason'],
+          equals('no_dice_chosen'));
+      expect(
+          sim.apply({'type': 'reroll_risky', 'dice': [2, 2]}).first['reason'],
+          equals('duplicate_die'));
+    });
+
+    test('replays are deterministic given the same commands', () {
+      List<int> play(int seed) {
+        final sim = intoRolledTurn(seed);
+        sim.apply({'type': 'reroll_risky', 'dice': [1, 2]});
+        return [(sim.player['rolled'] as List).cast<int>().fold(0, (a, b) => a + b),
+                sim.eventHash];
+      }
+      expect(play(7), equals(play(7)));
+    });
+  });
+
+  group('reward telegraphs (v4) — honest previews', () {
+    test('every fight/elite node carries offers + preview from the offer '
+        'stream; elites guarantee a tier-3 die', () {
+      for (var seed = 1; seed <= 40; seed++) {
+        final sim = Sim(seed);
+        sim.apply({'type': 'start_run'});
+        final nodes = (sim.map!['nodes'] as Map).cast<String, Map>();
+        nodes.forEach((id, node) {
+          final kind = node['kind'];
+          if (kind != 'fight' && kind != 'elite') {
+            expect(node['offers'], isNull, reason: 'seed $seed node $id');
+            return;
+          }
+          final offers = (node['offers'] as List).cast<String>();
+          expect(offers.length, inInclusiveRange(2, 3),
+              reason: 'seed $seed node $id offer count');
+          final preview = node['reward_preview'] as String;
+          expect(offers.contains(preview), isTrue,
+              reason: 'seed $seed node $id preview not among offers');
+          if (kind == 'elite') {
+            expect(offers.any((d) => dice[d]!.tier == 3), isTrue,
+                reason: 'seed $seed elite $id lacks a rare die');
+            expect(dice[preview]!.tier, equals(3),
+                reason: 'seed $seed elite $id preview not rare');
+          }
+        });
+      }
+    });
+
+    test('the reward actually offered matches the telegraphed offers', () {
+      var checked = 0;
+      for (var seed = 1; seed <= 20; seed++) {
+        final sim = Sim(seed);
+        while (true) {
+          final cmd = botCmd(sim);
+          if (cmd == null) break;
+          final evs = sim.apply(cmd);
+          for (final e in evs) {
+            if (e['type'] == 'reward_offered') {
+              final pos = sim.map!['position'];
+              final node = (sim.map!['nodes'] as Map)['$pos'] as Map;
+              final offers = (node['offers'] as List).cast<String>();
+              expect(sim.offers, equals(offers),
+                  reason: 'seed $seed node $pos telegraph mismatch');
+              checked++;
+            }
+          }
+        }
+      }
+      expect(checked, greaterThan(0));
+    });
+  });
+
+  group('starting boons (v4)', () {
+    test('start_run without boons goes straight to map (back-compat)', () {
+      final sim = Sim(1);
+      sim.apply({'type': 'start_run'});
+      expect(sim.phase, equals('map'));
+      expect(sim.boons, isNull);
+    });
+
+    test('boons:true offers a deterministic 1-of-3 from the boon stream', () {
+      final a = Sim(9);
+      a.apply({'type': 'start_run', 'boons': true});
+      expect(a.phase, equals('boon'));
+      expect(a.boons!.length, equals(3));
+      expect(a.boons!.toSet().length, equals(3)); // distinct
+      for (final id in a.boons!) {
+        expect(boons.containsKey(id), isTrue);
+      }
+      final b = Sim(9);
+      b.apply({'type': 'start_run', 'boons': true});
+      expect(b.boons, equals(a.boons)); // same seed => same offering
+    });
+
+    test('choose_boon applies effects and enters the map; 0 skips', () {
+      final sim = Sim(9);
+      sim.apply({'type': 'start_run', 'boons': true});
+      final id = sim.boons![0];
+      final diceBefore = (sim.player['dice'] as List).length;
+      final goldBefore = sim.run!['gold'] as int;
+      final evs = sim.apply({'type': 'choose_boon', 'index': 1});
+      expect(evs.any((e) => e['type'] == 'boon_chosen'), isTrue);
+      expect(sim.phase, equals('map'));
+      final fx = boons[id]!.effects;
+      if (fx.containsKey('gain_die')) {
+        expect((sim.player['dice'] as List).length, equals(diceBefore + 1));
+      }
+      if (fx.containsKey('gold')) {
+        expect(sim.run!['gold'], equals(goldBefore + (fx['gold'] as int)));
+      }
+      final skip = Sim(9);
+      skip.apply({'type': 'start_run', 'boons': true});
+      final evs2 = skip.apply({'type': 'choose_boon', 'index': 0});
+      expect(evs2.any((e) => e['type'] == 'boon_skipped'), isTrue);
+      expect(skip.phase, equals('map'));
+    });
+  });
+
+  group('daily seed (v4)', () {
+    test('pure: same date => same seed; different dates differ', () {
+      expect(dailySeed(2026, 7, 24), equals(dailySeed(2026, 7, 24)));
+      expect(dailySeed(2026, 7, 24), isNot(equals(dailySeed(2026, 7, 25))));
+      expect(dailySeed(2026, 7, 24), isNot(equals(dailySeed(2027, 7, 24))));
+    });
+
+    test('seed is a valid LCG seed and drives identical runs', () {
+      final s = dailySeed(2026, 12, 31);
+      expect(s, greaterThan(0));
+      expect(s, lessThan(2147483647));
+      expect(playRun(s).sim.eventHash, equals(playRun(s).sim.eventHash));
+    });
+  });
+
+  group('exact-kill / overkill / burn (v4) — observed in real runs', () {
+    test('the new mechanics all fire across 60 bot runs', () {
+      final seen = <String>{};
+      for (var seed = 1; seed <= 60; seed++) {
+        final sim = Sim(seed);
+        while (true) {
+          final cmd = botCmd(sim);
+          if (cmd == null) break;
+          for (final e in sim.apply(cmd)) {
+            seen.add(e['type'] as String);
+          }
+        }
+      }
+      for (final t in [
+        'combo_pair', 'combo_triple', 'combo_straight', 'burn_applied',
+        'burn_tick', 'free_reroll_earned', 'risky_reroll', 'exact_kill',
+        'overkill', 'splash_damage', 'boon_offered', 'boon_chosen',
+      ]) {
+        expect(seen.contains(t), isTrue, reason: 'event $t never observed');
+      }
+    });
+
+    test('overkill surplus is capped and softens the next enemy', () {
+      // Scan runs for an overkill followed by a splash_damage <= cap.
+      for (var seed = 1; seed <= 60; seed++) {
+        final sim = Sim(seed);
+        int? pending;
+        while (true) {
+          final cmd = botCmd(sim);
+          if (cmd == null) break;
+          for (final e in sim.apply(cmd)) {
+            if (e['type'] == 'overkill') {
+              expect(e['surplus'] as int, inInclusiveRange(1, 5));
+              pending = e['surplus'] as int;
+            }
+            if (e['type'] == 'splash_damage' && pending != null) {
+              expect(e['amount'] as int, lessThanOrEqualTo(pending));
+              expect(e['enemy_hp'] as int, greaterThanOrEqualTo(1));
+              return; // proven once
+            }
+          }
+        }
+      }
+      fail('no overkill->splash sequence observed in 60 runs');
     });
   });
 }

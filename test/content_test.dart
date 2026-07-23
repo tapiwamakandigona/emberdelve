@@ -6,6 +6,7 @@ import 'package:emberdelve/data/enemies.dart';
 import 'package:emberdelve/data/relics.dart';
 import 'package:emberdelve/data/events.dart';
 import 'package:emberdelve/data/characters.dart';
+import 'package:emberdelve/data/boons.dart';
 
 const legalDieMods = {
   'attack_bonus', 'block_bonus', 'min_value', 'on_max_bonus',
@@ -16,6 +17,7 @@ const legalRelicHooks = {
   'on_max_gold', 'thorns', 'heal_after_fight', 'gold_bonus', 'ember_bonus',
   'elite_damage', 'rest_bonus', 'rerolls', 'shop_discount'
 };
+const legalBoonEffects = {'gold', 'max_hp', 'gain_die', 'embers'};
 const legalEffects = {
   'gold', 'gold_after', 'hp', 'max_hp', 'embers', 'heal_pct', 'gain_die',
   'gain_random_die', 'lose_random_die', 'gain_random_relic'
@@ -89,6 +91,23 @@ void main() {
         if (gd != null) {
           expect(dice.containsKey(gd), isTrue, reason: '$id gain_die unknown $gd');
         }
+      }
+    });
+  });
+
+  test('boons: order matches, legal effects, valid gain_die ids, >=6 ids', () {
+    expect(boonsOrder.toSet(), equals(boons.keys.toSet()));
+    expect(boons.length, greaterThanOrEqualTo(6));
+    boons.forEach((id, b) {
+      expect(b.id, equals(id));
+      expect(b.name.isNotEmpty, isTrue);
+      expect(b.effects.isNotEmpty, isTrue);
+      for (final k in b.effects.keys) {
+        expect(legalBoonEffects.contains(k), isTrue, reason: '$id bad effect $k');
+      }
+      final gd = b.effects['gain_die'];
+      if (gd != null) {
+        expect(dice.containsKey(gd), isTrue, reason: '$id gain_die unknown $gd');
       }
     });
   });

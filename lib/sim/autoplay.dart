@@ -2,6 +2,7 @@
 // SEALED-adjacent: pure Dart, drives ONLY the public v3 command set. Shared by
 // bin/autoplay.dart (stats) and test/autoplay_test.dart (gates).
 
+import '../data/boons.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
 import 'sim.dart';
@@ -9,7 +10,10 @@ import 'sim.dart';
 /// A pure function of sim.state() -> next command (or null at terminal). The
 /// bot spends gold in shops, forges duplicates upward at rests, takes value
 /// events, and plays fights greedily (block vs the shown intent, else attack).
-Map<String, Object?>? botCmd(Sim sim, {String? character, int ascension = 0}) {
+/// v4: it also takes a starting boon, risky-rerolls dead dice (1s), and hunts
+/// exact kills when attacking (docs/m4-sim-contract.md).
+Map<String, Object?>? botCmd(Sim sim,
+    {String? character, int ascension = 0, bool boons = true}) {
   final phase = sim.phase;
   switch (phase) {
     case 'idle':
@@ -17,7 +21,17 @@ Map<String, Object?>? botCmd(Sim sim, {String? character, int ascension = 0}) {
         'type': 'start_run',
         if (character != null) 'character': character,
         'ascension': ascension,
+        if (boons) 'boons': true,
       };
+    case 'boon':
+      // Prefer a die boon (permanent pool value), else take the first.
+      final picks = sim.boons!;
+      for (var i = 0; i < picks.length; i++) {
+        if (boonDef(picks[i]).effects.containsKey('gain_die')) {
+          return {'type': 'choose_boon', 'index': i + 1};
+        }
+      }
+      return {'type': 'choose_boon', 'index': 1};
     case 'map':
       final map = sim.map!;
       final position = map['position'] as int;
@@ -47,6 +61,39 @@ Map<String, Object?>? botCmd(Sim sim, {String? character, int ascension = 0}) {
       final rolled = (sim.player['rolled'] as List?)?.cast<int>();
       if (rolled == null) return {'type': 'roll'};
       final assigned = sim.player['assigned'] as Map;
+      // Risky reroll (once per turn): before assigning anything, reroll dead
+      // dice. A rolled 1 is +EV to reroll even with the -1-pip cost; with a
+      // free reroll (straight earned) widen the net to 1s and 2s.
+      if (sim.player['risky_used'] != true && assigned.isEmpty) {
+        final free = sim.player['free_reroll'] == true;
+        final threshold = free ? 2 : 1;
+        final picks = <int>[
+          for (var i = 1; i <= rolled.length; i++)
+            if (rolled[i - 1] <= threshold) i
+        ];
+        if (picks.isNotEmpty) return {'type': 'reroll_risky', 'dice': picks};
+      }
+      final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
+      int attackValue(int i) {
+        final mods =
+            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        return rolled[i - 1] +
+            (mods['attack_bonus'] as int? ?? 0) +
+            (combo != null ? combo[i - 1] : 0);
+      }
+      // Exact-kill hunt: if some unassigned attack-capable die kills the
+      // enemy at exactly 0 hp (through block), assign it first.
+      final enemy = sim.enemy!;
+      final lethal = (enemy['hp'] as int) + (enemy['block'] as int);
+      for (var i = 1; i <= rolled.length; i++) {
+        if (assigned['$i'] != null) continue;
+        final mods =
+            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        if (mods['block_only'] == true) continue;
+        if (attackValue(i) == lethal) {
+          return {'type': 'assign', 'die': i, 'action': 'attack'};
+        }
+      }
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] == null) {
           final mods = dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
@@ -137,11 +184,16 @@ class RunResult {
 }
 
 RunResult playRun(int seed,
-    {String? character, int ascension = 0, int? snapAt, int maxCmds = 4000}) {
+    {String? character,
+    int ascension = 0,
+    bool boons = true,
+    int? snapAt,
+    int maxCmds = 4000}) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
   while (applied < maxCmds) {
-    final cmd = botCmd(sim, character: character, ascension: ascension);
+    final cmd =
+        botCmd(sim, character: character, ascension: ascension, boons: boons);
     if (cmd == null) break;
     final evs = sim.apply(cmd);
     applied += 1;

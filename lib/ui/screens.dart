@@ -2,14 +2,18 @@
 // from controller.state() and never poke sim internals. Layout is portrait,
 // one-thumb: the primary action lives in the bottom zone on every screen.
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
+import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
 import '../data/relics.dart';
 import '../game/controller.dart';
 import 'art.dart';
+import 'fx.dart';
+import 'logo.dart';
 import 'settings_screen.dart';
 import 'sprites.dart';
 import 'theme.dart';
@@ -35,6 +39,9 @@ class GameRoot extends StatelessWidget {
         final phase = c.phase;
         Widget screen;
         switch (phase) {
+          case 'boon':
+            screen = BoonScreen(c);
+            break;
           case 'map':
             screen = MapScreen(c);
             break;
@@ -63,12 +70,15 @@ class GameRoot extends StatelessWidget {
         final enemy = c.state?['enemy'] as Map?;
         final bossFight = enemy != null &&
             (enemy['boss'] == true || enemy['elite'] == true);
+        // Flame-wipe smash-cut into combat; fade-through-black elsewhere
+        // (visuals.md #12 — the stock cross-fade dies here).
         return Scaffold(
-          body: ScreenBackground(
-            asset: Art.backgroundForPhase(phase, bossFight: bossFight),
-            child: SafeArea(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
+          body: PhaseSwitcher(
+            phaseKey: phase ?? 'title',
+            flameWipe: phase == 'player_turn',
+            child: ScreenBackground(
+              asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+              child: SafeArea(
                 child: KeyedSubtree(
                     key: ValueKey(phase ?? 'title'), child: screen),
               ),
@@ -89,53 +99,81 @@ class TitleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = c.meta;
-    return Padding(
-      padding: const EdgeInsets.all(Space.xl),
-      child: Column(children: [
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            icon: const Icon(Icons.settings,
-                color: EmberColors.textDim, size: 26),
-            tooltip: 'Settings',
-            onPressed: () {
-              AudioService.instance?.playSfx('ui_tap');
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const SettingsScreen()));
-            },
+    return Stack(fit: StackFit.expand, children: [
+      const Vignette(strength: 0.55),
+      const EmberDrift(count: 30),
+      Padding(
+        padding: const EdgeInsets.all(Space.xl),
+        child: Column(children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+              icon: const Icon(Icons.settings,
+                  color: EmberColors.textDim, size: 26),
+              tooltip: 'Settings',
+              onPressed: () {
+                AudioService.instance?.playSfx('ui_tap');
+                Navigator.of(context)
+                    .push(emberRoute((_) => const SettingsScreen()));
+              },
+            ),
           ),
-        ),
-        const Spacer(),
-        Text('EMBERDELVE', style: EmberText.display, textAlign: TextAlign.center),
-        const SizedBox(height: Space.s),
-        Text('A dice-builder delve into the dark',
-            style: EmberText.bodyDim, textAlign: TextAlign.center),
-        const SizedBox(height: Space.xxl),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          ResourcePip(Icons.local_fire_department, EmberColors.ember,
-              m.embers, 'EMBERS',
-              imageAsset: Art.currencyEmber),
-          const SizedBox(width: Space.xl),
-          _statText('${m.runsWon}/${m.runsPlayed}', 'WINS'),
+          const Spacer(),
+          // Drawn logotype: glow bloom + charred-top/molten-bottom fill +
+          // spark pinpricks (visuals.md #1 — never a plain Text).
+          const EmberLogotype('EMBERDELVE', fontSize: 42),
+          const SizedBox(height: Space.s),
+          Text('A dice-builder delve into the dark',
+              style: EmberText.bodyDim, textAlign: TextAlign.center),
+          const SizedBox(height: Space.xl),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ResourcePip(Icons.local_fire_department, EmberColors.ember,
+                m.embers, 'EMBERS',
+                imageAsset: Art.currencyEmber),
+            const SizedBox(width: Space.xl),
+            _statText('${m.runsWon}/${m.runsPlayed}', 'WINS'),
+          ]),
+          const Spacer(),
+          // The delver, idling by a fire while the dark waits below.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: const [
+              SpriteView(defaultCharacter, height: 72),
+              SizedBox(width: Space.l),
+              CampFire(size: 40),
+            ],
+          ),
+          const SizedBox(height: Space.xxl),
+          // Primary CTA in the thumb zone.
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Delve',
+                primary: true,
+                icon: Icons.bolt,
+                onTap: () =>
+                    c.startRun(character: defaultCharacter, boons: true)),
+          ),
+          const SizedBox(height: Space.m),
+          // Daily Delve: one shared seed per local calendar date — everyone
+          // gets the same delve. No streaks, no expiry pressure (§Ethics).
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Daily Delve — ${_dailyLabel()}',
+                icon: Icons.today,
+                onTap: () => c.startDailyRun(character: defaultCharacter)),
+          ),
+          const SizedBox(height: Space.m),
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Choose a delver',
+                ghost: true,
+                onTap: () => Navigator.of(context)
+                    .push(emberRoute((_) => CharacterScreen(c)))),
+          ),
         ]),
-        const Spacer(),
-        // Primary CTA in the thumb zone.
-        SizedBox(
-          width: double.infinity,
-          child: EmberButton('Delve',
-              primary: true,
-              icon: Icons.bolt,
-              onTap: () => c.startRun(character: defaultCharacter)),
-        ),
-        const SizedBox(height: Space.m),
-        SizedBox(
-          width: double.infinity,
-          child: EmberButton('Choose a delver',
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => CharacterScreen(c)))),
-        ),
-      ]),
-    );
+      ),
+    ]);
   }
 
   Widget _statText(String v, String l) => Column(mainAxisSize: MainAxisSize.min,
@@ -143,6 +181,88 @@ class TitleScreen extends StatelessWidget {
             Text(v, style: EmberText.value.copyWith(fontSize: 18)),
             Text(l, style: EmberText.micro),
           ]);
+
+  /// Local calendar date the daily seed is drawn from, e.g. "Jul 24".
+  static String _dailyLabel() {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    final now = DateTime.now();
+    return '${months[now.month - 1]} ${now.day}';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Boon pick — 1-of-3 starting blessing, always skippable (spec §Ethics: no
+// timer, no decay; the offer is exactly what the sim telegraphed).
+// ---------------------------------------------------------------------------
+class BoonScreen extends StatelessWidget {
+  final GameController c;
+  const BoonScreen(this.c, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    final boonIds = ((c.state!['boons']) as List?)?.cast<String>() ?? const [];
+    return Stack(fit: StackFit.expand, children: [
+      const Vignette(strength: 0.5),
+      const EmberDrift(count: 16, opacity: 0.6),
+      Column(children: [
+        _TopBar(c),
+        const SizedBox(height: Space.xl),
+        Text('Choose a boon', style: EmberText.h1),
+        const SizedBox(height: Space.xs),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+          child: Text('A blessing for this delve — or walk in unaided.',
+              style: EmberText.bodyDim, textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: Space.l),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            children: [
+              for (var i = 0; i < boonIds.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.m),
+                  child: _boonCard(context, boonIds[i], i + 1),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(Space.l),
+          child: SizedBox(
+            width: double.infinity,
+            child: EmberButton('Skip — delve unaided',
+                key: const ValueKey('boon-skip'),
+                onTap: () => c.apply({'type': 'choose_boon', 'index': 0})),
+          ),
+        ),
+      ]),
+    ]);
+  }
+
+  Widget _boonCard(BuildContext context, String id, int index) {
+    final def = boonDef(id);
+    return GestureDetector(
+      key: ValueKey('boon-$index'),
+      onTap: () => c.apply({'type': 'choose_boon', 'index': index}),
+      child: Panel(
+        child: Row(children: [
+          const Icon(Icons.auto_awesome, color: EmberColors.gold, size: 28),
+          const SizedBox(width: Space.l),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(def.name, style: EmberText.h2),
+              const SizedBox(height: Space.xs),
+              Text(def.text, style: EmberText.bodyDim),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -266,7 +386,8 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     primary: id == defaultCharacter,
                     onTap: () {
                       Navigator.of(context).pop();
-                      c.startRun(character: id, ascension: ascension);
+                      c.startRun(
+                          character: id, ascension: ascension, boons: true);
                     })
                 : EmberButton(
                     canAfford ? 'Unlock (${def.unlockEmbers} embers)' : 'Locked',
@@ -286,93 +407,215 @@ class _CharacterScreenState extends State<CharacterScreen> {
 // ---------------------------------------------------------------------------
 // Map
 // ---------------------------------------------------------------------------
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   final GameController c;
   const MapScreen(this.c, {super.key});
   @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen>
+    with SingleTickerProviderStateMixin {
+  // Pulse for reachable-node glow (one controller for the whole scene).
+  late final AnimationController _pulse = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 1600))
+    ..repeat(reverse: true);
+
+  // Where the delver marker last stood, kept across map visits so the marker
+  // visibly walks node-to-node after each encounter.
+  static int? _walkFrom;
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  // Node geometry (shared by nodes, trails, and the marker).
+  static const double _nodeSize = 52;
+  static const double _rowH = 96;
+  static Offset _center(Map n, double w) {
+    final x = (n['x'] as num).toDouble();
+    final layer = n['layer'] as int;
+    return Offset(28 + x * (w - 56 - _nodeSize) + _nodeSize / 2,
+        (layer - 1) * _rowH + 20 + _nodeSize / 2); // in bottom-up coords
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final c = widget.c;
     final st = c.state!;
     final map = st['map'] as Map;
     final nodes = (map['nodes'] as Map).cast<String, Map>();
     final edges = (map['edges'] as Map).cast<String, List>();
     final layers = map['layers'] as int;
     final position = map['position'] as int;
-    final reachable =
-        (edges['$position'] as List).cast<int>().toSet();
+    final reachable = (edges['$position'] as List).cast<int>().toSet();
     final run = st['run'] as Map;
+    final characterId = run['character'] as String? ?? defaultCharacter;
+    final curLayer = (nodes['$position']?['layer'] as int?) ?? 1;
+    if (_walkFrom == null || !nodes.containsKey('$_walkFrom')) {
+      _walkFrom = position;
+    }
 
-    return Column(children: [
-      _TopBar(c),
-      Expanded(
-        child: LayoutBuilder(builder: (context, cns) {
-          return SingleChildScrollView(
-            reverse: true,
-            child: SizedBox(
-              height: layers * 96.0 + 40,
-              width: cns.maxWidth,
-              child: CustomPaint(
-                painter: _EdgePainter(nodes, edges, cns.maxWidth, layers),
-                child: Stack(
-                  children: [
-                    for (final e in nodes.entries)
-                      _nodeWidget(context, e.value, cns.maxWidth, layers,
-                          position, reachable),
-                  ],
-                ),
+    return Stack(fit: StackFit.expand, children: [
+      Column(children: [
+        _TopBar(c),
+        Expanded(
+          child: LayoutBuilder(builder: (context, cns) {
+            final h = layers * _rowH + 40;
+            return SingleChildScrollView(
+              reverse: true,
+              child: SizedBox(
+                height: h,
+                width: cns.maxWidth,
+                child: Stack(children: [
+                  // Trails + fog-of-war + descent tint, painted once.
+                  RepaintBoundary(
+                    child: CustomPaint(
+                      size: Size(cns.maxWidth, h),
+                      painter: _MapScenePainter(nodes, edges, cns.maxWidth,
+                          layers, position, reachable, curLayer),
+                    ),
+                  ),
+                  for (final e in nodes.entries)
+                    _nodeWidget(context, e.value, cns.maxWidth, position,
+                        reachable),
+                  // Honest reward telegraphs: the sim pre-resolves each
+                  // fight/elite node's offers at start_run; the badge shows
+                  // its `reward_preview` verbatim (never invented here).
+                  for (final e in nodes.entries)
+                    if (e.value['reward_preview'] is String)
+                      _telegraphBadge(e.value, cns.maxWidth, reachable),
+                  _delverMarker(nodes, cns.maxWidth, h, position, characterId),
+                ]),
               ),
-            ),
-          );
-        }),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(Space.l),
-        child: Text('Tap a glowing node to advance · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
-            style: EmberText.micro, textAlign: TextAlign.center),
-      ),
+            );
+          }),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(Space.l),
+          child: Text(
+              'Tap a glowing node to descend · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
+              style: EmberText.micro, textAlign: TextAlign.center),
+        ),
+      ]),
+      // Ambient embers rising off the delve.
+      const EmberDrift(count: 18, opacity: 0.7),
     ]);
   }
 
-  Widget _nodeWidget(BuildContext context, Map node, double w, int layers,
-      int position, Set<int> reachable) {
+  /// The "you are here" delver, walking from the previous node to this one.
+  Widget _delverMarker(Map<String, Map> nodes, double w, double h,
+      int position, String characterId) {
+    final from = _center(nodes['$_walkFrom'] ?? nodes['$position']!, w);
+    final to = _center(nodes['$position']!, w);
+    final walkKey = '$_walkFrom>$position';
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(walkKey),
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(
+          milliseconds: _walkFrom == position ? 1 : 650),
+      curve: Curves.easeInOut,
+      onEnd: () => _walkFrom = position,
+      builder: (context, f, child) {
+        final p = Offset.lerp(from, to, f)!;
+        // Little hop while walking.
+        final hop = _walkFrom == position
+            ? 0.0
+            : (math.sin(f * math.pi * 4).abs() * 4);
+        return Positioned(
+          left: p.dx - 14,
+          bottom: p.dy + _nodeSize / 2 - 6 + hop,
+          child: child!,
+        );
+      },
+      child: IgnorePointer(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          SpriteView(characterId, height: 30, animate: false),
+          Container(
+            width: 14,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  /// Compact reward telegraph under a fight/elite medallion: die size tinted
+  /// by tier (tier 3 gold — the elite's guaranteed rare reads at a glance).
+  Widget _telegraphBadge(Map node, double w, Set<int> reachable) {
     final id = node['id'] as int;
-    final layer = node['layer'] as int;
-    final x = (node['x'] as num).toDouble();
+    final center = _center(node, w);
+    final preview = node['reward_preview'] as String;
+    final def = dieDef(preview);
+    final tierColor = switch (def.tier) {
+      3 => EmberColors.gold,
+      2 => EmberColors.ember,
+      _ => EmberColors.textDim,
+    };
+    final lit = reachable.contains(id);
+    return Positioned(
+      left: center.dx - 24,
+      bottom: center.dy - _nodeSize / 2 - 15,
+      width: 48,
+      child: IgnorePointer(
+        child: Opacity(
+          opacity: lit ? 1.0 : 0.55,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.casino, size: 9, color: tierColor),
+            const SizedBox(width: 2),
+            Text('d${def.size}',
+                style: EmberText.micro.copyWith(
+                    color: tierColor,
+                    fontSize: 9,
+                    shadows: const [
+                      Shadow(color: Colors.black, blurRadius: 3),
+                    ])),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _nodeWidget(BuildContext context, Map node, double w, int position,
+      Set<int> reachable) {
+    final id = node['id'] as int;
     final kind = node['kind'] as String;
-    final left = 28 + x * (w - 56 - 44);
-    final bottom = (layer - 1) * 96.0 + 20;
+    final center = _center(node, w);
     final isReachable = reachable.contains(id);
     final isHere = id == position;
     return Positioned(
-      left: left,
-      bottom: bottom,
-      child: Opacity(
-        opacity: isReachable || isHere ? 1 : 0.45,
-        child: GestureDetector(
-          onTap: isReachable
-              ? () => c.apply({'type': 'choose_node', 'node': id})
-              : null,
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: EmberColors.kind(kind),
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: isHere
-                      ? EmberColors.textPrimary
-                      : isReachable
-                          ? EmberColors.ember
-                          : EmberColors.line,
-                  width: isHere || isReachable ? 2.5 : 1),
-              boxShadow: isReachable
-                  ? [
-                      BoxShadow(
-                          color: EmberColors.ember.withValues(alpha: 0.5),
-                          blurRadius: 12)
-                    ]
-                  : null,
+      left: center.dx - _nodeSize / 2,
+      bottom: center.dy - _nodeSize / 2,
+      child: GestureDetector(
+        onTap: isReachable
+            ? () => widget.c.apply({'type': 'choose_node', 'node': id})
+            : null,
+        child: AnimatedBuilder(
+          animation: _pulse,
+          builder: (context, _) => CustomPaint(
+            size: const Size(_nodeSize, _nodeSize),
+            painter: _MedallionPainter(
+              kind: kind,
+              here: isHere,
+              reachable: isReachable,
+              pulse: isReachable ? _pulse.value : 0,
             ),
-            child: Center(child: _nodeIcon(kind)),
+            child: SizedBox(
+              width: _nodeSize,
+              height: _nodeSize,
+              child: Center(
+                child: Opacity(
+                  opacity: isReachable || isHere ? 1.0 : 0.55,
+                  child: _nodeIcon(kind),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -380,11 +623,11 @@ class MapScreen extends StatelessWidget {
   }
 }
 
-/// Painted node icon when we have one; material glyph fallback (start node).
+/// Painted node icon when we have one; drawn glyph fallback (start node).
 Widget _nodeIcon(String kind) {
   final asset = Art.nodeIcons[kind];
   if (asset == null) {
-    return Icon(_kindIcon(kind), size: 20, color: Colors.white);
+    return Icon(_kindIcon(kind), size: 20, color: EmberColors.textPrimary);
   }
   return Image.asset(asset,
       width: 26, height: 26, filterQuality: FilterQuality.medium);
@@ -393,7 +636,7 @@ Widget _nodeIcon(String kind) {
 IconData _kindIcon(String kind) {
   switch (kind) {
     case 'start':
-      return Icons.play_arrow;
+      return Icons.flag;
     case 'fight':
       return Icons.sports_martial_arts;
     case 'elite':
@@ -410,34 +653,184 @@ IconData _kindIcon(String kind) {
   return Icons.circle;
 }
 
-class _EdgePainter extends CustomPainter {
+/// Framed medallion: soft drop shadow, dark disc, kind-tinted ring, and a
+/// pulsing ember halo when the node is reachable.
+class _MedallionPainter extends CustomPainter {
+  final String kind;
+  final bool here;
+  final bool reachable;
+  final double pulse;
+  _MedallionPainter(
+      {required this.kind,
+      required this.here,
+      required this.reachable,
+      required this.pulse});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = size.center(Offset.zero);
+    final r = size.shortestSide / 2 - 2;
+    final kindColor = EmberColors.kind(kind);
+    final dimmed = !reachable && !here;
+
+    // Pulsing halo on reachable nodes only.
+    if (reachable) {
+      canvas.drawCircle(
+          c,
+          r + 3 + pulse * 4,
+          Paint()
+            ..color = EmberColors.ember.withValues(alpha: 0.22 + pulse * 0.25)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7));
+    }
+    // Soft grounding shadow.
+    canvas.drawCircle(
+        c + const Offset(0, 3),
+        r,
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.45)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+    // Medallion disc, lit warm-from-below.
+    canvas.drawCircle(
+        c,
+        r,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: dimmed
+                ? const [Color(0xFF16101E), Color(0xFF241B30)]
+                : [
+                    const Color(0xFF1B1424),
+                    Color.lerp(const Color(0xFF2A2136), kindColor, 0.22)!,
+                  ],
+          ).createShader(Rect.fromCircle(center: c, radius: r)));
+    // Kind-tinted ring + inner hairline frame.
+    canvas.drawCircle(
+        c,
+        r,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = here ? 3.0 : 2.2
+          ..color = here
+              ? EmberColors.textPrimary
+              : dimmed
+                  ? Color.lerp(kindColor, Colors.black, 0.5)!
+                  : kindColor);
+    canvas.drawCircle(
+        c,
+        r - 3.5,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = Colors.black.withValues(alpha: 0.5));
+    if (reachable) {
+      canvas.drawCircle(
+          c,
+          r,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.2
+            ..color =
+                EmberColors.ember.withValues(alpha: 0.5 + pulse * 0.5));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MedallionPainter old) =>
+      old.pulse != pulse ||
+      old.here != here ||
+      old.reachable != reachable ||
+      old.kind != kind;
+}
+
+/// The map scene beneath the nodes: dashed trails between medallions, fog on
+/// rows the delver can't reach yet, and the descent tint (hotter down low,
+/// darker up top).
+class _MapScenePainter extends CustomPainter {
   final Map<String, Map> nodes;
   final Map<String, List> edges;
   final double w;
   final int layers;
-  _EdgePainter(this.nodes, this.edges, this.w, this.layers);
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = EmberColors.line
-      ..strokeWidth = 2;
-    Offset pos(Map n) {
-      final x = (n['x'] as num).toDouble();
-      final layer = n['layer'] as int;
-      return Offset(28 + x * (w - 56 - 44) + 22,
-          size.height - ((layer - 1) * 96.0 + 20 + 22));
-    }
+  final int position;
+  final Set<int> reachable;
+  final int curLayer;
+  _MapScenePainter(this.nodes, this.edges, this.w, this.layers, this.position,
+      this.reachable, this.curLayer);
 
-    edges.forEach((k, v) {
-      final from = nodes[k]!;
-      for (final t in v.cast<int>()) {
-        canvas.drawLine(pos(from), pos(nodes['$t']!), paint);
-      }
-    });
+  Offset _pos(Map n, Size size) {
+    final c = _MapScreenState._center(n, w);
+    return Offset(c.dx, size.height - c.dy);
+  }
+
+  void _trail(Canvas canvas, Offset a, Offset b, Paint p, {double gap = 9}) {
+    // Hand-laid dashes: slight perpendicular jitter so the trail reads as
+    // stones/embers, not a ruler line.
+    final d = b - a;
+    final len = d.distance;
+    final dir = d / len;
+    final normal = Offset(-dir.dy, dir.dx);
+    var t = 12.0; // start clear of the node
+    var i = 0;
+    while (t < len - 12) {
+      final jitter = math.sin(t * 0.7 + a.dx) * 1.6;
+      final p0 = a + dir * t + normal * jitter;
+      final p1 = a + dir * (t + 4.5) + normal * jitter;
+      canvas.drawLine(p0, p1, p);
+      t += gap + (i.isEven ? 0 : 2);
+      i++;
+    }
   }
 
   @override
-  bool shouldRepaint(covariant _EdgePainter old) => false;
+  void paint(Canvas canvas, Size size) {
+    // Descent tint: hotter (warm) toward the bottom layer, colder/darker up.
+    canvas.drawRect(
+        Offset.zero & size,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              EmberColors.ember.withValues(alpha: 0.10),
+              Colors.transparent,
+              Colors.black.withValues(alpha: 0.30),
+            ],
+            stops: const [0.0, 0.4, 1.0],
+          ).createShader(Offset.zero & size));
+
+    // Trails.
+    final dim = Paint()
+      ..color = const Color(0xFF4A4058)
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+    final hot = Paint()
+      ..color = EmberColors.ember.withValues(alpha: 0.85)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    edges.forEach((k, v) {
+      final from = nodes[k]!;
+      final fromHere = k == '$position';
+      for (final t in v.cast<int>()) {
+        final active = fromHere && reachable.contains(t);
+        _trail(canvas, _pos(from, size), _pos(nodes['$t']!, size),
+            active ? hot : dim);
+      }
+    });
+
+    // Fog of war: rows beyond the next one sink into darkness.
+    for (var layer = curLayer + 2; layer <= layers; layer++) {
+      final depth = layer - curLayer - 1; // 1, 2, 3...
+      final alpha = (0.14 * depth).clamp(0.0, 0.5);
+      final top = size.height - (layer - 1) * _MapScreenState._rowH - 68;
+      canvas.drawRect(
+          Rect.fromLTWH(0, top, size.width, _MapScreenState._rowH),
+          Paint()..color = Colors.black.withValues(alpha: alpha));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _MapScenePainter old) =>
+      old.position != position || old.curLayer != curLayer;
 }
 
 // ---------------------------------------------------------------------------
@@ -454,12 +847,32 @@ class _CombatScreenState extends State<CombatScreen> {
   int? selected; // 1-based die index
   bool _busy = false; // input lock while a choreography sequence plays
 
-  // Choreography flags (attack = lunge tween + hit-flash + knockback;
-  // death = flash + fade/collapse — the sheets have no attack/death frames).
+  // Risky-reroll multi-select: while [_rerollMode] is on, taps on UNASSIGNED
+  // dice toggle membership in [_rerollSel]; confirm sends `reroll_risky`.
+  bool _rerollMode = false;
+  final Set<int> _rerollSel = {};
+
+  // Combo / kill call-outs: transient TextPops over the tray or the enemy.
+  final List<_Note> _notes = [];
+  int _noteId = 0;
+
+  // Choreography flags (attack = squash + lunge tween + hit-flash + knockback;
+  // death = flash + ember-dissolve — the sheets have no attack/death frames).
   bool _playerLunge = false, _enemyLunge = false;
   bool _playerFlash = false, _enemyFlash = false;
   bool _playerKnock = false, _enemyKnock = false;
   bool _playerDying = false, _enemyDying = false;
+  bool _playerSquash = false, _enemySquash = false;
+
+  // Juice: roll generation triggers the dice tumble; shake key drives screen
+  // shake; pops are floating damage numbers over the stage.
+  int _rollGen = 0;
+  final GlobalKey<ShakeBoxState> _shakeKey = GlobalKey<ShakeBoxState>();
+  final List<_Pop> _pops = [];
+  int _popId = 0;
+
+  // Boss/elite name-plate splash, shown once when the encounter opens.
+  bool _splash = false;
 
   // Cached combat view-model: during the end-of-encounter notify hold the sim
   // has already left combat (enemy == null), but we keep rendering the stage.
@@ -468,9 +881,36 @@ class _CombatScreenState extends State<CombatScreen> {
 
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
   static const _contact = Duration(milliseconds: 250);
+  static const _squashTime = Duration(milliseconds: 90);
+  static const _hitStop = Duration(milliseconds: 80);
   static const _knockTime = Duration(milliseconds: 140);
   static const _flashTail = Duration(milliseconds: 120);
   static const _deathTime = Duration(milliseconds: 700);
+
+  @override
+  void initState() {
+    super.initState();
+    final enemy = widget.c.state?['enemy'] as Map?;
+    if (enemy != null && (enemy['boss'] == true || enemy['elite'] == true)) {
+      _splash = true;
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        if (mounted) setState(() => _splash = false);
+      });
+    }
+  }
+
+  void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
+    setState(() =>
+        _pops.add(_Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked)));
+  }
+
+  /// Shake scaled by damage relative to the victim's max HP; hits at or above
+  /// 25% of max HP also earn an ~80 ms hit-stop (design-system §5).
+  bool _impact(int amount, int victimMaxHp) {
+    final frac = victimMaxHp <= 0 ? 0.0 : amount / victimMaxHp;
+    _shakeKey.currentState?.shake((0.25 + frac * 2.2).clamp(0.0, 1.0));
+    return frac >= 0.25;
+  }
 
   AudioService? get _audio => widget.c.audio;
 
@@ -479,6 +919,64 @@ class _CombatScreenState extends State<CombatScreen> {
       if (e['type'] == type) return e;
     }
     return null;
+  }
+
+  void _note(String text,
+      {Color color = EmberColors.gold, IconData? icon, bool onEnemy = false}) {
+    if (!mounted) return;
+    setState(() =>
+        _notes.add(_Note(_noteId++, text, color, icon, onEnemy: onEnemy)));
+  }
+
+  /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
+  /// pair/triple/straight get distinct call-outs over the dice tray; ignite
+  /// flames the enemy; straight announces the earned free reroll.
+  void _announceCombos(List<Map<String, Object?>> events) {
+    for (final e in events) {
+      switch (e['type']) {
+        case 'combo_pair':
+          _note('PAIR +${e['bonus']}', icon: Icons.casino);
+          break;
+        case 'combo_triple':
+          // Ignite is announced by burn_applied (it only fires when the sim
+          // actually applies burn) — claiming IGNITE here would exaggerate.
+          _note('TRIPLE!',
+              color: EmberColors.danger, icon: Icons.casino);
+          break;
+        case 'burn_applied':
+          _note('IGNITE +${e['stacks']} BURN',
+              color: EmberColors.ember,
+              icon: Icons.local_fire_department,
+              onEnemy: true);
+          break;
+        case 'combo_straight':
+          _note('STRAIGHT!', color: EmberColors.kindElite,
+              icon: Icons.trending_up);
+          break;
+        case 'free_reroll_earned':
+          _note('FREE REROLL NEXT TURN',
+              color: EmberColors.success, icon: Icons.replay);
+          break;
+        case 'free_reroll_granted':
+          _note('FREE REROLL READY',
+              color: EmberColors.success, icon: Icons.replay);
+          break;
+      }
+    }
+  }
+
+  void _doRiskyReroll() {
+    if (_busy || _rerollSel.isEmpty) return;
+    final dice = _rerollSel.toList()..sort();
+    final events = widget.c.apply({'type': 'reroll_risky', 'dice': dice});
+    setState(() {
+      _rerollMode = false;
+      _rerollSel.clear();
+      if (_find(events, 'risky_reroll') != null) {
+        _rollGen++; // retumble the tray on a successful reroll
+      }
+    });
+    _announceCombos(events);
   }
 
   Future<void> _sleep(Duration d) => Future.delayed(d);
@@ -511,23 +1009,48 @@ class _CombatScreenState extends State<CombatScreen> {
       if (mounted) setState(() {});
       return;
     }
+    // Anticipation squash before the lunge (visuals.md #9).
+    setState(() => _playerSquash = true);
+    await _sleep(_squashTime);
+    if (!mounted) return;
     _audio?.playSfx('whoosh');
-    setState(() => _playerLunge = true);
+    setState(() {
+      _playerSquash = false;
+      _playerLunge = true;
+    });
     await _sleep(_contact);
     if (!mounted) return;
     final amount = dmg['amount'] as int? ?? 0;
     final absorbed = dmg['blocked'] as int? ?? 0;
+    final landed = amount - absorbed;
     _audio?.playSfx(absorbed >= amount ? 'block' : 'enemy_hit');
-    setState(() {
-      _enemyFlash = true;
-      _enemyKnock = true;
-    });
+    _spawnPop(landed > 0 ? landed : amount,
+        onPlayer: false, blocked: landed <= 0);
+    final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
+    final bigHit = _impact(landed, enemyMax);
+    setState(() => _enemyFlash = true);
+    // Hit-stop: the frame freezes on contact before the knockback releases.
+    if (bigHit) await _sleep(_hitStop);
+    if (!mounted) return;
+    setState(() => _enemyKnock = true);
     await _sleep(_knockTime);
     if (!mounted) return;
     setState(() {
       _playerLunge = false;
       _enemyKnock = false;
     });
+    // Exact-kill / overkill moments (m4 contract §4): arithmetic pays off.
+    final exact = _find(events, 'exact_kill');
+    if (exact != null) {
+      _audio?.playSfx('ember_gain');
+      _note('+${exact['embers']} EMBERS — EXACT!',
+          icon: Icons.local_fire_department, onEnemy: true);
+    }
+    final over = _find(events, 'overkill');
+    if (over != null) {
+      _note('OVERKILL +${over['surplus']} → NEXT FOE',
+          color: EmberColors.ember, icon: Icons.double_arrow, onEnemy: true);
+    }
     if (_find(events, 'encounter_won') != null) {
       await _enemyDeath(events);
     } else {
@@ -549,21 +1072,35 @@ class _CombatScreenState extends State<CombatScreen> {
   Future<void> _endTurn() async {
     if (_busy) return;
     _busy = true;
-    setState(() => selected = null);
+    setState(() {
+      selected = null;
+      _rerollMode = false;
+      _rerollSel.clear();
+    });
     final events = widget.c.apply({'type': 'end_turn'},
         terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
+      setState(() => _enemySquash = true);
+      await _sleep(_squashTime);
+      if (!mounted) return;
       _audio?.playSfx('whoosh');
-      setState(() => _enemyLunge = true);
+      setState(() {
+        _enemySquash = false;
+        _enemyLunge = true;
+      });
       await _sleep(_contact);
       if (!mounted) return;
       final damage = atk['damage'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
-      setState(() {
-        _playerFlash = true;
-        _playerKnock = true;
-      });
+      _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
+      final playerMax =
+          ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
+      final bigHit = _impact(damage, playerMax);
+      setState(() => _playerFlash = true);
+      if (bigHit) await _sleep(_hitStop);
+      if (!mounted) return;
+      setState(() => _playerKnock = true);
       await _sleep(_knockTime);
       if (!mounted) return;
       setState(() {
@@ -584,7 +1121,21 @@ class _CombatScreenState extends State<CombatScreen> {
     } else if (_find(events, 'enemy_blocked') != null) {
       _audio?.playSfx('block', volume: 0.5);
     }
-    // Thorns relics can kill the enemy during its own turn.
+    // Burn ticks after the enemy acts: flame call-out + damage pop reusing
+    // the existing pop primitive (m4 contract §3).
+    final burnTick = _find(events, 'burn_tick');
+    if (burnTick != null && mounted) {
+      _audio?.playSfx('enemy_hit', volume: 0.5);
+      _spawnPop(burnTick['amount'] as int? ?? 0, onPlayer: false);
+      _note('BURN',
+          color: EmberColors.ember,
+          icon: Icons.local_fire_department,
+          onEnemy: true);
+      await _sleep(const Duration(milliseconds: 350));
+    }
+    // A straight last turn grants this turn's free reroll — announce it.
+    _announceCombos(events);
+    // Thorns relics and burn can kill the enemy during its own turn.
     if (mounted) await _enemyDeath(events);
     _busy = false;
     if (mounted) setState(() {});
@@ -609,11 +1160,13 @@ class _CombatScreenState extends State<CombatScreen> {
     final dice0 = (player['dice'] as List).cast<String>();
     final intent = (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0};
     final rerolls = player['rerolls_left'] as int? ?? 0;
+    final riskyUsed = player['risky_used'] == true;
+    final freeReroll = player['free_reroll'] == true;
     final enemyHp = (enemy['hp'] as int).clamp(0, enemy['max_hp'] as int);
 
-    return Column(children: [
+    final combat = Column(children: [
       _TopBar(c),
-      // Enemy header: name + intent + HP
+      // Enemy header: name + HP (intent lives on the stage, over the enemy).
       Padding(
         padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.s),
         child: Panel(
@@ -628,7 +1181,6 @@ class _CombatScreenState extends State<CombatScreen> {
                               : enemy['elite'] == true
                                   ? EmberColors.kindElite
                                   : EmberColors.textPrimary))),
-              _IntentBadge(intent),
             ]),
             const SizedBox(height: Space.s),
             StatBar(
@@ -641,7 +1193,7 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
       ),
       // The stage: hero (left) vs enemy (right), animated sprite loops.
-      Expanded(child: _stage(enemy)),
+      Expanded(child: _stage(enemy, intent)),
       // Player HP
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -653,24 +1205,58 @@ class _CombatScreenState extends State<CombatScreen> {
             label: 'YOUR HP'),
       ),
       const SizedBox(height: Space.m),
-      // Dice tray
+      // Dice tray (combo call-outs pop over it; in reroll mode taps pick the
+      // unassigned dice to risk — assigned dice never join the selection).
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
-        child: Wrap(
-          spacing: Space.s,
-          runSpacing: Space.s,
-          alignment: WrapAlignment.center,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
           children: [
-            for (var i = 1; i <= dice0.length; i++)
-              DieChip(dice0[i - 1],
-                  value: rolled != null ? rolled[i - 1] : null,
-                  assigned: assigned['$i'] != null,
-                  selected: selected == i,
-                  maxed: maxed != null && maxed[i - 1],
-                  onTap: rolled == null || _busy
-                      ? null
-                      : () => setState(
-                          () => selected = selected == i ? null : i))
+            Wrap(
+              spacing: Space.s,
+              runSpacing: Space.s,
+              alignment: WrapAlignment.center,
+              children: [
+                for (var i = 1; i <= dice0.length; i++)
+                  DieChip(dice0[i - 1],
+                      value: rolled != null ? rolled[i - 1] : null,
+                      assigned: assigned['$i'] != null,
+                      selected: _rerollMode
+                          ? _rerollSel.contains(i)
+                          : selected == i,
+                      maxed: maxed != null && maxed[i - 1],
+                      rollToken: _rollGen,
+                      // 50 ms cascade so the tumble reads left-to-right.
+                      tumbleDelayMs: (i - 1) * 50,
+                      onTap: rolled == null || _busy
+                          ? null
+                          : _rerollMode
+                              ? (assigned['$i'] != null
+                                  ? null
+                                  : () => setState(() =>
+                                      _rerollSel.contains(i)
+                                          ? _rerollSel.remove(i)
+                                          : _rerollSel.add(i)))
+                              : () => setState(() =>
+                                  selected = selected == i ? null : i))
+              ],
+            ),
+            for (final (idx, n)
+                in _notes.where((n) => !n.onEnemy).toList().indexed)
+              Positioned(
+                top: -30.0 - idx * 24,
+                child: TextPop(
+                  key: ValueKey('note-${n.id}'),
+                  text: n.text,
+                  color: n.color,
+                  icon: n.icon,
+                  fontSize: 16,
+                  onDone: () {
+                    if (mounted) setState(() => _notes.remove(n));
+                  },
+                ),
+              ),
           ],
         ),
       ),
@@ -687,95 +1273,262 @@ class _CombatScreenState extends State<CombatScreen> {
                     onTap: _busy
                         ? null
                         : () {
-                            setState(() => selected = null);
-                            c.apply({'type': 'roll'});
+                            setState(() {
+                              selected = null;
+                              _rollGen++; // trigger the dice tumble cascade
+                            });
+                            final events = c.apply({'type': 'roll'});
+                            // Combo call-outs land after the tumble reads.
+                            Future.delayed(
+                                const Duration(milliseconds: 550), () {
+                              if (mounted) _announceCombos(events);
+                            });
                           }))
-            : Column(children: [
-                Row(children: [
-                  Expanded(
-                      child: EmberButton('Attack',
-                          icon: Icons.gps_fixed,
-                          onTap: selected != null && !_busy ? _attack : null)),
-                  const SizedBox(width: Space.m),
-                  Expanded(
-                      child: EmberButton('Block',
-                          icon: Icons.shield,
-                          onTap: selected != null && !_busy ? _block : null)),
-                ]),
-                const SizedBox(height: Space.m),
-                Row(children: [
-                  if (rerolls > 0)
-                    Expanded(
-                        child: EmberButton('Reroll ($rerolls)',
-                            icon: Icons.replay,
-                            onTap: selected != null && !_busy
-                                ? () {
-                                    c.apply({'type': 'reroll', 'die': selected});
-                                    setState(() {});
-                                  }
-                                : null)),
-                  if (rerolls > 0) const SizedBox(width: Space.m),
-                  Expanded(
-                      child: EmberButton('End turn',
-                          primary: true,
-                          onTap: _busy ? null : _endTurn)),
-                ]),
-              ]),
+            : _rerollMode
+                // Risky-reroll confirm: pick unassigned dice, then commit.
+                ? Column(children: [
+                    Text(
+                        freeReroll
+                            ? 'Pick dice to reroll — FREE this turn'
+                            : 'Pick dice to reroll — each lands −1 pip',
+                        style: EmberText.micro.copyWith(
+                            color: freeReroll
+                                ? EmberColors.success
+                                : EmberColors.textDim)),
+                    const SizedBox(height: Space.s),
+                    Row(children: [
+                      Expanded(
+                          child: EmberButton('Cancel',
+                              ghost: true,
+                              onTap: () => setState(() {
+                                    _rerollMode = false;
+                                    _rerollSel.clear();
+                                  }))),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                          child: EmberButton(
+                              'Reroll (${_rerollSel.length})',
+                              primary: true,
+                              icon: Icons.casino,
+                              onTap: _rerollSel.isNotEmpty && !_busy
+                                  ? _doRiskyReroll
+                                  : null)),
+                    ]),
+                  ])
+                : Column(children: [
+                    Row(children: [
+                      Expanded(
+                          child: EmberButton('Attack',
+                              icon: Icons.gps_fixed,
+                              onTap:
+                                  selected != null && !_busy ? _attack : null)),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                          child: EmberButton('Block',
+                              icon: Icons.shield,
+                              onTap:
+                                  selected != null && !_busy ? _block : null)),
+                    ]),
+                    const SizedBox(height: Space.m),
+                    Row(children: [
+                      if (rerolls > 0)
+                        Expanded(
+                            child: EmberButton('Reroll ($rerolls)',
+                                icon: Icons.replay,
+                                onTap: selected != null && !_busy
+                                    ? () {
+                                        c.apply(
+                                            {'type': 'reroll', 'die': selected});
+                                        setState(() {});
+                                      }
+                                    : null)),
+                      if (rerolls > 0) const SizedBox(width: Space.m),
+                      // Risky reroll (m4 contract §1): once per turn, −1 pip
+                      // per rerolled die — waived after a straight (FREE).
+                      Expanded(
+                          child: EmberButton(
+                              riskyUsed
+                                  ? 'Reroll spent'
+                                  : freeReroll
+                                      ? 'Risky reroll · FREE'
+                                      : 'Risky reroll · −1 pip',
+                              icon: Icons.casino,
+                              onTap: riskyUsed || _busy
+                                  ? null
+                                  : () => setState(() {
+                                        _rerollMode = true;
+                                        _rerollSel.clear();
+                                        selected = null;
+                                      }))),
+                    ]),
+                    const SizedBox(height: Space.m),
+                    SizedBox(
+                        width: double.infinity,
+                        child: EmberButton('End turn',
+                            primary: true, onTap: _busy ? null : _endTurn)),
+                  ]),
       ),
     ]);
+
+    return ShakeBox(
+      key: _shakeKey,
+      child: Stack(fit: StackFit.expand, children: [
+        combat,
+        if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+      ]),
+    );
   }
 
-  /// Hero vs enemy, bottom-aligned; lunges slide the combatant toward the
-  /// other side, knockback nudges away, death fades + sinks the sprite.
-  Widget _stage(Map enemy) {
+  /// Layer of the node the delver stands on (for the boss name-plate).
+  int _currentLayer(Map st) {
+    final map = st['map'] as Map?;
+    if (map == null) return 1;
+    final nodes = (map['nodes'] as Map?)?.cast<String, Map>();
+    final pos = map['position'];
+    return (nodes?['$pos']?['layer'] as int?) ?? 1;
+  }
+
+  /// Hero vs enemy, bottom-aligned on a grounded floor plane (shadow
+  /// ellipses); lunges slide the combatant toward the other side, knockback
+  /// nudges away, deaths dissolve into embers. Damage numbers pop over the
+  /// stage; the enemy's next intent floats above it as an icon badge.
+  Widget _stage(Map enemy, Map intent) {
     final enemyId = enemy['id'] as String? ?? '';
     final big = enemy['boss'] == true || enemy['elite'] == true;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: Space.s),
-            child: _combatant(
-              sprite: SpriteView(_characterId,
-                  key: ValueKey('hero-$_characterId'), height: 104),
-              lungeToward: 1,
-              lunge: _playerLunge,
-              knock: _playerKnock,
-              flash: _playerFlash,
-              dying: _playerDying,
+      child: Stack(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.s),
+              child: _combatant(
+                sprite: SpriteView(_characterId,
+                    key: ValueKey('hero-$_characterId'), height: 104),
+                spriteHeight: 104,
+                lungeToward: 1,
+                lunge: _playerLunge,
+                knock: _playerKnock,
+                flash: _playerFlash,
+                dying: _playerDying,
+                squash: _playerSquash,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.s),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.topCenter,
+                children: [
+                  _combatant(
+                    sprite: SpriteView(enemyId,
+                        key: ValueKey('enemy-$enemyId'),
+                        height: big ? 128 : 96,
+                        flipX: true),
+                    spriteHeight: big ? 128 : 96,
+                    // Slight depth scale: the enemy stands a step closer.
+                    depthScale: big ? 1.02 : 1.06,
+                    lungeToward: -1,
+                    lunge: _enemyLunge,
+                    knock: _enemyKnock,
+                    flash: _enemyFlash,
+                    dying: _enemyDying,
+                    squash: _enemySquash,
+                  ),
+                  // Intent as an icon badge floating above the enemy
+                  // (overlaid, so it never adds layout height). Burn stacks
+                  // sit beside it while the enemy is alight.
+                  Positioned(
+                    top: -44,
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      _IntentBadge(intent),
+                      if ((enemy['burn'] as int? ?? 0) > 0) ...[
+                        const SizedBox(width: Space.xs),
+                        _BurnBadge(enemy['burn'] as int),
+                      ],
+                    ]),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
+        for (final (idx, n)
+            in _notes.where((n) => n.onEnemy).toList().indexed)
+          Positioned(
+            right: 12,
+            bottom: 150.0 + idx * 24,
+            child: TextPop(
+              key: ValueKey('note-${n.id}'),
+              text: n.text,
+              color: n.color,
+              icon: n.icon,
+              fontSize: 15,
+              onDone: () {
+                if (mounted) setState(() => _notes.remove(n));
+              },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: Space.s),
-            child: _combatant(
-              sprite: SpriteView(enemyId,
-                  key: ValueKey('enemy-$enemyId'),
-                  height: big ? 128 : 96,
-                  flipX: true),
-              lungeToward: -1,
-              lunge: _enemyLunge,
-              knock: _enemyKnock,
-              flash: _enemyFlash,
-              dying: _enemyDying,
+        // Floating damage numbers (player pops left, enemy pops right).
+        for (final p in _pops)
+          Positioned(
+            left: p.onPlayer ? 24 : null,
+            right: p.onPlayer ? null : 24,
+            bottom: 120,
+            child: DamagePop(
+              key: ValueKey('pop-${p.id}'),
+              amount: p.amount,
+              blocked: p.blocked,
+              onPlayer: p.onPlayer,
+              onDone: () {
+                if (mounted) setState(() => _pops.remove(p));
+              },
             ),
           ),
-        ],
-      ),
+      ]),
     );
   }
 
   Widget _combatant({
     required Widget sprite,
+    required double spriteHeight,
     required int lungeToward, // +1 lunges right, -1 lunges left
     required bool lunge,
     required bool knock,
     required bool flash,
     required bool dying,
+    required bool squash,
+    double depthScale = 1.0,
   }) {
     Widget w = sprite;
+    // Grounding: soft shadow ellipse under the feet (+ ember dissolve cloud
+    // while dying).
+    w = Stack(clipBehavior: Clip.none, alignment: Alignment.bottomCenter,
+        children: [
+      Positioned(
+        bottom: -4,
+        child: AnimatedOpacity(
+          duration: _deathTime,
+          opacity: dying ? 0.0 : 1.0,
+          child: Container(
+            width: spriteHeight * 0.7,
+            height: spriteHeight * 0.14,
+            decoration: BoxDecoration(
+              borderRadius:
+                  BorderRadius.all(Radius.elliptical(spriteHeight, 20)),
+              color: Colors.black.withValues(alpha: 0.38),
+            ),
+          ),
+        ),
+      ),
+      w,
+      if (dying)
+        Positioned.fill(
+            child: EmberBurst(duration: _deathTime, count: 30)),
+    ]);
     // Hit-flash: paint the sprite solid white for a beat.
     w = AnimatedSwitcher(
       duration: const Duration(milliseconds: 60),
@@ -787,7 +1540,7 @@ class _CombatScreenState extends State<CombatScreen> {
               child: w)
           : KeyedSubtree(key: const ValueKey('plain'), child: w),
     );
-    // Death: fade out while sinking (collapse).
+    // Death: fade out while sinking (collapse) into the ember cloud.
     w = AnimatedOpacity(
       opacity: dying ? 0.0 : 1.0,
       duration: _deathTime,
@@ -796,6 +1549,21 @@ class _CombatScreenState extends State<CombatScreen> {
         offset: dying ? const Offset(0, 0.35) : Offset.zero,
         duration: _deathTime,
         curve: Curves.easeIn,
+        child: w,
+      ),
+    );
+    // Anticipation squash (bottom-anchored) right before the lunge, and the
+    // slight depth scale that grounds the enemy a step closer to the camera.
+    w = Transform.scale(
+      alignment: Alignment.bottomCenter,
+      scale: depthScale,
+      child: AnimatedContainer(
+        duration: _squashTime,
+        curve: Curves.easeOut,
+        transformAlignment: Alignment.bottomCenter,
+        transform: squash
+            ? (Matrix4.identity()..scale(1.08, 0.86))
+            : Matrix4.identity(),
         child: w,
       ),
     );
@@ -810,6 +1578,109 @@ class _CombatScreenState extends State<CombatScreen> {
       duration: lunge ? _contact : _knockTime,
       curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
       child: w,
+    );
+  }
+}
+
+/// One transient combat call-out (combo, burn tick, exact-kill, overkill).
+class _Note {
+  final int id;
+  final String text;
+  final Color color;
+  final IconData? icon;
+  final bool onEnemy; // anchors near the enemy instead of the dice tray
+  _Note(this.id, this.text, this.color, this.icon, {required this.onEnemy});
+}
+
+/// One floating damage number's spawn record.
+class _Pop {
+  final int id;
+  final int amount;
+  final bool onPlayer;
+  final bool blocked;
+  _Pop(this.id, this.amount, {required this.onPlayer, required this.blocked});
+}
+
+/// Boss/elite name-plate splash: "SOOT SHADE — LAYER 1" over a charred band.
+class _NamePlate extends StatelessWidget {
+  final Map enemy;
+  final int layer;
+  const _NamePlate({required this.enemy, required this.layer});
+  @override
+  Widget build(BuildContext context) {
+    final boss = enemy['boss'] == true;
+    return IgnorePointer(
+      child: Center(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 1600),
+          builder: (context, f, child) {
+            // In 0-15%, hold, out 85-100%.
+            final a = f < 0.15
+                ? f / 0.15
+                : f > 0.85
+                    ? (1 - f) / 0.15
+                    : 1.0;
+            final scale = 1.15 - 0.15 * Curves.easeOut.transform(
+                (f / 0.2).clamp(0.0, 1.0));
+            return Opacity(
+                opacity: a.clamp(0.0, 1.0),
+                child: Transform.scale(scale: scale, child: child));
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: Space.xl),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                Colors.transparent,
+                Colors.black.withValues(alpha: 0.85),
+                Colors.black.withValues(alpha: 0.85),
+                Colors.transparent,
+              ], stops: const [0.0, 0.18, 0.82, 1.0]),
+              border: const Border(
+                top: BorderSide(color: EmberColors.ember, width: 1),
+                bottom: BorderSide(color: EmberColors.ember, width: 1),
+              ),
+            ),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text((enemy['name'] as String? ?? '').toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: EmberText.h1.copyWith(
+                      color:
+                          boss ? EmberColors.kindBoss : EmberColors.kindElite,
+                      letterSpacing: 3)),
+              const SizedBox(height: Space.xs),
+              Text(boss ? 'LAYER $layer · BOSS' : 'LAYER $layer · ELITE',
+                  style: EmberText.micro.copyWith(letterSpacing: 3)),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Burn stacks on the enemy: small flame + count, ticking down each turn.
+class _BurnBadge extends StatelessWidget {
+  final int stacks;
+  const _BurnBadge(this.stacks);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding:
+          const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.s),
+      decoration: BoxDecoration(
+          color: EmberColors.raised,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: EmberColors.ember)),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.local_fire_department,
+            size: 16, color: EmberColors.ember),
+        const SizedBox(width: 2),
+        Text('$stacks',
+            style: EmberText.value
+                .copyWith(fontSize: 15, color: EmberColors.ember)),
+      ]),
     );
   }
 }
@@ -958,7 +1829,9 @@ class RestScreen extends StatelessWidget {
     for (var i = 0; i < dice0.length; i++) {
       if (dieDef(dice0[i]).forgeTo.isNotEmpty) forgeable.add(i);
     }
-    return Column(children: [
+    return Stack(fit: StackFit.expand, children: [
+      const EmberDrift(count: 16, opacity: 0.6),
+      Column(children: [
       _TopBar(c),
       const SizedBox(height: Space.xl),
       Text('A warm hollow', style: EmberText.h1),
@@ -993,6 +1866,7 @@ class RestScreen extends StatelessWidget {
         )
       else
         const Spacer(),
+      ]),
     ]);
   }
 
@@ -1023,7 +1897,11 @@ class ShopScreen extends StatelessWidget {
   const ShopScreen(this.c, {super.key});
   @override
   Widget build(BuildContext context) {
-    final slots = ((c.state!['shop'] as Map)['slots'] as List).cast<Map>();
+    // After leave_shop the PhaseSwitcher cross-fade keeps this screen mounted
+    // briefly while state['shop'] is already null — render nothing then.
+    final shop = c.state?['shop'] as Map?;
+    if (shop == null) return const SizedBox.shrink();
+    final slots = (shop['slots'] as List).cast<Map>();
     final gold = (c.state!['run'] as Map)['gold'] as int;
     return Column(children: [
       _TopBar(c),
@@ -1112,7 +1990,11 @@ class EventScreen extends StatelessWidget {
   const EventScreen(this.c, {super.key});
   @override
   Widget build(BuildContext context) {
-    final def = eventDef(c.state!['event'] as String);
+    // Same stale-frame guard as ShopScreen: event is null right after
+    // event_choose while the cross-fade is still showing this screen.
+    final eventId = c.state?['event'] as String?;
+    if (eventId == null) return const SizedBox.shrink();
+    final def = eventDef(eventId);
     return Column(children: [
       _TopBar(c),
       const SizedBox(height: Space.xl),
@@ -1156,7 +2038,11 @@ class SummaryScreen extends StatelessWidget {
     final won = st['phase'] == 'run_won';
     final run = st['run'] as Map;
     final insight = run['insight'] as String?;
-    return Padding(
+    return Stack(fit: StackFit.expand, children: [
+      // The designed moment: embers rise in triumph, or sink and die.
+      Vignette(strength: won ? 0.45 : 0.7),
+      EmberDrift(count: won ? 44 : 12, falling: !won, opacity: won ? 1 : 0.7),
+      Padding(
       padding: const EdgeInsets.all(Space.xl),
       child: Column(children: [
         const Spacer(),
@@ -1165,7 +2051,16 @@ class SummaryScreen extends StatelessWidget {
             color: won ? EmberColors.gold : EmberColors.ember),
         const SizedBox(height: Space.m),
         Text(won ? 'The Ember is yours' : 'The dark claims you',
-            style: EmberText.h1, textAlign: TextAlign.center),
+            textAlign: TextAlign.center,
+            style: EmberText.h1.copyWith(
+              color: won ? EmberColors.gold : EmberColors.textPrimary,
+              shadows: [
+                Shadow(
+                    color: (won ? EmberColors.gold : EmberColors.ember)
+                        .withValues(alpha: 0.55),
+                    blurRadius: 18),
+              ],
+            )),
         const SizedBox(height: Space.xl),
         Panel(
           child: Column(children: [
@@ -1192,13 +2087,22 @@ class SummaryScreen extends StatelessWidget {
           ),
         ],
         const Spacer(),
+        // Fast restart (backlog #8): straight into a new run — boon pick
+        // included — without a detour through the title.
         SizedBox(
           width: double.infinity,
-          child: EmberButton('Continue',
-              primary: true, onTap: () => c.endToTitle()),
+          child: EmberButton('Delve again',
+              primary: true, icon: Icons.bolt, onTap: () => c.delveAgain()),
+        ),
+        const SizedBox(height: Space.m),
+        SizedBox(
+          width: double.infinity,
+          child: EmberButton('Back to the fire',
+              ghost: true, onTap: () => c.endToTitle()),
         ),
       ]),
-    );
+      ),
+    ]);
   }
 
   Widget _ledgerRow(IconData icon, Color color, String label, String value) {
@@ -1235,6 +2139,11 @@ class _TopBar extends StatelessWidget {
             run['embers'] as int, 'EMBERS',
             imageAsset: Art.currencyEmber),
         const Spacer(),
+        if (c.dailyDate != null) ...[
+          Text('DAILY ${c.dailyDate}',
+              style: EmberText.micro.copyWith(color: EmberColors.gold)),
+          const SizedBox(width: Space.m),
+        ],
         Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
         const SizedBox(width: 4),
         Text('${(run['relics'] as List).length}', style: EmberText.label),
