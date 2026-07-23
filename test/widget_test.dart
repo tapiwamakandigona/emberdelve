@@ -304,4 +304,62 @@ void main() {
     expect(find.text('The Ascetic'), findsOneWidget);
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
+  // --- v0.3.1 fix-pass coverage (docs/FIX_PLAN_v0.3.1.md) --------------------
+
+  testWidgets('F4: long event option labels wrap instead of clipping',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      theme: buildEmberTheme(),
+      home: Scaffold(
+        body: SizedBox(
+          width: 380, // phone-width column like the event screen
+          child: EmberButton(
+              'TRADE (LOSE A RANDOM DIE, GAIN A RANDOM DIE)'),
+        ),
+      ),
+    ));
+    await tester.pump();
+    // No RenderFlex overflow exception and the full text is present.
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('GAIN A RANDOM DIE'), findsOneWidget);
+  });
+
+  test('F5: event choices produce a concrete outcome toast', () {
+    final c = GameController();
+    // Walk seeds until one has an event on a start-adjacent node.
+    for (var seed = 1; seed <= 300; seed++) {
+      c.startRun(seed: seed);
+      final map = c.state!['map'] as Map;
+      final position = map['position'] as int;
+      final out = ((map['edges'] as Map)['$position'] as List).cast<int>();
+      int? eventNode;
+      for (final n in out) {
+        if (((map['nodes'] as Map)['$n'] as Map)['kind'] == 'event') {
+          eventNode = n;
+          break;
+        }
+      }
+      if (eventNode == null) continue;
+      c.apply({'type': 'choose_node', 'node': eventNode});
+      if (c.phase != 'event') continue;
+      c.flash = null;
+      c.apply({'type': 'event_choose', 'option': 1});
+      expect(c.flash, isNotNull,
+          reason: 'event resolved silently (seed $seed)');
+      expect(c.flash, isNot(equals('Not allowed')));
+      return;
+    }
+    fail('no start-adjacent event node found in 300 seeds');
+  });
+
+  test('F10: abandonRun discards the run without banking embers', () {
+    final c = GameController();
+    c.startRun(seed: 7);
+    final embersBefore = c.meta.embers;
+    final runsBefore = c.meta.runsPlayed;
+    c.abandonRun();
+    expect(c.sim, isNull);
+    expect(c.meta.embers, equals(embersBefore));
+    expect(c.meta.runsPlayed, equals(runsBefore + 1));
+  });
 }
