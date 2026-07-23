@@ -5,36 +5,36 @@
       "id": "M0-1",
       "title": "Repo scaffold with AI-handoff state files",
       "acceptance": "PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/ exist at repo root and describe the project accurately",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "repo root @ commit HEAD: PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/00-foundation.md all present and accurate"
     },
     {
       "id": "M0-2",
       "title": "Sealed sim core with deterministic RNG streams",
       "acceptance": "sim/ contains pure-Lua Sim with new/apply/state/snapshot/restore/state_hash; no engine APIs, os, io, or math.random anywhere under sim/ (grep clean)",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "grep clean (no defold/os/io/math.random under sim/); sim/init.lua exposes new/apply/state/snapshot/restore/state_hash; verified in CI run 29990121111 test job"
     },
     {
       "id": "M0-3",
       "title": "Headless sim test suite passes",
       "acceptance": "lua5.4 tests/run_tests.lua exits 0 with >=10 passing tests covering determinism, stream independence, snapshot round-trip, intent-resolution fairness, and invalid-command safety",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "12/12 tests pass; golden event_hash=158933364 state_hash=387435555 bit-identical on lua5.1/5.4/luajit2.0/2.1; CI test job https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
     },
     {
       "id": "M0-4",
       "title": "CI test gate green on GitHub Actions",
       "acceptance": "Workflow run on main: 'test' job passes on ubuntu-latest",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "test job green: https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
     },
     {
       "id": "M0-5",
       "title": "CI produces installable debug APK",
       "acceptance": "Workflow run on main: 'build-android' job bundles arm64+armv7 debug APK via pinned bob.jar and uploads it as an artifact",
-      "passes": false,
-      "evidence": null
+      "passes": true,
+      "evidence": "build-android green, artifact emberdelve-debug-apk (ID 89150834647, 29.6MB APK, ABIs arm64-v8a+armeabi-v7a, Defold game.arcd/arci/dmanifest present): https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
     },
     {
       "id": "M1-1",
