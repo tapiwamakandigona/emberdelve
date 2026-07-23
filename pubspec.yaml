@@ -3,7 +3,7 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.3.1+4
+version: 0.3.2+5
 
 environment:
   sdk: ^3.8.1

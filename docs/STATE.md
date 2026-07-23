@@ -1,3 +1,5 @@
+> **HISTORICAL (2026-07-23):** this file described the mid-pivot M2/M3 build session and is superseded. For current state read PROJECT.md, tail of progress.md, features.json, and the latest checkpoints/*.md.
+
 # STATE.md — live build state for any AI/human resuming
 
 **Read order for resuming:** this file → `PROJECT.md` → `docs/spec.md` →
