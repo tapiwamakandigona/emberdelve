@@ -18,11 +18,13 @@ Owner instructions this session (DM 2026-07-23):
 
 ## What is DONE and VERIFIED
 - **Sim core ported Lua→Dart**, `lib/sim/` (rng, hashing, map_gen, combat,
-  run_layer, sim). Parity PROVEN: `bin/parity.dart` output diffed 1:1 against
-  the Lua reference — golden `event_hash=311044885`, identical terminal
-  (phase, event_hash) for all 100 autoplay seeds (59W/41L), snapshot/restore
-  twins identical. This is the anchor: any sim change must be a deliberate
-  SIM_VERSION bump with a re-anchored golden.
+  run_layer, sim). Parity was PROVEN at the pivot commit (54f2e85): a parity
+  dump diffed 1:1 against the Lua reference — golden `event_hash=311044885`,
+  identical terminal (phase, event_hash) for all 100 autoplay seeds (59W/41L),
+  snapshot/restore twins identical. (The one-off `bin/parity.dart` prover was
+  removed after it served its purpose — `flutter analyze` is fatal on its
+  `print`s; the git history at 54f2e85 preserves it.) Any sim change must be a
+  deliberate SIM_VERSION bump with a re-anchored golden (v3 golden 513683311).
 - **Flutter app scaffolded** (`lib/`, `android/`, `pubspec.yaml`), fonts
   Cinzel + Inter (OFL) bundled, `path_provider` for saves.
 - **M3 content data** authored (data-only, zero logic): `lib/data/dice.dart`
