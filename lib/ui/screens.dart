@@ -66,12 +66,15 @@ class GameRoot extends StatelessWidget {
         final enemy = c.state?['enemy'] as Map?;
         final bossFight = enemy != null &&
             (enemy['boss'] == true || enemy['elite'] == true);
+        // Flame-wipe smash-cut into combat; fade-through-black elsewhere
+        // (visuals.md #12 — the stock cross-fade dies here).
         return Scaffold(
-          body: ScreenBackground(
-            asset: Art.backgroundForPhase(phase, bossFight: bossFight),
-            child: SafeArea(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
+          body: PhaseSwitcher(
+            phaseKey: phase ?? 'title',
+            flameWipe: phase == 'player_turn',
+            child: ScreenBackground(
+              asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+              child: SafeArea(
                 child: KeyedSubtree(
                     key: ValueKey(phase ?? 'title'), child: screen),
               ),
@@ -1438,7 +1441,9 @@ class RestScreen extends StatelessWidget {
     for (var i = 0; i < dice0.length; i++) {
       if (dieDef(dice0[i]).forgeTo.isNotEmpty) forgeable.add(i);
     }
-    return Column(children: [
+    return Stack(fit: StackFit.expand, children: [
+      const EmberDrift(count: 16, opacity: 0.6),
+      Column(children: [
       _TopBar(c),
       const SizedBox(height: Space.xl),
       Text('A warm hollow', style: EmberText.h1),
@@ -1473,6 +1478,7 @@ class RestScreen extends StatelessWidget {
         )
       else
         const Spacer(),
+      ]),
     ]);
   }
 
@@ -1636,7 +1642,11 @@ class SummaryScreen extends StatelessWidget {
     final won = st['phase'] == 'run_won';
     final run = st['run'] as Map;
     final insight = run['insight'] as String?;
-    return Padding(
+    return Stack(fit: StackFit.expand, children: [
+      // The designed moment: embers rise in triumph, or sink and die.
+      Vignette(strength: won ? 0.45 : 0.7),
+      EmberDrift(count: won ? 44 : 12, falling: !won, opacity: won ? 1 : 0.7),
+      Padding(
       padding: const EdgeInsets.all(Space.xl),
       child: Column(children: [
         const Spacer(),
@@ -1645,7 +1655,16 @@ class SummaryScreen extends StatelessWidget {
             color: won ? EmberColors.gold : EmberColors.ember),
         const SizedBox(height: Space.m),
         Text(won ? 'The Ember is yours' : 'The dark claims you',
-            style: EmberText.h1, textAlign: TextAlign.center),
+            textAlign: TextAlign.center,
+            style: EmberText.h1.copyWith(
+              color: won ? EmberColors.gold : EmberColors.textPrimary,
+              shadows: [
+                Shadow(
+                    color: (won ? EmberColors.gold : EmberColors.ember)
+                        .withValues(alpha: 0.55),
+                    blurRadius: 18),
+              ],
+            )),
         const SizedBox(height: Space.xl),
         Panel(
           child: Column(children: [
@@ -1678,7 +1697,8 @@ class SummaryScreen extends StatelessWidget {
               primary: true, onTap: () => c.endToTitle()),
         ),
       ]),
-    );
+      ),
+    ]);
   }
 
   Widget _ledgerRow(IconData icon, Color color, String label, String value) {

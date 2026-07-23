@@ -40,6 +40,7 @@ void main() {
     expect(c.phase, equals('map'));
     expect(find.text('GOLD'), findsOneWidget);
     expect(find.text('EMBERS'), findsWidgets);
+    await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
   testWidgets('combat renders die faces and rolling triggers the tray',
@@ -76,6 +77,7 @@ void main() {
     await pumpFor(tester, 900); // tumble cascade completes
     expect(find.text('Attack'), findsOneWidget);
     expect(find.text('Block'), findsOneWidget);
+    await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
   testWidgets('character screen lists all delvers', (tester) async {
@@ -94,5 +96,6 @@ void main() {
     await tester.dragUntilVisible(find.text('The Ascetic'),
         find.byType(Scrollable).first, const Offset(0, -200));
     expect(find.text('The Ascetic'), findsOneWidget);
+    await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 }

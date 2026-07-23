@@ -341,8 +341,16 @@ class PhaseSwitcher extends StatefulWidget {
 
 class _PhaseSwitcherState extends State<PhaseSwitcher>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _t = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 480));
+  // Created eagerly in initState: a lazy `late` controller would otherwise be
+  // constructed during dispose() when no transition ever ran.
+  late final AnimationController _t;
+
+  @override
+  void initState() {
+    super.initState();
+    _t = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 480));
+  }
   Widget? _old;
   String? _oldKey;
   bool _wipe = false;
