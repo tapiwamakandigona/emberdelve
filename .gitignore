@@ -1,7 +1,7 @@
+.dart_tool/
 build/
-dist/
-.internal/
-bob.jar
-*.apk
-*.aab
-.DS_Store
+pubspec.lock
+*.keystore
+*.jks
+*.p12
+key.properties

@@ -1,0 +1,10 @@
+name: emberdelve
+description: "Emberdelve — turn-based dice-builder roguelite (Tsoro Studios). Flutter port; deterministic Dart sim core."
+publish_to: "none"
+version: 0.2.0+1
+
+environment:
+  sdk: ^3.0.0
+
+dev_dependencies:
+  test: ^1.25.0
