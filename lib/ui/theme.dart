@@ -21,7 +21,9 @@ class EmberColors {
   static const success = Color(0xFF6FBF73);
   static const danger = Color(0xFFC24040);
 
-  static const kindStart = Color(0xFF66A366);
+  // Start node is warm ash, not stock green — everything on the map sits in
+  // the warm-from-below palette (visuals.md #6).
+  static const kindStart = Color(0xFF8A7B66);
   static const kindFight = Color(0xFF8C5959);
   static const kindElite = Color(0xFFB34D8C);
   static const kindRest = Color(0xFF5980A6);
@@ -115,6 +117,27 @@ class EmberText {
       letterSpacing: 1.2);
 }
 
+/// Fade-through-black route transition — the stock Material slide is one of
+/// the strongest "this is a Flutter app" tells, so it dies here globally.
+class _FadeThroughBlackBuilder extends PageTransitionsBuilder {
+  const _FadeThroughBlackBuilder();
+  @override
+  Widget buildTransitions<T>(
+      PageRoute<T> route,
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
+    final fade = CurvedAnimation(
+        parent: animation,
+        curve: const Interval(0.4, 1.0, curve: Curves.easeOut));
+    return ColoredBox(
+      color: Colors.black,
+      child: FadeTransition(opacity: fade, child: child),
+    );
+  }
+}
+
 ThemeData buildEmberTheme() {
   return ThemeData(
     useMaterial3: true,
@@ -128,5 +151,17 @@ ThemeData buildEmberTheme() {
       error: EmberColors.danger,
     ),
     splashFactory: NoSplash.splashFactory,
+    // Kill stock focus/hover/highlight tints (de-Flutter pass, visuals.md #6).
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
+    focusColor: EmberColors.ember.withValues(alpha: 0.12),
+    dividerColor: EmberColors.line,
+    pageTransitionsTheme: const PageTransitionsTheme(builders: {
+      TargetPlatform.android: _FadeThroughBlackBuilder(),
+      TargetPlatform.iOS: _FadeThroughBlackBuilder(),
+      TargetPlatform.linux: _FadeThroughBlackBuilder(),
+      TargetPlatform.macOS: _FadeThroughBlackBuilder(),
+      TargetPlatform.windows: _FadeThroughBlackBuilder(),
+    }),
   );
 }
