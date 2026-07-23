@@ -75,13 +75,20 @@ class _EmberButtonState extends State<EmberButton> {
                   Icon(widget.icon, size: 18, color: fg),
                   const SizedBox(width: Space.s),
                 ],
-                Text(widget.label,
-                    style: TextStyle(
-                        fontFamily: 'Cinzel',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: fg,
-                        letterSpacing: 0.6)),
+                // Flexible + soft-wrap (v0.3.1 F4): long labels (event
+                // options) wrap to a second line instead of clipping
+                // off-screen at phone widths.
+                Flexible(
+                  child: Text(widget.label,
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      style: TextStyle(
+                          fontFamily: 'Cinzel',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: fg,
+                          letterSpacing: 0.6)),
+                ),
               ],
             ),
           ),
@@ -436,8 +443,10 @@ class _DieChipState extends State<DieChip>
   @override
   Widget build(BuildContext context) {
     final def = dieDef(widget.dieId);
+    // v0.3.1 F1: taps are no longer swallowed here for assigned dice — the
+    // caller decides (CombatScreen flashes "ALREADY ASSIGNED" feedback).
     return GestureDetector(
-      onTap: widget.assigned ? null : widget.onTap,
+      onTap: widget.onTap,
       child: AnimatedBuilder(
         animation: _tumble,
         builder: (context, _) {
@@ -467,9 +476,13 @@ class _DieChipState extends State<DieChip>
   }
 
   Widget _face(DieDef def, int? value) {
-    final borderColor = widget.selected
+    // v0.3.1 F1: a spent (assigned) die must read as spent — never keep the
+    // gold MAX halo or the selection ring on a die whose taps do nothing.
+    final glowSelected = widget.selected && !widget.assigned;
+    final glowMaxed = widget.maxed && !widget.assigned;
+    final borderColor = glowSelected
         ? EmberColors.ember
-        : widget.maxed
+        : glowMaxed
             ? EmberColors.gold
             : Colors.transparent;
     return AnimatedOpacity(
@@ -478,7 +491,7 @@ class _DieChipState extends State<DieChip>
       child: Container(
         width: 64,
         height: 80,
-        decoration: widget.selected || widget.maxed
+        decoration: glowSelected || glowMaxed
             ? BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
@@ -501,23 +514,30 @@ class _DieChipState extends State<DieChip>
                 if (value != null)
                   CustomPaint(
                       painter: _PipPainter(value,
-                          maxed: widget.maxed, selected: widget.selected)),
-                if (widget.selected)
+                          maxed: glowMaxed, selected: glowSelected)),
+                if (glowSelected)
                   CustomPaint(painter: _DieRingPainter(EmberColors.ember))
-                else if (widget.maxed)
+                else if (glowMaxed)
                   CustomPaint(painter: _DieRingPainter(EmberColors.gold)),
               ]),
             ),
             const SizedBox(height: 2),
-            Text(
-                value != null && widget.maxed
-                    ? 'd${def.size} MAX'
-                    : 'd${def.size}',
-                style: EmberText.micro.copyWith(
-                    fontSize: 9,
-                    color: widget.maxed
-                        ? EmberColors.gold
-                        : EmberColors.textDim)),
+            // FittedBox: "d10 SPENT" must never wrap inside the 64x80 chip.
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                  widget.assigned && value != null
+                      ? 'd${def.size} SPENT'
+                      : value != null && widget.maxed
+                          ? 'd${def.size} MAX'
+                          : 'd${def.size}',
+                  maxLines: 1,
+                  style: EmberText.micro.copyWith(
+                      fontSize: 9,
+                      color: glowMaxed
+                          ? EmberColors.gold
+                          : EmberColors.textDim)),
+            ),
           ],
         ),
       ),

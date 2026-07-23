@@ -202,6 +202,29 @@ class AudioService {
     }
   }
 
+  // -- App lifecycle (v0.3.1 F3) ----------------------------------------------
+
+  /// Pause everything when the app leaves the foreground (Home/lock/call) —
+  /// Android keeps audioplayers running otherwise, which is a Play-review
+  /// killer. Best-effort like everything else here.
+  void pauseAll() {
+    try {
+      _music?.pause();
+      _ambience?.pause();
+      for (final p in _sfxPool) {
+        p.stop();
+      }
+    } catch (_) {}
+  }
+
+  /// Resume the music + ambience beds on return to the foreground.
+  void resumeAll() {
+    try {
+      _music?.resume();
+      _ambience?.resume();
+    } catch (_) {}
+  }
+
   // -- Settings ---------------------------------------------------------------
 
   /// Push current settings onto live players (sliders move audio instantly).

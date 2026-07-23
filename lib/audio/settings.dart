@@ -9,11 +9,13 @@ class AudioSettings {
   double sfxVolume;
   bool musicMuted;
   bool sfxMuted;
+  bool haptics; // v0.3.1 F12: vibration on key beats (roll/assign/hit/death)
   AudioSettings({
     this.musicVolume = 0.7,
     this.sfxVolume = 0.9,
     this.musicMuted = false,
     this.sfxMuted = false,
+    this.haptics = true,
   });
 
   double get effectiveMusic => musicMuted ? 0.0 : musicVolume;
@@ -24,6 +26,7 @@ class AudioSettings {
         'sfxVolume': sfxVolume,
         'musicMuted': musicMuted,
         'sfxMuted': sfxMuted,
+        'haptics': haptics,
       };
 
   factory AudioSettings.fromJson(Map<String, dynamic> j) => AudioSettings(
@@ -31,6 +34,7 @@ class AudioSettings {
         sfxVolume: (j['sfxVolume'] as num?)?.toDouble() ?? 0.9,
         musicMuted: j['musicMuted'] as bool? ?? false,
         sfxMuted: j['sfxMuted'] as bool? ?? false,
+        haptics: j['haptics'] as bool? ?? true,
       );
 }
 
