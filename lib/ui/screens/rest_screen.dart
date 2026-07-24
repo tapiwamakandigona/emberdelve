@@ -65,20 +65,34 @@ class RestScreen extends StatelessWidget {
   Widget _forgeRow(String id, int index) {
     final def = dieDef(id);
     final into = def.forgeTo.first;
+    // Compact chips + dense button: the full-size row overflowed 320dp
+    // phones by ~9px (many-dice layout sweep 2026-07-24).
     return Panel(
-      child: Row(children: [
-        DieChip(id),
-        const Icon(Icons.arrow_forward, color: EmberColors.ember),
-        DieChip(into),
-        const SizedBox(width: Space.m),
-        Expanded(
-            child: Text('${def.name} → ${dieDef(into).name}',
-                style: EmberText.body)),
-        EmberButton('Forge',
-            onTap: () => c.apply({'type': 'forge', 'die': index, 'into': into})),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          _chip(id),
+          const Icon(Icons.arrow_forward, size: 16, color: EmberColors.ember),
+          _chip(into),
+          const Spacer(),
+          EmberButton('Forge',
+              dense: true,
+              onTap: () =>
+                  c.apply({'type': 'forge', 'die': index, 'into': into})),
+        ]),
+        const SizedBox(height: Space.xs),
+        // Full-width caption line: squeezed beside the button it wrapped
+        // mid-word on 320dp phones.
+        Text('${def.name} → ${dieDef(into).name}',
+            maxLines: 1, overflow: TextOverflow.ellipsis, style: EmberText.label),
       ]),
     );
   }
+
+  Widget _chip(String id) => SizedBox(
+        width: 48,
+        height: 60,
+        child: FittedBox(fit: BoxFit.contain, child: DieChip(id)),
+      );
 }
 
 // ---------------------------------------------------------------------------

@@ -531,6 +531,34 @@ class _CombatScreenState extends State<CombatScreen> {
     final hudScale = math.min(systemScale, maxHudScale);
     final compact = height / hudScale < 700;
 
+    // Tray metrics (many-dice sweep 2026-07-24): a fat late-run pool used to
+    // clip dice 5+ behind a half-row — technically scrollable, visually
+    // broken. Now chips shrink once the pool outgrows the roomy row budget,
+    // the tray height is quantized to WHOLE rows (no half-cut dice), and a
+    // fade + chevron signals the overflow when it truly must scroll.
+    final trayWidth = MediaQuery.sizeOf(context).width - 2 * Space.l;
+    final chipScale = dice0.length > (compact ? 4 : 8) ? 0.75 : 1.0;
+    final chipW = 64 * chipScale + Space.s;
+    final chipH = 80 * chipScale;
+    final perRow = math.max(1, ((trayWidth + Space.s) / chipW).floor());
+    final rowsNeeded = math.max(1, (dice0.length / perRow).ceil());
+    const trayPeek = 26.0; // room for the fade strip below the last row
+    // Whole rows only, inside the same height budget the tray always had
+    // (112/256) so the stage never loses more space than before; the fade
+    // strip borrows from the budget when the tray truly scrolls.
+    final trayBudget = compact ? 112.0 : 256.0;
+    final rowH = chipH + Space.s;
+    int fitRows(double budget) =>
+        math.max(1, ((budget + Space.s) / rowH).floor());
+    var visRows = math.min(rowsNeeded, fitRows(trayBudget));
+    var trayScrolls = rowsNeeded > visRows;
+    if (trayScrolls) {
+      visRows = math.min(rowsNeeded, fitRows(trayBudget - trayPeek));
+      trayScrolls = rowsNeeded > visRows;
+    }
+    final trayH =
+        visRows * chipH + (visRows - 1) * Space.s + (trayScrolls ? trayPeek : 0);
+
     final combat = Column(
       children: [
         _TopBar(c),
@@ -602,15 +630,18 @@ class _CombatScreenState extends State<CombatScreen> {
             alignment: Alignment.topCenter,
             children: [
               ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: compact ? 112 : 256),
+                constraints: BoxConstraints(maxHeight: trayH),
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: trayScrolls ? trayPeek : 0),
                   child: Wrap(
                     spacing: Space.s,
                     runSpacing: Space.s,
                     alignment: WrapAlignment.center,
                     children: [
                       for (var i = 1; i <= dice0.length; i++)
-                        DieChip(
+                        _trayChip(
+                          chipScale,
+                          DieChip(
                           dice0[i - 1],
                           value: rolled != null ? rolled[i - 1] : null,
                           assigned: assigned['$i'] != null,
@@ -645,11 +676,34 @@ class _CombatScreenState extends State<CombatScreen> {
                                     () => selected = selected == i ? null : i,
                                   );
                                 },
+                          ),
                         ),
                     ],
                   ),
                 ),
               ),
+              // Fade + chevron: the tray holds more dice below the fold.
+              if (trayScrolls)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: IgnorePointer(
+                    child: Container(
+                      height: 26,
+                      alignment: Alignment.bottomCenter,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x00141019), Color(0xCC141019)],
+                        ),
+                      ),
+                      child: const Icon(Icons.keyboard_arrow_down,
+                          size: 16, color: EmberColors.textDim),
+                    ),
+                  ),
+                ),
               for (final (idx, n)
                   in _notes.where((n) => !n.onEnemy).toList().indexed)
                 Positioned(
@@ -891,6 +945,16 @@ class _CombatScreenState extends State<CombatScreen> {
   /// Hero vs enemy, bottom-aligned on a grounded floor plane (shadow
   /// ellipses); lunges slide the combatant toward the other side, knockback
   /// nudges away, deaths dissolve into embers. Damage numbers pop over the
+  /// Chips shrink together once the pool outgrows the tray's row budget so
+  /// more dice stay visible per row (FittedBox keeps taps + semantics).
+  Widget _trayChip(double scale, DieChip chip) => scale == 1.0
+      ? chip
+      : SizedBox(
+          width: 64 * scale,
+          height: 80 * scale,
+          child: FittedBox(fit: BoxFit.contain, child: chip),
+        );
+
   /// stage; the enemy's next intent floats above it as an icon badge.
   Widget _stage(Map enemy, Map intent, {bool compact = false}) {
     final enemyId = enemy['id'] as String? ?? '';
@@ -965,6 +1029,11 @@ class _CombatScreenState extends State<CombatScreen> {
                     // sit beside it while the enemy is alight.
                     Positioned(
                       top: -44,
+                      // With burn stacks the badge row widens; right-anchor it
+                      // to the enemy so it never draws off the screen edge
+                      // (many-dice sweep 2026-07-24 — the burn pill sat half
+                      // off-screen on every burning enemy).
+                      right: (enemy['burn'] as int? ?? 0) > 0 ? 0 : null,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
