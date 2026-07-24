@@ -407,6 +407,12 @@ void combatReroll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'value': newVal,
     'left': sim.player['rerolls_left'],
   });
+  // Combos are a pure function of the CURRENT pool (m4 §3) — re-detect after
+  // a charge reroll too, or `combo_bonus` goes stale: a broken pair kept
+  // paying +1 on both dice and a newly rolled pair/triple/straight paid
+  // nothing. The once-per-turn guards (`ignited`, `free_reroll_next`) make
+  // re-detection safe, exactly as on the risky-reroll path.
+  _detectAndApplyCombos(sim, events);
 }
 
 /// cmd: { type:"assign", die:<1-based index>, action:"attack"|"block" }

@@ -199,6 +199,32 @@ void main() {
       expect(a.bonus, equals(b.bonus));
       expect(a.pairs.length, equals(b.pairs.length));
     });
+
+    test('charge reroll re-detects combos (no stale combo_bonus)', () {
+      // Regression: `reroll {die}` used to skip re-detection, so a broken
+      // pair kept paying +1 on both dice and a new combo paid nothing.
+      final sim = Sim(1);
+      sim.apply({'type': 'start_run'});
+      while (sim.phase != 'player_turn') {
+        final cmd = botCmd(sim);
+        if (cmd == null || cmd['type'] == 'roll') break;
+        sim.apply(cmd);
+      }
+      expect(sim.phase, equals('player_turn'));
+      sim.apply({'type': 'roll'});
+      // Force a known pool with a pair on dice 1+2, and grant one charge.
+      sim.player['rolled'] = <int>[3, 3, 5];
+      sim.player['rolled_max'] = <bool>[false, false, false];
+      sim.player['combo_bonus'] = detectCombos([3, 3, 5]).bonus;
+      sim.player['rerolls_left'] = 1;
+      expect((sim.player['combo_bonus'] as List)[0], equals(1));
+      sim.apply({'type': 'reroll', 'die': 1});
+      final rolled = (sim.player['rolled'] as List).cast<int>();
+      final expected = detectCombos(rolled).bonus;
+      expect(sim.player['combo_bonus'], equals(expected),
+          reason: 'combo_bonus must match the CURRENT pool after a charge '
+              'reroll (pool now $rolled)');
+    });
   });
 
   group('risky reroll (v4)', () {
