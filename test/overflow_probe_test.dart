@@ -104,17 +104,21 @@ Future<void> probeAllPhases(
   ctx('map@$size');
   await pumpFor(tester, 500);
 
-  // Walk the map, probing every phase we land in. Give the player a large
-  // dice pool so the combat tray wraps to several rows (worst case).
+  // Walk the map, probing every phase we land in. Give the player a FAT
+  // late-run dice pool (16) so the combat tray hits the shrink + scroll
+  // branches and the rest screen shows a long forge list (worst case —
+  // many-dice sweep 2026-07-24).
   (c.state!['player'] as Map)['dice'] = <String>[
-    'd6',
-    'd6',
-    'd6',
-    'd8_aegis',
-    'd10_blade',
-    'd12',
-    'd4_lucky',
-    'd8',
+    for (var i = 0; i < 2; i++) ...[
+      'd6',
+      'd6',
+      'd6',
+      'd8_aegis',
+      'd10_blade',
+      'd12',
+      'd4_lucky',
+      'd8',
+    ],
   ];
   var guard = 0;
   var sawCombat = false, sawShop = false, sawEvent = false, sawRest = false;
