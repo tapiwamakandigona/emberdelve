@@ -351,3 +351,88 @@ tutorial promise and refreshed screenshots in a single submission.
 
 Full day-one narrative (publish journey, recruiting rounds, reciprocity
 table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
+
+---
+## 2026-07-24 — PIVOT to action platformer (owner-directed)
+- Owner (DM): rethink Emberdelve as an Apple-Knight-style action platformer; better + well-optimised; archive old game first; new targets/goals across the repo.
+- Legacy preserved: branch `legacy/dice-builder`, tag `v0.3.10-legacy`, GH release "Emberdelve Classic" (verified on remote).
+- A prior agent's pivot attempt died locally without pushing — nothing recoverable. Restarted from `main` on branch `pivot/platformer`. Standing rule: PUSH AT EVERY MILESTONE.
+- M0 (this commit): PROJECT.md/README/spec/architecture rewritten for v2; dice-era docs → `docs/legacy/`.
+- Keep: CI+signing, package id, AudioService+audio assets, fonts, seeded RNG, atomic-save pattern. Drop: dice sim/UI/data (archived on legacy branch).
+
+---
+## 2026-07-24 — M2/M3 headless cores (worker A, emberpivot-0724-A)
+- `lib/game/session.dart`: LevelSession — headless level runtime (mutable grid, melee
+  resolution w/ seeded crits + hit-pause + burn DoT, apple projectiles (pooled), coins/
+  apples/feathers, chest coin bursts via 'drops' stream, cracked walls (3 hits, 1 with
+  wallBreaker), signs, exit door → LevelResults w/ 3 medals, fall-out + death → fail).
+- `lib/game/enemies/enemy_core.dart`: EnemyCore base + Thornling (edge/wall patrol),
+  Ashbat (sine flyer), Hopper (aggro hops). Totem/Rotshield/boss left as TODO(M5) no-ops.
+- `lib/game/core_loadout.dart`: Loadout.fromSave snapshot (weapon stats, meleePower,
+  maxHearts, tripleJump→extraAirJumps, appleCapacity, coin_magnet).
+- Tests: physics_test (11: jump 2-not-4 tiles, double 3.5, coyote 0.08 ok/0.2 not, buffer,
+  variable height, one-way land/up/drop-through, wall, spike i-frames, knockback),
+  enemy_core_test (6), combat_test (8), session_test (14). Suite 68/68, analyze clean.
+
+---
+## 2026-07-24 — M2c/M3 render layer (worker A, emberpivot-0724-A)
+- `lib/game/ember_game.dart`: FlameGame shell over LevelSession — fixed-res 480x270
+  CameraComponent (smooth follow + kCameraLookAhead + peek-down, clamped to level, hit
+  camera bump), hand-rolled 4-layer forest parallax in camera.backdrop, event→sfx/fx map,
+  results persistence (recordFor + coins/feathers earn + skinKills[equippedSkin] += kills,
+  tutorialSeen on w1_l1), keyboard (arrows/AD, space/W/up jump, J/X attack, K/C throw, S down).
+- Components: tile_layer (ONE SpriteBatch pass for tileset grass/dirt variants
+  (x*7+y*13)%3 + platform/spikes batches + tinted block_big cracked walls + shared animated
+  fire; rebuilds on wallsDirty), player_component (all 8 strips, attack by comboIndex at
+  kAttackDuration, facing flip, i-frame blink), enemy_component (3 kinds + hopper jump strip,
+  hurt flash, sleep cull), items_component (door/signs/chests/coins/pickups/apples/sign
+  bubble in one pass), hud (hold-buttons + procedural 8x8 hearts, coin/apple/chest/feather/
+  timer readouts), fx (PuffFx dust, DeathFx).
+- `lib/ui/game_screen.dart`: GameWidget route + pause/results/fail overlays; level select
+  now opens levels (M2 snackbar gone). w1_l1: 3 tutorial sign texts (move/jump, attack,
+  throw + drop-through) + apple + thornling. pubspec assets now list image subdirs
+  (subdirectories are not recursive — fx/enemies/etc were unregistered).
+- Suite 70/70 green, analyze 0. P-M2 flipped with evidence. P-M3 left false: melee combo /
+  enemies (Thornling/Ashbat/Hopper) / pickups / chests / cracked walls / exit+results all
+  done & tested, but acceptance also names Ember Totem + Rotshield — deferred to M5 per
+  orchestrator instruction (spawn kinds are handled as no-op TODOs).
+
+---
+## 2026-07-24 — M4 meta + M5 World 1 content (worker B, emberpivot-0724-B)
+**M5 (commits `420b365`, `cc81a30`, `925b602`):**
+- `lib/game/enemies/enemy_core.dart`: EmberTotemCore (stationary spitter — 8-tile range,
+  LOS raycast every 4px, 2.2s cooldown, hp5) + RotshieldCore (18px/s patroller, hp6,
+  `blocksHit()` guards its facing side vs melee AND apples; vulnerable behind/above).
+  Session owns pooled EmberShots (kEmberShotSpeed, break on terrain, 1-heart player hit);
+  blocked hits emit `attackBlocked` → 'block' sfx. Hoppers spawn via `meta: hopperN=tx,ty`
+  (legend frozen by design).
+- `lib/game/enemies/boss_core.dart`: Grove Golem (hp60, phases at 2/3+1/3 hp with
+  `bossPhase` events): idle-stalk → telegraph (0.85s / 0.55s in P3) → attack → recover.
+  P1 slam shockwave along the floor (P3 adds a backward wave), P2 root spikes with harmless
+  warning marks under the player, P3 lobbed rock arcs. Session collides `hazardHits(body)`,
+  locks the exit until death, and pays a 45–60 coin + 3-feather victory burst
+  (`bossDefeated`). HUD: boss HP bar with phase ticks. Renderer: 2x moss-tinted thornling
+  composite + procedural hazards (no new art; provenance unchanged).
+- Levels `w1_l2..w1_l5` + `w1_boss` (+ `w1_l1` upgraded to quotas: 2 secret-vault chests,
+  4 chests, recoverable hazard pits). Progressive intro: l2 +hoppers, l3 +totems,
+  l4 +rotshields, l5 full mix (7 chests/3 secrets/3 feathers). Secrets are cracked-wall
+  vaults, all pass-through. `test/world1_levels_test.dart`: parse+lint, quotas
+  (2–7 chests / ≥2 secrets / 1–3 feathers), fair-par bounds, max-gap ≤ double-jump budget,
+  per-level required-entity assertions, and a scripted door-seeking runner bot that
+  actually finishes every regular level headlessly. P-M3 + P-M5 flipped.
+**M4 (this commit):**
+- `lib/ui/shop_screen.dart`: 3-tab shop from catalog.dart — weapons (dmg/crit%/xmult/range
+  + special text), skins (level, melee power xN.NN, kills-to-next), abilities; Buy→Equip→
+  EQUIPPED states, Haggler -10% shown with strikethrough, wallet chip; all transactions via
+  economy.buy (re-checks funds/ownership) then queued atomic persist.
+- `lib/ui/settings_screen.dart` (music/sfx sliders → SettingsStore, reset-save with confirm
+  dialog), `lib/ui/credits_screen.dart` (renders bundled CREDITS.md — CC-BY attributions
+  ship visibly in-app), title screen (drifting 3-layer CC0 parallax, ember-glow logo,
+  Play/Shop/Settings/Credits), level select (card nodes, 3 medal icons per level from save,
+  wallet, boss node gated on all five clears).
+- HUD: `HudThrowButton` — apple-icon touch button above the sword button, hidden unless
+  applesHeld > 0 (closes worker A's touch-throw gap).
+- `AppState.persist()` now chains writes on a queue (rapid buy/equip taps can't interleave
+  save-file bytes). Tests: shop_flow_test (headless buy/haggler/insufficient-funds/skin
+  power + widget BUY→EQUIP flow with disk round-trip), meta_screens_test (title routes,
+  reset-save confirm, credits attribution, boss lock + medals). P-M4 flipped.

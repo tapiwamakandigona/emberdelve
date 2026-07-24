@@ -1,9 +1,9 @@
 name: emberdelve
-description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
+description: "Emberdelve — pixel action-platformer. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.3.9+12
+version: 1.0.0-alpha.1+13
 
 environment:
   sdk: ^3.8.1
@@ -11,10 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Save-file location for autosave/meta persistence (the sim core stays
-  # sealed pure Dart with zero runtime deps).
+  # 2D game engine (gameplay only; meta screens are plain Flutter).
+  flame: ^1.29.0
+  # Save-file location (atomic JSON save + .bak).
   path_provider: ^2.1.4
-  # Music loops + SFX one-shots (assets-integration).
+  # Music loops + SFX one-shots (kept from v1).
   audioplayers: ^6.1.0
 
 dev_dependencies:
@@ -26,16 +27,15 @@ flutter:
   uses-material-design: true
   assets:
     - CREDITS.md
-    - assets/images/sprite_meta.json
+    - assets/levels/
+    - assets/images/bg/
     - assets/images/enemies/
-    - assets/images/characters/
-    - assets/images/backgrounds/
-    - assets/images/ui/
-    - assets/images/ui/dice/
-    - assets/images/ui/currency/
-    - assets/images/ui/events/
-    - assets/images/ui/nodes/
-    - assets/images/ui/relics/
+    - assets/images/fx/
+    - assets/images/hud/
+    - assets/images/items/
+    - assets/images/player/
+    - assets/images/props/
+    - assets/images/tiles/
     - assets/audio/music/
     - assets/audio/sfx/
   fonts:

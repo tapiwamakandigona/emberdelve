@@ -1,73 +1,47 @@
-// lib/main.dart — Emberdelve entry point.
+// main.dart — boot: services up, landscape lock, straight to the title.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
-import 'game/controller.dart';
-import 'ui/screens.dart';
-import 'ui/theme.dart';
+import 'core/save.dart';
+import 'ui/app_state.dart';
+import 'ui/title_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  // Must run before the first AudioPlayer exists — see initPlatformAudio.
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  final settings = await SettingsStore.load();
+  AudioService.instance = AudioService(settings);
   await AudioService.initPlatformAudio();
-  final audio = AudioService(await SettingsStore.load());
-  AudioService.instance = audio;
-  final controller = GameController()..audio = audio;
-  await controller.boot();
-  runApp(EmberdelveApp(controller));
+
+  final store = SaveStore();
+  final save = await store.load();
+  AppState.init(store: store, save: save);
+
+  runApp(const EmberdelveApp());
 }
 
-class EmberdelveApp extends StatefulWidget {
-  final GameController controller;
-  const EmberdelveApp(this.controller, {super.key});
-  @override
-  State<EmberdelveApp> createState() => _EmberdelveAppState();
-}
-
-/// App-lifecycle audio handling (v0.3.1 F3): pause music/ambience when the
-/// app leaves the foreground (Home button, lock screen, incoming call) and
-/// resume on return — Android keeps audioplayers running otherwise.
-class _EmberdelveAppState extends State<EmberdelveApp>
-    with WidgetsBindingObserver {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    final audio = widget.controller.audio;
-    if (audio == null) return;
-    switch (state) {
-      case AppLifecycleState.resumed:
-        audio.resumeAll();
-        break;
-      case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.detached:
-        audio.pauseAll();
-        break;
-    }
-  }
+class EmberdelveApp extends StatelessWidget {
+  const EmberdelveApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Emberdelve',
       debugShowCheckedModeBanner: false,
-      theme: buildEmberTheme(),
-      home: GameRoot(widget.controller),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF141420),
+        fontFamily: 'Inter',
+        useMaterial3: true,
+      ),
+      home: const TitleScreen(),
     );
   }
 }
