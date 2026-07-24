@@ -219,3 +219,11 @@ audio_service.setDanger mirrors the ambience-bed lifecycle exactly (failed
 start must not occupy the slot; off always stops+disposes). The 30% rule
 lives in the controller (_inDanger), not the audio layer, so it stays
 gameplay-owned. Analyze clean; assets/widget/phase-transition suites green.
+
+## 2026-07-24 — v0.3.4 release build (integrator pass 4: PRs #20, #19, #21)
+2026-07-24 Integrated #20 (haptics: direct Vibrator via MethodChannel, owner
+bug report) → #19 (boss variety: 3 seed-picked bosses, goldenV6 unchanged) →
+#21 (low-HP heartbeat danger layer). Each PR gate-verified post-merge-with-main
+(analyze clean; 133/134/134 tests; autoplay 200 normal 67.0/66.5/66.5% WR, 0
+invalids; golden 1842571558 self-consistent). Version bumped 0.3.3+6 → 0.3.4+7
+for the delivered signed APK (CI build-android-release artifact).
