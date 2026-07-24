@@ -362,4 +362,70 @@ void main() {
     expect(c.meta.embers, equals(embersBefore));
     expect(c.meta.runsPlayed, equals(runsBefore + 1));
   });
+
+  testWidgets('reward screen presents flip cards and picking one works',
+      (tester) async {
+    final c = GameController();
+    c.meta.tutorialSeen = true;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildEmberTheme(),
+      home: GameRoot(c),
+    ));
+    // Seed 2: the alternating bot below reaches the first reward alive
+    // (verified with a headless sim probe; seed 1 dies to its first elite).
+    c.startRun(character: 'kindler', seed: 2);
+    await pumpFor(tester, 400);
+
+    // Walk into the first fight and brute-force it with attacks.
+    var guard = 0;
+    while (c.phase != 'reward' && guard++ < 60) {
+      final phase = c.phase;
+      if (phase == 'map') {
+        final map = c.state!['map'] as Map;
+        final pos = map['position'] as int;
+        final edges = ((map['edges'] as Map)['$pos'] as List).cast<int>();
+        c.apply({'type': 'choose_node', 'node': edges.first});
+      } else if (phase == 'player_turn') {
+        c.apply({'type': 'roll'});
+        final n = ((c.state!['player'] as Map)['dice'] as List).length;
+        for (var i = 1; i <= n && c.phase == 'player_turn'; i++) {
+          // Alternate attack/block like the overflow probe's bot — pure
+          // aggression dies before the first reward on some seeds.
+          c.apply({
+            'type': 'assign',
+            'die': i,
+            'action': i.isEven ? 'block' : 'attack',
+          });
+        }
+        if (c.phase == 'player_turn') c.apply({'type': 'end_turn'});
+      } else if (phase == 'event') {
+        c.apply({'type': 'event_choose', 'choice': 1});
+      } else if (phase == 'rest') {
+        c.apply({'type': 'rest'});
+      } else if (phase == 'shop') {
+        c.apply({'type': 'leave_shop'});
+      } else {
+        break; // run_lost or something unexpected: fail below
+      }
+      await pumpFor(tester, 250);
+    }
+    expect(c.phase, equals('reward'));
+    await pumpFor(tester, 300);
+
+    // Flip cards render (one per offer), face-down first then auto-flip.
+    final offers = (c.state!['offers'] as List).cast<String>();
+    expect(offers, isNotEmpty);
+    for (var i = 0; i < offers.length; i++) {
+      expect(find.byKey(ValueKey('reward-${offers[i]}-$i')), findsOneWidget);
+    }
+    // Let every stagger + flip finish, then pick the first card by tapping.
+    await pumpFor(tester, 220 + offers.length * 240 + 600);
+    final before = ((c.state!['player'] as Map)['dice'] as List).length;
+    await tester.tap(find.byKey(ValueKey('reward-${offers[0]}-0')),
+        warnIfMissed: false);
+    await pumpFor(tester, 600);
+    expect(((c.state!['player'] as Map)['dice'] as List).length,
+        equals(before + 1));
+    await pumpFor(tester, 800); // drain implicit animations before teardown
+  });
 }
