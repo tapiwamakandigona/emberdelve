@@ -54,8 +54,12 @@ const List<String> enemiesOrder = [
   'soot_hound', 'ash_wraith', 'cinder_crawler', 'ember_moth', 'slag_brute',
   // elites
   'pyre_howler', 'kiln_golem', 'ash_reaper', 'forge_warden', 'molten_maw',
-  // boss
-  'ember_tyrant',
+  // bosses (exactly one per run, chosen deterministically from the run seed
+  // in run_layer.dart — see bossForSeed). Ordering is deliberate: the golden
+  // anchor seed (20260723 % 3 == 1) must keep mapping to the Ember Tyrant so
+  // the long-lived v6 golden replay stays valid. Append new bosses at the
+  // END; never reorder.
+  'ashen_colossus', 'ember_tyrant', 'pyre_matriarch',
 ];
 
 const Map<String, EnemyDef> enemies = {
@@ -137,13 +141,33 @@ const Map<String, EnemyDef> enemies = {
     Intent('attack', 25),
   ]),
 
-  // ---- boss (exactly one in act 1) -----------------------------------------------
+  // ---- bosses (exactly one per run, seed-picked) ----------------------------------
+  // v0.4 boss variety: three bosses with deliberately different rhythms, all
+  // built from the same honest Intent vocabulary (no new mechanics):
+  //   ember_tyrant   — the balanced 4-beat teacher (unchanged since v0.1).
+  //   ashen_colossus — the siege wall: guards two beats in three, then one
+  //                    giant swing; open beat is the player turn right after
+  //                    the swing. Tankiest, slowest.
+  //   pyre_matriarch — the race: never guards, escalating 3-beat burn; every
+  //                    player turn lands full but so does hers. Least HP.
   'ember_tyrant':
       EnemyDef('ember_tyrant', 'Ember Tyrant', 101, boss: true, pattern: [
     Intent('attack', 23),
     Intent('block', 28),
     Intent('attack_block', 26, 20),
     Intent('attack', 32),
+  ]),
+  'ashen_colossus':
+      EnemyDef('ashen_colossus', 'Ashen Colossus', 112, boss: true, pattern: [
+    Intent('block', 26),
+    Intent('attack_block', 23, 22),
+    Intent('attack', 36),
+  ]),
+  'pyre_matriarch':
+      EnemyDef('pyre_matriarch', 'Pyre Matriarch', 94, boss: true, pattern: [
+    Intent('attack', 21),
+    Intent('attack', 25),
+    Intent('attack', 29),
   ]),
 };
 

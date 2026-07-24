@@ -172,6 +172,45 @@ gate — rerun manually after UI changes. Meta in shots is staged but honest to
 real mechanics (real screens, real seeds; ledger numbers are sample data).
 Known nit spotted while shooting: ledger delver rows print "1 wins".
 
+## 2026-07-24 — haptics actually vibrate now (branch fix/haptics-release)
+2026-07-24 Owner report: haptics did nothing on the v0.3.2 APK even with the
+in-game toggle ON. Root cause: HapticFeedback.*Impact() maps to Android's
+View.performHapticFeedback(), which is silently gated by the SYSTEM "touch
+feedback" setting (off on many phones; apps can't override since Android 13).
+Fix: `emberdelve/haptics` MethodChannel in MainActivity.kt drives the Vibrator
+service directly (VibratorManager on S+, VibrationEffect on O+, legacy below)
+with per-beat duration/amplitude (light 18ms/90 · medium 38ms/170 · heavy
+70ms/255); Dart side falls back to HapticFeedback where the channel is absent
+(iOS/tests) or the device has no vibrator. Added the normal VIBRATE permission
+and updated the store docs' "zero permissions" claims (now: no internet
+permission, VIBRATE only). Flipping the settings toggle ON now answers with an
+immediate preview buzz for on-device confirmation. New test/haptics_test.dart
+(6 tests: channel args, toggle gating, fallbacks). Suite 133 tests, no sim
+change, golden untouched.
+
+## 2026-07-24 — boss variety (branch feat/boss-variety)
+2026-07-24 BOSS VARIETY (v0.4 notes item 5): three bosses, one per run, chosen
+as a PURE function of the run seed (bossForSeed = bossIds[seed % 3]) — no RNG
+stream consumed, so all other seeded streams are byte-identical and runs whose
+seed maps to the Ember Tyrant replay identically to the single-boss sim
+(goldenV6 survived unchanged; verified). Dailies share a seed → same boss for
+everyone that day. New kin, same honest Intent vocabulary, no new mechanics:
+  * Ashen Colossus (112hp) — the wall: guards 2 beats in 3, one giant swing;
+    the open player turn is right after the swing.
+  * Pyre Matriarch (94hp) — the race: never guards, escalating 21/25/29 burn.
+Balance (bin/autoplay, 200 seeds): overall 87/66.5/37% easy/normal/hard (was
+88/70/33 pre-variety, band test 20-80 green). Per-boss winrate spreads are
+dominated by pre-boss seed-group variance (measured: deaths-before-boss 31/15/44
+per group), NOT the boss fights — actual boss-FIGHT winrates are 94/94/86%
+tyrant/matriarch/colossus. Don't tune boss stats against whole-run winrate.
+Insights: per-boss coaching buckets (a Tyrant tip would lie about the
+Colossus); generic 'boss' bucket kept as fallback; all buckets 3 lines so the
+loot-stream draw shape is unchanged. Sprites: ember_tyrant palette-swap kin
+(cold-ash colossus, crimson matriarch) + sprite_meta entries. Tests: content
+test now expects exactly 3 bosses; sim_test pins one golden PER BOSS
+(goldenV6/Colossus/Matriarch). Boss ordering in enemiesOrder is deliberate
+(golden seed 20260723 % 3 == 1 → tyrant) — append new bosses at the END.
+
 ## 2026-07-24 — low-HP audio danger layer (branch feat/low-hp-danger-layer)
 2026-07-24 DANGER BED (flagged "before 1.0" since v0.2): quiet heartbeat loop
 (60bpm lub-dub + dark 41Hz drone, 8s seamless, synthesized in-house — CC0,

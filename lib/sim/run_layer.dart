@@ -47,7 +47,18 @@ List<String> _elitesFor(int layer) => [
       for (final id in enemiesOrder)
         if (enemies[id]!.elite && enemies[id]!.fromLayer <= layer) id
     ];
-final String _boss = enemiesOrder.firstWhere((id) => enemies[id]!.boss);
+// v0.4 boss variety: the run's boss is a PURE function of the run seed — no
+// RNG stream is consumed, so every other seeded stream (map, combat, loot,
+// boon, offer, shop) is byte-identical to the single-boss sim. Runs whose
+// seed maps to the Ember Tyrant replay identically to pre-variety builds,
+// which keeps the v6 golden anchor valid. Daily runs share a seed, so every
+// player faces the same boss that day.
+final List<String> _bossIds = [
+  for (final id in enemiesOrder)
+    if (enemies[id]!.boss) id
+];
+
+String bossForSeed(int seed) => _bossIds[seed % _bossIds.length];
 
 int _rollEmbers(Sim sim) => sim.rng['loot']!.range(8, 20);
 int _rollGold(Sim sim) => sim.rng['loot']!.range(12, 22);
@@ -281,7 +292,7 @@ void runChooseNode(Sim sim, Map cmd, List<Map<String, Object?>> events) {
           layer: layer);
       break;
     case 'boss':
-      combatBegin(sim, _boss, false, events);
+      combatBegin(sim, bossForSeed(sim.runSeed), false, events);
       break;
     case 'rest':
       sim.phase = 'rest';
@@ -647,7 +658,8 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     final kept = (run['embers'] as int) ~/ 2;
     final floor = 5 + layer;
     run['embers'] = kept > floor ? kept : floor;
-    final bucket = insightBucket(layer, node['kind'] == 'boss');
+    final bucket = insightBucket(layer, node['kind'] == 'boss',
+        bossId: bossForSeed(sim.runSeed));
     final lines = insights[bucket]!;
     final insight = lines[sim.rng['loot']!.range(1, lines.length) - 1];
     run['insight'] = insight;
