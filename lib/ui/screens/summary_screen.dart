@@ -65,6 +65,20 @@ class SummaryScreen extends StatelessWidget {
             ]),
           ),
         ],
+        const SizedBox(height: Space.m),
+        // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
+        // into 'Delve a seed' on the title to replay this exact delve.
+        GestureDetector(
+          key: const ValueKey('run-seed'),
+          onTap: () async {
+            await Clipboard.setData(
+                ClipboardData(text: '${c.sim?.runSeed ?? ''}'));
+            c.announce('Seed copied');
+          },
+          child: Text('Seed ${c.sim?.runSeed} — tap to copy',
+              textAlign: TextAlign.center,
+              style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+        ),
         const Spacer(),
         // Fast restart (backlog #8): straight into a new run — boon pick
         // included — without a detour through the title.
