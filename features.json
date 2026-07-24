@@ -26,8 +26,8 @@
       "id": "P-M3",
       "title": "Combat & pickups: melee combo, enemies, coins/apples/chests/feathers, exit",
       "acceptance": "3-hit combo with buffered input and hit-pause; Thornling/Ashbat/Ember Totem/Rotshield behaviors; apple throw; chests open with coin burst; secret chests via cracked walls; exit door ends level with results (medals) persisted; enemy/pickup unit tests green",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "flutter analyze clean + flutter test all green (this commit): test/combat_test.dart (3-hit combo, buffer, hit-pause), test/totem_rotshield_test.dart (Ember Totem LOS/cooldown/projectile + Rotshield front-block of melee AND apples, vulnerable behind/above), test/enemy_core_test.dart (Thornling/Ashbat/Hopper), test/session_test.dart (apple throw, chest coin bursts, cracked-wall secret chests, exit door results+medals persisted via ember_game._persistResults)"
     },
     {
       "id": "P-M4",
@@ -38,10 +38,10 @@
     },
     {
       "id": "P-M5",
-      "title": "Content: World 1 Emberwood — 5 levels + Grove Golem boss",
+      "title": "Content: World 1 Emberwood \u2014 5 levels + Grove Golem boss",
       "acceptance": "All levels in assets/levels parse + lint clean with >=2 chests and >=1 feather each (except boss arena); boss with 3 telegraphed phases; every level completable (manual/scripted run evidence)",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "assets/levels/w1_l1..w1_l5 + w1_boss all parse+lint clean with >=2 secrets, 2-7 chests, 1-3 feathers each (test/world1_levels_test.dart quotas); Grove Golem 3 telegraphed phases w/ thresholds 2/3+1/3 (test/boss_core_test.dart); completability: scripted door-seeking runner bot finishes every regular level headlessly (world1_levels_test 'scripted runner bot reaches the door'), boss arena door unlock covered in boss_core_test"
     },
     {
       "id": "P-M6",

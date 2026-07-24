@@ -40,6 +40,9 @@ void main() {
     expect(game.session.signs[0].text, contains('JUMP'));
     expect(game.session.signs[1].text, contains('SWORD'));
     expect(game.session.signs[2].text, contains('DOWN + JUMP'));
-    expect(game.session.chestTotal, 1);
+    // M5 content pass: tutorial now meets world quotas (2 plain chests +
+    // 2 secret chests in the cracked vault).
+    expect(game.session.chestTotal, 4);
+    expect(game.session.chests.where((c) => c.secret).length, 2);
   });
 }
