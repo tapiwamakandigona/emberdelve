@@ -84,6 +84,10 @@ class GameController extends ChangeNotifier {
   String? get phase => sim?.phase;
   Map<String, Object?>? get state => sim?.state();
 
+  /// Seed of the current run (null when no run is live). Presentation-side
+  /// identity key — e.g. the map screen uses it to reset cross-run UI state.
+  int? get runSeed => sim?.runSeed;
+
   /// Serialized, atomic autosave: the snapshot is captured synchronously (so
   /// it matches the state the command produced, even if `sim` moves on or is
   /// dropped before the write lands), writes are chained on a queue (so two

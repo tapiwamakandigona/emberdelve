@@ -30,7 +30,9 @@ const Map<String, List<String>> insights = {
     'Save an attack die for the turn the enemy drops its guard.',
   ],
   'boss': [
-    "The Tyrant's turn 4 hits for 25 — enter that turn with block banked.",
+    // Number-free on purpose: the exact amount shifts with difficulty and
+    // ascension, and a death-screen tip must never lie (§Ethics honesty).
+    "The Tyrant's turn 4 is its heaviest hit — enter that turn with block banked.",
     'The Tyrant blocks on turn 2; hold your damage and strike turn 3.',
     'Bring healing into the boss: its 4-beat cycle out-damages a raw race.',
   ],
