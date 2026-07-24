@@ -272,7 +272,13 @@ class _DamagePopState extends State<DamagePop>
         // Pop in (overshoot), arc up-and-away, fade in the last 40%.
         final scale = f < 0.18
             ? 0.4 + (f / 0.18) * 0.9 // 0.4 -> 1.3
-            : 1.3 - Curves.easeOut.transform((f - 0.18) / 0.82) * 0.3;
+            // Clamp: at f == 1.0 the division can land a hair above 1.0
+            // (1.0000000000000002), which trips Curve.transform's assert on
+            // the pop's final frame — every damage pop, every debug frame.
+            : 1.3 -
+                Curves.easeOut
+                        .transform(((f - 0.18) / 0.82).clamp(0.0, 1.0)) *
+                    0.3;
         final dir = widget.onPlayer ? -1.0 : 1.0;
         final dx = dir * 26 * Curves.easeOut.transform(f);
         final dy = -46 * Curves.easeOut.transform(f) + 18 * f * f;
@@ -350,7 +356,11 @@ class _TextPopState extends State<TextPop>
         // Pop in (overshoot), drift up, fade in the last 35%.
         final scale = f < 0.16
             ? 0.5 + (f / 0.16) * 0.75 // 0.5 -> 1.25
-            : 1.25 - Curves.easeOut.transform((f - 0.16) / 0.84) * 0.25;
+            // Same float-overshoot clamp as DamagePop above.
+            : 1.25 -
+                Curves.easeOut
+                        .transform(((f - 0.16) / 0.84).clamp(0.0, 1.0)) *
+                    0.25;
         final dy = -34 * Curves.easeOut.transform(f);
         final alpha = f < 0.65 ? 1.0 : 1.0 - (f - 0.65) / 0.35;
         return Transform.translate(
