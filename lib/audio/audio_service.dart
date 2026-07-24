@@ -72,6 +72,25 @@ class AudioService {
   AudioSettings settings;
   AudioService(this.settings);
 
+  /// One-time platform audio session setup — call from main() before any
+  /// player is created. Android's default AudioContext makes EVERY player
+  /// request exclusive audio focus (AUDIOFOCUS_GAIN) on play(), so each SFX
+  /// one-shot (ui_tap on the settings gear, the difficulty selector, every
+  /// EmberButton...) delivered a permanent AUDIOFOCUS_LOSS to the music
+  /// player, which audioplayers answers with a pause() that is never
+  /// resumed — "tapping settings kills the music". mixWithOthers drops all
+  /// in-app focus fighting (Android: AUDIOFOCUS_NONE, iOS: playback +
+  /// mixWithOthers); backgrounding is handled by the app-lifecycle observer
+  /// (pauseAll/resumeAll), not by audio focus.
+  static Future<void> initPlatformAudio() async {
+    try {
+      await AudioPlayer.global.setAudioContext(
+        AudioContextConfig(focus: AudioContextConfigFocus.mixWithOthers)
+            .build(),
+      );
+    } catch (_) {}
+  }
+
   static const _ambienceLevel = 0.35; // relative to music volume
 
   AudioPlayer? _music;
@@ -123,12 +142,25 @@ class AudioService {
     final old = _music;
     _music = null;
     if (old != null) _fadeOutAndDispose(old);
+    AudioPlayer? p;
     try {
-      final p = AudioPlayer();
+      p = AudioPlayer();
       _music = p;
       await p.setReleaseMode(loop ? ReleaseMode.loop : ReleaseMode.release);
       await p.play(AssetSource(path), volume: settings.effectiveMusic);
-    } catch (_) {}
+    } catch (_) {
+      // A failed start must not poison the dedupe key: syncPhase would keep
+      // early-returning on `key == _musicKey` and the whole screen family
+      // (title/map/combat) would stay silent. Reset so the next sync retries
+      // — but only if a newer playMusic hasn't already taken over.
+      if (_music == p) {
+        _music = null;
+        _musicKey = null;
+      }
+      try {
+        await p?.dispose();
+      } catch (_) {}
+    }
   }
 
   void _fadeOutAndDispose(AudioPlayer p) {
@@ -156,13 +188,18 @@ class AudioService {
   void setAmbience(bool on) {
     if (on) {
       if (_ambience != null) return;
+      AudioPlayer? p;
       try {
-        final p = AudioPlayer();
+        p = AudioPlayer();
         _ambience = p;
         p.setReleaseMode(ReleaseMode.loop);
         p.play(AssetSource(sfxPaths['ember_ambience_loop']!),
             volume: settings.effectiveMusic * _ambienceLevel);
-      } catch (_) {}
+      } catch (_) {
+        // Same retry rule as playMusic: a failed start must not occupy the
+        // slot, or ambience stays silent until the next off/on phase swing.
+        if (_ambience == p) _ambience = null;
+      }
     } else {
       final p = _ambience;
       _ambience = null;
