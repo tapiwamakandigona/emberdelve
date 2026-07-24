@@ -62,10 +62,23 @@ class SettingsStore {
     }
   }
 
-  static Future<void> save(AudioSettings s) async {
-    try {
-      final f = await _file();
-      await f.writeAsString(jsonEncode(s.toJson()));
-    } catch (_) {/* best-effort; never crash the game on save failure */}
+  /// Same durability contract as MetaStore.save / the run autosave: the JSON
+  /// snapshot is captured synchronously, writes are chained on a queue (a
+  /// slider release + a mute tap fire back-to-back saves that must not
+  /// interleave bytes in one file), and each write goes to a temp file that
+  /// is renamed into place so a crash mid-write can never leave truncated
+  /// JSON (which would silently reset the player's audio settings on load).
+  static Future<void> _writeQueue = Future.value();
+  static Future<void> save(AudioSettings s) {
+    final snap = jsonEncode(s.toJson());
+    _writeQueue = _writeQueue.then((_) async {
+      try {
+        final f = await _file();
+        final tmp = File('${f.path}.tmp');
+        await tmp.writeAsString(snap, flush: true);
+        await tmp.rename(f.path);
+      } catch (_) {/* best-effort; never crash the game on save failure */}
+    });
+    return _writeQueue;
   }
 }

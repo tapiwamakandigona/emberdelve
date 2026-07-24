@@ -33,7 +33,14 @@ const Map<String, List<String>> insights = {
     // Number-free on purpose: the exact amount shifts with difficulty and
     // ascension, and a death-screen tip must never lie (§Ethics honesty).
     "The Tyrant's turn 4 is its heaviest hit — enter that turn with block banked.",
-    'The Tyrant blocks on turn 2; hold your damage and strike turn 3.',
+    // Block timing (sim-verified): a block intent protects the enemy during
+    // the FOLLOWING player turn. The Tyrant shows block on turn 2 and
+    // attack+block on turn 3, so player turns 3 and 4 swing into a raised
+    // guard while turns 1-2 hit an unguarded boss. The old line said the
+    // exact opposite ("hold your damage and strike turn 3") — coaching the
+    // worst possible line on the death screen (§Ethics: insights never lie).
+    'The Tyrant shields through the middle of its cycle — pour damage into '
+        'the early beats, never into a raised guard.',
     'Bring healing into the boss: its 4-beat cycle out-damages a raw race.',
   ],
   'generic': [

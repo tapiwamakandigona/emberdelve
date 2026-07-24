@@ -430,7 +430,15 @@ class _CombatScreenState extends State<CombatScreen> {
         icon: Icons.local_fire_department,
         onEnemy: true,
       );
-      await _sleep(const Duration(milliseconds: 350));
+      // The 350 ms beat lets a plain tick read on its own — but when the
+      // tick KILLS, it pushed the worst end-turn path to ~1730 ms, past the
+      // 1450 ms terminal hold: the phase switched to the reward screen while
+      // the enemy was still mid-dissolve. The death choreography is the
+      // payoff there, so skip the beat and let _enemyDeath play in budget
+      // (worst path ≤ ~1380 ms).
+      if (_find(events, 'encounter_won') == null) {
+        await _sleep(const Duration(milliseconds: 350));
+      }
     }
     // A straight last turn grants this turn's free reroll — announce it.
     _announceCombos(events);
