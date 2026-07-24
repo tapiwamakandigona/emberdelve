@@ -146,3 +146,7 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
 
 ## 2026-07-24 — combat feel v2: dice charge, boss kill, enemy wind-up, reward flip (PR #13)
 2026-07-24 COMBAT FEEL V2 (branch feat/combat-feel-v2, stacked on feat/combat-weapons-juice; owner: "do all these, high quality weapons, good animations, more visuals"): (1) weapon quality pass — silhouette outlines, white-hot smear core, easeOutBack follow-through recovery; (2) DICE CHARGE — the selected die's pips heat the weapon (glow halo + rising sparks + white-hot edge, TweenAnimationBuilder-smoothed; heat frozen through the swing via _lastSwingCharge); (3) BOSS KILL MOMENT — white-hot impact freeze (260ms, _bossKillFlash overlay) + full-magnitude shake + flash decay into the ember dissolve, boss-only terminalHold 1900ms; (4) ENEMY WIND-UP — 190ms lean-back + red heat tint before the lunge (windup flag on _combatant), player squash untouched at 90ms; (5) REWARD FLIP — offers present as 3D flip cards (staggered auto-flip 220+240i ms, pre-mirrored back, FittedBox-scaled face for 320×568@1.3x, tap-to-pick with double-tap guard, event_page sfx + haptic per flip; all cards flip = no peek-gamble, Ethics-safe). Sim core untouched.
+
+## 2026-07-24 — ledger plural fix (branch fix/ledger-plurals)
+2026-07-24 "1 wins · 1 delves" on the Ledger delver rows now pluralizes
+correctly (win/wins, delve/delves). Spotted while rendering store screenshots.
