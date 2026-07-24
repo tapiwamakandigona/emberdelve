@@ -11,7 +11,7 @@ import '../level/level_data.dart';
 import '../physics.dart';
 import '../tuning.dart';
 
-enum EnemyKind { thornling, ashbat, hopper }
+enum EnemyKind { thornling, ashbat, hopper, emberTotem, rotshield, groveGolem }
 
 abstract class EnemyCore {
   final EnemyKind kind;
@@ -79,6 +79,11 @@ abstract class EnemyCore {
     }
     return true;
   }
+
+  /// Whether an attack (melee swing / apple) arriving from (fromX, fromY) is
+  /// blocked instead of dealing damage. Base enemies never block; Rotshield
+  /// blocks its shielded front side.
+  bool blocksHit({required double fromX, required double fromY}) => false;
 
   /// AABB overlap with an arbitrary rect.
   bool overlaps(double x, double y, double w, double h) =>
@@ -182,5 +187,101 @@ class HopperCore extends EnemyCore {
     body.vy += kGravity * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
     integrate(body, dt, tileAt);
+  }
+}
+
+/// Ember Totem — stationary ranged spitter. When the player is within range
+/// AND has line of sight, it aims and requests an ember shot (the session
+/// owns the projectile pool). Cooldown between shots; never moves.
+class EmberTotemCore extends EnemyCore {
+  static const double range = 8 * kTileSize;
+  static const double cooldown = 2.2;
+
+  double _cd = 1.0; // spawn grace so it never insta-shoots off-screen players
+  ({double dx, double dy})? _pendingShot;
+
+  EmberTotemCore({required super.x, required super.y})
+      : super(kind: EnemyKind.emberTotem, w: 20, h: 30, hp: 5) {
+    body.onGround = true; // stationary; physics never integrates it
+  }
+
+  /// The session consumes at most one aimed shot request per frame.
+  ({double dx, double dy})? takeShotRequest() {
+    final s = _pendingShot;
+    _pendingShot = null;
+    return s;
+  }
+
+  /// Seconds until the next shot is possible (render layer: charge glow).
+  double get cooldownLeft => _cd;
+
+  @override
+  void behave(double dt, TileQuery tileAt,
+      {required double playerX, required double playerY}) {
+    _cd = (_cd - dt).clamp(0, 10);
+    final dx = playerX - centerX, dy = playerY - centerY;
+    facing = dx >= 0 ? 1 : -1;
+    if (_cd > 0) return;
+    final distSq = dx * dx + dy * dy;
+    if (distSq > range * range || distSq < 1) return;
+    if (!_lineOfSight(tileAt, playerX, playerY)) return;
+    final dist = math.sqrt(distSq);
+    _pendingShot = (dx: dx / dist, dy: dy / dist);
+    _cd = cooldown;
+  }
+
+  /// Sample the muzzle→player segment every 4px; solid tiles block sight.
+  bool _lineOfSight(TileQuery tileAt, double px, double py) {
+    final x0 = centerX, y0 = body.top + 6;
+    final dx = px - x0, dy = py - y0;
+    final dist = math.sqrt(dx * dx + dy * dy);
+    final steps = (dist / 4).ceil().clamp(1, 64);
+    for (var i = 1; i < steps; i++) {
+      final t = i / steps;
+      final tx = ((x0 + dx * t) / kTileSize).floor();
+      final ty = ((y0 + dy * t) / kTileSize).floor();
+      final tile = tileAt(tx, ty);
+      if (tile == TileKind.solid || tile == TileKind.crackedWall) return false;
+    }
+    return true;
+  }
+}
+
+/// Rotshield — slow ground patroller with a front shield. Blocks melee and
+/// apples arriving from its facing side; vulnerable from behind and above.
+class RotshieldCore extends EnemyCore {
+  static const double speed = 18;
+
+  RotshieldCore({required super.x, required super.y})
+      : super(kind: EnemyKind.rotshield, w: 26, h: 24, hp: 6);
+
+  @override
+  bool blocksHit({required double fromX, required double fromY}) {
+    if (fromY < body.top - 2) return false; // attacks from above get through
+    final side = fromX >= centerX ? 1 : -1;
+    return side == facing; // shield covers the facing side only
+  }
+
+  @override
+  void behave(double dt, TileQuery tileAt,
+      {required double playerX, required double playerY}) {
+    body.vx = facing * speed;
+    body.vy += kGravity * dt;
+    if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
+    integrate(body, dt, tileAt);
+    if (body.hitWall) {
+      facing = -facing;
+      return;
+    }
+    if (body.onGround) {
+      final aheadX = facing > 0 ? body.right + 1 : body.left - 1;
+      final tx = (aheadX / kTileSize).floor();
+      final ty = ((body.bottom + 1) / kTileSize).floor();
+      final below = tileAt(tx, ty);
+      final walkable = below == TileKind.solid ||
+          below == TileKind.crackedWall ||
+          below == TileKind.platform;
+      if (!walkable) facing = -facing;
+    }
   }
 }

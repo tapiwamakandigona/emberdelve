@@ -33,6 +33,8 @@ class ItemsComponent extends PositionComponent
   );
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.none;
   final _bubblePaint = ui.Paint()..color = const ui.Color(0xEEF4EAD5);
+  final _emberGlow = ui.Paint()..color = const ui.Color(0x88E86A17);
+  final _emberCore = ui.Paint()..color = const ui.Color(0xFFF2C14E);
 
   @override
   Future<void> onLoad() async {
@@ -117,6 +119,13 @@ class ItemsComponent extends PositionComponent
     // Apple projectiles.
     for (final a in s.appleProjectiles) {
       if (a.active) _drawApple(canvas, a.x, a.y);
+    }
+
+    // Ember shots (totem spit): glowing two-tone orbs, no sprite needed.
+    for (final sh in s.emberShots) {
+      if (!sh.active) continue;
+      canvas.drawCircle(ui.Offset(sh.x, sh.y), 3.5, _emberGlow);
+      canvas.drawCircle(ui.Offset(sh.x, sh.y), 2, _emberCore);
     }
 
     // Active sign bubble.

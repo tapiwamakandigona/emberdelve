@@ -29,6 +29,9 @@ enum SessionEventKind {
   wallBreak, // data: tile x,y
   appleThrown,
   appleBroke, // data: x,y
+  attackBlocked, // data: x,y — Rotshield shield ate a hit ('block' sfx)
+  emberShot, // data: x,y — Ember Totem fired
+  emberShotBroke, // data: x,y — ember hit terrain / player / limits
   levelComplete,
   levelFailed,
 }
@@ -70,6 +73,12 @@ class SignEntity {
 }
 
 class AppleProjectile {
+  double x = 0, y = 0, vx = 0, vy = 0;
+  bool active = false;
+}
+
+/// Ember Totem projectile: straight-line spit, breaks on terrain/player.
+class EmberShot {
   double x = 0, y = 0, vx = 0, vy = 0;
   bool active = false;
 }
@@ -126,6 +135,12 @@ class LevelSession {
 
   /// Read-only view for the render layer.
   List<AppleProjectile> get appleProjectiles => _applePool;
+
+  final List<EmberShot> _emberPool =
+      List.generate(kMaxPooledProjectiles, (_) => EmberShot());
+
+  /// Read-only view for the render layer.
+  List<EmberShot> get emberShots => _emberPool;
 
   late final double exitX, exitY; // door center px
 
@@ -202,13 +217,14 @@ class LevelSession {
               x: cx - 12, y: (s.y + 1) * kTileSize - 22));
         case SpawnKind.ashbat:
           enemies.add(AshbatCore(x: cx - 14, y: cy - 12));
-        // Hoppers reuse the Rotshield 'R' slot until M5 rebalances spawns?
-        // No: hopper has no legend char yet — Ember Totem / Rotshield / boss
-        // are M5; treat their spawns as inert markers for now (TODO M5).
         case SpawnKind.emberTotem:
+          enemies.add(EmberTotemCore(
+              x: cx - 10, y: (s.y + 1) * kTileSize - 30));
         case SpawnKind.rotshield:
+          enemies.add(RotshieldCore(
+              x: cx - 13, y: (s.y + 1) * kTileSize - 24));
         case SpawnKind.groveGolem:
-          // TODO(M5): Ember Totem, Rotshield, Grove Golem.
+          // TODO(M5-boss): Grove Golem lands in the boss commit.
           break;
         case SpawnKind.player:
           break;
@@ -219,6 +235,19 @@ class LevelSession {
     final e = level.exit;
     exitX = e.x * kTileSize + kTileSize / 2;
     exitY = (e.y + 1) * kTileSize; // door base sits on the tile bottom
+
+    // Hoppers have no legend char (frozen legend): levels place them via
+    // "meta: hopperN=tx,ty" (tile coords), consumed here.
+    for (var i = 1;; i++) {
+      final v = level.meta['hopper$i'];
+      if (v == null) break;
+      final parts = v.split(',');
+      if (parts.length != 2) continue;
+      final tx = int.tryParse(parts[0].trim());
+      final ty = int.tryParse(parts[1].trim());
+      if (tx == null || ty == null) continue;
+      addHopper(tx * kTileSize + 2, (ty + 1) * kTileSize - 22);
+    }
   }
 
   /// Spawn a hopper explicitly (used by tests and, later, level scripting).
@@ -308,6 +337,24 @@ class LevelSession {
         _onEnemyDeath(e);
         continue;
       }
+      // Totems request aimed shots; the session owns the projectile pool.
+      if (e is EmberTotemCore && !e.sleeping) {
+        final req = e.takeShotRequest();
+        if (req != null) {
+          final shot = _emberPool
+              .cast<EmberShot?>()
+              .firstWhere((s) => !s!.active, orElse: () => null);
+          if (shot != null) {
+            shot.active = true;
+            shot.x = e.centerX + e.facing * 8;
+            shot.y = e.body.top + 6;
+            shot.vx = req.dx * kEmberShotSpeed;
+            shot.vy = req.dy * kEmberShotSpeed;
+            _events.add(SessionEvent(SessionEventKind.emberShot,
+                x: shot.x, y: shot.y));
+          }
+        }
+      }
       // Contact damage: 1 heart.
       if (!e.sleeping && e.overlapsBody(player.body)) {
         if (player.damage(1, from: e.centerX)) {
@@ -329,6 +376,12 @@ class LevelSession {
         if (!e.alive || e.sleeping || _swingVictims.contains(e)) continue;
         if (e.overlaps(hb.x, hb.y, hb.w, hb.h)) {
           _swingVictims.add(e);
+          if (e.blocksHit(
+              fromX: player.body.centerX, fromY: player.body.centerY)) {
+            _events.add(SessionEvent(SessionEventKind.attackBlocked,
+                x: e.centerX, y: e.centerY));
+            continue;
+          }
           var dmg = hb.damage;
           final crit = combatRng.range(1, 100) <= loadout.weapon.critPercent;
           if (crit) dmg = (dmg * loadout.weapon.critMultiplier).round();
@@ -383,12 +436,61 @@ class LevelSession {
       for (final e in enemies) {
         if (!e.alive || !e.overlaps(a.x - 4, a.y - 4, 8, 8)) continue;
         a.active = false;
+        // Rotshield fronts eat apples too (approach side from velocity).
+        if (e.blocksHit(fromX: a.x - a.vx.sign * 6, fromY: a.y)) {
+          _events.add(SessionEvent(SessionEventKind.attackBlocked,
+              x: e.centerX, y: e.centerY));
+          _events
+              .add(SessionEvent(SessionEventKind.appleBroke, x: a.x, y: a.y));
+          break;
+        }
         e.damage(kAppleDamage);
         _events.add(SessionEvent(SessionEventKind.enemyHit,
             x: e.centerX, y: e.centerY));
         _events.add(SessionEvent(SessionEventKind.appleBroke, x: a.x, y: a.y));
         if (!e.alive) _onEnemyDeath(e);
         break;
+      }
+    }
+
+    // --- ember shots (totem projectiles) vs terrain + player
+    for (final sh in _emberPool) {
+      if (!sh.active) continue;
+      sh.x += sh.vx * dt;
+      sh.y += sh.vy * dt;
+      final tx = (sh.x / kTileSize).floor(), ty = (sh.y / kTileSize).floor();
+      final t = tileAt(tx, ty);
+      if (t == TileKind.solid || t == TileKind.crackedWall) {
+        sh.active = false;
+        _events.add(
+            SessionEvent(SessionEventKind.emberShotBroke, x: sh.x, y: sh.y));
+        continue;
+      }
+      if (sh.x < -32 ||
+          sh.x > (level.width + 2) * kTileSize ||
+          sh.y < -64 ||
+          sh.y > (level.height + 4) * kTileSize) {
+        sh.active = false;
+        continue;
+      }
+      final b = player.body;
+      if (!player.isDead &&
+          sh.x > b.left - 3 &&
+          sh.x < b.right + 3 &&
+          sh.y > b.top - 3 &&
+          sh.y < b.bottom + 3) {
+        sh.active = false;
+        _events.add(
+            SessionEvent(SessionEventKind.emberShotBroke, x: sh.x, y: sh.y));
+        if (player.damage(1, from: sh.x - sh.vx.sign * 8)) {
+          hitsTaken++;
+          final dpev = player.takeEvents();
+          _playerEvents.addAll(dpev);
+          if (dpev.contains(PlayerEvent.died)) {
+            _fail();
+            return;
+          }
+        }
       }
     }
 

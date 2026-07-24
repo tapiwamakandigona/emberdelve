@@ -271,6 +271,15 @@ class EmberGame extends FlameGame with KeyboardEvents {
         case SessionEventKind.appleBroke:
           world.add(PuffFx(at,
               color: const Color(0xAAB6D53C), radius: 3, life: 0.2));
+        case SessionEventKind.attackBlocked:
+          AudioService.instance?.playSfx('block');
+          world.add(PuffFx(at,
+              color: const Color(0xCCB8C0C8), radius: 4, life: 0.22));
+        case SessionEventKind.emberShot:
+          AudioService.instance?.playSfx('whoosh', volume: 0.45);
+        case SessionEventKind.emberShotBroke:
+          world.add(PuffFx(at,
+              color: const Color(0xCCE86A17), radius: 4, life: 0.25));
         case SessionEventKind.levelComplete:
           _persistResults();
           AudioService.instance?.playMusic('victory', loop: false);

@@ -30,6 +30,7 @@ const double kHurtIFrames = 1.0; // s invulnerability after taking a hit
 const double kKnockbackSpeed = 150.0; // px/s away from damage source
 const double kAppleThrowSpeed = 220.0; // px/s, 45deg-ish arc
 const int kAppleDamage = 2;
+const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
 
 // Camera.
 const double kCameraLookAhead = 24.0; // px in facing direction
