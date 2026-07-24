@@ -74,6 +74,23 @@ class SummaryScreen extends StatelessWidget {
               primary: true, icon: Icons.bolt, onTap: () => c.delveAgain()),
         ),
         const SizedBox(height: Space.m),
+        // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
+        // Only offered when this run WAS the daily — normal runs stay quiet.
+        if (c.dailyResultShareText != null) ...[
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Copy daily result',
+                key: const ValueKey('copy-daily-result'),
+                ghost: true,
+                icon: Icons.copy, onTap: () async {
+              final text = c.dailyResultShareText;
+              if (text == null) return;
+              await Clipboard.setData(ClipboardData(text: text));
+              c.announce('Result copied');
+            }),
+          ),
+          const SizedBox(height: Space.m),
+        ],
         SizedBox(
           width: double.infinity,
           child: EmberButton('Back to the fire',

@@ -15,6 +15,7 @@ import '../data/relics.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
 import '../sim/sim.dart';
+import 'daily_share.dart';
 
 class GameController extends ChangeNotifier {
   Sim? sim;
@@ -171,9 +172,7 @@ class GameController extends ChangeNotifier {
   /// no expiry — just a shared delve (spec §Ethics).
   void startDailyRun({String? character}) {
     final now = DateTime.now();
-    final label = '${now.year}-'
-        '${now.month.toString().padLeft(2, '0')}-'
-        '${now.day.toString().padLeft(2, '0')}';
+    final label = dailyKey(now);
     startRun(
         character: character,
         seed: dailySeed(now.year, now.month, now.day),
@@ -384,8 +383,46 @@ class GameController extends ChangeNotifier {
       final asc = run['ascension'] as int? ?? 0;
       if (asc >= meta.bestAscension) meta.bestAscension = asc + 1;
     }
+    // Daily Delve record (v0.3.4): only a FINISHED daily counts as played —
+    // abandoning mid-run records nothing. One record, no history/streaks.
+    if (dailyDate != null) {
+      meta.lastDailyDate = dailyDate;
+      meta.lastDailyWon = sim!.phase == 'run_won';
+      meta.lastDailyFloor = floorReached;
+      meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
+    }
     MetaStore.save(meta);
     _clearSave();
+  }
+
+  /// 1-based map layer of the node the run currently stands on (the boss
+  /// layer after a win, the death layer after a loss). 0 when unknown.
+  int get floorReached {
+    final map = sim?.map;
+    if (map == null) return 0;
+    final node = (map['nodes'] as Map?)?['${map['position']}'] as Map?;
+    return node?['layer'] as int? ?? 0;
+  }
+
+  /// Share text for a just-finished Daily Delve; null for normal runs or
+  /// mid-run. Built from the banked meta record so it matches what the
+  /// title recap will show.
+  String? get dailyResultShareText {
+    if (dailyDate == null || meta.lastDailyDate != dailyDate) return null;
+    if (!_terminal.contains(sim?.phase) || sim?.phase == 'idle') return null;
+    return dailyShareText(
+      date: meta.lastDailyDate!,
+      won: meta.lastDailyWon,
+      floor: meta.lastDailyFloor,
+      floors: meta.lastDailyFloors,
+    );
+  }
+
+  /// Surface a toast from UI actions that don't go through the sim
+  /// (e.g. "Result copied").
+  void announce(String message) {
+    flash = message;
+    notifyListeners();
   }
 
   /// Chained on the same queue as [_autosave], so a pending queued save can

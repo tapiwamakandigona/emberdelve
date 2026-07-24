@@ -103,6 +103,20 @@ class TitleScreen extends StatelessWidget {
                 icon: Icons.today,
                 onTap: () => c.startDailyRun(character: defaultCharacter)),
           ),
+          // Daily recap (v0.3.4): a small honest checkmark on the day it was
+          // played. Replaying stays allowed — no lockout, no streaks.
+          if (m.lastDailyDate == dailyKey(DateTime.now())) ...[
+            const SizedBox(height: Space.s),
+            Text(
+              dailyRecapLine(
+                  won: m.lastDailyWon,
+                  floor: m.lastDailyFloor,
+                  floors: m.lastDailyFloors),
+              key: const ValueKey('daily-recap'),
+              style: EmberText.micro,
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: Space.m),
           SizedBox(
             width: double.infinity,
