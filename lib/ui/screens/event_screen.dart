@@ -37,12 +37,31 @@ class EventScreen extends StatelessWidget {
             width: double.infinity,
             child: EmberButton(def.options[i].label,
                 primary: i == 0,
+                // Icon telegraphs the option's payoff/risk at a glance
+                // (wordiness pass 2026-07-24).
+                icon: _optionIcon(def.options[i].effects),
                 onTap: () =>
                     c.apply({'type': 'event_choose', 'option': i + 1})),
           ),
         ),
       const SizedBox(height: Space.s),
     ]);
+  }
+
+  /// The dominant effect of an option, as an icon: cost (HP) beats reward so
+  /// risky picks read as risky.
+  IconData? _optionIcon(Map<String, Object> e) {
+    if ((e['hp'] as int? ?? 0) < 0) return Icons.heart_broken;
+    if (e.containsKey('lose_random_die')) return Icons.do_not_disturb_on;
+    if (e.containsKey('gain_die') || e.containsKey('gain_random_die')) {
+      return Icons.casino;
+    }
+    if (e.containsKey('gain_random_relic')) return Icons.auto_awesome;
+    if (e.containsKey('heal_pct')) return Icons.healing;
+    if (e.containsKey('max_hp')) return Icons.favorite;
+    if (e.containsKey('gold') || e.containsKey('gold_after')) return Icons.paid;
+    if (e.containsKey('embers')) return Icons.local_fire_department;
+    return null; // walk away / no effect: keep the button quiet
   }
 }
 

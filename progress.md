@@ -253,3 +253,24 @@ exit). Also measured controller-level bot parity: 60-seed easy winrate via
 GameController.apply = 83.3%, in family with the sim-level 86.7% — the
 controller/UI command path introduces no drift. Suite green, autoplay
 baseline unchanged (sim untouched). Version 0.3.4+7 → 0.3.5+8.
+
+## 2026-07-24 — many-dice layout + wordiness pass (branch fix/many-dice-layout)
+2026-07-24 Owner report: "ui was buggy when there were many dice on screen —
+awkward placement and other stuff on different screens", plus "too wordy,
+less expressive using visuals". New probe tool/many_dice_probe_test.dart
+(pools 6/9/12/16 × 320/360/412 widths, combat unrolled/rolled/assigned +
+rest + map) reproduced and gated the fixes:
+1. **Combat tray clipped dice 5+** behind a half-row (technically scrollable,
+   visually broken; untappable in practice). Now: chips shrink 0.75x once the
+   pool outgrows the row budget, tray height quantizes to WHOLE rows inside
+   the same 112/256 budget, fade + chevron marks a scrolling fold.
+2. **Burn badge drew half off-screen** — intent+burn row right-anchors to the
+   enemy when burn is up.
+3. **Rest forge rows overflowed 320dp** by 9.4px — compact 48x60 chips, dense
+   button, caption moved to its own full-width line (was wrapping mid-word).
+Wordiness (UI-only, data untouched): boon cards lead with the actual die art
+or currency icon + number (caption is `d6 · +2 block`-style mechanics, prose
+gone); event options carry a payoff/risk icon (cost beats reward so risky
+reads risky); shop price button uses a coin, not an abstract dot.
+CI overflow probe now runs the 16-die pool. Suite 136 green, analyze clean,
+autoplay baseline unchanged (sim untouched). 0.3.5+8 → 0.3.6+9.
