@@ -21,14 +21,16 @@ class EmberButton extends StatefulWidget {
 
   /// Compact vertical padding for short screens (combat action zone).
   final bool dense;
-  const EmberButton(this.label,
-      {super.key,
-      this.onTap,
-      this.primary = false,
-      this.danger = false,
-      this.ghost = false,
-      this.icon,
-      this.dense = false});
+  const EmberButton(
+    this.label, {
+    super.key,
+    this.onTap,
+    this.primary = false,
+    this.danger = false,
+    this.ghost = false,
+    this.icon,
+    this.dense = false,
+  });
 
   @override
   State<EmberButton> createState() => _EmberButtonState();
@@ -42,59 +44,73 @@ class _EmberButtonState extends State<EmberButton> {
     final tier = widget.danger
         ? _ButtonTier.danger
         : widget.primary
-            ? _ButtonTier.primary
-            : widget.ghost
-                ? _ButtonTier.ghost
-                : _ButtonTier.secondary;
+        ? _ButtonTier.primary
+        : widget.ghost
+        ? _ButtonTier.ghost
+        : _ButtonTier.secondary;
     final fg = !enabled
         ? EmberColors.textDisabled
         : switch (tier) {
-            _ButtonTier.primary || _ButtonTier.danger => const Color(0xFF17110A),
+            _ButtonTier.primary ||
+            _ButtonTier.danger => const Color(0xFF17110A),
             _ButtonTier.secondary => EmberColors.textPrimary,
             _ButtonTier.ghost => EmberColors.textDim,
           };
-    return GestureDetector(
-      onTapDown: enabled ? (_) => setState(() => _down = true) : null,
-      onTapUp: enabled ? (_) => setState(() => _down = false) : null,
-      onTapCancel: enabled ? () => setState(() => _down = false) : null,
-      onTap: enabled
-          ? () {
-              AudioService.instance?.playSfx('ui_tap', volume: 0.8);
-              widget.onTap!();
-            }
-          : null,
-      child: AnimatedScale(
-        scale: _down ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 80),
-        child: CustomPaint(
-          painter: _ButtonPainter(tier: tier, enabled: enabled, down: _down),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
+    void handleTap() {
+      AudioService.instance?.playSfx('ui_tap', volume: 0.8);
+      widget.onTap!();
+    }
+
+    // One merged semantics node per button: TalkBack reads the label and can
+    // activate it; the drawn (CustomPaint) chrome is invisible to a11y.
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: widget.label,
+      onTap: enabled ? handleTap : null,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTapDown: enabled ? (_) => setState(() => _down = true) : null,
+        onTapUp: enabled ? (_) => setState(() => _down = false) : null,
+        onTapCancel: enabled ? () => setState(() => _down = false) : null,
+        onTap: enabled ? handleTap : null,
+        child: AnimatedScale(
+          scale: _down ? 0.96 : 1.0,
+          duration: const Duration(milliseconds: 80),
+          child: CustomPaint(
+            painter: _ButtonPainter(tier: tier, enabled: enabled, down: _down),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
                 horizontal: Space.xl,
-                vertical: widget.dense ? Space.m : Space.l),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.icon != null) ...[
-                  Icon(widget.icon, size: 18, color: fg),
-                  const SizedBox(width: Space.s),
-                ],
-                // Flexible + soft-wrap (v0.3.1 F4): long labels (event
-                // options) wrap to a second line instead of clipping
-                // off-screen at phone widths.
-                Flexible(
-                  child: Text(widget.label,
+                vertical: widget.dense ? Space.m : Space.l,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.icon != null) ...[
+                    Icon(widget.icon, size: 18, color: fg),
+                    const SizedBox(width: Space.s),
+                  ],
+                  // Flexible + soft-wrap (v0.3.1 F4): long labels (event
+                  // options) wrap to a second line instead of clipping
+                  // off-screen at phone widths.
+                  Flexible(
+                    child: Text(
+                      widget.label,
                       textAlign: TextAlign.center,
                       softWrap: true,
                       style: TextStyle(
-                          fontFamily: 'Cinzel',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: fg,
-                          letterSpacing: 0.6)),
-                ),
-              ],
+                        fontFamily: 'Cinzel',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: fg,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -111,11 +127,20 @@ class _ButtonPainter extends CustomPainter {
   final _ButtonTier tier;
   final bool enabled;
   final bool down;
-  _ButtonPainter({required this.tier, required this.enabled, required this.down});
+  _ButtonPainter({
+    required this.tier,
+    required this.enabled,
+    required this.down,
+  });
 
   Path _slab(Size s, [double inset = 0]) {
     const c = 9.0; // chamfer
-    final r = Rect.fromLTWH(inset, inset, s.width - 2 * inset, s.height - 2 * inset);
+    final r = Rect.fromLTWH(
+      inset,
+      inset,
+      s.width - 2 * inset,
+      s.height - 2 * inset,
+    );
     return Path()
       ..moveTo(r.left + c, r.top)
       ..lineTo(r.right - c, r.top)
@@ -137,11 +162,12 @@ class _ButtonPainter extends CustomPainter {
     if (!enabled) {
       canvas.drawPath(slab, Paint()..color = EmberColors.surface);
       canvas.drawPath(
-          slab,
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.4
-            ..color = EmberColors.line.withValues(alpha: 0.6));
+        slab,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.4
+          ..color = EmberColors.line.withValues(alpha: 0.6),
+      );
       return;
     }
 
@@ -153,10 +179,11 @@ class _ButtonPainter extends CustomPainter {
         rim = const Color(0xFF4A2508);
         // Under-glow (warm light spilling below).
         canvas.drawPath(
-            _slab(size).shift(const Offset(0, 3)),
-            Paint()
-              ..color = EmberColors.ember.withValues(alpha: 0.35)
-              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+          _slab(size).shift(const Offset(0, 3)),
+          Paint()
+            ..color = EmberColors.ember.withValues(alpha: 0.35)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        );
         break;
       case _ButtonTier.danger:
         grad = const [Color(0xFF7E2424), Color(0xFFC24040), Color(0xFFE07B5B)];
@@ -168,56 +195,61 @@ class _ButtonPainter extends CustomPainter {
         break;
       case _ButtonTier.ghost:
         canvas.drawPath(
-            slab, Paint()..color = Colors.black.withValues(alpha: 0.25));
+          slab,
+          Paint()..color = Colors.black.withValues(alpha: 0.25),
+        );
         canvas.drawPath(
-            slab,
-            Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 1.2
-              ..color = EmberColors.textDim.withValues(alpha: 0.5));
+          slab,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.2
+            ..color = EmberColors.textDim.withValues(alpha: 0.5),
+        );
         return;
     }
 
     canvas.drawPath(
-        slab,
-        Paint()
-          ..shader = LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    for (final c in grad)
-                      Color.lerp(c, Colors.black, dim)!
-                  ])
-              .createShader(rect));
+      slab,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [for (final c in grad) Color.lerp(c, Colors.black, dim)!],
+        ).createShader(rect),
+    );
     // Char line along the top (cool shadow side).
     canvas.drawLine(
-        Offset(10, 1.2),
-        Offset(size.width - 10, 1.2),
-        Paint()
-          ..strokeWidth = 2
-          ..color = Colors.black.withValues(alpha: 0.28));
+      Offset(10, 1.2),
+      Offset(size.width - 10, 1.2),
+      Paint()
+        ..strokeWidth = 2
+        ..color = Colors.black.withValues(alpha: 0.28),
+    );
     // Hot edge along the bottom (lit side).
     if (tier == _ButtonTier.primary || tier == _ButtonTier.danger) {
       canvas.drawLine(
-          Offset(10, size.height - 1.6),
-          Offset(size.width - 10, size.height - 1.6),
-          Paint()
-            ..strokeWidth = 2.4
-            ..color = const Color(0xFFFFE0A3).withValues(alpha: 0.55));
+        Offset(10, size.height - 1.6),
+        Offset(size.width - 10, size.height - 1.6),
+        Paint()
+          ..strokeWidth = 2.4
+          ..color = const Color(0xFFFFE0A3).withValues(alpha: 0.55),
+      );
     } else {
       canvas.drawLine(
-          Offset(10, size.height - 1.4),
-          Offset(size.width - 10, size.height - 1.4),
-          Paint()
-            ..strokeWidth = 1.6
-            ..color = EmberColors.ember.withValues(alpha: 0.25));
+        Offset(10, size.height - 1.4),
+        Offset(size.width - 10, size.height - 1.4),
+        Paint()
+          ..strokeWidth = 1.6
+          ..color = EmberColors.ember.withValues(alpha: 0.25),
+      );
     }
     canvas.drawPath(
-        slab,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2
-          ..color = rim);
+      slab,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = rim,
+    );
   }
 
   @override
@@ -233,22 +265,41 @@ class ResourcePip extends StatelessWidget {
   final int value;
   final String label;
   final String? imageAsset; // painted currency icon; falls back to [icon]
-  const ResourcePip(this.icon, this.color, this.value, this.label,
-      {super.key, this.imageAsset});
+  const ResourcePip(
+    this.icon,
+    this.color,
+    this.value,
+    this.label, {
+    super.key,
+    this.imageAsset,
+  });
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      if (imageAsset != null)
-        Image.asset(imageAsset!,
-            width: 18, height: 18, filterQuality: FilterQuality.medium)
-      else
-        Icon(icon, size: 18, color: color),
-      const SizedBox(width: Space.xs),
-      Text('$value',
-          style: EmberText.value.copyWith(fontSize: 18, color: color)),
-      const SizedBox(width: Space.xs),
-      Text(label, style: EmberText.micro),
-    ]);
+    return Semantics(
+      label: '$value ${label.toLowerCase()}',
+      excludeSemantics: true,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (imageAsset != null)
+            Image.asset(
+              imageAsset!,
+              width: 18,
+              height: 18,
+              filterQuality: FilterQuality.medium,
+            )
+          else
+            Icon(icon, size: 18, color: color),
+          const SizedBox(width: Space.xs),
+          Text(
+            '$value',
+            style: EmberText.value.copyWith(fontSize: 18, color: color),
+          ),
+          const SizedBox(width: Space.xs),
+          Text(label, style: EmberText.micro),
+        ],
+      ),
+    );
   }
 }
 
@@ -261,13 +312,14 @@ class StatBar extends StatefulWidget {
   final int block;
   final Color color;
   final String label;
-  const StatBar(
-      {super.key,
-      required this.value,
-      required this.max,
-      required this.color,
-      required this.label,
-      this.block = 0});
+  const StatBar({
+    super.key,
+    required this.value,
+    required this.max,
+    required this.color,
+    required this.label,
+    this.block = 0,
+  });
 
   @override
   State<StatBar> createState() => _StatBarState();
@@ -293,39 +345,70 @@ class _StatBarState extends State<StatBar> {
   @override
   Widget build(BuildContext context) {
     final frac = _frac;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [
-        Text('${widget.value}', style: EmberText.value.copyWith(fontSize: 20)),
-        Text(' / ${widget.max}', style: EmberText.bodyDim.copyWith(fontSize: 14)),
-        const Spacer(),
-        if (widget.block > 0)
-          Row(children: [
-            const Icon(Icons.shield, size: 14, color: EmberColors.block),
-            const SizedBox(width: 2),
-            Text('${widget.block}',
-                style: EmberText.value
-                    .copyWith(fontSize: 16, color: EmberColors.block)),
-          ]),
-      ]),
-      const SizedBox(height: Space.xs),
-      TweenAnimationBuilder<double>(
-        tween: Tween(begin: _ghost, end: frac),
-        duration: const Duration(milliseconds: 700),
-        curve: const Interval(0.45, 1.0, curve: Curves.easeOut),
-        builder: (context, ghost, _) => TweenAnimationBuilder<double>(
-          tween: Tween(end: frac),
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-          builder: (context, fill, _) => CustomPaint(
-            painter: _SegBarPainter(
-                fill: fill, ghost: ghost, max: widget.max, color: widget.color),
-            size: const Size(double.infinity, 12),
+    return Semantics(
+      label:
+          '${widget.label.toLowerCase()}: ${widget.value} of ${widget.max} HP'
+          '${widget.block > 0 ? ', ${widget.block} block' : ''}',
+      excludeSemantics: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                '${widget.value}',
+                style: EmberText.value.copyWith(fontSize: 20),
+              ),
+              Text(
+                ' / ${widget.max}',
+                style: EmberText.bodyDim.copyWith(fontSize: 14),
+              ),
+              const Spacer(),
+              if (widget.block > 0)
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.shield,
+                      size: 14,
+                      color: EmberColors.block,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      '${widget.block}',
+                      style: EmberText.value.copyWith(
+                        fontSize: 16,
+                        color: EmberColors.block,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
           ),
-        ),
+          const SizedBox(height: Space.xs),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: _ghost, end: frac),
+            duration: const Duration(milliseconds: 700),
+            curve: const Interval(0.45, 1.0, curve: Curves.easeOut),
+            builder: (context, ghost, _) => TweenAnimationBuilder<double>(
+              tween: Tween(end: frac),
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOut,
+              builder: (context, fill, _) => CustomPaint(
+                painter: _SegBarPainter(
+                  fill: fill,
+                  ghost: ghost,
+                  max: widget.max,
+                  color: widget.color,
+                ),
+                size: const Size(double.infinity, 12),
+              ),
+            ),
+          ),
+          const SizedBox(height: Space.xs),
+          Text(widget.label, style: EmberText.micro),
+        ],
       ),
-      const SizedBox(height: Space.xs),
-      Text(widget.label, style: EmberText.micro),
-    ]);
+    );
   }
 }
 
@@ -336,39 +419,48 @@ class _SegBarPainter extends CustomPainter {
   final double ghost;
   final int max;
   final Color color;
-  _SegBarPainter(
-      {required this.fill,
-      required this.ghost,
-      required this.max,
-      required this.color});
+  _SegBarPainter({
+    required this.fill,
+    required this.ghost,
+    required this.max,
+    required this.color,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final r = RRect.fromRectAndRadius(
-        Offset.zero & size, const Radius.circular(3));
+      Offset.zero & size,
+      const Radius.circular(3),
+    );
     canvas.drawRRect(r, Paint()..color = const Color(0xFF171021));
     // Ghost trail (recently lost chunk).
     if (ghost > fill) {
       canvas.drawRect(
-          Rect.fromLTWH(size.width * fill, 1, size.width * (ghost - fill),
-              size.height - 2),
-          Paint()..color = const Color(0xFFEDE6DA).withValues(alpha: 0.45));
+        Rect.fromLTWH(
+          size.width * fill,
+          1,
+          size.width * (ghost - fill),
+          size.height - 2,
+        ),
+        Paint()..color = const Color(0xFFEDE6DA).withValues(alpha: 0.45),
+      );
     }
     // Fill, lit from below.
     if (fill > 0) {
       canvas.drawRect(
-          Rect.fromLTWH(0, 1, size.width * fill, size.height - 2),
-          Paint()
-            ..shader = LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color.lerp(color, Colors.black, 0.35)!,
-                color,
-                Color.lerp(color, const Color(0xFFFFE0A3), 0.45)!,
-              ],
-              stops: const [0.0, 0.55, 1.0],
-            ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)));
+        Rect.fromLTWH(0, 1, size.width * fill, size.height - 2),
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.lerp(color, Colors.black, 0.35)!,
+              color,
+              Color.lerp(color, const Color(0xFFFFE0A3), 0.45)!,
+            ],
+            stops: const [0.0, 0.55, 1.0],
+          ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
+      );
     }
     // Segment notches every 10 points.
     if (max > 10) {
@@ -382,16 +474,19 @@ class _SegBarPainter extends CustomPainter {
     }
     // Rim.
     canvas.drawRRect(
-        r,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2
-          ..color = const Color(0xFF3A3148));
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = const Color(0xFF3A3148),
+    );
   }
 
   @override
   bool shouldRepaint(covariant _SegBarPainter old) =>
-      old.fill != fill || old.ghost != ghost || old.max != max ||
+      old.fill != fill ||
+      old.ghost != ghost ||
+      old.max != max ||
       old.color != color;
 }
 
@@ -410,24 +505,27 @@ class DieChip extends StatefulWidget {
   /// Increment per roll to trigger the tumble; [tumbleDelayMs] staggers dice.
   final int rollToken;
   final int tumbleDelayMs;
-  const DieChip(this.dieId,
-      {super.key,
-      this.value,
-      this.assigned = false,
-      this.selected = false,
-      this.maxed = false,
-      this.onTap,
-      this.rollToken = 0,
-      this.tumbleDelayMs = 0});
+  const DieChip(
+    this.dieId, {
+    super.key,
+    this.value,
+    this.assigned = false,
+    this.selected = false,
+    this.maxed = false,
+    this.onTap,
+    this.rollToken = 0,
+    this.tumbleDelayMs = 0,
+  });
 
   @override
   State<DieChip> createState() => _DieChipState();
 }
 
-class _DieChipState extends State<DieChip>
-    with SingleTickerProviderStateMixin {
+class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
   late final AnimationController _tumble = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 520));
+    vsync: this,
+    duration: const Duration(milliseconds: 520),
+  );
 
   @override
   void didUpdateWidget(DieChip old) {
@@ -448,34 +546,48 @@ class _DieChipState extends State<DieChip>
   @override
   Widget build(BuildContext context) {
     final def = dieDef(widget.dieId);
+    // Spoken description for TalkBack: die size, face, and state. The painted
+    // pips/rings below carry no semantics of their own.
+    final a11y = StringBuffer('${def.name}, d${def.size} die');
+    if (widget.value != null) a11y.write(', rolled ${widget.value}');
+    if (widget.maxed && !widget.assigned) a11y.write(', max roll');
+    if (widget.assigned) {
+      a11y.write(', spent');
+    } else if (widget.selected) {
+      a11y.write(', selected');
+    }
     // v0.3.1 F1: taps are no longer swallowed here for assigned dice — the
     // caller decides (CombatScreen flashes "ALREADY ASSIGNED" feedback).
-    return GestureDetector(
+    return Semantics(
+      button: widget.onTap != null,
+      label: a11y.toString(),
       onTap: widget.onTap,
-      child: AnimatedBuilder(
-        animation: _tumble,
-        builder: (context, _) {
-          final f = _tumble.isAnimating ? _tumble.value : 1.0;
-          // Rotation settles with a decaying wobble; die hops once.
-          final settle = 1.0 - Curves.easeOut.transform(f);
-          final rot = math.sin(f * math.pi * 4) * 0.55 * settle;
-          final hop = -math.sin(f * math.pi).abs() *
-              14 *
-              (1.0 - f * 0.6);
-          // While mid-tumble, show cycling faces instead of the result.
-          final showValue = widget.value == null
-              ? null
-              : (f < 0.55 && _tumble.isAnimating)
-                  ? 1 + ((f * 31).floor() * 7 + widget.tumbleDelayMs) % def.size
-                  : widget.value;
-          return Transform.translate(
-            offset: Offset(0, _tumble.isAnimating ? hop : 0),
-            child: Transform.rotate(
-              angle: _tumble.isAnimating ? rot : 0,
-              child: _face(def, showValue),
-            ),
-          );
-        },
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedBuilder(
+          animation: _tumble,
+          builder: (context, _) {
+            final f = _tumble.isAnimating ? _tumble.value : 1.0;
+            // Rotation settles with a decaying wobble; die hops once.
+            final settle = 1.0 - Curves.easeOut.transform(f);
+            final rot = math.sin(f * math.pi * 4) * 0.55 * settle;
+            final hop = -math.sin(f * math.pi).abs() * 14 * (1.0 - f * 0.6);
+            // While mid-tumble, show cycling faces instead of the result.
+            final showValue = widget.value == null
+                ? null
+                : (f < 0.55 && _tumble.isAnimating)
+                ? 1 + ((f * 31).floor() * 7 + widget.tumbleDelayMs) % def.size
+                : widget.value;
+            return Transform.translate(
+              offset: Offset(0, _tumble.isAnimating ? hop : 0),
+              child: Transform.rotate(
+                angle: _tumble.isAnimating ? rot : 0,
+                child: _face(def, showValue),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -488,8 +600,8 @@ class _DieChipState extends State<DieChip>
     final borderColor = glowSelected
         ? EmberColors.ember
         : glowMaxed
-            ? EmberColors.gold
-            : Colors.transparent;
+        ? EmberColors.gold
+        : Colors.transparent;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 120),
       opacity: widget.assigned ? 0.35 : 1.0,
@@ -501,8 +613,9 @@ class _DieChipState extends State<DieChip>
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                      color: borderColor.withValues(alpha: 0.55),
-                      blurRadius: 12),
+                    color: borderColor.withValues(alpha: 0.55),
+                    blurRadius: 12,
+                  ),
                 ],
               )
             : null,
@@ -512,36 +625,49 @@ class _DieChipState extends State<DieChip>
             SizedBox(
               width: 64,
               height: 64,
-              child: Stack(fit: StackFit.expand, children: [
-                // Pixel die art at exactly 0.5x of its 128px source.
-                Image.asset('assets/images/ui/dice/die_d${def.size}.png',
-                    filterQuality: FilterQuality.none),
-                if (value != null)
-                  CustomPaint(
-                      painter: _PipPainter(value,
-                          maxed: glowMaxed, selected: glowSelected)),
-                if (glowSelected)
-                  CustomPaint(painter: _DieRingPainter(EmberColors.ember))
-                else if (glowMaxed)
-                  CustomPaint(painter: _DieRingPainter(EmberColors.gold)),
-              ]),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Pixel die art at exactly 0.5x of its 128px source.
+                  Image.asset(
+                    'assets/images/ui/dice/die_d${def.size}.png',
+                    filterQuality: FilterQuality.none,
+                  ),
+                  if (value != null)
+                    CustomPaint(
+                      painter: _PipPainter(
+                        value,
+                        maxed: glowMaxed,
+                        selected: glowSelected,
+                      ),
+                    ),
+                  if (glowSelected)
+                    CustomPaint(painter: _DieRingPainter(EmberColors.ember))
+                  else if (glowMaxed)
+                    CustomPaint(painter: _DieRingPainter(EmberColors.gold)),
+                ],
+              ),
             ),
             const SizedBox(height: 2),
-            // FittedBox: "d10 SPENT" must never wrap inside the 64x80 chip.
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
+            // Flexible + FittedBox: "d10 SPENT" must never wrap inside the
+            // 64x80 chip, and at large system font sizes (1.3x) the label
+            // scales down instead of overflowing the fixed-height chip.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
                   widget.assigned && value != null
                       ? 'd${def.size} SPENT'
                       : value != null && widget.maxed
-                          ? 'd${def.size} MAX'
-                          : 'd${def.size}',
+                      ? 'd${def.size} MAX'
+                      : 'd${def.size}',
                   maxLines: 1,
                   style: EmberText.micro.copyWith(
-                      fontSize: 9,
-                      color: glowMaxed
-                          ? EmberColors.gold
-                          : EmberColors.textDim)),
+                    fontSize: 9,
+                    color: glowMaxed ? EmberColors.gold : EmberColors.textDim,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -557,12 +683,13 @@ class _DieRingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawCircle(
-        size.center(Offset.zero),
-        size.shortestSide * 0.52,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.4
-          ..color = color.withValues(alpha: 0.9));
+      size.center(Offset.zero),
+      size.shortestSide * 0.52,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.4
+        ..color = color.withValues(alpha: 0.9),
+    );
   }
 
   @override
@@ -585,42 +712,88 @@ class _PipPainter extends CustomPainter {
     3: [Offset(-1, -1), Offset.zero, Offset(1, 1)],
     4: [Offset(-1, -1), Offset(1, -1), Offset(-1, 1), Offset(1, 1)],
     5: [
-      Offset(-1, -1), Offset(1, -1), Offset.zero, Offset(-1, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(1, -1),
+      Offset.zero,
+      Offset(-1, 1),
+      Offset(1, 1),
     ],
     6: [
-      Offset(-1, -1), Offset(1, -1), Offset(-1, 0), Offset(1, 0),
-      Offset(-1, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(1, -1),
+      Offset(-1, 0),
+      Offset(1, 0),
+      Offset(-1, 1),
+      Offset(1, 1),
     ],
     7: [
-      Offset(-1, -1), Offset(1, -1), Offset(-1, 0), Offset.zero, Offset(1, 0),
-      Offset(-1, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(1, -1),
+      Offset(-1, 0),
+      Offset.zero,
+      Offset(1, 0),
+      Offset(-1, 1),
+      Offset(1, 1),
     ],
     8: [
-      Offset(-1, -1), Offset(0, -1), Offset(1, -1), Offset(-1, 0),
-      Offset(1, 0), Offset(-1, 1), Offset(0, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(0, -1),
+      Offset(1, -1),
+      Offset(-1, 0),
+      Offset(1, 0),
+      Offset(-1, 1),
+      Offset(0, 1),
+      Offset(1, 1),
     ],
     9: [
-      Offset(-1, -1), Offset(0, -1), Offset(1, -1), Offset(-1, 0),
-      Offset.zero, Offset(1, 0), Offset(-1, 1), Offset(0, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(0, -1),
+      Offset(1, -1),
+      Offset(-1, 0),
+      Offset.zero,
+      Offset(1, 0),
+      Offset(-1, 1),
+      Offset(0, 1),
+      Offset(1, 1),
     ],
     10: [
-      Offset(-1, -1), Offset(0, -1), Offset(1, -1),
-      Offset(-1, -0.33), Offset(1, -0.33),
-      Offset(-1, 0.33), Offset(1, 0.33),
-      Offset(-1, 1), Offset(0, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(0, -1),
+      Offset(1, -1),
+      Offset(-1, -0.33),
+      Offset(1, -0.33),
+      Offset(-1, 0.33),
+      Offset(1, 0.33),
+      Offset(-1, 1),
+      Offset(0, 1),
+      Offset(1, 1),
     ],
     11: [
-      Offset(-1, -1), Offset(0, -1), Offset(1, -1),
-      Offset(-1, -0.33), Offset(1, -0.33),
+      Offset(-1, -1),
+      Offset(0, -1),
+      Offset(1, -1),
+      Offset(-1, -0.33),
+      Offset(1, -0.33),
       Offset.zero,
-      Offset(-1, 0.33), Offset(1, 0.33),
-      Offset(-1, 1), Offset(0, 1), Offset(1, 1)
+      Offset(-1, 0.33),
+      Offset(1, 0.33),
+      Offset(-1, 1),
+      Offset(0, 1),
+      Offset(1, 1),
     ],
     12: [
-      Offset(-1, -1), Offset(0, -1), Offset(1, -1),
-      Offset(-1, -0.33), Offset(0, -0.33), Offset(1, -0.33),
-      Offset(-1, 0.33), Offset(0, 0.33), Offset(1, 0.33),
-      Offset(-1, 1), Offset(0, 1), Offset(1, 1)
+      Offset(-1, -1),
+      Offset(0, -1),
+      Offset(1, -1),
+      Offset(-1, -0.33),
+      Offset(0, -0.33),
+      Offset(1, -0.33),
+      Offset(-1, 0.33),
+      Offset(0, 0.33),
+      Offset(1, 0.33),
+      Offset(-1, 1),
+      Offset(0, 1),
+      Offset(1, 1),
     ],
   };
 
@@ -631,12 +804,12 @@ class _PipPainter extends CustomPainter {
     // Conservative face area so pips stay inside every die silhouette
     // (d4 triangle is the tightest); dense values pack slightly smaller.
     final extent = size.shortestSide * (pips.length > 9 ? 0.20 : 0.17);
-    final radius =
-        size.shortestSide * (pips.length > 6 ? 0.045 : 0.06);
+    final radius = size.shortestSide * (pips.length > 6 ? 0.045 : 0.06);
     final pip = Paint()..color = const Color(0xFF241407);
     final rim = Paint()
-      ..color = (maxed ? EmberColors.gold : const Color(0xFFFFD98A))
-          .withValues(alpha: maxed ? 0.9 : 0.5);
+      ..color = (maxed ? EmberColors.gold : const Color(0xFFFFD98A)).withValues(
+        alpha: maxed ? 0.9 : 0.5,
+      );
     for (final o in pips) {
       final p = c + Offset(o.dx * extent, o.dy * extent);
       canvas.drawCircle(p + const Offset(0, 0.8), radius + 0.8, rim);
@@ -656,16 +829,17 @@ class Panel extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
   final Color? color;
-  const Panel(
-      {super.key,
-      required this.child,
-      this.padding = const EdgeInsets.all(Space.l),
-      this.color});
+  const Panel({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(Space.l),
+    this.color,
+  });
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: _PanelPainter(color ?? EmberColors.surface),
-        child: Padding(padding: padding, child: child),
-      );
+    painter: _PanelPainter(color ?? EmberColors.surface),
+    child: Padding(padding: padding, child: child),
+  );
 }
 
 class _PanelPainter extends CustomPainter {
@@ -686,32 +860,35 @@ class _PanelPainter extends CustomPainter {
       ..lineTo(0, c)
       ..close();
     canvas.drawPath(
-        path,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.lerp(color, Colors.black, 0.18)!,
-              color,
-              Color.lerp(color, EmberColors.ember, 0.06)!,
-            ],
-            stops: const [0.0, 0.6, 1.0],
-          ).createShader(Offset.zero & size)
-          ..color = color.withValues(alpha: 0.94));
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(color, Colors.black, 0.18)!,
+            color,
+            Color.lerp(color, EmberColors.ember, 0.06)!,
+          ],
+          stops: const [0.0, 0.6, 1.0],
+        ).createShader(Offset.zero & size)
+        ..color = color.withValues(alpha: 0.94),
+    );
     canvas.drawPath(
-        path,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.3
-          ..color = EmberColors.line);
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.3
+        ..color = EmberColors.line,
+    );
     // Warm hairline along the bottom (lit-from-below rule).
     canvas.drawLine(
-        Offset(c + 2, size.height - 1),
-        Offset(size.width - c - 2, size.height - 1),
-        Paint()
-          ..strokeWidth = 1.2
-          ..color = EmberColors.ember.withValues(alpha: 0.18));
+      Offset(c + 2, size.height - 1),
+      Offset(size.width - c - 2, size.height - 1),
+      Paint()
+        ..strokeWidth = 1.2
+        ..color = EmberColors.ember.withValues(alpha: 0.18),
+    );
   }
 
   @override
@@ -721,10 +898,12 @@ class _PanelPainter extends CustomPainter {
 void showFlash(BuildContext context, String msg) {
   final messenger = ScaffoldMessenger.of(context);
   messenger.clearSnackBars();
-  messenger.showSnackBar(SnackBar(
-    content: Text(msg, style: EmberText.body),
-    backgroundColor: EmberColors.raised,
-    behavior: SnackBarBehavior.floating,
-    duration: const Duration(milliseconds: 1400),
-  ));
+  messenger.showSnackBar(
+    SnackBar(
+      content: Text(msg, style: EmberText.body),
+      backgroundColor: EmberColors.raised,
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(milliseconds: 1400),
+    ),
+  );
 }
