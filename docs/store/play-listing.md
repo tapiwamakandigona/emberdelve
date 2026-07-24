@@ -67,8 +67,11 @@ Made for one-thumb portrait play. Delve in.
 ## Data safety form
 
 - Collects no data, shares no data (see docs/store/privacy-policy.md)
-- Privacy policy URL: host privacy-policy.md anywhere public (GitHub Pages of
-  this repo is the zero-cost option) and paste the URL here.
+- Privacy policy URL:
+  https://tapiwamakandigona.github.io/emberdelve/store/privacy-policy.html
+  (GitHub Pages, serves main:/docs — the styled page is
+  docs/store/privacy-policy.html; the markdown source stays the canonical
+  text).
 
 ## Still needed (owner-gated)
 
@@ -76,5 +79,6 @@ Made for one-thumb portrait play. Delve in.
       from real screens; regenerate with `flutter test tool/store_screenshots_test.dart`)
 - [x] Feature graphic 1024×500 (docs/store/screenshots/feature-graphic-1024x500.png)
 - [ ] App icon 512×512 (export of the launcher icon)
-- [ ] Hosted privacy policy URL
+- [x] Hosted privacy policy URL (GitHub Pages enabled 2026-07-24, main:/docs):
+      https://tapiwamakandigona.github.io/emberdelve/store/privacy-policy.html
 - [ ] Console: content rating questionnaire + data safety form submission
