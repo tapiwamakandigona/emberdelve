@@ -158,7 +158,12 @@ class MetaState {
 class MetaStore {
   static const _fileName = 'emberdelve_meta.json';
 
+  /// Test seam, mirroring GameController.saveDirOverride: when set, meta
+  /// persistence targets this directory instead of path_provider.
+  static String? dirOverride;
+
   static Future<File> _file() async {
+    if (dirOverride != null) return File('$dirOverride/$_fileName');
     final dir = await getApplicationSupportDirectory();
     return File('${dir.path}/$_fileName');
   }
@@ -174,10 +179,24 @@ class MetaStore {
     }
   }
 
-  static Future<void> save(MetaState state) async {
-    try {
-      final f = await _file();
-      await f.writeAsString(jsonEncode(state.toJson()));
-    } catch (_) {/* best-effort; never crash the game on save failure */}
+  /// Same durability contract as the run autosave (see GameController's
+  /// `_saveQueue`, PR #2): the JSON snapshot is captured synchronously at
+  /// call time, writes are chained on a queue so rapid saves (bank + unlock
+  /// + theme buy) can't interleave bytes, and each write goes to a temp file
+  /// that is renamed into place so a crash mid-write can never leave a
+  /// truncated meta file — this file holds embers/unlocks/lifetime stats,
+  /// the one save whose loss is unrecoverable.
+  static Future<void> _writeQueue = Future.value();
+  static Future<void> save(MetaState state) {
+    final snap = jsonEncode(state.toJson());
+    _writeQueue = _writeQueue.then((_) async {
+      try {
+        final f = await _file();
+        final tmp = File('${f.path}.tmp');
+        await tmp.writeAsString(snap, flush: true);
+        await tmp.rename(f.path);
+      } catch (_) {/* best-effort; never crash the game on save failure */}
+    });
+    return _writeQueue;
   }
 }
