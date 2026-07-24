@@ -1,8 +1,11 @@
 # Emberdelve — Google Play listing draft
 
 Draft copy for the Play Console listing (owner to review before submitting).
-Screenshots/feature graphic still needed — capture on a real device (also
-closes the real-device playthrough gate, features.json M1-3).
+Screenshots + feature graphic: first pass committed under
+`docs/store/screenshots/` (1080×1920 PNGs + 1024×500 graphic, rendered from
+real screens via `tool/store_screenshots_test.dart` — rerun any time the UI
+changes). Real-device captures can replace them later if preferred (that
+session also closes the real-device playthrough gate, features.json M1-3).
 
 ## App name (30 chars max)
 
@@ -69,8 +72,9 @@ Made for one-thumb portrait play. Delve in.
 
 ## Still needed (owner-gated)
 
-- [ ] 4–8 phone screenshots (1080×1920+), captured on a real device
-- [ ] Feature graphic 1024×500
+- [x] 5 phone screenshots 1080×1920 (docs/store/screenshots/01–05, rendered
+      from real screens; regenerate with `flutter test tool/store_screenshots_test.dart`)
+- [x] Feature graphic 1024×500 (docs/store/screenshots/feature-graphic-1024x500.png)
 - [ ] App icon 512×512 (export of the launcher icon)
 - [ ] Hosted privacy policy URL
 - [ ] Console: content rating questionnaire + data safety form submission
