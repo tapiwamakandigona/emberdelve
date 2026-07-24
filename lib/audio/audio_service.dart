@@ -108,6 +108,11 @@ class AudioService {
     switch (phase) {
       case 'player_turn':
         return bossFight ? 'boss_combat' : 'combat';
+      // 'boon' is part of the run (the map background already shows behind
+      // it) — without this case it fell through to title music, so "Delve
+      // again" after a defeat played: defeat sting -> title theme for the
+      // boon pick -> map music seconds later. Two jarring switches.
+      case 'boon':
       case 'map':
       case 'reward':
       case 'shop':
