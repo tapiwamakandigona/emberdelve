@@ -314,6 +314,7 @@ class GameController extends ChangeNotifier {
     meta.runsPlayed += 1;
     final char = sim!.run?['character'] as String? ?? defaultCharacter;
     meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
+    meta.addRunRecord(_runRecord(result: 'abandoned', embers: 0));
     MetaStore.save(meta);
     _clearSave();
     sim = null;
@@ -391,8 +392,28 @@ class GameController extends ChangeNotifier {
       meta.lastDailyFloor = floorReached;
       meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
     }
+    // Run history (v0.3.4): one small record per ended run, newest first.
+    meta.addRunRecord(_runRecord(
+        result: sim!.phase == 'run_won' ? 'won' : 'lost', embers: banked));
     MetaStore.save(meta);
     _clearSave();
+  }
+
+  Map<String, Object?> _runRecord(
+      {required String result, required int embers}) {
+    final run = sim?.run;
+    return {
+      'date': dailyKey(DateTime.now()),
+      'character': run?['character'] as String? ?? defaultCharacter,
+      'difficulty': run?['difficulty'] as String? ?? 'normal',
+      'ascension': run?['ascension'] as int? ?? 0,
+      'result': result,
+      'floor': floorReached,
+      'floors': sim?.map?['layers'] as int? ?? 0,
+      'seed': sim?.runSeed ?? 0,
+      'embers': embers,
+      if (dailyDate != null) 'daily': true,
+    };
   }
 
   /// 1-based map layer of the node the run currently stands on (the boss

@@ -107,3 +107,10 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
   keys (controller + title reuse it).
 - Gate: analyze clean, 107/107 tests; new test/daily_record_test.dart (6);
   title/summary screenshots inspected (widget-render probe).
+
+## 2026-07-24 — run history in meta + Ledger (PR #8)
+- Every ended run (won/lost/abandoned) prepends one record to meta.runHistory
+  (date/character/difficulty/ascension/result/floor/floors/seed/embers/daily),
+  capped at 30, newest first. Seeds recorded per run enable seed replay (PR #9).
+- The Ledger gains a RECENT DELVES section (last 10, real records only).
+- Gate: analyze clean, 111/111 tests; ledger screenshot inspected.
