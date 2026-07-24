@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../meta/progress_state.dart';
 import 'app_state.dart';
+import 'game_screen.dart';
 
 class LevelSelectScreen extends StatelessWidget {
   const LevelSelectScreen({super.key});
@@ -44,11 +45,8 @@ class LevelSelectScreen extends StatelessWidget {
               style: const TextStyle(color: Colors.white38, fontSize: 12),
             ),
             onTap: unlocked
-                ? () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('Gameplay lands in M2 — engine core.')),
-                    )
+                ? () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => GameScreen(levelId: entry.id)))
                 : null,
           );
         },

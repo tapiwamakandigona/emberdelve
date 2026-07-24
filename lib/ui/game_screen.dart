@@ -1,0 +1,207 @@
+// ui/game_screen.dart — GameWidget route hosting EmberGame with Flutter
+// overlays for pause / results / fail. Meta stays plain Flutter (spec seam).
+import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
+
+import '../audio/audio_service.dart';
+import '../game/ember_game.dart';
+import '../game/session.dart';
+
+class GameScreen extends StatefulWidget {
+  final String levelId;
+  const GameScreen({super.key, required this.levelId});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  late final EmberGame _game;
+
+  @override
+  void initState() {
+    super.initState();
+    _game = EmberGame(levelId: widget.levelId);
+  }
+
+  @override
+  void dispose() {
+    AudioService.instance?.playMusic('title_menu');
+    super.dispose();
+  }
+
+  void _replay() {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => GameScreen(levelId: widget.levelId)));
+  }
+
+  void _leave() => Navigator.of(context).pop();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GameWidget<EmberGame>(
+        game: _game,
+        overlayBuilderMap: {
+          EmberGame.overlayPause: (context, game) => _PauseOverlay(
+                onResume: game.resumeGame,
+                onLeave: _leave,
+              ),
+          EmberGame.overlayResults: (context, game) => _ResultsOverlay(
+                results: game.session.results!,
+                onReplay: _replay,
+                onContinue: _leave,
+              ),
+          EmberGame.overlayFail: (context, game) => _FailOverlay(
+                onRetry: _replay,
+                onLeave: _leave,
+              ),
+        },
+      ),
+    );
+  }
+}
+
+class _Panel extends StatelessWidget {
+  final List<Widget> children;
+  const _Panel({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black54,
+      alignment: Alignment.center,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        decoration: BoxDecoration(
+          color: const Color(0xF0141420),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF3A3A52)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: children,
+        ),
+      ),
+    );
+  }
+}
+
+class _PauseOverlay extends StatelessWidget {
+  final VoidCallback onResume;
+  final VoidCallback onLeave;
+  const _PauseOverlay({required this.onResume, required this.onLeave});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(children: [
+      const Text('PAUSED',
+          style: TextStyle(
+              fontFamily: 'Cinzel',
+              fontSize: 24,
+              letterSpacing: 4,
+              color: Color(0xFFE8A33D),
+              fontWeight: FontWeight.bold)),
+      const SizedBox(height: 20),
+      FilledButton(
+        style: FilledButton.styleFrom(backgroundColor: const Color(0xFF3E8948)),
+        onPressed: onResume,
+        child: const Text('Resume'),
+      ),
+      const SizedBox(height: 8),
+      TextButton(onPressed: onLeave, child: const Text('Leave level')),
+    ]);
+  }
+}
+
+class _FailOverlay extends StatelessWidget {
+  final VoidCallback onRetry;
+  final VoidCallback onLeave;
+  const _FailOverlay({required this.onRetry, required this.onLeave});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(children: [
+      const Text('FALLEN...',
+          style: TextStyle(
+              fontFamily: 'Cinzel',
+              fontSize: 24,
+              letterSpacing: 4,
+              color: Color(0xFFD53C3C),
+              fontWeight: FontWeight.bold)),
+      const SizedBox(height: 20),
+      FilledButton(
+        style: FilledButton.styleFrom(backgroundColor: const Color(0xFF3E8948)),
+        onPressed: onRetry,
+        child: const Text('Try again'),
+      ),
+      const SizedBox(height: 8),
+      TextButton(onPressed: onLeave, child: const Text('Leave')),
+    ]);
+  }
+}
+
+class _ResultsOverlay extends StatelessWidget {
+  final LevelResults results;
+  final VoidCallback onReplay;
+  final VoidCallback onContinue;
+  const _ResultsOverlay(
+      {required this.results,
+      required this.onReplay,
+      required this.onContinue});
+
+  String get _time {
+    final s = results.timeMs ~/ 1000;
+    return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
+  }
+
+  Widget _medal(String label, bool earned) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(earned ? Icons.emoji_events : Icons.emoji_events_outlined,
+              size: 18,
+              color: earned ? const Color(0xFFE8A33D) : Colors.white24),
+          const SizedBox(width: 8),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 13,
+                  color: earned ? Colors.white : Colors.white38)),
+        ]),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(children: [
+      const Text('LEVEL CLEAR!',
+          style: TextStyle(
+              fontFamily: 'Cinzel',
+              fontSize: 22,
+              letterSpacing: 3,
+              color: Color(0xFFE8A33D),
+              fontWeight: FontWeight.bold)),
+      const SizedBox(height: 12),
+      Text('Time $_time  ·  par ${results.parSeconds ~/ 60}:'
+          '${(results.parSeconds % 60).toString().padLeft(2, '0')}'
+          '\nCoins +${results.coinsEarned}'
+          '   Chests ${results.chestsOpened}/${results.chestTotal}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white70, fontSize: 13)),
+      const SizedBox(height: 12),
+      _medal('Finished', results.finished),
+      _medal('All chests', results.allChests),
+      _medal('Low damage', results.lowDamage),
+      const SizedBox(height: 16),
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        TextButton(onPressed: onReplay, child: const Text('Replay')),
+        const SizedBox(width: 12),
+        FilledButton(
+          style:
+              FilledButton.styleFrom(backgroundColor: const Color(0xFF3E8948)),
+          onPressed: onContinue,
+          child: const Text('Continue'),
+        ),
+      ]),
+    ]);
+  }
+}

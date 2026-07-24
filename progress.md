@@ -373,3 +373,26 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
 - Tests: physics_test (11: jump 2-not-4 tiles, double 3.5, coyote 0.08 ok/0.2 not, buffer,
   variable height, one-way land/up/drop-through, wall, spike i-frames, knockback),
   enemy_core_test (6), combat_test (8), session_test (14). Suite 68/68, analyze clean.
+
+---
+## 2026-07-24 — M2c/M3 render layer (worker A, emberpivot-0724-A)
+- `lib/game/ember_game.dart`: FlameGame shell over LevelSession — fixed-res 480x270
+  CameraComponent (smooth follow + kCameraLookAhead + peek-down, clamped to level, hit
+  camera bump), hand-rolled 4-layer forest parallax in camera.backdrop, event→sfx/fx map,
+  results persistence (recordFor + coins/feathers earn + skinKills[equippedSkin] += kills,
+  tutorialSeen on w1_l1), keyboard (arrows/AD, space/W/up jump, J/X attack, K/C throw, S down).
+- Components: tile_layer (ONE SpriteBatch pass for tileset grass/dirt variants
+  (x*7+y*13)%3 + platform/spikes batches + tinted block_big cracked walls + shared animated
+  fire; rebuilds on wallsDirty), player_component (all 8 strips, attack by comboIndex at
+  kAttackDuration, facing flip, i-frame blink), enemy_component (3 kinds + hopper jump strip,
+  hurt flash, sleep cull), items_component (door/signs/chests/coins/pickups/apples/sign
+  bubble in one pass), hud (hold-buttons + procedural 8x8 hearts, coin/apple/chest/feather/
+  timer readouts), fx (PuffFx dust, DeathFx).
+- `lib/ui/game_screen.dart`: GameWidget route + pause/results/fail overlays; level select
+  now opens levels (M2 snackbar gone). w1_l1: 3 tutorial sign texts (move/jump, attack,
+  throw + drop-through) + apple + thornling. pubspec assets now list image subdirs
+  (subdirectories are not recursive — fx/enemies/etc were unregistered).
+- Suite 70/70 green, analyze 0. P-M2 flipped with evidence. P-M3 left false: melee combo /
+  enemies (Thornling/Ashbat/Hopper) / pickups / chests / cracked walls / exit+results all
+  done & tested, but acceptance also names Ember Totem + Rotshield — deferred to M5 per
+  orchestrator instruction (spawn kinds are handled as no-op TODOs).
