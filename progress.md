@@ -348,3 +348,6 @@ mod requirement). Reciprocal-testing bookkeeping is tracked outside this repo.
 **Next update (owner is considering):** a core-gameplay-simplification pass.
 Confirmed safe during closed testing (see mechanics above); pair it with the
 tutorial promise and refreshed screenshots in a single submission.
+
+Full day-one narrative (publish journey, recruiting rounds, reciprocity
+table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
