@@ -16,6 +16,19 @@ dependencies:
   path_provider: ^2.1.4
   # Music loops + SFX one-shots (assets-integration).
   audioplayers: ^6.1.0
+  # --- Telemetry phase 1 (docs/telemetry-events.md) ---
+  # Crash reporting (legitimate interest, opt-out in Settings) + consent-gated
+  # gameplay analytics. Both are no-ops until android/app/google-services.json
+  # exists (see README §Telemetry) — Firebase init failure is caught.
+  firebase_core: ^4.12.1
+  firebase_crashlytics: ^5.2.6
+  firebase_analytics: ^12.4.5
+  # Consent + toggle persistence.
+  shared_preferences: ^2.3.0
+  # In-app "Send feedback": annotated screenshot + note, shared out via the
+  # system share sheet (no backend, no extra data collection).
+  feedback: ^3.2.0
+  share_plus: ^12.0.2 # 13.x needs Dart >=3.10; repo pins Flutter 3.32.7/Dart 3.8.1
 
 dev_dependencies:
   flutter_test:
