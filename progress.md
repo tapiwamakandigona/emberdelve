@@ -67,6 +67,16 @@ Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
 2026-07-23 AUTOSAVE HARDENING (same branch): GameController autosave was fire-and-forget writeAsString — rapid commands could interleave bytes in the save file, a crash mid-write could truncate it, and the snapshot was serialized after an await (so it could drift from the state that triggered the save). Now: snapshot captured synchronously, writes chained on a save queue, temp-file + atomic rename; _clearSave rides the same queue so a queued save can never resurrect an abandoned/finished run. analyze clean, 80/80 tests.
 2026-07-24 AUDIO CUTOUT FIX (branch fix/audio-focus-cutouts): owner-reported "tap settings / switch difficulty kills the music" root-caused to audioplayers' Android default AudioContext (AUDIOFOCUS_GAIN per player): every SFX one-shot filed an exclusive focus request and the OS sent the music/ambience players a permanent AUDIOFOCUS_LOSS, which the plugin answers with a never-resumed pause — any ui_tap could kill the music, and every sound also silenced other apps' audio. Fix: AudioService.initPlatformAudio() in main() sets global AudioContextConfig(focus: mixWithOthers) (Android AUDIOFOCUS_NONE / iOS playback+mixWithOthers); backgrounding still handled by the lifecycle observer. Also fixed the silent-phase latch: playMusic assigned _musicKey before try, so one failed start muted the whole screen family (syncPhase dedupe early-return) — failures now reset _music/_musicKey (and the ambience slot ditto). Full write-up incl. plugin-source evidence + audited non-issues: docs/improvements/audio-cutout-investigation.md. analyze clean, tests green, autoplay 200 = 74.0%/0 invalids, golden 1117081416 (no sim change). Needs one real-device confirm.
 
+## 2026-07-24 — Bug sweep (post-audio fix)
+Full-repo bug pass (docs/improvements/bug-sweep-2026-07-24.md). Fixed: stale
+combo_bonus after charge reroll (sim; re-detect combos, contract §1/§3
+updated, regression test added; gates byte-identical → no SIM_VERSION bump);
+lying boss insight ("hits for 25" vs actual 32 — now number-free); Ember
+Moths label leftover; map marker walking in from the previous run's node
+(cross-run static leak, now keyed by run seed); unclamped volumes from a
+corrupt settings file crashing the Settings sliders; wrong stream docs for
+event grants (loot, not shuffle) + documented gold_after. Verified: analyze
+clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
 ## 2026-07-24 — backlog pass (branch fix/backlog-pass, no app-version bump by owner request)
 2026-07-24 SCREENS SPLIT: lib/ui/screens.dart (2,604 lines) mechanically split into 13 part files under lib/ui/screens/ (part/part of — shared privates like _TopBar keep working, all imports stay valid). Byte-identical bodies; no behavior change.
 2026-07-24 ACCESSIBILITY: Semantics labels/actions on EmberButton, DieChip (die/face/state), StatBar (HP+block), ResourcePip, intent badge, burn badge, pause gear. Overflow probe gained a 1.3x text-scale pass (all 5 sizes); fixes it caught: die-chip label scales inside its 64x80 chip, RECOMMENDED chip scales down, map node badge fits its 48px slot, combat HUD clamps text scale to its height budget with scale-aware compact mode (was overflowing up to 116px at 320x568@1.3x). Probe's source-location regex now matches lib/ui/screens/.
