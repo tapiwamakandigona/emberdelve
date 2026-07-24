@@ -252,7 +252,11 @@ class GameController extends ChangeNotifier {
           flash = _reason(e['reason'] as String?);
           break;
         case 'rested':
-          flash = 'Rested — healed ${e['healed']} HP';
+          // "Move on" from a full-HP rest heals 0 — no toast for a non-heal.
+          final healed = e['healed'];
+          if (healed is int && healed > 0) {
+            flash = 'Rested — healed $healed HP';
+          }
           break;
         case 'forged':
           flash = 'Forged into a stronger die';

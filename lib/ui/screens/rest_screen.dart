@@ -29,10 +29,16 @@ class RestScreen extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: EmberButton(
-              fullHp ? 'Fully rested — forge or move on' : 'Rest — heal 30%',
+              // At full HP this is the ONLY exit when nothing is forgeable —
+              // a disabled button here soft-locked the run (found in play
+              // session 2026-07-24). The sim's `rest` command is safe at full
+              // HP: it heals 0 and moves to the map.
+              fullHp ? 'Move on — fully rested' : 'Rest — heal 30%',
               primary: !fullHp,
-              icon: Icons.local_fire_department,
-              onTap: fullHp ? null : () => c.apply({'type': 'rest'})),
+              icon: fullHp
+                  ? Icons.arrow_forward
+                  : Icons.local_fire_department,
+              onTap: () => c.apply({'type': 'rest'})),
         ),
       ),
       if (forgeable.isNotEmpty)

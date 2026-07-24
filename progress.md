@@ -227,3 +227,29 @@ bug report) → #19 (boss variety: 3 seed-picked bosses, goldenV6 unchanged) →
 (analyze clean; 133/134/134 tests; autoplay 200 normal 67.0/66.5/66.5% WR, 0
 invalids; golden 1842571558 self-consistent). Version bumped 0.3.3+6 → 0.3.4+7
 for the delivered signed APK (CI build-android-release artifact).
+
+## 2026-07-24 — play-session bug hunt (branch fix/play-session-findings)
+2026-07-24 Owner directive: "play emberdelve and fix all the problems it has."
+Built tool/play_session_test.dart — an interactive harness that PLAYS the
+game through the real UI (hit-tested taps, real frames, sim-bot-guided
+choices) for 4 full runs, screenshots every phase, and records every
+framework exception. Found and fixed:
+1. **Pop-curve assert on every damage/text pop** (lib/ui/fx.dart): the
+   settle-scale curves fed `(f - a) / (1 - a)` into `Curve.transform`
+   un-clamped; at f == 1.0 float error yields 1.0000000000000002 and trips
+   the [0,1] assert on the final frame of EVERY DamagePop/TextPop (82 hits
+   in one 4-run session). Debug-only crash spam (asserts strip in release),
+   still out of contract. Clamped both sites; audited all other
+   `.transform(` call sites — the rest receive controller values in range.
+2. **Rest-hollow softlock** (lib/ui/screens/rest_screen.dart): at full HP
+   with nothing forgeable the only exit was a DISABLED button ("Fully
+   rested — forge or move on") — no way to leave the node, run soft-locked.
+   Now an enabled "Move on — fully rested" applies the sim's `rest` (heals
+   0, moves to map — command verified safe at full HP). Controller no
+   longer toasts "Rested — healed 0 HP" for a non-heal.
+Regression tests added to test/widget_test.dart (pop-completion exception
+gate — verified to FAIL against the pre-fix fx.dart — and full-HP rest
+exit). Also measured controller-level bot parity: 60-seed easy winrate via
+GameController.apply = 83.3%, in family with the sim-level 86.7% — the
+controller/UI command path introduces no drift. Suite green, autoplay
+baseline unchanged (sim untouched). Version 0.3.4+7 → 0.3.5+8.

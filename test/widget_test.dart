@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/sim.dart';
+import 'package:emberdelve/ui/fx.dart';
 import 'package:emberdelve/ui/logo.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
@@ -427,5 +428,52 @@ void main() {
     expect(((c.state!['player'] as Map)['dice'] as List).length,
         equals(before + 1));
     await pumpFor(tester, 800); // drain implicit animations before teardown
+  });
+
+  testWidgets('rest at full HP offers an enabled exit back to the map',
+      (tester) async {
+    // Regression (play session 2026-07-24): at full HP with nothing forgeable
+    // the rest button was disabled and the screen had no other exit — a
+    // soft-locked run. The button must stay tappable and lead to the map.
+    final c = GameController();
+    c.meta.tutorialSeen = true;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildEmberTheme(),
+      home: GameRoot(c),
+    ));
+    c.startRun(character: 'kindler', seed: 1);
+    await pumpFor(tester, 400);
+    c.sim!.phase = 'rest'; // walk straight into a rest hollow at full HP
+    c.notifyListeners();
+    await pumpFor(tester, 500);
+
+    expect(find.text('Move on — fully rested'), findsOneWidget);
+    await tester.tap(find.text('Move on — fully rested'), warnIfMissed: false);
+    await pumpFor(tester, 500);
+    expect(c.phase, equals('map'));
+    // A 0-HP "rest" is a move, not a heal — no toast.
+    expect(c.flash, isNull);
+    await pumpFor(tester, 600); // drain animations before teardown
+  });
+
+  testWidgets('damage and text pops finish without framework exceptions',
+      (tester) async {
+    // Regression (play session 2026-07-24): the pop scale curves fed
+    // (f - a) / (1 - a) into Curve.transform un-clamped; at f == 1.0 float
+    // error produced 1.0000000000000002 and tripped the [0, 1] assert on the
+    // final frame of every pop.
+    var done = 0;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildEmberTheme(),
+      home: Scaffold(
+        body: Stack(children: [
+          DamagePop(amount: 7, onDone: () => done++),
+          TextPop(text: 'PAIR +2', color: Colors.amber, onDone: () => done++),
+        ]),
+      ),
+    ));
+    await pumpFor(tester, 1200); // both run to completion
+    expect(done, equals(2));
+    expect(tester.takeException(), isNull);
   });
 }
