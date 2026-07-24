@@ -35,6 +35,17 @@ const List<String> boonsOrder = [
   'lucky_charm',
   'kindled_cache',
   'steady_hand',
+  // v0.3.3+ batch: widen the pool so the 1-of-3 opening offer repeats less
+  // (the "delve again" hook). NOTE: growing this list reshuffles the seeded
+  // boon draw — the golden anchor was deliberately re-anchored (see
+  // test/sim_test.dart) when these landed.
+  'brand_bearer',
+  'stout_start',
+  'glowing_start',
+  'spark_pouch',
+  'slate_guard',
+  'deep_pockets',
+  'hearth_blessing',
 ];
 
 const Map<String, BoonDef> boons = {
@@ -62,6 +73,27 @@ const Map<String, BoonDef> boons = {
   'steady_hand': BoonDef('steady_hand', 'Steady Hand',
       'Add a Steady Ember (d6, never rolls below 3) to your starting pool.',
       effects: {'gain_die': 'd6_steady'}),
+  'brand_bearer': BoonDef('brand_bearer', 'Brand Bearer',
+      'Add a Brand Iron (d6, attack only, +2 attack) to your starting pool.',
+      effects: {'gain_die': 'd6_brand'}),
+  'stout_start': BoonDef('stout_start', 'Stout Start',
+      'Add a Stout Ember (d6, block +1) to your starting pool.',
+      effects: {'gain_die': 'd6_stout'}),
+  'glowing_start': BoonDef('glowing_start', 'Glowing Start',
+      'Add a Glowing Ember (d6, +2 on a max roll) to your starting pool.',
+      effects: {'gain_die': 'd6_ember'}),
+  'spark_pouch': BoonDef('spark_pouch', 'Spark Pouch',
+      'Add a Spark Chip (d4, attack only, min 2) and 10 gold.',
+      effects: {'gain_die': 'd4_spark', 'gold': 10}),
+  'slate_guard': BoonDef('slate_guard', 'Slate Guard',
+      'Add a Slate Chip (d4, block only, min 2) and 10 gold.',
+      effects: {'gain_die': 'd4_guard', 'gold': 10}),
+  'deep_pockets': BoonDef('deep_pockets', 'Deep Pockets',
+      'Start the delve with 40 gold in hand.',
+      effects: {'gold': 40}),
+  'hearth_blessing': BoonDef('hearth_blessing', 'Hearth Blessing',
+      'Start with +4 max HP and bank 8 embers into the run ledger.',
+      effects: {'max_hp': 4, 'embers': 8}),
 };
 
 BoonDef boonDef(String id) {

@@ -1,0 +1,80 @@
+// lib/ui/screens/rest_screen.dart — part of screens.dart (see library header there).
+part of '../screens.dart';
+
+class RestScreen extends StatelessWidget {
+  final GameController c;
+  const RestScreen(this.c, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    final player = c.state!['player'] as Map;
+    final dice0 = (player['dice'] as List).cast<String>();
+    final forgeable = <int>[];
+    for (var i = 0; i < dice0.length; i++) {
+      if (dieDef(dice0[i]).forgeTo.isNotEmpty) forgeable.add(i);
+    }
+    // v0.3.1 F9: never offer a heal that heals nothing.
+    final fullHp = (player['hp'] as int) >= (player['max_hp'] as int);
+    return Stack(fit: StackFit.expand, children: [
+      const EmberDrift(count: 16, opacity: 0.6),
+      Column(children: [
+      _TopBar(c),
+      const SizedBox(height: Space.xl),
+      Text('A warm hollow', style: EmberText.h1),
+      const SizedBox(height: Space.xs),
+      Text('Rest to heal, or forge a die into something stronger. One only.',
+          style: EmberText.bodyDim, textAlign: TextAlign.center),
+      const Spacer(),
+      Padding(
+        padding: const EdgeInsets.all(Space.l),
+        child: SizedBox(
+          width: double.infinity,
+          child: EmberButton(
+              fullHp ? 'Fully rested — forge or move on' : 'Rest — heal 30%',
+              primary: !fullHp,
+              icon: Icons.local_fire_department,
+              onTap: fullHp ? null : () => c.apply({'type': 'rest'})),
+        ),
+      ),
+      if (forgeable.isNotEmpty)
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            children: [
+              Text('FORGE', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              for (final i in forgeable)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.s),
+                  child: _forgeRow(dice0[i], i + 1),
+                ),
+            ],
+          ),
+        )
+      else
+        const Spacer(),
+      ]),
+    ]);
+  }
+
+  Widget _forgeRow(String id, int index) {
+    final def = dieDef(id);
+    final into = def.forgeTo.first;
+    return Panel(
+      child: Row(children: [
+        DieChip(id),
+        const Icon(Icons.arrow_forward, color: EmberColors.ember),
+        DieChip(into),
+        const SizedBox(width: Space.m),
+        Expanded(
+            child: Text('${def.name} → ${dieDef(into).name}',
+                style: EmberText.body)),
+        EmberButton('Forge',
+            onTap: () => c.apply({'type': 'forge', 'die': index, 'into': into})),
+      ]),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Shop
+// ---------------------------------------------------------------------------
