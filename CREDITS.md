@@ -43,6 +43,8 @@ Fonts are credited separately in the repository (see assets/fonts).
 - RPG foley (swing, potion, metal ring) by **artisticdude** (opengameart.org), CC0
 - Fire crackle by **AntumDeluge** (opengameart.org), CC0
 - **"Fire Loop"** by Iwan "qubodup" Gabovitch (opengameart.org), CC BY 3.0
+- **Low-HP heartbeat danger loop** — synthesized for Emberdelve by Tsoro
+  Studios, CC0 1.0 Universal
   https://creativecommons.org/licenses/by/3.0/
 
 Thank you to all of these artists for releasing their work freely.
