@@ -124,6 +124,9 @@ class LevelSession {
   final List<AppleProjectile> _applePool =
       List.generate(kMaxPooledProjectiles, (_) => AppleProjectile());
 
+  /// Read-only view for the render layer.
+  List<AppleProjectile> get appleProjectiles => _applePool;
+
   late final double exitX, exitY; // door center px
 
   // Run state.

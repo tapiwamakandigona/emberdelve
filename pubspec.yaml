@@ -28,7 +28,14 @@ flutter:
   assets:
     - CREDITS.md
     - assets/levels/
-    - assets/images/
+    - assets/images/bg/
+    - assets/images/enemies/
+    - assets/images/fx/
+    - assets/images/hud/
+    - assets/images/items/
+    - assets/images/player/
+    - assets/images/props/
+    - assets/images/tiles/
     - assets/audio/music/
     - assets/audio/sfx/
   fonts:

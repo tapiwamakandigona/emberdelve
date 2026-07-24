@@ -1,0 +1,174 @@
+// Touch HUD: hold buttons (left/right), round jump/attack buttons, pause,
+// plus readouts (procedural pixel hearts, coin/apple counters, chest x/y,
+// feather icon, level timer). All live on the camera viewport, driving the
+// game's shared TouchState.
+import 'dart:ui' as ui;
+
+import 'package:flame/components.dart';
+import 'package:flame/events.dart';
+import 'package:flame/text.dart';
+
+import '../ember_game.dart';
+
+/// A HUD button that reports press/release into a callback pair.
+class HudHoldButton extends SpriteComponent
+    with TapCallbacks, HasGameReference<EmberGame> {
+  final String spritePath;
+  final String? iconPath;
+  final void Function() onPressed;
+  final void Function() onReleased;
+  SpriteComponent? _icon;
+
+  HudHoldButton({
+    required this.spritePath,
+    this.iconPath,
+    required this.onPressed,
+    required this.onReleased,
+    required Vector2 position,
+    required Vector2 size,
+  }) : super(position: position, size: size, priority: 10) {
+    paint = ui.Paint()
+      ..filterQuality = ui.FilterQuality.none
+      ..color = const ui.Color(0xAAFFFFFF);
+  }
+
+  @override
+  Future<void> onLoad() async {
+    sprite = Sprite(await game.images.load(spritePath));
+    if (iconPath != null) {
+      _icon = SpriteComponent(
+        sprite: Sprite(await game.images.load(iconPath!)),
+        size: size * 0.55,
+        position: size / 2,
+        anchor: Anchor.center,
+        paint: ui.Paint()
+          ..filterQuality = ui.FilterQuality.none
+          ..color = const ui.Color(0xDDFFFFFF),
+      );
+      add(_icon!);
+    }
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    paint.color = const ui.Color(0xFFFFFFFF);
+    onPressed();
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    paint.color = const ui.Color(0xAAFFFFFF);
+    onReleased();
+  }
+
+  @override
+  void onTapCancel(TapCancelEvent event) {
+    paint.color = const ui.Color(0xAAFFFFFF);
+    onReleased();
+  }
+}
+
+/// Readouts drawn procedurally each frame from session state.
+class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
+  HudReadout() : super(priority: 10);
+
+  late Sprite _coinSprite;
+  late Sprite _appleSprite;
+  late Sprite _featherSprite;
+  late Sprite _chestSprite;
+
+  static final _text = TextPaint(
+    style: const TextStyle(
+      fontSize: 8,
+      color: ui.Color(0xFFF4EAD5),
+      fontFamily: 'Inter',
+    ),
+  );
+  final _heartFill = ui.Paint()..color = const ui.Color(0xFFD53C3C);
+  final _heartEmpty = ui.Paint()..color = const ui.Color(0x66201826);
+  final _spritePaint = ui.Paint()..filterQuality = ui.FilterQuality.none;
+
+  @override
+  Future<void> onLoad() async {
+    _coinSprite = Sprite(await game.images.load('items/coin.png'),
+        srcSize: Vector2(16, 16));
+    _appleSprite = Sprite(await game.images.load('items/apple.png'),
+        srcSize: Vector2(32, 32));
+    _featherSprite = Sprite(await game.images.load('items/feather.png'),
+        srcSize: Vector2(15, 13));
+    _chestSprite = Sprite(await game.images.load('items/chest.png'),
+        srcSize: Vector2(48, 48));
+  }
+
+  /// 8x8 pixel heart: two bumps + point, drawn from a bitmask.
+  static const _heartRows = [
+    0x66, // .##..##.
+    0xFF, // ########
+    0xFF, // ########
+    0xFF, // ########
+    0x7E, // .######.
+    0x3C, // ..####..
+    0x18, // ...#....
+    0x00,
+  ];
+
+  void _drawHeart(ui.Canvas canvas, double x, double y, ui.Paint paint) {
+    for (var row = 0; row < 8; row++) {
+      final bits = _heartRows[row];
+      for (var col = 0; col < 8; col++) {
+        if ((bits >> (7 - col)) & 1 == 1) {
+          canvas.drawRect(ui.Rect.fromLTWH(x + col, y + row, 1, 1), paint);
+        }
+      }
+    }
+  }
+
+  @override
+  void render(ui.Canvas canvas) {
+    final s = game.session;
+
+    // Hearts (top-left).
+    for (var i = 0; i < s.loadout.maxHearts; i++) {
+      _drawHeart(canvas, 6.0 + i * 10, 6,
+          i < s.player.hearts ? _heartFill : _heartEmpty);
+    }
+
+    // Coins.
+    _coinSprite.render(canvas,
+        position: Vector2(4, 16), size: Vector2(12, 12),
+        overridePaint: _spritePaint);
+    _text.render(canvas, '${s.coinsCollected}', Vector2(17, 18));
+
+    // Apples.
+    _appleSprite.render(canvas,
+        position: Vector2(4, 28), size: Vector2(12, 12),
+        overridePaint: _spritePaint);
+    _text.render(canvas, '${s.applesHeld}', Vector2(17, 30));
+
+    // Chests opened/total (only when the level has chests).
+    if (s.chestTotal > 0) {
+      _chestSprite.render(canvas,
+          position: Vector2(4, 40), size: Vector2(12, 12),
+          overridePaint: _spritePaint);
+      _text.render(
+          canvas, '${s.chestsOpened}/${s.chestTotal}', Vector2(17, 42));
+    }
+
+    // Feather icon when collected this run.
+    if (s.feathersCollected > 0) {
+      _featherSprite.render(canvas,
+          position: Vector2(5, 52), size: Vector2(11, 10),
+          overridePaint: _spritePaint);
+      if (s.feathersCollected > 1) {
+        _text.render(canvas, '${s.feathersCollected}', Vector2(17, 53));
+      }
+    }
+
+    // Level timer (top-center).
+    final t = s.time.floor();
+    final mm = (t ~/ 60).toString().padLeft(1, '0');
+    final ss = (t % 60).toString().padLeft(2, '0');
+    _text.render(canvas, '$mm:$ss', Vector2(EmberGame.viewWidth / 2, 6),
+        anchor: Anchor.topCenter);
+  }
+}

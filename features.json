@@ -19,8 +19,8 @@
       "id": "P-M2",
       "title": "Engine core: player physics + camera + touch input",
       "acceptance": "Playable level: d-pad run, jump with coyote+buffer+variable height, double jump, one-way platforms, spikes/fire damage with i-frames+knockback, camera follow with look-ahead and peek-down; headless physics tests green (jump clears 2 tiles, double jump 3.5, coyote/buffer windows honored)",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "flutter analyze clean + flutter test 70/70 (this commit): test/physics_test.dart pins jump 2-not-4 tiles, double-jump 3.5, coyote 0.10 ok / 0.2 not, jump buffer, variable height, one-way land/up/drop-through, wall stop, spike i-frames, knockback; lib/game/ember_game.dart + game_screen.dart deliver playable level (480x270 camera w/ look-ahead+peek, parallax, SpriteBatch tiles, touch HUD + keyboard)"
     },
     {
       "id": "P-M3",

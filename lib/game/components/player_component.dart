@@ -1,0 +1,97 @@
+// PlayerComponent: draws PlayerCore state. NO gameplay logic here — the core
+// (via the session) owns movement/combat; this picks animation strips, flips
+// by facing, and blinks during i-frames.
+import 'dart:ui' as ui;
+
+import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
+
+import '../ember_game.dart';
+import '../player/player_core.dart';
+import '../tuning.dart';
+
+class PlayerComponent extends PositionComponent
+    with HasGameReference<EmberGame> {
+  PlayerComponent() : super(priority: 3);
+
+  late final Map<PlayerState, SpriteAnimation> _anims;
+  late final List<SpriteAnimation> _attacks; // by comboIndex
+  SpriteAnimation? _current;
+  SpriteAnimationTicker? _ticker;
+  double _blinkClock = 0;
+
+  Future<SpriteAnimation> _load(
+      String name, int frames, Vector2 size, double stepTime,
+      {bool loop = true}) async {
+    return SpriteAnimation.fromFrameData(
+      await game.images.load('player/$name.png'),
+      SpriteAnimationData.sequenced(
+          amount: frames, stepTime: stepTime, textureSize: size, loop: loop),
+    );
+  }
+
+  @override
+  Future<void> onLoad() async {
+    final s22 = Vector2(22, 24);
+    final s40 = Vector2(40, 30);
+    _anims = {
+      PlayerState.idle: await _load('idle', 5, s22, 0.12),
+      PlayerState.run: await _load('run', 6, s22, 0.09),
+      PlayerState.jump: await _load('jump', 4, s22, 0.08, loop: false),
+      PlayerState.fall: await _load('fall', 4, s22, 0.08, loop: false),
+      PlayerState.hurt: await _load('hit', 6, s22, 0.05, loop: false),
+      PlayerState.dead: await _load('hit', 6, s22, 0.05, loop: false),
+    };
+    _attacks = [
+      await _load('attack1', 10, s40, kAttackDuration / 10, loop: false),
+      await _load('attack2', 12, s40, kAttackDuration / 12, loop: false),
+      await _load('attack3', 8, s40, kAttackDuration / 8, loop: false),
+    ];
+    _setAnim(_anims[PlayerState.idle]!);
+  }
+
+  void _setAnim(SpriteAnimation anim) {
+    if (identical(anim, _current)) return;
+    _current = anim;
+    _ticker = anim.createTicker();
+  }
+
+  @override
+  void update(double dt) {
+    final core = game.session.player;
+    _blinkClock += dt;
+    if (core.state == PlayerState.attack) {
+      _setAnim(_attacks[core.comboIndex.clamp(0, _attacks.length - 1)]);
+    } else {
+      _setAnim(_anims[core.state]!);
+    }
+    _ticker?.update(dt);
+  }
+
+  @override
+  void render(ui.Canvas canvas) {
+    final core = game.session.player;
+    final ticker = _ticker;
+    if (ticker == null) return;
+    // Blink during i-frames (skip every other 0.08s window).
+    if (core.iFrames > 0 &&
+        !core.isDead &&
+        (_blinkClock / 0.08).floor().isEven) {
+      return;
+    }
+    final sprite = ticker.getSprite();
+    final w = sprite.srcSize.x, h = sprite.srcSize.y;
+    // Anchor the frame bottom-center on the body's bottom-center.
+    final b = core.body;
+    final drawX = b.centerX - w / 2;
+    final drawY = b.bottom - h;
+    canvas.save();
+    if (core.facing < 0) {
+      canvas.translate(b.centerX * 2, 0);
+      canvas.scale(-1, 1);
+    }
+    sprite.render(canvas,
+        position: Vector2(drawX, drawY), size: Vector2(w, h));
+    canvas.restore();
+  }
+}
