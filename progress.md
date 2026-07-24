@@ -93,4 +93,4 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
 - Closes review note: a crash-corrupted meta file used to silently reset all
   embers/unlocks/stats. New test/meta_backup_test.dart (6 tests) covers both
   generations corrupt, heal-on-recover, legacy/future schema tolerance.
-- Gate: analyze clean, 101/101 tests (autoplay 200-seed + golden included).
+- Gate: analyze clean, 101/101 tests at branch time; re-verified post-merge with main by integrator: analyze clean, 107/107 tests, autoplay 200 seeds normal 67.0%/0 invalids, golden 1842571558 self-consistent.
