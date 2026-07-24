@@ -66,6 +66,26 @@ void drain(WidgetTester tester) {
   }
 }
 
+/// Decode every bundled PNG before taking screenshots. Widget tests decode
+/// images asynchronously, so without this the first screenshot of any screen
+/// shows blank art (2026-07-24: boon-card die art was invisible in the
+/// evidence shots shipped to the owner).
+Future<void> precacheAllImages(WidgetTester tester) async {
+  final manifest = await tester.binding
+      .runAsync(() => AssetManifest.loadFromAssetBundle(rootBundle));
+  final keys =
+      manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final context = tester.element(find.byType(MaterialApp));
+  await tester.binding.runAsync(() async {
+    for (final k in keys) {
+      try {
+        await precacheImage(AssetImage(k), context);
+      } catch (_) {/* non-image or corrupt asset: ignore */}
+    }
+  });
+  await tester.pump();
+}
+
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
   for (var t = 0; t < ms; t += step) {
@@ -121,10 +141,12 @@ void main() {
     await tester.pumpWidget(RepaintBoundary(
       key: rootKey,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: buildEmberTheme(),
         home: GameRoot(c),
       ),
     ));
+    await precacheAllImages(tester);
     await pumpFor(tester, 600);
     ctx = 'title';
     await shot(tester, 'title');

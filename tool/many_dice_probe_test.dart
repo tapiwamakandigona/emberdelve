@@ -67,6 +67,24 @@ void drain(WidgetTester tester) {
   }
 }
 
+/// Decode every bundled PNG before screenshots (async decode otherwise leaves
+/// blank art in the first shot of each screen — see play_session_test).
+Future<void> precacheAllImages(WidgetTester tester) async {
+  final manifest = await tester.binding
+      .runAsync(() => AssetManifest.loadFromAssetBundle(rootBundle));
+  final keys =
+      manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final context = tester.element(find.byType(MaterialApp));
+  await tester.binding.runAsync(() async {
+    for (final k in keys) {
+      try {
+        await precacheImage(AssetImage(k), context);
+      } catch (_) {/* ignore */}
+    }
+  });
+  await tester.pump();
+}
+
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
   for (var t = 0; t < ms; t += step) {
@@ -129,8 +147,12 @@ void main() {
         c.meta.tutorialSeen = true;
         await tester.pumpWidget(RepaintBoundary(
           key: rootKey,
-          child: MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+          child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: buildEmberTheme(),
+              home: GameRoot(c)),
         ));
+        await precacheAllImages(tester);
         c.startRun(character: 'kindler', seed: 7);
         c.sim!.player['dice'] = poolOf(n);
         // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
