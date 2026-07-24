@@ -16,5 +16,20 @@ class AppState {
 
   static bool get isReady => _ready;
 
-  static Future<void> persist() => _store.save(save);
+  /// Persist the current save. Writes are chained on a queue so rapid
+  /// buy/equip taps can never interleave bytes in the save file (same
+  /// durability contract as SettingsStore.save).
+  static Future<void> _writes = Future.value();
+
+  /// Widget tests set this false: real file IO started inside a FakeAsync
+  /// test zone can never complete (cross-zone deadlock). Disk round-trips
+  /// are covered by headless tests instead.
+  static bool diskWrites = true;
+
+  static Future<void> persist() {
+    if (!diskWrites) return Future.value();
+    final next = _writes.then((_) => _store.save(save));
+    _writes = next.catchError((_) {});
+    return next;
+  }
 }

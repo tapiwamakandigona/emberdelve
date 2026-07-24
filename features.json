@@ -33,8 +33,8 @@
       "id": "P-M4",
       "title": "Meta: shop (weapons/skins/abilities), level select, tutorial, settings",
       "acceptance": "3-tab shop buys/equips against save with haggler discount; skins show level + melee power; level select shows medals/locks; w1_l1 signposts teach move/jump/attack/throw (tutorial promise); widget tests for shop + results flows",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "flutter analyze clean + full suite green (this commit): lib/ui/shop_screen.dart 3-tab shop (weapons stats/crit/special, skins level+power xN.NN+kills-to-next, abilities) buying/equipping against save via economy.dart with visible Haggler -10%; test/shop_flow_test.dart (headless buy/equip + save round-trip, widget BUY->EQUIP->EQUIPPED flow, disabled-when-broke, discount display); test/meta_screens_test.dart (title 4 routes, settings reset-save confirm flow, credits render CREDITS.md incl. dustdfg CC BY 4.0 chest attribution, level select medals+wallet+boss lock); w1_l1 signs teach move/jump/attack/throw (game_screen_smoke_test); HUD apple-throw touch button (HudThrowButton, visible only with apples)"
     },
     {
       "id": "P-M5",
