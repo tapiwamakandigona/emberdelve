@@ -45,6 +45,13 @@ class _CombatScreenState extends State<CombatScreen> {
   final List<_Pop> _pops = [];
   int _popId = 0;
 
+  // Contact FX on the stage: weapon smear on the enemy when the delver's
+  // swing lands, claw rake on the player when the enemy's does (the sheets
+  // have no attack frames — the overlay IS the strike), and the guard-flash
+  // shield arc whenever block happens or a hit is fully absorbed.
+  final List<_Fx> _fx = [];
+  int _fxId = 0;
+
   // Boss/elite name-plate splash, shown once when the encounter opens.
   bool _splash = false;
 
@@ -82,6 +89,19 @@ class _CombatScreenState extends State<CombatScreen> {
       ),
     );
   }
+
+  void _spawnFx(_FxKind kind,
+      {required bool onPlayer, Color color = EmberColors.gold}) {
+    setState(() => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)));
+  }
+
+  /// Weapon choreography rides the existing squash/lunge flags: pull back in
+  /// anticipation, whip through the smear arc during the lunge.
+  WeaponPhase get _weaponPhase => _playerSquash
+      ? WeaponPhase.raise
+      : _playerLunge
+          ? WeaponPhase.swing
+          : WeaponPhase.idle;
 
   /// Shake scaled by damage relative to the victim's max HP; hits at or above
   /// 25% of max HP also earn an ~80 ms hit-stop (design-system §5).
@@ -259,6 +279,14 @@ class _CombatScreenState extends State<CombatScreen> {
       onPlayer: false,
       blocked: landed <= 0,
     );
+    // Contact frame: the weapon's smear crosses the enemy — or glances off
+    // a shield arc when the hit is fully absorbed.
+    if (landed > 0) {
+      _spawnFx(_FxKind.slash,
+          onPlayer: false, color: weaponFor(_characterId).accent);
+    } else {
+      _spawnFx(_FxKind.guard, onPlayer: false);
+    }
     final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
     final bigHit = _impact(landed, enemyMax);
     setState(() => _enemyFlash = true);
@@ -308,9 +336,18 @@ class _CombatScreenState extends State<CombatScreen> {
       _queued = ('block', selected); // F2: remember, don't drop
       return;
     }
-    widget.c.apply({'type': 'assign', 'die': selected, 'action': 'block'});
+    final events =
+        widget.c.apply({'type': 'assign', 'die': selected, 'action': 'block'});
     Haptics.light();
     setState(() => selected = null);
+    // Block used to be completely silent — now the guard visibly comes up.
+    final gained = _find(events, 'block_gained');
+    if (gained != null) {
+      _audio?.playSfx('block', volume: 0.55);
+      _spawnFx(_FxKind.guard, onPlayer: true);
+      _note('+${gained['amount']} BLOCK',
+          color: EmberColors.block, icon: Icons.shield);
+    }
   }
 
   /// Enemy turn: mirrored choreography — enemy lunges, player_hit/block on
@@ -345,6 +382,13 @@ class _CombatScreenState extends State<CombatScreen> {
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
       Haptics.medium();
       _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
+      // Contact frame: claws rake the delver — or break on the guard arc
+      // when block eats the whole hit.
+      if (damage > 0) {
+        _spawnFx(_FxKind.claws, onPlayer: true, color: EmberColors.danger);
+      } else {
+        _spawnFx(_FxKind.guard, onPlayer: true);
+      }
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
       final bigHit = _impact(damage, playerMax);
@@ -372,6 +416,7 @@ class _CombatScreenState extends State<CombatScreen> {
       }
     } else if (_find(events, 'enemy_blocked') != null) {
       _audio?.playSfx('block', volume: 0.5);
+      _spawnFx(_FxKind.guard, onPlayer: false); // its shield visibly comes up
     }
     // Burn ticks after the enemy acts: flame call-out + damage pop reusing
     // the existing pop primitive (m4 contract §3).
@@ -816,6 +861,12 @@ class _CombatScreenState extends State<CombatScreen> {
                   flash: _playerFlash,
                   dying: _playerDying,
                   squash: _playerSquash,
+                  // The delver's signature weapon, finally visible: idles in
+                  // hand, pulls back on the squash, swings with the lunge.
+                  weapon: WeaponView(_characterId,
+                      key: ValueKey('weapon-$_characterId'),
+                      height: heroH,
+                      phase: _weaponPhase),
                 ),
               ),
               Padding(
@@ -879,6 +930,29 @@ class _CombatScreenState extends State<CombatScreen> {
                 },
               ),
             ),
+        // Contact FX: weapon smear / claw rake / guard arc over the victim.
+        for (final fx in _fx)
+          Positioned(
+            left: fx.onPlayer ? 0 : null,
+            right: fx.onPlayer ? null : 0,
+            bottom: Space.s,
+            width: (fx.onPlayer ? heroH : enemyH) * 1.35,
+            height: (fx.onPlayer ? heroH : enemyH) * 1.35,
+            child: fx.kind == _FxKind.guard
+                ? GuardFlash(
+                    key: ValueKey('fx-${fx.id}'),
+                    facing: fx.onPlayer ? 1 : -1,
+                    onDone: () {
+                      if (mounted) setState(() => _fx.remove(fx));
+                    })
+                : ImpactSlash(
+                    key: ValueKey('fx-${fx.id}'),
+                    claws: fx.kind == _FxKind.claws,
+                    color: fx.color,
+                    onDone: () {
+                      if (mounted) setState(() => _fx.remove(fx));
+                    }),
+          ),
           // Floating damage numbers (player pops left, enemy pops right).
           for (final p in _pops)
             Positioned(
@@ -910,10 +984,13 @@ class _CombatScreenState extends State<CombatScreen> {
     required bool dying,
     required bool squash,
     double depthScale = 1.0,
+    Widget? weapon,
   }) {
     Widget w = sprite;
     // Grounding: soft shadow ellipse under the feet (+ ember dissolve cloud
-    // while dying).
+    // while dying). The weapon sits inside this stack so it inherits every
+    // transform — squash, lunge, hit-flash, death fade — with its grip
+    // riding at the sprite's hand.
     w = Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
@@ -936,6 +1013,14 @@ class _CombatScreenState extends State<CombatScreen> {
           ),
         ),
         w,
+        if (weapon != null)
+          Positioned(
+            bottom: spriteHeight * 0.02,
+            child: Transform.translate(
+              offset: Offset(spriteHeight * 0.30, 0),
+              child: weapon,
+            ),
+          ),
         if (dying)
           Positioned.fill(child: EmberBurst(duration: _deathTime, count: 30)),
       ],
@@ -997,6 +1082,17 @@ class _CombatScreenState extends State<CombatScreen> {
 }
 
 /// One transient combat call-out (combo, burn tick, exact-kill, overkill).
+/// One transient stage contact effect (weapon smear, claw rake, guard arc).
+enum _FxKind { slash, claws, guard }
+
+class _Fx {
+  final int id;
+  final _FxKind kind;
+  final bool onPlayer;
+  final Color color;
+  const _Fx(this.id, this.kind, {required this.onPlayer, required this.color});
+}
+
 class _Note {
   final int id;
   final String text;
