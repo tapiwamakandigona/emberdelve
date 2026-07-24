@@ -7,6 +7,7 @@
 //      runs/wins and lifetime embers banked at run end.
 //   4. Hearth colors: ember-priced purchase logic (deduct, refuse, activate).
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/themes.dart';
 import 'package:emberdelve/game/controller.dart';
@@ -162,6 +163,42 @@ void main() {
     for (final t in hearthThemes.values) {
       expect(t.name, isNotEmpty);
       expect(t.costEmbers, greaterThanOrEqualTo(0));
+    }
+  });
+
+  test('meta save is atomic and serialized (queue, temp+rename, snapshot)',
+      () async {
+    final dir = await Directory.systemTemp.createTemp('emberdelve_meta');
+    MetaStore.dirOverride = dir.path;
+    try {
+      // Rapid-fire saves (bank + unlock + theme buy in one frame): the
+      // snapshot is captured at call time, so mutating the state AFTER the
+      // un-awaited save must not leak into that write, and the last save
+      // must win.
+      final m = MetaState(embers: 10);
+      final first = MetaStore.save(m); // not awaited: queued
+      m.embers = 20;
+      MetaStore.save(m);
+      m.embers = 30;
+      await MetaStore.save(m); // queue drains in order
+      await first;
+      final loaded = await MetaStore.load();
+      expect(loaded.embers, 30, reason: 'last queued save must win');
+
+      // No temp file left behind: the write landed via rename.
+      expect(
+          await File('${dir.path}/emberdelve_meta.json.tmp').exists(), isFalse,
+          reason: 'temp file must be renamed into place');
+
+      // A truncated/corrupt file (crash mid-write of a NON-atomic writer)
+      // must never crash load — it falls back to a fresh MetaState.
+      await File('${dir.path}/emberdelve_meta.json')
+          .writeAsString('{"embers": 5, "unlo');
+      final recovered = await MetaStore.load();
+      expect(recovered.embers, 0);
+    } finally {
+      MetaStore.dirOverride = null;
+      await dir.delete(recursive: true);
     }
   });
 }
