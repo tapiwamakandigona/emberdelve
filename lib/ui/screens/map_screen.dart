@@ -12,8 +12,9 @@ class _MapScreenState extends State<MapScreen>
     with SingleTickerProviderStateMixin {
   // Pulse for reachable-node glow (one controller for the whole scene).
   late final AnimationController _pulse = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 1600))
-    ..repeat(reverse: true);
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat(reverse: true);
 
   // Where the delver marker last stood, kept across map visits so the marker
   // visibly walks node-to-node after each encounter.
@@ -31,8 +32,10 @@ class _MapScreenState extends State<MapScreen>
   static Offset _center(Map n, double w) {
     final x = (n['x'] as num).toDouble();
     final layer = n['layer'] as int;
-    return Offset(28 + x * (w - 56 - _nodeSize) + _nodeSize / 2,
-        (layer - 1) * _rowH + 20 + _nodeSize / 2); // in bottom-up coords
+    return Offset(
+      28 + x * (w - 56 - _nodeSize) + _nodeSize / 2,
+      (layer - 1) * _rowH + 20 + _nodeSize / 2,
+    ); // in bottom-up coords
   }
 
   @override
@@ -52,64 +55,97 @@ class _MapScreenState extends State<MapScreen>
       _walkFrom = position;
     }
 
-    return Stack(fit: StackFit.expand, children: [
-      Column(children: [
-        _TopBar(c),
-        Expanded(
-          child: LayoutBuilder(builder: (context, cns) {
-            final h = layers * _rowH + 40;
-            return SingleChildScrollView(
-              reverse: true,
-              child: SizedBox(
-                height: h,
-                width: cns.maxWidth,
-                child: Stack(children: [
-                  // Trails + fog-of-war + descent tint, painted once.
-                  RepaintBoundary(
-                    child: CustomPaint(
-                      size: Size(cns.maxWidth, h),
-                      painter: _MapScenePainter(nodes, edges, cns.maxWidth,
-                          layers, position, reachable, curLayer),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Column(
+          children: [
+            _TopBar(c),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, cns) {
+                  final h = layers * _rowH + 40;
+                  return SingleChildScrollView(
+                    reverse: true,
+                    child: SizedBox(
+                      height: h,
+                      width: cns.maxWidth,
+                      child: Stack(
+                        children: [
+                          // Trails + fog-of-war + descent tint, painted once.
+                          RepaintBoundary(
+                            child: CustomPaint(
+                              size: Size(cns.maxWidth, h),
+                              painter: _MapScenePainter(
+                                nodes,
+                                edges,
+                                cns.maxWidth,
+                                layers,
+                                position,
+                                reachable,
+                                curLayer,
+                              ),
+                            ),
+                          ),
+                          for (final e in nodes.entries)
+                            _nodeWidget(
+                              context,
+                              e.value,
+                              cns.maxWidth,
+                              position,
+                              reachable,
+                            ),
+                          // Honest reward telegraphs: the sim pre-resolves each
+                          // fight/elite node's offers at start_run; the badge shows
+                          // its `reward_preview` verbatim (never invented here).
+                          for (final e in nodes.entries)
+                            if (e.value['reward_preview'] is String)
+                              _telegraphBadge(e.value, cns.maxWidth, reachable),
+                          _delverMarker(
+                            nodes,
+                            cns.maxWidth,
+                            h,
+                            position,
+                            characterId,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  for (final e in nodes.entries)
-                    _nodeWidget(context, e.value, cns.maxWidth, position,
-                        reachable),
-                  // Honest reward telegraphs: the sim pre-resolves each
-                  // fight/elite node's offers at start_run; the badge shows
-                  // its `reward_preview` verbatim (never invented here).
-                  for (final e in nodes.entries)
-                    if (e.value['reward_preview'] is String)
-                      _telegraphBadge(e.value, cns.maxWidth, reachable),
-                  _delverMarker(nodes, cns.maxWidth, h, position, characterId),
-                ]),
+                  );
+                },
               ),
-            );
-          }),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(Space.l),
+              child: Text(
+                'Tap a glowing node to descend · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
+                style: EmberText.micro,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(Space.l),
-          child: Text(
-              'Tap a glowing node to descend · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
-              style: EmberText.micro, textAlign: TextAlign.center),
-        ),
-      ]),
-      // Ambient embers rising off the delve.
-      const EmberDrift(count: 18, opacity: 0.7),
-    ]);
+        // Ambient embers rising off the delve.
+        const EmberDrift(count: 18, opacity: 0.7),
+      ],
+    );
   }
 
   /// The "you are here" delver, walking from the previous node to this one.
-  Widget _delverMarker(Map<String, Map> nodes, double w, double h,
-      int position, String characterId) {
+  Widget _delverMarker(
+    Map<String, Map> nodes,
+    double w,
+    double h,
+    int position,
+    String characterId,
+  ) {
     final from = _center(nodes['$_walkFrom'] ?? nodes['$position']!, w);
     final to = _center(nodes['$position']!, w);
     final walkKey = '$_walkFrom>$position';
     return TweenAnimationBuilder<double>(
       key: ValueKey(walkKey),
       tween: Tween(begin: 0, end: 1),
-      duration: Duration(
-          milliseconds: _walkFrom == position ? 1 : 650),
+      duration: Duration(milliseconds: _walkFrom == position ? 1 : 650),
       curve: Curves.easeInOut,
       onEnd: () => _walkFrom = position,
       builder: (context, f, child) {
@@ -125,17 +161,20 @@ class _MapScreenState extends State<MapScreen>
         );
       },
       child: IgnorePointer(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SpriteView(characterId, height: 30, animate: false),
-          Container(
-            width: 14,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SpriteView(characterId, height: 30, animate: false),
+            Container(
+              width: 14,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
@@ -160,24 +199,39 @@ class _MapScreenState extends State<MapScreen>
       child: IgnorePointer(
         child: Opacity(
           opacity: lit ? 1.0 : 0.55,
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(Icons.casino, size: 9, color: tierColor),
-            const SizedBox(width: 2),
-            Text('d${def.size}',
-                style: EmberText.micro.copyWith(
+          // FittedBox: the badge is pinned to a 48px-wide slot under the
+          // node; at large system font sizes it scales down instead of
+          // overflowing the slot.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.casino, size: 9, color: tierColor),
+                const SizedBox(width: 2),
+                Text(
+                  'd${def.size}',
+                  style: EmberText.micro.copyWith(
                     color: tierColor,
                     fontSize: 9,
-                    shadows: const [
-                      Shadow(color: Colors.black, blurRadius: 3),
-                    ])),
-          ]),
+                    shadows: const [Shadow(color: Colors.black, blurRadius: 3)],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _nodeWidget(BuildContext context, Map node, double w, int position,
-      Set<int> reachable) {
+  Widget _nodeWidget(
+    BuildContext context,
+    Map node,
+    double w,
+    int position,
+    Set<int> reachable,
+  ) {
     final id = node['id'] as int;
     final kind = node['kind'] as String;
     final center = _center(node, w);
@@ -223,8 +277,12 @@ Widget _nodeIcon(String kind) {
   if (asset == null) {
     return Icon(_kindIcon(kind), size: 20, color: EmberColors.textPrimary);
   }
-  return Image.asset(asset,
-      width: 26, height: 26, filterQuality: FilterQuality.medium);
+  return Image.asset(
+    asset,
+    width: 26,
+    height: 26,
+    filterQuality: FilterQuality.medium,
+  );
 }
 
 IconData _kindIcon(String kind) {
@@ -254,11 +312,12 @@ class _MedallionPainter extends CustomPainter {
   final bool here;
   final bool reachable;
   final double pulse;
-  _MedallionPainter(
-      {required this.kind,
-      required this.here,
-      required this.reachable,
-      required this.pulse});
+  _MedallionPainter({
+    required this.kind,
+    required this.here,
+    required this.reachable,
+    required this.pulse,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -270,62 +329,67 @@ class _MedallionPainter extends CustomPainter {
     // Pulsing halo on reachable nodes only.
     if (reachable) {
       canvas.drawCircle(
-          c,
-          r + 3 + pulse * 4,
-          Paint()
-            ..color = EmberColors.ember.withValues(alpha: 0.22 + pulse * 0.25)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7));
+        c,
+        r + 3 + pulse * 4,
+        Paint()
+          ..color = EmberColors.ember.withValues(alpha: 0.22 + pulse * 0.25)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+      );
     }
     // Soft grounding shadow.
     canvas.drawCircle(
-        c + const Offset(0, 3),
-        r,
-        Paint()
-          ..color = Colors.black.withValues(alpha: 0.45)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+      c + const Offset(0, 3),
+      r,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.45)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
     // Medallion disc, lit warm-from-below.
     canvas.drawCircle(
-        c,
-        r,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: dimmed
-                ? const [Color(0xFF16101E), Color(0xFF241B30)]
-                : [
-                    const Color(0xFF1B1424),
-                    Color.lerp(const Color(0xFF2A2136), kindColor, 0.22)!,
-                  ],
-          ).createShader(Rect.fromCircle(center: c, radius: r)));
+      c,
+      r,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: dimmed
+              ? const [Color(0xFF16101E), Color(0xFF241B30)]
+              : [
+                  const Color(0xFF1B1424),
+                  Color.lerp(const Color(0xFF2A2136), kindColor, 0.22)!,
+                ],
+        ).createShader(Rect.fromCircle(center: c, radius: r)),
+    );
     // Kind-tinted ring + inner hairline frame.
     canvas.drawCircle(
+      c,
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = here ? 3.0 : 2.2
+        ..color = here
+            ? EmberColors.textPrimary
+            : dimmed
+            ? Color.lerp(kindColor, Colors.black, 0.5)!
+            : kindColor,
+    );
+    canvas.drawCircle(
+      c,
+      r - 3.5,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = Colors.black.withValues(alpha: 0.5),
+    );
+    if (reachable) {
+      canvas.drawCircle(
         c,
         r,
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = here ? 3.0 : 2.2
-          ..color = here
-              ? EmberColors.textPrimary
-              : dimmed
-                  ? Color.lerp(kindColor, Colors.black, 0.5)!
-                  : kindColor);
-    canvas.drawCircle(
-        c,
-        r - 3.5,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1
-          ..color = Colors.black.withValues(alpha: 0.5));
-    if (reachable) {
-      canvas.drawCircle(
-          c,
-          r,
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.2
-            ..color =
-                EmberColors.ember.withValues(alpha: 0.5 + pulse * 0.5));
+          ..strokeWidth = 1.2
+          ..color = EmberColors.ember.withValues(alpha: 0.5 + pulse * 0.5),
+      );
     }
   }
 
@@ -348,8 +412,15 @@ class _MapScenePainter extends CustomPainter {
   final int position;
   final Set<int> reachable;
   final int curLayer;
-  _MapScenePainter(this.nodes, this.edges, this.w, this.layers, this.position,
-      this.reachable, this.curLayer);
+  _MapScenePainter(
+    this.nodes,
+    this.edges,
+    this.w,
+    this.layers,
+    this.position,
+    this.reachable,
+    this.curLayer,
+  );
 
   Offset _pos(Map n, Size size) {
     final c = _MapScreenState._center(n, w);
@@ -379,18 +450,19 @@ class _MapScenePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Descent tint: hotter (warm) toward the bottom layer, colder/darker up.
     canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              EmberColors.ember.withValues(alpha: 0.10),
-              Colors.transparent,
-              Colors.black.withValues(alpha: 0.30),
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ).createShader(Offset.zero & size));
+      Offset.zero & size,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            EmberColors.ember.withValues(alpha: 0.10),
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.30),
+          ],
+          stops: const [0.0, 0.4, 1.0],
+        ).createShader(Offset.zero & size),
+    );
 
     // Trails.
     final dim = Paint()
@@ -406,8 +478,12 @@ class _MapScenePainter extends CustomPainter {
       final fromHere = k == '$position';
       for (final t in v.cast<int>()) {
         final active = fromHere && reachable.contains(t);
-        _trail(canvas, _pos(from, size), _pos(nodes['$t']!, size),
-            active ? hot : dim);
+        _trail(
+          canvas,
+          _pos(from, size),
+          _pos(nodes['$t']!, size),
+          active ? hot : dim,
+        );
       }
     });
 
@@ -417,8 +493,9 @@ class _MapScenePainter extends CustomPainter {
       final alpha = (0.14 * depth).clamp(0.0, 0.5);
       final top = size.height - (layer - 1) * _MapScreenState._rowH - 68;
       canvas.drawRect(
-          Rect.fromLTWH(0, top, size.width, _MapScreenState._rowH),
-          Paint()..color = Colors.black.withValues(alpha: alpha));
+        Rect.fromLTWH(0, top, size.width, _MapScreenState._rowH),
+        Paint()..color = Colors.black.withValues(alpha: alpha),
+      );
     }
   }
 
