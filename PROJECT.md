@@ -1,47 +1,41 @@
-# PROJECT.md — Emberdelve
+# PROJECT.md — Emberdelve (v2: action platformer)
 
-**Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Flutter. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
+**Goal:** A 2D **pixel action-platformer** for Android (Google Play), built with Flutter + Flame. Inspired by *Apple Knight*'s loop — run/jump/double-jump, melee combat, coins, treasure chests, secret rooms, level-based worlds, and a meta shop (weapons · skins · abilities) — but tighter, fairer, and better optimised. Landscape, touch-first, 2–5 minute levels. Free download, no forced ads.
 
-**Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built and orchestrated by Viktor (AI). This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
+**Owner:** memorymadie (Tsoro Studios, GitHub `tapiwamakandigona`). Built and orchestrated by Viktor (AI). This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
+
+> **Pivot note (2026-07-24, owner-directed):** The original turn-based dice-builder
+> is archived intact on branch `legacy/dice-builder`, tag `v0.3.10-legacy`, and the
+> GitHub release "Emberdelve Classic". Everything below describes the new game.
+> The legacy spec lives at `docs/legacy/`; do not build against it.
 
 ## Canonical artifacts
 | What | Where |
 |---|---|
-| Product spec (approved) | `docs/spec.md` |
-| Architecture (interfaces frozen) | `docs/architecture.md` |
+| Product spec v2 (platformer) | `docs/spec.md` |
+| Architecture v2 | `docs/architecture.md` |
 | Definition of done | `features.json` (machine-readable; workers only flip `passes` + `evidence`) |
 | History / decisions | `progress.md` (append-only), `checkpoints/` |
 | Dev environment | `init.sh` |
+| Asset licensing | `PROVENANCE.md`, `CREDITS.md` (shipped in-app) |
 
 ## Standing decisions (do not relitigate without owner)
-1. **Engine:** **Flutter/Dart** (stable 3.32.7, Dart ≥3.8.1). *Changed by owner
-   2026-07-23 ("remember we making this using flutter") for consistency with
-   their other apps (lanlink, quick bucks). Supersedes the original Defold
-   decision.* The sim core is a **sealed pure-Dart library** under `lib/sim/`
-   (no Flutter imports) so it stays deterministic and headless-testable — same
-   seam discipline as before. CI: `flutter analyze` + `flutter test` → `flutter
-   build apk`. The Defold-era Lua core was ported to Dart with proven 1:1 hash
-   parity (commit history), so the deterministic guarantees carry over.
-2. **Repo:** public (all shipped assets are CC0/CC-BY with attribution shipped in-app — see PROVENANCE.md; no license forbids redistribution). Releases are public on GitHub Releases.
-3. **Architecture:** sealed pure-Lua simulation core (`sim/`) — commands in, events out, zero engine APIs inside. Presentation (Defold) renders events only. Never violate this seam.
-4. **Determinism:** all randomness via per-domain seeded streams (`sim/rng.lua`). Same seed + same commands ⇒ identical event/state hashes on every Lua VM. CI enforces it.
-5. **Mechanic:** dice-builder combat (roll dice pool → assign dice to actions; grow/upgrade dice across the run). Enemy intent always visible; randomness in *offerings*, never in *resolution*.
-6. **Monetization:** free + one-time unlock IAP. **Banned:** energy timers, decaying streaks, rigged near-misses, FOMO-expiring content, loss-framed notifications (see `docs/spec.md` §Ethics).
-7. **Art direction (M2+):** dark high-contrast cartoony pixel-painterly, 48–64px sprites, portrait. No AI-generated animated sprites. Paid packs need owner budget approval BEFORE purchase.
-8. **Audio (M2+):** real recorded SFX only (Sonniss GDC bundles / Leohpaz / Kenney CC0). No AI audio. Licensed (non-CC0) assets must never enter a public repo.
-9. **Milestones:** M0 skeleton → M1 prototype (full seeded run) → M2 vertical slice → M3 content → M4 release. One milestone per work session; gate via `features.json` + checkpoint.
+1. **Engine:** Flutter (stable 3.32.x, Dart ≥3.8.1) + **Flame** (pinned in pubspec). Owner mandate: Flutter for consistency with their other apps.
+2. **Repo:** public. Only CC0 / CC-BY assets with attribution shipped in-app (`PROVENANCE.md`). No license may forbid redistribution.
+3. **Package id / signing:** `com.tsorostudios.emberdelve` and the permanent upload keystore are **immutable** — the Play closed-testing track depends on them. Never regenerate keys; never change `EXPECTED_CERT_SHA256` in CI.
+4. **Architecture seam:** game logic (`lib/game/`) is engine-code but *headless-testable*: level parsing, physics resolution, economy, and save data have zero rendering dependencies and are covered by `flutter test`. Determinism where it matters (drops, daily seeds) via seeded RNG (`lib/core/rng.dart`).
+5. **Gameplay loop:** level-based worlds → collect coins/apples/chests/secrets → spend in shop (weapons with stats+specials, skins with levels, abilities) → replay for 3-medal completion. Fair-addictive: mastery and collection, never dark patterns.
+6. **Monetization:** free; optional one-time supporter IAP later. **Banned:** energy timers, decaying streaks, FOMO-expiring content, loss-framed notifications, pay-to-win.
+7. **Performance targets:** 60 fps on 2GB-RAM Android (see spec §Performance): sprite batching / atlases, object pooling for projectiles+particles, no per-frame allocations in hot paths, `--release` profiling before each release.
+8. **Tutorial promise:** an in-game tutorial was promised to Play testers — the first level must teach movement/jump/attack via signs & guided layout. Blocker for the first pivot release.
+9. **Milestones (v2):** M1 scaffold (boots, CI green) → M2 engine core (player+physics+camera+touch) → M3 combat & pickups → M4 meta (shop/save/level-select) → M5 content (World 1 “Emberwood”: 5 levels + boss) → M6 release `v1.0.0-alpha.1`. **Push to GitHub at every milestone — never hold work locally.**
 
 ## Play publishing status (updated 2026-07-24)
-- **Closed testing (Alpha) is LIVE**: passed Google Play review; release 12 (v0.3.9+12), 177 countries. Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve · opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve · tester group: emberdelve@googlegroups.com.
-- **Production gate:** 12+ opted-in testers for 14 continuous days (personal dev account). Criterion met 2026-07-24 → earliest "Apply for production" ~2026-08-07. A dip below 12 resets the clock; app updates and listing edits do NOT.
-- **Public commitment:** an in-game tutorial was promised to testers "in the next update" — treat as a blocker for the next release.
-- Details + verified Play mechanics: `docs/release.md` §"Google Play closed testing" and the tail of `progress.md`.
+- Closed testing (Alpha) LIVE, release 12 (v0.3.9+12), 177 countries. Production gate: 12+ opted-in testers for 14 days → earliest apply ~2026-08-07. A dip below 12 resets the clock; app updates do NOT.
+- The pivot ships on the **same package + track** as a normal app update.
 
 ## Session-start ritual (for any AI/human resuming)
 1. Read this file, `features.json`, tail of `progress.md`, latest `checkpoints/*.md`.
 2. `git log --oneline -20` for recent history.
 3. `./init.sh` to bring the environment up and run the test suite.
-4. Work the next unfinished feature; update `features.json` (evidence required) and append to `progress.md`.
-
-## Research provenance
-Decisions above come from a 5-track research run (market, core-build, art, audio, psychology), 2026-07-23, synthesized in the owner's records. Key conclusions are embedded in `docs/spec.md` and `docs/architecture.md`; trust these files over memory.
+4. Work the next unfinished feature; update `features.json` (evidence required) and append to `progress.md`. Commit + push.
