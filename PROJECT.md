@@ -31,6 +31,12 @@
 8. **Audio (M2+):** real recorded SFX only (Sonniss GDC bundles / Leohpaz / Kenney CC0). No AI audio. Licensed (non-CC0) assets must never enter a public repo.
 9. **Milestones:** M0 skeleton → M1 prototype (full seeded run) → M2 vertical slice → M3 content → M4 release. One milestone per work session; gate via `features.json` + checkpoint.
 
+## Play publishing status (updated 2026-07-24)
+- **Closed testing (Alpha) is LIVE**: passed Google Play review; release 12 (v0.3.9+12), 177 countries. Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve · opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve · tester group: emberdelve@googlegroups.com.
+- **Production gate:** 12+ opted-in testers for 14 continuous days (personal dev account). Criterion met 2026-07-24 → earliest "Apply for production" ~2026-08-07. A dip below 12 resets the clock; app updates and listing edits do NOT.
+- **Public commitment:** an in-game tutorial was promised to testers "in the next update" — treat as a blocker for the next release.
+- Details + verified Play mechanics: `docs/release.md` §"Google Play closed testing" and the tail of `progress.md`.
+
 ## Session-start ritual (for any AI/human resuming)
 1. Read this file, `features.json`, tail of `progress.md`, latest `checkpoints/*.md`.
 2. `git log --oneline -20` for recent history.

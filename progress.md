@@ -305,3 +305,46 @@ Owner sent 4 in-game screenshots asking "so these look right to you?" — they d
 New probe tool/owner_triage_probe_test.dart (boon + burning combat at 320/360,
 badge-vs-bar rect assertions + screenshots) — 0 problems; many-dice probe still
 0 problems; suite 137 green; analyze clean. All evidence screenshots eyeballed.
+
+## 2026-07-24 — Google Play closed testing LIVE + tester campaign (v0.3.9+12)
+Review PASSED: closed-testing release **12 (0.3.9)** is live on the
+"Closed testing - Alpha" track in 177 countries.
+- Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
+- Tester opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve
+- Tester Google Group: emberdelve@googlegroups.com (wired to the Alpha track;
+  "anyone on the web can join").
+
+**Production gate (personal dev account):** 12+ opted-in testers for 14
+*continuous* days before "Apply for production" unlocks. The 12-tester
+criterion was **MET 2026-07-24** (dashboard checkmark) → clock running,
+earliest production apply **~2026-08-07**, realistic public launch ~Aug 10–14.
+A dip below 12 opted-in testers resets the clock — keep over-recruiting.
+
+**Recruiting:** Reddit test-for-test posts (r/AndroidClosedTesting,
+r/TestersCommunity) + the Google Group; group grew 10 → 20 members in ~90 min
+on day one. `testers-community@googlegroups.com` added to the track (subreddit
+mod requirement). Reciprocal-testing bookkeeping is tracked outside this repo.
+
+**Verified Play mechanics (recorded for release planning):**
+- App updates to the testing track and store-listing edits (screenshots, copy)
+  do **NOT** reset the 14-day clock — it tracks opted-in testers, not versions.
+- Testers get **no explicit "update available" notification**; Play
+  auto-updates installed apps (typically within ~24h, on Wi-Fi/idle). Shipping
+  updates mid-window is safe.
+- Submitting changes while a review is in progress pops a "restart your
+  review?" dialog — expected; confirm it. Bundle new build + refreshed
+  screenshots in ONE submission.
+
+**Tester feedback so far:**
+- "How is damage calculated?" — answered publicly with the real formula from
+  `lib/sim/combat.dart` (attack = die face + die bonuses + pair bonus + relic
+  bonuses; enemy block absorbs first). **PUBLIC PROMISE made to testers: an
+  in-game tutorial ships "in the next update".**
+  `lib/ui/screens/tutorial_overlay.dart` exists — wire/verify it before the
+  next release. This is now a release blocker for the next update.
+- One "app can't load" report from a tester in Germany (app IS live there;
+  most likely cause: installed without joining the group/opting in first).
+
+**Next update (owner is considering):** a core-gameplay-simplification pass.
+Confirmed safe during closed testing (see mechanics above); pair it with the
+tutorial promise and refreshed screenshots in a single submission.
