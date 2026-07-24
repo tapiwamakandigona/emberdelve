@@ -14,6 +14,7 @@ import '../data/relics.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
 import '../game/daily_share.dart';
+import '../game/seed_input.dart';
 import 'art.dart';
 import 'fx.dart';
 import 'haptics.dart';
@@ -222,6 +223,15 @@ class TitleScreen extends StatelessWidget {
                 onTap: () => Navigator.of(context)
                     .push(emberRoute((_) => CharacterScreen(c)))),
           ),
+          const SizedBox(height: Space.s),
+          // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
+          // shared seed IS a shared delve. Small, out of the main flow.
+          TextButton(
+            key: const ValueKey('seeded-delve'),
+            onPressed: () => _promptSeed(context),
+            child: Text('Delve a seed',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+          ),
                 ]),
               ),
             ),
@@ -229,6 +239,51 @@ class TitleScreen extends StatelessWidget {
         );
       }),
     ]);
+  }
+
+  /// Custom-seed dialog: paste a number from a summary screen (exact replay)
+  /// or type any word (hashed deterministically — same word, same delve).
+  void _promptSeed(BuildContext context) {
+    final input = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: EmberColors.surface,
+        title: Text('Delve a seed', style: EmberText.h2),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(
+              'A seed decides the whole delve — map, offers, rolls. '
+              'Paste a number from a run summary, or type any word.',
+              style: EmberText.bodyDim),
+          const SizedBox(height: Space.m),
+          TextField(
+            key: const ValueKey('seed-field'),
+            controller: input,
+            autofocus: true,
+            style: EmberText.body,
+            decoration: const InputDecoration(hintText: 'seed or word'),
+          ),
+        ]),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: Text('Cancel', style: EmberText.bodyDim),
+          ),
+          TextButton(
+            key: const ValueKey('seed-start'),
+            onPressed: () {
+              final seed = parseSeedInput(input.text);
+              if (seed == null) return; // blank: nothing to delve
+              Navigator.of(dialogCtx).pop();
+              c.startRun(
+                  character: defaultCharacter, boons: true, seed: seed);
+            },
+            child: Text('Delve',
+                style: EmberText.body.copyWith(color: EmberColors.ember)),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _statText(String v, String l) => Column(mainAxisSize: MainAxisSize.min,
@@ -2366,6 +2421,20 @@ class SummaryScreen extends StatelessWidget {
             ]),
           ),
         ],
+        const SizedBox(height: Space.m),
+        // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
+        // into 'Delve a seed' on the title to replay this exact delve.
+        GestureDetector(
+          key: const ValueKey('run-seed'),
+          onTap: () async {
+            await Clipboard.setData(
+                ClipboardData(text: '${c.sim?.runSeed ?? ''}'));
+            c.announce('Seed copied');
+          },
+          child: Text('Seed ${c.sim?.runSeed} — tap to copy',
+              textAlign: TextAlign.center,
+              style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+        ),
         const Spacer(),
         // Fast restart (backlog #8): straight into a new run — boon pick
         // included — without a detour through the title.

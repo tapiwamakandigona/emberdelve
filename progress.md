@@ -96,3 +96,10 @@ Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
   capped at 30, newest first. Seeds recorded per run enable seed replay (PR #9).
 - The Ledger gains a RECENT DELVES section (last 10, real records only).
 - Gate: analyze clean, 111/111 tests; ledger screenshot inspected.
+
+## 2026-07-24 — seed display + custom-seed entry (PR #9)
+- Every summary shows "Seed N — tap to copy"; title gains a small "Delve a
+  seed" entry (dialog: paste a number for exact replay, or any word — hashed
+  deterministically, namespaced away from daily seeds).
+- lib/game/seed_input.dart parseSeedInput() is pure and range-safe [1, 2^31-2].
+- Gate: analyze clean, 114/114 tests; title/dialog/summary screenshots inspected.
