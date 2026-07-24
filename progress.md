@@ -150,3 +150,12 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
 ## 2026-07-24 — ledger plural fix (branch fix/ledger-plurals)
 2026-07-24 "1 wins · 1 delves" on the Ledger delver rows now pluralizes
 correctly (win/wins, delve/delves). Spotted while rendering store screenshots.
+
+## 2026-07-24 — privacy policy hosted (branch feat/privacy-policy-page)
+2026-07-24 GitHub Pages enabled for the repo (main:/docs, legacy build,
+https://tapiwamakandigona.github.io/emberdelve/). Added a styled
+docs/store/privacy-policy.html (same text as the canonical .md), a minimal
+docs/index.html, and docs/.nojekyll (serve raw files; internal .md docs stay
+plain text, no Jekyll surprises). play-listing.md now carries the live URL —
+closes the "hosted privacy policy" P0.3 item. NOTE: everything under docs/ is
+now also a public web page (repo was already public).
