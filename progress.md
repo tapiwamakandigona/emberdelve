@@ -274,3 +274,11 @@ gone); event options carry a payoff/risk icon (cost beats reward so risky
 reads risky); shop price button uses a coin, not an abstract dot.
 CI overflow probe now runs the 16-die pool. Suite 136 green, analyze clean,
 autoplay baseline unchanged (sim untouched). 0.3.5+8 → 0.3.6+9.
+
+## 2026-07-24 — Screenshot-evidence fixes (v0.3.7+10)
+Owner reviewed the PR #23 "after" screenshots and correctly flagged they still showed problems. Fixed:
+- Combat tray fold: viewport now clips at whole rows; explicit "+N ⌄" pill replaces the fade-over-half-cut-dice (which read as a glitch).
+- Map auto-follow: map reopened scrolled to the bottom each visit, leaving late-run reachable nodes off-screen; it now scrolls the delver to ~45% of the viewport (found via stuck autoplay).
+- Event options: choices the sim would reject (unaffordable gold cost, pool ≤ 3 for die-loss) render disabled instead of spawning "Not enough gold" toasts; mirrors runEventChoose validation.
+- Harnesses: debugShowCheckedModeBanner=false (red ribbon was in every evidence shot) + precacheAllImages() so async image decode never ships blank art in screenshots (boon-card die art was invisible).
+Verified: 136/136 tests, analyze clean, many-dice probe 0 problems, play session 4/4 runs finished 0 problems. Lesson recorded: eyeball every screenshot before shipping it as evidence.
