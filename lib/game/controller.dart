@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
+import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/relics.dart';
 import '../meta/meta.dart';
@@ -45,6 +46,10 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
+    // First-run on-ramp (v0.3.3): steer a brand-new profile toward easy by
+    // moving the VISIBLE selector — what's highlighted is what they get, so
+    // there is never a silent difficulty switch. One tap ends the steering.
+    if (meta.steerToEasy) meta.preferredDifficulty = 'easy';
     try {
       final f = await _runFile();
       if (await f.exists()) {
@@ -127,10 +132,32 @@ class GameController extends ChangeNotifier {
   }
 
   /// Sticky difficulty preference behind the title-screen selector.
+  /// Any explicit tap — even on the already-selected segment — counts as a
+  /// choice and ends the first-run easy steering for good.
   void setPreferredDifficulty(String d) {
     if (!const {'easy', 'normal', 'hard'}.contains(d)) return;
-    if (meta.preferredDifficulty == d) return;
+    if (meta.preferredDifficulty == d && meta.difficultyChosen) return;
     meta.preferredDifficulty = d;
+    meta.difficultyChosen = true;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  /// Buy a hearth color with embers (v0.3.3 ledger cosmetics).
+  bool buyTheme(String id) {
+    final ok = meta.tryBuyTheme(id);
+    if (ok) {
+      MetaStore.save(meta);
+      audio?.playSfx('unlock');
+    }
+    notifyListeners();
+    return ok;
+  }
+
+  /// Activate an owned hearth color (sticky).
+  void setActiveTheme(String id) {
+    if (!meta.ownedThemes.contains(id) || meta.activeTheme == id) return;
+    meta.activeTheme = id;
     MetaStore.save(meta);
     notifyListeners();
   }
@@ -172,6 +199,7 @@ class GameController extends ChangeNotifier {
     if (sim == null) return const [];
     final events = sim!.apply(cmd);
     _handleFlash(events);
+    recordCombatStats(events);
     if (_terminal.contains(sim!.phase)) _bankRun();
     _autosave();
     audio?.handleEvents(events);
@@ -281,6 +309,8 @@ class GameController extends ChangeNotifier {
   void abandonRun() {
     if (sim == null) return;
     meta.runsPlayed += 1;
+    final char = sim!.run?['character'] as String? ?? defaultCharacter;
+    meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
     MetaStore.save(meta);
     _clearSave();
     sim = null;
@@ -315,15 +345,38 @@ class GameController extends ChangeNotifier {
     }
   }
 
+  /// v0.3.3 ledger stats: lifetime exact-kill count and the exact-kill
+  /// streak (consecutive fights ended with an exact kill; a fight won any
+  /// other way resets it). Pure observation of sim events — the sim itself
+  /// stays untouched. Persistence rides the next _bankRun/autosave cycle;
+  /// on a fight won we save immediately so a crash can't eat a streak.
+  @visibleForTesting
+  void recordCombatStats(List<Map<String, Object?>> events) {
+    final exact = events.any((e) => e['type'] == 'exact_kill');
+    final fightWon = events.any((e) => e['type'] == 'encounter_won');
+    if (exact) meta.exactKills += 1;
+    if (!fightWon) return;
+    meta.exactStreak = exact ? meta.exactStreak + 1 : 0;
+    if (meta.exactStreak > meta.bestExactStreak) {
+      meta.bestExactStreak = meta.exactStreak;
+    }
+    MetaStore.save(meta);
+  }
+
   void _bankRun() {
     if (_bankedThisRun || sim == null) return;
     _bankedThisRun = true;
     final run = sim!.run;
     if (run == null) return;
-    meta.embers += run['embers'] as int? ?? 0;
+    final banked = run['embers'] as int? ?? 0;
+    final char = run['character'] as String? ?? defaultCharacter;
+    meta.embers += banked;
+    meta.lifetimeEmbers += banked;
     meta.runsPlayed += 1;
+    meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
     if (sim!.phase == 'run_won') {
       meta.runsWon += 1;
+      meta.charWins[char] = (meta.charWins[char] ?? 0) + 1;
       final asc = run['ascension'] as int? ?? 0;
       if (asc >= meta.bestAscension) meta.bestAscension = asc + 1;
     }

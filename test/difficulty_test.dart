@@ -8,6 +8,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/sim/autoplay.dart';
+import 'package:emberdelve/sim/combat.dart';
+import 'package:emberdelve/data/enemies.dart';
 
 Map<String, Object?> _firstEncounterEnemy(String difficulty) {
   final sim = Sim(42);
@@ -54,7 +56,7 @@ void main() {
         'easy');
   });
 
-  test('easy shrinks enemy HP and attacks; hard swells them', () {
+  test('easy shrinks enemy HP and attacks; hard swells them (early ramp)', () {
     final normal = _firstEncounterEnemy('normal');
     final easy = _firstEncounterEnemy('easy');
     final hard = _firstEncounterEnemy('hard');
@@ -64,7 +66,9 @@ void main() {
 
     final nHp = normal['max_hp'] as int;
     expect(easy['max_hp'], (nHp * 0.8).round());
-    expect(hard['max_hp'], (nHp * 1.25).round());
+    // v0.3.3 hard ramp: the first fight sits on layer 2 => x1.10, +1 — a
+    // door, not a wall (the old flat x1.25/+2 put 68% of hard losses here).
+    expect(hard['max_hp'], (nHp * 1.10).round());
 
     int firstAttack(Map e) {
       for (final it in (e['pattern'] as List).cast<Map>()) {
@@ -78,7 +82,44 @@ void main() {
     final na = firstAttack(normal);
     expect(na, greaterThan(0));
     expect(firstAttack(easy), (na - 2) < 1 ? 1 : na - 2);
-    expect(firstAttack(hard), na + 2);
+    expect(firstAttack(hard), na + 1);
+  });
+
+  test('hard ramp is a staircase: +1/x1.10 early, +2/x1.25 mid, +3/x1.40 late',
+      () {
+    // The ramp is a pure function of layer — pin the brackets directly.
+    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) hardAttackBonus(l)],
+        [1, 1, 2, 2, 3, 3, 3]);
+    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) hardHpScalar(l)],
+        [1.10, 1.10, 1.25, 1.25, 1.40, 1.40, 1.40]);
+
+    // And through combatBegin itself: the same enemy on a mid and a late
+    // layer gets the bracketed adjustments (elite=true skips early mercy).
+    Map<String, Object?> enemyAt(int layer) {
+      final sim = Sim(42)
+        ..apply({'type': 'start_run', 'difficulty': 'hard'});
+      combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
+      return Map<String, Object?>.from(sim.enemy!);
+    }
+
+    final mid = enemyAt(5);
+    final late = enemyAt(8);
+    final base = enemyDef('cinder_wisp');
+    expect(mid['max_hp'], (base.hp * 1.25).round());
+    expect(late['max_hp'], (base.hp * 1.40).round());
+
+    int firstAttack(Map e) {
+      for (final it in (e['pattern'] as List).cast<Map>()) {
+        if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
+          return it['amount'] as int;
+        }
+      }
+      return -1;
+    }
+
+    final baseAttack = firstAttack(enemyAt(2)) - 1; // layer 2 => +1
+    expect(firstAttack(mid), baseAttack + 2);
+    expect(firstAttack(late), baseAttack + 3);
   });
 
   test('normal replay of a difficulty-less command is unchanged', () {
