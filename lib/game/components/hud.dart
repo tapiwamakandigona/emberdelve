@@ -9,6 +9,7 @@ import 'package:flame/events.dart';
 import 'package:flame/text.dart';
 
 import '../ember_game.dart';
+import '../enemies/boss_core.dart';
 
 /// A HUD button that reports press/release into a callback pair.
 class HudHoldButton extends SpriteComponent
@@ -85,6 +86,9 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
     ),
   );
   final _heartFill = ui.Paint()..color = const ui.Color(0xFFD53C3C);
+  final _bossBarBack = ui.Paint()..color = const ui.Color(0xCC201826);
+  final _bossBarFill = ui.Paint()..color = const ui.Color(0xFF8FBF3F);
+  final _bossBarTick = ui.Paint()..color = const ui.Color(0x88FFFFFF);
   final _heartEmpty = ui.Paint()..color = const ui.Color(0x66201826);
   final _spritePaint = ui.Paint()..filterQuality = ui.FilterQuality.none;
 
@@ -162,6 +166,29 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
       if (s.feathersCollected > 1) {
         _text.render(canvas, '${s.feathersCollected}', Vector2(17, 53));
       }
+    }
+
+    // Boss HP bar (top-center, under the timer) with phase threshold ticks.
+    final boss = s.boss;
+    if (boss != null) {
+      const barW = 180.0, barH = 6.0;
+      final left = (EmberGame.viewWidth - barW) / 2;
+      const top = 18.0;
+      canvas.drawRRect(
+          ui.RRect.fromRectAndRadius(
+              ui.Rect.fromLTWH(left - 1, top - 1, barW + 2, barH + 2),
+              const ui.Radius.circular(2)),
+          _bossBarBack);
+      final frac = boss.hp / GroveGolemCore.maxHp;
+      canvas.drawRect(
+          ui.Rect.fromLTWH(left, top, barW * frac, barH), _bossBarFill);
+      // Phase threshold ticks at 2/3 and 1/3.
+      for (final t in const [2 / 3, 1 / 3]) {
+        canvas.drawRect(
+            ui.Rect.fromLTWH(left + barW * t, top, 1, barH), _bossBarTick);
+      }
+      _text.render(canvas, 'GROVE GOLEM', Vector2(EmberGame.viewWidth / 2, top - 10),
+          anchor: Anchor.topCenter);
     }
 
     // Level timer (top-center).

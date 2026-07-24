@@ -11,6 +11,7 @@ import 'dart:math' as math;
 
 import 'core_loadout.dart';
 import '../core/rng.dart';
+import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
 import 'input_intent.dart';
 import 'level/level_data.dart';
@@ -30,6 +31,8 @@ enum SessionEventKind {
   appleThrown,
   appleBroke, // data: x,y
   attackBlocked, // data: x,y — Rotshield shield ate a hit ('block' sfx)
+  bossPhase, // boss crossed a phase threshold (x = new phase)
+  bossDefeated, // data: x,y — big burst + the exit unlocks
   emberShot, // data: x,y — Ember Totem fired
   emberShotBroke, // data: x,y — ember hit terrain / player / limits
   levelComplete,
@@ -161,6 +164,13 @@ class LevelSession {
   /// Camera center x (px), fed by the render layer for enemy sleeping.
   double cameraX = 0;
 
+  /// Boss bookkeeping: the exit stays locked while a Grove Golem lives.
+  int _bossPhaseSeen = 1;
+  GroveGolemCore? get boss =>
+      enemies.whereType<GroveGolemCore>().where((b) => b.alive).firstOrNull;
+  bool get bossPresent => enemies.whereType<GroveGolemCore>().isNotEmpty;
+  bool get exitLocked => boss != null;
+
   // Melee swing bookkeeping: one damage application per enemy per swing.
   final Set<EnemyCore> _swingVictims = {};
   final Set<CrackedWall> _swingWalls = {};
@@ -224,8 +234,8 @@ class LevelSession {
           enemies.add(RotshieldCore(
               x: cx - 13, y: (s.y + 1) * kTileSize - 24));
         case SpawnKind.groveGolem:
-          // TODO(M5-boss): Grove Golem lands in the boss commit.
-          break;
+          enemies.add(GroveGolemCore(
+              x: cx - 22, y: (s.y + 1) * kTileSize - 52));
         case SpawnKind.player:
           break;
         case SpawnKind.exit:
@@ -352,6 +362,24 @@ class LevelSession {
             shot.vy = req.dy * kEmberShotSpeed;
             _events.add(SessionEvent(SessionEventKind.emberShot,
                 x: shot.x, y: shot.y));
+          }
+        }
+      }
+      // Boss extras: phase-change events + hazard collision.
+      if (e is GroveGolemCore && !e.sleeping) {
+        if (e.phase != _bossPhaseSeen) {
+          _bossPhaseSeen = e.phase;
+          _events.add(SessionEvent(SessionEventKind.bossPhase,
+              x: e.phase.toDouble(), y: 0));
+        }
+        if (e.hazardHits(player.body) &&
+            player.damage(1, from: e.hazardSourceX(player.body))) {
+          hitsTaken++;
+          final dpev = player.takeEvents();
+          _playerEvents.addAll(dpev);
+          if (dpev.contains(PlayerEvent.died)) {
+            _fail();
+            return;
           }
         }
       }
@@ -580,6 +608,22 @@ class LevelSession {
     kills++;
     _events.add(
         SessionEvent(SessionEventKind.enemyDeath, x: e.centerX, y: e.centerY));
+    if (e is GroveGolemCore) {
+      // Victory burst: a shower of coins + feathers, then the door opens.
+      final n = dropsRng.range(45, 60);
+      for (var i = 0; i < n; i++) {
+        final ang = dropsRng.range(-80, 80) * 3.14159 / 180;
+        final spd = dropsRng.range(80, 200).toDouble();
+        coins.add(CoinEntity(e.centerX, e.centerY - 8,
+            vx: spd * 0.9 * math.sin(ang), vy: -spd, physical: true));
+      }
+      for (final off in const [-14.0, 0.0, 14.0]) {
+        pickups.add(
+            PickupEntity(SpawnKind.feather, e.centerX + off, e.centerY - 16));
+      }
+      _events.add(SessionEvent(SessionEventKind.bossDefeated,
+          x: e.centerX, y: e.centerY));
+    }
   }
 
   /// Sign text to show, or null (player within 1.5 tiles of a sign).
@@ -597,6 +641,7 @@ class LevelSession {
 
   void _complete() {
     if (over) return;
+    if (exitLocked) return; // boss arenas: door opens only when the boss dies
     completed = true;
     results = LevelResults(
       timeMs: (time * 1000).round(),
