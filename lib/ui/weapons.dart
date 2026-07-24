@@ -273,11 +273,16 @@ class _WeaponPainter extends CustomPainter {
     // selected die's pips, plus embers rising off the edge.
     if (charge > 0.02) {
       final tip = Offset(0, -reach * 0.75);
+      // Layered radial falloff (blur scaled to reach) so the heat reads as
+      // a soft aura, not a solid disc.
       _p
         ..style = PaintingStyle.fill
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
-        ..color = def.accent.withValues(alpha: 0.10 + 0.28 * charge);
-      canvas.drawCircle(tip, reach * (0.18 + 0.22 * charge), _p);
+        ..maskFilter =
+            MaskFilter.blur(BlurStyle.normal, reach * (0.16 + 0.10 * charge));
+      _p.color = def.accent.withValues(alpha: 0.05 + 0.11 * charge);
+      canvas.drawCircle(tip, reach * (0.16 + 0.18 * charge), _p);
+      _p.color = def.accent.withValues(alpha: 0.05 + 0.10 * charge);
+      canvas.drawCircle(tip, reach * (0.08 + 0.10 * charge), _p);
       _p.maskFilter = null;
       final sparkCount = (2 + charge * 5).round();
       for (var i = 0; i < sparkCount; i++) {
