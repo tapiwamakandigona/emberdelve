@@ -7,15 +7,17 @@
 // nothing else is legal). All amounts are ints:
 //   gold=±N            gain/pay gold (an option needing gold the player lacks
 //                      is an invalid command — state untouched)
+//   gold_after=+N      gold paid out AFTER the gold cost resolves (bet payout)
 //   hp=±N              damage floors at 1 hp (events never kill — fair-death
 //                      pillar: only fights end runs); heals cap at max
 //   max_hp=±N          floor 10; current hp clamped
 //   embers=+N          meta payout, added to the run ledger
 //   heal_pct=N         heal N% of max hp (integer floor)
 //   gain_die=<id>      add this exact die to the pool
-//   gain_random_die=T  random die of tier <= T via the shuffle stream
-//   lose_random_die=1  lose a random die (only valid while pool > 3)
-//   gain_random_relic=1  random unowned relic via the shuffle stream
+//   gain_random_die=T  random die of tier <= T via the loot stream
+//   lose_random_die=1  lose a random die via the shuffle stream (only valid
+//                      while pool > 3)
+//   gain_random_relic=1  random unowned relic via the loot stream
 //                        (falls back to embers=+15 when all are owned)
 //
 // Event pick at node entry: uniform over events not yet seen this run
@@ -166,7 +168,7 @@ const Map<String, EventDef> events = {
       'Ember Moths',
       'A cloud of glowing moths settles on your pack, drawn to the embers.',
       [
-        OptionDef('Let them feed (-8 embers... wait, +8 embers)', {'embers': 8}),
+        OptionDef('Let them feed (+8 embers)', {'embers': 8}),
         OptionDef('Wave them off', {}),
       ]),
   'broken_cart': EventDef(
