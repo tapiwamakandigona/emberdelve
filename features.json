@@ -1,138 +1,54 @@
 {
-  "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
+  "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning. Dice-era (v1) features are archived on branch legacy/dice-builder.",
   "features": [
     {
-      "id": "M0-1",
-      "title": "Repo scaffold with AI-handoff state files",
-      "acceptance": "PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/ exist at repo root and describe the project accurately",
+      "id": "P-M0",
+      "title": "Pivot docs: PROJECT/README/spec v2/architecture v2, legacy archived",
+      "acceptance": "PROJECT.md + docs/spec.md + docs/architecture.md describe the platformer; dice docs under docs/legacy/; legacy branch+tag+release exist on remote",
       "passes": true,
-      "evidence": "repo root @ commit HEAD: PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/00-foundation.md all present and accurate"
+      "evidence": "commit c215c97 on pivot/platformer; release v0.3.10-legacy verified via gh release list"
     },
     {
-      "id": "M0-2",
-      "title": "Sealed sim core with deterministic RNG streams",
-      "acceptance": "sim/ contains pure-Lua Sim with new/apply/state/snapshot/restore/state_hash; no engine APIs, os, io, or math.random anywhere under sim/ (grep clean)",
+      "id": "P-M1",
+      "title": "Scaffold: Flame app boots to title, dice code stripped, core contracts tested",
+      "acceptance": "flutter analyze clean; flutter test green covering: ASCII level parser+linter, economy/catalog, save v2 round-trip + legacy migration + corrupt-file fallback, RNG determinism, UI smoke (title -> level select with locks)",
       "passes": true,
-      "evidence": "grep clean (no defold/os/io/math.random under sim/); sim/init.lua exposes new/apply/state/snapshot/restore/state_hash; verified in CI run 29990121111 test job"
+      "evidence": "flutter analyze 'No issues found'; flutter test 29/29 passed (this commit)"
     },
     {
-      "id": "M0-3",
-      "title": "Headless sim test suite passes",
-      "acceptance": "lua5.4 tests/run_tests.lua exits 0 with >=10 passing tests covering determinism, stream independence, snapshot round-trip, intent-resolution fairness, and invalid-command safety",
-      "passes": true,
-      "evidence": "12/12 tests pass; golden event_hash=158933364 state_hash=387435555 bit-identical on lua5.1/5.4/luajit2.0/2.1; CI test job https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
-    },
-    {
-      "id": "M0-4",
-      "title": "CI test gate green on GitHub Actions",
-      "acceptance": "Workflow run on main: 'test' job passes on ubuntu-latest",
-      "passes": true,
-      "evidence": "test job green: https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
-    },
-    {
-      "id": "M0-5",
-      "title": "CI produces installable debug APK",
-      "acceptance": "Workflow run on main: 'build-android' job bundles arm64+armv7 debug APK via pinned bob.jar and uploads it as an artifact",
-      "passes": true,
-      "evidence": "build-android green, artifact emberdelve-debug-apk (ID 89150834647, 29.6MB APK, ABIs arm64-v8a+armeabi-v7a, Defold game.arcd/arci/dmanifest present): https://github.com/tapiwamakandigona/emberdelve/actions/runs/29990121111"
-    },
-    {
-      "id": "M1-1",
-      "title": "StS-style layered node map generation",
-      "acceptance": "sim/map.lua generates a connected layered map from the map stream; property tests: all paths reach boss, node counts within spec, same seed => same map",
-      "passes": true,
-      "evidence": "tests/map_tests.lua: 12/12 property tests over 200 seeds (connectivity both ways, all paths reach boss, layer/node bounds, elite/rest placement, determinism from fresh and mid-consumed streams); run locally lua5.4 + enforced in CI test job"
-    },
-    {
-      "id": "M1-2",
-      "title": "Dice-builder combat v1 (10 dice variants, 3 enemies, 1 boss)",
-      "acceptance": "Content defined as data modules under data/; headless autoplayer completes 100 seeded runs without error; win rate within 20-80% band",
-      "passes": true,
-      "evidence": "data/dice.lua (12 dice) + data/enemies.lua (4 regular, 2 elite, 1 boss); tests/content_tests.lua 21/21; tests/autoplay.lua: 100 seeded runs all terminal <=3000 cmds, 0 invalid_command, snapshot/restore twin-hash identical seeds 1..10, wins=59 losses=41 (in 20-80 band); enforced in CI test job"
-    },
-    {
-      "id": "M1-3",
-      "title": "Full seeded run playable on device",
-      "acceptance": "Debug APK: map -> fights -> boss -> run summary with placeholder art; manual play-through video or device log as evidence",
+      "id": "P-M2",
+      "title": "Engine core: player physics + camera + touch input",
+      "acceptance": "Playable level: d-pad run, jump with coyote+buffer+variable height, double jump, one-way platforms, spikes/fire damage with i-frames+knockback, camera follow with look-ahead and peek-down; headless physics tests green (jump clears 2 tiles, double jump 3.5, coyote/buffer windows honored)",
       "passes": false,
-      "evidence": "PARTIAL (emulator): debug+release APK installed on API-33 AVD; played title->character select->map->event (Broken Cart, +12 gold applied)->fight (Soot Shade: roll 1/6/6, dice select, Attack/Block, End turn). Screenshots in orchestrator evidence dir. Emulator cannot render Flutter-decoded images / has -no-audio (proven env-only, checkpoints/03). Full boss->summary playthrough on a real device remains OWNER-GATED."
+      "evidence": ""
     },
     {
-      "id": "M1-4",
-      "title": "Autosave every action + resume",
-      "acceptance": "Kill the app mid-fight, relaunch: game resumes into the exact pending decision; snapshot round-trip test",
-      "passes": true,
-      "evidence": "GameController autosaves sim.snapshot() to app-support JSON after every eventful apply; boot() restores non-terminal saves and routes to the phase screen. Snapshot round-trip proven headless: test/sim_test.dart 'snapshot mid-run, restore, continue => identical' (15 seeds, event+state hash identical) + autoplay twin checks."
+      "id": "P-M3",
+      "title": "Combat & pickups: melee combo, enemies, coins/apples/chests/feathers, exit",
+      "acceptance": "3-hit combo with buffered input and hit-pause; Thornling/Ashbat/Ember Totem/Rotshield behaviors; apple throw; chests open with coin burst; secret chests via cracked walls; exit door ends level with results (medals) persisted; enemy/pickup unit tests green",
+      "passes": false,
+      "evidence": ""
     },
     {
-      "id": "M2-1",
-      "title": "Stack = Flutter/Dart with sealed deterministic sim library",
-      "acceptance": "Sim runs as pure Dart (no Flutter imports); flutter test green headless; determinism preserved across the port",
-      "passes": true,
-      "evidence": "lib/sim/ is pure Dart; Lua->Dart port proven 1:1 (golden 311044885 + 100-seed hashes + twins) at pivot commit; v3 golden re-anchored 513683311. flutter test: 25 tests green."
+      "id": "P-M4",
+      "title": "Meta: shop (weapons/skins/abilities), level select, tutorial, settings",
+      "acceptance": "3-tab shop buys/equips against save with haggler discount; skins show level + melee power; level select shows medals/locks; w1_l1 signposts teach move/jump/attack/throw (tutorial promise); widget tests for shop + results flows",
+      "passes": false,
+      "evidence": ""
     },
     {
-      "id": "M3-1",
-      "title": "Content scale: 30+ dice, 15+ enemies, 20+ relics, events",
-      "acceptance": "Data-only modules; schema-validated in CI; autoplayer balance stats in band",
-      "passes": true,
-      "evidence": "31 dice, 15 enemies, 22 relics, 16 events, 4 characters (data/*.dart, zero logic). test/content_test.dart validates schema + cross-references. Balance: 200-seed autoplay 53.5% win (band 20-80%), 0 invalids, deterministic."
+      "id": "P-M5",
+      "title": "Content: World 1 Emberwood — 5 levels + Grove Golem boss",
+      "acceptance": "All levels in assets/levels parse + lint clean with >=2 chests and >=1 feather each (except boss arena); boss with 3 telegraphed phases; every level completable (manual/scripted run evidence)",
+      "passes": false,
+      "evidence": ""
     },
     {
-      "id": "M3-2",
-      "title": "Full run systems: gold, shop, events, relics, forge, rewards",
-      "acceptance": "Shop/event/rest-forge phases reachable and resolvable; gold economy; relic hooks resolved; all in the sealed sim",
-      "passes": true,
-      "evidence": "sim v3 (SIM_VERSION=3): commands buy/leave_shop/event_choose/forge/reroll added; run_layer implements gold, shop stock (tier-gated), 16-event deck (fair: never kills), relic hook vocabulary, forge, tiered rewards. Verified by autoplay (bot uses all systems, 0 invalids) + sim_test."
-    },
-    {
-      "id": "M3-3",
-      "title": "Meta-progression + ascension ladder",
-      "acceptance": "Embers bank across runs into unlocks; ascension raises difficulty; meta persists; sim stays pure (only scalar params in)",
-      "passes": true,
-      "evidence": "lib/meta/ persists embers/unlocks/best-ascension/stats (path_provider, outside sim). 4 characters unlockable via embers; endowed-progress unlock bar. Ascension = deterministic additive enemy scaling; verified monotonic (asc0 52% -> asc3 15% -> asc6 6% -> asc10 4%), test/autoplay_test.dart asserts asc6<asc0."
-    },
-    {
-      "id": "M2-2",
-      "title": "Full Flutter UI (UXPeak-informed) for all phases",
-      "acceptance": "Title, character/unlock, map, combat, reward, rest/forge, shop, event, summary screens render from sim state; portrait one-thumb; design system applied",
-      "passes": true,
-      "evidence": "lib/ui/ (theme, widgets, screens) + GameController. Design tokens from docs/design-system.md (UXPeak psychology + typography laws). flutter analyze clean; widget smoke tests green (title->map, character list). Device screenshots OWNER-GATED (needs emulator/device)."
-    },
-    {
-      "id": "M2-3",
-      "title": "CI: analyze + test gate -> Android APK artifact",
-      "acceptance": "Workflow: flutter analyze + flutter test pass, then flutter build apk uploads artifact",
-      "passes": true,
-      "evidence": "CI run 30004629450 (commit 2ed37a1) fully green: 'Analyze + test (headless)' success (flutter analyze + 25/25 tests), 'Build Android debug APK' success -> artifact emberdelve-debug-apk (89.2MB, not expired). https://github.com/tapiwamakandigona/emberdelve/actions/runs/30004629450"
-    },
-    {
-      "id": "M4-1",
-      "title": "Curated art/audio/animation integration + v0.2.0 release",
-      "acceptance": "All screens use curated CC0/CC-BY assets; sprite animations with SFX synced to contact frames; per-screen music; credits + provenance shipped; release APK published on GitHub Releases",
-      "passes": true,
-      "evidence": "Merge 01bc2f4 + fixes a51dc69: 75 images + 26 audio (PROVENANCE.md, CREDITS.md, in-app credits screen), SpriteView 8fps idle loops, combat lunge/hit-flash/death choreography with whoosh at contact-250ms per SYNC_POINTS.md, AudioService crossfaded music + 20 SFX, settings persistence, launcher icons. Independent review APPROVE (0 blocking). CI green runs 30011499453/30011501605; 29 tests. Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.2.0"
-    },
-    {
-      "id": "M5-1",
-      "title": "Gameplay depth v0.3.0: combos, risky reroll, exact-kill/overkill, honest telegraphs, boons, daily seed",
-      "acceptance": "SIM_VERSION 4 in sealed sim: pair/triple/straight combos, reroll_risky (-1 pip, once/turn, free after straight), exact-0 kill +5 embers + capped overkill splash, offer-stream reward telegraphs (elites guarantee tier-3), 1-of-3 starting boons (skippable), dailySeed(y,m,d); determinism + golden re-anchored; balance in 20-80% band over 200 seeds",
-      "passes": true,
-      "evidence": "lib/sim/ v4 (golden 1117081416, was 513683311); sim_test v4 suites (combos pure-function, reroll gating/determinism, telegraph honesty, boons, daily seed, exact/overkill observed over 60 bot runs); autoplay 200 seeds win 53.5%, 0 invalids; branch gameplay-sim merged via v030-integration"
-    },
-    {
-      "id": "M5-2",
-      "title": "Visual overhaul: de-Flutter presentation pass + mechanics wired into painted UI",
-      "acceptance": "Painted UI kit (no stock-Flutter look): pip die faces + tumble, segmented HP bars w/ ghost trail, hit-stop/shake/damage pops/ember deaths, map medallions + fog + reward telegraph badges, drawn logotype + camp-fire title, flame-wipe transitions; combo/burn/exact-kill call-outs, risky-reroll control (gated), boon pick screen, Daily Delve entry, fast Delve-again, stale v3 save recovery; zero new binary assets",
-      "passes": true,
-      "evidence": "lib/ui/fx.dart, logo.dart, screens/widgets repaint (branches visual-overhaul + ui-wiring, all programmatic); flutter analyze clean; 56/56 tests incl. widget tests for reroll gating, boon pick/skip, daily seed, delve-again, stale-save recovery, and phase-transition stale-frame regressions (post-review)"
-    },
-    {
-      "id": "M5-3",
-      "title": "Permanent release signing: keystore + signed CI builds",
-      "acceptance": "Upload keystore recovered and stored outside repo; Gradle release signingConfig (key.properties, debug fallback); CI job builds signed APK+AAB on main pushes/dispatch with apksigner cert-fingerprint gate; updates install over previous release-signed installs without uninstall",
-      "passes": true,
-      "evidence": "CI run 30018705918 green (build-android-release, fingerprint gate passed); cert SHA-256 03:1A:CB:...:7A:0D valid to 2066; docs/release.md; keystore held privately by owner-side orchestrator (never committed)"
+      "id": "P-M6",
+      "title": "Release v1.0.0-alpha.1: CI green on main, signed APK, GitHub prerelease",
+      "acceptance": "CI test+build jobs green on main; signed APK/AAB with unchanged cert; GitHub prerelease v1.0.0-alpha.1 with APK attached and honest release notes",
+      "passes": false,
+      "evidence": ""
     }
   ]
 }

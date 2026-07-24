@@ -1,5 +1,8 @@
 # Emberdelve Asset Provenance
 
+> **Pivot note (2026-07-24):** the dice-era **image** entries below are historical — those files were removed in the platformer pivot (archived on `legacy/dice-builder`). **Audio and font entries remain shipped.** New platformer art entries are added as assets land.
+
+
 Per-file origin, author, license, and modification record for every bundled
 art and audio asset. Summarized attributions live in `CREDITS.md` and the
 in-app Credits & Licenses screen; this file is the full audit trail.
