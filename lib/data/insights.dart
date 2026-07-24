@@ -29,7 +29,18 @@ const Map<String, List<String>> insights = {
     'Elites telegraph a cycle — count to their big hit and block exactly then.',
     'Save an attack die for the turn the enemy drops its guard.',
   ],
+  // v0.4 boss variety: each boss gets its own honest coaching bucket (a
+  // death-screen tip must never lie — §Ethics honesty — and a Tyrant tip
+  // would lie about the Colossus). 'boss' stays as the generic fallback for
+  // any boss id without a dedicated bucket. All buckets keep exactly 3 lines
+  // so the seeded loot-stream draw shape is unchanged.
   'boss': [
+    'Every boss telegraphs a fixed cycle — learn it on the first loop, '
+        'spend your damage on the second.',
+    'Never swing into a raised guard; the open beat always comes back around.',
+    'Bring healing into the boss: a long cycle out-damages a raw race.',
+  ],
+  'boss_ember_tyrant': [
     // Number-free on purpose: the exact amount shifts with difficulty and
     // ascension, and a death-screen tip must never lie (§Ethics honesty).
     "The Tyrant's turn 4 is its heaviest hit — enter that turn with block banked.",
@@ -43,14 +54,34 @@ const Map<String, List<String>> insights = {
         'the early beats, never into a raised guard.',
     'Bring healing into the boss: its 4-beat cycle out-damages a raw race.',
   ],
+  'boss_ashen_colossus': [
+    // Block timing (sim-verified, same rule as above): the Colossus guards on
+    // beats 1 and 2 of its 3-beat cycle, so the only unguarded player turn is
+    // the one right after its giant swing.
+    'The Colossus guards two beats in three — the open turn is the one right '
+        'after its giant swing lands.',
+    'Its heaviest hit closes the cycle; bank block early so you are still '
+        'standing when it comes.',
+    'Racing a wall loses. Hold your burst for the open beat and block the rest.',
+  ],
+  'boss_pyre_matriarch': [
+    'The Matriarch never guards — every one of your turns lands full. '
+        'Make each pip count and race her down.',
+    'Her flame climbs each beat, then resets. Block or heal into the crest, '
+        'not the start.',
+    'No shield to wait out: slow, careful play just feeds her tempo.',
+  ],
   'generic': [
     'Randomness picks what you roll, never how your played dice resolve.',
     'Every death banks embers — the next delve starts stronger.',
   ],
 };
 
-String insightBucket(int layer, bool bossDeath) {
-  if (bossDeath) return 'boss';
+String insightBucket(int layer, bool bossDeath, {String? bossId}) {
+  if (bossDeath) {
+    final keyed = 'boss_$bossId';
+    return insights.containsKey(keyed) ? keyed : 'boss';
+  }
   if (layer <= 3) return 'early';
   if (layer <= 6) return 'mid';
   return 'late';
