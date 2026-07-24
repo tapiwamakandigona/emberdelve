@@ -17,8 +17,11 @@ class _MapScreenState extends State<MapScreen>
   )..repeat(reverse: true);
 
   // Where the delver marker last stood, kept across map visits so the marker
-  // visibly walks node-to-node after each encounter.
+  // visibly walks node-to-node after each encounter. Keyed by run seed:
+  // node ids restart at 1 every run, so without the key a NEW run's marker
+  // would "walk" from wherever the previous run ended (a cross-run ghost).
   static int? _walkFrom;
+  static int? _walkRunSeed;
 
   @override
   void dispose() {
@@ -51,7 +54,11 @@ class _MapScreenState extends State<MapScreen>
     final run = st['run'] as Map;
     final characterId = run['character'] as String? ?? defaultCharacter;
     final curLayer = (nodes['$position']?['layer'] as int?) ?? 1;
-    if (_walkFrom == null || !nodes.containsKey('$_walkFrom')) {
+    final runSeed = c.runSeed;
+    if (_walkRunSeed != runSeed ||
+        _walkFrom == null ||
+        !nodes.containsKey('$_walkFrom')) {
+      _walkRunSeed = runSeed;
       _walkFrom = position;
     }
 
