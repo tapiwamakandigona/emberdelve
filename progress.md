@@ -172,6 +172,22 @@ gate — rerun manually after UI changes. Meta in shots is staged but honest to
 real mechanics (real screens, real seeds; ledger numbers are sample data).
 Known nit spotted while shooting: ledger delver rows print "1 wins".
 
+## 2026-07-24 — haptics actually vibrate now (branch fix/haptics-release)
+2026-07-24 Owner report: haptics did nothing on the v0.3.2 APK even with the
+in-game toggle ON. Root cause: HapticFeedback.*Impact() maps to Android's
+View.performHapticFeedback(), which is silently gated by the SYSTEM "touch
+feedback" setting (off on many phones; apps can't override since Android 13).
+Fix: `emberdelve/haptics` MethodChannel in MainActivity.kt drives the Vibrator
+service directly (VibratorManager on S+, VibrationEffect on O+, legacy below)
+with per-beat duration/amplitude (light 18ms/90 · medium 38ms/170 · heavy
+70ms/255); Dart side falls back to HapticFeedback where the channel is absent
+(iOS/tests) or the device has no vibrator. Added the normal VIBRATE permission
+and updated the store docs' "zero permissions" claims (now: no internet
+permission, VIBRATE only). Flipping the settings toggle ON now answers with an
+immediate preview buzz for on-device confirmation. New test/haptics_test.dart
+(6 tests: channel args, toggle gating, fallbacks). Suite 133 tests, no sim
+change, golden untouched.
+
 ## 2026-07-24 — boss variety (branch feat/boss-variety)
 2026-07-24 BOSS VARIETY (v0.4 notes item 5): three bosses, one per run, chosen
 as a PURE function of the run seed (bossForSeed = bossIds[seed % 3]) — no RNG
