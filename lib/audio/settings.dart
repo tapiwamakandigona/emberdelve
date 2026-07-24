@@ -29,9 +29,14 @@ class AudioSettings {
         'haptics': haptics,
       };
 
+  // Volumes clamped on load: an out-of-range value in a hand-edited or
+  // corrupt settings file would otherwise crash the Settings sliders
+  // (Slider asserts value ∈ [min, max]).
   factory AudioSettings.fromJson(Map<String, dynamic> j) => AudioSettings(
-        musicVolume: (j['musicVolume'] as num?)?.toDouble() ?? 0.7,
-        sfxVolume: (j['sfxVolume'] as num?)?.toDouble() ?? 0.9,
+        musicVolume:
+            ((j['musicVolume'] as num?)?.toDouble() ?? 0.7).clamp(0.0, 1.0),
+        sfxVolume:
+            ((j['sfxVolume'] as num?)?.toDouble() ?? 0.9).clamp(0.0, 1.0),
         musicMuted: j['musicMuted'] as bool? ?? false,
         sfxMuted: j['sfxMuted'] as bool? ?? false,
         haptics: j['haptics'] as bool? ?? true,

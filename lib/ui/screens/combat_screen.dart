@@ -689,11 +689,15 @@ class _CombatScreenState extends State<CombatScreen> {
                               icon: Icons.replay,
                               onTap: selected != null && !_busy
                                   ? () {
-                                      c.apply({
+                                      final events = c.apply({
                                         'type': 'reroll',
                                         'die': selected,
                                       });
                                       setState(() {});
+                                      // A charge reroll re-detects combos
+                                      // (m4 §3) — announce them like the
+                                      // roll/risky paths do.
+                                      _announceCombos(events);
                                     }
                                   : null,
                             ),
