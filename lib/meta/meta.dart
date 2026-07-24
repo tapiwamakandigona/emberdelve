@@ -44,6 +44,14 @@ class MetaState {
   // Pure ember sink after all delvers unlock; no gameplay effect, no FOMO.
   Set<String> ownedThemes;
   String activeTheme;
+  // v0.3.4 Daily Delve record (review note #3): remember the most recent
+  // daily played so the title shows an honest recap and the summary offers a
+  // copyable result. ONE record — deliberately no daily history, no streaks,
+  // no expiry pressure (§Ethics).
+  String? lastDailyDate; // local 'YYYY-MM-DD' the daily was finished
+  bool lastDailyWon;
+  int lastDailyFloor; // 1-based layer reached (boss layer when won)
+  int lastDailyFloors; // total layers on that day's map
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -61,6 +69,10 @@ class MetaState {
     this.bestExactStreak = 0,
     Set<String>? ownedThemes,
     this.activeTheme = defaultTheme,
+    this.lastDailyDate,
+    this.lastDailyWon = false,
+    this.lastDailyFloor = 0,
+    this.lastDailyFloors = 0,
   })  : unlockedCharacters = unlocked ?? {defaultCharacter},
         charRuns = charRuns ?? {},
         charWins = charWins ?? {},
@@ -84,6 +96,10 @@ class MetaState {
         'bestExactStreak': bestExactStreak,
         'ownedThemes': ownedThemes.toList(),
         'activeTheme': activeTheme,
+        if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
+        if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
+        if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
+        if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
       };
 
   static Map<String, int> _intMap(Object? v) =>
@@ -117,6 +133,10 @@ class MetaState {
         activeTheme: hearthThemes.containsKey(j['activeTheme'])
             ? j['activeTheme'] as String
             : defaultTheme,
+        lastDailyDate: j['lastDailyDate'] as String?,
+        lastDailyWon: j['lastDailyWon'] as bool? ?? false,
+        lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
+        lastDailyFloors: j['lastDailyFloors'] as int? ?? 0,
       );
 
   /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched

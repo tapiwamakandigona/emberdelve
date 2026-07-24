@@ -94,3 +94,16 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
   embers/unlocks/stats. New test/meta_backup_test.dart (6 tests) covers both
   generations corrupt, heal-on-recover, legacy/future schema tolerance.
 - Gate: analyze clean, 101/101 tests at branch time; re-verified post-merge with main by integrator: analyze clean, 107/107 tests, autoplay 200 seeds normal 67.0%/0 invalids, golden 1842571558 self-consistent.
+- Gate: analyze clean, 101/101 tests (autoplay 200-seed + golden included).
+
+## 2026-07-24 — Daily Delve record + shareable result (PR #7)
+- Meta remembers the most recent FINISHED daily (date/result/floor) — one
+  record, deliberately no history, no streaks, no expiry (§Ethics).
+- Title shows an honest "✓ Played today" recap under the Daily button on the
+  played day; replaying stays allowed.
+- Summary offers "Copy daily result" for daily runs: plain-text Wordle-style
+  share via clipboard (zero new dependencies).
+- lib/game/daily_share.dart is the single formatting authority for daily-date
+  keys (controller + title reuse it).
+- Gate: analyze clean, 107/107 tests; new test/daily_record_test.dart (6);
+  title/summary screenshots inspected (widget-render probe).
