@@ -12,6 +12,12 @@ import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
 import '../data/themes.dart';
 
+/// Schema version stamped into emberdelve_meta.json (v0.3.4).
+/// v1 = every file written before the field existed (absence ⇒ 1). Readers
+/// stay field-tolerant — every field has a default — so bumping this is only
+/// needed when a MIGRATION must run, not when fields are merely added.
+const int metaSchemaVersion = 2;
+
 class MetaState {
   int embers;
   Set<String> unlockedCharacters;
@@ -61,6 +67,7 @@ class MetaState {
         ownedThemes = ownedThemes ?? {defaultTheme};
 
   Map<String, Object?> toJson() => {
+        'schema': metaSchemaVersion,
         'embers': embers,
         'unlocked': unlockedCharacters.toList(),
         'bestAscension': bestAscension,
@@ -168,15 +175,38 @@ class MetaStore {
     return File('${dir.path}/$_fileName');
   }
 
-  static Future<MetaState> load() async {
+  /// Parse one candidate save file; null when missing/unreadable/corrupt.
+  static Future<MetaState?> _loadFrom(File f) async {
     try {
-      final f = await _file();
-      if (!await f.exists()) return MetaState();
+      if (!await f.exists()) return null;
       final data = jsonDecode(await f.readAsString()) as Map<String, dynamic>;
       return MetaState.fromJson(data);
     } catch (_) {
-      return MetaState();
+      return null;
     }
+  }
+
+  /// Load with backup fallback (v0.3.4): a corrupt/missing main file no
+  /// longer silently resets all progress — the previous good save is kept as
+  /// `.bak` by [save] and restored from here. Only when BOTH copies are
+  /// unreadable does the player get a fresh profile.
+  static Future<MetaState> load() async {
+    try {
+      final f = await _file();
+      final main = await _loadFrom(f);
+      if (main != null) return main;
+      final fromBak = await _loadFrom(File('${f.path}.bak'));
+      if (fromBak != null) {
+        // Heal the main file so the recovery survives even if the game
+        // exits before the next natural save. Deliberately NOT a normal
+        // save(): that would demote the corrupt main file over the .bak we
+        // just recovered from — the one good copy must stay untouched
+        // until a complete main file is back in place.
+        await _healMain(jsonEncode(fromBak.toJson()));
+        return fromBak;
+      }
+    } catch (_) {/* fall through to a fresh profile */}
+    return MetaState();
   }
 
   /// Same durability contract as the run autosave (see GameController's
@@ -187,6 +217,22 @@ class MetaStore {
   /// truncated meta file — this file holds embers/unlocks/lifetime stats,
   /// the one save whose loss is unrecoverable.
   static Future<void> _writeQueue = Future.value();
+
+  /// Recovery-only write: atomically replace the main file WITHOUT touching
+  /// `.bak` (see [load]). Rides the same queue as [save] so it can never
+  /// interleave with a normal write.
+  static Future<void> _healMain(String snap) {
+    _writeQueue = _writeQueue.then((_) async {
+      try {
+        final f = await _file();
+        final tmp = File('${f.path}.tmp');
+        await tmp.writeAsString(snap, flush: true);
+        await tmp.rename(f.path);
+      } catch (_) {/* best-effort */}
+    });
+    return _writeQueue;
+  }
+
   static Future<void> save(MetaState state) {
     final snap = jsonEncode(state.toJson());
     _writeQueue = _writeQueue.then((_) async {
@@ -194,6 +240,12 @@ class MetaStore {
         final f = await _file();
         final tmp = File('${f.path}.tmp');
         await tmp.writeAsString(snap, flush: true);
+        // Two-generation scheme (v0.3.4): demote the current save to `.bak`
+        // BEFORE promoting the new bytes. Both steps are atomic renames, so
+        // at every instant at least one of {main, bak} is a complete save:
+        //   crash after demote  -> main missing, bak = last good (load heals)
+        //   crash after promote -> main = new,   bak = previous good
+        if (await f.exists()) await f.rename('${f.path}.bak');
         await tmp.rename(f.path);
       } catch (_) {/* best-effort; never crash the game on save failure */}
     });

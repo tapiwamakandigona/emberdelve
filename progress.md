@@ -65,3 +65,15 @@ Curated art + audio integrated (staging: /work/temp/emberdelve-polish/staging).
 2026-07-23 Version bumped 0.3.1+4 → 0.3.2+5. GitHub repo description fixed (said "Defold" since the stack pivot — now "Flutter"). docs/STATE.md marked historical (superseded by PROJECT.md + checkpoints; it still described the mid-pivot M2/M3 state).
 2026-07-23 ZOMBIE-WIN FIX (branch fix/zombie-win-tiebreak): combatEndTurn resolved thorns/burn kills BEFORE checking player death, so a lethal enemy attack + same-tick thorns/burn kill declared the encounter WON and the run continued with the player at negative HP (proven by probe: phase=reward, player_hp=-4). Fix: player death now resolves immediately after the attack intent lands — a dead delver deals no thorns and has no burn tick. No SIM_VERSION bump: golden 1117081416 unchanged and 200-seed autoplay identical (74.0%, 0 invalids) — the bot never reaches the edge; behavior only changes in the both-die-same-tick state (same reasoning as the v0.3.2 difficulty change). Also removed dead `chosen` list in _openShop and corrected its misleading comment (duplicate shop stock is deliberate, with-replacement; zero behavior change). 3 regression tests added (80 total).
 2026-07-23 AUTOSAVE HARDENING (same branch): GameController autosave was fire-and-forget writeAsString — rapid commands could interleave bytes in the save file, a crash mid-write could truncate it, and the snapshot was serialized after an await (so it could drift from the state that triggered the save). Now: snapshot captured synchronously, writes chained on a save queue, temp-file + atomic rename; _clearSave rides the same queue so a queued save can never resurrect an abandoned/finished run. analyze clean, 80/80 tests.
+
+## 2026-07-24 — save durability: schema version + .bak recovery (PR #6)
+- emberdelve_meta.json now carries `schema` (v2; absent = v1) so future
+  migrations have something to key on; readers stay field-tolerant.
+- MetaStore.save keeps the previous good save as `.bak` (two atomic renames:
+  demote main → .bak, promote tmp → main); MetaStore.load falls back to .bak
+  when the main file is corrupt/missing and heals the main file via a
+  recovery-only write that never touches .bak.
+- Closes review note: a crash-corrupted meta file used to silently reset all
+  embers/unlocks/stats. New test/meta_backup_test.dart (6 tests) covers both
+  generations corrupt, heal-on-recover, legacy/future schema tolerance.
+- Gate: analyze clean, 101/101 tests (autoplay 200-seed + golden included).
