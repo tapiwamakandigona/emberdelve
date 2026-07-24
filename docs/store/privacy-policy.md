@@ -11,9 +11,11 @@ fully offline dice roguelite by Tsoro Studios (Tapiwa Makandigona).
 
 ## Details
 
-- **No network access.** The app declares zero Android permissions — including
-  the internet permission — so it is technically incapable of transmitting
-  anything off your device.
+- **No network access.** The app does not declare the internet permission —
+  or any other data-relevant permission — so it is technically incapable of
+  transmitting anything off your device. The only permission it declares is
+  `VIBRATE`, used solely for the optional in-game haptics (controller-style
+  rumble); it touches no data.
 - **No personal data collected.** No accounts, no names, no email addresses,
   no contacts, no location, no identifiers.
 - **No analytics, no ads, no trackers.** The app contains no analytics SDKs,
