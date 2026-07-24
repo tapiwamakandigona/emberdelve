@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
@@ -12,6 +13,7 @@ import '../data/events.dart';
 import '../data/relics.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
+import '../game/daily_share.dart';
 import 'art.dart';
 import 'fx.dart';
 import 'haptics.dart';
@@ -198,6 +200,20 @@ class TitleScreen extends StatelessWidget {
                 icon: Icons.today,
                 onTap: () => c.startDailyRun(character: defaultCharacter)),
           ),
+          // Daily recap (v0.3.4): a small honest checkmark on the day it was
+          // played. Replaying stays allowed — no lockout, no streaks.
+          if (m.lastDailyDate == dailyKey(DateTime.now())) ...[
+            const SizedBox(height: Space.s),
+            Text(
+              dailyRecapLine(
+                  won: m.lastDailyWon,
+                  floor: m.lastDailyFloor,
+                  floors: m.lastDailyFloors),
+              key: const ValueKey('daily-recap'),
+              style: EmberText.micro,
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: Space.m),
           SizedBox(
             width: double.infinity,
@@ -2359,6 +2375,23 @@ class SummaryScreen extends StatelessWidget {
               primary: true, icon: Icons.bolt, onTap: () => c.delveAgain()),
         ),
         const SizedBox(height: Space.m),
+        // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
+        // Only offered when this run WAS the daily — normal runs stay quiet.
+        if (c.dailyResultShareText != null) ...[
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Copy daily result',
+                key: const ValueKey('copy-daily-result'),
+                ghost: true,
+                icon: Icons.copy, onTap: () async {
+              final text = c.dailyResultShareText;
+              if (text == null) return;
+              await Clipboard.setData(ClipboardData(text: text));
+              c.announce('Result copied');
+            }),
+          ),
+          const SizedBox(height: Space.m),
+        ],
         SizedBox(
           width: double.infinity,
           child: EmberButton('Back to the fire',
