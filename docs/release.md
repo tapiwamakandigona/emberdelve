@@ -66,3 +66,37 @@ always.
 - **One-time caveat:** the first permanent-signed APK cannot install over a
   debug-signed v0.2.0 install (different signature). One final
   uninstall/reinstall is required; every update after that is in place.
+
+## Google Play closed testing (status 2026-07-24)
+
+- **Live:** release 12 (v0.3.9+12) on the "Closed testing - Alpha" track,
+  177 countries. Passed Google Play review 2026-07-24.
+- Testers join via the Google Group `emberdelve@googlegroups.com`, then the
+  opt-in link https://play.google.com/apps/testing/com.tsorostudios.emberdelve,
+  then install from the Play Store.
+- **Production gate (personal dev account):** 12+ opted-in testers for 14
+  continuous days → "Apply for production" unlocks → Google questionnaire →
+  application review (~days) → production release passes one more standard
+  review. Criterion met 2026-07-24 → earliest apply ~2026-08-07.
+
+### Verified mechanics (plan releases around these)
+
+1. Pushing app updates to the track and editing the store listing do **NOT**
+   reset the 14-day clock — it tracks opted-in testers, not versions. Only a
+   dip below 12 opted-in testers resets it.
+2. Testers receive **no explicit update notification**; Play auto-updates
+   installed apps (typically ≤24h). Shipping updates mid-window is safe and
+   expected — closed testing exists for exactly this.
+3. Submitting changes while a review is in progress pops a "Do you want to
+   restart your review?" dialog — confirm it. Bundle the new build + refreshed
+   screenshots/listing in **one** submission.
+4. Once the tester criterion is met the exact opted-in count is hidden;
+   proxies = group member count + testing-track install stats.
+
+### Open commitments for the next update
+
+- **In-game tutorial** — publicly promised to testers ("in the next update").
+  `lib/ui/screens/tutorial_overlay.dart` exists; wire and verify before
+  release. Blocker.
+- Owner is considering a core-gameplay-simplification pass — pair with the
+  tutorial + new screenshots in a single submission.
