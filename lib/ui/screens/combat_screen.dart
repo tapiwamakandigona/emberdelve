@@ -76,8 +76,11 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
-    setState(() =>
-        _pops.add(_Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked)));
+    setState(
+      () => _pops.add(
+        _Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked),
+      ),
+    );
   }
 
   /// Shake scaled by damage relative to the victim's max HP; hits at or above
@@ -97,11 +100,16 @@ class _CombatScreenState extends State<CombatScreen> {
     return null;
   }
 
-  void _note(String text,
-      {Color color = EmberColors.gold, IconData? icon, bool onEnemy = false}) {
+  void _note(
+    String text, {
+    Color color = EmberColors.gold,
+    IconData? icon,
+    bool onEnemy = false,
+  }) {
     if (!mounted) return;
-    setState(() =>
-        _notes.add(_Note(_noteId++, text, color, icon, onEnemy: onEnemy)));
+    setState(
+      () => _notes.add(_Note(_noteId++, text, color, icon, onEnemy: onEnemy)),
+    );
   }
 
   /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
@@ -116,26 +124,36 @@ class _CombatScreenState extends State<CombatScreen> {
         case 'combo_triple':
           // Ignite is announced by burn_applied (it only fires when the sim
           // actually applies burn) — claiming IGNITE here would exaggerate.
-          _note('TRIPLE!',
-              color: EmberColors.danger, icon: Icons.casino);
+          _note('TRIPLE!', color: EmberColors.danger, icon: Icons.casino);
           break;
         case 'burn_applied':
-          _note('IGNITE +${e['stacks']} BURN',
-              color: EmberColors.ember,
-              icon: Icons.local_fire_department,
-              onEnemy: true);
+          _note(
+            'IGNITE +${e['stacks']} BURN',
+            color: EmberColors.ember,
+            icon: Icons.local_fire_department,
+            onEnemy: true,
+          );
           break;
         case 'combo_straight':
-          _note('STRAIGHT!', color: EmberColors.kindElite,
-              icon: Icons.trending_up);
+          _note(
+            'STRAIGHT!',
+            color: EmberColors.kindElite,
+            icon: Icons.trending_up,
+          );
           break;
         case 'free_reroll_earned':
-          _note('FREE REROLL NEXT TURN',
-              color: EmberColors.success, icon: Icons.replay);
+          _note(
+            'FREE REROLL NEXT TURN',
+            color: EmberColors.success,
+            icon: Icons.replay,
+          );
           break;
         case 'free_reroll_granted':
-          _note('FREE REROLL READY',
-              color: EmberColors.success, icon: Icons.replay);
+          _note(
+            'FREE REROLL READY',
+            color: EmberColors.success,
+            icon: Icons.replay,
+          );
           break;
       }
     }
@@ -207,9 +225,11 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
     _busy = true;
-    final events = widget.c.apply(
-        {'type': 'assign', 'die': selected, 'action': 'attack'},
-        terminalHold: const Duration(milliseconds: 1300));
+    final events = widget.c.apply({
+      'type': 'assign',
+      'die': selected,
+      'action': 'attack',
+    }, terminalHold: const Duration(milliseconds: 1300));
     selected = null;
     final dmg = _find(events, 'damage_dealt');
     if (dmg == null) {
@@ -234,8 +254,11 @@ class _CombatScreenState extends State<CombatScreen> {
     final landed = amount - absorbed;
     _audio?.playSfx(absorbed >= amount ? 'block' : 'enemy_hit');
     Haptics.medium();
-    _spawnPop(landed > 0 ? landed : amount,
-        onPlayer: false, blocked: landed <= 0);
+    _spawnPop(
+      landed > 0 ? landed : amount,
+      onPlayer: false,
+      blocked: landed <= 0,
+    );
     final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
     final bigHit = _impact(landed, enemyMax);
     setState(() => _enemyFlash = true);
@@ -253,13 +276,20 @@ class _CombatScreenState extends State<CombatScreen> {
     final exact = _find(events, 'exact_kill');
     if (exact != null) {
       _audio?.playSfx('ember_gain');
-      _note('+${exact['embers']} EMBERS — EXACT!',
-          icon: Icons.local_fire_department, onEnemy: true);
+      _note(
+        '+${exact['embers']} EMBERS — EXACT!',
+        icon: Icons.local_fire_department,
+        onEnemy: true,
+      );
     }
     final over = _find(events, 'overkill');
     if (over != null) {
-      _note('OVERKILL +${over['surplus']} → NEXT FOE',
-          color: EmberColors.ember, icon: Icons.double_arrow, onEnemy: true);
+      _note(
+        'OVERKILL +${over['surplus']} → NEXT FOE',
+        color: EmberColors.ember,
+        icon: Icons.double_arrow,
+        onEnemy: true,
+      );
     }
     if (_find(events, 'encounter_won') != null) {
       await _enemyDeath(events);
@@ -296,8 +326,9 @@ class _CombatScreenState extends State<CombatScreen> {
       _rerollMode = false;
       _rerollSel.clear();
     });
-    final events = widget.c.apply({'type': 'end_turn'},
-        terminalHold: const Duration(milliseconds: 1450));
+    final events = widget.c.apply({
+      'type': 'end_turn',
+    }, terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
       setState(() => _enemySquash = true);
@@ -348,10 +379,12 @@ class _CombatScreenState extends State<CombatScreen> {
     if (burnTick != null && mounted) {
       _audio?.playSfx('enemy_hit', volume: 0.5);
       _spawnPop(burnTick['amount'] as int? ?? 0, onPlayer: false);
-      _note('BURN',
-          color: EmberColors.ember,
-          icon: Icons.local_fire_department,
-          onEnemy: true);
+      _note(
+        'BURN',
+        color: EmberColors.ember,
+        icon: Icons.local_fire_department,
+        onEnemy: true,
+      );
       await _sleep(const Duration(milliseconds: 350));
     }
     // A straight last turn grants this turn's free reroll — announce it.
@@ -380,7 +413,8 @@ class _CombatScreenState extends State<CombatScreen> {
     final assigned = (player['assigned'] as Map?) ?? const {};
     final maxed = (player['rolled_max'] as List?)?.cast<bool>();
     final dice0 = (player['dice'] as List).cast<String>();
-    final intent = (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0};
+    final intent =
+        (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0};
     final rerolls = player['rerolls_left'] as int? ?? 0;
     final riskyUsed = player['risky_used'] == true;
     final freeReroll = player['free_reroll'] == true;
@@ -388,133 +422,171 @@ class _CombatScreenState extends State<CombatScreen> {
     // Compact mode for short phones: tighter chrome and smaller sprites so
     // the fixed sections never overflow the column (measured: the roomy
     // chrome needs ~700px once the tray wraps to two rows).
-    final compact = MediaQuery.sizeOf(context).height < 700;
+    //
+    // The combat HUD is a fixed-height layout, so large system font sizes
+    // are handled in two steps (probed at 1.3x across all supported sizes):
+    // 1. text scale is clamped to what the height budget can absorb
+    //    (~400px of height buys one full step of text growth, measured);
+    // 2. the compact decision uses the *effective* height at that scale.
+    // Every label the clamp affects also carries a Semantics description,
+    // so screen readers get the full text regardless of visual scale.
+    final height = MediaQuery.sizeOf(context).height;
+    final systemScale = MediaQuery.textScalerOf(context).scale(100) / 100;
+    final maxHudScale = (1.0 + (height - 570) / 400).clamp(1.0, 2.0).toDouble();
+    final hudScale = math.min(systemScale, maxHudScale);
+    final compact = height / hudScale < 700;
 
-    final combat = Column(children: [
-      _TopBar(c),
-      // Enemy header: name + HP (intent lives on the stage, over the enemy).
-      Padding(
-        padding: EdgeInsets.fromLTRB(Space.l, compact ? Space.s : Space.l,
-            Space.l, compact ? Space.xs : Space.s),
-        child: Panel(
-          padding: EdgeInsets.all(compact ? Space.s : Space.m),
-          child: Column(children: [
-            Row(children: [
-              Expanded(
-                  child: Text(enemy['name'] as String,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: EmberText.h2.copyWith(
+    final combat = Column(
+      children: [
+        _TopBar(c),
+        // Enemy header: name + HP (intent lives on the stage, over the enemy).
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            Space.l,
+            compact ? Space.s : Space.l,
+            Space.l,
+            compact ? Space.xs : Space.s,
+          ),
+          child: Panel(
+            padding: EdgeInsets.all(compact ? Space.s : Space.m),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        enemy['name'] as String,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: EmberText.h2.copyWith(
                           color: enemy['boss'] == true
                               ? EmberColors.kindBoss
                               : enemy['elite'] == true
-                                  ? EmberColors.kindElite
-                                  : EmberColors.textPrimary))),
-            ]),
-            const SizedBox(height: Space.s),
-            StatBar(
-                value: enemyHp,
-                max: enemy['max_hp'] as int,
-                block: enemy['block'] as int? ?? 0,
-                color: EmberColors.danger,
-                label: 'ENEMY HP · TURN ${st['turn']}'),
-          ]),
+                              ? EmberColors.kindElite
+                              : EmberColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: Space.s),
+                StatBar(
+                  value: enemyHp,
+                  max: enemy['max_hp'] as int,
+                  block: enemy['block'] as int? ?? 0,
+                  color: EmberColors.danger,
+                  label: 'ENEMY HP · TURN ${st['turn']}',
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-      // The stage: hero (left) vs enemy (right), animated sprite loops.
-      Expanded(child: _stage(enemy, intent, compact: compact)),
-      // Player HP
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.l),
-        child: StatBar(
+        // The stage: hero (left) vs enemy (right), animated sprite loops.
+        Expanded(child: _stage(enemy, intent, compact: compact)),
+        // Player HP
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.l),
+          child: StatBar(
             value: (player['hp'] as int).clamp(0, player['max_hp'] as int),
             max: player['max_hp'] as int,
             block: player['block'] as int,
             color: EmberColors.hp,
-            label: 'YOUR HP'),
-      ),
-      SizedBox(height: compact ? Space.s : Space.m),
-      // Dice tray (combo call-outs pop over it; in reroll mode taps pick the
-      // unassigned dice to risk — assigned dice never join the selection).
-      // Bounded + scrollable: a fat late-run pool can wrap to many rows, so
-      // past ~2 rows the tray scrolls instead of squeezing the stage out and
-      // overflowing the column on short screens.
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Space.l),
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: compact ? 112 : 256),
-              child: SingleChildScrollView(
-                child: Wrap(
-              spacing: Space.s,
-              runSpacing: Space.s,
-              alignment: WrapAlignment.center,
-              children: [
-                for (var i = 1; i <= dice0.length; i++)
-                  DieChip(dice0[i - 1],
-                      value: rolled != null ? rolled[i - 1] : null,
-                      assigned: assigned['$i'] != null,
-                      selected: _rerollMode
-                          ? _rerollSel.contains(i)
-                          : selected == i,
-                      maxed: maxed != null && maxed[i - 1],
-                      rollToken: _rollGen,
-                      // 50 ms cascade so the tumble reads left-to-right.
-                      tumbleDelayMs: (i - 1) * 50,
-                      // v0.3.1 F1/F2: selection is pure UI state, so dice
-                      // stay tappable during choreography; a spent die
-                      // answers with an explicit call-out instead of
-                      // silently eating the tap.
-                      onTap: rolled == null
-                          ? null
-                          : assigned['$i'] != null
-                              ? () => _note('ALREADY ASSIGNED',
-                                  color: EmberColors.textDim,
-                                  icon: Icons.do_not_disturb_alt)
-                              : _rerollMode
-                                  ? () => setState(() =>
-                                      _rerollSel.contains(i)
-                                          ? _rerollSel.remove(i)
-                                          : _rerollSel.add(i))
-                                  : () {
-                                      Haptics.light();
-                                      setState(() => selected =
-                                          selected == i ? null : i);
-                                    })
-                  ],
-                ),
-              ),
-            ),
-            for (final (idx, n)
-                in _notes.where((n) => !n.onEnemy).toList().indexed)
-              Positioned(
-                top: -30.0 - idx * 24,
-                child: TextPop(
-                  key: ValueKey('note-${n.id}'),
-                  text: n.text,
-                  color: n.color,
-                  icon: n.icon,
-                  fontSize: 16,
-                  onDone: () {
-                    if (mounted) setState(() => _notes.remove(n));
-                  },
-                ),
-              ),
-          ],
+            label: 'YOUR HP',
+          ),
         ),
-      ),
-      SizedBox(height: compact ? Space.s : Space.m),
-      // Action zone (thumb reach)
-      Padding(
-        padding: EdgeInsets.fromLTRB(
-            Space.l, 0, Space.l, compact ? Space.s : Space.l),
-        child: rolled == null
-            ? SizedBox(
-                width: double.infinity,
-                child: EmberButton('Roll',
+        SizedBox(height: compact ? Space.s : Space.m),
+        // Dice tray (combo call-outs pop over it; in reroll mode taps pick the
+        // unassigned dice to risk — assigned dice never join the selection).
+        // Bounded + scrollable: a fat late-run pool can wrap to many rows, so
+        // past ~2 rows the tray scrolls instead of squeezing the stage out and
+        // overflowing the column on short screens.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.l),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: compact ? 112 : 256),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: Space.s,
+                    runSpacing: Space.s,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      for (var i = 1; i <= dice0.length; i++)
+                        DieChip(
+                          dice0[i - 1],
+                          value: rolled != null ? rolled[i - 1] : null,
+                          assigned: assigned['$i'] != null,
+                          selected: _rerollMode
+                              ? _rerollSel.contains(i)
+                              : selected == i,
+                          maxed: maxed != null && maxed[i - 1],
+                          rollToken: _rollGen,
+                          // 50 ms cascade so the tumble reads left-to-right.
+                          tumbleDelayMs: (i - 1) * 50,
+                          // v0.3.1 F1/F2: selection is pure UI state, so dice
+                          // stay tappable during choreography; a spent die
+                          // answers with an explicit call-out instead of
+                          // silently eating the tap.
+                          onTap: rolled == null
+                              ? null
+                              : assigned['$i'] != null
+                              ? () => _note(
+                                  'ALREADY ASSIGNED',
+                                  color: EmberColors.textDim,
+                                  icon: Icons.do_not_disturb_alt,
+                                )
+                              : _rerollMode
+                              ? () => setState(
+                                  () => _rerollSel.contains(i)
+                                      ? _rerollSel.remove(i)
+                                      : _rerollSel.add(i),
+                                )
+                              : () {
+                                  Haptics.light();
+                                  setState(
+                                    () => selected = selected == i ? null : i,
+                                  );
+                                },
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              for (final (idx, n)
+                  in _notes.where((n) => !n.onEnemy).toList().indexed)
+                Positioned(
+                  top: -30.0 - idx * 24,
+                  child: TextPop(
+                    key: ValueKey('note-${n.id}'),
+                    text: n.text,
+                    color: n.color,
+                    icon: n.icon,
+                    fontSize: 16,
+                    onDone: () {
+                      if (mounted) setState(() => _notes.remove(n));
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+        SizedBox(height: compact ? Space.s : Space.m),
+        // Action zone (thumb reach)
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            Space.l,
+            0,
+            Space.l,
+            compact ? Space.s : Space.l,
+          ),
+          child: rolled == null
+              ? SizedBox(
+                  width: double.infinity,
+                  child: EmberButton(
+                    'Roll',
                     primary: true,
                     dense: compact,
                     icon: Icons.casino,
@@ -529,124 +601,170 @@ class _CombatScreenState extends State<CombatScreen> {
                             final events = c.apply({'type': 'roll'});
                             // Combo call-outs land after the tumble reads.
                             Future.delayed(
-                                const Duration(milliseconds: 550), () {
-                              if (mounted) _announceCombos(events);
-                            });
-                          }))
-            : _rerollMode
-                // Risky-reroll confirm: pick unassigned dice, then commit.
-                ? Column(children: [
+                              const Duration(milliseconds: 550),
+                              () {
+                                if (mounted) _announceCombos(events);
+                              },
+                            );
+                          },
+                  ),
+                )
+              : _rerollMode
+              // Risky-reroll confirm: pick unassigned dice, then commit.
+              ? Column(
+                  children: [
                     Text(
-                        freeReroll
-                            ? 'Pick dice to reroll — FREE this turn'
-                            : 'Pick dice to reroll — each lands −1 pip',
-                        style: EmberText.micro.copyWith(
-                            color: freeReroll
-                                ? EmberColors.success
-                                : EmberColors.textDim)),
+                      freeReroll
+                          ? 'Pick dice to reroll — FREE this turn'
+                          : 'Pick dice to reroll — each lands −1 pip',
+                      style: EmberText.micro.copyWith(
+                        color: freeReroll
+                            ? EmberColors.success
+                            : EmberColors.textDim,
+                      ),
+                    ),
                     const SizedBox(height: Space.s),
-                    Row(children: [
-                      Expanded(
-                          child: EmberButton('Cancel',
-                              ghost: true,
-                              dense: compact,
-                              onTap: () => setState(() {
-                                    _rerollMode = false;
-                                    _rerollSel.clear();
-                                  }))),
-                      const SizedBox(width: Space.m),
-                      Expanded(
-                          child: EmberButton(
-                              'Reroll (${_rerollSel.length})',
-                              primary: true,
-                              dense: compact,
-                              icon: Icons.casino,
-                              onTap: _rerollSel.isNotEmpty && !_busy
-                                  ? _doRiskyReroll
-                                  : null)),
-                    ]),
-                  ])
-                : Column(children: [
-                    Row(children: [
-                      // Enabled during choreography too: taps land in the
-                      // one-slot queue instead of being dropped (F2).
-                      Expanded(
-                          child: EmberButton('Attack',
-                              dense: compact,
-                              icon: Icons.gps_fixed,
-                              onTap: selected != null ? _attack : null)),
-                      const SizedBox(width: Space.m),
-                      Expanded(
-                          child: EmberButton('Block',
-                              dense: compact,
-                              icon: Icons.shield,
-                              onTap: selected != null ? _block : null)),
-                    ]),
-                    SizedBox(height: compact ? Space.s : Space.m),
-                    Row(children: [
-                      if (rerolls > 0)
+                    Row(
+                      children: [
                         Expanded(
-                            child: EmberButton('Reroll ($rerolls)',
-                                dense: compact,
-                                icon: Icons.replay,
-                                onTap: selected != null && !_busy
-                                    ? () {
-                                        c.apply(
-                                            {'type': 'reroll', 'die': selected});
-                                        setState(() {});
-                                      }
-                                    : null)),
-                      if (rerolls > 0) const SizedBox(width: Space.m),
-                      // Risky reroll (m4 contract §1): once per turn, −1 pip
-                      // per rerolled die — waived after a straight (FREE).
-                      Expanded(
                           child: EmberButton(
-                              riskyUsed
-                                  ? 'Reroll spent'
-                                  : freeReroll
-                                      ? 'Risky reroll · FREE'
-                                      : 'Risky reroll · −1 pip',
+                            'Cancel',
+                            ghost: true,
+                            dense: compact,
+                            onTap: () => setState(() {
+                              _rerollMode = false;
+                              _rerollSel.clear();
+                            }),
+                          ),
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: EmberButton(
+                            'Reroll (${_rerollSel.length})',
+                            primary: true,
+                            dense: compact,
+                            icon: Icons.casino,
+                            onTap: _rerollSel.isNotEmpty && !_busy
+                                ? _doRiskyReroll
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              : Column(
+                  children: [
+                    Row(
+                      children: [
+                        // Enabled during choreography too: taps land in the
+                        // one-slot queue instead of being dropped (F2).
+                        Expanded(
+                          child: EmberButton(
+                            'Attack',
+                            dense: compact,
+                            icon: Icons.gps_fixed,
+                            onTap: selected != null ? _attack : null,
+                          ),
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: EmberButton(
+                            'Block',
+                            dense: compact,
+                            icon: Icons.shield,
+                            onTap: selected != null ? _block : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: compact ? Space.s : Space.m),
+                    Row(
+                      children: [
+                        if (rerolls > 0)
+                          Expanded(
+                            child: EmberButton(
+                              'Reroll ($rerolls)',
                               dense: compact,
-                              icon: Icons.casino,
-                              onTap: riskyUsed || _busy
-                                  ? null
-                                  : () => setState(() {
-                                        _rerollMode = true;
-                                        _rerollSel.clear();
-                                        selected = null;
-                                      }))),
-                    ]),
+                              icon: Icons.replay,
+                              onTap: selected != null && !_busy
+                                  ? () {
+                                      c.apply({
+                                        'type': 'reroll',
+                                        'die': selected,
+                                      });
+                                      setState(() {});
+                                    }
+                                  : null,
+                            ),
+                          ),
+                        if (rerolls > 0) const SizedBox(width: Space.m),
+                        // Risky reroll (m4 contract §1): once per turn, −1 pip
+                        // per rerolled die — waived after a straight (FREE).
+                        Expanded(
+                          child: EmberButton(
+                            riskyUsed
+                                ? 'Reroll spent'
+                                : freeReroll
+                                ? 'Risky reroll · FREE'
+                                : 'Risky reroll · −1 pip',
+                            dense: compact,
+                            icon: Icons.casino,
+                            onTap: riskyUsed || _busy
+                                ? null
+                                : () => setState(() {
+                                    _rerollMode = true;
+                                    _rerollSel.clear();
+                                    selected = null;
+                                  }),
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: compact ? Space.s : Space.m),
                     SizedBox(
-                        width: double.infinity,
-                        child: EmberButton('End turn',
-                            primary: true, dense: compact, onTap: _endTurn)),
-                  ]),
-      ),
-    ]);
+                      width: double.infinity,
+                      child: EmberButton(
+                        'End turn',
+                        primary: true,
+                        dense: compact,
+                        onTap: _endTurn,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
 
-    return ShakeBox(
-      key: _shakeKey,
-      child: Stack(fit: StackFit.expand, children: [
-        combat,
-        if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
-        if (_tutStep >= 0)
-          _TutorialOverlay(
-            step: _tutStep,
-            onNext: () => setState(() {
-              if (_tutStep >= 2) {
-                _tutStep = -1;
-                widget.c.markTutorialSeen();
-              } else {
-                _tutStep++;
-              }
-            }),
-            onSkip: () => setState(() {
-              _tutStep = -1;
-              widget.c.markTutorialSeen();
-            }),
-          ),
-      ]),
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: maxHudScale,
+      child: ShakeBox(
+        key: _shakeKey,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            combat,
+            if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+            if (_tutStep >= 0)
+              _TutorialOverlay(
+                step: _tutStep,
+                onNext: () => setState(() {
+                  if (_tutStep >= 2) {
+                    _tutStep = -1;
+                    widget.c.markTutorialSeen();
+                  } else {
+                    _tutStep++;
+                  }
+                }),
+                onSkip: () => setState(() {
+                  _tutStep = -1;
+                  widget.c.markTutorialSeen();
+                }),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -672,98 +790,109 @@ class _CombatScreenState extends State<CombatScreen> {
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
       // Clip.none: on short screens the shrunken stage lets sprites/intent
       // badges overlap the header gracefully instead of being cut off.
-      child: Stack(clipBehavior: Clip.none, children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: Space.s),
-              child: _combatant(
-                sprite: SpriteView(_characterId,
-                    key: ValueKey('hero-$_characterId'), height: heroH),
-                spriteHeight: heroH,
-                lungeToward: 1,
-                lunge: _playerLunge,
-                knock: _playerKnock,
-                flash: _playerFlash,
-                dying: _playerDying,
-                squash: _playerSquash,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: Space.s),
+                child: _combatant(
+                  sprite: SpriteView(
+                    _characterId,
+                    key: ValueKey('hero-$_characterId'),
+                    height: heroH,
+                  ),
+                  spriteHeight: heroH,
+                  lungeToward: 1,
+                  lunge: _playerLunge,
+                  knock: _playerKnock,
+                  flash: _playerFlash,
+                  dying: _playerDying,
+                  squash: _playerSquash,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: Space.s),
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.topCenter,
-                children: [
-                  _combatant(
-                    sprite: SpriteView(enemyId,
+              Padding(
+                padding: const EdgeInsets.only(bottom: Space.s),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.topCenter,
+                  children: [
+                    _combatant(
+                      sprite: SpriteView(
+                        enemyId,
                         key: ValueKey('enemy-$enemyId'),
                         height: enemyH,
-                        flipX: true),
-                    spriteHeight: enemyH,
-                    // Slight depth scale: the enemy stands a step closer.
-                    depthScale: big ? 1.02 : 1.06,
-                    lungeToward: -1,
-                    lunge: _enemyLunge,
-                    knock: _enemyKnock,
-                    flash: _enemyFlash,
-                    dying: _enemyDying,
-                    squash: _enemySquash,
-                  ),
-                  // Intent as an icon badge floating above the enemy
-                  // (overlaid, so it never adds layout height). Burn stacks
-                  // sit beside it while the enemy is alight.
-                  Positioned(
-                    top: -44,
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      _IntentBadge(intent),
-                      if ((enemy['burn'] as int? ?? 0) > 0) ...[
-                        const SizedBox(width: Space.xs),
-                        _BurnBadge(enemy['burn'] as int),
-                      ],
-                    ]),
-                  ),
-                ],
+                        flipX: true,
+                      ),
+                      spriteHeight: enemyH,
+                      // Slight depth scale: the enemy stands a step closer.
+                      depthScale: big ? 1.02 : 1.06,
+                      lungeToward: -1,
+                      lunge: _enemyLunge,
+                      knock: _enemyKnock,
+                      flash: _enemyFlash,
+                      dying: _enemyDying,
+                      squash: _enemySquash,
+                    ),
+                    // Intent as an icon badge floating above the enemy
+                    // (overlaid, so it never adds layout height). Burn stacks
+                    // sit beside it while the enemy is alight.
+                    Positioned(
+                      top: -44,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _IntentBadge(intent),
+                          if ((enemy['burn'] as int? ?? 0) > 0) ...[
+                            const SizedBox(width: Space.xs),
+                            _BurnBadge(enemy['burn'] as int),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
+          for (final (idx, n)
+              in _notes.where((n) => n.onEnemy).toList().indexed)
+            Positioned(
+              right: 12,
+              bottom: 150.0 + idx * 24,
+              child: TextPop(
+                key: ValueKey('note-${n.id}'),
+                text: n.text,
+                color: n.color,
+                icon: n.icon,
+                fontSize: 15,
+                onDone: () {
+                  if (mounted) setState(() => _notes.remove(n));
+                },
               ),
             ),
-          ],
-        ),
-        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
-        for (final (idx, n)
-            in _notes.where((n) => n.onEnemy).toList().indexed)
-          Positioned(
-            right: 12,
-            bottom: 150.0 + idx * 24,
-            child: TextPop(
-              key: ValueKey('note-${n.id}'),
-              text: n.text,
-              color: n.color,
-              icon: n.icon,
-              fontSize: 15,
-              onDone: () {
-                if (mounted) setState(() => _notes.remove(n));
-              },
+          // Floating damage numbers (player pops left, enemy pops right).
+          for (final p in _pops)
+            Positioned(
+              left: p.onPlayer ? 24 : null,
+              right: p.onPlayer ? null : 24,
+              bottom: 120,
+              child: DamagePop(
+                key: ValueKey('pop-${p.id}'),
+                amount: p.amount,
+                blocked: p.blocked,
+                onPlayer: p.onPlayer,
+                onDone: () {
+                  if (mounted) setState(() => _pops.remove(p));
+                },
+              ),
             ),
-          ),
-        // Floating damage numbers (player pops left, enemy pops right).
-        for (final p in _pops)
-          Positioned(
-            left: p.onPlayer ? 24 : null,
-            right: p.onPlayer ? null : 24,
-            bottom: 120,
-            child: DamagePop(
-              key: ValueKey('pop-${p.id}'),
-              amount: p.amount,
-              blocked: p.blocked,
-              onPlayer: p.onPlayer,
-              onDone: () {
-                if (mounted) setState(() => _pops.remove(p));
-              },
-            ),
-          ),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -781,38 +910,44 @@ class _CombatScreenState extends State<CombatScreen> {
     Widget w = sprite;
     // Grounding: soft shadow ellipse under the feet (+ ember dissolve cloud
     // while dying).
-    w = Stack(clipBehavior: Clip.none, alignment: Alignment.bottomCenter,
-        children: [
-      Positioned(
-        bottom: -4,
-        child: AnimatedOpacity(
-          duration: _deathTime,
-          opacity: dying ? 0.0 : 1.0,
-          child: Container(
-            width: spriteHeight * 0.7,
-            height: spriteHeight * 0.14,
-            decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.all(Radius.elliptical(spriteHeight, 20)),
-              color: Colors.black.withValues(alpha: 0.38),
+    w = Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        Positioned(
+          bottom: -4,
+          child: AnimatedOpacity(
+            duration: _deathTime,
+            opacity: dying ? 0.0 : 1.0,
+            child: Container(
+              width: spriteHeight * 0.7,
+              height: spriteHeight * 0.14,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.elliptical(spriteHeight, 20),
+                ),
+                color: Colors.black.withValues(alpha: 0.38),
+              ),
             ),
           ),
         ),
-      ),
-      w,
-      if (dying)
-        Positioned.fill(
-            child: EmberBurst(duration: _deathTime, count: 30)),
-    ]);
+        w,
+        if (dying)
+          Positioned.fill(child: EmberBurst(duration: _deathTime, count: 30)),
+      ],
+    );
     // Hit-flash: paint the sprite solid white for a beat.
     w = AnimatedSwitcher(
       duration: const Duration(milliseconds: 60),
       child: flash
           ? ColorFiltered(
               key: const ValueKey('flash'),
-              colorFilter:
-                  const ColorFilter.mode(Colors.white, BlendMode.srcATop),
-              child: w)
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcATop,
+              ),
+              child: w,
+            )
           : KeyedSubtree(key: const ValueKey('plain'), child: w),
     );
     // Death: fade out while sinking (collapse) into the ember cloud.
@@ -846,8 +981,8 @@ class _CombatScreenState extends State<CombatScreen> {
     final dx = lunge
         ? 1.15 * lungeToward
         : knock
-            ? -0.22 * lungeToward
-            : 0.0;
+        ? -0.22 * lungeToward
+        : 0.0;
     return AnimatedSlide(
       offset: Offset(dx, 0),
       duration: lunge ? _contact : _knockTime,
@@ -894,40 +1029,52 @@ class _NamePlate extends StatelessWidget {
             final a = f < 0.15
                 ? f / 0.15
                 : f > 0.85
-                    ? (1 - f) / 0.15
-                    : 1.0;
-            final scale = 1.15 - 0.15 * Curves.easeOut.transform(
-                (f / 0.2).clamp(0.0, 1.0));
+                ? (1 - f) / 0.15
+                : 1.0;
+            final scale =
+                1.15 -
+                0.15 * Curves.easeOut.transform((f / 0.2).clamp(0.0, 1.0));
             return Opacity(
-                opacity: a.clamp(0.0, 1.0),
-                child: Transform.scale(scale: scale, child: child));
+              opacity: a.clamp(0.0, 1.0),
+              child: Transform.scale(scale: scale, child: child),
+            );
           },
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: Space.xl),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                Colors.transparent,
-                Colors.black.withValues(alpha: 0.85),
-                Colors.black.withValues(alpha: 0.85),
-                Colors.transparent,
-              ], stops: const [0.0, 0.18, 0.82, 1.0]),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.85),
+                  Colors.black.withValues(alpha: 0.85),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.18, 0.82, 1.0],
+              ),
               border: const Border(
                 top: BorderSide(color: EmberColors.ember, width: 1),
                 bottom: BorderSide(color: EmberColors.ember, width: 1),
               ),
             ),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text((enemy['name'] as String? ?? '').toUpperCase(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  (enemy['name'] as String? ?? '').toUpperCase(),
                   textAlign: TextAlign.center,
                   style: EmberText.h1.copyWith(
-                      color:
-                          boss ? EmberColors.kindBoss : EmberColors.kindElite,
-                      letterSpacing: 3)),
-              const SizedBox(height: Space.xs),
-              Text(boss ? 'LAYER $layer · BOSS' : 'LAYER $layer · ELITE',
-                  style: EmberText.micro.copyWith(letterSpacing: 3)),
-            ]),
+                    color: boss ? EmberColors.kindBoss : EmberColors.kindElite,
+                    letterSpacing: 3,
+                  ),
+                ),
+                const SizedBox(height: Space.xs),
+                Text(
+                  boss ? 'LAYER $layer · BOSS' : 'LAYER $layer · ELITE',
+                  style: EmberText.micro.copyWith(letterSpacing: 3),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -941,21 +1088,38 @@ class _BurnBadge extends StatelessWidget {
   const _BurnBadge(this.stacks);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.s),
-      decoration: BoxDecoration(
+    return Semantics(
+      label: 'Burning, $stacks ${stacks == 1 ? 'stack' : 'stacks'}',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.s,
+          vertical: Space.s,
+        ),
+        decoration: BoxDecoration(
           color: EmberColors.raised,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: EmberColors.ember)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.local_fire_department,
-            size: 16, color: EmberColors.ember),
-        const SizedBox(width: 2),
-        Text('$stacks',
-            style: EmberText.value
-                .copyWith(fontSize: 15, color: EmberColors.ember)),
-      ]),
+          border: Border.all(color: EmberColors.ember),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.local_fire_department,
+              size: 16,
+              color: EmberColors.ember,
+            ),
+            const SizedBox(width: 2),
+            Text(
+              '$stacks',
+              style: EmberText.value.copyWith(
+                fontSize: 15,
+                color: EmberColors.ember,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -980,23 +1144,43 @@ class _IntentBadge extends StatelessWidget {
     final border = kind == 'attack_block'
         ? EmberColors.kindElite
         : kind == 'block'
-            ? EmberColors.block
-            : EmberColors.danger;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: Space.s),
-      decoration: BoxDecoration(
+        ? EmberColors.block
+        : EmberColors.danger;
+    final spoken = switch (kind) {
+      'attack' => 'attack for ${intent['amount']}',
+      'block' => 'block ${intent['amount']}',
+      'attack_block' =>
+        'attack for ${intent['amount']} and block ${intent['block']}',
+      _ => '$kind',
+    };
+    return Semantics(
+      label: 'Enemy intent: $spoken',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.m,
+          vertical: Space.s,
+        ),
+        decoration: BoxDecoration(
           color: EmberColors.raised,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: border)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        for (final (i, part) in parts.indexed) ...[
-          if (i > 0) const SizedBox(width: Space.m),
-          Icon(part.$1, size: 18, color: part.$2),
-          const SizedBox(width: Space.xs),
-          Text(part.$3,
-              style: EmberText.value.copyWith(fontSize: 18, color: part.$2)),
-        ],
-      ]),
+          border: Border.all(color: border),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (i, part) in parts.indexed) ...[
+              if (i > 0) const SizedBox(width: Space.m),
+              Icon(part.$1, size: 18, color: part.$2),
+              const SizedBox(width: Space.xs),
+              Text(
+                part.$3,
+                style: EmberText.value.copyWith(fontSize: 18, color: part.$2),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
