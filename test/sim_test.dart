@@ -14,16 +14,16 @@ import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/rng.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 
-// The v5 golden, deliberately re-anchored for the v0.3.1 balance pass
-// (early-mercy on layer-2/3 regulars + ember floor on death; SIM_VERSION
-// 4 -> 5). Old goldens: v3 513683311, v4 1117081416 (docs/m4-sim-contract.md
-// documents the v3->v4 move; docs/FIX_PLAN_v0.3.1.md the v4->v5 one). If this
+// The v6 golden, deliberately re-anchored when the starting-boon pool grew
+// from 8 to 15 (the without-replacement draw over boonsOrder reshuffles the
+// seeded boon stream for every seed; SIM_VERSION 5 -> 6 so mid-flight v5
+// saves are cleanly discarded at boot). Resolution rules are untouched —
+// only the offering stream moved. Old goldens: v3 513683311,
+// v4 1117081416, v5 1117081416 (docs/m4-sim-contract.md documents v3->v4,
+// docs/FIX_PLAN_v0.3.1.md v4->v5, progress.md the v5->v6 move). If this
 // changes again, sim behavior for existing seeds changed: bump SIM_VERSION
 // and document.
-// Note: numerically equal to the v4 golden — measured, not assumed: seed
-// 20260723's bot path meets no layer-2 regular fight, so the mercy shave
-// never touches its event stream (verified by zeroing the shave: same hash).
-const int goldenV5 = 1117081416;
+const int goldenV6 = 1842571558;
 
 void main() {
   group('rng', () {
@@ -91,7 +91,7 @@ void main() {
 
     test('golden determinism anchor (regression guard)', () {
       final sim = playRun(20260723).sim;
-      expect(sim.eventHash, equals(goldenV5));
+      expect(sim.eventHash, equals(goldenV6));
     });
   });
 
