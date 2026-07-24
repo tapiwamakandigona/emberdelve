@@ -77,6 +77,12 @@ void _applyTurnBlock(Sim sim, List<Map<String, Object?>> events) {
 int earlyMercyAttackShave(int layer) => layer <= 2 ? 2 : 0;
 int earlyMercyHpCap(int layer) => layer <= 2 ? 28 : 1 << 30;
 
+/// Hard-mode layer ramp (v0.3.3): +1 early, +2 mid, +3 late/boss.
+int hardAttackBonus(int layer) => layer <= 3 ? 1 : (layer <= 6 ? 2 : 3);
+
+/// Hard-mode enemy HP scalar by layer: x1.10 early, x1.25 mid, x1.40 late.
+double hardHpScalar(int layer) => layer <= 3 ? 1.10 : (layer <= 6 ? 1.25 : 1.40);
+
 void combatBegin(
     Sim sim, String enemyId, bool elite, List<Map<String, Object?>> events,
     {int layer = 99}) {
@@ -85,18 +91,28 @@ void combatBegin(
   // Difficulty (v0.3.2): deterministic flat/scalar adjustments, no RNG, so
   // determinism and replays are untouched. 'normal' is byte-identical to the
   // pre-difficulty sim (golden anchor). Tuned by measurement (bin/autoplay):
-  // easy = enemy HP x0.8 and attacks -2 (min 1); hard = HP x1.25, amounts +2.
+  // easy = enemy HP x0.8 and attacks -2 (min 1), flat.
+  //
+  // Hard (v0.3.3) is a LAYER-SCALED RAMP, not a flat wall: the original flat
+  // +2 / HP x1.25 put 68% of all hard losses on the very first fight (bot
+  // histogram, 200 seeds) — a bouncer, not a climb. The ramp keeps hard's
+  // late-run bite while letting a fresh pool get through the door:
+  //   layers 2-3: +1, HP x1.10   ·   layers 4-6: +2, HP x1.25
+  //   layers 7+ and the boss:    +3, HP x1.40
+  // (The boss call site passes no layer, so it lands in the 7+ bracket by
+  // the `layer = 99` default — intentional.) Deterministic pure function of
+  // (difficulty, layer); normal and easy paths are untouched.
   final difficulty = sim.run?['difficulty'] as String? ?? 'normal';
   final diffAmount = difficulty == 'easy'
       ? -2
       : difficulty == 'hard'
-          ? 2
+          ? hardAttackBonus(layer)
           : 0;
   final mercy = (!elite && !def.boss) ? earlyMercyAttackShave(layer) : 0;
   final hpCap = (!elite && !def.boss) ? earlyMercyHpCap(layer) : (1 << 30);
   var hp = def.hp > hpCap ? hpCap : def.hp;
   if (difficulty == 'easy') hp = (hp * 0.8).round();
-  if (difficulty == 'hard') hp = (hp * 1.25).round();
+  if (difficulty == 'hard') hp = (hp * hardHpScalar(layer)).round();
   if (hp < 1) hp = 1;
   int shaved(int amount) {
     final v = amount - mercy;
