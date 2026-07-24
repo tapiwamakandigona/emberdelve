@@ -7,6 +7,7 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 
 import '../ember_game.dart';
+import '../enemies/boss_core.dart';
 import '../enemies/enemy_core.dart';
 
 class EnemyComponent extends PositionComponent
@@ -59,12 +60,14 @@ class EnemyComponent extends PositionComponent
           ..colorFilter = const ui.ColorFilter.mode(
               ui.Color(0xFF7FA05A), ui.BlendMode.modulate);
       case EnemyKind.groveGolem:
-        // Boss: scaled + tinted thornling composite (see boss commit).
+        // Boss: 2x-scaled, moss-tinted thornling composite (CC0 Sunny Land)
+        // + rock.png for its lobbed rocks. No unverified art added.
         _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
+        _rock = await game.images.load('props/rock.png');
         _tint = ui.Paint()
           ..filterQuality = ui.FilterQuality.none
           ..colorFilter = const ui.ColorFilter.mode(
-              ui.Color(0xFF9C8AD9), ui.BlendMode.modulate);
+              ui.Color(0xFF87A96B), ui.BlendMode.modulate);
     }
     _show(_main!);
   }
@@ -101,6 +104,10 @@ class EnemyComponent extends PositionComponent
     final b = core.body;
     if (core.kind == EnemyKind.emberTotem) {
       _renderTotem(canvas, ticker);
+      return;
+    }
+    if (core.kind == EnemyKind.groveGolem) {
+      _renderGolem(canvas, ticker);
       return;
     }
     final sprite = ticker.getSprite();
@@ -157,4 +164,76 @@ class EnemyComponent extends PositionComponent
 
   static final _firePaint = ui.Paint()
     ..filterQuality = ui.FilterQuality.none;
+
+  /// Boss: 2x-scaled tinted thornling body; telegraph = red pulse tint.
+  /// Hazards (shockwaves / root-spike warnings + spikes / rocks) are drawn
+  /// here too since the core owns them.
+  void _renderGolem(ui.Canvas canvas, SpriteAnimationTicker ticker) {
+    final golem = core as GroveGolemCore;
+    final b = core.body;
+    final sprite = ticker.getSprite();
+    const w = 72.0, h = 56.0;
+    canvas.save();
+    if (core.facing < 0) {
+      canvas.translate(b.centerX * 2, 0);
+      canvas.scale(-1, 1);
+    }
+    ui.Paint? paint = _tint;
+    if (core.hurtFlash > 0) {
+      paint = _flashPaint;
+    } else if (golem.telegraphPulse > 0.5) {
+      paint = _telegraphPaint;
+    }
+    sprite.render(canvas,
+        position: Vector2(b.centerX - w / 2, b.bottom - h),
+        size: Vector2(w, h),
+        overridePaint: paint);
+    canvas.restore();
+
+    for (final hz in golem.hazards) {
+      final r = hz.rect;
+      switch (hz.kind) {
+        case BossHazardKind.shockwave:
+          canvas.drawOval(
+              ui.Rect.fromLTWH(r.x, r.y + 2, r.w, r.h - 2), _shockPaint);
+          canvas.drawOval(
+              ui.Rect.fromLTWH(r.x + 3, r.y + 5, r.w - 6, r.h - 6),
+              _shockCore);
+        case BossHazardKind.rootSpike:
+          if (!hz.harmful) {
+            // Warning mark on the ground.
+            canvas.drawRect(
+                ui.Rect.fromLTWH(hz.x - 6, hz.y - 2, 12, 2), _warnPaint);
+          } else {
+            final path = ui.Path()
+              ..moveTo(r.x, hz.y)
+              ..lineTo(hz.x, r.y)
+              ..lineTo(r.x + r.w, hz.y)
+              ..close();
+            canvas.drawPath(path, _spikePaint);
+          }
+        case BossHazardKind.rock:
+          final rock = _rock;
+          if (rock != null) {
+            canvas.drawImageRect(
+                rock,
+                const ui.Rect.fromLTWH(0, 0, 28, 15),
+                ui.Rect.fromLTWH(r.x, r.y, r.w, r.h),
+                _rockPaint);
+          } else {
+            canvas.drawOval(
+                ui.Rect.fromLTWH(r.x, r.y, r.w, r.h), _spikePaint);
+          }
+      }
+    }
+  }
+
+  static final _telegraphPaint = ui.Paint()
+    ..filterQuality = ui.FilterQuality.none
+    ..colorFilter =
+        const ui.ColorFilter.mode(ui.Color(0xFFE86A4A), ui.BlendMode.modulate);
+  static final _shockPaint = ui.Paint()..color = const ui.Color(0xAA9C6A2F);
+  static final _shockCore = ui.Paint()..color = const ui.Color(0xCCE8A33D);
+  static final _warnPaint = ui.Paint()..color = const ui.Color(0xCCD53C3C);
+  static final _spikePaint = ui.Paint()..color = const ui.Color(0xFF6B4A2B);
 }

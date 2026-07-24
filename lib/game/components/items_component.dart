@@ -66,8 +66,11 @@ class ItemsComponent extends PositionComponent
   void render(ui.Canvas canvas) {
     final s = game.session;
 
-    // Exit door (bottom-center anchored on the exit tile).
-    final door = s.completed ? _doorOpen : _door;
+    // Exit door (bottom-center anchored on the exit tile). In boss arenas
+    // the door swings open the moment the boss dies.
+    final door = s.completed || (s.bossPresent && !s.exitLocked)
+        ? _doorOpen
+        : _door;
     canvas.drawImageRect(
       door,
       const ui.Rect.fromLTWH(0, 0, 22, 33),
