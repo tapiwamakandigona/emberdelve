@@ -20,6 +20,10 @@ plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.7.3" apply false
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+    // Firebase (v0.3.9 telemetry). Declared here (apply false) so app/ can
+    // apply it CONDITIONALLY — only when android/app/google-services.json
+    // exists. Until then the build stays green with telemetry as a no-op.
+    id("com.google.gms.google-services") version "4.4.4" apply false
 }
 
 include(":app")

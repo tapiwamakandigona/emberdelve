@@ -8,6 +8,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// v0.3.9 telemetry: the google-services plugin hard-fails without its config
+// file, so it is applied only once android/app/google-services.json exists.
+// TODO(SA-A2): drop the Firebase project's google-services.json (package
+// com.tsorostudios.emberdelve) into android/app/ — nothing else to change;
+// this block picks it up automatically. See README §Telemetry.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.lifecycle(
+        "emberdelve: android/app/google-services.json missing — building " +
+        "without Firebase config (telemetry no-op). See README §Telemetry.")
+}
+
 // Release signing: android/key.properties (NEVER committed; see docs/release.md
 // for where the permanent upload keystore + passwords live and how CI injects
 // them from GitHub Actions secrets).
