@@ -8,6 +8,7 @@ import 'package:emberdelve/data/dice.dart';
 import 'package:emberdelve/data/enemies.dart';
 import 'package:emberdelve/data/relics.dart';
 import 'package:emberdelve/sim/combat.dart';
+import 'package:emberdelve/sim/run_layer.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/sim/combos.dart';
 import 'package:emberdelve/sim/daily.dart';
@@ -24,6 +25,12 @@ import 'package:emberdelve/sim/autoplay.dart';
 // changes again, sim behavior for existing seeds changed: bump SIM_VERSION
 // and document.
 const int goldenV6 = 1842571558;
+
+// v0.4 boss-variety anchors: one golden per boss (the V6 seed maps to the
+// Tyrant; these two cover the Colossus and the Matriarch). Measured on the
+// build that introduced boss variety (bin/autoplay-verified balance).
+const int goldenColossus = 578589309;
+const int goldenMatriarch = 1077392826;
 
 void main() {
   group('rng', () {
@@ -90,8 +97,21 @@ void main() {
     });
 
     test('golden determinism anchor (regression guard)', () {
+      // Seed 20260723 % 3 == 1 maps to the Ember Tyrant (boss ordering in
+      // enemiesOrder is deliberate), so this anchor survived the v0.4
+      // boss-variety change byte-for-byte: boss choice is a pure function of
+      // the seed and consumes no RNG stream.
       final sim = playRun(20260723).sim;
       expect(sim.eventHash, equals(goldenV6));
+    });
+
+    test('boss variety: seed picks the boss, each has its own anchor', () {
+      // One anchor per boss so a regression in ANY boss fight trips the gate.
+      expect(bossForSeed(20260723), equals('ember_tyrant'));
+      expect(bossForSeed(20260724), equals('pyre_matriarch'));
+      expect(bossForSeed(20260725), equals('ashen_colossus'));
+      expect(playRun(20260724).sim.eventHash, equals(goldenMatriarch));
+      expect(playRun(20260725).sim.eventHash, equals(goldenColossus));
     });
   });
 

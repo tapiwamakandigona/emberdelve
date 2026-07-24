@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import 'credits_screen.dart';
+import 'haptics.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -98,6 +99,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onChanged: (v) {
                     _s.haptics = v;
                     _changed(preview: true);
+                    // Answer "ON" with a buzz you can feel — instant
+                    // on-device confirmation that haptics actually work.
+                    if (v) Haptics.preview();
                   }),
             ]),
           ),
