@@ -24,7 +24,10 @@ import 'run_layer.dart';
 // 5: v0.3.1 balance pass — early-mercy shave on layer-2/3 regular fights and
 // the ember floor on death (5 + layer). Same seeds now produce different
 // runs, so mid-flight v4 saves are cleanly discarded at boot.
-const int simVersion = 5;
+// 6: starting-boon pool grew 8 -> 15 — the seeded boon draw reshuffles for
+// every seed (offering stream only; resolution rules untouched), so
+// mid-flight v5 saves are cleanly discarded at boot.
+const int simVersion = 6;
 
 const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
 

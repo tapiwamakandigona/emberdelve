@@ -10,8 +10,9 @@
 // RNG discipline:
 //   map     -> map generation only
 //   combat  -> dice rolls + enemy spawn pick
-//   loot    -> ember/gold amounts, reward + shop + event + insight picks
-//   shuffle -> event deck order + random die/relic grants inside events
+//   loot    -> ember/gold amounts, reward + shop + insight picks, and the
+//              random die/relic GRANTS inside events
+//   shuffle -> event deck order + random die LOSS inside events
 //   offer   -> map reward telegraphs (per-node offers precomputed at start_run)
 //   boon    -> starting-boon 1-of-3 offering (start_run {boons:true})
 

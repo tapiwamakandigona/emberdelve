@@ -38,8 +38,8 @@ fair-death pillar; (b) the cost is visible arithmetic on the dice themselves
 rerolling a decent die usually isn't, which is exactly the push-your-luck
 tension the backlog asked for.
 
-The M3 `reroll {die}` (relic-charge, single die, no penalty) is unchanged and
-coexists.
+The M3 `reroll {die}` (relic-charge, single die, no penalty) coexists; since
+the post-v0.3.3 fix it also re-detects combos afterwards (§3).
 
 ## 2. Phases
 
@@ -52,9 +52,12 @@ New state field: `sim.boons` (`List<String>?` of 3 boon ids while phase ==
 ## 3. Combos (backlog #1) — pure function of the rolled pool
 
 Detection lives in `lib/sim/combos.dart` (`detectCombos(List<int>) →
-ComboResult`), consumes **zero RNG**, and runs after every `roll` and after
+ComboResult`), consumes **zero RNG**, and runs after every `roll`, after
 every `reroll_risky` (over the final effective values, i.e. after min_value
-floors and the −1 pip penalty).
+floors and the −1 pip penalty), and after every charge `reroll` — combos are
+a pure function of the CURRENT pool, so any command that changes a rolled
+face re-detects them (fixed post-v0.3.3: a charge reroll used to leave
+`combo_bonus` stale).
 
 - **Pair** — exactly two dice share a value: each of the two dice carries a
   **+1 combo bonus** (+2 across the pair) added to whatever action it is

@@ -11,6 +11,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  // Must run before the first AudioPlayer exists — see initPlatformAudio.
+  await AudioService.initPlatformAudio();
   final audio = AudioService(await SettingsStore.load());
   AudioService.instance = audio;
   final controller = GameController()..audio = audio;

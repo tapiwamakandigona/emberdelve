@@ -35,8 +35,10 @@ void installDetailHook() {
   FlutterError.onError = (details) {
     final s = details.toString();
     final src =
-        RegExp(r'(lib/ui/\w+\.dart:\d+)').firstMatch(s)?.group(1) ?? '';
-    _details.add('$_probeContext: ${details.exceptionAsString().split('\n').first} @$src');
+        RegExp(r'(lib/ui/[\w/]+\.dart:\d+)').firstMatch(s)?.group(1) ?? '';
+    _details.add(
+      '$_probeContext: ${details.exceptionAsString().split('\n').first} @$src',
+    );
     original(details);
   };
 }
@@ -48,9 +50,11 @@ void _drain(WidgetTester tester) {
     final e = tester.takeException();
     if (e == null) break;
     final s = e.toString();
-    problems.add(_details.isNotEmpty
-        ? _details.removeAt(0)
-        : '$_probeContext: ${s.split('\n').first}');
+    problems.add(
+      _details.isNotEmpty
+          ? _details.removeAt(0)
+          : '$_probeContext: ${s.split('\n').first}',
+    );
   }
   _details.clear();
 }
@@ -63,18 +67,31 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
   }
 }
 
-Future<void> probeAllPhases(WidgetTester tester, Size size) async {
+/// Wraps [home] so the app renders at [textScale] (accessibility font size).
+Widget appAt(Widget home, double textScale) => MaterialApp(
+  theme: buildEmberTheme(),
+  builder: (context, child) => MediaQuery(
+    data: MediaQuery.of(
+      context,
+    ).copyWith(textScaler: TextScaler.linear(textScale)),
+    child: child!,
+  ),
+  home: home,
+);
+
+Future<void> probeAllPhases(
+  WidgetTester tester,
+  Size size, {
+  double textScale = 1.0,
+}) async {
   tester.view.physicalSize = size * tester.view.devicePixelRatio;
   addTearDown(tester.view.resetPhysicalSize);
 
   final c = GameController();
   c.meta.tutorialSeen = true;
   installDetailHook();
-  ctx('title@$size');
-  await tester.pumpWidget(MaterialApp(
-    theme: buildEmberTheme(),
-    home: GameRoot(c),
-  ));
+  ctx('title@$size@${textScale}x');
+  await tester.pumpWidget(appAt(GameRoot(c), textScale));
   _drain(tester);
   await pumpFor(tester, 400);
 
@@ -90,7 +107,14 @@ Future<void> probeAllPhases(WidgetTester tester, Size size) async {
   // Walk the map, probing every phase we land in. Give the player a large
   // dice pool so the combat tray wraps to several rows (worst case).
   (c.state!['player'] as Map)['dice'] = <String>[
-    'd6', 'd6', 'd6', 'd8_aegis', 'd10_blade', 'd12', 'd4_lucky', 'd8'
+    'd6',
+    'd6',
+    'd6',
+    'd8_aegis',
+    'd10_blade',
+    'd12',
+    'd4_lucky',
+    'd8',
   ];
   var guard = 0;
   var sawCombat = false, sawShop = false, sawEvent = false, sawRest = false;
@@ -99,8 +123,7 @@ Future<void> probeAllPhases(WidgetTester tester, Size size) async {
     if (phase == 'map') {
       final map = c.state!['map'] as Map;
       final position = map['position'] as int;
-      final edges =
-          ((map['edges'] as Map)['$position'] as List).cast<int>();
+      final edges = ((map['edges'] as Map)['$position'] as List).cast<int>();
       // Prefer node kinds we have not probed yet.
       final nodes = (map['nodes'] as Map).cast<String, Map>();
       int pick = edges.first;
@@ -126,7 +149,11 @@ Future<void> probeAllPhases(WidgetTester tester, Size size) async {
       final player = c.state!['player'] as Map;
       final n = (player['dice'] as List).length;
       for (var i = 1; i <= n && c.phase == 'player_turn'; i++) {
-        c.apply({'type': 'assign', 'die': i, 'action': i.isEven ? 'block' : 'attack'});
+        c.apply({
+          'type': 'assign',
+          'die': i,
+          'action': i.isEven ? 'block' : 'attack',
+        });
       }
       await pumpFor(tester, 400);
       if (c.phase == 'player_turn') {
@@ -169,12 +196,28 @@ Future<void> probeAllPhases(WidgetTester tester, Size size) async {
 
 void main() {
   for (final size in sizes) {
-    testWidgets('no layout errors across phases at $size',
-        (tester) async {
+    testWidgets('no layout errors across phases at $size', (tester) async {
       problems.clear();
       await probeAllPhases(tester, size);
-      expect(problems, isEmpty,
-          reason: 'layout problems:\n${problems.join('\n')}');
+      expect(
+        problems,
+        isEmpty,
+        reason: 'layout problems:\n${problems.join('\n')}',
+      );
+    });
+
+    // Accessibility pass: same walk with system font size at 1.3x (Android
+    // "Large"). Layouts must degrade gracefully, not overflow.
+    testWidgets('no layout errors across phases at $size, 1.3x text', (
+      tester,
+    ) async {
+      problems.clear();
+      await probeAllPhases(tester, size, textScale: 1.3);
+      expect(
+        problems,
+        isEmpty,
+        reason: 'layout problems at 1.3x text:\n${problems.join('\n')}',
+      );
     });
 
     testWidgets('settings screen fits at $size', (tester) async {
@@ -182,14 +225,16 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       problems.clear();
       ctx('settings@$size');
-      await tester.pumpWidget(MaterialApp(
-        theme: buildEmberTheme(),
-        home: const SettingsScreen(),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: const SettingsScreen()),
+      );
       _drain(tester);
       await pumpFor(tester, 400);
-      expect(problems, isEmpty,
-          reason: 'layout problems:\n${problems.join('\n')}');
+      expect(
+        problems,
+        isEmpty,
+        reason: 'layout problems:\n${problems.join('\n')}',
+      );
     });
 
     testWidgets('ledger screen fits at $size', (tester) async {
@@ -211,14 +256,16 @@ void main() {
         ..charWins.addAll({'kindler': 480, 'warden': 290, 'gambler': 223})
         ..ownedThemes.addAll({'frostfire', 'witchlight', 'goldvein'})
         ..activeTheme = 'witchlight';
-      await tester.pumpWidget(MaterialApp(
-        theme: buildEmberTheme(),
-        home: LedgerScreen(c),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
+      );
       _drain(tester);
       await pumpFor(tester, 400);
-      expect(problems, isEmpty,
-          reason: 'layout problems:\n${problems.join('\n')}');
+      expect(
+        problems,
+        isEmpty,
+        reason: 'layout problems:\n${problems.join('\n')}',
+      );
     });
   }
 }
