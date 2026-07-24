@@ -171,3 +171,12 @@ docs/store/screenshots/; harness lives in tool/ so it is NOT part of the CI
 gate — rerun manually after UI changes. Meta in shots is staged but honest to
 real mechanics (real screens, real seeds; ledger numbers are sample data).
 Known nit spotted while shooting: ledger delver rows print "1 wins".
+
+## 2026-07-24 — low-HP audio danger layer (branch feat/low-hp-danger-layer)
+2026-07-24 DANGER BED (flagged "before 1.0" since v0.2): quiet heartbeat loop
+(60bpm lub-dub + dark 41Hz drone, 8s seamless, synthesized in-house — CC0,
+credited) under combat music when phase == player_turn and hp <= 30% of max.
+audio_service.setDanger mirrors the ambience-bed lifecycle exactly (failed
+start must not occupy the slot; off always stops+disposes). The 30% rule
+lives in the controller (_inDanger), not the audio layer, so it stays
+gameplay-owned. Analyze clean; assets/widget/phase-transition suites green.

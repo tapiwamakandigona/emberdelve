@@ -49,6 +49,7 @@ class AudioService {
     'ember_gain': 'audio/sfx/ember_gain.ogg',
     'whoosh': 'audio/sfx/whoosh.ogg',
     'ember_ambience_loop': 'audio/sfx/ember_ambience_loop.ogg',
+    'danger_loop': 'audio/sfx/danger_loop.ogg',
   };
 
   /// Immediate SFX per sim event type. Combat impacts (whoosh, hits, deaths,
@@ -92,10 +93,12 @@ class AudioService {
   }
 
   static const _ambienceLevel = 0.35; // relative to music volume
+  static const _dangerLevel = 0.5; // relative to music volume
 
   AudioPlayer? _music;
   String? _musicKey;
   AudioPlayer? _ambience;
+  AudioPlayer? _danger;
 
   final List<AudioPlayer> _sfxPool = [];
   int _sfxNext = 0;
@@ -208,6 +211,35 @@ class AudioService {
     } else {
       final p = _ambience;
       _ambience = null;
+      if (p != null) {
+        try {
+          p.stop();
+          p.dispose();
+        } catch (_) {}
+      }
+    }
+  }
+
+  /// Low-HP danger bed (v0.4, flagged "before 1.0" since v0.2): a quiet
+  /// heartbeat loop under the combat music while the player is in lethal
+  /// range. Same lifecycle rules as the ambience bed: a failed start must
+  /// not occupy the slot, and off always stops+disposes.
+  void setDanger(bool on) {
+    if (on) {
+      if (_danger != null) return;
+      AudioPlayer? p;
+      try {
+        p = AudioPlayer();
+        _danger = p;
+        p.setReleaseMode(ReleaseMode.loop);
+        p.play(AssetSource(sfxPaths['danger_loop']!),
+            volume: settings.effectiveMusic * _dangerLevel);
+      } catch (_) {
+        if (_danger == p) _danger = null;
+      }
+    } else {
+      final p = _danger;
+      _danger = null;
       if (p != null) {
         try {
           p.stop();
