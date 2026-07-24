@@ -48,7 +48,10 @@ android {
         applicationId = "com.tsorostudios.emberdelve"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // v0.3.9: Firebase (analytics/crashlytics) requires minSdk 23
+        // (Android 6.0, 2015). Flutter's default is 21; devices on 21–22 are
+        // effectively extinct among Play beta testers.
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
