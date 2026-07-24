@@ -43,7 +43,7 @@ Pick a starting boon and delve again in seconds — 15 boons keep restarts
 fresh.
 
 FAIR BY DESIGN
-• Zero ads, zero tracking, zero permissions — fully offline
+• Zero ads, zero tracking, no internet permission — fully offline
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
 • A daily seeded delve, shared by everyone
