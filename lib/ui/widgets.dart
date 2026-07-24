@@ -633,14 +633,19 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                     'assets/images/ui/dice/die_d${def.size}.png',
                     filterQuality: FilterQuality.none,
                   ),
-                  if (value != null)
-                    CustomPaint(
-                      painter: _PipPainter(
-                        value,
-                        maxed: glowMaxed,
-                        selected: glowSelected,
-                      ),
+                  // Face content: rolled values as pips (numeral on the d4 —
+                  // the square pip layouts spill off the triangle), and a dim
+                  // engraved size numeral while unrolled, so a die never
+                  // renders as a blank cream shape (owner report 2026-07-24:
+                  // boon cards / pre-roll tray showed featureless squares).
+                  CustomPaint(
+                    painter: _FacePainter(
+                      value: value,
+                      sides: def.size,
+                      maxed: glowMaxed,
+                      selected: glowSelected,
                     ),
+                  ),
                   if (glowSelected)
                     CustomPaint(painter: _DieRingPainter(EmberColors.ember))
                   else if (glowMaxed)
@@ -696,13 +701,64 @@ class _DieRingPainter extends CustomPainter {
   bool shouldRepaint(covariant _DieRingPainter old) => old.color != color;
 }
 
-/// Pip layouts per value (1–12), drawn over the die face. Dark pips with a
-/// hot rim highlight so they read on the light die art.
-class _PipPainter extends CustomPainter {
-  final int value;
+/// Die face content painted over the die art.
+///
+/// - Rolled: classic pips (dark, hot rim) per [_layouts] — except the d4,
+///   which gets an engraved numeral like a real tetrahedral die: the square
+///   pip arrangements (corner pips for 2–4) land outside the triangle
+///   silhouette (owner screenshot 2026-07-24 — a pip floated off the die).
+/// - Unrolled ([value] == null): a dim engraved size numeral, so pre-roll
+///   tray dice and boon/shop/reward die cards read as dice, never as blank
+///   cream shapes.
+class _FacePainter extends CustomPainter {
+  final int? value;
+  final int sides;
   final bool maxed;
   final bool selected;
-  _PipPainter(this.value, {this.maxed = false, this.selected = false});
+  _FacePainter({
+    required this.value,
+    required this.sides,
+    this.maxed = false,
+    this.selected = false,
+  });
+
+  static const _ink = Color(0xFF241407);
+
+  /// The d4 triangle's visual centroid sits below its bounding-box center;
+  /// content drawn at the box center floats toward the apex.
+  Offset _faceCenter(Size size) {
+    final c = size.center(Offset.zero);
+    return sides == 4 ? c + Offset(0, size.height * 0.11) : c;
+  }
+
+  void _numeral(
+    Canvas canvas,
+    Size size,
+    String text, {
+    required Color color,
+    Color? rim,
+    required double fontSize,
+    FontWeight weight = FontWeight.w800,
+  }) {
+    TextPainter tp(Color c) => TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontFamily: 'Inter',
+          fontSize: fontSize,
+          fontWeight: weight,
+          color: c,
+          height: 1.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final main = tp(color);
+    final at = _faceCenter(size) - Offset(main.width / 2, main.height / 2);
+    // Same treatment as the pips: a warm rim highlight under the dark ink.
+    if (rim != null) tp(rim).paint(canvas, at + const Offset(0, 1.0));
+    main.paint(canvas, at);
+  }
 
   // Unit positions (-1..1) per value; classic pip arrangements, extended
   // symmetrically for 10–12.
@@ -799,8 +855,35 @@ class _PipPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final pips = _layouts[value.clamp(1, 12)]!;
-    final c = size.center(Offset.zero);
+    final v = value;
+    if (v == null) {
+      // Engraved stamp — dim and low-contrast, clearly "not rolled yet",
+      // never mistakable for the bright rimmed pips of a rolled value.
+      _numeral(
+        canvas,
+        size,
+        '$sides',
+        color: _ink.withValues(alpha: 0.30),
+        fontSize: size.shortestSide * 0.30,
+        weight: FontWeight.w700,
+      );
+      return;
+    }
+    if (sides == 4) {
+      _numeral(
+        canvas,
+        size,
+        '$v',
+        color: _ink,
+        rim: (maxed ? EmberColors.gold : const Color(0xFFFFD98A)).withValues(
+          alpha: maxed ? 0.9 : 0.5,
+        ),
+        fontSize: size.shortestSide * 0.34,
+      );
+      return;
+    }
+    final pips = _layouts[v.clamp(1, 12)]!;
+    final c = _faceCenter(size);
     // Conservative face area so pips stay inside every die silhouette
     // (d4 triangle is the tightest); dense values pack slightly smaller.
     final extent = size.shortestSide * (pips.length > 9 ? 0.20 : 0.17);
@@ -818,8 +901,11 @@ class _PipPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _PipPainter old) =>
-      old.value != value || old.maxed != maxed || old.selected != selected;
+  bool shouldRepaint(covariant _FacePainter old) =>
+      old.value != value ||
+      old.sides != sides ||
+      old.maxed != maxed ||
+      old.selected != selected;
 }
 
 // ---------------------------------------------------------------------------

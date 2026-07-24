@@ -282,3 +282,26 @@ Owner reviewed the PR #23 "after" screenshots and correctly flagged they still s
 - Event options: choices the sim would reject (unaffordable gold cost, pool ≤ 3 for die-loss) render disabled instead of spawning "Not enough gold" toasts; mirrors runEventChoose validation.
 - Harnesses: debugShowCheckedModeBanner=false (red ribbon was in every evidence shot) + precacheAllImages() so async image decode never ships blank art in screenshots (boon-card die art was invisible).
 Verified: 136/136 tests, analyze clean, many-dice probe 0 problems, play session 4/4 runs finished 0 problems. Lesson recorded: eyeball every screenshot before shipping it as evidence.
+
+## 2026-07-24 — Owner screenshot triage #2 (v0.3.8+11)
+Owner sent 4 in-game screenshots asking "so these look right to you?" — they didn't:
+1. **Intent/burn pills covered the enemy HP bar** (which then read ~55% full at
+   28/28 — the bar itself was fine, the pills drew over its right half). Root
+   cause: the stage Stack top-aligned its content, so on squeezed stages
+   (fat pool tray + short screen) the sprites hugged the top edge right under
+   the HP panel and the badge's fixed -44 lift escaped the stage entirely.
+   Fix: combatants row is now floor-pinned (Positioned bottom:0) and the badge
+   lift clamps to the stage's real headroom (negative lift pushes it DOWN onto
+   the sprite rather than up over the panel). CI regression test added
+   (verified to FAIL pre-fix): badge rect must not overlap any StatBar at
+   320x568 with a 12-die pool + burn.
+2. **Dice rendered as blank cream shapes** wherever value==null (pre-roll tray,
+   boon/shop/rest/reward die cards). _PipPainter → _FacePainter: unrolled dice
+   now show a dim engraved size numeral, so a die always reads as a die.
+3. **d4 pips spilled off the triangle** (value 2 drew one pip on the die, one
+   on the background) and sat above the visual centroid. The d4 now shows
+   rolled values as an engraved numeral (like a real tetrahedral die) at the
+   triangle's centroid; other dice keep pips, centered per-shape.
+New probe tool/owner_triage_probe_test.dart (boon + burning combat at 320/360,
+badge-vs-bar rect assertions + screenshots) — 0 problems; many-dice probe still
+0 problems; suite 137 green; analyze clean. All evidence screenshots eyeballed.
