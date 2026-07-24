@@ -24,3 +24,18 @@ A dark, turn-based **dice-builder roguelite** for Android. Roll, assign, and for
 Release builds are signed in CI from repository secrets (see `docs/release.md`).
 Without a local `android/key.properties` the build falls back to debug signing,
 so contributors can build and run without any secrets.
+
+## Telemetry (v0.3.9, phase 1)
+
+Consent-gated Firebase Analytics + Crashlytics + in-app feedback. Event
+schema and consent rules: `docs/telemetry-events.md`.
+
+**Firebase config is NOT in the repo yet.** The build intentionally works
+without it: `Firebase.initializeApp()` failure is caught and all telemetry
+becomes a no-op, and the google-services gradle plugin is only applied when
+the config exists. To activate telemetry, drop the Firebase project's
+`google-services.json` (Android package `com.tsorostudios.emberdelve`) into
+`android/app/google-services.json` — no other change needed. (Preferred
+long-term: run `flutterfire configure` and switch
+`lib/telemetry/telemetry_bootstrap.dart` to the generated
+`firebase_options.dart`.)
