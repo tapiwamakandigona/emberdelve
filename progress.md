@@ -359,3 +359,17 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
 - A prior agent's pivot attempt died locally without pushing — nothing recoverable. Restarted from `main` on branch `pivot/platformer`. Standing rule: PUSH AT EVERY MILESTONE.
 - M0 (this commit): PROJECT.md/README/spec/architecture rewritten for v2; dice-era docs → `docs/legacy/`.
 - Keep: CI+signing, package id, AudioService+audio assets, fonts, seeded RNG, atomic-save pattern. Drop: dice sim/UI/data (archived on legacy branch).
+
+---
+## 2026-07-24 — M2/M3 headless cores (worker A, emberpivot-0724-A)
+- `lib/game/session.dart`: LevelSession — headless level runtime (mutable grid, melee
+  resolution w/ seeded crits + hit-pause + burn DoT, apple projectiles (pooled), coins/
+  apples/feathers, chest coin bursts via 'drops' stream, cracked walls (3 hits, 1 with
+  wallBreaker), signs, exit door → LevelResults w/ 3 medals, fall-out + death → fail).
+- `lib/game/enemies/enemy_core.dart`: EnemyCore base + Thornling (edge/wall patrol),
+  Ashbat (sine flyer), Hopper (aggro hops). Totem/Rotshield/boss left as TODO(M5) no-ops.
+- `lib/game/core_loadout.dart`: Loadout.fromSave snapshot (weapon stats, meleePower,
+  maxHearts, tripleJump→extraAirJumps, appleCapacity, coin_magnet).
+- Tests: physics_test (11: jump 2-not-4 tiles, double 3.5, coyote 0.08 ok/0.2 not, buffer,
+  variable height, one-way land/up/drop-through, wall, spike i-frames, knockback),
+  enemy_core_test (6), combat_test (8), session_test (14). Suite 68/68, analyze clean.
