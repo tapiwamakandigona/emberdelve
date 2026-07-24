@@ -44,9 +44,37 @@ class EnemyComponent extends PositionComponent
         _main =
             await load('enemies/hopper_idle.png', 4, Vector2(35, 32), 0.14);
         _alt = await load('enemies/hopper_jump.png', 2, Vector2(35, 32), 0.12);
+      case EnemyKind.emberTotem:
+        // Composite: stone base (props/rock, CC0 Sunny Land) + the shared
+        // fire animation burning on top. No new art assets needed.
+        _rock = await game.images.load('props/rock.png');
+        _main = await load('fx/fire.png', 3, Vector2(16, 32), 0.09);
+      case EnemyKind.rotshield:
+        // Thornling strip tinted rot-green; the shield plate is drawn
+        // procedurally on the facing side.
+        _main =
+            await load('enemies/thornling.png', 6, Vector2(36, 28), 0.16);
+        _tint = ui.Paint()
+          ..filterQuality = ui.FilterQuality.none
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFF7FA05A), ui.BlendMode.modulate);
+      case EnemyKind.groveGolem:
+        // Boss: scaled + tinted thornling composite (see boss commit).
+        _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
+        _tint = ui.Paint()
+          ..filterQuality = ui.FilterQuality.none
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFF9C8AD9), ui.BlendMode.modulate);
     }
     _show(_main!);
   }
+
+  ui.Image? _rock;
+  ui.Paint? _tint;
+  static final _shieldPaint = ui.Paint()..color = const ui.Color(0xFF4A5C3A);
+  static final _shieldRim = ui.Paint()..color = const ui.Color(0xFF9BB07C);
+  static final _rockPaint = ui.Paint()
+    ..filterQuality = ui.FilterQuality.none;
 
   void _show(SpriteAnimation anim) {
     if (identical(anim, _shown)) return;
@@ -70,9 +98,13 @@ class EnemyComponent extends PositionComponent
   void render(ui.Canvas canvas) {
     final ticker = _ticker;
     if (ticker == null || core.sleeping) return;
+    final b = core.body;
+    if (core.kind == EnemyKind.emberTotem) {
+      _renderTotem(canvas, ticker);
+      return;
+    }
     final sprite = ticker.getSprite();
     final w = sprite.srcSize.x, h = sprite.srcSize.y;
-    final b = core.body;
     canvas.save();
     if (core.facing < 0) {
       canvas.translate(b.centerX * 2, 0);
@@ -81,7 +113,48 @@ class EnemyComponent extends PositionComponent
     sprite.render(canvas,
         position: Vector2(b.centerX - w / 2, b.bottom - h),
         size: Vector2(w, h),
-        overridePaint: core.hurtFlash > 0 ? _flashPaint : null);
+        overridePaint: core.hurtFlash > 0 ? _flashPaint : _tint);
+    if (core.kind == EnemyKind.rotshield) {
+      // Shield plate on the (post-flip) right edge = the facing side.
+      final rect = ui.Rect.fromLTWH(b.centerX + 8, b.top - 2, 5, b.h + 2);
+      canvas.drawRRect(
+          ui.RRect.fromRectAndRadius(rect, const ui.Radius.circular(2)),
+          _shieldPaint);
+      canvas.drawRect(
+          ui.Rect.fromLTWH(rect.left + 1, rect.top + 2, 1, rect.height - 4),
+          _shieldRim);
+    }
     canvas.restore();
   }
+
+  /// Stone base + fire crown; the fire dims while the totem recharges.
+  void _renderTotem(ui.Canvas canvas, SpriteAnimationTicker ticker) {
+    final b = core.body;
+    final rock = _rock;
+    if (rock != null) {
+      // Stack two rock slices for a stone pillar body.
+      canvas.drawImageRect(
+          rock,
+          const ui.Rect.fromLTWH(0, 0, 28, 15),
+          ui.Rect.fromLTWH(b.left - 2, b.bottom - 12, b.w + 4, 12),
+          core.hurtFlash > 0 ? _flashPaint : _rockPaint);
+      canvas.drawImageRect(
+          rock,
+          const ui.Rect.fromLTWH(2, 0, 24, 15),
+          ui.Rect.fromLTWH(b.left, b.bottom - 22, b.w, 11),
+          core.hurtFlash > 0 ? _flashPaint : _rockPaint);
+    }
+    final fire = ticker.getSprite();
+    final charging = (core as EmberTotemCore).cooldownLeft;
+    _firePaint.color = charging > 0.4
+        ? const ui.Color(0x99FFFFFF)
+        : const ui.Color(0xFFFFFFFF);
+    fire.render(canvas,
+        position: Vector2(b.centerX - 8, b.bottom - 22 - 26),
+        size: Vector2(16, 32),
+        overridePaint: core.hurtFlash > 0 ? _flashPaint : _firePaint);
+  }
+
+  static final _firePaint = ui.Paint()
+    ..filterQuality = ui.FilterQuality.none;
 }
