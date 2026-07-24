@@ -195,7 +195,11 @@ class LedgerScreen extends StatelessWidget {
       Flexible(
         child: FittedBox(
           fit: BoxFit.scaleDown,
-          child: Text(unlocked ? '$wins wins · $runs delves' : 'locked',
+          child: Text(
+              unlocked
+                  ? '$wins ${wins == 1 ? 'win' : 'wins'} · '
+                      '$runs ${runs == 1 ? 'delve' : 'delves'}'
+                  : 'locked',
               style: EmberText.label.copyWith(
                   color: unlocked
                       ? EmberColors.textDim
