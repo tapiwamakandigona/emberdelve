@@ -191,11 +191,15 @@ void main() {
           reason: 'temp file must be renamed into place');
 
       // A truncated/corrupt file (crash mid-write of a NON-atomic writer)
-      // must never crash load — it falls back to a fresh MetaState.
+      // must never crash load. Since v0.3.4 the previous good save is kept
+      // as .bak, so this now RECOVERS the last state instead of resetting
+      // (full backup semantics covered in meta_backup_test.dart).
       await File('${dir.path}/emberdelve_meta.json')
           .writeAsString('{"embers": 5, "unlo');
       final recovered = await MetaStore.load();
-      expect(recovered.embers, 0);
+      expect(recovered.embers, 20,
+          reason: '.bak holds the PREVIOUS generation (30 was the corrupted '
+              'main); recovering 20 beats resetting to 0');
     } finally {
       MetaStore.dirOverride = null;
       await dir.delete(recursive: true);
