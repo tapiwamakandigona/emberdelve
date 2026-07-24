@@ -66,20 +66,22 @@ Weapon/arsenal visibility is mastery visibility.
 
 ## Backlog — next highest-value feel work (in order)
 
-1. **Enemy silhouettes during intent** — tint/lean the enemy on its wind-up
-   (attack intents telegraph physically, not just via the badge).
-2. **Dice impact on assign** — assigning a die to attack should *charge* the
-   weapon (brief glow scaled by pips); makes the die→weapon causality visible.
-   Cheap: WeaponView already takes phase; add a `charge` level.
-3. **Boss kill moment** — bosses currently die like trash mobs (same 700 ms
-   dissolve). Deserve: slow-mo hold + bigger burst + screen flash.
-4. **Reward flip** (visuals.md #4, still open): rewards as 3 physical cards
-   you flip — the variable-reward moment deserves its own animation.
+1. ~~Enemy wind-up~~ — SHIPPED in feel-v2 (lean-back + heat tint, 190 ms).
+2. ~~Dice charge the weapon~~ — SHIPPED in feel-v2 (selected pips heat the
+   blade: glow halo, rising sparks, white-hot edge; heat holds through swing).
+3. ~~Boss kill moment~~ — SHIPPED in feel-v2 (white-hot impact freeze 260 ms
+   + full-magnitude shake + flash decay into the dissolve; longer terminal
+   hold for boss kills only).
+4. ~~Reward flip~~ — SHIPPED in feel-v2 (offers auto-flip as 3D cards,
+   staggered left-to-right; all flip — no peek-gamble — then tap to pick).
 5. **Run-power recap on victory screen**: "your pool, forged this run" strip
    (IKEA effect, design-system §1) — show the arsenal they built.
 6. **Plain reroll retumble**: single-die reroll doesn't retumble the die
    (only risky reroll bumps `_rollGen`); per-die tumble tokens would fix it.
 7. **Map ambience audio bed** per layer depth (hotter = lower rumble).
+8. **Weapon evolution**: weapon visuals could grow with forge upgrades
+   (bigger/hotter as the pool tiers up) — strongest remaining mastery-
+   visibility lever.
 
 ## Cited sources
 - gdkeys.com/keys-to-combat-design-1-anatomy-of-an-attack

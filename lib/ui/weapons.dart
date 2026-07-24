@@ -81,8 +81,16 @@ class WeaponView extends StatefulWidget {
   final String characterId;
   final double height;
   final WeaponPhase phase;
+
+  /// 0..1 — how "charged" the weapon is (die pips ready to strike). The
+  /// accent edge brightens, a heat halo grows, and sparks rise off the
+  /// blade, making the die -> weapon causality visible before the swing.
+  final double charge;
   const WeaponView(this.characterId,
-      {super.key, required this.height, this.phase = WeaponPhase.idle});
+      {super.key,
+      required this.height,
+      this.phase = WeaponPhase.idle,
+      this.charge = 0.0});
 
   @override
   State<WeaponView> createState() => _WeaponViewState();
@@ -149,10 +157,11 @@ class _WeaponViewState extends State<WeaponView>
               smear: true);
           break;
         case WeaponPhase.idle:
-          // Recovery: settle back to the ready pose.
+          // Recovery: settle back to the ready pose with a little
+          // follow-through overshoot (weight lives in the deceleration).
           _retarget(_def.idleAngle,
-              duration: const Duration(milliseconds: 260),
-              curve: Curves.easeOutCubic);
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutBack);
           break;
       }
     }
@@ -170,19 +179,29 @@ class _WeaponViewState extends State<WeaponView>
     final size = Size(widget.height, widget.height);
     return IgnorePointer(
       child: RepaintBoundary(
-        child: AnimatedBuilder(
-          animation: Listenable.merge([_sway, _move]),
-          builder: (context, _) {
-            final swayAmp = widget.phase == WeaponPhase.idle ? 0.05 : 0.0;
-            final angle = _angle() +
-                math.sin(_sway.value * math.pi * 2) * swayAmp;
-            final smearFrom =
-                _smearing && _move.isAnimating ? _from : null;
-            return CustomPaint(
-              size: size,
-              painter: _WeaponPainter(_def, angle, smearFrom: smearFrom),
-            );
-          },
+        // TweenAnimationBuilder eases charge changes (die picked/unpicked)
+        // so the heat swells instead of popping.
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: widget.charge.clamp(0.0, 1.0)),
+          duration: const Duration(milliseconds: 260),
+          curve: Curves.easeOutCubic,
+          builder: (context, charge, _) => AnimatedBuilder(
+            animation: Listenable.merge([_sway, _move]),
+            builder: (context, _) {
+              final swayAmp = widget.phase == WeaponPhase.idle ? 0.05 : 0.0;
+              final angle = _angle() +
+                  math.sin(_sway.value * math.pi * 2) * swayAmp;
+              final smearFrom =
+                  _smearing && _move.isAnimating ? _from : null;
+              return CustomPaint(
+                size: size,
+                painter: _WeaponPainter(_def, angle,
+                    smearFrom: smearFrom,
+                    charge: charge,
+                    sparkTime: _sway.value),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -193,8 +212,20 @@ class _WeaponPainter extends CustomPainter {
   final WeaponDef def;
   final double angle;
   final double? smearFrom; // when set, draw the smear arc from here to angle
+  final double charge; // 0..1 heat from the selected die's pips
+  final double sparkTime; // sway clock reused for charge-spark motion
   final Paint _p = Paint();
-  _WeaponPainter(this.def, this.angle, {this.smearFrom});
+  final Paint _outline = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeJoin = StrokeJoin.round
+    ..color = const Color(0xCC120C08);
+  _WeaponPainter(this.def, this.angle,
+      {this.smearFrom, this.charge = 0.0, this.sparkTime = 0.0});
+
+  double _h(int i, int salt) {
+    final v = math.sin(i * 113.9 + salt * 271.3) * 43758.5453;
+    return v - v.floorToDouble();
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -224,11 +255,40 @@ class _WeaponPainter extends CustomPainter {
       canvas.drawArc(rect.deflate(reach * 0.15), from - math.pi / 2,
           angle - from, false, _p);
       _p.shader = null;
+      // White-hot core streak on the trailing half of the smear — the glint
+      // that sells speed (brighter when the swing was charged).
+      final coreSweep = (angle - from) * 0.45;
+      _p
+        ..strokeWidth = reach * 0.09
+        ..color = Colors.white.withValues(alpha: 0.35 + 0.45 * charge);
+      canvas.drawArc(rect.deflate(reach * 0.15),
+          angle - math.pi / 2 - coreSweep, coreSweep, false, _p);
+      _p.style = PaintingStyle.fill;
     }
 
     canvas.save();
     canvas.translate(grip.dx, grip.dy);
     canvas.rotate(angle);
+    // Charge heat: a soft halo around the business end that swells with the
+    // selected die's pips, plus embers rising off the edge.
+    if (charge > 0.02) {
+      final tip = Offset(0, -reach * 0.75);
+      _p
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10)
+        ..color = def.accent.withValues(alpha: 0.10 + 0.28 * charge);
+      canvas.drawCircle(tip, reach * (0.18 + 0.22 * charge), _p);
+      _p.maskFilter = null;
+      final sparkCount = (2 + charge * 5).round();
+      for (var i = 0; i < sparkCount; i++) {
+        final f = (sparkTime * (0.7 + _h(i, 1) * 0.8) + _h(i, 2)) % 1.0;
+        final x = (_h(i, 3) - 0.5) * reach * 0.30;
+        final y = -reach * (0.45 + _h(i, 4) * 0.5) - f * reach * 0.22;
+        _p.color = Color.lerp(def.accent, Colors.white, _h(i, 5) * 0.5)!
+            .withValues(alpha: (1.0 - f) * (0.35 + 0.5 * charge));
+        canvas.drawCircle(Offset(x, y), 0.8 + _h(i, 6) * 1.4, _p);
+      }
+    }
     // All weapons draw in grip space: +y down the hand, -y out to the tip.
     switch (def.id) {
       case 'ward_maul':
@@ -285,12 +345,15 @@ class _WeaponPainter extends CustomPainter {
     ).createShader(Rect.fromLTWH(-w, -reach, w * 2, reach));
     canvas.drawPath(blade, _p);
     _p.shader = null;
-    // Forge-hot edge line up the leading side.
+    _outline.strokeWidth = w * 0.18;
+    canvas.drawPath(blade, _outline); // crisp silhouette against any bg
+    // Forge-hot edge line up the leading side (white-hot when charged).
     _p
       ..style = PaintingStyle.stroke
       ..strokeWidth = w * 0.34
       ..strokeCap = StrokeCap.round
-      ..color = def.accent.withValues(alpha: 0.85);
+      ..color = Color.lerp(def.accent, Colors.white, charge * 0.6)!
+          .withValues(alpha: 0.85 + 0.15 * charge);
     canvas.drawLine(
         Offset(w * 0.62, -w * 1.2), Offset(0, -reach * 0.97), _p);
     // Fuller groove.
@@ -336,6 +399,9 @@ class _WeaponPainter extends CustomPainter {
     canvas.drawRRect(
         RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)), _p);
     _p.shader = null;
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)), _outline);
     _p.color = const Color(0xFFE8C24A);
     canvas.drawRect(
         Rect.fromCenter(
@@ -384,6 +450,8 @@ class _WeaponPainter extends CustomPainter {
     ).createShader(Rect.fromLTWH(-w, -reach, w * 2.6, reach));
     canvas.drawPath(blade, _p);
     _p.shader = null;
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawPath(blade, _outline);
     // Gold glint on the leading edge.
     _p
       ..style = PaintingStyle.stroke
@@ -423,7 +491,7 @@ class _WeaponPainter extends CustomPainter {
         _p);
     // White-hot brand head: glowing ring + core.
     final tip = Offset(0, -reach * 0.94);
-    _p.color = def.accent.withValues(alpha: 0.35);
+    _p.color = def.accent.withValues(alpha: 0.35 + 0.3 * charge);
     canvas.drawCircle(tip, w * 3.1, _p);
     _p
       ..style = PaintingStyle.stroke
@@ -438,7 +506,11 @@ class _WeaponPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WeaponPainter old) =>
-      old.angle != angle || old.smearFrom != smearFrom || old.def != def;
+      old.angle != angle ||
+      old.smearFrom != smearFrom ||
+      old.def != def ||
+      old.charge != charge ||
+      (charge > 0.02 && old.sparkTime != sparkTime);
 }
 
 // ---------------------------------------------------------------------------

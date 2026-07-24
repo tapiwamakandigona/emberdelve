@@ -55,7 +55,22 @@ void main() {
       setPhase(() => phase = WeaponPhase.swing);
       await pumpFor(tester, 300);
       setPhase(() => phase = WeaponPhase.idle);
-      await pumpFor(tester, 300);
+      await pumpFor(tester, 350);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('WeaponView renders charged (die pips heat the blade)',
+      (tester) async {
+    for (final id in charactersOrder) {
+      await tester.pumpWidget(MaterialApp(
+        home: Center(
+          child: WeaponView(id,
+              key: ValueKey('charged-$id'), height: 96, charge: 1.0),
+        ),
+      ));
+      // Cover the charge tween plus a stretch of spark animation.
+      await pumpFor(tester, 500);
       expect(tester.takeException(), isNull);
     }
   });

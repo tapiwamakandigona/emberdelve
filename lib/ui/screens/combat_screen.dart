@@ -52,6 +52,9 @@ class _CombatScreenState extends State<CombatScreen> {
   final List<_Fx> _fx = [];
   int _fxId = 0;
 
+  // Boss kill moment: a full-screen white-hot flash held over the stage.
+  bool _bossKillFlash = false;
+
   // Boss/elite name-plate splash, shown once when the encounter opens.
   bool _splash = false;
 
@@ -63,6 +66,9 @@ class _CombatScreenState extends State<CombatScreen> {
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
   static const _contact = Duration(milliseconds: 250);
   static const _squashTime = Duration(milliseconds: 90);
+  // Enemy anticipation runs longer than the player's: their wind-up is the
+  // player's last cue to read the incoming hit.
+  static const _enemyWindupTime = Duration(milliseconds: 190);
   static const _hitStop = Duration(milliseconds: 80);
   static const _knockTime = Duration(milliseconds: 140);
   static const _flashTail = Duration(milliseconds: 120);
@@ -102,6 +108,20 @@ class _CombatScreenState extends State<CombatScreen> {
       : _playerLunge
           ? WeaponPhase.swing
           : WeaponPhase.idle;
+
+  /// Selected die pips -> weapon heat (0..1). Keeps glowing through the
+  /// swing (selection is cleared after apply, but the lunge should stay hot).
+  double get _weaponCharge {
+    if (_playerSquash || _playerLunge) return _lastSwingCharge;
+    final st = widget.c.state;
+    final player = st?['player'] as Map?;
+    final rolled = (player?['rolled'] as List?)?.cast<int>();
+    final sel = selected;
+    if (rolled == null || sel == null || sel > rolled.length) return 0.0;
+    return (rolled[sel - 1] / 12.0).clamp(0.15, 1.0);
+  }
+
+  double _lastSwingCharge = 0.0;
 
   /// Shake scaled by damage relative to the victim's max HP; hits at or above
   /// 25% of max HP also earn an ~80 ms hit-stop (design-system §5).
@@ -225,14 +245,31 @@ class _CombatScreenState extends State<CombatScreen> {
 
   Future<void> _enemyDeath(List<Map<String, Object?>> events) async {
     if (_find(events, 'encounter_won') == null) return;
-    _audio?.playSfx(_enemy?['boss'] == true ? 'boss_death' : 'enemy_death');
+    final boss = _enemy?['boss'] == true;
+    _audio?.playSfx(boss ? 'boss_death' : 'enemy_death');
     Haptics.heavy();
     if (!mounted) return;
+    if (boss) {
+      // Boss kill moment: the frame holds white-hot for a beat (impact
+      // freeze), the screen rocks at full magnitude, then the dissolve.
+      _shakeKey.currentState?.shake(1.0);
+      setState(() {
+        _enemyFlash = true;
+        _bossKillFlash = true;
+      });
+      await _sleep(const Duration(milliseconds: 260));
+      if (!mounted) return;
+    }
     setState(() {
       _enemyFlash = false;
       _enemyDying = true;
     });
     await _sleep(_deathTime);
+    if (boss && mounted) {
+      // Let the flash overlay finish fading before the phase switch.
+      setState(() => _bossKillFlash = false);
+      await _sleep(const Duration(milliseconds: 150));
+    }
   }
 
   /// Player attack: lunge toward the enemy, whoosh leading contact by ~2
@@ -245,11 +282,14 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
     _busy = true;
+    _lastSwingCharge = _weaponCharge; // freeze the heat for the swing itself
+    // Boss deaths get a longer hold: the kill moment below needs the stage.
+    final isBoss = _enemy?['boss'] == true;
     final events = widget.c.apply({
       'type': 'assign',
       'die': selected,
       'action': 'attack',
-    }, terminalHold: const Duration(milliseconds: 1300));
+    }, terminalHold: Duration(milliseconds: isBoss ? 1900 : 1300));
     selected = null;
     final dmg = _find(events, 'damage_dealt');
     if (dmg == null) {
@@ -368,8 +408,10 @@ class _CombatScreenState extends State<CombatScreen> {
     }, terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
+      // Physical wind-up: the enemy leans back and darkens for a beat before
+      // the lunge — the strike telegraphs in the body, not just the badge.
       setState(() => _enemySquash = true);
-      await _sleep(_squashTime);
+      await _sleep(_enemyWindupTime);
       if (!mounted) return;
       _audio?.playSfx('whoosh');
       setState(() {
@@ -802,6 +844,18 @@ class _CombatScreenState extends State<CombatScreen> {
           fit: StackFit.expand,
           children: [
             combat,
+            // Boss kill flash: white-out that decays into the ember dissolve.
+            IgnorePointer(
+              child: AnimatedOpacity(
+                opacity: _bossKillFlash ? 1.0 : 0.0,
+                duration: Duration(milliseconds: _bossKillFlash ? 60 : 420),
+                curve: Curves.easeOut,
+                child: const ColoredBox(
+                  color: Color(0xFFFFE9C4),
+                  child: SizedBox.expand(),
+                ),
+              ),
+            ),
             if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
             if (_tutStep >= 0)
               _TutorialOverlay(
@@ -871,10 +925,15 @@ class _CombatScreenState extends State<CombatScreen> {
                   squash: _playerSquash,
                   // The delver's signature weapon, finally visible: idles in
                   // hand, pulls back on the squash, swings with the lunge.
-                  weapon: WeaponView(_characterId,
-                      key: ValueKey('weapon-$_characterId'),
-                      height: heroH,
-                      phase: _weaponPhase),
+                  weapon: WeaponView(
+                    _characterId,
+                    key: ValueKey('weapon-$_characterId'),
+                    height: heroH,
+                    phase: _weaponPhase,
+                    // Die -> weapon causality made visible: the selected
+                    // die's pips heat the blade before the swing.
+                    charge: _weaponCharge,
+                  ),
                 ),
               ),
               Padding(
@@ -899,6 +958,7 @@ class _CombatScreenState extends State<CombatScreen> {
                       flash: _enemyFlash,
                       dying: _enemyDying,
                       squash: _enemySquash,
+                      windup: true,
                     ),
                     // Intent as an icon badge floating above the enemy
                     // (overlaid, so it never adds layout height). Burn stacks
@@ -991,6 +1051,9 @@ class _CombatScreenState extends State<CombatScreen> {
     required bool flash,
     required bool dying,
     required bool squash,
+    // Wind-up telegraph (enemy only): lean away + darken during the squash
+    // so the incoming strike reads in the body, not just the intent badge.
+    bool windup = false,
     double depthScale = 1.0,
     Widget? weapon,
   }) {
@@ -1059,17 +1122,36 @@ class _CombatScreenState extends State<CombatScreen> {
         child: w,
       ),
     );
+    // Wind-up tint: threat reads as a heat shift on the body.
+    if (windup) {
+      w = AnimatedContainer(
+        duration: _enemyWindupTime,
+        foregroundDecoration: BoxDecoration(
+          backgroundBlendMode: BlendMode.srcATop,
+          color: squash
+              ? const Color(0x55C24040)
+              : const Color(0x00C24040),
+        ),
+        child: w,
+      );
+    }
     // Anticipation squash (bottom-anchored) right before the lunge, and the
     // slight depth scale that grounds the enemy a step closer to the camera.
+    // A wind-up leans back away from the target while it squashes.
     w = Transform.scale(
       alignment: Alignment.bottomCenter,
       scale: depthScale,
       child: AnimatedContainer(
-        duration: _squashTime,
+        duration: windup && squash ? _enemyWindupTime : _squashTime,
         curve: Curves.easeOut,
         transformAlignment: Alignment.bottomCenter,
         transform: squash
-            ? (Matrix4.identity()..scale(1.08, 0.86))
+            ? (windup
+                ? (Matrix4.identity()
+                  ..translate(lungeToward * -8.0)
+                  ..rotateZ(lungeToward * -0.07) // top tips away from target
+                  ..scale(1.06, 0.90))
+                : (Matrix4.identity()..scale(1.08, 0.86)))
             : Matrix4.identity(),
         child: w,
       ),
