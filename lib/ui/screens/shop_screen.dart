@@ -81,7 +81,8 @@ class ShopScreen extends StatelessWidget {
           sold
               ? Text('SOLD', style: EmberText.micro)
               : EmberButton('$price',
-                  icon: Icons.circle,
+                  // A coin, not an abstract dot (wordiness pass 2026-07-24).
+                  icon: Icons.paid,
                   onTap: afford
                       ? () => c.apply({'type': 'buy', 'slot': index})
                       : null),
