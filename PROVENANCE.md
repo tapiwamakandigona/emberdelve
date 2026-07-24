@@ -1,5 +1,8 @@
 # Emberdelve Asset Provenance
 
+> **Pivot note (2026-07-24):** the dice-era **image** entries below are historical — those files were removed in the platformer pivot (archived on `legacy/dice-builder`). **Audio and font entries remain shipped.** New platformer art entries are added as assets land.
+
+
 Per-file origin, author, license, and modification record for every bundled
 art and audio asset. Summarized attributions live in `CREDITS.md` and the
 in-app Credits & Licenses screen; this file is the full audit trail.
@@ -176,3 +179,18 @@ SFX q4–5), 44.1 kHz, SFX mono / music stereo. All music decodes with peak ≤
 - **CC BY 4.0**: https://creativecommons.org/licenses/by/4.0/ — redistribution permitted with attribution.
 
 No Sonniss/GDC content was used (royalty-free but not openly redistributable — unsuitable for a public repo).
+
+## Platformer (v2) assets — added 2026-07-24
+Assembled by `tool/build_assets.py` from these verified packs (license checked on source page at download time):
+
+| Pack | Author | Source | License | Used for |
+|---|---|---|---|---|
+| Royal Knight Platformer | pixivan | https://opengameart.org/content/royal-knight-platformer | CC0 1.0 | player animations (idle/run/jump/fall/hit/roll/attack1-3) |
+| Sunny Land | ansimuz | https://opengameart.org/content/sunny-land-forest-of-illusion | CC0 1.0 | tileset, props (spikes/door/sign/platform/…), enemies (thornling/ashbat/hopper), gem→feather, cherry, enemy-death fx, bg layer |
+| Forest Parallax Background | ansimuz | https://opengameart.org/content/forest-background | CC0 1.0 | bg/forest_* parallax layers |
+| Pixel Adventure 1 | Pixel Frog | https://pixelfrog-assets.itch.io/pixel-adventure-1 | CC0 1.0 | items/apple, fx/fire |
+| Items #1 | GrafxKid | https://opengameart.org/content/various-items | CC0 1.0 | items/coin (bg keyed out) |
+| Animated pixel-art treasure chests | dustdfg | https://opengameart.org/content/animated-pixel-art-treasure-chests | **CC-BY 4.0** (credited in CREDITS.md) | items/chest |
+| Mobile Controls | Kenney | https://kenney.nl/assets/mobile-controls | CC0 1.0 | hud buttons + icons |
+
+Full per-pack evidence recorded at curation time (staging MANIFEST, 2026-07-24).

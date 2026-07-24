@@ -1,257 +1,151 @@
-// lib/ui/settings_screen.dart — audio settings (music/SFX volume + mutes),
-// persisted via SettingsStore, applied live to the AudioService. Also the
-// route to Credits & Licenses.
+// ui/settings_screen.dart — music/sfx volume sliders (persisted via
+// SettingsStore) and a confirm-guarded reset-save. Credits live on their own
+// screen; this links to it too (license requirement: reachable in-app).
+import 'dart:async' show unawaited;
+
 import 'package:flutter/material.dart';
+
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
+import '../core/save.dart';
+import 'app_state.dart';
 import 'credits_screen.dart';
-import 'haptics.dart';
-import 'theme.dart';
-import 'widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  AudioSettings get _s =>
-      AudioService.instance?.settings ?? _fallback;
-  static final AudioSettings _fallback = AudioSettings();
-
-  void _changed({bool preview = false, bool persist = true}) {
-    AudioService.instance?.applySettings();
-    if (persist) SettingsStore.save(_s);
-    if (preview) AudioService.instance?.playSfx('ui_tap');
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
+    final audio = AudioService.instance;
+    final settings = audio?.settings;
     return Scaffold(
+      backgroundColor: const Color(0xFF141420),
       appBar: AppBar(
-        title: Text('Settings', style: EmberText.h2),
-        backgroundColor: EmberColors.bg,
-        leading: BackButton(onPressed: () {
-          AudioService.instance?.playSfx('ui_back');
-          Navigator.of(context).pop();
-        }),
+        backgroundColor: Colors.transparent,
+        title: const Text('SETTINGS',
+            style: TextStyle(
+                fontFamily: 'Cinzel',
+                color: Color(0xFFE8A33D),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 3)),
       ),
-      body: SafeArea(
-        child: ListView(padding: const EdgeInsets.all(Space.l), children: [
-          Text('AUDIO', style: EmberText.micro),
-          const SizedBox(height: Space.s),
-          Panel(
-            child: Column(children: [
-              _volumeRow(
-                icon: Icons.music_note,
-                label: 'Music',
-                value: _s.musicVolume,
-                muted: _s.musicMuted,
-                // Live volume preview while dragging; persist once on release.
-                onVolume: (v) {
-                  _s.musicVolume = v;
-                  _changed(persist: false);
-                },
-                onVolumeEnd: (v) {
-                  _s.musicVolume = v;
-                  _changed();
-                },
-                onMute: (m) {
-                  _s.musicMuted = !m;
-                  _changed();
-                },
-              ),
-              const Divider(color: EmberColors.line, height: Space.xl),
-              _volumeRow(
-                icon: Icons.graphic_eq,
-                label: 'Sound effects',
-                value: _s.sfxVolume,
-                muted: _s.sfxMuted,
-                // No SFX per drag tick; single confirm tap + save on release.
-                onVolume: (v) {
-                  _s.sfxVolume = v;
-                  _changed(persist: false);
-                },
-                onVolumeEnd: (v) {
-                  _s.sfxVolume = v;
-                  _changed(preview: true);
-                },
-                onMute: (m) {
-                  _s.sfxMuted = !m;
-                  _changed(preview: true);
-                },
-              ),
-            ]),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        children: [
+          if (settings != null) ...[
+            _SliderTile(
+              label: 'Music',
+              value: settings.musicVolume,
+              onChanged: (v) {
+                setState(() => settings.musicVolume = v);
+                audio!.applySettings();
+              },
+              onChangeEnd: (_) => SettingsStore.save(settings),
+            ),
+            _SliderTile(
+              label: 'Sound effects',
+              value: settings.sfxVolume,
+              onChanged: (v) => setState(() => settings.sfxVolume = v),
+              onChangeEnd: (v) {
+                audio!.playSfx('ui_tap');
+                SettingsStore.save(settings);
+              },
+            ),
+          ] else
+            const ListTile(
+              title: Text('Audio unavailable',
+                  style: TextStyle(color: Colors.white38)),
+            ),
+          const Divider(color: Colors.white12, height: 32),
+          ListTile(
+            leading:
+                const Icon(Icons.menu_book, color: Color(0xFFE8A33D)),
+            title: const Text('Credits & Licenses',
+                style: TextStyle(color: Colors.white)),
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CreditsScreen())),
           ),
-          const SizedBox(height: Space.xl),
-          Text('FEEDBACK', style: EmberText.micro),
-          const SizedBox(height: Space.s),
-          Panel(
-            child: Row(children: [
-              const Icon(Icons.vibration,
-                  color: EmberColors.textDim, size: 20),
-              const SizedBox(width: Space.m),
-              Expanded(child: Text('Haptics', style: EmberText.body)),
-              _EmberToggle(
-                  value: _s.haptics,
-                  onChanged: (v) {
-                    _s.haptics = v;
-                    _changed(preview: true);
-                    // Answer "ON" with a buzz you can feel — instant
-                    // on-device confirmation that haptics actually work.
-                    if (v) Haptics.preview();
-                  }),
-            ]),
+          ListTile(
+            leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
+            title: const Text('Reset save',
+                style: TextStyle(color: Colors.redAccent)),
+            subtitle: const Text('Erases coins, purchases and level progress',
+                style: TextStyle(color: Colors.white38, fontSize: 12)),
+            onTap: _confirmReset,
           ),
-          const SizedBox(height: Space.xl),
-          Text('ABOUT', style: EmberText.micro),
-          const SizedBox(height: Space.s),
-          Panel(
-            child: Row(children: [
-              const Icon(Icons.menu_book,
-                  color: EmberColors.textDim, size: 20),
-              const SizedBox(width: Space.m),
-              Expanded(
-                  child: Text('Credits & Licenses', style: EmberText.body)),
-              EmberButton('View', onTap: () {
-                AudioService.instance?.playSfx('ui_tap');
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CreditsScreen()));
-              }),
-            ]),
-          ),
-        ]),
+        ],
       ),
     );
   }
 
-  Widget _volumeRow({
-    required IconData icon,
-    required String label,
-    required double value,
-    required bool muted,
-    required ValueChanged<double> onVolume,
-    required ValueChanged<double> onVolumeEnd,
-    required ValueChanged<bool> onMute,
-  }) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(children: [
-        Icon(icon, size: 20, color: EmberColors.textDim),
-        const SizedBox(width: Space.m),
-        Expanded(child: Text(label, style: EmberText.body)),
-        _EmberToggle(value: !muted, onChanged: onMute),
-      ]),
-      SliderTheme(
-        data: SliderThemeData(
-          trackHeight: 8,
-          activeTrackColor: EmberColors.ember,
-          inactiveTrackColor: const Color(0xFF171021),
-          thumbShape: const _EmberThumb(),
-          overlayShape: SliderComponentShape.noOverlay,
-          trackShape: const RoundedRectSliderTrackShape(),
-        ),
-        child: Slider(
-          value: value,
-          onChanged: muted ? null : onVolume,
-          onChangeEnd: muted ? null : onVolumeEnd,
-        ),
+  Future<void> _confirmReset() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E2E),
+        title: const Text('Reset save?',
+            style: TextStyle(color: Colors.white)),
+        content: const Text(
+            'All coins, feathers, purchases and level progress will be '
+            'erased. This cannot be undone.',
+            style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('RESET'),
+          ),
+        ],
       ),
-    ]);
+    );
+    if (confirmed != true || !mounted) return;
+    AppState.save = SaveData();
+    unawaited(AppState.persist()); // atomic write; UI must not block on disk
+    setState(() {});
+    AudioService.instance?.playSfx('ui_tap');
   }
 }
 
-/// Skinned slider thumb: a glowing ember bead with a charcoal rim (no stock
-/// Material thumb/overlay).
-class _EmberThumb extends SliderComponentShape {
-  const _EmberThumb();
-  @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
-      const Size(22, 22);
+class _SliderTile extends StatelessWidget {
+  final String label;
+  final double value;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double> onChangeEnd;
+  const _SliderTile({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    required this.onChangeEnd,
+  });
 
-  @override
-  void paint(PaintingContext context, Offset center,
-      {required Animation<double> activationAnimation,
-      required Animation<double> enableAnimation,
-      required bool isDiscrete,
-      required TextPainter labelPainter,
-      required RenderBox parentBox,
-      required SliderThemeData sliderTheme,
-      required TextDirection textDirection,
-      required double value,
-      required double textScaleFactor,
-      required Size sizeWithOverflow}) {
-    final canvas = context.canvas;
-    final enabled = enableAnimation.value > 0.5;
-    if (enabled) {
-      canvas.drawCircle(
-          center,
-          10,
-          Paint()
-            ..color = EmberColors.ember.withValues(alpha: 0.4)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
-    }
-    canvas.drawCircle(
-        center,
-        8,
-        Paint()
-          ..shader = RadialGradient(colors: [
-            const Color(0xFFFFD98A),
-            enabled ? EmberColors.ember : EmberColors.textDisabled,
-          ]).createShader(Rect.fromCircle(center: center, radius: 8)));
-    canvas.drawCircle(
-        center,
-        8,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2
-          ..color = const Color(0xFF17110A));
-  }
-}
-
-/// Drawn on/off toggle: an ember coal that lights when on (replaces the stock
-/// Material Switch).
-class _EmberToggle extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  const _EmberToggle({required this.value, required this.onChanged});
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        width: 46,
-        height: 26,
-        padding: const EdgeInsets.all(3),
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: const Color(0xFF171021),
-          borderRadius: BorderRadius.circular(13),
-          border: Border.all(
-              color: value ? EmberColors.ember : EmberColors.line, width: 1.4),
-        ),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          width: 18,
-          height: 18,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(colors: [
-              value ? const Color(0xFFFFD98A) : EmberColors.textDisabled,
-              value ? EmberColors.ember : const Color(0xFF3A3148),
-            ]),
-            boxShadow: value
-                ? [
-                    BoxShadow(
-                        color: EmberColors.ember.withValues(alpha: 0.6),
-                        blurRadius: 8)
-                  ]
-                : null,
-          ),
+    return Row(children: [
+      SizedBox(
+          width: 120,
+          child:
+              Text(label, style: const TextStyle(color: Colors.white70))),
+      Expanded(
+        child: Slider(
+          value: value.clamp(0.0, 1.0),
+          activeColor: const Color(0xFFE8A33D),
+          onChanged: onChanged,
+          onChangeEnd: onChangeEnd,
         ),
       ),
-    );
+      SizedBox(
+          width: 40,
+          child: Text('${(value * 100).round()}%',
+              style: const TextStyle(color: Colors.white38, fontSize: 12))),
+    ]);
   }
 }

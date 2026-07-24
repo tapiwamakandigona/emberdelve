@@ -8,20 +8,18 @@ game — this file is bundled in-app (Settings → Credits & Licenses).
 
 Emberdelve uses the following third-party art. Thank you to these artists.
 
-### Sprites & pixel animations
-- **DungeonTilesetII v1.7** by **0x72** — https://0x72.itch.io/dungeontileset-ii
-  License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/).
-  Enemy, character, coin and ember-flow sprites are recolored/rearranged derivatives.
+### Sprites, tiles & animations (v2 platformer)
+- **Royal Knight Platformer** by **pixivan** — https://opengameart.org/content/royal-knight-platformer — CC0 1.0. Player knight animations.
+- **Sunny Land** by **ansimuz** — https://opengameart.org/content/sunny-land-forest-of-illusion — CC0 1.0. Forest tileset, props, enemies, pickups.
+- **Forest Parallax Background** by **ansimuz** — https://opengameart.org/content/forest-background — CC0 1.0. Parallax layers.
+- **Pixel Adventure 1** by **Pixel Frog** — https://pixelfrog-assets.itch.io/pixel-adventure-1 — CC0 1.0. Apple item, fire trap.
+- **Items #1** by **GrafxKid** — https://opengameart.org/content/various-items — CC0 1.0. Coin animation.
+- **Animated pixel-art treasure chests** by **dustdfg** — https://opengameart.org/content/animated-pixel-art-treasure-chests — **CC BY 4.0** (https://creativecommons.org/licenses/by/4.0/). Treasure chest animation.
+- **Mobile Controls** by **Kenney** — https://kenney.nl/assets/mobile-controls — CC0 1.0. Touch buttons and icons.
 
-### Icons
-Icons made by **Lorc** (http://lorcblog.blogspot.com), **Delapouite** (http://delapouite.com)
-and **Skoll**, available at **https://game-icons.net**.
-License: CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/).
-Icons were tinted and rasterized for this game. The app launcher icon incorporates
-"dice-six-faces-six" by Delapouite.
-
-### Backgrounds & launcher icon composition
-Procedurally generated for Emberdelve by Tsoro Studios — CC0 1.0 Universal.
+### Legacy (dice-builder era, preserved on branch legacy/dice-builder)
+- **DungeonTilesetII v1.7** by **0x72** — https://0x72.itch.io/dungeontileset-ii — CC0 1.0.
+- Icons by **Lorc**, **Delapouite**, **Skoll** — https://game-icons.net — CC BY 3.0. The app launcher icon incorporates "dice-six-faces-six" by Delapouite.
 
 Fonts are credited separately in the repository (see assets/fonts).
 

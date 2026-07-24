@@ -1,0 +1,51 @@
+// game/tuning.dart — ALL game-feel constants live here (spec §3).
+// Tests assert the invariants at the bottom; tune freely, keep tests green.
+
+// World scale.
+const double kTileSize = 16.0; // logical px per tile
+const double kGravity = 1150.0; // px/s^2
+const double kMaxFallSpeed = 420.0; // terminal velocity px/s
+
+// Horizontal movement.
+const double kRunSpeed = 118.0; // px/s
+const double kGroundAccel = 1400.0;
+const double kAirAccel = 900.0;
+const double kGroundFriction = 1600.0;
+
+// Jumping (feel spec: coyote 0.10s, buffer 0.12s, variable height).
+const double kJumpSpeed = 292.0; // initial jump velocity px/s (clears 2 tiles+)
+const double kJumpCutMultiplier = 0.45; // vy *= this when jump released early
+const double kCoyoteTime = 0.10; // s of grace after walking off a ledge
+const double kJumpBufferTime = 0.12; // s a jump press is remembered
+const int kMaxAirJumps = 1; // double jump (2 with triple-jump special)
+const double kAirJumpSpeed = 265.0;
+
+// Combat.
+const double kAttackBufferTime = 0.15; // s an attack press is remembered
+const double kComboWindow = 0.38; // s after a swing in which next chains
+const int kComboHits = 3; // 3-hit chain; 3rd hit +50% damage
+const double kAttackDuration = 0.22; // s per swing
+const double kHitPause = 0.040; // s freeze on connect
+const double kHurtIFrames = 1.0; // s invulnerability after taking a hit
+const double kKnockbackSpeed = 150.0; // px/s away from damage source
+const double kAppleThrowSpeed = 220.0; // px/s, 45deg-ish arc
+const int kAppleDamage = 2;
+const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
+
+// Camera.
+const double kCameraLookAhead = 24.0; // px in facing direction
+const double kCameraSmooth = 8.0; // exp smoothing factor
+const double kCameraPeekDown = 56.0; // px when holding down
+
+// Player.
+const int kBaseMaxHearts = 3;
+const int kHeartsHardCap = 5;
+
+// Economy pacing.
+const int kCoinValue = 1;
+const int kChestCoinsMin = 12;
+const int kChestCoinsMax = 30;
+
+// Performance budgets (enforced by review, referenced in tests).
+const int kMaxLiveParticles = 120;
+const int kMaxPooledProjectiles = 16;
