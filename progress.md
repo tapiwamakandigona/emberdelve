@@ -159,3 +159,15 @@ docs/index.html, and docs/.nojekyll (serve raw files; internal .md docs stay
 plain text, no Jekyll surprises). play-listing.md now carries the live URL —
 closes the "hosted privacy policy" P0.3 item. NOTE: everything under docs/ is
 now also a public web page (repo was already public).
+
+## 2026-07-24 — store listing assets (branch feat/store-listing-assets)
+2026-07-24 STORE ASSETS: Play-listing screenshot pass without a device —
+tool/store_screenshots_test.dart renders real screens (GameController-driven,
+FontLoader'd Cinzel/Inter + SDK MaterialIcons so no box glyphs; runAsync
+pumping so rootBundle sprites/asset images actually decode) at 360x640@3x =
+1080x1920 (9:16): title / boon pick / map / combat mid-roll / ledger, plus a
+1024x500 feature graphic (bg_boss + logotype + die chips). Committed under
+docs/store/screenshots/; harness lives in tool/ so it is NOT part of the CI
+gate — rerun manually after UI changes. Meta in shots is staged but honest to
+real mechanics (real screens, real seeds; ledger numbers are sample data).
+Known nit spotted while shooting: ledger delver rows print "1 wins".
