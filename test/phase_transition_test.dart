@@ -43,7 +43,10 @@ void main() {
     final c = GameController();
     c.startRun(character: 'kindler', seed: 1);
     // Skip the boon offer so state is a plain map phase without 'shop'.
-    if (c.phase == 'boon_offer') c.apply({'type': 'choose_boon', 'option': 0});
+    // (Phase is 'boon' and the command key is 'index' — the old guard
+    // checked a phase name that doesn't exist and passed the wrong key, so
+    // it could never have worked had boons been enabled.)
+    if (c.phase == 'boon') c.apply({'type': 'choose_boon', 'index': 0});
     expect(c.state!['shop'], isNull);
     await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: ShopScreen(c)));

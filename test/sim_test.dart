@@ -569,6 +569,34 @@ void main() {
       expect(events.any((e) => e['type'] == 'encounter_won'), isTrue);
       expect(sim.phase, equals('reward'));
     });
+
+    // Anchors the mechanic the boss death-insight coaches (bug-sweep-2): a
+    // block intent protects the enemy during the FOLLOWING player turn, so
+    // the honest advice is "attack before the guard is shown", never "hold
+    // damage and strike after". If this timing ever changes, rewrite the
+    // boss insight lines in data/insights.dart to match.
+    test('enemy block from a block intent absorbs NEXT turn\'s attacks', () {
+      final sim = simInFight(42);
+      sim.player['hp'] = 30;
+      sim.enemy!['hp'] = 50;
+      sim.enemy!['max_hp'] = 50;
+      sim.enemy!['intent'] = {'kind': 'block', 'amount': 10};
+      // During the turn the block intent is SHOWN, the enemy has 0 block.
+      expect(sim.enemy!['block'], equals(0));
+      sim.apply({'type': 'end_turn'});
+      // The enemy banked its block during its action...
+      expect(sim.enemy!['block'], equals(10));
+      // ...so this turn's attack is absorbed before hp is touched.
+      sim.apply({'type': 'roll'});
+      final hpBefore = sim.enemy!['hp'] as int;
+      final events = sim.apply({'type': 'assign', 'die': 1, 'action': 'attack'});
+      final dmg = events.firstWhere((e) => e['type'] == 'damage_dealt');
+      expect(dmg['blocked'], greaterThan(0));
+      expect(
+          (sim.enemy!['hp'] as int),
+          equals(hpBefore -
+              ((dmg['amount'] as int) - (dmg['blocked'] as int))));
+    });
   });
 }
 
