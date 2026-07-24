@@ -396,3 +396,43 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   enemies (Thornling/Ashbat/Hopper) / pickups / chests / cracked walls / exit+results all
   done & tested, but acceptance also names Ember Totem + Rotshield — deferred to M5 per
   orchestrator instruction (spawn kinds are handled as no-op TODOs).
+
+---
+## 2026-07-24 — M4 meta + M5 World 1 content (worker B, emberpivot-0724-B)
+**M5 (commits `420b365`, `cc81a30`, `925b602`):**
+- `lib/game/enemies/enemy_core.dart`: EmberTotemCore (stationary spitter — 8-tile range,
+  LOS raycast every 4px, 2.2s cooldown, hp5) + RotshieldCore (18px/s patroller, hp6,
+  `blocksHit()` guards its facing side vs melee AND apples; vulnerable behind/above).
+  Session owns pooled EmberShots (kEmberShotSpeed, break on terrain, 1-heart player hit);
+  blocked hits emit `attackBlocked` → 'block' sfx. Hoppers spawn via `meta: hopperN=tx,ty`
+  (legend frozen by design).
+- `lib/game/enemies/boss_core.dart`: Grove Golem (hp60, phases at 2/3+1/3 hp with
+  `bossPhase` events): idle-stalk → telegraph (0.85s / 0.55s in P3) → attack → recover.
+  P1 slam shockwave along the floor (P3 adds a backward wave), P2 root spikes with harmless
+  warning marks under the player, P3 lobbed rock arcs. Session collides `hazardHits(body)`,
+  locks the exit until death, and pays a 45–60 coin + 3-feather victory burst
+  (`bossDefeated`). HUD: boss HP bar with phase ticks. Renderer: 2x moss-tinted thornling
+  composite + procedural hazards (no new art; provenance unchanged).
+- Levels `w1_l2..w1_l5` + `w1_boss` (+ `w1_l1` upgraded to quotas: 2 secret-vault chests,
+  4 chests, recoverable hazard pits). Progressive intro: l2 +hoppers, l3 +totems,
+  l4 +rotshields, l5 full mix (7 chests/3 secrets/3 feathers). Secrets are cracked-wall
+  vaults, all pass-through. `test/world1_levels_test.dart`: parse+lint, quotas
+  (2–7 chests / ≥2 secrets / 1–3 feathers), fair-par bounds, max-gap ≤ double-jump budget,
+  per-level required-entity assertions, and a scripted door-seeking runner bot that
+  actually finishes every regular level headlessly. P-M3 + P-M5 flipped.
+**M4 (this commit):**
+- `lib/ui/shop_screen.dart`: 3-tab shop from catalog.dart — weapons (dmg/crit%/xmult/range
+  + special text), skins (level, melee power xN.NN, kills-to-next), abilities; Buy→Equip→
+  EQUIPPED states, Haggler -10% shown with strikethrough, wallet chip; all transactions via
+  economy.buy (re-checks funds/ownership) then queued atomic persist.
+- `lib/ui/settings_screen.dart` (music/sfx sliders → SettingsStore, reset-save with confirm
+  dialog), `lib/ui/credits_screen.dart` (renders bundled CREDITS.md — CC-BY attributions
+  ship visibly in-app), title screen (drifting 3-layer CC0 parallax, ember-glow logo,
+  Play/Shop/Settings/Credits), level select (card nodes, 3 medal icons per level from save,
+  wallet, boss node gated on all five clears).
+- HUD: `HudThrowButton` — apple-icon touch button above the sword button, hidden unless
+  applesHeld > 0 (closes worker A's touch-throw gap).
+- `AppState.persist()` now chains writes on a queue (rapid buy/equip taps can't interleave
+  save-file bytes). Tests: shop_flow_test (headless buy/haggler/insufficient-funds/skin
+  power + widget BUY→EQUIP flow with disk round-trip), meta_screens_test (title routes,
+  reset-save confirm, credits attribution, boss lock + medals). P-M4 flipped.

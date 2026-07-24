@@ -123,6 +123,13 @@ class EmberGame extends FlameGame with KeyboardEvents {
         onPressed: () => touchRight = true,
         onReleased: () => touchRight = false,
       ),
+      // Throw (apple) button sits above the sword button; HudThrowButton
+      // hides itself whenever the pouch is empty.
+      HudThrowButton(
+        position: Vector2(viewWidth - pad - btn * 2 - 6, bottomY - btn * 0.8 - 6),
+        size: Vector2.all(btn * 0.8),
+        onPressed: () => _touchThrowEdge = true,
+      ),
       HudHoldButton(
         spritePath: 'hud/btn_round.png',
         iconPath: 'hud/icon_sword.png',

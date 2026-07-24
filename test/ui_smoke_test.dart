@@ -20,8 +20,11 @@ void main() {
     await tester.pumpWidget(const EmberdelveApp());
     expect(find.text('EMBERDELVE'), findsOneWidget);
     await tester.tap(find.text('PLAY'));
-    await tester.pumpAndSettle();
-    expect(find.text('Emberwood — World 1'), findsOneWidget);
+    // M4 title runs a looping parallax drift — pumpAndSettle would never
+    // settle; pump the route transition explicitly instead.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('EMBERWOOD'), findsOneWidget);
     expect(find.text('Forest Edge'), findsOneWidget);
   });
 

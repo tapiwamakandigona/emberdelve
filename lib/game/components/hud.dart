@@ -69,6 +69,42 @@ class HudHoldButton extends SpriteComponent
   }
 }
 
+/// Throw button: apple icon from items/apple.png (32x32 frame 0), only
+/// visible & tappable while the player is actually carrying apples.
+class HudThrowButton extends HudHoldButton {
+  HudThrowButton({
+    required super.onPressed,
+    required super.position,
+    required super.size,
+  }) : super(
+          spritePath: 'hud/btn_round.png',
+          onReleased: _noop,
+        );
+
+  static void _noop() {}
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    final apple = Sprite(await game.images.load('items/apple.png'),
+        srcSize: Vector2(32, 32));
+    add(SpriteComponent(
+      sprite: apple,
+      size: size * 0.62,
+      position: size / 2,
+      anchor: Anchor.center,
+      paint: ui.Paint()..filterQuality = ui.FilterQuality.none,
+    ));
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final visible = game.session.applesHeld > 0;
+    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides + kills taps
+  }
+}
+
 /// Readouts drawn procedurally each frame from session state.
 class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   HudReadout() : super(priority: 10);

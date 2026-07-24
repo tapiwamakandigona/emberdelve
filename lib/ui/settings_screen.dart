@@ -1,0 +1,151 @@
+// ui/settings_screen.dart — music/sfx volume sliders (persisted via
+// SettingsStore) and a confirm-guarded reset-save. Credits live on their own
+// screen; this links to it too (license requirement: reachable in-app).
+import 'dart:async' show unawaited;
+
+import 'package:flutter/material.dart';
+
+import '../audio/audio_service.dart';
+import '../audio/settings.dart';
+import '../core/save.dart';
+import 'app_state.dart';
+import 'credits_screen.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final audio = AudioService.instance;
+    final settings = audio?.settings;
+    return Scaffold(
+      backgroundColor: const Color(0xFF141420),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text('SETTINGS',
+            style: TextStyle(
+                fontFamily: 'Cinzel',
+                color: Color(0xFFE8A33D),
+                fontWeight: FontWeight.bold,
+                letterSpacing: 3)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        children: [
+          if (settings != null) ...[
+            _SliderTile(
+              label: 'Music',
+              value: settings.musicVolume,
+              onChanged: (v) {
+                setState(() => settings.musicVolume = v);
+                audio!.applySettings();
+              },
+              onChangeEnd: (_) => SettingsStore.save(settings),
+            ),
+            _SliderTile(
+              label: 'Sound effects',
+              value: settings.sfxVolume,
+              onChanged: (v) => setState(() => settings.sfxVolume = v),
+              onChangeEnd: (v) {
+                audio!.playSfx('ui_tap');
+                SettingsStore.save(settings);
+              },
+            ),
+          ] else
+            const ListTile(
+              title: Text('Audio unavailable',
+                  style: TextStyle(color: Colors.white38)),
+            ),
+          const Divider(color: Colors.white12, height: 32),
+          ListTile(
+            leading:
+                const Icon(Icons.menu_book, color: Color(0xFFE8A33D)),
+            title: const Text('Credits & Licenses',
+                style: TextStyle(color: Colors.white)),
+            onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CreditsScreen())),
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
+            title: const Text('Reset save',
+                style: TextStyle(color: Colors.redAccent)),
+            subtitle: const Text('Erases coins, purchases and level progress',
+                style: TextStyle(color: Colors.white38, fontSize: 12)),
+            onTap: _confirmReset,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmReset() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E2E),
+        title: const Text('Reset save?',
+            style: TextStyle(color: Colors.white)),
+        content: const Text(
+            'All coins, feathers, purchases and level progress will be '
+            'erased. This cannot be undone.',
+            style: TextStyle(color: Colors.white70)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('RESET'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    AppState.save = SaveData();
+    unawaited(AppState.persist()); // atomic write; UI must not block on disk
+    setState(() {});
+    AudioService.instance?.playSfx('ui_tap');
+  }
+}
+
+class _SliderTile extends StatelessWidget {
+  final String label;
+  final double value;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double> onChangeEnd;
+  const _SliderTile({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    required this.onChangeEnd,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      SizedBox(
+          width: 120,
+          child:
+              Text(label, style: const TextStyle(color: Colors.white70))),
+      Expanded(
+        child: Slider(
+          value: value.clamp(0.0, 1.0),
+          activeColor: const Color(0xFFE8A33D),
+          onChanged: onChanged,
+          onChangeEnd: onChangeEnd,
+        ),
+      ),
+      SizedBox(
+          width: 40,
+          child: Text('${(value * 100).round()}%',
+              style: const TextStyle(color: Colors.white38, fontSize: 12))),
+    ]);
+  }
+}
