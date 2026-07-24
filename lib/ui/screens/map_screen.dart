@@ -23,9 +23,16 @@ class _MapScreenState extends State<MapScreen>
   static int? _walkFrom;
   static int? _walkRunSeed;
 
+  // Auto-follow: the map used to reopen scrolled to the BOTTOM every visit,
+  // so late-run reachable nodes sat clipped off the top edge (found via a
+  // stuck autoplay session 2026-07-24). Scroll to the delver on each arrival.
+  final ScrollController _scroll = ScrollController();
+  int? _scrolledForPos;
+
   @override
   void dispose() {
     _pulse.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -72,8 +79,29 @@ class _MapScreenState extends State<MapScreen>
               child: LayoutBuilder(
                 builder: (context, cns) {
                   final h = layers * _rowH + 40;
+                  // Follow the delver: keep the marker ~45% up the viewport so
+                  // the reachable row above is always on screen (reverse list:
+                  // offset 0 == bottom of the delve).
+                  if (_scrolledForPos != position) {
+                    _scrolledForPos = position;
+                    final target = ((curLayer - 1) * _rowH +
+                            20 +
+                            _nodeSize / 2 -
+                            cns.maxHeight * 0.45)
+                        .clamp(0.0, math.max(0.0, h - cns.maxHeight))
+                        .toDouble();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted || !_scroll.hasClients) return;
+                      _scroll.animateTo(
+                        target,
+                        duration: const Duration(milliseconds: 450),
+                        curve: Curves.easeOutCubic,
+                      );
+                    });
+                  }
                   return SingleChildScrollView(
                     reverse: true,
+                    controller: _scroll,
                     child: SizedBox(
                       height: h,
                       width: cns.maxWidth,

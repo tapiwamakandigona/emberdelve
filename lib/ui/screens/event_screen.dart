@@ -36,16 +36,35 @@ class EventScreen extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: EmberButton(def.options[i].label,
-                primary: i == 0,
+                // Options the sim would reject render DISABLED instead of
+                // inviting a tap that only spawns a "Not enough gold" toast
+                // (2026-07-24: a 0-gold peddler showed a glowing primary
+                // "Buy (35 gold)" CTA). Mirrors runEventChoose's validation.
+                primary: i == 0 && _legal(def.options[i].effects),
                 // Icon telegraphs the option's payoff/risk at a glance
                 // (wordiness pass 2026-07-24).
                 icon: _optionIcon(def.options[i].effects),
-                onTap: () =>
-                    c.apply({'type': 'event_choose', 'option': i + 1})),
+                onTap: _legal(def.options[i].effects)
+                    ? () =>
+                        c.apply({'type': 'event_choose', 'option': i + 1})
+                    : null),
           ),
         ),
       const SizedBox(height: Space.s),
     ]);
+  }
+
+  /// Same legality rules as the sim's runEventChoose: gold cost must be
+  /// coverable, and lose_random_die needs a pool above the floor of 3.
+  bool _legal(Map<String, Object> e) {
+    final goldDelta = (e['gold'] as int?) ?? 0;
+    final gold = ((c.state!['run'] as Map)['gold'] as int?) ?? 0;
+    if (goldDelta < 0 && gold + goldDelta < 0) return false;
+    if (e['lose_random_die'] == 1 &&
+        ((c.state!['player'] as Map)['dice'] as List).length <= 3) {
+      return false;
+    }
+    return true;
   }
 
   /// The dominant effect of an option, as an icon: cost (HP) beats reward so

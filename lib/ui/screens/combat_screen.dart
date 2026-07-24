@@ -556,8 +556,11 @@ class _CombatScreenState extends State<CombatScreen> {
       visRows = math.min(rowsNeeded, fitRows(trayBudget - trayPeek));
       trayScrolls = rowsNeeded > visRows;
     }
-    final trayH =
-        visRows * chipH + (visRows - 1) * Space.s + (trayScrolls ? trayPeek : 0);
+    // Viewport height is EXACTLY whole rows — the scroll view clips at a row
+    // boundary, so no half-cut dice ever bleed through (screenshot review
+    // 2026-07-24: the old fade-over-peek let row 2 show as clipped grey dice).
+    final trayViewH = visRows * chipH + (visRows - 1) * Space.s;
+    final hiddenDice = math.max(0, dice0.length - visRows * perRow);
 
     final combat = Column(
       children: [
@@ -629,10 +632,10 @@ class _CombatScreenState extends State<CombatScreen> {
             clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
             children: [
+              Column(mainAxisSize: MainAxisSize.min, children: [
               ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: trayH),
+                constraints: BoxConstraints(maxHeight: trayViewH),
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.only(bottom: trayScrolls ? trayPeek : 0),
                   child: Wrap(
                     spacing: Space.s,
                     runSpacing: Space.s,
@@ -682,28 +685,37 @@ class _CombatScreenState extends State<CombatScreen> {
                   ),
                 ),
               ),
-              // Fade + chevron: the tray holds more dice below the fold.
+              // Fold indicator: an explicit "+N" pill under the last whole
+              // row — replaces the fade+chevron that read as a glitch over
+              // half-cut dice (owner feedback 2026-07-24).
               if (trayScrolls)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: IgnorePointer(
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.xs),
+                  child: Semantics(
+                    label: '$hiddenDice more dice below, scroll the tray',
                     child: Container(
-                      height: 26,
-                      alignment: Alignment.bottomCenter,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Color(0x00141019), Color(0xCC141019)],
-                        ),
+                      height: trayPeek - Space.xs,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: Space.m),
+                      decoration: BoxDecoration(
+                        color: EmberColors.raised,
+                        borderRadius: BorderRadius.circular(11),
+                        border: Border.all(color: EmberColors.line),
                       ),
-                      child: const Icon(Icons.keyboard_arrow_down,
-                          size: 16, color: EmberColors.textDim),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('+$hiddenDice',
+                              style: EmberText.label
+                                  .copyWith(color: EmberColors.textPrimary)),
+                          const Icon(Icons.keyboard_arrow_down,
+                              size: 14, color: EmberColors.textDim),
+                        ],
+                      ),
                     ),
                   ),
                 ),
+              ]),
               for (final (idx, n)
                   in _notes.where((n) => !n.onEnemy).toList().indexed)
                 Positioned(
