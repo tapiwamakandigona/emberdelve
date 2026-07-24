@@ -92,10 +92,23 @@ class _CharacterScreenState extends State<CharacterScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             // Static portrait frame from the character sheet (idle frame 0);
-            // animation stays reserved for the combat stage.
+            // animation stays reserved for the combat stage. The signature
+            // weapon leans against the frame so the arsenal reads at a
+            // glance before the delve.
             Opacity(
               opacity: unlocked ? 1 : 0.45,
-              child: SpriteView(id, height: 56, animate: false),
+              child: SizedBox(
+                width: 78,
+                height: 58,
+                child: Stack(clipBehavior: Clip.none, children: [
+                  SpriteView(id, height: 56, animate: false),
+                  Positioned(
+                      right: 0,
+                      bottom: -2,
+                      child:
+                          WeaponView(id, height: 46, phase: WeaponPhase.idle)),
+                ]),
+              ),
             ),
             const SizedBox(width: Space.m),
             Expanded(child: Text(def.name, style: EmberText.h2)),
@@ -109,7 +122,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
           const SizedBox(height: Space.xs),
           Text(def.text, style: EmberText.bodyDim),
           const SizedBox(height: Space.s),
-          Text('${def.maxHp} HP · ${def.startDice.map((d) => dieDef(d).name).join(", ")}',
+          Text(
+              '${def.maxHp} HP · ${weaponFor(id).name} · '
+              '${def.startDice.map((d) => dieDef(d).name).join(", ")}',
               style: EmberText.micro),
           const SizedBox(height: Space.m),
           SizedBox(

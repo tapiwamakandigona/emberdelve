@@ -121,3 +121,9 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
   deterministically, namespaced away from daily seeds).
 - lib/game/seed_input.dart parseSeedInput() is pure and range-safe [1, 2^31-2].
 - Gate: analyze clean, 114/114 tests; title/dialog/summary screenshots inspected.
+- Visible signature weapons in combat + character select. Weapon painters
+  (Ember Brand / Ward Maul / Lucky Fang / Brand Iron) with idle sway →
+  anticipation raise → swing, riding existing choreography flags. Contact FX:
+  weapon smear + sparks on enemy hits, claw rake on player hits, guard-arc
+  shield flash for block (previously completely silent/invisible). Character
+  select: weapon leans on portrait, name in stat line. Sim untouched.
