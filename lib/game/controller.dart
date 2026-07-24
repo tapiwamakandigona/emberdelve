@@ -80,7 +80,22 @@ class GameController extends ChangeNotifier {
     return e != null && (e['boss'] == true || e['elite'] == true);
   }
 
-  void _syncAudio() => audio?.syncPhase(phase, bossFight: _bossFight);
+  void _syncAudio() {
+    audio?.syncPhase(phase, bossFight: _bossFight);
+    audio?.setDanger(_inDanger);
+  }
+
+  /// Low-HP danger bed condition: mid-combat with HP at or under 30% of max.
+  /// Computed here (not in the audio layer) so the rule stays gameplay-owned
+  /// and testable without audio.
+  bool get _inDanger {
+    if (phase != 'player_turn') return false;
+    final p = sim?.player;
+    if (p == null) return false;
+    final hp = p['hp'] as int? ?? 0;
+    final maxHp = p['max_hp'] as int? ?? 1;
+    return hp * 10 <= maxHp * 3;
+  }
 
   String? get phase => sim?.phase;
   Map<String, Object?>? get state => sim?.state();
