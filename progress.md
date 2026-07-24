@@ -82,3 +82,15 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
 2026-07-24 ACCESSIBILITY: Semantics labels/actions on EmberButton, DieChip (die/face/state), StatBar (HP+block), ResourcePip, intent badge, burn badge, pause gear. Overflow probe gained a 1.3x text-scale pass (all 5 sizes); fixes it caught: die-chip label scales inside its 64x80 chip, RECOMMENDED chip scales down, map node badge fits its 48px slot, combat HUD clamps text scale to its height budget with scale-aware compact mode (was overflowing up to 116px at 320x568@1.3x). Probe's source-location regex now matches lib/ui/screens/.
 2026-07-24 SIM v6 (SIM_VERSION=6): starting-boon pool grown 8 -> 15 (brand_bearer, stout_start, glowing_start, spark_pouch, slate_guard, deep_pockets, hearth_blessing — existing effect vocabulary + tier-1 dice only, resolution rules untouched). The without-replacement draw over boonsOrder reshuffles the seeded boon stream for every seed, so the golden was deliberately re-anchored 1117081416 -> 1842571558 (measured; simVersion itself does not enter the hash — verified before/after bump). Autoplay 200 seeds: easy 88.0% / normal 67.0% / hard 37.0%, 0 invalids (was 90.5/74/43 — new pool is slightly leaner; normal stays inside the 20–80 band). Mid-flight v5 saves are cleanly discarded at boot.
 2026-07-24 HOUSEKEEPING: LICENSE added (proprietary code notice + pointer to PROVENANCE.md/CREDITS.md for asset licenses); docs/store/privacy-policy.md + docs/store/play-listing.md drafted (zero-permissions story; owner still needs screenshots/graphic/hosted URL); checkpoint 04's stale "fine-grained-PAT pushes don't trigger CI" claim corrected in place.
+
+## 2026-07-24 — save durability: schema version + .bak recovery (PR #6)
+- emberdelve_meta.json now carries `schema` (v2; absent = v1) so future
+  migrations have something to key on; readers stay field-tolerant.
+- MetaStore.save keeps the previous good save as `.bak` (two atomic renames:
+  demote main → .bak, promote tmp → main); MetaStore.load falls back to .bak
+  when the main file is corrupt/missing and heals the main file via a
+  recovery-only write that never touches .bak.
+- Closes review note: a crash-corrupted meta file used to silently reset all
+  embers/unlocks/stats. New test/meta_backup_test.dart (6 tests) covers both
+  generations corrupt, heal-on-recover, legacy/future schema tolerance.
+- Gate: analyze clean, 101/101 tests at branch time; re-verified post-merge with main by integrator: analyze clean, 107/107 tests, autoplay 200 seeds normal 67.0%/0 invalids, golden 1842571558 self-consistent.
