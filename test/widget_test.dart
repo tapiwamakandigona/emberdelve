@@ -23,13 +23,13 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 }
 
 void main() {
-  testWidgets('title renders the logotype and Delve enters the map',
-      (tester) async {
+  testWidgets('title renders the logotype and Delve enters the map', (
+    tester,
+  ) async {
     final c = GameController(); // no boot(): starts at title
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     await pumpFor(tester, 400);
 
     // The wordmark is drawn (EmberLogotype), not a plain Text widget.
@@ -48,16 +48,16 @@ void main() {
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
-  testWidgets('combat renders die faces and rolling triggers the tray',
-      (tester) async {
+  testWidgets('combat renders die faces and rolling triggers the tray', (
+    tester,
+  ) async {
     final c = GameController();
     // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     // Pinned seed: keep this test deterministic (seed 1's first reachable
     // node is a fight, so the walk below always lands in combat).
     c.startRun(character: 'kindler', seed: 1);
@@ -90,13 +90,13 @@ void main() {
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
-  testWidgets('boon screen offers 1-of-3 and skip enters the map',
-      (tester) async {
+  testWidgets('boon screen offers 1-of-3 and skip enters the map', (
+    tester,
+  ) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', boons: true, seed: 1);
     await pumpFor(tester, 700);
 
@@ -111,13 +111,13 @@ void main() {
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
-  testWidgets('picking a boon applies its effect and enters the map',
-      (tester) async {
+  testWidgets('picking a boon applies its effect and enters the map', (
+    tester,
+  ) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     // Seed 1 offers [steady_hand, ward_start, kindled_cache]; slot 1 grants
     // a die, growing the pool from 3 to 4.
     c.startRun(character: 'kindler', boons: true, seed: 1);
@@ -132,16 +132,16 @@ void main() {
     await pumpFor(tester, 800);
   });
 
-  testWidgets('risky reroll: gated to unassigned dice, once per turn',
-      (tester) async {
+  testWidgets('risky reroll: gated to unassigned dice, once per turn', (
+    tester,
+  ) async {
     final c = GameController();
     // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     // Seed 1: the first reachable node is a fight.
     c.startRun(character: 'kindler', seed: 1);
     await pumpFor(tester, 700);
@@ -189,39 +189,41 @@ void main() {
     await pumpFor(tester, 800);
   });
 
-  test('stale/corrupt autosaves are cleared; healthy v4 saves restore',
-      () async {
-    final dir = await Directory.systemTemp.createTemp('emberdelve_test');
-    final f = File('${dir.path}/emberdelve_run.json');
+  test(
+    'stale/corrupt autosaves are cleared; healthy v4 saves restore',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('emberdelve_test');
+      final f = File('${dir.path}/emberdelve_run.json');
 
-    // v3 (pre-SIM_VERSION-4) autosave: rejected, cleared, fresh start.
-    await f.writeAsString(
-        jsonEncode({'version': 3, 'phase': 'map', 'player': {}}));
-    final c = GameController(saveDirOverride: dir.path);
-    await c.boot();
-    expect(c.sim, isNull, reason: 'stale save must not restore');
-    expect(await f.exists(), isFalse, reason: 'stale save must be deleted');
+      // v3 (pre-SIM_VERSION-4) autosave: rejected, cleared, fresh start.
+      await f.writeAsString(
+        jsonEncode({'version': 3, 'phase': 'map', 'player': {}}),
+      );
+      final c = GameController(saveDirOverride: dir.path);
+      await c.boot();
+      expect(c.sim, isNull, reason: 'stale save must not restore');
+      expect(await f.exists(), isFalse, reason: 'stale save must be deleted');
 
-    // Corrupt v4 snapshot: Sim.restore throws; boot survives and clears.
-    await f.writeAsString(jsonEncode({'version': 4, 'phase': 'map'}));
-    await c.boot();
-    expect(c.sim, isNull);
-    expect(await f.exists(), isFalse);
+      // Corrupt v4 snapshot: Sim.restore throws; boot survives and clears.
+      await f.writeAsString(jsonEncode({'version': 4, 'phase': 'map'}));
+      await c.boot();
+      expect(c.sim, isNull);
+      expect(await f.exists(), isFalse);
 
-    // Healthy mid-run v4 snapshot still restores.
-    final sim = Sim(7)..apply({'type': 'start_run', 'character': 'kindler'});
-    await f.writeAsString(jsonEncode(sim.snapshot()));
-    await c.boot();
-    expect(c.phase, equals('map'));
-    await dir.delete(recursive: true);
-  });
+      // Healthy mid-run v4 snapshot still restores.
+      final sim = Sim(7)..apply({'type': 'start_run', 'character': 'kindler'});
+      await f.writeAsString(jsonEncode(sim.snapshot()));
+      await c.boot();
+      expect(c.phase, equals('map'));
+      await dir.delete(recursive: true);
+    },
+  );
 
   testWidgets('daily delve starts the shared seeded run', (tester) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     await pumpFor(tester, 400);
     expect(find.textContaining('Daily Delve'), findsOneWidget);
 
@@ -236,13 +238,13 @@ void main() {
     await pumpFor(tester, 800);
   });
 
-  testWidgets('summary offers a fast Delve again into the boon pick',
-      (tester) async {
+  testWidgets('summary offers a fast Delve again into the boon pick', (
+    tester,
+  ) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: 1);
     await pumpFor(tester, 700);
     // Force a terminal phase through the sim's own command surface: walk the
@@ -289,10 +291,9 @@ void main() {
 
   testWidgets('character screen lists all delvers', (tester) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     await pumpFor(tester, 300);
     await tester.tap(find.text('Choose a delver'));
     await pumpFor(tester, 700);
@@ -300,25 +301,30 @@ void main() {
     expect(find.text('The Kindler'), findsOneWidget);
     expect(find.text('The Warden'), findsOneWidget);
     expect(find.text('NEXT UNLOCK — THE WARDEN'), findsOneWidget);
-    await tester.dragUntilVisible(find.text('The Ascetic'),
-        find.byType(Scrollable).first, const Offset(0, -200));
+    await tester.dragUntilVisible(
+      find.text('The Ascetic'),
+      find.byType(Scrollable).first,
+      const Offset(0, -200),
+    );
     expect(find.text('The Ascetic'), findsOneWidget);
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
   // --- v0.3.1 fix-pass coverage (docs/FIX_PLAN_v0.3.1.md) --------------------
 
-  testWidgets('F4: long event option labels wrap instead of clipping',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: Scaffold(
-        body: SizedBox(
-          width: 380, // phone-width column like the event screen
-          child: EmberButton(
-              'TRADE (LOSE A RANDOM DIE, GAIN A RANDOM DIE)'),
+  testWidgets('F4: long event option labels wrap instead of clipping', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildEmberTheme(),
+        home: Scaffold(
+          body: SizedBox(
+            width: 380, // phone-width column like the event screen
+            child: EmberButton('TRADE (LOSE A RANDOM DIE, GAIN A RANDOM DIE)'),
+          ),
         ),
       ),
-    ));
+    );
     await tester.pump();
     // No RenderFlex overflow exception and the full text is present.
     expect(tester.takeException(), isNull);
@@ -345,8 +351,11 @@ void main() {
       if (c.phase != 'event') continue;
       c.flash = null;
       c.apply({'type': 'event_choose', 'option': 1});
-      expect(c.flash, isNotNull,
-          reason: 'event resolved silently (seed $seed)');
+      expect(
+        c.flash,
+        isNotNull,
+        reason: 'event resolved silently (seed $seed)',
+      );
       expect(c.flash, isNot(equals('Not allowed')));
       return;
     }
@@ -364,14 +373,14 @@ void main() {
     expect(c.meta.runsPlayed, equals(runsBefore + 1));
   });
 
-  testWidgets('reward screen presents flip cards and picking one works',
-      (tester) async {
+  testWidgets('reward screen presents flip cards and picking one works', (
+    tester,
+  ) async {
     final c = GameController();
     c.meta.tutorialSeen = true;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     // Seed 2: the alternating bot below reaches the first reward alive
     // (verified with a headless sim probe; seed 1 dies to its first elite).
     c.startRun(character: 'kindler', seed: 2);
@@ -422,25 +431,29 @@ void main() {
     // Let every stagger + flip finish, then pick the first card by tapping.
     await pumpFor(tester, 220 + offers.length * 240 + 600);
     final before = ((c.state!['player'] as Map)['dice'] as List).length;
-    await tester.tap(find.byKey(ValueKey('reward-${offers[0]}-0')),
-        warnIfMissed: false);
+    await tester.tap(
+      find.byKey(ValueKey('reward-${offers[0]}-0')),
+      warnIfMissed: false,
+    );
     await pumpFor(tester, 600);
-    expect(((c.state!['player'] as Map)['dice'] as List).length,
-        equals(before + 1));
+    expect(
+      ((c.state!['player'] as Map)['dice'] as List).length,
+      equals(before + 1),
+    );
     await pumpFor(tester, 800); // drain implicit animations before teardown
   });
 
-  testWidgets('rest at full HP offers an enabled exit back to the map',
-      (tester) async {
+  testWidgets('rest at full HP offers an enabled exit back to the map', (
+    tester,
+  ) async {
     // Regression (play session 2026-07-24): at full HP with nothing forgeable
     // the rest button was disabled and the screen had no other exit — a
     // soft-locked run. The button must stay tappable and lead to the map.
     final c = GameController();
     c.meta.tutorialSeen = true;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: 1);
     await pumpFor(tester, 400);
     c.sim!.phase = 'rest'; // walk straight into a rest hollow at full HP
@@ -456,24 +469,93 @@ void main() {
     await pumpFor(tester, 600); // drain animations before teardown
   });
 
-  testWidgets('damage and text pops finish without framework exceptions',
-      (tester) async {
+  testWidgets('damage and text pops finish without framework exceptions', (
+    tester,
+  ) async {
     // Regression (play session 2026-07-24): the pop scale curves fed
     // (f - a) / (1 - a) into Curve.transform un-clamped; at f == 1.0 float
     // error produced 1.0000000000000002 and tripped the [0, 1] assert on the
     // final frame of every pop.
     var done = 0;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: Scaffold(
-        body: Stack(children: [
-          DamagePop(amount: 7, onDone: () => done++),
-          TextPop(text: 'PAIR +2', color: Colors.amber, onDone: () => done++),
-        ]),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildEmberTheme(),
+        home: Scaffold(
+          body: Stack(
+            children: [
+              DamagePop(amount: 7, onDone: () => done++),
+              TextPop(
+                text: 'PAIR +2',
+                color: Colors.amber,
+                onDone: () => done++,
+              ),
+            ],
+          ),
+        ),
       ),
-    ));
+    );
     await pumpFor(tester, 1200); // both run to completion
     expect(done, equals(2));
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'intent/burn badges never cover the enemy HP bar on squeezed screens',
+    (tester) async {
+      // Regression (owner screenshot 2026-07-24): with a fat dice pool on a
+      // short phone the stage collapsed, its content was top-aligned, and the
+      // intent+burn pills drew straight over the enemy HP bar — which then
+      // looked half-empty at 28/28. The stage row is now floor-pinned and the
+      // badge lift clamps to the stage's real headroom.
+      tester.view.physicalSize = const Size(320, 568) * 2.0;
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.reset);
+      final c = GameController();
+      c.meta.tutorialSeen = true;
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      c.startRun(character: 'kindler', seed: 1);
+      // Fat 12-die pool so the tray takes its full budget.
+      c.sim!.player['dice'] = [
+        for (var i = 0; i < 12; i++)
+          ['d4', 'd6', 'd8', 'd10', 'd12', 'd6'][i % 6],
+      ];
+      await pumpFor(tester, 400);
+      final map = c.state!['map'] as Map;
+      final edges = (map['edges'] as Map).cast<String, List>();
+      var guard = 0;
+      while (c.phase == 'map' && guard++ < 10) {
+        final position = (c.state!['map'] as Map)['position'] as int;
+        final next = (edges['$position'] as List).cast<int>().first;
+        c.apply({'type': 'choose_node', 'node': next});
+        await pumpFor(tester, 500);
+        if (c.phase == 'reward') c.apply({'type': 'choose_reward', 'index': 0});
+        if (c.phase == 'rest') c.apply({'type': 'rest'});
+        if (c.phase == 'shop') c.apply({'type': 'leave_shop'});
+        if (c.phase == 'event') c.apply({'type': 'event_choose', 'option': 1});
+        await pumpFor(tester, 500);
+      }
+      if (c.phase != 'player_turn') return; // no early fight on this seed; fine
+      // Burn stacks widen the badge row — the worst case from the screenshot.
+      c.sim!.enemy!['burn'] = 3;
+      // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+      c.notifyListeners();
+      await pumpFor(tester, 2400); // outlast the name-plate splash
+      final badge = find.byWidgetPredicate(
+        (w) => w.runtimeType.toString() == '_IntentBadge',
+      );
+      expect(badge, findsOneWidget);
+      final badgeRect = tester.getRect(badge);
+      for (final bar in tester.widgetList(find.byType(StatBar))) {
+        final barRect = tester.getRect(find.byWidget(bar));
+        expect(
+          badgeRect.overlaps(barRect),
+          isFalse,
+          reason: 'intent badge $badgeRect must not cover StatBar $barRect',
+        );
+      }
+      await pumpFor(tester, 600); // drain animations before teardown
+    },
+  );
 }

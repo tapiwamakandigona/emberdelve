@@ -96,9 +96,14 @@ class _CombatScreenState extends State<CombatScreen> {
     );
   }
 
-  void _spawnFx(_FxKind kind,
-      {required bool onPlayer, Color color = EmberColors.gold}) {
-    setState(() => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)));
+  void _spawnFx(
+    _FxKind kind, {
+    required bool onPlayer,
+    Color color = EmberColors.gold,
+  }) {
+    setState(
+      () => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)),
+    );
   }
 
   /// Weapon choreography rides the existing squash/lunge flags: pull back in
@@ -106,8 +111,8 @@ class _CombatScreenState extends State<CombatScreen> {
   WeaponPhase get _weaponPhase => _playerSquash
       ? WeaponPhase.raise
       : _playerLunge
-          ? WeaponPhase.swing
-          : WeaponPhase.idle;
+      ? WeaponPhase.swing
+      : WeaponPhase.idle;
 
   /// Selected die pips -> weapon heat (0..1). Keeps glowing through the
   /// swing (selection is cleared after apply, but the lunge should stay hot).
@@ -322,8 +327,11 @@ class _CombatScreenState extends State<CombatScreen> {
     // Contact frame: the weapon's smear crosses the enemy — or glances off
     // a shield arc when the hit is fully absorbed.
     if (landed > 0) {
-      _spawnFx(_FxKind.slash,
-          onPlayer: false, color: weaponFor(_characterId).accent);
+      _spawnFx(
+        _FxKind.slash,
+        onPlayer: false,
+        color: weaponFor(_characterId).accent,
+      );
     } else {
       _spawnFx(_FxKind.guard, onPlayer: false);
     }
@@ -376,8 +384,11 @@ class _CombatScreenState extends State<CombatScreen> {
       _queued = ('block', selected); // F2: remember, don't drop
       return;
     }
-    final events =
-        widget.c.apply({'type': 'assign', 'die': selected, 'action': 'block'});
+    final events = widget.c.apply({
+      'type': 'assign',
+      'die': selected,
+      'action': 'block',
+    });
     Haptics.light();
     setState(() => selected = null);
     // Block used to be completely silent — now the guard visibly comes up.
@@ -385,8 +396,11 @@ class _CombatScreenState extends State<CombatScreen> {
     if (gained != null) {
       _audio?.playSfx('block', volume: 0.55);
       _spawnFx(_FxKind.guard, onPlayer: true);
-      _note('+${gained['amount']} BLOCK',
-          color: EmberColors.block, icon: Icons.shield);
+      _note(
+        '+${gained['amount']} BLOCK',
+        color: EmberColors.block,
+        icon: Icons.shield,
+      );
     }
   }
 
@@ -632,90 +646,102 @@ class _CombatScreenState extends State<CombatScreen> {
             clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
             children: [
-              Column(mainAxisSize: MainAxisSize.min, children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: trayViewH),
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: Space.s,
-                    runSpacing: Space.s,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      for (var i = 1; i <= dice0.length; i++)
-                        _trayChip(
-                          chipScale,
-                          DieChip(
-                          dice0[i - 1],
-                          value: rolled != null ? rolled[i - 1] : null,
-                          assigned: assigned['$i'] != null,
-                          selected: _rerollMode
-                              ? _rerollSel.contains(i)
-                              : selected == i,
-                          maxed: maxed != null && maxed[i - 1],
-                          rollToken: _rollGen,
-                          // 50 ms cascade so the tumble reads left-to-right.
-                          tumbleDelayMs: (i - 1) * 50,
-                          // v0.3.1 F1/F2: selection is pure UI state, so dice
-                          // stay tappable during choreography; a spent die
-                          // answers with an explicit call-out instead of
-                          // silently eating the tap.
-                          onTap: rolled == null
-                              ? null
-                              : assigned['$i'] != null
-                              ? () => _note(
-                                  'ALREADY ASSIGNED',
-                                  color: EmberColors.textDim,
-                                  icon: Icons.do_not_disturb_alt,
-                                )
-                              : _rerollMode
-                              ? () => setState(
-                                  () => _rerollSel.contains(i)
-                                      ? _rerollSel.remove(i)
-                                      : _rerollSel.add(i),
-                                )
-                              : () {
-                                  Haptics.light();
-                                  setState(
-                                    () => selected = selected == i ? null : i,
-                                  );
-                                },
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              // Fold indicator: an explicit "+N" pill under the last whole
-              // row — replaces the fade+chevron that read as a glitch over
-              // half-cut dice (owner feedback 2026-07-24).
-              if (trayScrolls)
-                Padding(
-                  padding: const EdgeInsets.only(top: Space.xs),
-                  child: Semantics(
-                    label: '$hiddenDice more dice below, scroll the tray',
-                    child: Container(
-                      height: trayPeek - Space.xs,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: Space.m),
-                      decoration: BoxDecoration(
-                        color: EmberColors.raised,
-                        borderRadius: BorderRadius.circular(11),
-                        border: Border.all(color: EmberColors.line),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: trayViewH),
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: Space.s,
+                        runSpacing: Space.s,
+                        alignment: WrapAlignment.center,
                         children: [
-                          Text('+$hiddenDice',
-                              style: EmberText.label
-                                  .copyWith(color: EmberColors.textPrimary)),
-                          const Icon(Icons.keyboard_arrow_down,
-                              size: 14, color: EmberColors.textDim),
+                          for (var i = 1; i <= dice0.length; i++)
+                            _trayChip(
+                              chipScale,
+                              DieChip(
+                                dice0[i - 1],
+                                value: rolled != null ? rolled[i - 1] : null,
+                                assigned: assigned['$i'] != null,
+                                selected: _rerollMode
+                                    ? _rerollSel.contains(i)
+                                    : selected == i,
+                                maxed: maxed != null && maxed[i - 1],
+                                rollToken: _rollGen,
+                                // 50 ms cascade so the tumble reads left-to-right.
+                                tumbleDelayMs: (i - 1) * 50,
+                                // v0.3.1 F1/F2: selection is pure UI state, so dice
+                                // stay tappable during choreography; a spent die
+                                // answers with an explicit call-out instead of
+                                // silently eating the tap.
+                                onTap: rolled == null
+                                    ? null
+                                    : assigned['$i'] != null
+                                    ? () => _note(
+                                        'ALREADY ASSIGNED',
+                                        color: EmberColors.textDim,
+                                        icon: Icons.do_not_disturb_alt,
+                                      )
+                                    : _rerollMode
+                                    ? () => setState(
+                                        () => _rerollSel.contains(i)
+                                            ? _rerollSel.remove(i)
+                                            : _rerollSel.add(i),
+                                      )
+                                    : () {
+                                        Haptics.light();
+                                        setState(
+                                          () => selected = selected == i
+                                              ? null
+                                              : i,
+                                        );
+                                      },
+                              ),
+                            ),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ]),
+                  // Fold indicator: an explicit "+N" pill under the last whole
+                  // row — replaces the fade+chevron that read as a glitch over
+                  // half-cut dice (owner feedback 2026-07-24).
+                  if (trayScrolls)
+                    Padding(
+                      padding: const EdgeInsets.only(top: Space.xs),
+                      child: Semantics(
+                        label: '$hiddenDice more dice below, scroll the tray',
+                        child: Container(
+                          height: trayPeek - Space.xs,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Space.m,
+                          ),
+                          decoration: BoxDecoration(
+                            color: EmberColors.raised,
+                            borderRadius: BorderRadius.circular(11),
+                            border: Border.all(color: EmberColors.line),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '+$hiddenDice',
+                                style: EmberText.label.copyWith(
+                                  color: EmberColors.textPrimary,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 14,
+                                color: EmberColors.textDim,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               for (final (idx, n)
                   in _notes.where((n) => !n.onEnemy).toList().indexed)
                 Positioned(
@@ -975,150 +1001,170 @@ class _CombatScreenState extends State<CombatScreen> {
     final enemyH = compact ? (big ? 96.0 : 72.0) : (big ? 128.0 : 96.0);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-      // Clip.none: on short screens the shrunken stage lets sprites/intent
-      // badges overlap the header gracefully instead of being cut off.
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
+      // Clip.none so sprites/badges can animate past their own boxes, but the
+      // intent badge's lift is clamped to the stage's real headroom below —
+      // on a squeezed stage the old fixed -44 pushed it clear out of the
+      // stage and over the enemy HP bar (owner screenshot 2026-07-24).
+      child: LayoutBuilder(
+        builder: (context, box) {
+          // Space above the enemy sprite's top edge inside the stage (the
+          // combatants row is pinned to the stage floor below). A negative
+          // lift pushes the badge DOWN onto the sprite when the stage is
+          // shorter than the sprite itself — never up over the HP panel.
+          final headroom = box.maxHeight - Space.s - enemyH;
+          final badgeLift = headroom.isFinite ? math.min(44.0, headroom) : 44.0;
+          return Stack(
+            clipBehavior: Clip.none,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: Space.s),
-                child: _combatant(
-                  sprite: SpriteView(
-                    _characterId,
-                    key: ValueKey('hero-$_characterId'),
-                    height: heroH,
-                  ),
-                  spriteHeight: heroH,
-                  lungeToward: 1,
-                  lunge: _playerLunge,
-                  knock: _playerKnock,
-                  flash: _playerFlash,
-                  dying: _playerDying,
-                  squash: _playerSquash,
-                  // The delver's signature weapon, finally visible: idles in
-                  // hand, pulls back on the squash, swings with the lunge.
-                  weapon: WeaponView(
-                    _characterId,
-                    key: ValueKey('weapon-$_characterId'),
-                    height: heroH,
-                    phase: _weaponPhase,
-                    // Die -> weapon causality made visible: the selected
-                    // die's pips heat the blade before the swing.
-                    charge: _weaponCharge,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: Space.s),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.topCenter,
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    _combatant(
-                      sprite: SpriteView(
-                        enemyId,
-                        key: ValueKey('enemy-$enemyId'),
-                        height: enemyH,
-                        flipX: true,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Space.s),
+                      child: _combatant(
+                        sprite: SpriteView(
+                          _characterId,
+                          key: ValueKey('hero-$_characterId'),
+                          height: heroH,
+                        ),
+                        spriteHeight: heroH,
+                        lungeToward: 1,
+                        lunge: _playerLunge,
+                        knock: _playerKnock,
+                        flash: _playerFlash,
+                        dying: _playerDying,
+                        squash: _playerSquash,
+                        // The delver's signature weapon, finally visible: idles in
+                        // hand, pulls back on the squash, swings with the lunge.
+                        weapon: WeaponView(
+                          _characterId,
+                          key: ValueKey('weapon-$_characterId'),
+                          height: heroH,
+                          phase: _weaponPhase,
+                          // Die -> weapon causality made visible: the selected
+                          // die's pips heat the blade before the swing.
+                          charge: _weaponCharge,
+                        ),
                       ),
-                      spriteHeight: enemyH,
-                      // Slight depth scale: the enemy stands a step closer.
-                      depthScale: big ? 1.02 : 1.06,
-                      lungeToward: -1,
-                      lunge: _enemyLunge,
-                      knock: _enemyKnock,
-                      flash: _enemyFlash,
-                      dying: _enemyDying,
-                      squash: _enemySquash,
-                      windup: true,
                     ),
-                    // Intent as an icon badge floating above the enemy
-                    // (overlaid, so it never adds layout height). Burn stacks
-                    // sit beside it while the enemy is alight.
-                    Positioned(
-                      top: -44,
-                      // With burn stacks the badge row widens; right-anchor it
-                      // to the enemy so it never draws off the screen edge
-                      // (many-dice sweep 2026-07-24 — the burn pill sat half
-                      // off-screen on every burning enemy).
-                      right: (enemy['burn'] as int? ?? 0) > 0 ? 0 : null,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: Space.s),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.topCenter,
                         children: [
-                          _IntentBadge(intent),
-                          if ((enemy['burn'] as int? ?? 0) > 0) ...[
-                            const SizedBox(width: Space.xs),
-                            _BurnBadge(enemy['burn'] as int),
-                          ],
+                          _combatant(
+                            sprite: SpriteView(
+                              enemyId,
+                              key: ValueKey('enemy-$enemyId'),
+                              height: enemyH,
+                              flipX: true,
+                            ),
+                            spriteHeight: enemyH,
+                            // Slight depth scale: the enemy stands a step closer.
+                            depthScale: big ? 1.02 : 1.06,
+                            lungeToward: -1,
+                            lunge: _enemyLunge,
+                            knock: _enemyKnock,
+                            flash: _enemyFlash,
+                            dying: _enemyDying,
+                            squash: _enemySquash,
+                            windup: true,
+                          ),
+                          // Intent as an icon badge floating above the enemy
+                          // (overlaid, so it never adds layout height). Burn stacks
+                          // sit beside it while the enemy is alight. The lift is
+                          // clamped so the badge never escapes the stage upward.
+                          Positioned(
+                            top: -badgeLift,
+                            // With burn stacks the badge row widens; right-anchor it
+                            // to the enemy so it never draws off the screen edge
+                            // (many-dice sweep 2026-07-24 — the burn pill sat half
+                            // off-screen on every burning enemy).
+                            right: (enemy['burn'] as int? ?? 0) > 0 ? 0 : null,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _IntentBadge(intent),
+                                if ((enemy['burn'] as int? ?? 0) > 0) ...[
+                                  const SizedBox(width: Space.xs),
+                                  _BurnBadge(enemy['burn'] as int),
+                                ],
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
+              // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
+              for (final (idx, n)
+                  in _notes.where((n) => n.onEnemy).toList().indexed)
+                Positioned(
+                  right: 12,
+                  bottom: 150.0 + idx * 24,
+                  child: TextPop(
+                    key: ValueKey('note-${n.id}'),
+                    text: n.text,
+                    color: n.color,
+                    icon: n.icon,
+                    fontSize: 15,
+                    onDone: () {
+                      if (mounted) setState(() => _notes.remove(n));
+                    },
+                  ),
+                ),
+              // Contact FX: weapon smear / claw rake / guard arc over the victim.
+              for (final fx in _fx)
+                Positioned(
+                  left: fx.onPlayer ? 0 : null,
+                  right: fx.onPlayer ? null : 0,
+                  bottom: Space.s,
+                  width: (fx.onPlayer ? heroH : enemyH) * 1.35,
+                  height: (fx.onPlayer ? heroH : enemyH) * 1.35,
+                  child: fx.kind == _FxKind.guard
+                      ? GuardFlash(
+                          key: ValueKey('fx-${fx.id}'),
+                          facing: fx.onPlayer ? 1 : -1,
+                          onDone: () {
+                            if (mounted) setState(() => _fx.remove(fx));
+                          },
+                        )
+                      : ImpactSlash(
+                          key: ValueKey('fx-${fx.id}'),
+                          claws: fx.kind == _FxKind.claws,
+                          color: fx.color,
+                          onDone: () {
+                            if (mounted) setState(() => _fx.remove(fx));
+                          },
+                        ),
+                ),
+              // Floating damage numbers (player pops left, enemy pops right).
+              for (final p in _pops)
+                Positioned(
+                  left: p.onPlayer ? 24 : null,
+                  right: p.onPlayer ? null : 24,
+                  bottom: 120,
+                  child: DamagePop(
+                    key: ValueKey('pop-${p.id}'),
+                    amount: p.amount,
+                    blocked: p.blocked,
+                    onPlayer: p.onPlayer,
+                    onDone: () {
+                      if (mounted) setState(() => _pops.remove(p));
+                    },
+                  ),
+                ),
             ],
-          ),
-          // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
-          for (final (idx, n)
-              in _notes.where((n) => n.onEnemy).toList().indexed)
-            Positioned(
-              right: 12,
-              bottom: 150.0 + idx * 24,
-              child: TextPop(
-                key: ValueKey('note-${n.id}'),
-                text: n.text,
-                color: n.color,
-                icon: n.icon,
-                fontSize: 15,
-                onDone: () {
-                  if (mounted) setState(() => _notes.remove(n));
-                },
-              ),
-            ),
-        // Contact FX: weapon smear / claw rake / guard arc over the victim.
-        for (final fx in _fx)
-          Positioned(
-            left: fx.onPlayer ? 0 : null,
-            right: fx.onPlayer ? null : 0,
-            bottom: Space.s,
-            width: (fx.onPlayer ? heroH : enemyH) * 1.35,
-            height: (fx.onPlayer ? heroH : enemyH) * 1.35,
-            child: fx.kind == _FxKind.guard
-                ? GuardFlash(
-                    key: ValueKey('fx-${fx.id}'),
-                    facing: fx.onPlayer ? 1 : -1,
-                    onDone: () {
-                      if (mounted) setState(() => _fx.remove(fx));
-                    })
-                : ImpactSlash(
-                    key: ValueKey('fx-${fx.id}'),
-                    claws: fx.kind == _FxKind.claws,
-                    color: fx.color,
-                    onDone: () {
-                      if (mounted) setState(() => _fx.remove(fx));
-                    }),
-          ),
-          // Floating damage numbers (player pops left, enemy pops right).
-          for (final p in _pops)
-            Positioned(
-              left: p.onPlayer ? 24 : null,
-              right: p.onPlayer ? null : 24,
-              bottom: 120,
-              child: DamagePop(
-                key: ValueKey('pop-${p.id}'),
-                amount: p.amount,
-                blocked: p.blocked,
-                onPlayer: p.onPlayer,
-                onDone: () {
-                  if (mounted) setState(() => _pops.remove(p));
-                },
-              ),
-            ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -1209,9 +1255,7 @@ class _CombatScreenState extends State<CombatScreen> {
         duration: _enemyWindupTime,
         foregroundDecoration: BoxDecoration(
           backgroundBlendMode: BlendMode.srcATop,
-          color: squash
-              ? const Color(0x55C24040)
-              : const Color(0x00C24040),
+          color: squash ? const Color(0x55C24040) : const Color(0x00C24040),
         ),
         child: w,
       );
@@ -1228,11 +1272,13 @@ class _CombatScreenState extends State<CombatScreen> {
         transformAlignment: Alignment.bottomCenter,
         transform: squash
             ? (windup
-                ? (Matrix4.identity()
-                  ..translate(lungeToward * -8.0)
-                  ..rotateZ(lungeToward * -0.07) // top tips away from target
-                  ..scale(1.06, 0.90))
-                : (Matrix4.identity()..scale(1.08, 0.86)))
+                  ? (Matrix4.identity()
+                      ..translate(lungeToward * -8.0)
+                      ..rotateZ(
+                        lungeToward * -0.07,
+                      ) // top tips away from target
+                      ..scale(1.06, 0.90))
+                  : (Matrix4.identity()..scale(1.08, 0.86)))
             : Matrix4.identity(),
         child: w,
       ),
