@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- v0.3.4: needed to drive the Vibrator service directly for the in-game
+         Haptics toggle. Normal install-time permission; still no internet,
+         no sensitive permissions. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
         android:label="emberdelve"
         android:name="${applicationName}"
