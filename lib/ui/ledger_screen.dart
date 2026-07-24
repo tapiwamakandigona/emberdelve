@@ -71,6 +71,25 @@ class LedgerScreen extends StatelessWidget {
                       ],
                     ]),
                   ),
+                  // Recent delves (v0.3.4, review note #4): the last runs,
+                  // newest first — every entry REAL (§Ethics honesty).
+                  if (m.runHistory.isNotEmpty) ...[
+                    const SizedBox(height: Space.xl),
+                    Text('RECENT DELVES', style: EmberText.micro),
+                    const SizedBox(height: Space.s),
+                    Panel(
+                      key: const ValueKey('recent-delves'),
+                      child: Column(children: [
+                        for (final (i, r)
+                            in m.runHistory.take(10).toList().indexed) ...[
+                          if (i > 0)
+                            const Divider(
+                                color: EmberColors.line, height: Space.xl),
+                          _historyRow(r),
+                        ],
+                      ]),
+                    ),
+                  ],
                   const SizedBox(height: Space.xl),
                   // Hearth colors: tap an owned color to light it; tap a
                   // locked one to buy it with embers (price always shown).
@@ -100,6 +119,42 @@ class LedgerScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _historyRow(Map<String, Object?> r) {
+    final result = r['result'] as String? ?? 'lost';
+    final won = result == 'won';
+    final abandoned = result == 'abandoned';
+    final ch = characters[r['character']]?.name ?? '${r['character']}';
+    final diff = r['difficulty'] as String? ?? 'normal';
+    final daily = r['daily'] == true;
+    final outcome = won
+        ? 'Ember claimed'
+        : abandoned
+            ? 'walked away'
+            : 'fell on floor ${r['floor']} of ${r['floors']}';
+    final icon = won
+        ? Icons.emoji_events
+        : abandoned
+            ? Icons.logout
+            : Icons.local_fire_department;
+    final color = won
+        ? EmberColors.gold
+        : abandoned
+            ? EmberColors.textDisabled
+            : EmberColors.ember;
+    return Row(children: [
+      Icon(icon, color: color, size: 20),
+      const SizedBox(width: Space.m),
+      Expanded(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('$ch — $outcome', style: EmberText.body),
+          const SizedBox(height: 2),
+          Text('${daily ? 'daily · ' : ''}$diff · ${r['date']}',
+              style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+        ]),
+      ),
+    ]);
   }
 
   Widget _row(IconData icon, Color color, String label, String value) {

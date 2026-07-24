@@ -52,6 +52,13 @@ class MetaState {
   bool lastDailyWon;
   int lastDailyFloor; // 1-based layer reached (boss layer when won)
   int lastDailyFloors; // total layers on that day's map
+  // v0.3.4 run history (review note #4): one small record per ENDED run
+  // (won/lost/abandoned), newest first, capped — enough for a ledger page
+  // and per-run seed replay, small enough to never bloat the save.
+  // Record keys: date, character, difficulty, ascension, result, floor,
+  // floors, seed, embers, daily(optional true).
+  List<Map<String, Object?>> runHistory;
+  static const int runHistoryCap = 30;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -73,7 +80,9 @@ class MetaState {
     this.lastDailyWon = false,
     this.lastDailyFloor = 0,
     this.lastDailyFloors = 0,
-  })  : unlockedCharacters = unlocked ?? {defaultCharacter},
+    List<Map<String, Object?>>? runHistory,
+  })  : runHistory = runHistory ?? [],
+        unlockedCharacters = unlocked ?? {defaultCharacter},
         charRuns = charRuns ?? {},
         charWins = charWins ?? {},
         ownedThemes = ownedThemes ?? {defaultTheme};
@@ -100,7 +109,16 @@ class MetaState {
         if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
         if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
         if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
+        if (runHistory.isNotEmpty) 'runHistory': runHistory,
       };
+
+  /// Prepend a run record and trim to [runHistoryCap] (newest first).
+  void addRunRecord(Map<String, Object?> record) {
+    runHistory.insert(0, record);
+    if (runHistory.length > runHistoryCap) {
+      runHistory.removeRange(runHistoryCap, runHistory.length);
+    }
+  }
 
   static Map<String, int> _intMap(Object? v) =>
       (v as Map?)?.map((k, n) => MapEntry('$k', (n as num).toInt())) ?? {};
@@ -137,6 +155,10 @@ class MetaState {
         lastDailyWon: j['lastDailyWon'] as bool? ?? false,
         lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
         lastDailyFloors: j['lastDailyFloors'] as int? ?? 0,
+        runHistory: ((j['runHistory'] as List?) ?? const [])
+            .whereType<Map>()
+            .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))
+            .toList(),
       );
 
   /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched
