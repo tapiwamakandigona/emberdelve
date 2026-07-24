@@ -14,7 +14,9 @@ State as of branch `v030-integration` (version `0.3.0+3`). Read alongside progre
 - Signed-build CI run 30018705918 green; fingerprint gate passed.
 
 ## Gotchas for the next agent
-- Fine-grained-PAT pushes do NOT trigger push workflows — dispatch with `gh workflow run CI --ref main`.
+- ~~Fine-grained-PAT pushes do NOT trigger push workflows — dispatch with `gh workflow run CI --ref main`.~~
+  CORRECTION (2026-07-23): pushes DID trigger CI (runs 30044770024, 30044931004).
+  Treat `gh workflow run` as belt-and-braces, not a requirement.
 - Ambient animation loops hang `pumpAndSettle`; use the bounded `pumpFor` helper (see test/widget_test.dart header).
 - v3 autosaves are rejected by v4 `restore`; `GameController.boot()` deletes them and lands on title.
 - `MapScreen._walkFrom` is a static guard — revisit if map screens ever coexist.
