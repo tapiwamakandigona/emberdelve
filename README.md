@@ -1,8 +1,12 @@
 # Emberdelve
 
-A dark, turn-based **dice-builder roguelite** for Android. Roll, assign, and forge dice as you delve toward the ember at the bottom of the world.
+A crisp **pixel action-platformer** for Android. Delve through the cursed forest of Emberwood — slash beasts, loot chests, hunt secret rooms, and gear up in the shop. Apple-Knight-style loop, tighter feel, no ad spam.
 
-**Tsoro Studios** · Flutter 3.32 / Dart (sealed pure-Dart sim) · public repo
+**Tsoro Studios** · Flutter 3.32 + Flame · public repo
+
+> **v2 pivot (2026-07-24):** Emberdelve was reborn as an action platformer. The original
+> dice-builder roguelite is preserved on branch [`legacy/dice-builder`](../../tree/legacy/dice-builder),
+> tag `v0.3.10-legacy`, and the ["Emberdelve Classic" release](../../releases/tag/v0.3.10-legacy).
 
 ## Start here (human or AI)
 1. `PROJECT.md` — goal, standing decisions, session-start ritual
@@ -11,16 +15,21 @@ A dark, turn-based **dice-builder roguelite** for Android. Roll, assign, and for
 4. `flutter pub get && flutter test` — environment up + test suite
 
 ## Layout
-- `lib/sim/` — sealed pure-Dart simulation core (commands in, events out; deterministic, seeded; no Flutter/dart:io imports)
-- `lib/ui/` — Flutter presentation layer (custom-painted, no stock Material look)
-- `lib/data/` — content as data modules (dice, foes, relics, boons, events)
-- `lib/game/` — controller gluing sim to UI (autosave, choreography)
-- `bin/autoplay.dart` — headless balance harness (`dart run bin/autoplay.dart 200`)
-- `test/` — sim + widget suite
-- `docs/` — spec + architecture + sim contract (`docs/spec.md` §Ethics is binding)
-- `.github/workflows/ci.yml` — analyze/test gate → signed Android APK+AAB on main
+- `lib/game/` — Flame gameplay: player, enemies, levels, physics, HUD (`docs/architecture.md`)
+- `lib/meta/` — economy, shop catalog, progression (pure Dart, headless-tested)
+- `lib/ui/` — Flutter meta screens (title, level select, shop, settings)
+- `lib/core/` — seeded RNG, atomic save system
+- `lib/audio/` — music/SFX service
+- `assets/levels/` — ASCII level grids (unit-tested)
+- `docs/` — spec + architecture (`docs/spec.md` §7 Ethics is binding); `docs/legacy/` — dice-era docs
 
-## Release signing
-Release builds are signed in CI from repository secrets (see `docs/release.md`).
-Without a local `android/key.properties` the build falls back to debug signing,
-so contributors can build and run without any secrets.
+## Build
+```
+flutter pub get
+flutter test        # full headless gate (levels, physics, economy, UI smoke)
+flutter build apk --release
+```
+CI builds signed APK/AAB on `main` (see `.github/workflows/ci.yml` — signing config is immutable).
+
+## Licensing
+Code: see `LICENSE`. Art/audio: CC0/CC-BY only, cataloged in `PROVENANCE.md`, attribution shipped in-app (`CREDITS.md`).

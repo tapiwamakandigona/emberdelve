@@ -351,3 +351,11 @@ tutorial promise and refreshed screenshots in a single submission.
 
 Full day-one narrative (publish journey, recruiting rounds, reciprocity
 table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
+
+---
+## 2026-07-24 — PIVOT to action platformer (owner-directed)
+- Owner (DM): rethink Emberdelve as an Apple-Knight-style action platformer; better + well-optimised; archive old game first; new targets/goals across the repo.
+- Legacy preserved: branch `legacy/dice-builder`, tag `v0.3.10-legacy`, GH release "Emberdelve Classic" (verified on remote).
+- A prior agent's pivot attempt died locally without pushing — nothing recoverable. Restarted from `main` on branch `pivot/platformer`. Standing rule: PUSH AT EVERY MILESTONE.
+- M0 (this commit): PROJECT.md/README/spec/architecture rewritten for v2; dice-era docs → `docs/legacy/`.
+- Keep: CI+signing, package id, AudioService+audio assets, fonts, seeded RNG, atomic-save pattern. Drop: dice sim/UI/data (archived on legacy branch).
