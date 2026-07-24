@@ -127,3 +127,22 @@ clean, 96/96 tests, autoplay 74.0%/0 invalids, golden 1117081416.
   weapon smear + sparks on enemy hits, claw rake on player hits, guard-arc
   shield flash for block (previously completely silent/invisible). Character
   select: weapon leans on portrait, name in stat line. Sim untouched.
+
+## 2026-07-24 — bug sweep 2 (deeper pass)
+- Fixed: boss death insight coached the exact wrong line (block timing is
+  sim-verified: block intents protect the FOLLOWING player turn — old tip said
+  "hold damage turn 2, strike turn 3", i.e. swing into 28 block). Reworded
+  direction-correct + number-free; block-timing anchor test added.
+- Fixed: burn-kill death dissolve overran the 1450 ms terminal hold (~1730 ms
+  worst path) and got cut by the reward-screen switch — burn beat now skipped
+  when the tick kills (worst path ~1380 ms). PR #11 audit note corrected.
+- Fixed: 'boon' phase fell through to title music (jarring after "Delve
+  again"); now plays the map track like the other run phases.
+- Fixed: SettingsStore.save now queued + atomic (temp file + rename), same
+  contract as MetaStore/run autosave. Dead guard in phase_transition_test
+  corrected ('boon_offer'/'option' -> 'boon'/'index').
+- Sim behavior untouched; golden 1842571558 verified unchanged, no SIM_VERSION
+  bump. Write-up: docs/improvements/bug-sweep-2-2026-07-24.md
+
+## 2026-07-24 — combat feel v2: dice charge, boss kill, enemy wind-up, reward flip (PR #13)
+2026-07-24 COMBAT FEEL V2 (branch feat/combat-feel-v2, stacked on feat/combat-weapons-juice; owner: "do all these, high quality weapons, good animations, more visuals"): (1) weapon quality pass — silhouette outlines, white-hot smear core, easeOutBack follow-through recovery; (2) DICE CHARGE — the selected die's pips heat the weapon (glow halo + rising sparks + white-hot edge, TweenAnimationBuilder-smoothed; heat frozen through the swing via _lastSwingCharge); (3) BOSS KILL MOMENT — white-hot impact freeze (260ms, _bossKillFlash overlay) + full-magnitude shake + flash decay into the ember dissolve, boss-only terminalHold 1900ms; (4) ENEMY WIND-UP — 190ms lean-back + red heat tint before the lunge (windup flag on _combatant), player squash untouched at 90ms; (5) REWARD FLIP — offers present as 3D flip cards (staggered auto-flip 220+240i ms, pre-mirrored back, FittedBox-scaled face for 320×568@1.3x, tap-to-pick with double-tap guard, event_page sfx + haptic per flip; all cards flip = no peek-gamble, Ethics-safe). Sim core untouched.
