@@ -41,7 +41,7 @@ void main() {
     expect(dice.containsKey('d6'), isTrue); // starter must exist
   });
 
-  test('enemies: order matches, >=3 regular + >=1 elite + exactly 1 boss', () {
+  test('enemies: order matches, >=3 regular + >=1 elite + exactly 3 bosses', () {
     expect(enemiesOrder.toSet(), equals(enemies.keys.toSet()));
     var regs = 0, elites = 0, bosses = 0;
     enemies.forEach((id, e) {
@@ -62,7 +62,7 @@ void main() {
     });
     expect(regs, greaterThanOrEqualTo(3));
     expect(elites, greaterThanOrEqualTo(1));
-    expect(bosses, equals(1));
+    expect(bosses, equals(3));
   });
 
   test('relics: order matches, legal hooks, >=20 ids', () {
