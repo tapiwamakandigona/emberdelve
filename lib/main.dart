@@ -1,9 +1,13 @@
 // lib/main.dart — Emberdelve entry point.
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
+import 'telemetry/consent_dialog.dart';
+import 'telemetry/telemetry_bootstrap.dart';
+import 'telemetry/telemetry_service.dart';
 import 'ui/screens.dart';
 import 'ui/theme.dart';
 
@@ -11,13 +15,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  // Telemetry gate first: loads consent prefs and tries Firebase. Without
+  // android/app/google-services.json this is a harmless no-op (see README
+  // §Telemetry) — the game never depends on it.
+  await initTelemetry();
   // Must run before the first AudioPlayer exists — see initPlatformAudio.
   await AudioService.initPlatformAudio();
   final audio = AudioService(await SettingsStore.load());
   AudioService.instance = audio;
   final controller = GameController()..audio = audio;
   await controller.boot();
-  runApp(EmberdelveApp(controller));
+  // No-op until the player opts in via the first-launch disclosure dialog.
+  TelemetryService.instance.logEvent('app_open');
+  runApp(BetterFeedback(child: EmberdelveApp(controller)));
 }
 
 class EmberdelveApp extends StatefulWidget {
@@ -67,7 +77,9 @@ class _EmberdelveAppState extends State<EmberdelveApp>
       title: 'Emberdelve',
       debugShowCheckedModeBanner: false,
       theme: buildEmberTheme(),
-      home: GameRoot(widget.controller),
+      // TelemetryConsentGate shows the first-launch prominent-disclosure
+      // dialog (analytics stay off until "Allow" is tapped).
+      home: TelemetryConsentGate(child: GameRoot(widget.controller)),
     );
   }
 }

@@ -4,6 +4,8 @@
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
+import '../telemetry/feedback_share.dart';
+import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'haptics.dart';
 import 'theme.dart';
@@ -25,6 +27,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (persist) SettingsStore.save(_s);
     if (preview) AudioService.instance?.playSfx('ui_tap');
     setState(() {});
+  }
+
+  /// settings_changed telemetry (no-op until opted in). Only the setting's
+  /// name + coarse value — never free text (docs/telemetry-events.md).
+  void _logSetting(String setting, Object value) {
+    TelemetryService.instance.logEvent('settings_changed', {
+      'setting': setting,
+      'value': '$value',
+    });
   }
 
   @override
@@ -57,10 +68,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onVolumeEnd: (v) {
                   _s.musicVolume = v;
                   _changed();
+                  _logSetting('music_volume', v.toStringAsFixed(2));
                 },
                 onMute: (m) {
                   _s.musicMuted = !m;
                   _changed();
+                  _logSetting('music_muted', _s.musicMuted);
                 },
               ),
               const Divider(color: EmberColors.line, height: Space.xl),
@@ -77,10 +90,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onVolumeEnd: (v) {
                   _s.sfxVolume = v;
                   _changed(preview: true);
+                  _logSetting('sfx_volume', v.toStringAsFixed(2));
                 },
                 onMute: (m) {
                   _s.sfxMuted = !m;
                   _changed(preview: true);
+                  _logSetting('sfx_muted', _s.sfxMuted);
                 },
               ),
             ]),
@@ -99,10 +114,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onChanged: (v) {
                     _s.haptics = v;
                     _changed(preview: true);
+                    _logSetting('haptics', v);
                     // Answer "ON" with a buzz you can feel — instant
                     // on-device confirmation that haptics actually work.
                     if (v) Haptics.preview();
                   }),
+            ]),
+          ),
+          const SizedBox(height: Space.xl),
+          Text('PRIVACY & FEEDBACK', style: EmberText.micro),
+          const SizedBox(height: Space.s),
+          Panel(
+            child: Column(children: [
+              // Opt-in gameplay analytics (mirrors the first-launch dialog).
+              Row(children: [
+                const Icon(Icons.insights,
+                    color: EmberColors.textDim, size: 20),
+                const SizedBox(width: Space.m),
+                Expanded(
+                    child:
+                        Text('Gameplay analytics', style: EmberText.body)),
+                _EmberToggle(
+                    value: TelemetryService.instance.analyticsConsented,
+                    onChanged: (v) async {
+                      await TelemetryService.instance
+                          .setAnalyticsConsent(v);
+                      // Log the flip itself (only fires when turning ON —
+                      // once off, logEvent is a no-op by design).
+                      _logSetting('analytics_consent', v);
+                      _changed(preview: true, persist: false);
+                    }),
+              ]),
+              const Divider(color: EmberColors.line, height: Space.xl),
+              // Crash reporting runs on legitimate interest — collected by
+              // default so crashes can be fixed, opt-out lives right here.
+              Row(children: [
+                const Icon(Icons.bug_report,
+                    color: EmberColors.textDim, size: 20),
+                const SizedBox(width: Space.m),
+                Expanded(
+                    child: Text('Crash reports', style: EmberText.body)),
+                _EmberToggle(
+                    value: TelemetryService.instance.crashlyticsEnabled,
+                    onChanged: (v) async {
+                      await TelemetryService.instance
+                          .setCrashlyticsEnabled(v);
+                      _logSetting('crash_reports', v);
+                      _changed(preview: true, persist: false);
+                    }),
+              ]),
+              const Divider(color: EmberColors.line, height: Space.xl),
+              Row(children: [
+                const Icon(Icons.outgoing_mail,
+                    color: EmberColors.textDim, size: 20),
+                const SizedBox(width: Space.m),
+                Expanded(
+                    child: Text('Send feedback', style: EmberText.body)),
+                EmberButton('Write', onTap: () {
+                  AudioService.instance?.playSfx('ui_tap');
+                  showFeedbackAndShare(context);
+                }),
+              ]),
             ]),
           ),
           const SizedBox(height: Space.xl),

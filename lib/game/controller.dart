@@ -15,6 +15,7 @@ import '../data/relics.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
 import '../sim/sim.dart';
+import '../telemetry/telemetry_service.dart';
 import 'daily_share.dart';
 
 class GameController extends ChangeNotifier {
@@ -149,6 +150,13 @@ class GameController extends ChangeNotifier {
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
     });
+    // Telemetry (no-op until opted in): docs/telemetry-events.md.
+    TelemetryService.instance.logEvent('run_started', {
+      'character': character ?? defaultCharacter,
+      'difficulty': diff,
+      'ascension': ascension,
+      'daily': daily != null ? 1 : 0,
+    });
   }
 
   /// Sticky difficulty preference behind the title-screen selector.
@@ -218,6 +226,13 @@ class GameController extends ChangeNotifier {
     final events = sim!.apply(cmd);
     _handleFlash(events);
     recordCombatStats(events);
+    // Core-loop telemetry (no-op until opted in): forging a die is the
+    // dice-builder's central crafting action (docs/telemetry-events.md).
+    if (events.any((e) => e['type'] == 'forged')) {
+      TelemetryService.instance.logEvent('die_forged', {
+        'floor': floorReached,
+      });
+    }
     if (_terminal.contains(sim!.phase)) _bankRun();
     _autosave();
     audio?.handleEvents(events);
@@ -334,6 +349,15 @@ class GameController extends ChangeNotifier {
     final char = sim!.run?['character'] as String? ?? defaultCharacter;
     meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
     meta.addRunRecord(_runRecord(result: 'abandoned', embers: 0));
+    TelemetryService.instance.logEvent('run_ended', {
+      'outcome': 'abandoned',
+      'floor': floorReached,
+      'floors': sim?.map?['layers'] as int? ?? 0,
+      'character': char,
+      'difficulty': sim?.run?['difficulty'] as String? ?? 'normal',
+      'ascension': sim?.run?['ascension'] as int? ?? 0,
+      'daily': dailyDate != null ? 1 : 0,
+    });
     MetaStore.save(meta);
     _clearSave();
     sim = null;
@@ -414,6 +438,16 @@ class GameController extends ChangeNotifier {
     // Run history (v0.3.4): one small record per ended run, newest first.
     meta.addRunRecord(_runRecord(
         result: sim!.phase == 'run_won' ? 'won' : 'lost', embers: banked));
+    TelemetryService.instance.logEvent('run_ended', {
+      'outcome': sim!.phase == 'run_won' ? 'won' : 'lost',
+      'floor': floorReached,
+      'floors': sim!.map?['layers'] as int? ?? 0,
+      'character': char,
+      'difficulty': run['difficulty'] as String? ?? 'normal',
+      'ascension': run['ascension'] as int? ?? 0,
+      'daily': dailyDate != null ? 1 : 0,
+      'embers': banked,
+    });
     MetaStore.save(meta);
     _clearSave();
   }
