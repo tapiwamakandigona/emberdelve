@@ -657,3 +657,35 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
 - Map/pacing: no geometry changes needed — gap-budget + completability
   guards all green with the new enemy mix; new enemies add threat variety
   without new leap-of-faith or chokepoint risks.
+
+---
+## 2026-07-25 — Stage 3: consolidation + owner-reported bug/feel fixes (feat/content-depth)
+- Consolidation (owner DM 10:58): #50 (original assets) + #53 (music engine
+  v2) merged into this branch; plan/ak-parity (#48) merged so the plan doc +
+  reference pack land on main; PR #54 retargeted to main; #48/#50/#51/#53
+  closed as superseded.
+- 5fac665 enemies rendered in reverse: enemy art faces LEFT, player art faces
+  RIGHT; EnemyComponent used the player flip rule. Mirror now on facing > 0;
+  rotshield plate drawn facing-explicit outside the mirror; golem same rule.
+- c0d6b8d movement stutter root cause 1: playSfx re-prepared the audio source
+  on every one-shot (footsteps every 0.26s while running = rhythmic jank).
+  Per-id prepared lowLatency (SoundPool) voices, stop+resume per shot. Bonus
+  fix: danger loop now pauses/resumes with app lifecycle.
+- eb6235d movement stutter root cause 2: fractional camera coords under
+  nearest-neighbor ~5-6x upscale = full-screen shimmer while panning +
+  frame-rate-dependent linear smoothing. Exponential smoothing on unrounded
+  accumulators, viewfinder quantized to whole world pixels, scratch Vector2.
+- Level layout pass (owner: "level designs don't make sense"): every
+  campaign level rebuilt around its name/lore with real macro structure —
+  Old Orchard canopy route, Bramble Hollow spike bowl, Charcoal Camp mounds
+  + stone kiln, Rootway Ruins colonnade/sunken court/buried shrine, Ashen
+  Gate descending terraces + sealed gate, Ember Vault one grand breakable
+  treasury with diver guards, Soot Falls hanging falls (one hides a room
+  behind a breakable curtain), Magma Gallery stacked galleries over magma
+  channels, Kiln Works work floors ramping to the boss door. Coins now trace
+  jump arcs; secrets vary (buried cellars / walled shrines / behind-the-fall
+  alcove); enemy rosters + introduction order preserved; w1_l1 (tuned
+  onboarding) and both boss arenas untouched.
+- VERIFIED: analyze clean (1 pre-existing info), full suite 279/279 green —
+  incl. per-level completability bots, gap budget, hazard-run <= 5, quotas,
+  secret-behind-cracked-wall, lore, onboarding invariants.
