@@ -20,7 +20,10 @@ class TileLayerComponent extends PositionComponent
   late ui.Image _blockBig;
   late SpriteAnimationTicker _fireTicker;
   late SpriteAnimation _fireAnim;
+  // Draw positions (already offset a tile up: the 16x32 flame rises above
+  // the fire tile), precomputed in [rebuild] so render never allocates.
   final List<Vector2> _firePositions = [];
+  static final _fireSize = Vector2(16, 32);
 
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.none;
   final _wallPaint = ui.Paint()
@@ -88,7 +91,7 @@ class TileLayerComponent extends PositionComponent
               offset: Vector2(px, py + kTileSize - 10),
             );
           case TileKind.fire:
-            _firePositions.add(Vector2(px, py));
+            _firePositions.add(Vector2(px, py - kTileSize));
           case TileKind.crackedWall:
           case TileKind.empty:
             break;
@@ -125,11 +128,10 @@ class TileLayerComponent extends PositionComponent
     }
 
     // Fire: 16x32 frames drawn with a 16px base on the tile, flame rising
-    // above it.
+    // above it (positions pre-offset in rebuild; zero per-frame allocations).
     final fireSprite = _fireTicker.getSprite();
     for (final p in _firePositions) {
-      fireSprite.render(canvas,
-          position: Vector2(p.x, p.y - kTileSize), size: Vector2(16, 32));
+      fireSprite.render(canvas, position: p, size: _fireSize);
     }
   }
 }
