@@ -266,3 +266,32 @@ Recolors of shipped Sunny Land CC0 sheets by `tool/build_w2_enemies.py`:
 `enemies/soot_creeper.png` (from thornling.png — blues→soot, accents→ember)
 and `enemies/cinder_diver.png` (from ashbat.png — plumage→dark ash,
 beak/talons→hot ember). CC0, same as sources.
+
+---
+
+# Original-asset pass 1 — 2026-07-25 (zero required attributions)
+
+Every CC-BY asset was replaced with **original work by Tsoro Studios**,
+generated in-repo with no third-party inputs (no samples, soundfonts,
+images, or traced references). Research + plan: `docs/original-assets.md`.
+All new files are dedicated **CC0 1.0 Universal** by Tsoro Studios.
+
+| File | Replaces (old source, old license) | Generator | New provenance |
+|---|---|---|---|
+| audio/music/title_menu.ogg | Kevin MacLeod "Ossuary 1 - A Beginning", CC-BY 4.0 | tool/build_original_music.py `compose_title` | Original composition "Delve Below" (90 BPM, A minor, 64-beat seamless loop), numpy synthesis |
+| audio/music/map.ogg | Kevin MacLeod "Ossuary 2 - Turn", CC-BY 4.0 | `compose_map` | Original composition "Wayfarer's Ledger" (108 BPM, C major, seamless loop) |
+| audio/music/combat.ogg | Kevin MacLeod "Curse of the Scarab", CC-BY 4.0 | `compose_combat` | Original composition "Sparks in the Undergrowth" (140 BPM, E minor, seamless loop) |
+| audio/music/boss_combat.ogg | Kevin MacLeod "Five Armies", CC-BY 4.0 | `compose_boss` | Original composition "Grove Golem's Wrath" (152 BPM, D minor, seamless loop) |
+| audio/music/defeat.ogg | tcarisland "Defeat", CC-BY 4.0 | `compose_defeat` | Original composition "Embers Fade" (70 BPM, A minor, non-looping, 2.5 s fade) |
+| audio/sfx/defeat.ogg | tcarisland "Defeat", CC-BY 4.0 | `compose_defeat` (6.5 s cut) | Sting cut of "Embers Fade", 1.5 s fade |
+| audio/sfx/ember_ambience_loop.ogg | qubodup "Fire Loop", CC-BY 3.0 | `fire_loop` | Procedural crackle synthesis (filtered noise bursts + rumble bed, wrap-around seam), 9.0 s seamless loop |
+| images/items/chest.png | dustdfg "Animated pixel-art treasure chests", CC-BY 4.0 | tool/build_original_art.py `build_chest` | Original design (dark oak / ash-iron / ember-rune lock), 3×48×48 frames, engine contract unchanged |
+| icon/app_icon_master_1024.png + android mipmaps | dice-era icon incorporating game-icons.net "dice-six-faces-six" (Delapouite), CC-BY 3.0 | `build_icon` | Original "ember in the delve" mark (flame over cave mouth), 64px grid, NEAREST-upscaled |
+
+Mastering evidence (build log 2026-07-25): all music/sting outputs measured
+to −19/−18 LUFS targets, alimiter ceiling, decoded peaks −9.44…−2.17 dBFS —
+all ≤ the repo's −1.3 dBFS convention (asserted by the build script itself).
+
+The superseded rows above (Kevin MacLeod / tcarisland / qubodup / dustdfg /
+game-icons dice glyph) are retained in this file as **historical record
+only** — those files no longer ship.
