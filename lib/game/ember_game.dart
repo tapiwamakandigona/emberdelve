@@ -347,6 +347,11 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('player_hit');
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
+        case PlayerEvent.rolled:
+          AudioService.instance?.playSfx('whoosh', volume: 0.5);
+          world.add(PuffFx(
+              Vector2(session.player.body.centerX, session.player.body.bottom),
+              life: 0.22));
         case PlayerEvent.attacked:
           // 3-hit combo reads as a phrase: neutral / up / down+heavy.
           AudioService.instance?.playSfx(

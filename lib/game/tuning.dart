@@ -34,6 +34,12 @@ const double kAirJumpSpeed = 265.0;
 // bonking. Player-only; enemies keep exact collision.
 const double kCeilingCornerNudge = 4.0;
 
+// Roll (DOWN+JUMP on solid ground): a quick commit-dodge. 11-frame sheet.
+const double kRollDuration = 0.38; // s locked in the roll
+const double kRollSpeed = 190.0; // px/s in facing direction
+const double kRollIFrames = 0.28; // s of invulnerability from roll start
+const double kRollCooldown = 0.35; // s after the roll ends before the next
+
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
 const double kComboWindow = 0.38; // s after a swing in which next chains
