@@ -24,6 +24,16 @@ class GameController extends ChangeNotifier {
   /// Wired by main(); null in tests, so gameplay never depends on audio.
   AudioService? audio;
   String? flash; // transient toast (invalid reasons, rewards, heals)
+
+  /// Overkill splash that softened the enemy the current encounter opened
+  /// with (LFP-6a). Set by the splash_damage event, claimed exactly once by
+  /// the combat screen so it can call the dent out on the stage itself.
+  int? _splashIn;
+  int? takeSplashIn() {
+    final v = _splashIn;
+    _splashIn = null;
+    return v;
+  }
   bool _bankedThisRun = false;
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
@@ -268,7 +278,15 @@ class GameController extends ChangeNotifier {
           flash = 'Reward skipped';
           break;
         case 'splash_damage':
-          flash = 'Overkill splash — ${e['amount']} damage carried in';
+          // LFP-6a (corrected diagnosis): the "Wisp spawns at 19/20" playtest
+          // finding is overkill splash carry-in working as designed — there is
+          // no floor-vs-round mismatch (combatBegin rounds hp and max_hp from
+          // the same value). What was broken is LEGIBILITY: this toast fired
+          // during the map→combat flame wipe and was gone before the stage
+          // was readable, so the dented HP bar looked like a bug. The combat
+          // screen now claims the amount and shows an on-enemy call-out once
+          // the stage is up.
+          _splashIn = e['amount'] as int?;
           break;
       }
     }

@@ -4,9 +4,36 @@ part of '../screens.dart';
 class BoonScreen extends StatelessWidget {
   final GameController c;
   const BoonScreen(this.c, {super.key});
+  /// LFP-6c: deterministic RECOMMENDED default, mirroring the reward screen
+  /// (design-system §1 smart defaults — the reward flip has had one since
+  /// v0.2, the boon pick never did). Pure function of the offer: die boons
+  /// rank by die size (same rule as rewards), then lasting stats over
+  /// spendables (max HP > gold > banked embers), amount breaking ties inside
+  /// a band and the earlier card winning exact ties. No RNG, no sim change.
+  static int recommendedIndex(List<String> boonIds) {
+    var recIdx = -1, recScore = -1;
+    for (var i = 0; i < boonIds.length; i++) {
+      final e = boonDef(boonIds[i]).effects;
+      final dieId = e['gain_die'] as String?;
+      final score = dieId != null
+          ? 1000 + dieDef(dieId).size
+          : e.containsKey('max_hp')
+              ? 500 + (e['max_hp'] as int)
+              : e.containsKey('gold')
+                  ? 200 + (e['gold'] as int)
+                  : 100 + (e['embers'] as int? ?? 0);
+      if (score > recScore) {
+        recScore = score;
+        recIdx = i;
+      }
+    }
+    return recIdx;
+  }
+
   @override
   Widget build(BuildContext context) {
     final boonIds = ((c.state!['boons']) as List?)?.cast<String>() ?? const [];
+    final recIdx = recommendedIndex(boonIds);
     return Stack(fit: StackFit.expand, children: [
       const Vignette(strength: 0.5),
       const EmberDrift(count: 16, opacity: 0.6),
@@ -28,7 +55,8 @@ class BoonScreen extends StatelessWidget {
               for (var i = 0; i < boonIds.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(bottom: Space.m),
-                  child: _boonCard(context, boonIds[i], i + 1),
+                  child: _boonCard(context, boonIds[i], i + 1,
+                      recommended: i == recIdx),
                 ),
             ],
           ),
@@ -46,7 +74,8 @@ class BoonScreen extends StatelessWidget {
     ]);
   }
 
-  Widget _boonCard(BuildContext context, String id, int index) {
+  Widget _boonCard(BuildContext context, String id, int index,
+      {bool recommended = false}) {
     final def = boonDef(id);
     final e = def.effects;
     final dieId = e['gain_die'] as String?;
@@ -91,7 +120,27 @@ class BoonScreen extends StatelessWidget {
           Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(def.name, style: EmberText.h2),
+              Row(children: [
+                Flexible(child: Text(def.name, style: EmberText.h2)),
+                // Same chip the reward flip uses — one visual vocabulary
+                // for "the default pick" across both offer screens.
+                if (recommended)
+                  Container(
+                    margin: const EdgeInsets.only(left: Space.s),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: Space.s, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: EmberColors.ember,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'RECOMMENDED',
+                      maxLines: 1,
+                      style: EmberText.micro
+                          .copyWith(color: const Color(0xFF17110A)),
+                    ),
+                  ),
+              ]),
               const SizedBox(height: Space.xs),
               Text(bits.join(' · '), style: EmberText.bodyDim),
             ]),
