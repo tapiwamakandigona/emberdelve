@@ -4,10 +4,9 @@
 // with a short crossfade on change; victory/defeat play as non-looping stings.
 // A quiet ember-ambience bed runs under the title and rest screens.
 //
-// SFX: 20 one-shot ids (see [sfxPaths]) played through a small player pool.
-// Immediate, event-mapped SFX go through [handleEvents]; combat impact sounds
-// (whoosh/hits/deaths) are timed by the combat screen's choreography per
-// staging SYNC_POINTS.md, so they land on the animation contact frame.
+// SFX: one-shot ids (see [sfxPaths]) played through a small player pool.
+// The platformer maps them per event in EmberGame._handlePlayerEvents /
+// _handleSessionEvents (jump/land/swing combo/chest/feather/secret/...).
 //
 // Everything is best-effort: every platform call is caught so audio can never
 // crash gameplay, and nothing here is constructed in widget tests.
@@ -29,9 +28,21 @@ class AudioService {
   };
 
   static const Map<String, String> sfxPaths = {
-    'dice_roll': 'audio/sfx/dice_roll.ogg',
-    'die_assign': 'audio/sfx/die_assign.ogg',
-    'reroll': 'audio/sfx/reroll.ogg',
+    // -- movement / combat (platformer v2 pass, tool/build_platformer_sfx.py)
+    'jump': 'audio/sfx/jump.ogg',
+    'double_jump': 'audio/sfx/double_jump.ogg',
+    'land': 'audio/sfx/land.ogg',
+    'step1': 'audio/sfx/step1.ogg',
+    'step2': 'audio/sfx/step2.ogg',
+    'swing1': 'audio/sfx/swing1.ogg',
+    'swing2': 'audio/sfx/swing2.ogg',
+    'swing3': 'audio/sfx/swing3.ogg',
+    // -- loot / discovery
+    'chest_open': 'audio/sfx/chest_open.ogg',
+    'feather': 'audio/sfx/feather.ogg',
+    'secret': 'audio/sfx/secret.ogg',
+    'medal': 'audio/sfx/medal.ogg',
+    // -- shared
     'player_hit': 'audio/sfx/player_hit.ogg',
     'enemy_hit': 'audio/sfx/enemy_hit.ogg',
     'block': 'audio/sfx/block.ogg',
@@ -40,9 +51,7 @@ class AudioService {
     'victory': 'audio/sfx/victory.ogg',
     'defeat': 'audio/sfx/defeat.ogg',
     'coin': 'audio/sfx/coin.ogg',
-    'forge': 'audio/sfx/forge.ogg',
     'heal': 'audio/sfx/heal.ogg',
-    'event_page': 'audio/sfx/event_page.ogg',
     'ui_tap': 'audio/sfx/ui_tap.ogg',
     'ui_back': 'audio/sfx/ui_back.ogg',
     'unlock': 'audio/sfx/unlock.ogg',
@@ -50,24 +59,6 @@ class AudioService {
     'whoosh': 'audio/sfx/whoosh.ogg',
     'ember_ambience_loop': 'audio/sfx/ember_ambience_loop.ogg',
     'danger_loop': 'audio/sfx/danger_loop.ogg',
-  };
-
-  /// Immediate SFX per sim event type. Combat impacts (whoosh, hits, deaths,
-  /// stings) are deliberately absent — the combat screen times those to the
-  /// animation frames instead.
-  static const Map<String, String> eventSfx = {
-    'dice_rolled': 'dice_roll',
-    'die_assigned': 'die_assign',
-    'reroll_used': 'reroll',
-    'gold_gained': 'coin',
-    'gold_spent': 'coin',
-    'bought': 'coin',
-    'forged': 'forge',
-    'healed': 'heal',
-    'rested': 'heal',
-    'event_shown': 'event_page',
-    'embers_gained': 'ember_gain',
-    'relic_gained': 'unlock',
   };
 
   AudioSettings settings;
@@ -106,46 +97,12 @@ class AudioService {
 
   // -- Music ----------------------------------------------------------------
 
-  /// Music key for a sim phase. `null`/idle = title.
-  static String? musicKeyForPhase(String? phase, {bool bossFight = false}) {
-    switch (phase) {
-      case 'player_turn':
-        return bossFight ? 'boss_combat' : 'combat';
-      // 'boon' is part of the run (the map background already shows behind
-      // it) — without this case it fell through to title music, so "Delve
-      // again" after a defeat played: defeat sting -> title theme for the
-      // boon pick -> map music seconds later. Two jarring switches.
-      case 'boon':
-      case 'map':
-      case 'reward':
-      case 'shop':
-      case 'event':
-      case 'rest':
-        return 'map';
-      case 'run_won':
-        return 'victory';
-      case 'run_lost':
-        return 'defeat';
-      default:
-        return 'title_menu';
-    }
-  }
-
-  static bool _ambientPhase(String? phase) =>
-      phase == null || phase == 'idle' || phase == 'rest';
-
-  /// Crossfade to the track for [phase]; manage the ambience bed too.
-  Future<void> syncPhase(String? phase, {bool bossFight = false}) async {
-    final key = musicKeyForPhase(phase, bossFight: bossFight);
-    setAmbience(_ambientPhase(phase));
-    if (key == _musicKey) return;
-    final sting = key == 'victory' || key == 'defeat';
-    await playMusic(key!, loop: !sting);
-  }
-
   Future<void> playMusic(String key, {bool loop = true}) async {
     final path = musicPaths[key];
     if (path == null) return;
+    // Dedupe looping tracks: navigating title -> shop/settings -> title must
+    // not restart the theme mid-phrase. Stings (victory/defeat) always play.
+    if (loop && key == _musicKey && _music != null) return;
     _musicKey = key;
     final old = _music;
     _music = null;
@@ -157,9 +114,9 @@ class AudioService {
       await p.setReleaseMode(loop ? ReleaseMode.loop : ReleaseMode.release);
       await p.play(AssetSource(path), volume: settings.effectiveMusic);
     } catch (_) {
-      // A failed start must not poison the dedupe key: syncPhase would keep
+      // A failed start must not poison the dedupe key: playMusic would keep
       // early-returning on `key == _musicKey` and the whole screen family
-      // (title/map/combat) would stay silent. Reset so the next sync retries
+      // (title/map/combat) would stay silent. Reset so the next call retries
       // — but only if a newer playMusic hasn't already taken over.
       if (_music == p) {
         _music = null;
@@ -265,15 +222,6 @@ class AudioService {
       await p.stop();
       await p.play(AssetSource(path), volume: v.clamp(0.0, 1.0));
     } catch (_) {}
-  }
-
-  /// Immediate, non-choreographed SFX for a batch of sim events.
-  void handleEvents(List<Map<String, Object?>> events) {
-    final played = <String>{};
-    for (final e in events) {
-      final id = eventSfx[e['type']];
-      if (id != null && played.add(id)) playSfx(id);
-    }
   }
 
   // -- App lifecycle (v0.3.1 F3) ----------------------------------------------

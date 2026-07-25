@@ -6,13 +6,14 @@ import '../input_intent.dart';
 import '../physics.dart';
 import '../tuning.dart';
 
-enum PlayerState { idle, run, jump, fall, attack, hurt, dead }
+enum PlayerState { idle, run, jump, fall, attack, roll, hurt, dead }
 
 enum PlayerEvent {
   jumped,
   airJumped,
   landed,
   attacked,
+  rolled,
   hurt,
   died,
   droppedThrough,
@@ -41,6 +42,8 @@ class PlayerCore {
   double attackTime = 0; // remaining swing time
   double comboWindow = 0;
   double hurtTime = 0;
+  double rollTime = 0;
+  double rollCooldown = 0;
   int comboIndex = 0; // 0..kComboHits-1, index of CURRENT swing
   int airJumpsUsed = 0;
   bool wasOnGround = false;
@@ -72,6 +75,8 @@ class PlayerCore {
 
   bool get attacking => attackTime > 0;
 
+  bool get rolling => rollTime > 0;
+
   /// Active attack hitbox (null when not in the damage window).
   ({double x, double y, double w, double h, int damage})? get attackHitbox {
     if (!attacking) return null;
@@ -97,6 +102,8 @@ class PlayerCore {
     iFrames = (iFrames - dt).clamp(0, 10);
     comboWindow = (comboWindow - dt).clamp(0, 10);
     hurtTime = (hurtTime - dt).clamp(0, 10);
+    rollTime = (rollTime - dt).clamp(0, 10);
+    rollCooldown = (rollCooldown - dt).clamp(0, 10);
     if (attackTime > 0) {
       attackTime = (attackTime - dt).clamp(0, 10);
       if (attackTime == 0) comboWindow = kComboWindow;
@@ -108,13 +115,21 @@ class PlayerCore {
     final stunned = hurtTime > 0;
 
     // --- horizontal
-    final dir = stunned ? 0.0 : input.dirX.clamp(-1.0, 1.0);
+    // A roll is a commitment: velocity is locked to facing until it ends.
+    final dir =
+        (stunned || rolling) ? 0.0 : input.dirX.clamp(-1.0, 1.0);
+    if (rolling) body.vx = facing * kRollSpeed;
     if (dir != 0) {
       facing = dir > 0 ? 1 : -1;
-      final accel = body.onGround ? kGroundAccel : kAirAccel;
+      var accel = body.onGround ? kGroundAccel : kAirAccel;
+      // Turnaround assist: reversing direction is the most latency-sensitive
+      // input on touch — boost accel while velocity opposes the stick.
+      if (body.vx != 0 && body.vx.sign != dir.sign) {
+        accel *= kTurnAccelMultiplier;
+      }
       body.vx += dir * accel * dt;
       if (body.vx.abs() > kRunSpeed) body.vx = kRunSpeed * body.vx.sign;
-    } else if (body.onGround) {
+    } else if (body.onGround && !rolling) {
       final f = kGroundFriction * dt;
       if (body.vx.abs() <= f) {
         body.vx = 0;
@@ -130,13 +145,26 @@ class PlayerCore {
       airJumpsUsed = 0;
     }
     var dropThrough = false;
-    if (jumpBuffer > 0 && !stunned) {
-      if (input.down && grounded) {
+    if (jumpBuffer > 0 && !stunned && !rolling) {
+      if (input.down && grounded && platformBelow(body, tileAt)) {
         // Drop through one-way platform.
         dropThrough = true;
         jumpBuffer = 0;
         body.y += 2;
         _events.add(PlayerEvent.droppedThrough);
+      } else if (input.down && grounded) {
+        // DOWN+JUMP on solid ground = roll: quick commit-dodge with
+        // i-frames. Previously this input combination ate the jump. While
+        // the roll cools down the press is consumed (never an accidental
+        // jump — DOWN+JUMP always means "roll" on solid ground).
+        jumpBuffer = 0;
+        if (!attacking && rollCooldown <= 0) {
+          rollTime = kRollDuration;
+          rollCooldown = kRollDuration + kRollCooldown;
+          if (iFrames < kRollIFrames) iFrames = kRollIFrames;
+          body.vx = facing * kRollSpeed;
+          _events.add(PlayerEvent.rolled);
+        }
       } else if (coyote > 0) {
         body.vy = -kJumpSpeed;
         coyote = 0;
@@ -156,7 +184,7 @@ class PlayerCore {
     jumpWasHeld = input.jumpHeld;
 
     // --- attack
-    if (attackBuffer > 0 && !attacking && !stunned) {
+    if (attackBuffer > 0 && !attacking && !stunned && !rolling) {
       attackBuffer = 0;
       comboIndex = comboWindow > 0 ? (comboIndex + 1) % kComboHits : 0;
       comboWindow = 0;
@@ -165,9 +193,21 @@ class PlayerCore {
     }
 
     // --- gravity + integrate
-    body.vy += kGravity * dt;
+    // Asymmetric gravity: apex hang while jump is held (extra beat of air
+    // control at the top of the arc), heavier gravity on the way down (snappy
+    // landings). Rise gravity is untouched, so jump HEIGHT never changes —
+    // the clearance tests pin that.
+    var g = kGravity;
+    if (!body.onGround && input.jumpHeld && body.vy.abs() < kApexHangSpeed) {
+      g = kGravity * kApexGravityMultiplier;
+    } else if (body.vy > 0) {
+      g = kGravity * kFallGravityMultiplier;
+    }
+    body.vy += g * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
-    integrate(body, dt, tileAt, dropThrough: dropThrough || input.down);
+    integrate(body, dt, tileAt,
+        dropThrough: dropThrough || input.down,
+        ceilingNudge: kCeilingCornerNudge);
     if (body.onGround && !wasOnGround) _events.add(PlayerEvent.landed);
     wasOnGround = body.onGround;
 
@@ -180,6 +220,8 @@ class PlayerCore {
     if (state != PlayerState.dead) {
       if (hurtTime > 0) {
         state = PlayerState.hurt;
+      } else if (rolling) {
+        state = PlayerState.roll;
       } else if (attacking) {
         state = PlayerState.attack;
       } else if (!body.onGround) {
@@ -198,6 +240,7 @@ class PlayerCore {
     iFrames = kHurtIFrames;
     hurtTime = 0.25;
     attackTime = 0;
+    rollTime = 0;
     final dir = body.centerX >= from ? 1 : -1;
     body.vx = dir * kKnockbackSpeed;
     body.vy = -kKnockbackSpeed * 0.6;

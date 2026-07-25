@@ -7,9 +7,19 @@
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/gestures.dart'
+    show
+        Drag,
+        DragEndDetails,
+        DragStartDetails,
+        DragUpdateDetails,
+        ImmediateMultiDragGestureRecognizer,
+        TapDownDetails,
+        TapUpDetails;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show KeyEventResult;
 
@@ -17,6 +27,7 @@ import '../audio/audio_service.dart';
 import '../core/rng.dart';
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
+import 'components/decor_layer.dart';
 import 'components/enemy_component.dart';
 import 'components/fx.dart';
 import 'components/hud.dart';
@@ -31,7 +42,26 @@ import 'player/player_core.dart';
 import 'session.dart';
 import 'tuning.dart';
 
-class EmberGame extends FlameGame with KeyboardEvents {
+// NOTE ON THE MIXINS (v1.0.0-alpha.3 touch-input fix, the REAL alpha.1 bug):
+// Flame's TapCallbacks/DragCallbacks components normally get their gesture
+// recognizers attached lazily — MultiTap/MultiDragDispatcher are only created
+// when the first such component MOUNTS, which for our HUD is after onLoad,
+// i.e. after the GameWidget has already built once. The widget-refresh that
+// is supposed to re-wrap the game in a RawGestureDetector after that never
+// lands in release builds (verified empirically in headless Chromium against
+// the compiled web build: pointer events reached Flutter's Listener but no
+// recognizer ever fired, so no HUD button ever received a tap — on device
+// the whole touch HUD was dead while keyboard input worked fine).
+//
+// The fix: EmberGame itself implements MultiTouchTapDetector +
+// MultiTouchDragDetector. Their `mount()` overrides register the gesture
+// recognizers via `initializeGestures`/`gestureDetectors` BEFORE the first
+// GameWidget build, so the RawGestureDetector is present from frame one. The
+// game-level handlers then forward every tap/drag into the stock Flame
+// dispatchers, preserving the normal component routing (componentsAtPoint →
+// HudHoldButton TapCallbacks/DragCallbacks) that all existing tests cover.
+class EmberGame extends FlameGame
+    with KeyboardEvents, MultiTouchTapDetector, MultiTouchDragDetector {
   static const double viewWidth = 480;
   static const double viewHeight = 270;
 
@@ -47,7 +77,69 @@ class EmberGame extends FlameGame with KeyboardEvents {
       : super(
           camera: CameraComponent.withFixedResolution(
               width: viewWidth, height: viewHeight),
-        );
+        ) {
+    // Pre-register the component-event dispatchers. If we left this to
+    // TapCallbacks/DragCallbacks (which add them when the first HUD button
+    // mounts), their gesture recognizers would be registered after the
+    // GameWidget's first build and never attach in release builds — the
+    // whole touch HUD stays deaf (see class note above).
+    // registerKey is what TapCallbacks/DragCallbacks.onMount would call for
+    // their lazily-created dispatchers; using it here keeps them from ever
+    // creating duplicates.
+    // ignore: invalid_use_of_internal_member
+    registerKey(const MultiTapDispatcherKey(), _tapDispatcher);
+    add(_tapDispatcher);
+    // ignore: invalid_use_of_internal_member
+    registerKey(const MultiDragDispatcherKey(), _dragDispatcher);
+    add(_dragDispatcher);
+    // Touching gestureDetectors here runs initializeGestures(this), wiring
+    // the tap recognizer to our MultiTapListener API before the first build.
+    // The drag recognizer has no game-level branch there, so add it directly.
+    gestureDetectors.add<ImmediateMultiDragGestureRecognizer>(
+      ImmediateMultiDragGestureRecognizer.new,
+      (ImmediateMultiDragGestureRecognizer instance) {
+        instance.onStart = (Offset point) => _GameDragAdapter(this, point);
+      },
+    );
+  }
+
+  final MultiTapDispatcher _tapDispatcher = MultiTapDispatcher();
+  final MultiDragDispatcher _dragDispatcher = MultiDragDispatcher();
+
+  // -- game-level gesture API → component dispatchers -------------------------
+  // Forward every tap/drag into the stock Flame dispatchers, preserving the
+  // normal componentsAtPoint routing to TapCallbacks/DragCallbacks components.
+  @override
+  void handleTapDown(int pointerId, TapDownDetails details) =>
+      _tapDispatcher.onTapDown(TapDownEvent(pointerId, this, details));
+
+  @override
+  void handleTapUp(int pointerId, TapUpDetails details) =>
+      _tapDispatcher.onTapUp(TapUpEvent(pointerId, this, details));
+
+  @override
+  void handleTapCancel(int pointerId) =>
+      _tapDispatcher.onTapCancel(TapCancelEvent(pointerId));
+
+  @override
+  void handleLongTapDown(int pointerId, TapDownDetails details) =>
+      _tapDispatcher.onLongTapDown(TapDownEvent(pointerId, this, details));
+
+  @override
+  void handleDragStart(int pointerId, DragStartDetails details) =>
+      _dragDispatcher.onDragStart(DragStartEvent(pointerId, this, details));
+
+  @override
+  void handleDragUpdate(int pointerId, DragUpdateDetails details) =>
+      _dragDispatcher.onDragUpdate(DragUpdateEvent(pointerId, this, details));
+
+  @override
+  void handleDragEnd(int pointerId, DragEndDetails details) =>
+      _dragDispatcher.onDragEnd(DragEndEvent(pointerId, details));
+
+  @override
+  void handleDragCancel(int pointerId) =>
+      _dragDispatcher.onDragCancel(DragCancelEvent(pointerId));
 
   late LevelSession session;
   final InputIntent _intent = InputIntent();
@@ -68,6 +160,8 @@ class EmberGame extends FlameGame with KeyboardEvents {
 
   late SpriteAnimation _deathAnim;
   double _camBump = 0;
+  double _stepClock = 0;
+  bool _stepAlt = false;
   final math.Random _bumpRand = math.Random();
   bool _resultsPersisted = false;
 
@@ -89,6 +183,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
         Vector2(session.player.body.centerX, session.player.body.centerY);
     camera.backdrop.add(ParallaxBackground());
 
+    world.add(DecorLayerComponent());
     world.add(TileLayerComponent());
     world.add(ItemsComponent());
     world.add(PlayerComponent());
@@ -227,22 +322,59 @@ class EmberGame extends FlameGame with KeyboardEvents {
     _handlePlayerEvents();
     _handleSessionEvents();
     _followCamera(clamped);
+
+    // Footsteps: cadence-gated, only while genuinely running on ground.
+    final p = session.player;
+    if (p.state == PlayerState.run && p.body.vx.abs() > kRunSpeed * 0.5) {
+      _stepClock -= clamped;
+      if (_stepClock <= 0) {
+        _stepClock = kFootstepInterval;
+        _stepAlt = !_stepAlt;
+        AudioService.instance
+            ?.playSfx(_stepAlt ? 'step1' : 'step2', volume: 0.28);
+      }
+    } else {
+      // Re-arm so the first step lands just after movement starts (not
+      // instantly on a tap, which reads as a click).
+      _stepClock = kFootstepInterval * 0.5;
+    }
+
+    // Low-HP heartbeat bed under the combat music (dedupes internally).
+    AudioService.instance?.setDanger(
+        session.player.hearts <= 1 && !session.player.isDead && !session.over);
+  }
+
+  @override
+  void onRemove() {
+    AudioService.instance?.setDanger(false);
+    super.onRemove();
   }
 
   void _handlePlayerEvents() {
     for (final e in session.takePlayerEvents()) {
       switch (e) {
         case PlayerEvent.jumped:
+          AudioService.instance?.playSfx('jump', volume: 0.55);
         case PlayerEvent.airJumped:
-          AudioService.instance?.playSfx('whoosh', volume: 0.6);
+          AudioService.instance?.playSfx('double_jump', volume: 0.55);
         case PlayerEvent.landed:
+          AudioService.instance?.playSfx('land', volume: 0.5);
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom)));
         case PlayerEvent.hurt:
           AudioService.instance?.playSfx('player_hit');
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
+        case PlayerEvent.rolled:
+          AudioService.instance?.playSfx('whoosh', volume: 0.5);
+          world.add(PuffFx(
+              Vector2(session.player.body.centerX, session.player.body.bottom),
+              life: 0.22));
         case PlayerEvent.attacked:
+          // 3-hit combo reads as a phrase: neutral / up / down+heavy.
+          AudioService.instance?.playSfx(
+              'swing${session.player.comboIndex.clamp(0, 2) + 1}',
+              volume: 0.7);
         case PlayerEvent.droppedThrough:
           break;
       }
@@ -255,14 +387,16 @@ class EmberGame extends FlameGame with KeyboardEvents {
       switch (e.kind) {
         case SessionEventKind.coin:
           AudioService.instance?.playSfx('coin', volume: 0.5);
-          world.add(PuffFx(at,
-              color: const Color(0xAAF2C14E), radius: 3, life: 0.2));
+          world.add(SparkleFx(at));
         case SessionEventKind.applePickup:
           AudioService.instance?.playSfx('heal', volume: 0.6);
         case SessionEventKind.feather:
-          AudioService.instance?.playSfx('ember_gain');
+          AudioService.instance?.playSfx('feather');
         case SessionEventKind.chestOpen:
-          AudioService.instance?.playSfx('unlock');
+          AudioService.instance?.playSfx('chest_open');
+          world.add(SparkleFx(at, life: 0.5));
+        case SessionEventKind.secretFound:
+          AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
           AudioService.instance?.playSfx('enemy_hit');
           _camBump = e.crit ? 3.0 : 1.5;
@@ -290,7 +424,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
           AudioService.instance?.playSfx('enemy_hit', volume: 0.9);
           _camBump = 4.0;
         case SessionEventKind.bossDefeated:
-          AudioService.instance?.playSfx('unlock');
+          AudioService.instance?.playSfx('boss_death');
           _camBump = 5.0;
         case SessionEventKind.emberShotBroke:
           world.add(PuffFx(at,
@@ -387,4 +521,36 @@ class EmberGame extends FlameGame with KeyboardEvents {
     if (levelId == 'w1_l1') save.tutorialSeen = true;
     AppState.persist();
   }
+}
+
+/// Adapts Flutter's [Drag] interface (fed by the
+/// [ImmediateMultiDragGestureRecognizer] registered in the [EmberGame]
+/// constructor) to the game-level MultiDragListener API. Mirrors Flame's
+/// internal FlameDragAdapter, which is not exported.
+class _GameDragAdapter implements Drag {
+  _GameDragAdapter(this._game, Offset startPoint) {
+    _id = _dragIdCounter++;
+    _game.handleDragStart(
+      _id,
+      DragStartDetails(
+        sourceTimeStamp: Duration.zero,
+        globalPosition: startPoint,
+        localPosition: _game.renderBox.globalToLocal(startPoint),
+      ),
+    );
+  }
+
+  static int _dragIdCounter = 0;
+  final EmberGame _game;
+  late final int _id;
+
+  @override
+  void update(DragUpdateDetails details) =>
+      _game.handleDragUpdate(_id, details);
+
+  @override
+  void end(DragEndDetails details) => _game.handleDragEnd(_id, details);
+
+  @override
+  void cancel() => _game.handleDragCancel(_id);
 }
