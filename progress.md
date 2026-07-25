@@ -501,3 +501,27 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   emulator was available in the sandbox. Paint/rebuild counts are exact and
   framework-level; the transfer to real hardware is inferred.
 - Detail: docs/improvements/perf-repaint-and-sfx-2026-07-25.md
+
+## 2026-07-25 — combat screen: scoped rebuilds (v0.3.13+18)
+- Follow-up to the repaint/SFX pass: that fixed idle cost, this one attacks the
+  cost of a real tap. combat 12 rapid real taps: 95.4 -> 48.3 render objects
+  painted per frame (2.0x). Rebuilds/frame 31.5 -> 31.0, unchanged by design.
+- Cause: one ~1000-line `build()` behind ~40 `setState` sites. Choreography
+  alone (squash/lunge/flash/hit-stop/knockback) fires ~20 setStates per attack,
+  and every transient overlay spawn AND expiry was another one — each re-ran
+  and repainted the whole screen, including the top bar, HP panels, dice tray
+  and action zone that read none of that state.
+- Fix: two `ValueNotifier<int>` ticks — `_choreoTick` (combatant flags + the
+  weapon phase/charge derived from them) and `_fxTick` (pops, contact FX,
+  call-out notes, assign ghosts, boss-kill flash). Fields unchanged; only the
+  notification is scoped. Consumers sit in `ValueListenableBuilder` +
+  `RepaintBoundary`. Sim-driven state still uses `setState`.
+- Rebuilds/frame stay flat because the probe's tap storm drives SIM state
+  (rolls), which still rebuilds the screen. Scoping selection/busy/roll state
+  is a real restructuring of `build()` and is deliberately left to its own PR.
+- VERIFIED: analyze clean; 143/143 tests; play_session 4 runs, 0 problems;
+  `tool/store_screenshots_test.dart` (deterministic) byte-identical PNGs
+  before/after on all six screenshots incl. combat.
+- NOT VERIFIED: mid-choreography frames are not pixel-covered by any
+  deterministic harness; on-device frame times (no device/emulator available).
+- Detail: docs/improvements/perf-combat-scoped-rebuilds-2026-07-25.md

@@ -53,6 +53,44 @@ class CombatScreen extends StatefulWidget {
 }
 
 class _CombatScreenState extends State<CombatScreen> {
+  // ---------------------------------------------------------------------
+  // Scoped rebuild ticks (perf, 2026-07-25). This screen's build() is ~1000
+  // lines and every setState re-ran ALL of it: top bar, enemy panel, sprite
+  // stage, dice tray, action zone. Choreography alone fires ~20 setStates
+  // per attack, so a normal swing rebuilt the whole screen 20 times — and a
+  // rapid tapper stacked those sequences.
+  //
+  // The two highest-churn state groups now live behind ValueNotifier ticks
+  // instead. The fields themselves are unchanged (so every read site reads
+  // the same way); only the NOTIFICATION is scoped: bump the tick and just
+  // the subtree that listens rebuilds.
+  //
+  //   _choreoTick — combatant flags (lunge/knock/flash/dying/squash) +
+  //                 the weapon phase/charge derived from them. Consumers:
+  //                 the two _combatant() subtrees on the stage.
+  //   _fxTick     — transient overlay layers: pops, contact fx, call-out
+  //                 notes, assign ghosts, boss-kill flash. Consumers: the
+  //                 overlay layers themselves, nothing else.
+  //
+  // Anything sim-driven (HP, dice faces, phase) still goes through setState:
+  // those genuinely change the whole screen.
+  final ValueNotifier<int> _choreoTick = ValueNotifier(0);
+  final ValueNotifier<int> _fxTick = ValueNotifier(0);
+
+  /// Mutate choreography flags and rebuild only the combatants.
+  void _choreo(VoidCallback f) {
+    if (!mounted) return;
+    f();
+    _choreoTick.value++;
+  }
+
+  /// Mutate a transient overlay list/flag and rebuild only the fx layers.
+  void _fxUpdate(VoidCallback f) {
+    if (!mounted) return;
+    f();
+    _fxTick.value++;
+  }
+
   int? selected; // 1-based die index
   bool _busy = false; // input lock while a choreography sequence plays
 
@@ -155,7 +193,7 @@ class _CombatScreenState extends State<CombatScreen> {
   void _spawnGhost(int die, String action, int value, Offset? from) {
     final to = _centerOf(action == 'attack' ? _attackKey : _blockKey);
     if (from == null || to == null || !mounted) return;
-    setState(() => _ghosts.add(_Ghost(_ghostId++, from, to, value, action)));
+    _fxUpdate(() => _ghosts.add(_Ghost(_ghostId++, from, to, value, action)));
   }
 
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
@@ -201,8 +239,15 @@ class _CombatScreenState extends State<CombatScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _choreoTick.dispose();
+    _fxTick.dispose();
+    super.dispose();
+  }
+
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
-    setState(
+    _fxUpdate(
       () => _pops.add(
         _Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked),
       ),
@@ -214,7 +259,7 @@ class _CombatScreenState extends State<CombatScreen> {
     required bool onPlayer,
     Color color = EmberColors.gold,
   }) {
-    setState(
+    _fxUpdate(
       () => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)),
     );
   }
@@ -285,7 +330,7 @@ class _CombatScreenState extends State<CombatScreen> {
     final life = _resolving && _ffwd > 0
         ? const Duration(milliseconds: 1000)
         : _noteLife;
-    setState(
+    _fxUpdate(
       () => _notes.add(
         _Note(_noteId++, text, color, icon, onEnemy: onEnemy, life: life),
       ),
@@ -455,21 +500,19 @@ class _CombatScreenState extends State<CombatScreen> {
       // Boss kill moment: the frame holds white-hot for a beat (impact
       // freeze), the screen rocks at full magnitude, then the dissolve.
       _shakeKey.currentState?.shake(1.0);
-      setState(() {
-        _enemyFlash = true;
-        _bossKillFlash = true;
-      });
+      _choreo(() => _enemyFlash = true);
+      _fxUpdate(() => _bossKillFlash = true);
       await _sleep(const Duration(milliseconds: 260));
       if (!mounted) return;
     }
-    setState(() {
+    _choreo(() {
       _enemyFlash = false;
       _enemyDying = true;
     });
     await _sleep(_deathTime);
     if (boss && mounted) {
       // Let the flash overlay finish fading before the phase switch.
-      setState(() => _bossKillFlash = false);
+      _fxUpdate(() => _bossKillFlash = false);
       await _sleep(const Duration(milliseconds: 150));
     }
   }
@@ -513,11 +556,11 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
     // Anticipation squash before the lunge (visuals.md #9).
-    setState(() => _playerSquash = true);
+    _choreo(() => _playerSquash = true);
     await _sleep(_squashTime);
     if (!mounted) return;
     _audio?.playSfx('whoosh');
-    setState(() {
+    _choreo(() {
       _playerSquash = false;
       _playerLunge = true;
     });
@@ -557,14 +600,14 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
     final bigHit = _impact(landed, enemyMax);
-    setState(() => _enemyFlash = true);
+    _choreo(() => _enemyFlash = true);
     // Hit-stop: the frame freezes on contact before the knockback releases.
     if (bigHit) await _sleep(_hitStop);
     if (!mounted) return;
-    setState(() => _enemyKnock = true);
+    _choreo(() => _enemyKnock = true);
     await _sleep(_knockTime);
     if (!mounted) return;
-    setState(() {
+    _choreo(() {
       _playerLunge = false;
       _enemyKnock = false;
     });
@@ -591,7 +634,7 @@ class _CombatScreenState extends State<CombatScreen> {
       await _enemyDeath(events);
     } else {
       await _sleep(_flashTail);
-      if (mounted) setState(() => _enemyFlash = false);
+      _choreo(() => _enemyFlash = false);
     }
     _busy = false;
     if (mounted) setState(() {});
@@ -658,11 +701,11 @@ class _CombatScreenState extends State<CombatScreen> {
     if (atk != null) {
       // Physical wind-up: the enemy leans back and darkens for a beat before
       // the lunge — the strike telegraphs in the body, not just the badge.
-      setState(() => _enemySquash = true);
+      _choreo(() => _enemySquash = true);
       await _beat(_enemyWindupTime);
       if (!mounted) return;
       _audio?.playSfx('whoosh');
-      setState(() {
+      _choreo(() {
         _enemySquash = false;
         _enemyLunge = true;
       });
@@ -695,20 +738,20 @@ class _CombatScreenState extends State<CombatScreen> {
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
       final bigHit = _impact(damage, playerMax);
-      setState(() => _playerFlash = true);
+      _choreo(() => _playerFlash = true);
       if (bigHit) await _beat(_hitStop);
       if (!mounted) return;
-      setState(() => _playerKnock = true);
+      _choreo(() => _playerKnock = true);
       await _beat(_knockTime);
       if (!mounted) return;
-      setState(() {
+      _choreo(() {
         _enemyLunge = false;
         _playerKnock = false;
       });
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
         Haptics.heavy();
-        setState(() {
+        _choreo(() {
           _playerFlash = false;
           _playerDying = true;
         });
@@ -716,7 +759,7 @@ class _CombatScreenState extends State<CombatScreen> {
         await _sleep(const Duration(milliseconds: 800));
       } else {
         await _beat(_flashTail);
-        if (mounted) setState(() => _playerFlash = false);
+        _choreo(() => _playerFlash = false);
       }
     } else if (_find(events, 'enemy_blocked') != null) {
       _audio?.playSfx('block', volume: 0.5);
@@ -1053,22 +1096,36 @@ class _CombatScreenState extends State<CombatScreen> {
                     ),
                 ],
               ),
-              for (final (idx, n)
-                  in _notes.where((n) => !n.onEnemy).toList().indexed)
-                Positioned(
-                  top: -30.0 - idx * 24,
-                  child: TextPop(
-                    key: ValueKey('note-${n.id}'),
-                    text: n.text,
-                    color: n.color,
-                    icon: n.icon,
-                    fontSize: 16,
-                    duration: n.life,
-                    onDone: () {
-                      if (mounted) setState(() => _notes.remove(n));
-                    },
+              // Tray call-outs, scoped to _fxTick (see the stage layers).
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: _fxTick,
+                    builder: (context, _, _) => Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.topCenter,
+                      children: [
+                        for (final (idx, n)
+                            in _notes.where((n) => !n.onEnemy).toList().indexed)
+                          Positioned(
+                            top: -30.0 - idx * 24,
+                            child: TextPop(
+                              key: ValueKey('note-${n.id}'),
+                              text: n.text,
+                              color: n.color,
+                              icon: n.icon,
+                              fontSize: 16,
+                              duration: n.life,
+                              onDone: () {
+                                _fxUpdate(() => _notes.remove(n));
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
+              ),
             ],
           ),
         ),
@@ -1279,70 +1336,92 @@ class _CombatScreenState extends State<CombatScreen> {
             fit: StackFit.expand,
             children: [
               combat,
-              // LFP-2a: assign ghosts — the spent die flies to its verb.
-              for (final g in _ghosts)
-                TweenAnimationBuilder<double>(
-                  key: ValueKey('ghost-${g.id}'),
-                  tween: Tween(begin: 0, end: 1),
-                  duration: const Duration(milliseconds: 230),
-                  curve: Curves.easeIn,
-                  onEnd: () {
-                    if (!mounted) return;
-                    setState(() {
-                      _ghosts.remove(g);
-                      // Arrival pulse on the verb button.
-                      if (g.action == 'attack') {
-                        _attackPulse++;
-                      } else {
-                        _blockPulse++;
-                      }
-                    });
-                  },
-                  builder: (context, f, _) {
-                    final p = Offset.lerp(g.from, g.to, f)!;
-                    final color = g.action == 'attack'
-                        ? EmberColors.danger
-                        : EmberColors.block;
-                    return Positioned(
-                      left: p.dx - 19,
-                      top: p.dy - 19,
-                      child: IgnorePointer(
-                        child: Opacity(
-                          opacity: (1.0 - f * 0.55).clamp(0.0, 1.0),
-                          child: Transform.scale(
-                            scale: 1.0 - f * 0.35,
-                            child: Container(
-                              width: 38,
-                              height: 38,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: EmberColors.raised,
-                                borderRadius: BorderRadius.circular(9),
-                                border: Border.all(color: color, width: 1.5),
-                              ),
-                              child: Text(
-                                '+${g.value}',
-                                style: EmberText.value.copyWith(
-                                  fontSize: 16,
-                                  color: color,
+              // Assign ghosts + boss-kill flash, scoped to _fxTick: a die
+              // flying to its verb no longer rebuilds the tray, the stage or
+              // the action zone underneath it.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: _fxTick,
+                    builder: (context, _, _) => Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // LFP-2a: assign ghosts — the spent die flies to its verb.
+                        for (final g in _ghosts)
+                          TweenAnimationBuilder<double>(
+                            key: ValueKey('ghost-${g.id}'),
+                            tween: Tween(begin: 0, end: 1),
+                            duration: const Duration(milliseconds: 230),
+                            curve: Curves.easeIn,
+                            onEnd: () {
+                              if (!mounted) return;
+                              setState(() {
+                                _ghosts.remove(g);
+                                // Arrival pulse on the verb button.
+                                if (g.action == 'attack') {
+                                  _attackPulse++;
+                                } else {
+                                  _blockPulse++;
+                                }
+                              });
+                            },
+                            builder: (context, f, _) {
+                              final p = Offset.lerp(g.from, g.to, f)!;
+                              final color = g.action == 'attack'
+                                  ? EmberColors.danger
+                                  : EmberColors.block;
+                              return Positioned(
+                                left: p.dx - 19,
+                                top: p.dy - 19,
+                                child: IgnorePointer(
+                                  child: Opacity(
+                                    opacity: (1.0 - f * 0.55).clamp(0.0, 1.0),
+                                    child: Transform.scale(
+                                      scale: 1.0 - f * 0.35,
+                                      child: Container(
+                                        width: 38,
+                                        height: 38,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: EmberColors.raised,
+                                          borderRadius: BorderRadius.circular(
+                                            9,
+                                          ),
+                                          border: Border.all(
+                                            color: color,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '+${g.value}',
+                                          style: EmberText.value.copyWith(
+                                            fontSize: 16,
+                                            color: color,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              );
+                            },
+                          ),
+                        // Boss kill flash: white-out that decays into the ember dissolve.
+                        IgnorePointer(
+                          child: AnimatedOpacity(
+                            opacity: _bossKillFlash ? 1.0 : 0.0,
+                            duration: Duration(
+                              milliseconds: _bossKillFlash ? 60 : 420,
+                            ),
+                            curve: Curves.easeOut,
+                            child: const ColoredBox(
+                              color: Color(0xFFFFE9C4),
+                              child: SizedBox.expand(),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              // Boss kill flash: white-out that decays into the ember dissolve.
-              IgnorePointer(
-                child: AnimatedOpacity(
-                  opacity: _bossKillFlash ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: _bossKillFlash ? 60 : 420),
-                  curve: Curves.easeOut,
-                  child: const ColoredBox(
-                    color: Color(0xFFFFE9C4),
-                    child: SizedBox.expand(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1430,30 +1509,40 @@ class _CombatScreenState extends State<CombatScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: Space.s),
-                      child: _combatant(
-                        sprite: SpriteView(
-                          _characterId,
-                          key: ValueKey('hero-$_characterId'),
-                          height: heroH,
-                          bob: true, // LFP-4a: the stage always breathes
-                        ),
-                        spriteHeight: heroH,
-                        lungeToward: 1,
-                        lunge: _playerLunge,
-                        knock: _playerKnock,
-                        flash: _playerFlash,
-                        dying: _playerDying,
-                        squash: _playerSquash,
-                        // The delver's signature weapon, finally visible: idles in
-                        // hand, pulls back on the squash, swings with the lunge.
-                        weapon: WeaponView(
-                          _characterId,
-                          key: ValueKey('weapon-$_characterId'),
-                          height: heroH,
-                          phase: _weaponPhase,
-                          // Die -> weapon causality made visible: the selected
-                          // die's pips heat the blade before the swing.
-                          charge: _weaponCharge,
+                      // Scoped to _choreoTick: the swing rebuilds the delver,
+                      // not the screen. RepaintBoundary keeps the lunge's
+                      // transform from dirtying the rest of the stage.
+                      child: RepaintBoundary(
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: _choreoTick,
+                          builder: (context, _, _) => _combatant(
+                            sprite: SpriteView(
+                              _characterId,
+                              key: ValueKey('hero-$_characterId'),
+                              height: heroH,
+                              bob: true, // LFP-4a: the stage always breathes
+                            ),
+                            spriteHeight: heroH,
+                            lungeToward: 1,
+                            lunge: _playerLunge,
+                            knock: _playerKnock,
+                            flash: _playerFlash,
+                            dying: _playerDying,
+                            squash: _playerSquash,
+                            // The delver's signature weapon, finally visible:
+                            // idles in hand, pulls back on the squash, swings
+                            // with the lunge.
+                            weapon: WeaponView(
+                              _characterId,
+                              key: ValueKey('weapon-$_characterId'),
+                              height: heroH,
+                              phase: _weaponPhase,
+                              // Die -> weapon causality made visible: the
+                              // selected die's pips heat the blade before the
+                              // swing.
+                              charge: _weaponCharge,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -1463,29 +1552,36 @@ class _CombatScreenState extends State<CombatScreen> {
                         clipBehavior: Clip.none,
                         alignment: Alignment.topCenter,
                         children: [
-                          _combatant(
-                            sprite: SpriteView(
-                              enemyId,
-                              key: ValueKey('enemy-$enemyId'),
-                              height: enemyH,
-                              flipX: true,
-                              bob: true, // LFP-4a
-                              // LFP-4b: slow lean while an attack is
-                              // telegraphed — the badge gets body language.
-                              sway:
-                                  intent['kind'] == 'attack' ||
-                                  intent['kind'] == 'attack_block',
+                          // Scoped to _choreoTick (see the delver above).
+                          RepaintBoundary(
+                            child: ValueListenableBuilder<int>(
+                              valueListenable: _choreoTick,
+                              builder: (context, _, _) => _combatant(
+                                sprite: SpriteView(
+                                  enemyId,
+                                  key: ValueKey('enemy-$enemyId'),
+                                  height: enemyH,
+                                  flipX: true,
+                                  bob: true, // LFP-4a
+                                  // LFP-4b: slow lean while an attack is
+                                  // telegraphed — the badge gets body language.
+                                  sway:
+                                      intent['kind'] == 'attack' ||
+                                      intent['kind'] == 'attack_block',
+                                ),
+                                spriteHeight: enemyH,
+                                // Slight depth scale: the enemy stands a step
+                                // closer.
+                                depthScale: big ? 1.02 : 1.06,
+                                lungeToward: -1,
+                                lunge: _enemyLunge,
+                                knock: _enemyKnock,
+                                flash: _enemyFlash,
+                                dying: _enemyDying,
+                                squash: _enemySquash,
+                                windup: true,
+                              ),
                             ),
-                            spriteHeight: enemyH,
-                            // Slight depth scale: the enemy stands a step closer.
-                            depthScale: big ? 1.02 : 1.06,
-                            lungeToward: -1,
-                            lunge: _enemyLunge,
-                            knock: _enemyKnock,
-                            flash: _enemyFlash,
-                            dying: _enemyDying,
-                            squash: _enemySquash,
-                            windup: true,
                           ),
                           // Intent as an icon badge floating above the enemy
                           // (overlaid, so it never adds layout height). The lift
@@ -1558,65 +1654,80 @@ class _CombatScreenState extends State<CombatScreen> {
                     ),
                   ),
                 ),
-              // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
-              for (final (idx, n)
-                  in _notes.where((n) => n.onEnemy).toList().indexed)
-                Positioned(
-                  right: 12,
-                  bottom: 150.0 + idx * 24,
-                  child: TextPop(
-                    key: ValueKey('note-${n.id}'),
-                    text: n.text,
-                    color: n.color,
-                    icon: n.icon,
-                    fontSize: 15,
-                    duration: n.life,
-                    onDone: () {
-                      if (mounted) setState(() => _notes.remove(n));
-                    },
+              // Transient overlay layers, scoped to _fxTick: a damage pop
+              // or a call-out spawning/expiring rebuilds THIS stack only —
+              // it used to setState the whole 1000-line screen build.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: _fxTick,
+                    builder: (context, _, _) => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
+                        for (final (idx, n)
+                            in _notes.where((n) => n.onEnemy).toList().indexed)
+                          Positioned(
+                            right: 12,
+                            bottom: 150.0 + idx * 24,
+                            child: TextPop(
+                              key: ValueKey('note-${n.id}'),
+                              text: n.text,
+                              color: n.color,
+                              icon: n.icon,
+                              fontSize: 15,
+                              duration: n.life,
+                              onDone: () {
+                                _fxUpdate(() => _notes.remove(n));
+                              },
+                            ),
+                          ),
+                        // Contact FX: weapon smear / claw rake / guard arc over the victim.
+                        for (final fx in _fx)
+                          Positioned(
+                            left: fx.onPlayer ? 0 : null,
+                            right: fx.onPlayer ? null : 0,
+                            bottom: Space.s,
+                            width: (fx.onPlayer ? heroH : enemyH) * 1.35,
+                            height: (fx.onPlayer ? heroH : enemyH) * 1.35,
+                            child: fx.kind == _FxKind.guard
+                                ? GuardFlash(
+                                    key: ValueKey('fx-${fx.id}'),
+                                    facing: fx.onPlayer ? 1 : -1,
+                                    onDone: () {
+                                      _fxUpdate(() => _fx.remove(fx));
+                                    },
+                                  )
+                                : ImpactSlash(
+                                    key: ValueKey('fx-${fx.id}'),
+                                    claws: fx.kind == _FxKind.claws,
+                                    color: fx.color,
+                                    onDone: () {
+                                      _fxUpdate(() => _fx.remove(fx));
+                                    },
+                                  ),
+                          ),
+                        // Floating damage numbers (player pops left, enemy pops right).
+                        for (final p in _pops)
+                          Positioned(
+                            left: p.onPlayer ? 24 : null,
+                            right: p.onPlayer ? null : 24,
+                            bottom: 120,
+                            child: DamagePop(
+                              key: ValueKey('pop-${p.id}'),
+                              amount: p.amount,
+                              blocked: p.blocked,
+                              onPlayer: p.onPlayer,
+                              onDone: () {
+                                _fxUpdate(() => _pops.remove(p));
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              // Contact FX: weapon smear / claw rake / guard arc over the victim.
-              for (final fx in _fx)
-                Positioned(
-                  left: fx.onPlayer ? 0 : null,
-                  right: fx.onPlayer ? null : 0,
-                  bottom: Space.s,
-                  width: (fx.onPlayer ? heroH : enemyH) * 1.35,
-                  height: (fx.onPlayer ? heroH : enemyH) * 1.35,
-                  child: fx.kind == _FxKind.guard
-                      ? GuardFlash(
-                          key: ValueKey('fx-${fx.id}'),
-                          facing: fx.onPlayer ? 1 : -1,
-                          onDone: () {
-                            if (mounted) setState(() => _fx.remove(fx));
-                          },
-                        )
-                      : ImpactSlash(
-                          key: ValueKey('fx-${fx.id}'),
-                          claws: fx.kind == _FxKind.claws,
-                          color: fx.color,
-                          onDone: () {
-                            if (mounted) setState(() => _fx.remove(fx));
-                          },
-                        ),
-                ),
-              // Floating damage numbers (player pops left, enemy pops right).
-              for (final p in _pops)
-                Positioned(
-                  left: p.onPlayer ? 24 : null,
-                  right: p.onPlayer ? null : 24,
-                  bottom: 120,
-                  child: DamagePop(
-                    key: ValueKey('pop-${p.id}'),
-                    amount: p.amount,
-                    blocked: p.blocked,
-                    onPlayer: p.onPlayer,
-                    onDone: () {
-                      if (mounted) setState(() => _pops.remove(p));
-                    },
-                  ),
-                ),
+              ),
             ],
           );
         },
