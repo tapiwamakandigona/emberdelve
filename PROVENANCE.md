@@ -224,3 +224,23 @@ low-saturation "armor" pixels get per-channel multipliers (warmed / darkened /
 gilded). Outlines and skin tones untouched. Outputs:
 `assets/images/player/skins/<id>/{idle,run,jump,fall,hit,roll,attack1-3}.png`
 — same CC0 licensing as the source pack.
+
+## Shop icons — added 2026-07-25
+
+Built by `tool/build_shop_icons.py`: SVG rasterized 512px → alpha-mask glyph →
+two-tone ember tint → 20px pixelation → x4 nearest → 80x80 PNG under
+`assets/images/shop/`. All from the game-icons collection
+(https://github.com/game-icons/icons, CC BY 3.0, credited in CREDITS.md).
+
+| File | Source icon | Author | License |
+|---|---|---|---|
+| shop/weapon_squire_blade.png | pointy-sword.svg | Lorc | CC BY 3.0 |
+| shop/weapon_woodsman_axe.png | battered-axe.svg | Lorc | CC BY 3.0 |
+| shop/weapon_ember_fang.png | curvy-knife.svg | Lorc | CC BY 3.0 |
+| shop/weapon_warden_blade.png | broadsword.svg | Lorc | CC BY 3.0 |
+| shop/weapon_skypiercer.png | barbed-spear.svg | Lorc | CC BY 3.0 |
+| shop/weapon_wind_gods_hammer.png | flat-hammer.svg | Lorc | CC BY 3.0 |
+| shop/ability_coin_magnet.png | magnet.svg | Lorc | CC BY 3.0 |
+| shop/ability_apple_pouch.png | shiny-apple.svg | Lorc | CC BY 3.0 |
+| shop/ability_haggler.png | price-tag.svg | Delapouite | CC BY 3.0 |
+| shop/ability_chest_radar.png | radar-sweep.svg | Lorc | CC BY 3.0 |
