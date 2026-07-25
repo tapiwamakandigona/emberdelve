@@ -1,5 +1,5 @@
 // game/ember_game.dart — the Flame shell around LevelSession. Owns the level
-// lifecycle, fixed-resolution camera (384x216) with look-ahead + peek-down,
+// lifecycle, fixed-resolution camera (352x198) with look-ahead + peek-down,
 // parallax backdrop, touch HUD + keyboard input (one shared InputIntent),
 // sfx/fx event mapping, and results/fail persistence. ALL gameplay logic
 // lives in the headless session/cores — nothing here mutates game state
@@ -64,11 +64,12 @@ import 'tuning.dart';
 // HudHoldButton TapCallbacks/DragCallbacks) that all existing tests cover.
 class EmberGame extends FlameGame
     with KeyboardEvents, MultiTouchTapDetector, MultiTouchDragDetector {
-  // AKP-1a (docs/ak-parity-plan.md): 384x216 (was 480x270) — same 16:9 at
-  // x1.25 zoom, so the 24px player reads ~11.1% of screen height, within a
-  // point of Apple Knight's ~12.5% without touching sprites or physics.
-  static const double viewWidth = 384;
-  static const double viewHeight = 216;
+  // AKP-1a (docs/ak-parity-plan.md): 352x198 — owner-confirmed 2026-07-25:
+  // exact Apple Knight character-size match. Same 16:9; the 24px player
+  // reads 24/198 ≈ 12.1% of screen height (AK measured ≈12.5%). Was 384x216
+  // (11.1%), originally 480x270. No sprite or physics constant changes.
+  static const double viewWidth = 352;
+  static const double viewHeight = 198;
 
   static const overlayPause = 'pause';
   static const overlayResults = 'results';
