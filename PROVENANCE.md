@@ -191,7 +191,8 @@ Assembled by `tool/build_assets.py` from these verified packs (license checked o
 | Pixel Adventure 1 | Pixel Frog | https://pixelfrog-assets.itch.io/pixel-adventure-1 | CC0 1.0 | items/apple, fx/fire |
 | Items #1 | GrafxKid | https://opengameart.org/content/various-items | CC0 1.0 | items/coin (bg keyed out) |
 | Animated pixel-art treasure chests | dustdfg | https://opengameart.org/content/animated-pixel-art-treasure-chests | **CC-BY 4.0** (credited in CREDITS.md) | items/chest |
-| Mobile Controls | Kenney | https://kenney.nl/assets/mobile-controls | CC0 1.0 | hud buttons + icons |
+| Mobile Controls | Kenney | https://kenney.nl/assets/mobile-controls | CC0 1.0 | hud buttons + icons; hud/btn_down.png is btn_left.png rotated 90° (tool/build_hud_extras.py) |
+| Dash icon | original (Tsoro Studios, drawn by tool/build_hud_extras.py) | this repo | CC0 1.0 | hud/icon_dash.png |
 
 Full per-pack evidence recorded at curation time (staging MANIFEST, 2026-07-24).
 
