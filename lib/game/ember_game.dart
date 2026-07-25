@@ -195,8 +195,9 @@ class EmberGame extends FlameGame
             : Difficulty.medium);
 
     camera.viewfinder.anchor = Anchor.center;
-    camera.viewfinder.position =
-        Vector2(session.player.body.centerX, session.player.body.centerY);
+    _camSmoothX = session.player.body.centerX;
+    _camSmoothY = session.player.body.centerY;
+    camera.viewfinder.position = Vector2(_camSmoothX, _camSmoothY);
     camera.backdrop.add(ParallaxBackground());
 
     world.add(DecorLayerComponent());
@@ -653,15 +654,32 @@ class EmberGame extends FlameGame
         ? levelH / 2
         : targetY.clamp(viewHeight / 2, levelH - viewHeight / 2);
 
-    final k = (kCameraSmooth * dt).clamp(0.0, 1.0);
-    final pos = camera.viewfinder.position;
+    // Frame-rate-independent exponential smoothing: the old `k * dt` linear
+    // factor under-corrects at low fps and over-corrects at high fps, so
+    // follow speed (and the apparent "weight" of the camera) changed with
+    // frame rate. 1 - e^(-k*dt) converges identically at any fps.
+    final k = 1 - math.exp(-kCameraSmooth * dt);
     _camBump = math.max(0, _camBump - 12 * dt);
     final bumpY = _camBump > 0 ? (_bumpRand.nextDouble() - 0.5) * _camBump * 2 : 0.0;
-    camera.viewfinder.position = Vector2(
-      pos.x + (targetX - pos.x) * k,
-      pos.y + (targetY - pos.y) * k + bumpY,
-    );
+    _camSmoothX += (targetX - _camSmoothX) * k;
+    _camSmoothY += (targetY - _camSmoothY) * k;
+    // Pixel snap (movement-stutter fix): the 352x198 viewport is upscaled
+    // ~5-6x with nearest-neighbor filtering. A camera at fractional world
+    // coordinates makes every tile edge resample differently each frame —
+    // full-screen shimmer/judder whenever the camera pans (i.e. whenever
+    // the player moves). Smoothing runs on unrounded floats so no motion is
+    // lost; only the rendered position is quantized to whole world pixels.
+    camera.viewfinder.position = _camRender
+      ..setValues(
+        _camSmoothX.roundToDouble(),
+        (_camSmoothY + bumpY).roundToDouble(),
+      );
   }
+
+  // Unrounded camera state (smoothing accumulator) + scratch render vector.
+  double _camSmoothX = 0;
+  double _camSmoothY = 0;
+  final Vector2 _camRender = Vector2.zero();
 
   // -- flow -------------------------------------------------------------------
 
