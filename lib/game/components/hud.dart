@@ -299,7 +299,9 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
       // Phase threshold ticks at 2/3 and 1/3.
       canvas.drawRect(_tick1, _bossBarTick);
       canvas.drawRect(_tick2, _bossBarTick);
-      if (_bossName.dirty(0)) _bossName.text = 'GROVE GOLEM';
+      if (_bossName.dirty(0)) {
+        _bossName.text = game.session.level.name.toUpperCase();
+      }
       _bossName.paint(canvas);
     }
 

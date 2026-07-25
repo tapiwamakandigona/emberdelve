@@ -22,7 +22,22 @@ const List<LevelEntry> kWorld1 = [
   LevelEntry('w1_boss', 'Grove Golem', isBoss: true),
 ];
 
+/// World 2 — Cinder Depths. Unlocks once the World 1 boss falls.
+const List<LevelEntry> kWorld2 = [
+  LevelEntry('w2_l1', 'Ashen Gate'),
+  LevelEntry('w2_l2', 'Ember Vault'),
+  LevelEntry('w2_l3', 'Soot Falls'),
+  LevelEntry('w2_l4', 'Magma Gallery'),
+  LevelEntry('w2_l5', 'Kiln Works'),
+  LevelEntry('w2_boss', 'Kiln Golem', isBoss: true),
+];
+
+bool isWorld2Unlocked(SaveData save) =>
+    save.levels['w1_boss']?.finished ?? false;
+
 bool isLevelUnlocked(SaveData save, int index, {List<LevelEntry>? world}) {
+  // World 2's first level additionally requires the World 1 boss.
+  if (identical(world, kWorld2) && !isWorld2Unlocked(save)) return false;
   final w = world ?? kWorld1;
   if (index <= 0) return true;
   if (index >= w.length) return false;

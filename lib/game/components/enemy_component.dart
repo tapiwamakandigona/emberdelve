@@ -72,10 +72,14 @@ class EnemyComponent extends PositionComponent
         // + rock.png for its lobbed rocks. No unverified art added.
         _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
         _rock = await game.images.load('props/rock.png');
+        // Golem tint follows the world: mossy in Emberwood, kiln-fired
+        // terracotta in the Cinder Depths (same core, distinct look).
+        final cave = game.session.level.environment == 'cave';
         _tint = ui.Paint()
           ..filterQuality = ui.FilterQuality.none
-          ..colorFilter = const ui.ColorFilter.mode(
-              ui.Color(0xFF87A96B), ui.BlendMode.modulate);
+          ..colorFilter = ui.ColorFilter.mode(
+              cave ? const ui.Color(0xFFC9704A) : const ui.Color(0xFF87A96B),
+              ui.BlendMode.modulate);
     }
     _show(_main!);
   }
