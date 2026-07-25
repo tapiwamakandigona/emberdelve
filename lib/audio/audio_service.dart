@@ -4,7 +4,8 @@
 // with a short crossfade on change; victory/defeat play as non-looping stings.
 // A quiet ember-ambience bed runs under the title and rest screens.
 //
-// SFX: 20 one-shot ids (see [sfxPaths]) played through a small player pool.
+// SFX: 20 one-shot ids (see [sfxPaths]), each with one or more resident
+// low-latency voices (see [sfxVoices]) so overlapping triggers layer.
 // Immediate, event-mapped SFX go through [handleEvents]; combat impact sounds
 // (whoosh/hits/deaths) are timed by the combat screen's choreography per
 // staging SYNC_POINTS.md, so they land on the animation contact frame.
@@ -12,6 +13,7 @@
 // Everything is best-effort: every platform call is caught so audio can never
 // crash gameplay, and nothing here is constructed in widget tests.
 import 'dart:async';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:audioplayers/audioplayers.dart';
 import 'settings.dart';
 
@@ -101,9 +103,44 @@ class AudioService {
   AudioPlayer? _ambience;
   AudioPlayer? _danger;
 
-  /// One preloaded low-latency player per SFX id (see [playSfx]).
-  final Map<String, AudioPlayer> _sfxPlayers = {};
+  /// Preloaded low-latency voices per SFX id (see [playSfx]). Most ids have a
+  /// single voice; the ones a player can genuinely trigger on top of
+  /// themselves get [sfxVoices] of them so the second hit LAYERS instead of
+  /// cutting the first one off.
+  final Map<String, List<AudioPlayer>> _sfxPlayers = {};
+  final Map<String, int> _sfxNextVoice = {};
   final Set<String> _sfxLoading = {};
+
+  /// Voice count per SFX id (default 1). Multi-voice ids are the ones that
+  /// overlap in real play: the dice cascade assigns/rolls in quick succession,
+  /// and multi-hit turns stack impacts. UI clicks stay single-voice — a click
+  /// that restarts is correct, a click that layers sounds broken.
+  static const Map<String, int> sfxVoices = {
+    'dice_roll': 2,
+    'die_assign': 3,
+    'reroll': 2,
+    'enemy_hit': 3,
+    'player_hit': 2,
+    'block': 2,
+    'coin': 3,
+    'ember_gain': 2,
+    'whoosh': 2,
+  };
+
+  static int voicesFor(String id) => sfxVoices[id] ?? 1;
+
+  /// Which voice to trigger next: the first idle one, else the round-robin
+  /// pick (the least recently started voice, i.e. the closest to finished).
+  /// Pure and static so the choice is testable without a platform player.
+  @visibleForTesting
+  static int pickVoice(List<bool> busy, int next) {
+    if (busy.isEmpty) return 0;
+    for (var i = 0; i < busy.length; i++) {
+      final idx = (next + i) % busy.length;
+      if (!busy[idx]) return idx;
+    }
+    return next % busy.length;
+  }
 
   /// Ids worth having ready before the first tap ever happens.
   static const _warmSfx = [
@@ -284,50 +321,56 @@ class AudioService {
   /// "start a new stream from the decoded sample". Every SFX asset is <=56KB,
   /// well inside SoundPool's per-sample budget.
   ///
-  /// Re-triggering a sound that is still playing restarts it rather than
-  /// layering it — the same behaviour the old six-player pool gave once more
-  /// than six sounds were in flight, and the right behaviour for UI clicks.
+  /// Re-triggering (v0.3.15): ids listed in [sfxVoices] hold several resident
+  /// voices and the next trigger takes an IDLE one, so a fast dice cascade or
+  /// a multi-hit turn layers instead of chopping the previous sound off
+  /// mid-tail. Single-voice ids (UI clicks, stings) still restart, which is
+  /// the right behaviour for them.
   Future<void> playSfx(String id, {double volume = 1.0}) async {
     final path = sfxPaths[id];
     if (path == null) return;
     final v = settings.effectiveSfx * volume;
     if (v <= 0) return;
     try {
-      final p = _sfxPlayers[id];
-      if (p == null) {
-        // Not resident yet: load it, then play. Only the very first use of a
-        // sound can pay this, and [warmUp] removes it for the common ones.
-        final loaded = await _ensureSfx(id, path);
-        if (loaded == null) return;
-        await loaded.setVolume(v.clamp(0.0, 1.0));
-        await loaded.resume();
-        return;
-      }
-      await p.stop();
+      final voices = _sfxPlayers[id] ?? await _ensureSfx(id, path);
+      if (voices == null || voices.isEmpty) return;
+      final idx = pickVoice([
+        for (final p in voices) p.state == PlayerState.playing,
+      ], _sfxNextVoice[id] ?? 0);
+      _sfxNextVoice[id] = (idx + 1) % voices.length;
+      final p = voices[idx];
+      // Only a voice that is still sounding needs the stop(); skipping it on
+      // an idle voice saves a platform hop on the frame of the tap.
+      if (p.state == PlayerState.playing) await p.stop();
       await p.setVolume(v.clamp(0.0, 1.0));
       await p.resume();
     } catch (_) {}
   }
 
-  /// Create + preload the low-latency player for [id]. Concurrent callers for
-  /// the same id don't stack up duplicate players.
-  Future<AudioPlayer?> _ensureSfx(String id, String path) async {
+  /// Create + preload every voice for [id]. Concurrent callers for the same id
+  /// don't stack up duplicate players.
+  Future<List<AudioPlayer>?> _ensureSfx(String id, String path) async {
     final existing = _sfxPlayers[id];
     if (existing != null) return existing;
     if (_sfxLoading.contains(id)) return null;
     _sfxLoading.add(id);
-    AudioPlayer? p;
+    final made = <AudioPlayer>[];
     try {
-      p = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
-      await p.setPlayerMode(PlayerMode.lowLatency);
-      // Resolves once the sample is decoded and resident.
-      await p.setSource(AssetSource(path));
-      _sfxPlayers[id] = p;
-      return p;
+      for (var i = 0; i < voicesFor(id); i++) {
+        final p = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+        await p.setPlayerMode(PlayerMode.lowLatency);
+        // Resolves once the sample is decoded and resident.
+        await p.setSource(AssetSource(path));
+        made.add(p);
+      }
+      _sfxPlayers[id] = made;
+      return made;
     } catch (_) {
-      try {
-        await p?.dispose();
-      } catch (_) {}
+      // Keep whatever loaded: one working voice beats none.
+      if (made.isNotEmpty) {
+        _sfxPlayers[id] = made;
+        return made;
+      }
       return null;
     } finally {
       _sfxLoading.remove(id);
@@ -363,8 +406,10 @@ class AudioService {
       _music?.pause();
       _ambience?.pause();
       _danger?.pause();
-      for (final p in _sfxPlayers.values) {
-        p.stop();
+      for (final voices in _sfxPlayers.values) {
+        for (final p in voices) {
+          p.stop();
+        }
       }
     } catch (_) {}
   }
