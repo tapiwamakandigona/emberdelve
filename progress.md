@@ -502,7 +502,7 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   framework-level; the transfer to real hardware is inferred.
 - Detail: docs/improvements/perf-repaint-and-sfx-2026-07-25.md
 
-## 2026-07-25 — combat screen: scoped rebuilds (v0.3.12+18)
+## 2026-07-25 — combat screen: scoped rebuilds (v0.3.13+18)
 - Follow-up to the repaint/SFX pass: that fixed idle cost, this one attacks the
   cost of a real tap. combat 12 rapid real taps: 95.4 -> 48.3 render objects
   painted per frame (2.0x). Rebuilds/frame 31.5 -> 31.0, unchanged by design.
