@@ -215,7 +215,7 @@ class PlayerCore {
 
     // --- hazards
     if (iFrames <= 0 && touchesHazard(body, tileAt)) {
-      damage(1, from: body.centerX);
+      damage(1, from: body.centerX, hazardEject: true);
     }
 
     // --- state
@@ -247,16 +247,27 @@ class PlayerCore {
 
   /// Apply [amount] hearts of damage from a source at x=[from].
   /// Returns true if damage landed (not invulnerable).
-  bool damage(int amount, {required double from}) {
+  ///
+  /// [hazardEject] (AKP-6b): hazard-tile damage launches the player up and
+  /// along the direction of travel so a pit throws you back OUT — the
+  /// normal knockback left you at the pit bottom, chain-dying every time
+  /// the i-frames lapsed.
+  bool damage(int amount, {required double from, bool hazardEject = false}) {
     if (iFrames > 0 || state == PlayerState.dead) return false;
     hearts -= amount;
     iFrames = kHurtIFrames;
     hurtTime = 0.25;
     attackTime = 0;
     rollTime = 0;
-    final dir = body.centerX >= from ? 1 : -1;
-    body.vx = dir * kKnockbackSpeed;
-    body.vy = -kKnockbackSpeed * 0.6;
+    if (hazardEject) {
+      final travel = body.vx.abs() > 5 ? body.vx.sign : -facing.toDouble();
+      body.vx = travel * kHazardEjectSpeedX;
+      body.vy = -kHazardEjectSpeedY;
+    } else {
+      final dir = body.centerX >= from ? 1 : -1;
+      body.vx = dir * kKnockbackSpeed;
+      body.vy = -kKnockbackSpeed * 0.6;
+    }
     body.onGround = false;
     if (hearts <= 0) {
       hearts = 0;

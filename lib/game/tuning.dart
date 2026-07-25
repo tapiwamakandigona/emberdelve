@@ -52,6 +52,12 @@ const double kAttackDuration = 0.22; // s per swing
 const double kHitPause = 0.040; // s freeze on connect
 const double kHurtIFrames = 1.0; // s invulnerability after taking a hit
 const double kKnockbackSpeed = 150.0; // px/s away from damage source
+// AKP-6b: hazard tiles (spike/fire pits) eject the player up and along the
+// direction of travel instead of the normal shallow knockback, which left
+// you inside the pit chain-taking hits. 340 px/s rises ~50px (3 tiles);
+// 170 px/s across ~0.6s of airtime clears a 4-tile pit from its lip.
+const double kHazardEjectSpeedY = 340.0;
+const double kHazardEjectSpeedX = 170.0;
 const double kAppleThrowSpeed = 220.0; // px/s, 45deg-ish arc
 const int kAppleDamage = 2;
 const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
