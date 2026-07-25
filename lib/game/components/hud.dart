@@ -29,6 +29,7 @@ class HudHoldButton extends SpriteComponent
   SpriteComponent? _icon;
   late final HoldButtonCore _core;
 
+
   HudHoldButton({
     required this.spritePath,
     this.iconPath,
@@ -131,11 +132,22 @@ class HudThrowButton extends HudHoldButton {
     ));
   }
 
+  /// A zero-scaled component does NOT "kill taps": Flame inverts the
+  /// (singular) transform, every canvas point collapses to local (0,0), and
+  /// (0,0) is inside the button — so the hidden throw button swallowed every
+  /// tap on screen before the movement arrows could see it (checked earlier
+  /// in reversed child order; jump/attack/pause are checked before it and
+  /// kept working, which is why only left/right looked broken). Gate hit
+  /// testing on visibility explicitly.
+  @override
+  bool containsLocalPoint(Vector2 point) =>
+      game.session.applesHeld > 0 && super.containsLocalPoint(point);
+
   @override
   void update(double dt) {
     super.update(dt);
     final visible = game.session.applesHeld > 0;
-    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides + kills taps
+    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides the sprite
   }
 }
 

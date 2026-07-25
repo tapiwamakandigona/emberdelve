@@ -1,5 +1,7 @@
 // ui/game_screen.dart — GameWidget route hosting EmberGame with Flutter
 // overlays for pause / results / fail. Meta stays plain Flutter (spec seam).
+import 'dart:async' show Timer;
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
@@ -151,7 +153,7 @@ class _FailOverlay extends StatelessWidget {
   }
 }
 
-class _ResultsOverlay extends StatelessWidget {
+class _ResultsOverlay extends StatefulWidget {
   final LevelResults results;
   final VoidCallback onReplay;
   final VoidCallback onContinue;
@@ -160,24 +162,68 @@ class _ResultsOverlay extends StatelessWidget {
       required this.onReplay,
       required this.onContinue});
 
+  @override
+  State<_ResultsOverlay> createState() => _ResultsOverlayState();
+}
+
+class _ResultsOverlayState extends State<_ResultsOverlay> {
+  // Medals reveal one by one (0.35s stagger); each earned one pops with a
+  // little scale bounce + the medal chime.
+  int _revealed = 0;
+  Timer? _timer;
+
+  LevelResults get results => widget.results;
+
+  @override
+  void initState() {
+    super.initState();
+    final earned = [results.finished, results.allChests, results.lowDamage];
+    _timer = Timer.periodic(const Duration(milliseconds: 350), (t) {
+      if (!mounted) return;
+      setState(() => _revealed++);
+      if (_revealed <= 3 && earned[_revealed - 1]) {
+        AudioService.instance?.playSfx('medal', volume: 0.8);
+      }
+      if (_revealed >= 3) t.cancel();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   String get _time {
     final s = results.timeMs ~/ 1000;
     return '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
   }
 
-  Widget _medal(String label, bool earned) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(earned ? Icons.emoji_events : Icons.emoji_events_outlined,
-              size: 18,
-              color: earned ? const Color(0xFFE8A33D) : Colors.white24),
-          const SizedBox(width: 8),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: earned ? Colors.white : Colors.white38)),
-        ]),
-      );
+  Widget _medal(int index, String label, bool earned) {
+    final shown = _revealed > index;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: AnimatedOpacity(
+        opacity: shown ? 1 : 0,
+        duration: const Duration(milliseconds: 150),
+        child: AnimatedScale(
+          scale: shown ? 1.0 : 1.6,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutBack,
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(earned ? Icons.emoji_events : Icons.emoji_events_outlined,
+                size: 18,
+                color: earned ? const Color(0xFFE8A33D) : Colors.white24),
+            const SizedBox(width: 8),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 13,
+                    color: earned ? Colors.white : Colors.white38)),
+          ]),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,9 +243,9 @@ class _ResultsOverlay extends StatelessWidget {
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white70, fontSize: 13)),
       const SizedBox(height: 12),
-      _medal('Finished', results.finished),
-      _medal('All chests', results.allChests),
-      _medal('Low damage', results.lowDamage),
+      _medal(0, 'Finished', results.finished),
+      _medal(1, 'All chests', results.allChests),
+      _medal(2, 'Low damage', results.lowDamage),
       if (results.perfectBonus > 0) ...[
         const SizedBox(height: 8),
         Text('PERFECT!  +${results.perfectBonus} coins',
@@ -212,12 +258,13 @@ class _ResultsOverlay extends StatelessWidget {
       ],
       const SizedBox(height: 16),
       Row(mainAxisSize: MainAxisSize.min, children: [
-        TextButton(onPressed: onReplay, child: const Text('Replay')),
+        TextButton(
+            onPressed: widget.onReplay, child: const Text('Replay')),
         const SizedBox(width: 12),
         FilledButton(
           style:
               FilledButton.styleFrom(backgroundColor: const Color(0xFF3E8948)),
-          onPressed: onContinue,
+          onPressed: widget.onContinue,
           child: const Text('Continue'),
         ),
       ]),

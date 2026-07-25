@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/input_intent.dart';
 import 'package:emberdelve/game/level/level_data.dart';
+import 'package:emberdelve/game/physics.dart';
 import 'package:emberdelve/game/player/player_core.dart';
 import 'package:emberdelve/game/tuning.dart';
 
@@ -322,5 +323,122 @@ void main() {
     final c2 = corePlayer(flat);
     c2.damage(1, from: c2.body.centerX + 10);
     expect(c2.body.vx, lessThan(0)); // pushed left
+  });
+
+
+  // --- asymmetric gravity feel (fall multiplier + apex hang) --------------
+
+  test('falling is snappier than rising (asymmetric gravity)', () {
+    final c = corePlayer(flat);
+    var first = true;
+    var riseFrames = 0, fallFrames = 0;
+    var apexSeen = false;
+    step(c, 2.0, (i) {
+      i.jumpHeld = true;
+      if (first) {
+        i.jumpPressed = true;
+        first = false;
+      }
+    }, onFrame: (c) {
+      if (c.body.onGround) return;
+      if (c.body.vy < 0) {
+        riseFrames++;
+      } else {
+        apexSeen = true;
+        fallFrames++;
+      }
+    });
+    expect(apexSeen, isTrue);
+    expect(c.body.onGround, isTrue, reason: 'should have landed within 2s');
+    // Fall gravity is 1.6x rise gravity => fall leg must be measurably
+    // shorter than the rise leg (apex hang straddles both sides equally).
+    expect(fallFrames, lessThan(riseFrames));
+  });
+
+  test('holding jump through the apex hangs longer than releasing there', () {
+    int airtime(bool holdThroughApex) {
+      final c = corePlayer(flat);
+      var first = true;
+      var frames = 0;
+      step(c, 2.0, (i) {
+        // Release exactly when the rise ends (vy >= 0): the jump-cut only
+        // fires while vy < 0, so this isolates the apex-hang effect.
+        i.jumpHeld = holdThroughApex || c.body.vy < 0;
+        if (first) {
+          i.jumpPressed = true;
+          first = false;
+        }
+      }, onFrame: (c) {
+        if (!c.body.onGround) frames++;
+      });
+      expect(c.body.onGround, isTrue);
+      return frames;
+    }
+
+    expect(airtime(true), greaterThan(airtime(false)));
+  });
+
+  // --- turnaround assist + ceiling corner correction -----------------------
+
+  test('turnaround assist: full-speed reversal snaps quickly', () {
+    final c = corePlayer(flat);
+    // Run right to full speed.
+    step(c, 1.0, (i) => i.dirX = 1);
+    expect(c.body.vx, closeTo(kRunSpeed, 1));
+    // Reverse: with the assist (2x accel) vx passes -20 within 0.075s;
+    // without it, plain kGroundAccel would still be ~ +13 at that point.
+    step(c, 0.075, (i) => i.dirX = -1);
+    expect(c.body.vx, lessThan(-20));
+  });
+
+  test('ceiling corner correction: a <=4px lip clip slides around', () {
+    // Ceiling with a one-tile gap: tiles are 16px, body is 12px wide.
+    final l = LevelData.parse("""
+##..################
+....................
+....................
+.P.................E
+####################
+""");
+    TileKind q(int tx, int ty) {
+      if (ty < 0 || ty >= l.height || tx < 0 || tx >= l.width) {
+        return TileKind.solid;
+      }
+      return l.tiles[ty][tx];
+    }
+
+    // Gap is tile x=2 (px 32..48). Clip the left lip (tile x=1) by 3px:
+    // body.left = 29 => overlaps column 1 by 3px, column 2 for the rest.
+    final b = Body(x: 29, y: 17, w: 12, h: 20)..vy = -120;
+    integrate(b, 1 / 60, q, ceilingNudge: kCeilingCornerNudge);
+    expect(b.hitCeiling, isFalse, reason: 'should slide around the lip');
+    expect(b.left, greaterThanOrEqualTo(32), reason: 'nudged into the gap');
+    expect(b.vy, lessThan(0), reason: 'still rising');
+
+    // Same setup clipping 8px deep: too much — honest bonk.
+    final b2 = Body(x: 24, y: 17, w: 12, h: 20)..vy = -120;
+    integrate(b2, 1 / 60, q, ceilingNudge: kCeilingCornerNudge);
+    expect(b2.hitCeiling, isTrue);
+    expect(b2.vy, 0);
+  });
+
+  test('corner correction never fires without the opt-in (enemies)', () {
+    final l = LevelData.parse("""
+##..################
+....................
+....................
+.P.................E
+####################
+""");
+    TileKind q(int tx, int ty) {
+      if (ty < 0 || ty >= l.height || tx < 0 || tx >= l.width) {
+        return TileKind.solid;
+      }
+      return l.tiles[ty][tx];
+    }
+
+    final b = Body(x: 29, y: 17, w: 12, h: 20)..vy = -120;
+    integrate(b, 1 / 60, q); // default: no nudge
+    expect(b.hitCeiling, isTrue);
   });
 }
