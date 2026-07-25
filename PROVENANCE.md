@@ -292,6 +292,25 @@ Mastering evidence (build log 2026-07-25): all music/sting outputs measured
 to −19/−18 LUFS targets, alimiter ceiling, decoded peaks −9.44…−2.17 dBFS —
 all ≤ the repo's −1.3 dBFS convention (asserted by the build script itself).
 
+## Music engine v2 ("immersive") — 2026-07-25
+
+The five music tracks + defeat sting were re-rendered by
+`tool/build_original_music.py` **engine v2**: the same original compositions
+(unchanged titles, keys, BPM, event data — see rows above) performed through
+a far richer synthesis/mix engine (felt piano, Karplus-Strong plucks,
+tremolo strings, convolution reverb with synthesized IRs, arrangement arcs,
+humanized timing, mastered tonal balance). Still 100% first-principles
+numpy/scipy synthesis — no samples, no soundfonts, no AI audio, no
+third-party inputs — deterministic, CC0 1.0 by Tsoro Studios. Production
+notes: `docs/music-production.md`. Music OGG quality raised q4 → q6 for the
+denser spectrum.
+
+Mastering evidence (engine v2 build log 2026-07-25): title −18.99 LUFS /
+peak −6.45 dBFS · map −18.96 / −6.55 · combat −19.03 / −7.09 · boss −19.02 /
+−8.83 · defeat −18.02 / −6.30 · sfx defeat sting peak −5.33 · all decoded
+peaks ≤ −1.3 dBFS (asserted by the build script), seamless loops verified
+(2×-render second-pass export).
+
 The superseded rows above (Kevin MacLeod / tcarisland / qubodup / dustdfg /
 game-icons dice glyph) are retained in this file as **historical record
 only** — those files no longer ship.
