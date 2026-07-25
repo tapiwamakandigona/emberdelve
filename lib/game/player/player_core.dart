@@ -14,6 +14,7 @@ enum PlayerEvent {
   landed,
   attacked,
   rolled,
+  airDashed,
   hurt,
   died,
   droppedThrough,
@@ -46,6 +47,8 @@ class PlayerCore {
   double rollCooldown = 0;
   int comboIndex = 0; // 0..kComboHits-1, index of CURRENT swing
   int airJumpsUsed = 0;
+  bool airDashUsed = false; // AKP-2b: one air dash per airborne period
+  bool _airDashing = false; // current roll started mid-air (gravity off)
   bool wasOnGround = false;
   bool jumpWasHeld = false;
 
@@ -76,6 +79,7 @@ class PlayerCore {
   bool get attacking => attackTime > 0;
 
   bool get rolling => rollTime > 0;
+  bool get airDashing => _airDashing && rolling;
 
   /// Active attack hitbox (null when not in the damage window).
   ({double x, double y, double w, double h, int damage})? get attackHitbox {
@@ -143,6 +147,7 @@ class PlayerCore {
     if (grounded) {
       coyote = kCoyoteTime;
       airJumpsUsed = 0;
+      airDashUsed = false; // AKP-2b: landing re-arms the air dash
     }
     var dropThrough = false;
     if (jumpBuffer > 0 && !stunned && !rolling) {
@@ -172,11 +177,17 @@ class PlayerCore {
       }
     }
     // AKP-2a: dedicated dash/roll button — same commit-dodge as the
-    // DOWN+JUMP chord, ground-only (air-dash is an open owner question,
-    // plan §2 AKP-2b). Rejected presses are simply dropped: a dash button
-    // must never buffer into a surprise roll half a second later.
-    if (input.rollPressed && grounded && !stunned && !rolling) {
-      _tryRoll();
+    // DOWN+JUMP chord. On the ground it is the classic roll; in the air
+    // (AKP-2b, owner-confirmed 2026-07-25) it is AK's air dash: a flat
+    // horizontal burst with gravity suspended, once per airborne period.
+    // Rejected presses are simply dropped: a dash button must never buffer
+    // into a surprise roll half a second later.
+    if (input.rollPressed && !stunned && !rolling) {
+      if (grounded) {
+        _tryRoll();
+      } else if (kAirDashEnabled && !airDashUsed) {
+        _tryRoll(air: true);
+      }
     }
 
     // Variable height: releasing jump early cuts upward velocity.
@@ -204,6 +215,16 @@ class PlayerCore {
       g = kGravity * kApexGravityMultiplier;
     } else if (body.vy > 0) {
       g = kGravity * kFallGravityMultiplier;
+    }
+    // AKP-2b: an air dash holds its height — gravity fully suspended and
+    // vertical velocity zeroed for the whole dash window.
+    if (_airDashing) {
+      if (rolling) {
+        g = 0;
+        body.vy = 0;
+      } else {
+        _airDashing = false;
+      }
     }
     body.vy += g * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
@@ -236,13 +257,20 @@ class PlayerCore {
 
   /// Start a roll if allowed (not mid-attack, cooldown elapsed). Shared by
   /// the DOWN+JUMP chord and the dedicated dash/roll button (AKP-2a).
-  void _tryRoll() {
+  /// With [air] (AKP-2b) it becomes the air dash: same speed/i-frames but
+  /// height is held for the duration and the charge arms only on landing.
+  void _tryRoll({bool air = false}) {
     if (attacking || rollCooldown > 0) return;
     rollTime = kRollDuration;
     rollCooldown = kRollDuration + kRollCooldown;
     if (iFrames < kRollIFrames) iFrames = kRollIFrames;
     body.vx = facing * kRollSpeed;
-    _events.add(PlayerEvent.rolled);
+    if (air) {
+      airDashUsed = true;
+      _airDashing = true;
+      body.vy = 0;
+    }
+    _events.add(air ? PlayerEvent.airDashed : PlayerEvent.rolled);
   }
 
   /// Apply [amount] hearts of damage from a source at x=[from].

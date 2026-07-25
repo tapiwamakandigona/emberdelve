@@ -514,6 +514,16 @@ class EmberGame extends FlameGame
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom),
               life: 0.22));
+        case PlayerEvent.airDashed:
+          // AKP-2b: slightly sharper whoosh, puff trails BEHIND the dash at
+          // body height (there is no ground under an air dash).
+          AudioService.instance?.playSfx('whoosh', volume: 0.65);
+          world.add(PuffFx(
+              Vector2(
+                  session.player.body.centerX -
+                      session.player.facing * 8,
+                  session.player.body.centerY),
+              life: 0.22));
         case PlayerEvent.attacked:
           // 3-hit combo reads as a phrase: neutral / up / down+heavy.
           AudioService.instance?.playSfx(
