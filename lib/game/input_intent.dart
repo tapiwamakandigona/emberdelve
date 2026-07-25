@@ -6,10 +6,14 @@ class InputIntent {
   bool jumpHeld = false;
   bool attackPressed = false; // edge
   bool throwPressed = false; // edge
+  // AKP-2a: dash/roll as a first-class verb (dedicated touch button + Shift).
+  // The DOWN+JUMP chord in PlayerCore still works as a keyboard alternative.
+  bool rollPressed = false; // edge
 
   void clearEdges() {
     jumpPressed = false;
     attackPressed = false;
     throwPressed = false;
+    rollPressed = false;
   }
 }

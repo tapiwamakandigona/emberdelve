@@ -157,11 +157,13 @@ class EmberGame extends FlameGame
   bool _touchJumpEdge = false;
   bool _touchAttackEdge = false;
   bool _touchThrowEdge = false;
+  bool _touchRollEdge = false;
 
   final Set<LogicalKeyboardKey> _keys = {};
   bool _keyJumpEdge = false;
   bool _keyAttackEdge = false;
   bool _keyThrowEdge = false;
+  bool _keyRollEdge = false;
 
   late SpriteAnimation _deathAnim;
   double _camBump = 0;
@@ -287,6 +289,12 @@ class EmberGame extends FlameGame
       if (k == LogicalKeyboardKey.keyK || k == LogicalKeyboardKey.keyC) {
         _keyThrowEdge = true;
       }
+      // AKP-2a: dash/roll on Shift (the DOWN+JUMP chord still works too).
+      if (k == LogicalKeyboardKey.shiftLeft ||
+          k == LogicalKeyboardKey.shiftRight ||
+          k == LogicalKeyboardKey.keyL) {
+        _keyRollEdge = true;
+      }
       if (k == LogicalKeyboardKey.escape) pauseGame();
     }
     return KeyEventResult.handled;
@@ -321,10 +329,12 @@ class EmberGame extends FlameGame
       ..jumpHeld = _touchJumpHeld || _keyJumpHeld
       ..jumpPressed = _touchJumpEdge || _keyJumpEdge
       ..attackPressed = _touchAttackEdge || _keyAttackEdge
-      ..throwPressed = _touchThrowEdge || _keyThrowEdge;
+      ..throwPressed = _touchThrowEdge || _keyThrowEdge
+      ..rollPressed = _touchRollEdge || _keyRollEdge;
     _touchJumpEdge = _keyJumpEdge = false;
     _touchAttackEdge = _keyAttackEdge = false;
     _touchThrowEdge = _keyThrowEdge = false;
+    _touchRollEdge = _keyRollEdge = false;
 
     session.cameraX = cameraPos.x;
     session.update(clamped, _intent);
