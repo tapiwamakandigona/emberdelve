@@ -183,6 +183,9 @@ const List<Skin> kSkins = [
   Skin(id: 'ember_monk', name: 'Ember Monk', currency: Currency.coins, price: 800),
   Skin(id: 'shadow_thief', name: 'Shadow Thief', currency: Currency.coins, price: 1200),
   Skin(id: 'hearth_knight', name: 'Hearth Knight', currency: Currency.feathers, price: 15),
+  // Stage 2 (owner-directed 2026-07-25): two more characters.
+  Skin(id: 'grove_sentinel', name: 'Grove Sentinel', currency: Currency.coins, price: 1600),
+  Skin(id: 'ash_wraith', name: 'Ash Wraith', currency: Currency.feathers, price: 25),
 ];
 
 const List<Ability> kAbilities = [
