@@ -15,13 +15,21 @@ class ParallaxBackground extends Component with HasGameReference<EmberGame> {
     ('bg/forest_front.png', 0.7),
   ];
 
-  final List<(ui.Image, double)> _images = [];
+  // Per-layer draw state, precomputed at load: image, parallax factor,
+  // full-image src rect, and view-scaled width (render stays allocation-lean:
+  // only the moving dst Rect is built per draw call, as the canvas API needs).
+  final List<(ui.Image, double, ui.Rect, double)> _images = [];
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.none;
 
   @override
   Future<void> onLoad() async {
+    const viewH = EmberGame.viewHeight;
     for (final (path, factor) in _layers) {
-      _images.add((await game.images.load(path), factor));
+      final img = await game.images.load(path);
+      final src = ui.Rect.fromLTWH(
+          0, 0, img.width.toDouble(), img.height.toDouble());
+      final w = img.width * (viewH / img.height);
+      _images.add((img, factor, src, w));
     }
   }
 
@@ -29,14 +37,10 @@ class ParallaxBackground extends Component with HasGameReference<EmberGame> {
   void render(ui.Canvas canvas) {
     const viewW = EmberGame.viewWidth, viewH = EmberGame.viewHeight;
     final camX = game.cameraPos.x;
-    for (final (img, factor) in _images) {
-      final scale = viewH / img.height;
-      final w = img.width * scale;
+    for (final (img, factor, src, w) in _images) {
       // Scroll opposite to camera, wrapped for infinite tiling.
       var offset = (-camX * factor) % w;
       if (offset > 0) offset -= w;
-      final src = ui.Rect.fromLTWH(
-          0, 0, img.width.toDouble(), img.height.toDouble());
       for (var x = offset; x < viewW; x += w) {
         canvas.drawImageRect(
             img, src, ui.Rect.fromLTWH(x, 0, w + 0.5, viewH), _paint);
