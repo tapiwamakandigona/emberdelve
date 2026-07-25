@@ -227,6 +227,9 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   final _chestText = _HudText(_text, 17, 42);
   final _featherText = _HudText(_text, 17, 53);
   final _timerText = _HudText(_text, EmberGame.viewWidth / 2, 6, centerX: true);
+  // Lives ("x2") sit right of the heart row — AK shows the same thing as a
+  // small counter, and a player has to be able to see what a death costs.
+  final _livesText = _HudText(_text, 0, 4);
   // Stage 2 lore intro: level name + one-line blurb, shown for the first
   // few seconds of a run (meta: lore=... in the level file).
   static const _loreSeconds = 4.5;
@@ -299,11 +302,16 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   void render(ui.Canvas canvas) {
     final s = game.session;
 
-    // Hearts (top-left).
-    for (var i = 0; i < s.loadout.maxHearts; i++) {
+    // Hearts (top-left) + remaining lives.
+    final maxHearts = s.loadout.maxHearts;
+    for (var i = 0; i < maxHearts; i++) {
       _drawHeart(canvas, 6.0 + i * 10, 6,
           i < s.player.hearts ? _heartFill : _heartEmpty);
     }
+    _drawHeart(canvas, 6.0 + maxHearts * 10 + 2, 6, _heartFill);
+    _livesText.moveTo(6.0 + maxHearts * 10 + 12);
+    if (_livesText.dirty(s.lives)) _livesText.text = 'x${s.lives}';
+    _livesText.paint(canvas);
 
     // Coins.
     _coinSprite.render(canvas,
@@ -395,7 +403,8 @@ class _HudText {
   _HudText(this._style, this._x, this._y, {this.centerX = false});
 
   final TextPaint _style;
-  final double _x, _y;
+  double _x;
+  final double _y;
   final bool centerX;
   int _key = -0x7fffffff; // sentinel: first dirty() is always true
   ui.Offset _offset = ui.Offset.zero;
@@ -407,6 +416,17 @@ class _HudText {
     if (key == _key) return false;
     _key = key;
     return true;
+  }
+
+  /// Move the slot (used by the lives counter, whose x depends on how many
+  /// heart pips the loadout draws). Re-lays out only if text already exists.
+  void moveTo(double x) {
+    if (x == _x) return;
+    _x = x;
+    final tp = _tp;
+    if (tp != null) {
+      _offset = ui.Offset(centerX ? _x - tp.width / 2 : _x, _y);
+    }
   }
 
   set text(String value) {

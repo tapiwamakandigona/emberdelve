@@ -35,14 +35,20 @@ void main() {
     // Real asset I/O needs runAsync (FakeAsync would deadlock rootBundle).
     await tester.runAsync(() => game.onLoad());
     expect(game.session.level.name, 'Forest Edge');
-    expect(game.session.signs.length, 3);
-    expect(game.session.enemies.length, 1); // the tutorial thornling
+    // CHECK CHANGE (2026-07-25 alpha pass): the tutorial teaches four verbs
+    // now — the campfire checkpoint is a new one, and it is taught BEFORE the
+    // first hazard, which is the whole point of the teach-then-test rework.
+    expect(game.session.signs.length, 4);
     expect(game.session.signs[0].text, contains('JUMP'));
-    expect(game.session.signs[1].text, contains('SWORD'));
+    expect(game.session.signs[1].text, contains('campfire'));
+    expect(game.session.signs[2].text, contains('SWORD'));
     // AKP-2a: roll is taught via its dedicated button now (chord still works).
-    expect(game.session.signs[2].text, contains('DASH'));
-    // M5 content pass: tutorial now meets world quotas (2 plain chests +
-    // 2 secret chests in the cracked vault).
+    expect(game.session.signs[3].text, contains('DASH'));
+    // Two thornlings, both well past the safe runway.
+    expect(game.session.enemies.length, 2);
+    expect(game.session.checkpoints.length, 2,
+        reason: 'the tutorial must demonstrate a checkpoint being lit');
+    // Content quotas: 2 plain chests + 2 secret chests behind cracked walls.
     expect(game.session.chestTotal, 4);
     expect(game.session.chests.where((c) => c.secret).length, 2);
   });

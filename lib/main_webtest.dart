@@ -61,6 +61,29 @@ void main() {
       obj.setProperty('touchLeft'.toJS, game.touchLeft.toJS);
       obj.setProperty('touchRight'.toJS, game.touchRight.toJS);
       obj.setProperty('paused'.toJS, game.paused.toJS);
+      // Run/outcome state: lets a driver verify a FULL level clear instead of
+      // just movement (the alpha.3 harness could only watch x/y).
+      final s = game.session;
+      obj.setProperty('level'.toJS, game.levelId.toJS);
+      obj.setProperty('levelName'.toJS, s.level.name.toJS);
+      obj.setProperty('time'.toJS, s.time.toJS);
+      obj.setProperty('completed'.toJS, s.completed.toJS);
+      obj.setProperty('failed'.toJS, s.failed.toJS);
+      obj.setProperty('over'.toJS, s.over.toJS);
+      obj.setProperty('apples'.toJS, s.applesHeld.toJS);
+      obj.setProperty('feathers'.toJS, s.feathersCollected.toJS);
+      obj.setProperty('kills'.toJS, s.kills.toJS);
+      obj.setProperty('hitsTaken'.toJS, s.hitsTaken.toJS);
+      obj.setProperty('secrets'.toJS, s.secretsFound.toJS);
+      obj.setProperty('chestsOpened'.toJS,
+          s.chests.where((c) => c.opened).length.toJS);
+      obj.setProperty('chestTotal'.toJS, s.chests.length.toJS);
+      obj.setProperty('enemiesAlive'.toJS,
+          s.enemies.where((e) => e.alive).length.toJS);
+      obj.setProperty('exitX'.toJS, s.exitX.toJS);
+      obj.setProperty('exitY'.toJS, s.exitY.toJS);
+      obj.setProperty('levelW'.toJS, (s.level.width * 16).toJS);
+      obj.setProperty('levelH'.toJS, (s.level.height * 16).toJS);
       loaded = true;
     } catch (_) {
       // session not initialised yet (game still loading)
@@ -78,8 +101,40 @@ void main() {
       body: Listener(
         behavior: HitTestBehavior.translucent,
         onPointerDown: (PointerDownEvent e) => _rawPointerDowns++,
-        child: GameWidget(game: game),
+        child: GameWidget(
+        game: game,
+        // Harness bug (found in the alpha.3 playtest): the game adds
+        // 'results'/'fail'/'pause' overlays at level end. With no
+        // overlayBuilderMap the widget threw "Null check operator used on a
+        // null value" and the canvas went grey, so no automated run could
+        // ever verify a level CLEAR. Minimal stand-ins keep the harness alive
+        // (the real overlays live in ui/game_screen.dart).
+        overlayBuilderMap: {
+          EmberGame.overlayResults: (_, EmberGame g) =>
+              const _HarnessBanner('LEVEL COMPLETE'),
+          EmberGame.overlayFail: (_, EmberGame g) =>
+              const _HarnessBanner('DEFEAT'),
+          EmberGame.overlayPause: (_, EmberGame g) =>
+              const _HarnessBanner('PAUSED'),
+        },
+      ),
       ),
     ),
   ));
+}
+
+/// Minimal overlay stand-in for the harness (see [GameWidget.overlayBuilderMap]).
+class _HarnessBanner extends StatelessWidget {
+  const _HarnessBanner(this.label);
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          color: const Color(0xCC000000),
+          child: Text(label,
+              style: const TextStyle(color: Color(0xFFFFD37A), fontSize: 28)),
+        ),
+      );
 }

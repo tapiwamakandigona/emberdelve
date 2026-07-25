@@ -1,0 +1,258 @@
+{
+ "music": {
+  "boss_combat": {
+   "peak": -3.0,
+   "phoneRms": -26.1
+  },
+  "cave_combat": {
+   "peak": -7.3,
+   "phoneRms": -26.0
+  },
+  "combat": {
+   "peak": -2.2,
+   "phoneRms": -26.1
+  },
+  "defeat": {
+   "peak": -7.6,
+   "phoneRms": -26.0
+  },
+  "map": {
+   "peak": -3.2,
+   "phoneRms": -26.0
+  },
+  "title_menu": {
+   "peak": -6.4,
+   "phoneRms": -26.1
+  },
+  "victory": {
+   "peak": -2.9,
+   "phoneRms": -26.0
+  }
+ },
+ "sfx": {
+  "block": {
+   "above500": 0.977,
+   "group": "foreground",
+   "peak": -3.2,
+   "phoneRms": -22.0,
+   "seconds": 0.23,
+   "source": "kenney_impact/Audio/impactMetal_light_002.ogg"
+  },
+  "boss_death": {
+   "above500": 0.427,
+   "group": "foreground",
+   "peak": -0.8,
+   "phoneRms": -22.2,
+   "seconds": 1.73,
+   "source": "oga_retro512/Explosions/Medium Length/sfx_exp_medium1.wav"
+  },
+  "chest_open": {
+   "above500": 0.977,
+   "group": "foreground",
+   "peak": -3.8,
+   "phoneRms": -22.2,
+   "seconds": 0.83,
+   "source": "kenney_rpg/Audio/creak2.ogg"
+  },
+  "coin": {
+   "above500": 0.977,
+   "group": "foreground",
+   "peak": -13.9,
+   "phoneRms": -21.8,
+   "seconds": 0.13,
+   "source": "oga_retro512/General Sounds/Coins/sfx_coin_single3.wav"
+  },
+  "danger_loop": {
+   "above500": 0.955,
+   "group": "background",
+   "peak": -17.0,
+   "phoneRms": -32.1,
+   "seconds": 0.45,
+   "source": "oga_retro512/General Sounds/Alarms/Low health Alarms/sfx_lowhealth_alarmloop5.wav"
+  },
+  "defeat": {
+   "above500": 0.525,
+   "group": "foreground",
+   "peak": -5.4,
+   "phoneRms": -22.0,
+   "seconds": 0.83,
+   "source": "kenney_jingles/Audio/Steel jingles/jingles_STEEL11.ogg"
+  },
+  "double_jump": {
+   "above500": 1.0,
+   "group": "foreground",
+   "peak": -6.4,
+   "phoneRms": -22.2,
+   "seconds": 0.19,
+   "source": "oga_sfx100v2/sfx100v2_air_03.ogg"
+  },
+  "ember_ambience_loop": {
+   "above500": 0.933,
+   "group": "background",
+   "peak": -17.5,
+   "phoneRms": -34.2,
+   "seconds": 9.0,
+   "source": "oga_sfx100v2/sfx100v2_loop_ambient_01.ogg"
+  },
+  "ember_gain": {
+   "above500": 0.676,
+   "group": "foreground",
+   "peak": -7.6,
+   "phoneRms": -22.0,
+   "seconds": 0.56,
+   "source": "oga_retro512/General Sounds/Interactions/sfx_sounds_interaction12.wav"
+  },
+  "enemy_death": {
+   "above500": 0.603,
+   "group": "foreground",
+   "peak": -1.1,
+   "phoneRms": -22.4,
+   "seconds": 0.56,
+   "source": "oga_sfx100v2/sfx100v2_wood_hit_03.ogg"
+  },
+  "enemy_hit": {
+   "above500": 0.933,
+   "group": "foreground",
+   "peak": -2.0,
+   "phoneRms": -23.8,
+   "seconds": 0.22,
+   "source": "oga_sfx100v2/sfx100v2_hit_03.ogg"
+  },
+  "feather": {
+   "above500": 0.977,
+   "group": "foreground",
+   "peak": -9.3,
+   "phoneRms": -22.1,
+   "seconds": 0.54,
+   "source": "kenney_interface/Audio/confirmation_002.ogg"
+  },
+  "heal": {
+   "above500": 0.891,
+   "group": "foreground",
+   "peak": -11.2,
+   "phoneRms": -22.3,
+   "seconds": 0.45,
+   "source": "oga_retro512/General Sounds/Positive Sounds/sfx_sounds_powerup11.wav"
+  },
+  "jump": {
+   "above500": 1.0,
+   "group": "foreground",
+   "peak": -10.1,
+   "phoneRms": -22.3,
+   "seconds": 0.24,
+   "source": "oga_sfx100v2/sfx100v2_air_02.ogg"
+  },
+  "land": {
+   "above500": 0.479,
+   "group": "foreground",
+   "peak": -1.3,
+   "phoneRms": -22.9,
+   "seconds": 0.84,
+   "source": "kenney_impact/Audio/footstep_grass_001.ogg"
+  },
+  "medal": {
+   "above500": 0.457,
+   "group": "foreground",
+   "peak": -8.3,
+   "phoneRms": -21.9,
+   "seconds": 0.29,
+   "source": "kenney_interface/Audio/confirmation_001.ogg"
+  },
+  "player_hit": {
+   "above500": 0.617,
+   "group": "foreground",
+   "peak": -10.6,
+   "phoneRms": -22.0,
+   "seconds": 0.06,
+   "source": "oga_retro512/General Sounds/Simple Damage Sounds/sfx_damage_hit1.wav"
+  },
+  "secret": {
+   "above500": 0.832,
+   "group": "foreground",
+   "peak": -15.3,
+   "phoneRms": -22.1,
+   "seconds": 0.84,
+   "source": "oga_retro512/General Sounds/Positive Sounds/sfx_sounds_powerup1.wav"
+  },
+  "step1": {
+   "above500": 0.955,
+   "group": "background",
+   "peak": -9.2,
+   "phoneRms": -30.2,
+   "seconds": 0.41,
+   "source": "oga_sfx100v2/sfx100v2_footstep_01.ogg"
+  },
+  "step2": {
+   "above500": 0.933,
+   "group": "background",
+   "peak": -9.8,
+   "phoneRms": -30.1,
+   "seconds": 0.35,
+   "source": "oga_sfx100v2/sfx100v2_footstep_02.ogg"
+  },
+  "swing1": {
+   "above500": 0.603,
+   "group": "foreground",
+   "peak": -1.4,
+   "phoneRms": -22.6,
+   "seconds": 0.23,
+   "source": "oga_rpg/RPG Sound Pack/battle/swing.wav"
+  },
+  "swing2": {
+   "above500": 0.55,
+   "group": "foreground",
+   "peak": -3.6,
+   "phoneRms": -22.0,
+   "seconds": 0.13,
+   "source": "oga_rpg/RPG Sound Pack/battle/swing2.wav"
+  },
+  "swing3": {
+   "above500": 0.617,
+   "group": "foreground",
+   "peak": -4.5,
+   "phoneRms": -22.0,
+   "seconds": 0.15,
+   "source": "oga_rpg/RPG Sound Pack/battle/swing3.wav"
+  },
+  "ui_back": {
+   "above500": 0.851,
+   "group": "background",
+   "peak": -4.2,
+   "phoneRms": -26.0,
+   "seconds": 0.06,
+   "source": "kenney_interface/Audio/back_001.ogg"
+  },
+  "ui_tap": {
+   "above500": 0.708,
+   "group": "background",
+   "peak": -4.8,
+   "phoneRms": -26.1,
+   "seconds": 0.09,
+   "source": "kenney_ui/Audio/click1.ogg"
+  },
+  "unlock": {
+   "above500": 1.0,
+   "group": "foreground",
+   "peak": -1.5,
+   "phoneRms": -21.9,
+   "seconds": 0.26,
+   "source": "kenney_rpg/Audio/metalLatch.ogg"
+  },
+  "victory": {
+   "above500": 0.479,
+   "group": "foreground",
+   "peak": -3.6,
+   "phoneRms": -22.0,
+   "seconds": 1.55,
+   "source": "kenney_jingles/Audio/Steel jingles/jingles_STEEL07.ogg"
+  },
+  "whoosh": {
+   "above500": 0.933,
+   "group": "foreground",
+   "peak": -9.9,
+   "phoneRms": -22.3,
+   "seconds": 0.3,
+   "source": "oga_sfx100v2/sfx100v2_air_01.ogg"
+  }
+ }
+}

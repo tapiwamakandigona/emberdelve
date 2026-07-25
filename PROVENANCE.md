@@ -316,3 +316,69 @@ peaks ≤ −1.3 dBFS (asserted by the build script), seamless loops verified
 The superseded rows above (Kevin MacLeod / tcarisland / qubodup / dustdfg /
 game-icons dice glyph) are retained in this file as **historical record
 only** — those files no longer ship.
+
+## Audio pass v3 — phone-speaker remaster, 2026-07-25
+
+Measured problem: the v2 set carried nearly all of its energy below 300 Hz
+(land.ogg 100 %, player_hit 99.4 %, enemy_death 99.8 %, jump 96.6 %, music beds
+88-91 %), which a phone loudspeaker cannot reproduce. Every one-shot was
+rebuilt from recorded CC0 sources and mastered through one chain
+(`tool/build_audio_v3.py`): mono 44.1 kHz -> 130 Hz high-pass -> presence lift
+(2.6 kHz +3 dB, 5.2 kHz +2 dB) -> loudness matched THROUGH a 500 Hz
+high-passed phone-speaker model -> soft limit -> peak <= -1.5 dBFS -> 4 ms edge
+fades -> OGG q5. Measured results ship in `tool/audio_mix.json` and are pinned
+by `test/audio_mix_test.dart`.
+
+New sources this pass (all CC0, added to the Sources table above):
+
+| Ref | Pack | Author | License | Page |
+|---|---|---|---|---|
+| K-UI | UI Audio | Kenney Vleugels | CC0 1.0 | https://kenney.nl/assets/ui-audio |
+| K-JIN | Music Jingles | Kenney Vleugels | CC0 1.0 | https://kenney.nl/assets/music-jingles |
+| JJ-512 | The Essential Retro Video Game Sound Effects Collection [512 sounds] | Juhani Junkala | CC0 | https://opengameart.org/content/512-sound-effects-8-bit-style |
+| CM-CAVE | Crystal Cave (song18) | cynicmusic (Pixel Sphere) | CC0 | https://opengameart.org/content/crystal-cave-song18 |
+
+| File | Source file | Pack / Work | License | Modifications |
+|---|---|---|---|---|
+| sfx/block.ogg | impactMetal_light_002.ogg | Kenney Impact Sounds (K-IMP) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -3.2 dBFS |
+| sfx/boss_death.ogg | sfx_exp_medium1.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.2 dBFS, peak -0.8 dBFS |
+| sfx/chest_open.ogg | creak2.ogg | Kenney RPG Audio (K-RPG) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.2 dBFS, peak -3.8 dBFS |
+| sfx/coin.ogg | sfx_coin_single3.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -21.8 dBFS, peak -13.9 dBFS |
+| sfx/danger_loop.ogg | sfx_lowhealth_alarmloop5.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -32.1 dBFS, peak -17.0 dBFS |
+| sfx/defeat.ogg | jingles_STEEL11.ogg | Kenney Music Jingles (K-JIN) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -5.4 dBFS |
+| sfx/double_jump.ogg | sfx100v2_air_03.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.2 dBFS, peak -6.4 dBFS |
+| sfx/ember_ambience_loop.ogg | sfx100v2_loop_ambient_01.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -34.2 dBFS, peak -17.5 dBFS |
+| sfx/ember_gain.ogg | sfx_sounds_interaction12.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -7.6 dBFS |
+| sfx/enemy_death.ogg | sfx100v2_wood_hit_03.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.4 dBFS, peak -1.1 dBFS |
+| sfx/enemy_hit.ogg | sfx100v2_hit_03.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -23.8 dBFS, peak -2.0 dBFS |
+| sfx/feather.ogg | confirmation_002.ogg | Kenney Interface Sounds (K-INT) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.1 dBFS, peak -9.3 dBFS |
+| sfx/heal.ogg | sfx_sounds_powerup11.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.3 dBFS, peak -11.2 dBFS |
+| sfx/jump.ogg | sfx100v2_air_02.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.3 dBFS, peak -10.1 dBFS |
+| sfx/land.ogg | footstep_grass_001.ogg | Kenney Impact Sounds (K-IMP) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.9 dBFS, peak -1.3 dBFS |
+| sfx/medal.ogg | confirmation_001.ogg | Kenney Interface Sounds (K-INT) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -21.9 dBFS, peak -8.3 dBFS |
+| sfx/player_hit.ogg | sfx_damage_hit1.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -10.6 dBFS |
+| sfx/secret.ogg | sfx_sounds_powerup1.wav | Essential Retro Video Game SFX Collection (JJ-512), Juhani Junkala | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.1 dBFS, peak -15.3 dBFS |
+| sfx/step1.ogg | sfx100v2_footstep_01.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -30.2 dBFS, peak -9.2 dBFS |
+| sfx/step2.ogg | sfx100v2_footstep_02.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -30.1 dBFS, peak -9.8 dBFS |
+| sfx/swing1.ogg | swing.wav | RPG Sound Pack (AD-RPG), artisticdude | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.6 dBFS, peak -1.4 dBFS |
+| sfx/swing2.ogg | swing2.wav | RPG Sound Pack (AD-RPG), artisticdude | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -3.6 dBFS |
+| sfx/swing3.ogg | swing3.wav | RPG Sound Pack (AD-RPG), artisticdude | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -4.5 dBFS |
+| sfx/ui_back.ogg | back_001.ogg | Kenney Interface Sounds (K-INT) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -26.0 dBFS, peak -4.2 dBFS |
+| sfx/ui_tap.ogg | click1.ogg | Kenney UI Audio (K-UI) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -26.1 dBFS, peak -4.8 dBFS |
+| sfx/unlock.ogg | metalLatch.ogg | Kenney RPG Audio (K-RPG) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -21.9 dBFS, peak -1.5 dBFS |
+| sfx/victory.ogg | jingles_STEEL07.ogg | Kenney Music Jingles (K-JIN) | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.0 dBFS, peak -3.6 dBFS |
+| sfx/whoosh.ogg | sfx100v2_air_01.ogg | 100 CC0 SFX #2 (RD-100), rubberduck | CC0 | phone-band master: HP 130 Hz, presence +3/+2 dB, RMS -22.3 dBFS, peak -9.9 dBFS |
+
+### Music
+
+`tool/build_music_v3.py` re-masters the v2 tracks for the same speaker (95 Hz
+high-pass, -4 dB at 180 Hz, +3/+4/+2 dB through 900 Hz/2.4 kHz/5 kHz, gentle
+excitation, 11 kHz low-pass, phone-band RMS -26 dBFS, peak <= -2 dBFS) and adds
+`cave_combat.ogg` for World 2 from CM-CAVE (Crystal Cave, cynicmusic, CC0).
+Boss arenas now use `boss_combat.ogg`, which shipped in every previous APK
+without a single level referencing it. Music assets: 3.8 MB -> 1.9 MB.
+
+### Checkpoint art
+
+`props/campfire_out.png` / `props/campfire_lit.png` — original pixel art,
+every pixel placed by `tool/build_checkpoint_art.py` (Tsoro Studios, CC0).
