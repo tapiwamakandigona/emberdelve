@@ -10,6 +10,8 @@ bots, 2026-07-25) and Apple Knight played with Pixel-7 touch emulation, plus a
 code audit of `tuning.dart`, `hud.dart`, `player_component.dart`, `catalog.dart`.
 Claims below are VERIFIED against code/screenshots unless marked ASSUMED.
 
+**Feel reference:** `docs/reference/apple-knight/feel-notes.md` holds frame-measured
+AK physics (jump curve, dash, apple arc, collision FX) with filmstrips/GIFs.
 **Visual reference:** `docs/reference/apple-knight/` holds captioned AK
 screenshots of every screen (main menu, all three shop tabs, gameplay verbs,
 pause menu, controls) — see its README index before working any AKP item.

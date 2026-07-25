@@ -29,6 +29,14 @@ trace, or copy assets from them (`PROVENANCE.md` rules apply).
 | `13_controls_bindings.png` | Controls popup | Keyboard verbs: Z jump, X melee, C **ability**, V **dash** — 4 action verbs + movement, confirming dash and ability are first-class. |
 | `14_level_start_toast.png` | Level start toast | "Level 1: 3 lives left" — AK web build uses a lives system and goes straight into the level from PLAY (no level-select screen in this build). |
 
+## Feel & animation measurements
+
+[`feel-notes.md`](feel-notes.md) has frame-measured physics (jump airtime,
+dash speed, apple trajectory, hit/collision FX language) from a 25 fps
+recording, with per-verb filmstrips and GIF clips in
+[`feel-frames/`](feel-frames/): jump_full, double_jump, dash, sword_combo,
+apple_throw.
+
 ## Capture notes (repeatability)
 
 - Poki page: `poki.com/en/g/apple-knight`, tap "Play now" ≈ (200,295) in an
