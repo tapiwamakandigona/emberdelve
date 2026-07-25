@@ -37,7 +37,10 @@ class TileLayerComponent extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    _tiles = await SpriteBatch.load('tiles/tileset.png', images: game.images);
+    final atlas = game.session.level.environment == 'cave'
+        ? 'tiles/tileset_cave.png'
+        : 'tiles/tileset.png';
+    _tiles = await SpriteBatch.load(atlas, images: game.images);
     _platforms =
         await SpriteBatch.load('props/platform.png', images: game.images);
     _spikes = await SpriteBatch.load('props/spikes.png', images: game.images);

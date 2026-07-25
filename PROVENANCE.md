@@ -251,3 +251,11 @@ two-tone ember tint → 20px pixelation → x4 nearest → 80x80 PNG under
 |---|---|---|---|---|---|
 | sfx/step1.ogg | sfx100v2_footstep_01.ogg | 100 CC0 SFX #2 (RD-100) | rubberduck | CC0 | gain −8 dB, trimmed 0.22 s |
 | sfx/step2.ogg | sfx100v2_footstep_02.ogg | 100 CC0 SFX #2 (RD-100) | rubberduck | CC0 | gain −8 dB, pitch ×0.96, trimmed 0.22 s |
+
+## World 2 "Cinder Depths" environment — added 2026-07-25
+
+Deterministic recolors of already-shipped Sunny Land CC0 art by
+`tool/build_cave_assets.py` (no new sources): `tiles/tileset_cave.png`
+(greens→cold ash, browns→dark basalt) and `bg/cave_{back,middle,front}.png`
+(deep violet-gray dusk) + `bg/cave_lights.png` (ember glow). Same CC0
+licensing as the source files.
