@@ -36,14 +36,13 @@ Fonts are credited separately in the repository (see assets/fonts).
 
 ### Sound Effects
 
-- UI, dice, impact and inventory sounds by **Kenney** (kenney.nl), CC0
+- UI, impact and inventory sounds by **Kenney** (kenney.nl), CC0
 - Creature and foley SFX by **rubberduck** (opengameart.org), CC0
 - RPG foley (swing, potion, metal ring) by **artisticdude** (opengameart.org), CC0
 - Fire crackle by **AntumDeluge** (opengameart.org), CC0
 - **"Fire Loop"** by Iwan "qubodup" Gabovitch (opengameart.org), CC BY 3.0
-- **Low-HP heartbeat danger loop** — synthesized for Emberdelve by Tsoro
-  Studios, CC0 1.0 Universal
-  https://creativecommons.org/licenses/by/3.0/
+- **Low-HP heartbeat danger loop, jump/double-jump blips & secret chime** —
+  synthesized for Emberdelve by Tsoro Studios, CC0 1.0 Universal
 
 Thank you to all of these artists for releasing their work freely.
 Full per-file provenance: see `PROVENANCE.md`.
