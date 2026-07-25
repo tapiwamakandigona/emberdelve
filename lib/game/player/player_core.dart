@@ -64,6 +64,7 @@ class PlayerCore {
   bool get isDead => state == PlayerState.dead;
 
   List<PlayerEvent> takeEvents() {
+    if (_events.isEmpty) return const []; // called every frame: skip the copy
     final out = List<PlayerEvent>.from(_events);
     _events.clear();
     return out;

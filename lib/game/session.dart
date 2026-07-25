@@ -15,6 +15,7 @@ import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
 import 'input_intent.dart';
 import 'level/level_data.dart';
+import 'physics.dart' show TileQuery;
 import 'player/player_core.dart';
 import 'tuning.dart';
 
@@ -275,7 +276,12 @@ class LevelSession {
     return grid[ty][tx];
   }
 
+  /// Cached tear-off: instance-method tear-offs allocate a fresh closure at
+  /// every evaluation, and update() passes this per enemy per frame (perf.md).
+  late final TileQuery _tileQuery = tileAt;
+
   List<SessionEvent> takeEvents() {
+    if (_events.isEmpty) return const []; // hot path: no per-frame copy
     final out = List<SessionEvent>.of(_events);
     _events.clear();
     return out;
@@ -283,6 +289,7 @@ class LevelSession {
 
   /// Player events forwarded from the core (jumped/landed/hurt/died...).
   List<PlayerEvent> takePlayerEvents() {
+    if (_playerEvents.isEmpty) return const []; // hot path: no per-frame copy
     final out = List<PlayerEvent>.of(_playerEvents);
     _playerEvents.clear();
     return out;
@@ -303,9 +310,13 @@ class LevelSession {
 
     // --- apple throw (before player.update consumes edges elsewhere)
     if (input.throwPressed && applesHeld > 0 && !player.isDead) {
-      final p = _applePool.cast<AppleProjectile?>().firstWhere(
-          (a) => !a!.active,
-          orElse: () => null);
+      AppleProjectile? p;
+      for (final a in _applePool) {
+        if (!a.active) {
+          p = a;
+          break;
+        }
+      }
       if (p != null) {
         applesHeld--;
         p.active = true;
@@ -347,7 +358,7 @@ class LevelSession {
     for (final e in enemies) {
       if (!e.alive) continue;
       e.sleeping = (e.centerX - cameraX).abs() > sleepDist;
-      final burnKilled = e.update(dt, tileAt,
+      final burnKilled = e.update(dt, _tileQuery,
           playerX: player.body.centerX, playerY: player.body.centerY);
       if (burnKilled) {
         _onEnemyDeath(e);
@@ -357,9 +368,13 @@ class LevelSession {
       if (e is EmberTotemCore && !e.sleeping) {
         final req = e.takeShotRequest();
         if (req != null) {
-          final shot = _emberPool
-              .cast<EmberShot?>()
-              .firstWhere((s) => !s!.active, orElse: () => null);
+          EmberShot? shot;
+          for (final s in _emberPool) {
+            if (!s.active) {
+              shot = s;
+              break;
+            }
+          }
           if (shot != null) {
             shot.active = true;
             shot.x = e.centerX + e.facing * 8;
