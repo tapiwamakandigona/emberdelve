@@ -7,9 +7,19 @@
 import 'dart:math' as math;
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/gestures.dart'
+    show
+        Drag,
+        DragEndDetails,
+        DragStartDetails,
+        DragUpdateDetails,
+        ImmediateMultiDragGestureRecognizer,
+        TapDownDetails,
+        TapUpDetails;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show KeyEventResult;
 
@@ -32,7 +42,26 @@ import 'player/player_core.dart';
 import 'session.dart';
 import 'tuning.dart';
 
-class EmberGame extends FlameGame with KeyboardEvents {
+// NOTE ON THE MIXINS (v1.0.0-alpha.3 touch-input fix, the REAL alpha.1 bug):
+// Flame's TapCallbacks/DragCallbacks components normally get their gesture
+// recognizers attached lazily — MultiTap/MultiDragDispatcher are only created
+// when the first such component MOUNTS, which for our HUD is after onLoad,
+// i.e. after the GameWidget has already built once. The widget-refresh that
+// is supposed to re-wrap the game in a RawGestureDetector after that never
+// lands in release builds (verified empirically in headless Chromium against
+// the compiled web build: pointer events reached Flutter's Listener but no
+// recognizer ever fired, so no HUD button ever received a tap — on device
+// the whole touch HUD was dead while keyboard input worked fine).
+//
+// The fix: EmberGame itself implements MultiTouchTapDetector +
+// MultiTouchDragDetector. Their `mount()` overrides register the gesture
+// recognizers via `initializeGestures`/`gestureDetectors` BEFORE the first
+// GameWidget build, so the RawGestureDetector is present from frame one. The
+// game-level handlers then forward every tap/drag into the stock Flame
+// dispatchers, preserving the normal component routing (componentsAtPoint →
+// HudHoldButton TapCallbacks/DragCallbacks) that all existing tests cover.
+class EmberGame extends FlameGame
+    with KeyboardEvents, MultiTouchTapDetector, MultiTouchDragDetector {
   static const double viewWidth = 480;
   static const double viewHeight = 270;
 
@@ -48,7 +77,69 @@ class EmberGame extends FlameGame with KeyboardEvents {
       : super(
           camera: CameraComponent.withFixedResolution(
               width: viewWidth, height: viewHeight),
-        );
+        ) {
+    // Pre-register the component-event dispatchers. If we left this to
+    // TapCallbacks/DragCallbacks (which add them when the first HUD button
+    // mounts), their gesture recognizers would be registered after the
+    // GameWidget's first build and never attach in release builds — the
+    // whole touch HUD stays deaf (see class note above).
+    // registerKey is what TapCallbacks/DragCallbacks.onMount would call for
+    // their lazily-created dispatchers; using it here keeps them from ever
+    // creating duplicates.
+    // ignore: invalid_use_of_internal_member
+    registerKey(const MultiTapDispatcherKey(), _tapDispatcher);
+    add(_tapDispatcher);
+    // ignore: invalid_use_of_internal_member
+    registerKey(const MultiDragDispatcherKey(), _dragDispatcher);
+    add(_dragDispatcher);
+    // Touching gestureDetectors here runs initializeGestures(this), wiring
+    // the tap recognizer to our MultiTapListener API before the first build.
+    // The drag recognizer has no game-level branch there, so add it directly.
+    gestureDetectors.add<ImmediateMultiDragGestureRecognizer>(
+      ImmediateMultiDragGestureRecognizer.new,
+      (ImmediateMultiDragGestureRecognizer instance) {
+        instance.onStart = (Offset point) => _GameDragAdapter(this, point);
+      },
+    );
+  }
+
+  final MultiTapDispatcher _tapDispatcher = MultiTapDispatcher();
+  final MultiDragDispatcher _dragDispatcher = MultiDragDispatcher();
+
+  // -- game-level gesture API → component dispatchers -------------------------
+  // Forward every tap/drag into the stock Flame dispatchers, preserving the
+  // normal componentsAtPoint routing to TapCallbacks/DragCallbacks components.
+  @override
+  void handleTapDown(int pointerId, TapDownDetails details) =>
+      _tapDispatcher.onTapDown(TapDownEvent(pointerId, this, details));
+
+  @override
+  void handleTapUp(int pointerId, TapUpDetails details) =>
+      _tapDispatcher.onTapUp(TapUpEvent(pointerId, this, details));
+
+  @override
+  void handleTapCancel(int pointerId) =>
+      _tapDispatcher.onTapCancel(TapCancelEvent(pointerId));
+
+  @override
+  void handleLongTapDown(int pointerId, TapDownDetails details) =>
+      _tapDispatcher.onLongTapDown(TapDownEvent(pointerId, this, details));
+
+  @override
+  void handleDragStart(int pointerId, DragStartDetails details) =>
+      _dragDispatcher.onDragStart(DragStartEvent(pointerId, this, details));
+
+  @override
+  void handleDragUpdate(int pointerId, DragUpdateDetails details) =>
+      _dragDispatcher.onDragUpdate(DragUpdateEvent(pointerId, this, details));
+
+  @override
+  void handleDragEnd(int pointerId, DragEndDetails details) =>
+      _dragDispatcher.onDragEnd(DragEndEvent(pointerId, details));
+
+  @override
+  void handleDragCancel(int pointerId) =>
+      _dragDispatcher.onDragCancel(DragCancelEvent(pointerId));
 
   late LevelSession session;
   final InputIntent _intent = InputIntent();
@@ -407,4 +498,36 @@ class EmberGame extends FlameGame with KeyboardEvents {
     if (levelId == 'w1_l1') save.tutorialSeen = true;
     AppState.persist();
   }
+}
+
+/// Adapts Flutter's [Drag] interface (fed by the
+/// [ImmediateMultiDragGestureRecognizer] registered in the [EmberGame]
+/// constructor) to the game-level MultiDragListener API. Mirrors Flame's
+/// internal FlameDragAdapter, which is not exported.
+class _GameDragAdapter implements Drag {
+  _GameDragAdapter(this._game, Offset startPoint) {
+    _id = _dragIdCounter++;
+    _game.handleDragStart(
+      _id,
+      DragStartDetails(
+        sourceTimeStamp: Duration.zero,
+        globalPosition: startPoint,
+        localPosition: _game.renderBox.globalToLocal(startPoint),
+      ),
+    );
+  }
+
+  static int _dragIdCounter = 0;
+  final EmberGame _game;
+  late final int _id;
+
+  @override
+  void update(DragUpdateDetails details) =>
+      _game.handleDragUpdate(_id, details);
+
+  @override
+  void end(DragEndDetails details) => _game.handleDragEnd(_id, details);
+
+  @override
+  void cancel() => _game.handleDragCancel(_id);
 }
