@@ -21,7 +21,7 @@ import 'package:flutter/gestures.dart'
         TapDownDetails,
         TapUpDetails;
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart' show KeyEventResult;
+import 'package:flutter/widgets.dart' show EdgeInsets, KeyEventResult;
 
 import '../audio/audio_service.dart';
 import 'haptics.dart';
@@ -214,88 +214,177 @@ class EmberGame extends FlameGame
   // finally wires touchDown, AKP-2c). Bottom-right: 4-button diamond —
   // jump (biggest, bottom-right), sword (left of it), dash (top-left),
   // apple (top-right, auto-hides). Pause >= 44 logical px (AKP-5b).
+  //
+  // Alignment pass (owner-reported, 2026-07-25): the small diamond buttons
+  // (dash, apple) are CENTERED on their column (sword / jump) instead of
+  // edge-aligned, and the whole HUD respects device safe areas — display
+  // cutouts (notch / punch-hole) and gesture- or 3-button-nav bars — pushed
+  // in from the hosting widget via [setSafeArea]. Geometry lives in
+  // [_layoutHud] so it can re-run on resize / inset changes.
+  static const hudBtn = 52.0; // arrows + sword
+  static const hudJumpBtn = 56.0; // jump reads biggest, AK-style
+  static const hudSmallBtn = 44.0; // dash / apple / down / pause (>= 48dp)
+  static const hudPad = 8.0;
+  static const hudGap = 6.0;
+
+  HudHoldButton? _btnLeft, _btnRight, _btnDown;
+  HudHoldButton? _btnDash, _btnSword, _btnJump, _btnPause;
+  HudThrowButton? _btnThrow;
+  HudReadout? _readout;
+
+  // Screen-space (logical px) safe-area padding from the hosting widget;
+  // converted to viewport units in [hudSafeInsets].
+  EdgeInsets _safePadding = EdgeInsets.zero;
+  Vector2 _canvas = Vector2(1280, 720);
+
+  /// Called by the hosting widget (GameScreen) whenever MediaQuery padding
+  /// changes: display cutout, status bar, gesture-nav / 3-button-nav bar.
+  void setSafeArea(EdgeInsets padding) {
+    if (padding == _safePadding) return;
+    _safePadding = padding;
+    _layoutHud();
+  }
+
+  /// Safe-area padding converted from screen logical px to viewport units.
+  /// The fixed-resolution viewport is scaled uniformly and letterboxed; any
+  /// part of an inset that falls inside the letterbox band costs nothing.
+  EdgeInsets get hudSafeInsets {
+    final scale =
+        math.min(_canvas.x / viewWidth, _canvas.y / viewHeight);
+    if (scale <= 0) return EdgeInsets.zero;
+    final boxX = (_canvas.x - viewWidth * scale) / 2;
+    final boxY = (_canvas.y - viewHeight * scale) / 2;
+    double side(double inset, double box) =>
+        math.max(0, (inset - box) / scale);
+    return EdgeInsets.fromLTRB(
+      side(_safePadding.left, boxX),
+      side(_safePadding.top, boxY),
+      side(_safePadding.right, boxX),
+      side(_safePadding.bottom, boxY),
+    );
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    _canvas = size.clone();
+    _layoutHud();
+  }
+
+  void _layoutHud() {
+    if (_btnLeft == null) return; // HUD not built yet
+    final ins = hudSafeInsets;
+    final left = hudPad + ins.left;
+    final right = viewWidth - hudPad - ins.right;
+    final bottom = viewHeight - hudPad - ins.bottom;
+    final top = hudPad + ins.top;
+
+    // Left cluster: arrows bottom-aligned, down-chevron beside them.
+    final bottomY = bottom - hudBtn;
+    _btnLeft!.position.setValues(left, bottomY);
+    _btnRight!.position.setValues(left + hudBtn + hudGap, bottomY);
+    _btnDown!.position
+        .setValues(left + (hudBtn + hudGap) * 2, bottom - hudSmallBtn);
+
+    // Right diamond: jump biggest bottom-right, sword left of it; dash and
+    // apple centered above their columns (not edge-aligned — the alignment
+    // fix), so the diamond reads symmetric at any button-size mix.
+    final jumpX = right - hudJumpBtn;
+    final jumpY = bottom - hudJumpBtn;
+    final swordX = jumpX - hudBtn - hudGap;
+    final swordY = bottom - hudBtn;
+    _btnJump!.position.setValues(jumpX, jumpY);
+    _btnSword!.position.setValues(swordX, swordY);
+    _btnDash!.position.setValues(
+        swordX + (hudBtn - hudSmallBtn) / 2, swordY - hudSmallBtn - hudGap);
+    _btnThrow!.position.setValues(jumpX + (hudJumpBtn - hudSmallBtn) / 2,
+        jumpY - hudSmallBtn - hudGap);
+
+    _btnPause!.position.setValues(right - hudSmallBtn, top);
+    _readout!.position.setValues(ins.left, ins.top);
+  }
+
   void _buildHud() {
-    const btn = 52.0; // arrows + sword
-    const jumpBtn = 56.0; // jump reads biggest, AK-style
-    const smallBtn = 44.0; // dash / apple / down / pause (>= 48dp at 216p)
-    const pad = 8.0;
-    const gap = 6.0;
-    final bottomY = viewHeight - btn - pad;
-    final jumpX = viewWidth - pad - jumpBtn;
-    final jumpY = viewHeight - pad - jumpBtn;
-    final swordX = jumpX - btn - gap;
-    final swordY = viewHeight - pad - btn;
+    _btnLeft = HudHoldButton(
+      spritePath: 'hud/btn_left.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      spawnFade: true,
+      onPressed: () => touchLeft = true,
+      onReleased: () => touchLeft = false,
+    );
+    _btnRight = HudHoldButton(
+      spritePath: 'hud/btn_right.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      spawnFade: true,
+      onPressed: () => touchRight = true,
+      onReleased: () => touchRight = false,
+    );
+    // Down chevron (AKP-2c): camera peek-down + drop-through one-way
+    // platforms — previously keyboard-only on the touch build.
+    _btnDown = HudHoldButton(
+      spritePath: 'hud/btn_down.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      spawnFade: true,
+      onPressed: () => touchDown = true,
+      onReleased: () => touchDown = false,
+    );
+    // Throw (apple) button: diamond top-right, above jump; HudThrowButton
+    // hides itself whenever the pouch is empty.
+    _btnThrow = HudThrowButton(
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchThrowEdge = true,
+    );
+    // Dash/roll (AKP-2a): diamond top-left, above the sword.
+    _btnDash = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_dash.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchRollEdge = true,
+      onReleased: () {},
+    );
+    _btnSword = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_sword.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      onPressed: () => _touchAttackEdge = true,
+      onReleased: () {},
+    );
+    _btnJump = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_jump.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudJumpBtn),
+      onPressed: () {
+        _touchJumpEdge = true;
+        _touchJumpHeld = true;
+      },
+      onReleased: () => _touchJumpHeld = false,
+    );
+    _btnPause = HudHoldButton(
+      spritePath: 'hud/icon_pause.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: pauseGame,
+      onReleased: () {},
+    );
+    _readout = HudReadout();
+    _layoutHud();
     camera.viewport.addAll([
-      HudHoldButton(
-        spritePath: 'hud/btn_left.png',
-        position: Vector2(pad, bottomY),
-        size: Vector2.all(btn),
-        spawnFade: true,
-        onPressed: () => touchLeft = true,
-        onReleased: () => touchLeft = false,
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_right.png',
-        position: Vector2(pad + btn + gap, bottomY),
-        size: Vector2.all(btn),
-        spawnFade: true,
-        onPressed: () => touchRight = true,
-        onReleased: () => touchRight = false,
-      ),
-      // Down chevron (AKP-2c): camera peek-down + drop-through one-way
-      // platforms — previously keyboard-only on the touch build.
-      HudHoldButton(
-        spritePath: 'hud/btn_down.png',
-        position:
-            Vector2(pad + btn * 2 + gap * 2, viewHeight - pad - smallBtn),
-        size: Vector2.all(smallBtn),
-        spawnFade: true,
-        onPressed: () => touchDown = true,
-        onReleased: () => touchDown = false,
-      ),
-      // Throw (apple) button: diamond top-right, above jump; HudThrowButton
-      // hides itself whenever the pouch is empty.
-      HudThrowButton(
-        position: Vector2(jumpX + jumpBtn - smallBtn, jumpY - smallBtn - gap),
-        size: Vector2.all(smallBtn),
-        onPressed: () => _touchThrowEdge = true,
-      ),
-      // Dash/roll (AKP-2a): diamond top-left, above the sword.
-      HudHoldButton(
-        spritePath: 'hud/btn_round.png',
-        iconPath: 'hud/icon_dash.png',
-        position: Vector2(swordX, swordY - smallBtn - gap),
-        size: Vector2.all(smallBtn),
-        onPressed: () => _touchRollEdge = true,
-        onReleased: () {},
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_round.png',
-        iconPath: 'hud/icon_sword.png',
-        position: Vector2(swordX, swordY),
-        size: Vector2.all(btn),
-        onPressed: () => _touchAttackEdge = true,
-        onReleased: () {},
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_round.png',
-        iconPath: 'hud/icon_jump.png',
-        position: Vector2(jumpX, jumpY),
-        size: Vector2.all(jumpBtn),
-        onPressed: () {
-          _touchJumpEdge = true;
-          _touchJumpHeld = true;
-        },
-        onReleased: () => _touchJumpHeld = false,
-      ),
-      HudHoldButton(
-        spritePath: 'hud/icon_pause.png',
-        position: Vector2(viewWidth - smallBtn - gap, 6),
-        size: Vector2.all(smallBtn),
-        onPressed: pauseGame,
-        onReleased: () {},
-      ),
-      HudReadout(),
+      _btnLeft!,
+      _btnRight!,
+      _btnDown!,
+      _btnThrow!,
+      _btnDash!,
+      _btnSword!,
+      _btnJump!,
+      _btnPause!,
+      _readout!,
       // Frame-time readout for device profiling; compiled out of normal
       // builds (--dart-define=PERF_OVERLAY=true to enable — docs/perf.md §2).
       if (const bool.fromEnvironment('PERF_OVERLAY'))

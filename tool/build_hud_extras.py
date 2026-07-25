@@ -38,7 +38,11 @@ def build_icon_dash():
     t = 8  # stroke thickness
     h = 30  # chevron height
     cy = size // 2
-    for x0 in (7, 23):
+    # Glyph extent: leftmost pixel = x0_first - t, rightmost = x0_last + 12.
+    # With x0 in (14, 30): spans 6..42 — dead-centered in the 48px canvas.
+    # (The original (7, 23) spanned -1..35, leaving the glyph 6px left of
+    # center — visibly off inside the round button. Owner-reported 2026-07-25.)
+    for x0 in (14, 30):
         pts_up = [(x0, cy - h // 2), (x0 + 12, cy), (x0 + 12 - t, cy),
                   (x0 - t, cy - h // 2)]
         pts_dn = [(x0, cy + h // 2), (x0 + 12, cy), (x0 + 12 - t, cy),
