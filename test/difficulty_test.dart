@@ -65,7 +65,8 @@ void main() {
     expect(hard['id'], normal['id']);
 
     final nHp = normal['max_hp'] as int;
-    expect(easy['max_hp'], (nHp * 0.8).round());
+    // v0.3.10 easy ramp: the first fight sits on an early layer => x0.68.
+    expect(easy['max_hp'], (nHp * 0.68).round());
     // v0.3.3 hard ramp: the first fight sits on layer 2 => x1.10, +1 — a
     // door, not a wall (the old flat x1.25/+2 put 68% of hard losses here).
     expect(hard['max_hp'], (nHp * 1.10).round());
@@ -81,8 +82,41 @@ void main() {
 
     final na = firstAttack(normal);
     expect(na, greaterThan(0));
-    expect(firstAttack(easy), (na - 2) < 1 ? 1 : na - 2);
+    // v0.3.10 easy ramp: early layers shave 5 (floor 1).
+    expect(firstAttack(easy), (na - 5) < 1 ? 1 : na - 5);
     expect(firstAttack(hard), na + 1);
+  });
+
+  test('easy ramp is a staircase: -5/x0.68 early, -3/x0.80 mid, -2/x0.80 late',
+      () {
+    // The ramp is a pure function of layer — pin the brackets directly.
+    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) easyAttackShave(l)],
+        [5, 5, 3, 3, 2, 2, 2]);
+    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) easyHpScalar(l)],
+        [0.68, 0.68, 0.80, 0.80, 0.80, 0.80, 0.80]);
+
+    // And through combatBegin itself (elite=true skips early mercy).
+    Map<String, Object?> enemyAt(int layer) {
+      final sim = Sim(42)..apply({'type': 'start_run', 'difficulty': 'easy'});
+      combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
+      return Map<String, Object?>.from(sim.enemy!);
+    }
+
+    final base = enemyDef('cinder_wisp');
+    expect(enemyAt(2)['max_hp'], (base.hp * 0.68).round());
+    expect(enemyAt(5)['max_hp'], (base.hp * 0.80).round());
+
+    int firstAttack(Map e) {
+      for (final it in (e['pattern'] as List).cast<Map>()) {
+        if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
+          return it['amount'] as int;
+        }
+      }
+      return -1;
+    }
+
+    // Same enemy, elite (no mercy): early shaves 5, mid shaves 3.
+    expect(firstAttack(enemyAt(2)), firstAttack(enemyAt(5)) - 2);
   });
 
   test('hard ramp is a staircase: +1/x1.10 early, +2/x1.25 mid, +3/x1.40 late',

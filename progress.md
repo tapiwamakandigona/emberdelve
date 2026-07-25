@@ -351,3 +351,38 @@ tutorial promise and refreshed screenshots in a single submission.
 
 Full day-one narrative (publish journey, recruiting rounds, reciprocity
 table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
+
+## 2026-07-25 — v0.3.10 tester-feedback pass (block feel, readable call-outs, replayable tutorial, easy ramp)
+
+Driven by the first external tester feedback wave (Play closed testing, 4 entries 4-5★, plus a
+detailed email from a tester): "blocking isn't doing anything", "some text is on the screen but
+it's so fast I can't quite read it", "not sure how to see the telegraphs", "hard time with even
+the easy difficulty", "just add a manual or instructions or a tutorial".
+
+Diagnosis (played the sim + read the choreography):
+- Block RESOLVES correctly in the sim, but a partially blocked enemy hit rendered only the damage
+  number — absorbed points were invisible, so block read as a no-op exactly when it mattered.
+- Combat call-outs (PAIR/TRIPLE/BLOCKED/FREE REROLL) lived exactly 1s, fading from 0.65s.
+- The 3-card tutorial showed once ever (tutorialSeen); one tester considered reinstalling to see
+  it again. Nothing explained that block melts at the next roll.
+- Easy's flat -2/x0.8 left a layer-3 FIRST fight (route skipping layer 2) nearly as lethal as
+  normal: early mercy (layers <=2) missed it entirely.
+
+Changes:
+- combat_screen: enemy-turn partial blocks now spawn guard-arc FX + "BLOCKED n" call-out
+  ("FULLY BLOCKED" on full absorb); player attacks absorbed by enemy shields call out
+  "SHIELD ATE n" — every absorbed point is now visible on both sides of the exchange.
+- fx/TextPop: duration is a parameter; combat call-outs hold ~2s (_noteLife), other pops keep 1s.
+- tutorial: 4th card ("BLOCK FADES FAST" — block timing vs. the intent badge); a ? button in the
+  enemy header replays the overlay ANY time (no more one-shot); step logic is length-based.
+- sim/combat: easy-mode layer ramp mirroring hard's staircase — attack shave -5 (layers <=3),
+  -3 (4-6), -2 (7+/boss); HP x0.68 early, x0.80 mid+. Measured (bin/autoplay, 200 seeds):
+  flat -2/x0.8 = 87.0% bot winrate (50% of losses on the first fight); shipped ramp = 91.5%.
+  Normal/hard untouched: golden anchor 1842571558 verified identical before/after; 200-seed
+  normal sweep byte-identical (66.5%, same histogram).
+- play_session harness: final drain 1500 -> 3200ms to cover the 2s call-outs (a pending-timer
+  teardown assert caught the change — the drain must outlive the app's longest transient effect).
+- version 0.3.9+12 -> 0.3.10+13.
+
+Evidence: flutter analyze clean; full `flutter test` green (incl. new easy-ramp staircase test);
+tool/play_session_test green with 28 phase screenshots; autoplay sweeps easy/normal logged above.
