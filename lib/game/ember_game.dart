@@ -227,15 +227,27 @@ class EmberGame extends FlameGame with KeyboardEvents {
     _handlePlayerEvents();
     _handleSessionEvents();
     _followCamera(clamped);
+
+    // Low-HP heartbeat bed under the combat music (dedupes internally).
+    AudioService.instance?.setDanger(
+        session.player.hearts <= 1 && !session.player.isDead && !session.over);
+  }
+
+  @override
+  void onRemove() {
+    AudioService.instance?.setDanger(false);
+    super.onRemove();
   }
 
   void _handlePlayerEvents() {
     for (final e in session.takePlayerEvents()) {
       switch (e) {
         case PlayerEvent.jumped:
+          AudioService.instance?.playSfx('jump', volume: 0.55);
         case PlayerEvent.airJumped:
-          AudioService.instance?.playSfx('whoosh', volume: 0.6);
+          AudioService.instance?.playSfx('double_jump', volume: 0.55);
         case PlayerEvent.landed:
+          AudioService.instance?.playSfx('land', volume: 0.5);
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom)));
         case PlayerEvent.hurt:
@@ -243,6 +255,10 @@ class EmberGame extends FlameGame with KeyboardEvents {
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
         case PlayerEvent.attacked:
+          // 3-hit combo reads as a phrase: neutral / up / down+heavy.
+          AudioService.instance?.playSfx(
+              'swing${session.player.comboIndex.clamp(0, 2) + 1}',
+              volume: 0.7);
         case PlayerEvent.droppedThrough:
           break;
       }
@@ -260,9 +276,11 @@ class EmberGame extends FlameGame with KeyboardEvents {
         case SessionEventKind.applePickup:
           AudioService.instance?.playSfx('heal', volume: 0.6);
         case SessionEventKind.feather:
-          AudioService.instance?.playSfx('ember_gain');
+          AudioService.instance?.playSfx('feather');
         case SessionEventKind.chestOpen:
-          AudioService.instance?.playSfx('unlock');
+          AudioService.instance?.playSfx('chest_open');
+        case SessionEventKind.secretFound:
+          AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
           AudioService.instance?.playSfx('enemy_hit');
           _camBump = e.crit ? 3.0 : 1.5;
@@ -290,7 +308,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
           AudioService.instance?.playSfx('enemy_hit', volume: 0.9);
           _camBump = 4.0;
         case SessionEventKind.bossDefeated:
-          AudioService.instance?.playSfx('unlock');
+          AudioService.instance?.playSfx('boss_death');
           _camBump = 5.0;
         case SessionEventKind.emberShotBroke:
           world.add(PuffFx(at,

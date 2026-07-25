@@ -195,6 +195,25 @@ Assembled by `tool/build_assets.py` from these verified packs (license checked o
 
 Full per-pack evidence recorded at curation time (staging MANIFEST, 2026-07-24).
 
+## Platformer (v2) SFX pass — added 2026-07-25
+
+Dice-era one-shots (`dice_roll`, `die_assign`, `reroll`, `forge`, `event_page`)
+were removed from the bundle (dead since the pivot). New platformer verbs built
+by `tool/build_platformer_sfx.py` (mono 44.1 kHz, highpass 40 Hz, peak-limited,
+5 ms anti-click fades, OGG Vorbis q5; decoded peaks verified ≤ −1.4 dBFS):
+
+| File | Source file | Pack / Work | Author | License | Modifications |
+|---|---|---|---|---|---|
+| sfx/jump.ogg | — (procedural) | Original synthesis in tool/build_platformer_sfx.py (numpy: triangle sweep 170→430 Hz + filtered-noise breath) | Tsoro Studios (script) | CC0 (dedicated) | n/a |
+| sfx/double_jump.ogg | — (procedural) | Same synth, sweep 240→620 Hz | Tsoro Studios (script) | CC0 (dedicated) | n/a |
+| sfx/secret.ogg | — (procedural) | Original synthesis (sine arpeggio E5-B5-E6-G#6 + 2nd-harmonic shimmer) | Tsoro Studios (script) | CC0 (dedicated) | n/a |
+| sfx/land.ogg | impactSoft_medium_002.ogg | Kenney Impact Sounds (K-IMP, see Sources table above) | Kenney | CC0 1.0 | gain −4 dB |
+| sfx/swing1.ogg | battle/swing.wav | RPG Sound Pack (AD-RPG) | artisticdude | CC0 | gain −5 dB |
+| sfx/swing2.ogg | battle/swing2.wav | RPG Sound Pack (AD-RPG) | artisticdude | CC0 | pitch ×1.06, gain −5 dB |
+| sfx/swing3.ogg | battle/swing3.wav | RPG Sound Pack (AD-RPG) | artisticdude | CC0 | pitch ×0.94, gain −4 dB |
+| sfx/chest_open.ogg | sfx100v2_lock_open_01.ogg + repo coin.ogg | 100 CC0 SFX #2 (RD-100) + K-RPG (via repo coin.ogg) | rubberduck + Kenney | CC0 | coin layer +90 ms at −7 dB, trimmed 1.1 s |
+| sfx/feather.ogg | sfx100v2_air_02.ogg | 100 CC0 SFX #2 (RD-100) | rubberduck | CC0 | pitch ×1.5, trimmed 0.5 s, gain −3 dB |
+| sfx/medal.ogg | confirmation_001.ogg | Kenney Interface Sounds (K-INT) | Kenney | CC0 1.0 | trimmed 0.6 s |
 ## Skin sprite sheets — added 2026-07-25
 
 Catalog skins (Ember Monk, Shadow Thief, Hearth Knight) are deterministic HSV
