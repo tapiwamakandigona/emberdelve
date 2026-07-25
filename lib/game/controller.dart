@@ -34,6 +34,7 @@ class GameController extends ChangeNotifier {
     _splashIn = null;
     return v;
   }
+
   bool _bankedThisRun = false;
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
@@ -135,13 +136,14 @@ class GameController extends ChangeNotifier {
     return _saveQueue;
   }
 
-  void startRun(
-      {String? character,
-      int ascension = 0,
-      bool boons = false,
-      int? seed,
-      String? daily,
-      String? difficulty}) {
+  void startRun({
+    String? character,
+    int ascension = 0,
+    bool boons = false,
+    int? seed,
+    String? daily,
+    String? difficulty,
+  }) {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun].
     final s = seed ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
@@ -150,8 +152,9 @@ class GameController extends ChangeNotifier {
     dailyDate = daily;
     // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
     // exact same delve, so it always runs on normal (spec §Ethics fairness).
-    final diff =
-        daily != null ? 'normal' : (difficulty ?? meta.preferredDifficulty);
+    final diff = daily != null
+        ? 'normal'
+        : (difficulty ?? meta.preferredDifficulty);
     apply({
       'type': 'start_run',
       if (character != null) 'character': character,
@@ -199,10 +202,11 @@ class GameController extends ChangeNotifier {
     final now = DateTime.now();
     final label = dailyKey(now);
     startRun(
-        character: character,
-        seed: dailySeed(now.year, now.month, now.day),
-        boons: true,
-        daily: label);
+      character: character,
+      seed: dailySeed(now.year, now.month, now.day),
+      boons: true,
+      daily: label,
+    );
   }
 
   /// Fast restart from the death/victory ledger: a new run (fresh seed) with
@@ -210,10 +214,11 @@ class GameController extends ChangeNotifier {
   void delveAgain() {
     final run = sim?.run;
     startRun(
-        character: run?['character'] as String?,
-        ascension: run?['ascension'] as int? ?? 0,
-        boons: true,
-        difficulty: run?['difficulty'] as String? ?? 'normal');
+      character: run?['character'] as String?,
+      ascension: run?['ascension'] as int? ?? 0,
+      boons: true,
+      difficulty: run?['difficulty'] as String? ?? 'normal',
+    );
   }
 
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.
@@ -222,8 +227,10 @@ class GameController extends ChangeNotifier {
   /// the rebuild-notify by this long so the combat screen can finish its death
   /// choreography before the phase switches. State/saves update immediately;
   /// only the listener notification (and music change) is held.
-  List<Map<String, Object?>> apply(Map<String, Object?> cmd,
-      {Duration? terminalHold}) {
+  List<Map<String, Object?>> apply(
+    Map<String, Object?> cmd, {
+    Duration? terminalHold,
+  }) {
     if (sim == null) return const [];
     final events = sim!.apply(cmd);
     _handleFlash(events);
@@ -231,8 +238,9 @@ class GameController extends ChangeNotifier {
     if (_terminal.contains(sim!.phase)) _bankRun();
     _autosave();
     audio?.handleEvents(events);
-    final ended = events.any((e) =>
-        e['type'] == 'encounter_won' || e['type'] == 'encounter_lost');
+    final ended = events.any(
+      (e) => e['type'] == 'encounter_won' || e['type'] == 'encounter_lost',
+    );
     if (terminalHold != null && ended) {
       Future.delayed(terminalHold, () {
         notifyListeners();
@@ -295,8 +303,7 @@ class GameController extends ChangeNotifier {
   /// One-line outcome of an event choice, from its effect events.
   String? _eventSummary(List<Map<String, Object?>> events) {
     final parts = <String>[];
-    String dieName(Object? id) =>
-        id is String ? dieDef(id).name : 'a die';
+    String dieName(Object? id) => id is String ? dieDef(id).name : 'a die';
     for (final e in events) {
       switch (e['type']) {
         case 'die_lost':
@@ -430,14 +437,20 @@ class GameController extends ChangeNotifier {
       meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
     }
     // Run history (v0.3.4): one small record per ended run, newest first.
-    meta.addRunRecord(_runRecord(
-        result: sim!.phase == 'run_won' ? 'won' : 'lost', embers: banked));
+    meta.addRunRecord(
+      _runRecord(
+        result: sim!.phase == 'run_won' ? 'won' : 'lost',
+        embers: banked,
+      ),
+    );
     MetaStore.save(meta);
     _clearSave();
   }
 
-  Map<String, Object?> _runRecord(
-      {required String result, required int embers}) {
+  Map<String, Object?> _runRecord({
+    required String result,
+    required int embers,
+  }) {
     final run = sim?.run;
     return {
       'date': dailyKey(DateTime.now()),

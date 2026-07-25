@@ -55,6 +55,15 @@ class _CombatScreenState extends State<CombatScreen> {
   // Boss kill moment: a full-screen white-hot flash held over the stage.
   bool _bossKillFlash = false;
 
+  // LFP-5: resolution pacing control. END TURN choreography is fixed-length
+  // (~2.5–3.5s to next input; design-system §5 wants ≤400ms input blocks) —
+  // fine at fight 1, heavy by fight 30. Tapping anywhere during enemy
+  // resolution arms fast-forward: 1 tap = 2x (call-outs drop to 1s), 2 taps
+  // = skip-to-state. Information is never skipped — every pop, call-out and
+  // state change still happens — only duration. Reset every END TURN.
+  int _ffwd = 0;
+  bool _resolving = false;
+
   // Boss/elite name-plate splash, shown once when the encounter opens.
   bool _splash = false;
 
@@ -170,8 +179,15 @@ class _CombatScreenState extends State<CombatScreen> {
     bool onEnemy = false,
   }) {
     if (!mounted) return;
+    // LFP-5: while fast-forwarding, call-outs hold 1s instead of 2s — same
+    // information, matched pacing (the plan's "call-outs to 1s").
+    final life = _resolving && _ffwd > 0
+        ? const Duration(milliseconds: 1000)
+        : _noteLife;
     setState(
-      () => _notes.add(_Note(_noteId++, text, color, icon, onEnemy: onEnemy)),
+      () => _notes.add(
+        _Note(_noteId++, text, color, icon, onEnemy: onEnemy, life: life),
+      ),
     );
   }
 
@@ -222,6 +238,37 @@ class _CombatScreenState extends State<CombatScreen> {
     }
   }
 
+  /// LFP-3b: long-press tooltips — name what a badge means in one 2s
+  /// call-out (reuses the existing note primitive; zero new systems).
+  void _explainIntent(Map intent) {
+    final text = switch (intent['kind']) {
+      'attack' => 'NEXT MOVE: ATTACK ${intent['amount']} — AS SHOWN',
+      'block' => 'NEXT MOVE: BLOCK ${intent['amount']} — AS SHOWN',
+      'attack_block' =>
+        'NEXT MOVE: ATTACK ${intent['amount']} + BLOCK ${intent['block']}',
+      _ => 'NEXT MOVE — RESOLVES AS SHOWN',
+    };
+    Haptics.light();
+    _note(
+      text,
+      color: EmberColors.textPrimary,
+      icon: Icons.visibility,
+      onEnemy: true,
+    );
+  }
+
+  // Burn semantics VERIFIED against sim/combat.dart: damage = current stacks,
+  // ticks at the end of the enemy's action, then stacks decay by 1.
+  void _explainBurn(int stacks) {
+    Haptics.light();
+    _note(
+      'BURN $stacks — $stacks DMG AFTER ITS MOVE, THEN −1',
+      color: EmberColors.ember,
+      icon: Icons.local_fire_department,
+      onEnemy: true,
+    );
+  }
+
   void _doRiskyReroll() {
     if (_busy || _rerollSel.isEmpty) return;
     final dice = _rerollSel.toList()..sort();
@@ -237,6 +284,34 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   Future<void> _sleep(Duration d) => Future.delayed(d);
+
+  /// LFP-5: like [_sleep], but chunked so a fast-forward tap landing
+  /// mid-wait shortens the REMAINING wait too — 2x after one tap, ~instant
+  /// after two. Only the enemy-resolution path ([_endTurn]) waits through
+  /// this; the player's own swing keeps its full anatomy.
+  Future<void> _beat(Duration d) async {
+    var elapsed = 0;
+    while (true) {
+      final total = _ffwd >= 2
+          ? 0
+          : _ffwd == 1
+          ? d.inMilliseconds ~/ 2
+          : d.inMilliseconds;
+      if (elapsed >= total) return;
+      final step = math.min(40, total - elapsed);
+      await Future.delayed(Duration(milliseconds: step));
+      elapsed += step;
+    }
+  }
+
+  /// Armed only while the enemy resolution plays; taps that no button or die
+  /// claims fall through to this (the root gesture arena defers to children).
+  void _fastForwardTap() {
+    if (!_busy || !_resolving) return;
+    if (_ffwd >= 2) return;
+    Haptics.light();
+    setState(() => _ffwd = _ffwd + 1);
+  }
 
   /// Run the queued action once the current choreography finishes (F2).
   /// Guarded: the encounter must still be running, and a queued assign only
@@ -441,6 +516,8 @@ class _CombatScreenState extends State<CombatScreen> {
       return;
     }
     _busy = true;
+    _ffwd = 0; // LFP-5: each resolution starts at full speed
+    _resolving = true;
     setState(() {
       selected = null;
       _rerollMode = false;
@@ -454,14 +531,14 @@ class _CombatScreenState extends State<CombatScreen> {
       // Physical wind-up: the enemy leans back and darkens for a beat before
       // the lunge — the strike telegraphs in the body, not just the badge.
       setState(() => _enemySquash = true);
-      await _sleep(_enemyWindupTime);
+      await _beat(_enemyWindupTime);
       if (!mounted) return;
       _audio?.playSfx('whoosh');
       setState(() {
         _enemySquash = false;
         _enemyLunge = true;
       });
-      await _sleep(_contact);
+      await _beat(_contact);
       if (!mounted) return;
       final damage = atk['damage'] as int? ?? 0;
       final absorbed = atk['blocked'] as int? ?? 0;
@@ -491,10 +568,10 @@ class _CombatScreenState extends State<CombatScreen> {
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
       final bigHit = _impact(damage, playerMax);
       setState(() => _playerFlash = true);
-      if (bigHit) await _sleep(_hitStop);
+      if (bigHit) await _beat(_hitStop);
       if (!mounted) return;
       setState(() => _playerKnock = true);
-      await _sleep(_knockTime);
+      await _beat(_knockTime);
       if (!mounted) return;
       setState(() {
         _enemyLunge = false;
@@ -507,9 +584,10 @@ class _CombatScreenState extends State<CombatScreen> {
           _playerFlash = false;
           _playerDying = true;
         });
+        // The run-ending moment keeps its full weight — never fast-forwarded.
         await _sleep(const Duration(milliseconds: 800));
       } else {
-        await _sleep(_flashTail);
+        await _beat(_flashTail);
         if (mounted) setState(() => _playerFlash = false);
       }
     } else if (_find(events, 'enemy_blocked') != null) {
@@ -535,14 +613,16 @@ class _CombatScreenState extends State<CombatScreen> {
       // payoff there, so skip the beat and let _enemyDeath play in budget
       // (worst path ≤ ~1380 ms).
       if (_find(events, 'encounter_won') == null) {
-        await _sleep(const Duration(milliseconds: 350));
+        await _beat(const Duration(milliseconds: 350));
       }
     }
     // A straight last turn grants this turn's free reroll — announce it.
     _announceCombos(events);
     // Thorns relics and burn can kill the enemy during its own turn.
+    // (Death choreography keeps its full length — the kill is the payoff.)
     if (mounted) await _enemyDeath(events);
     _busy = false;
+    _resolving = false;
     if (mounted) setState(() {});
     _drainQueue();
   }
@@ -818,7 +898,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     color: n.color,
                     icon: n.icon,
                     fontSize: 16,
-                    duration: _noteLife,
+                    duration: n.life,
                     onDone: () {
                       if (mounted) setState(() => _notes.remove(n));
                     },
@@ -1000,42 +1080,50 @@ class _CombatScreenState extends State<CombatScreen> {
 
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: maxHudScale,
-      child: ShakeBox(
-        key: _shakeKey,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            combat,
-            // Boss kill flash: white-out that decays into the ember dissolve.
-            IgnorePointer(
-              child: AnimatedOpacity(
-                opacity: _bossKillFlash ? 1.0 : 0.0,
-                duration: Duration(milliseconds: _bossKillFlash ? 60 : 420),
-                curve: Curves.easeOut,
-                child: const ColoredBox(
-                  color: Color(0xFFFFE9C4),
-                  child: SizedBox.expand(),
+      // LFP-5: taps that no die/button claims fall through to this root
+      // detector (children win the gesture arena, so queued actions and die
+      // selection behave exactly as before) — during enemy resolution they
+      // arm fast-forward instead of dying silently.
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _fastForwardTap,
+        child: ShakeBox(
+          key: _shakeKey,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              combat,
+              // Boss kill flash: white-out that decays into the ember dissolve.
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: _bossKillFlash ? 1.0 : 0.0,
+                  duration: Duration(milliseconds: _bossKillFlash ? 60 : 420),
+                  curve: Curves.easeOut,
+                  child: const ColoredBox(
+                    color: Color(0xFFFFE9C4),
+                    child: SizedBox.expand(),
+                  ),
                 ),
               ),
-            ),
-            if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
-            if (_tutStep >= 0)
-              _TutorialOverlay(
-                step: _tutStep,
-                onNext: () => setState(() {
-                  if (_tutStep >= _TutorialOverlay.cardCount - 1) {
+              if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+              if (_tutStep >= 0)
+                _TutorialOverlay(
+                  step: _tutStep,
+                  onNext: () => setState(() {
+                    if (_tutStep >= _TutorialOverlay.cardCount - 1) {
+                      _tutStep = -1;
+                      widget.c.markTutorialSeen();
+                    } else {
+                      _tutStep++;
+                    }
+                  }),
+                  onSkip: () => setState(() {
                     _tutStep = -1;
                     widget.c.markTutorialSeen();
-                  } else {
-                    _tutStep++;
-                  }
-                }),
-                onSkip: () => setState(() {
-                  _tutStep = -1;
-                  widget.c.markTutorialSeen();
-                }),
-              ),
-          ],
+                  }),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -1147,27 +1235,39 @@ class _CombatScreenState extends State<CombatScreen> {
                             windup: true,
                           ),
                           // Intent as an icon badge floating above the enemy
-                          // (overlaid, so it never adds layout height). Burn stacks
-                          // sit beside it while the enemy is alight. The lift is
-                          // clamped so the badge never escapes the stage upward.
+                          // (overlaid, so it never adds layout height). The lift
+                          // is clamped so the badge never escapes the stage upward.
+                          //
+                          // LFP-3a: the badge owns this slot ALONE. Burn stacks
+                          // used to share its row — "🛡13 🔥3" read as one intent
+                          // ("it will shield 13 and burn me for 3"), misread live
+                          // in the plan playtest. Status now renders on the body
+                          // below, in a visibly different chip style.
                           Positioned(
                             top: -badgeLift,
-                            // With burn stacks the badge row widens; right-anchor it
-                            // to the enemy so it never draws off the screen edge
-                            // (many-dice sweep 2026-07-24 — the burn pill sat half
-                            // off-screen on every burning enemy).
-                            right: (enemy['burn'] as int? ?? 0) > 0 ? 0 : null,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _IntentBadge(intent),
-                                if ((enemy['burn'] as int? ?? 0) > 0) ...[
-                                  const SizedBox(width: Space.xs),
-                                  _BurnBadge(enemy['burn'] as int),
-                                ],
-                              ],
+                            child: _IntentBadge(
+                              intent,
+                              onLongPress: () => _explainIntent(intent),
                             ),
                           ),
+                          // LFP-3a: status stacks live ON the enemy sprite —
+                          // what it is suffering, not what it will do. Small
+                          // sprite-hugging pill, deliberately unlike the
+                          // squared intent badge.
+                          if ((enemy['burn'] as int? ?? 0) > 0)
+                            Positioned(
+                              bottom: -4,
+                              right: -14,
+                              child: _StatusChip(
+                                icon: Icons.local_fire_department,
+                                color: EmberColors.ember,
+                                value: enemy['burn'] as int,
+                                semantics:
+                                    'Burning, ${enemy['burn']} stacks. Long press to explain.',
+                                onLongPress: () =>
+                                    _explainBurn(enemy['burn'] as int),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -1186,7 +1286,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     color: n.color,
                     icon: n.icon,
                     fontSize: 15,
-                    duration: _noteLife,
+                    duration: n.life,
                     onDone: () {
                       if (mounted) setState(() => _notes.remove(n));
                     },
@@ -1387,7 +1487,15 @@ class _Note {
   final Color color;
   final IconData? icon;
   final bool onEnemy; // anchors near the enemy instead of the dice tray
-  _Note(this.id, this.text, this.color, this.icon, {required this.onEnemy});
+  final Duration life; // LFP-5: 1s while fast-forwarding, 2s otherwise
+  _Note(
+    this.id,
+    this.text,
+    this.color,
+    this.icon, {
+    required this.onEnemy,
+    this.life = const Duration(milliseconds: 2000),
+  });
 }
 
 /// One floating damage number's spawn record.
@@ -1470,42 +1578,52 @@ class _NamePlate extends StatelessWidget {
   }
 }
 
-/// Burn stacks on the enemy: small flame + count, ticking down each turn.
-class _BurnBadge extends StatelessWidget {
-  final int stacks;
-  const _BurnBadge(this.stacks);
+/// LFP-3a: a status stack ON the combatant (burn today; the vocabulary can
+/// grow). Deliberately unlike the intent badge: tight rounded pill, tinted
+/// fill, smaller type — reads as a condition, not a plan. Long-press names
+/// it (LFP-3b).
+class _StatusChip extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final int value;
+  final String semantics;
+  final VoidCallback? onLongPress;
+  const _StatusChip({
+    required this.icon,
+    required this.color,
+    required this.value,
+    required this.semantics,
+    this.onLongPress,
+  });
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Burning, $stacks ${stacks == 1 ? 'stack' : 'stacks'}',
+      label: semantics,
       excludeSemantics: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.s,
-          vertical: Space.s,
-        ),
-        decoration: BoxDecoration(
-          color: EmberColors.raised,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: EmberColors.ember),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.local_fire_department,
-              size: 16,
-              color: EmberColors.ember,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onLongPress: onLongPress,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+          decoration: BoxDecoration(
+            color: Color.alphaBlend(
+              color.withValues(alpha: 0.22),
+              EmberColors.raised,
             ),
-            const SizedBox(width: 2),
-            Text(
-              '$stacks',
-              style: EmberText.value.copyWith(
-                fontSize: 15,
-                color: EmberColors.ember,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: color.withValues(alpha: 0.8)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 13, color: color),
+              const SizedBox(width: 2),
+              Text(
+                '$value',
+                style: EmberText.value.copyWith(fontSize: 12, color: color),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1514,7 +1632,8 @@ class _BurnBadge extends StatelessWidget {
 
 class _IntentBadge extends StatelessWidget {
   final Map intent;
-  const _IntentBadge(this.intent);
+  final VoidCallback? onLongPress;
+  const _IntentBadge(this.intent, {this.onLongPress});
   @override
   Widget build(BuildContext context) {
     final kind = intent['kind'];
@@ -1542,31 +1661,36 @@ class _IntentBadge extends StatelessWidget {
       _ => '$kind',
     };
     return Semantics(
-      label: 'Enemy intent: $spoken',
+      label: 'Enemy intent: $spoken. Long press to explain.',
       excludeSemantics: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.m,
-          vertical: Space.s,
-        ),
-        decoration: BoxDecoration(
-          color: EmberColors.raised,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: border),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final (i, part) in parts.indexed) ...[
-              if (i > 0) const SizedBox(width: Space.m),
-              Icon(part.$1, size: 18, color: part.$2),
-              const SizedBox(width: Space.xs),
-              Text(
-                part.$3,
-                style: EmberText.value.copyWith(fontSize: 18, color: part.$2),
-              ),
+      // LFP-3b: long-press names the badge in a 2s call-out.
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onLongPress: onLongPress,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Space.m,
+            vertical: Space.s,
+          ),
+          decoration: BoxDecoration(
+            color: EmberColors.raised,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: border),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final (i, part) in parts.indexed) ...[
+                if (i > 0) const SizedBox(width: Space.m),
+                Icon(part.$1, size: 18, color: part.$2),
+                const SizedBox(width: Space.xs),
+                Text(
+                  part.$3,
+                  style: EmberText.value.copyWith(fontSize: 18, color: part.$2),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
