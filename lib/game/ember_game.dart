@@ -22,6 +22,7 @@ import 'components/fx.dart';
 import 'components/hud.dart';
 import 'components/items_component.dart';
 import 'components/parallax_bg.dart';
+import 'components/perf_overlay.dart';
 import 'components/player_component.dart';
 import 'components/tile_layer.dart';
 import 'core_loadout.dart';
@@ -159,6 +160,10 @@ class EmberGame extends FlameGame with KeyboardEvents {
         onReleased: () {},
       ),
       HudReadout(),
+      // Frame-time readout for device profiling; compiled out of normal
+      // builds (--dart-define=PERF_OVERLAY=true to enable — docs/perf.md §2).
+      if (const bool.fromEnvironment('PERF_OVERLAY'))
+        PerfOverlay()..position = Vector2(4, viewHeight - 14),
     ]);
   }
 
