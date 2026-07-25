@@ -155,7 +155,8 @@ void main() {
       AppState.save.ownedAbilities.add('haggler');
       AppState.save.coins = 10000;
       await pump(tester);
-      expect(find.text('405 coins'), findsOneWidget); // 450 * 0.9
+      // Price text is now '<n> ' + a coin glyph (icons replaced the words).
+      expect(find.text('405 '), findsOneWidget); // 450 * 0.9
       expect(find.textContaining('Haggler -10%'), findsWidgets);
     });
 

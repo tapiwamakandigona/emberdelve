@@ -492,3 +492,51 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   budget / cold start unmeasured; World 2 not started).
 - Session wrap: P-M7 partial (allocation pass done, hardware metrics OPEN),
   P-M8 done, P-M9 (World 2) + P-M10 (beta.1) remain open for next session.
+
+---
+## 2026-07-25 — pre-release polish pass: audio/skins/shop/maps/juice (maps-audio-visuals agent)
+- Owner directive (DM): "work on the pre-release... maps, audios, store visuals,
+  animations; research UI/UX/graphics improvements; small PRs, no subagents."
+- Shipped as 6 small PRs, each CI-green before merge:
+  #29 audio (10 platformer SFX + dead dice audio removed, low-HP heartbeat wired,
+  music dedupe fix), #31 real skin sprite sheets (were stat-only!), #35 shop
+  visuals (icons, stat bars, animated skin previews, currency glyphs), #38 map
+  decoration layer (b/r/m/t legend + DecorLayerComponent, all 6 levels dressed),
+  juice pass (chest anim, door glow, coin sparkles, staggered medal reveal),
+  W1 layout pass (optional sky routes + risk-reward pit coins, ground paths
+  untouched — runner-bot completion tests prove it).
+- Rationale + research notes: docs/design-notes-2026-07-25.md. Deliberately
+  skipped: roll verb (controls lane, parallel agent), footsteps (annoyance),
+  World 2 (gated on M7 per PROJECT.md §10).
+- Coordination: parallel perf/controls agent owns PRs #30/32/33/34/36/37 —
+  disjoint lanes, no file conflicts.
+
+---
+## 2026-07-25 — touch input REALLY fixed + browser test harness + v1.0.0-alpha.3 (orchestrator)
+- Owner: alpha.2 left/right STILL dead on device; asked for emulator testing ("test the
+  controls coz the right and left arrow don't work"). No KVM in sandbox → built a
+  **web test harness** instead: lib/main_webtest.dart (in-memory save, no audio, boots
+  straight into a level via ?level=&seed=, telemetry on window.__emberdelve every 50ms).
+  Docs: docs/web_testing.md. web/ platform dir committed so other AIs can test too
+  (owner request). Driven by headless Chromium + CDP touch events (Playwright).
+- **Two real root causes found** (the alpha.2 drift fix was necessary but insufficient):
+  1. Flame registers MultiTap/MultiDragDispatcher only when the first TapCallbacks/
+     DragCallbacks component MOUNTS; HUD mounts after GameWidget's first build and the
+     post-build refresh never lands in release builds → no gesture recognizer ever
+     attached → the whole touch HUD was deaf (keyboard path unaffected).
+  2. HudThrowButton hid via scale=(0,0); the singular transform collapses every canvas
+     point to local (0,0), which containsLocalPoint accepts → the invisible button
+     swallowed every tap ahead of the arrows in reversed hit-test order (jump/attack/
+     pause sit earlier → they worked; only left/right dead — matches device symptoms).
+  CI missed both because old tests invoked callbacks directly, bypassing routing.
+- Fix 99d0131: EmberGame pre-registers dispatchers at construction (MultiTouchTap/
+  DragDetector mixins + gestureDetectors), forwards into componentsAtPoint routing;
+  throw button skips hit-testing while hidden; 4 end-to-end routing regression tests
+  (test/hud_routing_test.dart — headless boot pattern, NOT pumpWidget). 174/174 tests.
+- **Browser-verified on compiled release web build:** touch hold right/left PASS,
+  thumb-drift-while-holding PASS, keyboard PASS, jump PASS.
+- CI 30144670090 green, cert "Signature OK" (031acb42…7a0d). Published
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.3
+  (universal APK 37.0 MB + AAB, SHA-256s in notes). Version 1.0.0-alpha.3+15.
+- Still OPEN: on-device confirmation by owner; device frame-budget/cold-start metrics;
+  P-M9 World 2; P-M10 beta.1→Play; old alpha.1 prerelease still listed.

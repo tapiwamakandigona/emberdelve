@@ -20,6 +20,10 @@ class EnemyComponent extends PositionComponent
   SpriteAnimation? _alt; // hopper jump strip
   SpriteAnimation? _shown;
 
+  // Scratch vectors reused every frame (Sprite.render copies, never stores).
+  static final _drawPos = Vector2.zero();
+  static final _drawSize = Vector2.zero();
+
   static final _flashPaint = ui.Paint()
     ..colorFilter =
         const ui.ColorFilter.mode(ui.Color(0xFFFFFFFF), ui.BlendMode.srcATop);
@@ -117,9 +121,11 @@ class EnemyComponent extends PositionComponent
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
+    _drawPos.setValues(b.centerX - w / 2, b.bottom - h);
+    _drawSize.setValues(w, h);
     sprite.render(canvas,
-        position: Vector2(b.centerX - w / 2, b.bottom - h),
-        size: Vector2(w, h),
+        position: _drawPos,
+        size: _drawSize,
         overridePaint: core.hurtFlash > 0 ? _flashPaint : _tint);
     if (core.kind == EnemyKind.rotshield) {
       // Shield plate on the (post-flip) right edge = the facing side.
@@ -156,9 +162,11 @@ class EnemyComponent extends PositionComponent
     _firePaint.color = charging > 0.4
         ? const ui.Color(0x99FFFFFF)
         : const ui.Color(0xFFFFFFFF);
+    _drawPos.setValues(b.centerX - 8, b.bottom - 22 - 26);
+    _drawSize.setValues(16, 32);
     fire.render(canvas,
-        position: Vector2(b.centerX - 8, b.bottom - 22 - 26),
-        size: Vector2(16, 32),
+        position: _drawPos,
+        size: _drawSize,
         overridePaint: core.hurtFlash > 0 ? _flashPaint : _firePaint);
   }
 
@@ -184,10 +192,10 @@ class EnemyComponent extends PositionComponent
     } else if (golem.telegraphPulse > 0.5) {
       paint = _telegraphPaint;
     }
+    _drawPos.setValues(b.centerX - w / 2, b.bottom - h);
+    _drawSize.setValues(w, h);
     sprite.render(canvas,
-        position: Vector2(b.centerX - w / 2, b.bottom - h),
-        size: Vector2(w, h),
-        overridePaint: paint);
+        position: _drawPos, size: _drawSize, overridePaint: paint);
     canvas.restore();
 
     for (final hz in golem.hazards) {

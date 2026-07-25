@@ -2,11 +2,13 @@
 // the session — coins (incl. chest-burst coins), apples/feathers, chests,
 // apple projectiles, the exit door, signs and the active sign bubble. One
 // component, no per-item children (perf budget: no per-frame allocations).
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text.dart';
+import 'package:flutter/painting.dart' show TextPainter;
 
 import '../ember_game.dart';
 import '../level/level_data.dart';
@@ -15,6 +17,11 @@ import '../tuning.dart';
 class ItemsComponent extends PositionComponent
     with HasGameReference<EmberGame> {
   ItemsComponent() : super(priority: 1);
+
+  /// Per-chest open-animation clocks (few chests per level; grows once per
+  /// opened chest, never per frame).
+  final Map<Object, double> _chestOpenClock = {};
+  double _doorPulse = 0;
 
   late SpriteAnimationTicker _coin;
   late SpriteAnimationTicker _feather;
@@ -33,7 +40,19 @@ class ItemsComponent extends PositionComponent
   );
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.none;
   final _bubblePaint = ui.Paint()..color = const ui.Color(0xEEF4EAD5);
+
+  // Scratch vectors reused every frame (Sprite.render copies, never stores).
+  static final _drawPos = Vector2.zero();
+  static final _coinSize = Vector2(16, 16);
+  static final _featherSize = Vector2(15, 13);
+
+  // Sign-bubble cache: text layout runs only when the active sign changes,
+  // not on every frame the bubble is visible.
+  String _bubbleFor = '';
+  TextPainter? _bubbleTp;
   final _emberGlow = ui.Paint()..color = const ui.Color(0x88E86A17);
+  final _doorGlow = ui.Paint()
+    ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 6);
   final _emberCore = ui.Paint()..color = const ui.Color(0xFFF2C14E);
 
   @override
@@ -60,6 +79,12 @@ class ItemsComponent extends PositionComponent
   void update(double dt) {
     _coin.update(dt);
     _feather.update(dt);
+    _doorPulse += dt;
+    for (final ch in game.session.chests) {
+      if (ch.opened) {
+        _chestOpenClock.update(ch, (t) => t + dt, ifAbsent: () => 0.0);
+      }
+    }
   }
 
   @override
@@ -67,12 +92,18 @@ class ItemsComponent extends PositionComponent
     final s = game.session;
 
     // Exit door (bottom-center anchored on the exit tile). In boss arenas
-    // the door swings open the moment the boss dies.
-    final door = s.completed || (s.bossPresent && !s.exitLocked)
-        ? _doorOpen
-        : _door;
+    // the door swings open the moment the boss dies; an open door breathes
+    // a soft golden glow so the goal reads from across the screen.
+    final doorOpen = s.completed || (s.bossPresent && !s.exitLocked);
+    if (doorOpen) {
+      final pulse = 0.5 + 0.5 * math.sin(_doorPulse * 4);
+      _doorGlow.color = ui.Color.fromARGB((40 + 50 * pulse).round(),
+          0xF2, 0xC1, 0x4E);
+      canvas.drawCircle(
+          ui.Offset(s.exitX, s.exitY - 16), 20 + 4 * pulse, _doorGlow);
+    }
     canvas.drawImageRect(
-      door,
+      doorOpen ? _doorOpen : _door,
       const ui.Rect.fromLTWH(0, 0, 22, 33),
       ui.Rect.fromLTWH(s.exitX - 11, s.exitY - 33, 22, 33),
       _paint,
@@ -88,9 +119,14 @@ class ItemsComponent extends PositionComponent
       );
     }
 
-    // Chests (48x48 frames; frame 0 closed, frame 2 open) drawn tile-sized.
+    // Chests (48x48 frames: closed / opening / open). Opening plays the
+    // middle frame for a beat instead of snapping closed->open.
     for (final ch in s.chests) {
-      final frame = ch.opened ? 2 : 0;
+      var frame = 0;
+      if (ch.opened) {
+        final t = _chestOpenClock[ch] ?? 0.0;
+        frame = t < 0.12 ? 1 : 2;
+      }
       canvas.drawImageRect(
         _chest,
         ui.Rect.fromLTWH(frame * 48.0, 0, 48, 48),
@@ -103,8 +139,8 @@ class ItemsComponent extends PositionComponent
     final coinSprite = _coin.getSprite();
     for (final c in s.coins) {
       if (c.collected) continue;
-      coinSprite.render(canvas,
-          position: Vector2(c.x - 8, c.y - 8), size: Vector2(16, 16));
+      _drawPos.setValues(c.x - 8, c.y - 8);
+      coinSprite.render(canvas, position: _drawPos, size: _coinSize);
     }
 
     // Apple + feather pickups.
@@ -114,8 +150,8 @@ class ItemsComponent extends PositionComponent
       if (p.kind == SpawnKind.apple) {
         _drawApple(canvas, p.x, p.y);
       } else {
-        featherSprite.render(canvas,
-            position: Vector2(p.x - 7.5, p.y - 6.5), size: Vector2(15, 13));
+        _drawPos.setValues(p.x - 7.5, p.y - 6.5);
+        featherSprite.render(canvas, position: _drawPos, size: _featherSize);
       }
     }
 
@@ -134,7 +170,11 @@ class ItemsComponent extends PositionComponent
     // Active sign bubble.
     final active = s.activeSign;
     if (active != null && active.text.isNotEmpty) {
-      final tp = _bubbleText.toTextPainter(active.text);
+      if (!identical(active.text, _bubbleFor)) {
+        _bubbleFor = active.text;
+        _bubbleTp = _bubbleText.toTextPainter(active.text);
+      }
+      final tp = _bubbleTp!;
       final w = tp.width + 6, h = tp.height + 4;
       final left = active.x - w / 2;
       final top = active.y - 34 - h;

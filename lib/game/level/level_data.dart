@@ -14,8 +14,24 @@
 //   C  chest            X  secret chest (counts as chest + secret)
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
 //   R  Rotshield        G  Grove Golem (boss)
+//   DECOR (purely visual, never collides):
+//   b  bush             r  rock                m  shrooms
+//   t  tree (large, background)
 
 enum TileKind { empty, solid, platform, spikes, fire, crackedWall }
+
+/// Purely visual set dressing. Parsed like spawns but kept in a separate
+/// list: zero gameplay meaning, zero collision, renderer-only.
+enum DecorKind { bush, rock, shrooms, tree }
+
+class Decor {
+  final DecorKind kind;
+  final int x, y; // tile coords, (0,0) = top-left
+  const Decor(this.kind, this.x, this.y);
+
+  @override
+  String toString() => '$kind@($x,$y)';
+}
 
 enum SpawnKind {
   player,
@@ -58,6 +74,13 @@ const Map<String, TileKind> _tileChars = {
   'B': TileKind.crackedWall,
 };
 
+const Map<String, DecorKind> _decorChars = {
+  'b': DecorKind.bush,
+  'r': DecorKind.rock,
+  'm': DecorKind.shrooms,
+  't': DecorKind.tree,
+};
+
 const Map<String, SpawnKind> _spawnChars = {
   'P': SpawnKind.player,
   'E': SpawnKind.exit,
@@ -78,9 +101,11 @@ class LevelData {
   final int width, height;
   final List<List<TileKind>> tiles; // [y][x]
   final List<Spawn> spawns;
+  final List<Decor> decor;
   final Map<String, String> meta;
 
-  LevelData._(this.width, this.height, this.tiles, this.spawns, this.meta);
+  LevelData._(
+      this.width, this.height, this.tiles, this.spawns, this.decor, this.meta);
 
   String get name => meta['name'] ?? 'Unnamed';
   String get music => meta['music'] ?? 'combat';
@@ -132,6 +157,7 @@ class LevelData {
         height, (_) => List.filled(width, TileKind.empty),
         growable: false);
     final spawns = <Spawn>[];
+    final decor = <Decor>[];
 
     for (var y = 0; y < height; y++) {
       final row = rows[y];
@@ -147,11 +173,16 @@ class LevelData {
           spawns.add(Spawn(spawn, x, y));
           continue;
         }
+        final dec = _decorChars[ch];
+        if (dec != null) {
+          decor.add(Decor(dec, x, y));
+          continue;
+        }
         throw LevelParseException('unknown char "$ch" at ($x,$y)');
       }
     }
 
-    final level = LevelData._(width, height, tiles, spawns, meta);
+    final level = LevelData._(width, height, tiles, spawns, decor, meta);
     _lint(level);
     return level;
   }
@@ -187,6 +218,16 @@ class LevelData {
     }
     if (!grounded) {
       throw LevelParseException('player spawn has no safe ground below');
+    }
+    // Decor is set dressing: it must sit in open air on solid ground so it
+    // never reads as an interactable or floats mid-air.
+    for (final d in l.decor) {
+      if (l.tiles[d.y][d.x] != TileKind.empty) {
+        throw LevelParseException('$d overlaps a non-empty tile');
+      }
+      if (d.y + 1 >= l.height || l.tiles[d.y + 1][d.x] != TileKind.solid) {
+        throw LevelParseException('$d has no solid ground below');
+      }
     }
   }
 }

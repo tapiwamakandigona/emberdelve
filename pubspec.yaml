@@ -3,7 +3,7 @@ description: "Emberdelve — pixel action-platformer. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 1.0.0-alpha.2+14
+version: 1.0.0-alpha.3+15
 
 environment:
   sdk: ^3.8.1
@@ -34,7 +34,11 @@ flutter:
     - assets/images/hud/
     - assets/images/items/
     - assets/images/player/
+    - assets/images/player/skins/ember_monk/
+    - assets/images/player/skins/shadow_thief/
+    - assets/images/player/skins/hearth_knight/
     - assets/images/props/
+    - assets/images/shop/
     - assets/images/tiles/
     - assets/audio/music/
     - assets/audio/sfx/

@@ -3,9 +3,11 @@
 // lib/meta/economy.dart (which re-checks funds/ownership — the UI never
 // trusts itself), applies the Haggler discount, and persists after every
 // transaction. Pixel-forest look: Cinzel headers, dark palette.
-import 'dart:async' show unawaited;
+import 'dart:async' show Timer, unawaited;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show ByteData, rootBundle;
 
 import '../audio/audio_service.dart';
 import '../meta/catalog.dart';
@@ -127,6 +129,8 @@ class _ShopScreenState extends State<ShopScreen> {
         for (final w in kWeapons)
           _ShopCard(
             key: ValueKey('weapon_${w.id}'),
+            leading: _ShopIcon('weapon_${w.id}'),
+            stats: _WeaponStats(weapon: w),
             title: w.name,
             subtitle:
                 'DMG ${w.damage}  ·  CRIT ${w.critPercent}% x${w.critMultiplier}'
@@ -164,6 +168,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 : 'MAX level';
             return _ShopCard(
               key: ValueKey('skin_${sk.id}'),
+              leading: SkinPreview(skinId: sk.id),
               title: sk.name,
               subtitle:
                   'Lv $level  ·  melee power x${sk.powerAt(level).toStringAsFixed(2)}',
@@ -195,6 +200,7 @@ class _ShopScreenState extends State<ShopScreen> {
         for (final a in kAbilities)
           _ShopCard(
             key: ValueKey('ability_${a.id}'),
+            leading: _ShopIcon('ability_${a.id}'),
             title: a.name,
             subtitle: a.text,
             detail: null,
@@ -250,6 +256,8 @@ class WalletChip extends StatelessWidget {
 }
 
 class _ShopCard extends StatelessWidget {
+  final Widget? leading;
+  final Widget? stats;
   final String title;
   final String subtitle;
   final String? detail;
@@ -265,6 +273,8 @@ class _ShopCard extends StatelessWidget {
 
   const _ShopCard({
     super.key,
+    this.leading,
+    this.stats,
     required this.title,
     required this.subtitle,
     required this.detail,
@@ -293,6 +303,7 @@ class _ShopCard extends StatelessWidget {
             width: equipped ? 1.5 : 1),
       ),
       child: Row(children: [
+        if (leading != null) ...[leading!, const SizedBox(width: 12)],
         Expanded(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -305,6 +316,7 @@ class _ShopCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(subtitle,
                 style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            if (stats != null) ...[const SizedBox(height: 4), stats!],
             if (detail != null && detail!.isNotEmpty)
               Text(detail!,
                   style: const TextStyle(color: _dim, fontSize: 11)),
@@ -320,13 +332,13 @@ class _ShopCard extends StatelessWidget {
                         color: _dim,
                         fontSize: 11,
                         decoration: TextDecoration.lineThrough)),
-              Text(
-                  '$price ${currency == Currency.coins ? 'coins' : 'feathers'}',
+              Text('$price ',
                   style: TextStyle(
                       color: currency == Currency.coins
                           ? _gold
                           : Colors.white70,
                       fontSize: 13)),
+              _CurrencyIcon(currency),
             ]),
             if (discounted)
               const Text('Haggler -10%',
@@ -353,4 +365,191 @@ class _ShopCard extends StatelessWidget {
       ]),
     );
   }
+}
+
+/// Pixel icon from assets/images/shop/ (built by tool/build_shop_icons.py).
+class _ShopIcon extends StatelessWidget {
+  final String id;
+  const _ShopIcon(this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: const Color(0xFF141420),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.white10),
+      ),
+      padding: const EdgeInsets.all(6),
+      child: Image.asset('assets/images/shop/$id.png',
+          filterQuality: FilterQuality.none, fit: BoxFit.contain),
+    );
+  }
+}
+
+/// Coin / feather glyph for price rows.
+class _CurrencyIcon extends StatelessWidget {
+  final Currency currency;
+  const _CurrencyIcon(this.currency);
+
+  @override
+  Widget build(BuildContext context) {
+    return currency == Currency.coins
+        ? Image.asset('assets/images/items/coin.png',
+            width: 16,
+            height: 16,
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.none,
+            filterQuality: FilterQuality.none)
+        : Image.asset('assets/images/items/feather.png',
+            width: 15,
+            height: 13,
+            alignment: Alignment.centerLeft,
+            fit: BoxFit.none,
+            filterQuality: FilterQuality.none);
+  }
+}
+
+/// Compact damage/crit/range bars so weapons compare at a glance.
+class _WeaponStats extends StatelessWidget {
+  final Weapon weapon;
+  const _WeaponStats({required this.weapon});
+
+  // Catalog maxima (unit-tested in shop_flow_test to stay in range).
+  static const _maxDamage = 10.0;
+  static const _maxCrit = 25.0;
+  static const _maxRange = 26.0;
+
+  Widget _bar(String label, double t, Color color) {
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      SizedBox(
+          width: 28,
+          child: Text(label,
+              style: const TextStyle(color: _dim, fontSize: 9))),
+      SizedBox(
+        width: 72,
+        height: 5,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: LinearProgressIndicator(
+            value: t.clamp(0.05, 1.0),
+            backgroundColor: Colors.white10,
+            valueColor: AlwaysStoppedAnimation(color),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      _bar('DMG', weapon.damage / _maxDamage, const Color(0xFFE86A17)),
+      const SizedBox(height: 2),
+      _bar('CRIT', weapon.critPercent / _maxCrit, _gold),
+      const SizedBox(height: 2),
+      _bar('RNG', weapon.range / _maxRange, const Color(0xFF6EA0DC)),
+    ]);
+  }
+}
+
+/// Animated idle preview of a skin, straight from the gameplay sheets —
+/// what you buy is exactly what renders in a level. Decodes the 5-frame
+/// idle strip once and steps frames on a timer (no game engine involved).
+class SkinPreview extends StatefulWidget {
+  final String skinId;
+  const SkinPreview({super.key, required this.skinId});
+
+  @override
+  State<SkinPreview> createState() => _SkinPreviewState();
+}
+
+class _SkinPreviewState extends State<SkinPreview> {
+  ui.Image? _sheet;
+  Timer? _timer;
+  int _frame = 0;
+  static const _frames = 5;
+  static const _fw = 22.0, _fh = 24.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    ByteData bytes;
+    try {
+      bytes = await rootBundle.load(widget.skinId == 'red'
+          ? 'assets/images/player/idle.png'
+          : 'assets/images/player/skins/${widget.skinId}/idle.png');
+    } catch (_) {
+      // Missing skin sheet (catalog/art drift): preview the base knight
+      // rather than crash the shop.
+      bytes = await rootBundle.load('assets/images/player/idle.png');
+    }
+    final codec =
+        await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    final frameInfo = await codec.getNextFrame();
+    if (!mounted) {
+      frameInfo.image.dispose();
+      return;
+    }
+    setState(() => _sheet = frameInfo.image);
+    _timer = Timer.periodic(const Duration(milliseconds: 140), (_) {
+      if (mounted) setState(() => _frame = (_frame + 1) % _frames);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _sheet?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 52,
+      height: 56,
+      decoration: BoxDecoration(
+        color: const Color(0xFF141420),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: _sheet == null
+          ? const SizedBox.shrink()
+          : CustomPaint(
+              painter: _SkinFramePainter(_sheet!, _frame, _fw, _fh)),
+    );
+  }
+}
+
+class _SkinFramePainter extends CustomPainter {
+  final ui.Image sheet;
+  final int frame;
+  final double fw, fh;
+  _SkinFramePainter(this.sheet, this.frame, this.fw, this.fh);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const scale = 2.0;
+    final dst = Rect.fromCenter(
+        center: Offset(size.width / 2, size.height / 2),
+        width: fw * scale,
+        height: fh * scale);
+    canvas.drawImageRect(
+      sheet,
+      Rect.fromLTWH(frame * fw, 0, fw, fh),
+      dst,
+      Paint()..filterQuality = FilterQuality.none,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SkinFramePainter old) =>
+      old.frame != frame || old.sheet != sheet;
 }
