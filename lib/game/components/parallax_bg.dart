@@ -8,11 +8,11 @@ import 'package:flame/components.dart';
 import '../ember_game.dart';
 
 class ParallaxBackground extends Component with HasGameReference<EmberGame> {
-  static const _layers = [
-    ('bg/forest_back.png', 0.15),
-    ('bg/forest_middle.png', 0.35),
-    ('bg/forest_lights.png', 0.5),
-    ('bg/forest_front.png', 0.7),
+  static const _factors = [
+    ('back', 0.15),
+    ('middle', 0.35),
+    ('lights', 0.5),
+    ('front', 0.7),
   ];
 
   // Per-layer draw state, precomputed at load: image, parallax factor,
@@ -24,7 +24,10 @@ class ParallaxBackground extends Component with HasGameReference<EmberGame> {
   @override
   Future<void> onLoad() async {
     const viewH = EmberGame.viewHeight;
-    for (final (path, factor) in _layers) {
+    final family =
+        game.session.level.environment == 'cave' ? 'cave' : 'forest';
+    for (final (layer, factor) in _factors) {
+      final path = 'bg/${family}_$layer.png';
       final img = await game.images.load(path);
       final src = ui.Rect.fromLTWH(
           0, 0, img.width.toDouble(), img.height.toDouble());
