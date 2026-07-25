@@ -17,6 +17,7 @@ import '../audio/audio_service.dart';
 import '../core/rng.dart';
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
+import 'components/decor_layer.dart';
 import 'components/enemy_component.dart';
 import 'components/fx.dart';
 import 'components/hud.dart';
@@ -89,6 +90,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
         Vector2(session.player.body.centerX, session.player.body.centerY);
     camera.backdrop.add(ParallaxBackground());
 
+    world.add(DecorLayerComponent());
     world.add(TileLayerComponent());
     world.add(ItemsComponent());
     world.add(PlayerComponent());
