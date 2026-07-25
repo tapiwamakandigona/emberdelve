@@ -492,3 +492,21 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   budget / cold start unmeasured; World 2 not started).
 - Session wrap: P-M7 partial (allocation pass done, hardware metrics OPEN),
   P-M8 done, P-M9 (World 2) + P-M10 (beta.1) remain open for next session.
+
+---
+## 2026-07-25 — pre-release polish pass: audio/skins/shop/maps/juice (maps-audio-visuals agent)
+- Owner directive (DM): "work on the pre-release... maps, audios, store visuals,
+  animations; research UI/UX/graphics improvements; small PRs, no subagents."
+- Shipped as 6 small PRs, each CI-green before merge:
+  #29 audio (10 platformer SFX + dead dice audio removed, low-HP heartbeat wired,
+  music dedupe fix), #31 real skin sprite sheets (were stat-only!), #35 shop
+  visuals (icons, stat bars, animated skin previews, currency glyphs), #38 map
+  decoration layer (b/r/m/t legend + DecorLayerComponent, all 6 levels dressed),
+  juice pass (chest anim, door glow, coin sparkles, staggered medal reveal),
+  W1 layout pass (optional sky routes + risk-reward pit coins, ground paths
+  untouched — runner-bot completion tests prove it).
+- Rationale + research notes: docs/design-notes-2026-07-25.md. Deliberately
+  skipped: roll verb (controls lane, parallel agent), footsteps (annoyance),
+  World 2 (gated on M7 per PROJECT.md §10).
+- Coordination: parallel perf/controls agent owns PRs #30/32/33/34/36/37 —
+  disjoint lanes, no file conflicts.

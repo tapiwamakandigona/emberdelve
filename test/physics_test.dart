@@ -325,6 +325,59 @@ void main() {
     expect(c2.body.vx, lessThan(0)); // pushed left
   });
 
+
+  // --- asymmetric gravity feel (fall multiplier + apex hang) --------------
+
+  test('falling is snappier than rising (asymmetric gravity)', () {
+    final c = corePlayer(flat);
+    var first = true;
+    var riseFrames = 0, fallFrames = 0;
+    var apexSeen = false;
+    step(c, 2.0, (i) {
+      i.jumpHeld = true;
+      if (first) {
+        i.jumpPressed = true;
+        first = false;
+      }
+    }, onFrame: (c) {
+      if (c.body.onGround) return;
+      if (c.body.vy < 0) {
+        riseFrames++;
+      } else {
+        apexSeen = true;
+        fallFrames++;
+      }
+    });
+    expect(apexSeen, isTrue);
+    expect(c.body.onGround, isTrue, reason: 'should have landed within 2s');
+    // Fall gravity is 1.6x rise gravity => fall leg must be measurably
+    // shorter than the rise leg (apex hang straddles both sides equally).
+    expect(fallFrames, lessThan(riseFrames));
+  });
+
+  test('holding jump through the apex hangs longer than releasing there', () {
+    int airtime(bool holdThroughApex) {
+      final c = corePlayer(flat);
+      var first = true;
+      var frames = 0;
+      step(c, 2.0, (i) {
+        // Release exactly when the rise ends (vy >= 0): the jump-cut only
+        // fires while vy < 0, so this isolates the apex-hang effect.
+        i.jumpHeld = holdThroughApex || c.body.vy < 0;
+        if (first) {
+          i.jumpPressed = true;
+          first = false;
+        }
+      }, onFrame: (c) {
+        if (!c.body.onGround) frames++;
+      });
+      expect(c.body.onGround, isTrue);
+      return frames;
+    }
+
+    expect(airtime(true), greaterThan(airtime(false)));
+  });
+
   // --- turnaround assist + ceiling corner correction -----------------------
 
   test('turnaround assist: full-speed reversal snaps quickly', () {
