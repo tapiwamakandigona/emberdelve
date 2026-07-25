@@ -581,3 +581,34 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   new); web-harness screenshots confirm zoom + new HUD live in release build.
 - features.json untouched — AKP items are plan-tracked (PR #48), not
   feature-gate items. Device metrics (P-M7) still the open gate item.
+
+---
+## 2026-07-25 — owner-directed PR #51 update (zoom, alignment, air dash, spell shop)
+- Owner answered all three open questions (DM 09:30): zoom = AK-exact, air
+  dash = YES, spell slot = in this PR. Plus new report: button/icon
+  misalignment and untested behaviour across screen sizes / nav modes.
+- ddae760 AKP-1 rev: 384×216 → 352×198 (24px player = 12.1% of screen height,
+  AK ≈12.5%). kCameraLookAhead 32→40 keeps ~1.8s forward sight at kRunSpeed.
+- 8d28dfb alignment pass: icon_dash.png glyph was VERIFIED 6px left of centre
+  (generator bug, fixed + regenerated); dash/apple now centred on their
+  sword/jump columns; HUD geometry moved to _layoutHud() and made safe-area
+  aware — GameScreen pushes MediaQuery.viewPadding, converted to viewport
+  units with letterbox-band absorption (notches, punch-holes, gesture and
+  3-button nav all clear every control). +4 tests incl. an icon
+  optical-centering drift guard (decodes the PNGs).
+- c790cb3 AKP-2b air dash: dash button fires mid-air — kRollSpeed burst,
+  gravity suspended + vy zeroed for the window, roll i-frames, ONE per
+  airborne period (landing re-arms). kAirDashEnabled flag for on-device A/B.
+  New PlayerEvent.airDashed. +5 tests.
+- 6d40dc8 AKP-4d spell shop: SPELLS tab (Ember Burst 700c AoE+ignite —
+  pierces Rotshield block; Stone Veil 1100c 3s immunity; Hearth Light 10f
+  +2 hearts). One equipped, ONE cast per run, premium-only (pinned by test).
+  Save fields ownedSpells/equippedSpell (json round-trip tested), session
+  castSpell() headless, auto-hiding HUD button (dash column cap), Q/M keys,
+  original CC0 icons via tool/build_spell_icons.py (PROVENANCE updated).
+- VERIFIED: analyze clean; 267/267 tests green (250 baseline + 17 new);
+  web-harness release build screenshots: akp_352_hud_aligned.png (new zoom,
+  centred dash icon, symmetric diamond, spell button correctly absent with
+  no spell equipped), akp_airdash_midair.png.
+- Next (owner, same DM): more characters + enemies, map/pacing pass,
+  per-level lore blurbs, Easy/Med/Hard + smarter AI → follow-up PR.
