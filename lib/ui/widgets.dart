@@ -505,6 +505,23 @@ class DieChip extends StatefulWidget {
   /// Increment per roll to trigger the tumble; [tumbleDelayMs] staggers dice.
   final int rollToken;
   final int tumbleDelayMs;
+
+  /// LFP-2c: what this die actually contributed when it was assigned
+  /// (modifiers, combos and relics included) — shown on the spent label so
+  /// "5 rolled, 7 landed" stops being silent arithmetic.
+  final int? contribution;
+
+  /// LFP-1: physical throw-in. When true, a roll flings the die from the
+  /// thumb's throw origin (bottom-center of the screen) in an arc with spin
+  /// and one soft bounce before it settles into its tray slot — instead of
+  /// the in-place hop. Pure presentation: the result is sim-determined
+  /// before the animation starts, and total flight stays inside the same
+  /// 520ms budget so pacing doesn't slow.
+  final bool flight;
+
+  /// LFP-1b: fires once when a flying die lands (the stagger across the
+  /// tray turns per-die light haptics into a rattle).
+  final VoidCallback? onSettle;
   const DieChip(
     this.dieId, {
     super.key,
@@ -515,6 +532,9 @@ class DieChip extends StatefulWidget {
     this.onTap,
     this.rollToken = 0,
     this.tumbleDelayMs = 0,
+    this.contribution,
+    this.flight = false,
+    this.onSettle,
   });
 
   @override
@@ -527,12 +547,47 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     duration: const Duration(milliseconds: 520),
   );
 
+  // LFP-1: where this throw came from (tray-slot-local delta to the throw
+  // origin), captured when the flight starts; null = in-place tumble.
+  Offset? _throwDelta;
+  bool _settled = true;
+  static const double _flightSplit = 0.72; // flight → settle handoff
+
+  @override
+  void initState() {
+    super.initState();
+    _tumble.addListener(() {
+      // LFP-1b: settle beat — one light haptic per die as it lands.
+      if (!_settled && _tumble.value >= _flightSplit) {
+        _settled = true;
+        widget.onSettle?.call();
+      }
+    });
+  }
+
   @override
   void didUpdateWidget(DieChip old) {
     super.didUpdateWidget(old);
     if (widget.rollToken != old.rollToken && widget.value != null) {
       Future.delayed(Duration(milliseconds: widget.tumbleDelayMs), () {
-        if (mounted) _tumble.forward(from: 0);
+        if (!mounted) return;
+        if (widget.flight) {
+          // Capture the chip's slot position NOW (post-layout) and aim the
+          // throw from the bottom-center of the screen — where the thumb is.
+          final box = context.findRenderObject() as RenderBox?;
+          if (box != null && box.attached && box.hasSize) {
+            final center = box.localToGlobal(box.size.center(Offset.zero));
+            final screen = MediaQuery.sizeOf(context);
+            final origin = Offset(screen.width / 2, screen.height - 56);
+            _throwDelta = origin - center;
+          } else {
+            _throwDelta = const Offset(0, 220); // sane fallback: from below
+          }
+          _settled = false;
+        } else {
+          _throwDelta = null;
+        }
+        _tumble.forward(from: 0);
       });
     }
   }
@@ -552,7 +607,11 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     if (widget.value != null) a11y.write(', rolled ${widget.value}');
     if (widget.maxed && !widget.assigned) a11y.write(', max roll');
     if (widget.assigned) {
-      a11y.write(', spent');
+      a11y.write(
+        widget.contribution != null
+            ? ', spent for ${widget.contribution}'
+            : ', spent',
+      );
     } else if (widget.selected) {
       a11y.write(', selected');
     }
@@ -569,16 +628,55 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
           animation: _tumble,
           builder: (context, _) {
             final f = _tumble.isAnimating ? _tumble.value : 1.0;
-            // Rotation settles with a decaying wobble; die hops once.
-            final settle = 1.0 - Curves.easeOut.transform(f);
-            final rot = math.sin(f * math.pi * 4) * 0.55 * settle;
-            final hop = -math.sin(f * math.pi).abs() * 14 * (1.0 - f * 0.6);
             // While mid-tumble, show cycling faces instead of the result.
             final showValue = widget.value == null
                 ? null
                 : (f < 0.55 && _tumble.isAnimating)
                 ? 1 + ((f * 31).floor() * 7 + widget.tumbleDelayMs) % def.size
                 : widget.value;
+            // LFP-1: physical throw — arc in from the throw origin with
+            // spin, then one soft bounce as it settles into the slot. The
+            // in-place hop remains for non-tray contexts (flight == false).
+            if (widget.flight && _throwDelta != null && _tumble.isAnimating) {
+              final delta = _throwDelta!;
+              Offset offset;
+              double rot;
+              if (f < _flightSplit) {
+                final ft = Curves.easeOutCubic.transform(f / _flightSplit);
+                // Straight-line approach + parabolic lift = a thrown arc.
+                final lin = Offset.lerp(delta, Offset.zero, ft)!;
+                final lift = -math.sin(ft * math.pi) * 30.0;
+                // Deterministic per-slot spin, alternating direction so the
+                // tray doesn't rotate in lockstep.
+                final dir = (widget.tumbleDelayMs ~/ 50).isEven ? 1.0 : -1.0;
+                rot =
+                    dir *
+                    (1.0 - ft) *
+                    (0.9 + (widget.tumbleDelayMs % 150) / 300) *
+                    2 *
+                    math.pi;
+                offset = lin + Offset(0, lift);
+              } else {
+                final st = (f - _flightSplit) / (1 - _flightSplit);
+                // One soft bounce with a decaying wobble.
+                offset = Offset(
+                  0,
+                  -math.sin(st * math.pi) * 7.0 * (1 - st * 0.4),
+                );
+                rot = math.sin(st * math.pi * 3) * 0.06 * (1 - st);
+              }
+              return Transform.translate(
+                offset: offset,
+                child: Transform.rotate(
+                  angle: rot,
+                  child: _face(def, showValue),
+                ),
+              );
+            }
+            // Rotation settles with a decaying wobble; die hops once.
+            final settle = 1.0 - Curves.easeOut.transform(f);
+            final rot = math.sin(f * math.pi * 4) * 0.55 * settle;
+            final hop = -math.sin(f * math.pi).abs() * 14 * (1.0 - f * 0.6);
             return Transform.translate(
               offset: Offset(0, _tumble.isAnimating ? hop : 0),
               child: Transform.rotate(
@@ -649,7 +747,16 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                   if (glowSelected)
                     CustomPaint(painter: _DieRingPainter(EmberColors.ember))
                   else if (glowMaxed)
-                    CustomPaint(painter: _DieRingPainter(EmberColors.gold)),
+                    CustomPaint(painter: _DieRingPainter(EmberColors.gold))
+                  // LFP-2c: modded dice (boon/forged/shop specials) carry a
+                  // quiet accent ring all the time, so "this die is special"
+                  // stops being knowledge you need the shop card for.
+                  else if (def.mods.isNotEmpty && !widget.assigned)
+                    CustomPaint(
+                      painter: _DieRingPainter(
+                        EmberColors.kindElite.withValues(alpha: 0.5),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -662,7 +769,9 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   widget.assigned && value != null
-                      ? 'd${def.size} SPENT'
+                      ? (widget.contribution != null
+                            ? '+${widget.contribution} SPENT'
+                            : 'd${def.size} SPENT')
                       : value != null && widget.maxed
                       ? 'd${def.size} MAX'
                       : 'd${def.size}',

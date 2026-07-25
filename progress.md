@@ -386,3 +386,75 @@ Changes:
 
 Evidence: flutter analyze clean; full `flutter test` green (incl. new easy-ramp staircase test);
 tool/play_session_test green with 28 phase screenshots; autoplay sweeps easy/normal logged above.
+
+## 2026-07-25 — v0.3.11 legacy-feel pre-gate slice (LFP-2a/2c, 3, 5, 6 from docs/legacy-feel-plan.md)
+
+Implements the pre-gate workstreams of the legacy-feel plan (PR #49) on
+`legacy/dice-builder`, per its own sequencing: cheap clarity first, headline
+feel work (LFP-1 physical dice, LFP-2b undo) left post-gate — both are
+blocked on the owner's open questions in the plan.
+
+- LFP-6b: risky-reroll copy — "each lands −1 pip" read as −1 from the CURRENT
+  face; actual rule is reroll-then-subtract. Copy now says "new face −1".
+- LFP-6c: boon screen gets the reward screen's deterministic RECOMMENDED
+  default (die boons by size, then max HP > gold > embers).
+- LFP-6a CORRECTED: the "Cinder Wisp spawns 19/20 on Easy" finding is NOT a
+  floor-vs-round bug — combatBegin rounds hp and max_hp from the same value
+  (VERIFIED in code; 29×0.68=19.72 → 20/20). It is overkill splash carry-in,
+  working as designed but announced only in a toast that died under the
+  flame wipe. The splash is now called out on the enemy in combat
+  ("OVERKILL SPLASH −N"). The plan doc's diagnosis should not be re-fixed.
+- LFP-3a/3b/3c: burn stacks no longer share the intent badge's row (the
+  "🛡13 🔥3 = it will shield and burn me" misread); status renders as a small
+  pill on the enemy body. Long-press any badge → 2s call-out naming it (burn
+  copy sim-verified: ticks AFTER the enemy's move, then −1 — the plan doc
+  said "turn start", corrected). Tutorial card 1 gains the plan-vs-status
+  clause.
+- LFP-5: tap anywhere during enemy resolution = 2x fast-forward (call-outs
+  1s), second tap = skip-to-state. Information never dropped; player/enemy
+  death moments keep full length. Measured in test: 450 ms vs 700 ms to
+  next input on a pinned fight (≥40% DoD met; real turns with burn/big hits
+  save more).
+- LFP-2a/2c (presentation-only subset): selecting a die shows "ATTACK +a ·
+  BLOCK +b" (modifiers, combos, relics included) as a stage pill before the
+  tap; spent chips show what they actually contributed ("+7 SPENT", from the
+  sim's die_assigned value); modded dice carry a quiet accent ring. The
+  preview math is a UI twin of the sim's — test/feel_pregate_test.dart
+  replays 10 seeded runs and asserts preview == die_assigned value for every
+  assignment (drift guard), plus fast-forward timing, status-chip
+  separation/tooltip, and boon-RECOMMENDED tests.
+- version 0.3.10+13 -> 0.3.11+14.
+
+Evidence: flutter analyze clean; full `flutter test` green (138 + 5 new);
+tool/play_session_test green. Sim untouched — golden anchors and replays are
+byte-identical by construction (no file under lib/sim/ or lib/data/ changed).
+
+## 2026-07-25 — v0.3.11 phase 2: LFP-1 physical dice, LFP-2a die flight, LFP-4 idle life (owner-directed "fix the issues and make the update")
+
+Owner asked Viktor to implement the remaining playtest-gap workstreams and
+ship a GitHub release. Everything presentation-only; sim untouched again.
+
+- LFP-1a/1b/1c: rolls now THROW the dice — launch from a bottom-center thumb
+  origin, per-die arc + alternating spin, one soft bounce into the slot, all
+  inside the existing 520ms budget with the same face-cycling. Settle beats
+  fire per-die light haptics (stagger = rattle). Risky/charge rerolls re-fly
+  only the rerolled dice via per-die _reflyGen tokens (the old code re-tumbled
+  the whole tray on risky rerolls; charge rerolls didn't animate at all).
+  Rendering is programmatic 2.5-D (plan open question 2 answered with the
+  free, decision-#7-safe option; a pre-rendered sheet can replace it later).
+- LFP-2a (flight half): on assign, a ghost of the die flies from its tray
+  slot to the verb button (230ms easeIn) and the button pulses on arrival.
+  With the preview pill + contribution labels from phase 1 this completes
+  LFP-2a. LFP-2b undo remains OPEN — it needs the sim-seam decision (unassign
+  command vs commit-at-end-turn, PR #49 question 1); not implementable
+  without relitigating a standing decision, so deferred, not forgotten.
+- LFP-4a/4b: root-caused the static stage — several sheets have 1-frame idle
+  rows, which rendered with no AnimationController at all; multi-frame bobs
+  were sub-pixel at stage scale. SpriteView gains a procedural idle ticker:
+  ~2px sine bob (both combatants) + slow ±1px threat sway on the enemy while
+  an attack is telegraphed. Independent of frame count by construction.
+- features.json: LFP-1..6 lifted in with evidence per the harness protocol.
+
+Evidence: flutter analyze clean; full flutter test green; play_session
+harness green. No lib/sim or lib/data change across the whole branch —
+golden anchors, replays and saves byte-identical.
