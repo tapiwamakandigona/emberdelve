@@ -165,7 +165,17 @@ class PlayerCore {
     }
 
     // --- gravity + integrate
-    body.vy += kGravity * dt;
+    // Asymmetric gravity: apex hang while jump is held (extra beat of air
+    // control at the top of the arc), heavier gravity on the way down (snappy
+    // landings). Rise gravity is untouched, so jump HEIGHT never changes —
+    // the clearance tests pin that.
+    var g = kGravity;
+    if (!body.onGround && input.jumpHeld && body.vy.abs() < kApexHangSpeed) {
+      g = kGravity * kApexGravityMultiplier;
+    } else if (body.vy > 0) {
+      g = kGravity * kFallGravityMultiplier;
+    }
+    body.vy += g * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
     integrate(body, dt, tileAt, dropThrough: dropThrough || input.down);
     if (body.onGround && !wasOnGround) _events.add(PlayerEvent.landed);
