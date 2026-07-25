@@ -28,7 +28,8 @@
 6. **Monetization:** free; optional one-time supporter IAP later. **Banned:** energy timers, decaying streaks, FOMO-expiring content, loss-framed notifications, pay-to-win.
 7. **Performance targets:** 60 fps on 2GB-RAM Android (see spec §Performance): sprite batching / atlases, object pooling for projectiles+particles, no per-frame allocations in hot paths, `--release` profiling before each release.
 8. **Tutorial promise:** an in-game tutorial was promised to Play testers — the first level must teach movement/jump/attack via signs & guided layout. Blocker for the first pivot release.
-9. **Milestones (v2):** M1 scaffold (boots, CI green) → M2 engine core (player+physics+camera+touch) → M3 combat & pickups → M4 meta (shop/save/level-select) → M5 content (World 1 “Emberwood”: 5 levels + boss) → M6 release `v1.0.0-alpha.1`. **Push to GitHub at every milestone — never hold work locally.**
+9. **Milestones (v2):** M1 scaffold (boots, CI green) → M2 engine core (player+physics+camera+touch) → M3 combat & pickups → M4 meta (shop/save/level-select) → M5 content (World 1 “Emberwood”: 5 levels + boss) → M6 release `v1.0.0-alpha.1` — **all shipped 2026-07-25** ([release](../../releases/tag/v1.0.0-alpha.1)). **Push to GitHub at every milestone — never hold work locally.**
+10. **Milestones (v2.1 — current):** M7 performance/device-proof pass (measured 60fps, APK diet, cold-start budget) → M8 game-feel & retention polish (medal economy, results juice, seeded Daily Delve — still zero dark patterns) → M9 World 2 “Cinder Depths” (5 levels + boss, 2 new enemies, cave tileset) → M10 release `v1.0.0-beta.1` to the existing Play closed-testing track. Acceptance criteria live in `features.json` (P-M7…P-M10).
 
 ## Play publishing status (updated 2026-07-24)
 - Closed testing (Alpha) LIVE, release 12 (v0.3.9+12), 177 countries. Production gate: 12+ opted-in testers for 14 days → earliest apply ~2026-08-07. A dip below 12 resets the clock; app updates do NOT.

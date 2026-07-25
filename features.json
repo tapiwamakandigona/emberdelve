@@ -47,6 +47,34 @@
       "id": "P-M6",
       "title": "Release v1.0.0-alpha.1: CI green on main, signed APK, GitHub prerelease",
       "acceptance": "CI test+build jobs green on main; signed APK/AAB with unchanged cert; GitHub prerelease v1.0.0-alpha.1 with APK attached and honest release notes",
+      "passes": true,
+      "evidence": "CI run 30128435151 on main@951ad53: test job + signed build job both green, apksigner cert check passed (EXPECTED_CERT_SHA256 unchanged); prerelease https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.1 with app-release.apk + app-release.aab attached and honest notes"
+    },
+    {
+      "id": "P-M7",
+      "title": "Performance & device-proof pass: measured 60fps, APK diet, cold-start budget",
+      "acceptance": "Profile-mode timeline captured on a real or emulated low-end device (2GB class) for w1_l5 and w1_boss with avg frame build+raster <= 16ms documented in docs/perf.md; no per-frame allocations in Session.update hot path (DevTools allocation trace or code-audit checklist in docs/perf.md); APK size delta tracked and tree-shake-icons + split-per-abi evaluated with decision recorded; cold start to title <= 3s on test device",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "P-M8",
+      "title": "Game-feel & retention polish: medals economy, results juice, daily delve",
+      "acceptance": "Results screen shows per-medal breakdown (time/chests/no-hit) with replay CTA; 3-medal completion pays a documented coin bonus; optional seeded 'Daily Delve' remix of a World 1 level (deterministic via lib/core/rng.dart daily seed) with its own best-run record on the title screen; no dark patterns (no streak decay, no FOMO copy) verified against spec section 7; tests cover medal calc + daily seed determinism",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "P-M9",
+      "title": "World 2 'Cinder Depths': 5 levels + boss, 2 new enemies, cave tileset",
+      "acceptance": "assets/levels/w2_l1..w2_l5 + w2_boss parse+lint clean and pass the same quota + scripted-runner completability suite as World 1; >=2 new enemy cores with headless tests; cave/lava tileset + parallax from CC0/CC-BY sources recorded in PROVENANCE.md and CREDITS.md; world select gates World 2 behind the Grove Golem kill; boss with >=3 telegraphed phases",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "P-M10",
+      "title": "Release v1.0.0-beta.1 to Play closed testing",
+      "acceptance": "Version bumped, CI green, signed AAB uploaded to the existing closed-testing track (same package id + cert), GitHub prerelease v1.0.0-beta.1 with APK + honest notes, checkpoints/ entry describing tester-facing changes",
       "passes": false,
       "evidence": ""
     }

@@ -436,3 +436,18 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   save-file bytes). Tests: shop_flow_test (headless buy/haggler/insufficient-funds/skin
   power + widget BUY→EQUIP flow with disk round-trip), meta_screens_test (title routes,
   reset-save confirm, credits attribution, boss lock + medals). P-M4 flipped.
+
+---
+## 2026-07-25 — M6 shipped: v1.0.0-alpha.1 prerelease (orchestrator)
+- Verified CI run 30128435151 on main@951ad53 (post-merge): analyze+test job AND signed
+  build job green; apksigner cert check passed against the immutable EXPECTED_CERT_SHA256.
+- Downloaded the run's signed artifacts (app-release.apk 36.8MB, app-release.aab 55.8MB)
+  and published GitHub prerelease **v1.0.0-alpha.1** (target main, both binaries attached,
+  honest notes incl. alpha limitations): 
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.1
+- P-M6 flipped with evidence. Version in pubspec was already 1.0.0-alpha.1+13 at build time.
+- **New roadmap (owner-directed “new targets/goals”, DM 2026-07-25):** added P-M7…P-M10 to
+  features.json and PROJECT.md §10 — M7 perf/device-proof pass, M8 feel+retention polish
+  (medal economy, Daily Delve, no dark patterns), M9 World 2 “Cinder Depths”, M10
+  v1.0.0-beta.1 to the Play closed-testing track. Rationale: alpha is feature-complete for
+  World 1; the riskiest unknown is real-device performance, so it gates content expansion.
