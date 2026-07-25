@@ -323,12 +323,18 @@ class TextPop extends StatefulWidget {
   final double fontSize;
   final IconData? icon;
   final VoidCallback onDone;
+  // v0.3.10: call-outs used to live exactly 1s (fading from 0.65s) — tester
+  // feedback: "some text is on the screen but it's so fast I can't quite
+  // read it". Combat call-outs now pass ~2s; the float/fade curve is a
+  // fraction of the duration, so longer pops drift and fade proportionally.
+  final Duration duration;
   const TextPop(
       {super.key,
       required this.text,
       required this.onDone,
       this.color = EmberColors.gold,
       this.fontSize = 18,
+      this.duration = const Duration(milliseconds: 1000),
       this.icon});
 
   @override
@@ -338,7 +344,7 @@ class TextPop extends StatefulWidget {
 class _TextPopState extends State<TextPop>
     with SingleTickerProviderStateMixin {
   late final AnimationController _t = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 1000))
+      vsync: this, duration: widget.duration)
     ..forward().whenComplete(widget.onDone);
 
   @override

@@ -73,6 +73,9 @@ class _CombatScreenState extends State<CombatScreen> {
   static const _knockTime = Duration(milliseconds: 140);
   static const _flashTail = Duration(milliseconds: 120);
   static const _deathTime = Duration(milliseconds: 700);
+  // Call-out lifetime (v0.3.10): was TextPop's 1s default — testers couldn't
+  // read PAIR/FREE-REROLL/BLOCKED before it faded. 2s holds the text ~1.3s.
+  static const _noteLife = Duration(milliseconds: 2000);
 
   @override
   void initState() {
@@ -324,6 +327,17 @@ class _CombatScreenState extends State<CombatScreen> {
       onPlayer: false,
       blocked: landed <= 0,
     );
+    // Mirror of the player-side rule (v0.3.10): when the enemy's shield eats
+    // part of the hit, say so — otherwise "-3" against a shielded foe reads
+    // like the attack die itself rolled low.
+    if (absorbed > 0 && landed > 0) {
+      _note(
+        'SHIELD ATE $absorbed',
+        color: EmberColors.block,
+        icon: Icons.shield,
+        onEnemy: true,
+      );
+    }
     // Contact frame: the weapon's smear crosses the enemy — or glances off
     // a shield arc when the hit is fully absorbed.
     if (landed > 0) {
@@ -435,6 +449,7 @@ class _CombatScreenState extends State<CombatScreen> {
       await _sleep(_contact);
       if (!mounted) return;
       final damage = atk['damage'] as int? ?? 0;
+      final absorbed = atk['blocked'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
       Haptics.medium();
       _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
@@ -444,6 +459,18 @@ class _CombatScreenState extends State<CombatScreen> {
         _spawnFx(_FxKind.claws, onPlayer: true, color: EmberColors.danger);
       } else {
         _spawnFx(_FxKind.guard, onPlayer: true);
+      }
+      // Make block visibly pay (v0.3.10): a partial block used to show only
+      // the damage number, so testers read block as doing nothing. Every
+      // absorbed point now gets its own shield call-out (and the guard arc
+      // joins the claws on partial blocks).
+      if (absorbed > 0) {
+        if (damage > 0) _spawnFx(_FxKind.guard, onPlayer: true);
+        _note(
+          damage <= 0 ? 'FULLY BLOCKED' : 'BLOCKED $absorbed',
+          color: EmberColors.block,
+          icon: Icons.shield,
+        );
       }
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
@@ -607,6 +634,30 @@ class _CombatScreenState extends State<CombatScreen> {
                         ),
                       ),
                     ),
+                    // Replayable how-to-play (v0.3.10): the tutorial used to
+                    // show once, ever — a tester considered REINSTALLING to
+                    // see it again. This reopens the same overlay any time.
+                    Semantics(
+                      label: 'How to play',
+                      button: true,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _busy || _tutStep >= 0
+                            ? null
+                            : () => setState(() => _tutStep = 0),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Space.s,
+                            vertical: Space.xs,
+                          ),
+                          child: Icon(
+                            Icons.help_outline,
+                            size: 20,
+                            color: EmberColors.textDim,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: Space.s),
@@ -752,6 +803,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     color: n.color,
                     icon: n.icon,
                     fontSize: 16,
+                    duration: _noteLife,
                     onDone: () {
                       if (mounted) setState(() => _notes.remove(n));
                     },
@@ -953,7 +1005,7 @@ class _CombatScreenState extends State<CombatScreen> {
               _TutorialOverlay(
                 step: _tutStep,
                 onNext: () => setState(() {
-                  if (_tutStep >= 2) {
+                  if (_tutStep >= _TutorialOverlay.cardCount - 1) {
                     _tutStep = -1;
                     widget.c.markTutorialSeen();
                   } else {
@@ -1116,6 +1168,7 @@ class _CombatScreenState extends State<CombatScreen> {
                     color: n.color,
                     icon: n.icon,
                     fontSize: 15,
+                    duration: _noteLife,
                     onDone: () {
                       if (mounted) setState(() => _notes.remove(n));
                     },

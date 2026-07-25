@@ -393,7 +393,7 @@ void main() {
 
     if (steps >= 900) problems.add('play loop hit step budget (900)');
     log.add('runs finished: $runsFinished, steps: $steps');
-    await pumpFor(tester, 1500); // drain animations
+    await pumpFor(tester, 3200); // drain animations (covers the 2s call-outs, v0.3.10)
 
     final report = StringBuffer()
       ..writeln('== PLAY SESSION REPORT ==')
