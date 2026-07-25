@@ -43,6 +43,11 @@ const double kRollDuration = 0.38; // s locked in the roll
 const double kRollSpeed = 190.0; // px/s in facing direction
 const double kRollIFrames = 0.28; // s of invulnerability from roll start
 const double kRollCooldown = 0.35; // s after the roll ends before the next
+// AKP-2b (owner-confirmed 2026-07-25): AK-style air dash — the dash button
+// also fires mid-air: horizontal kRollSpeed burst, gravity suspended for
+// the duration, ONE air dash per airborne period (resets on landing).
+// Tuning flag kept so it can be A/B'd on-device before the beta.
+const bool kAirDashEnabled = true;
 
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
