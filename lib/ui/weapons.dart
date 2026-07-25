@@ -31,44 +31,59 @@ enum WeaponPhase { idle, raise, swing }
 class WeaponDef {
   final String id;
   final String name;
+
   /// Accent used for the smear trail + impact slash.
   final Color accent;
+
   /// Blade length as a fraction of the widget height.
   final double reach;
   final double idleAngle;
   final double raiseAngle;
   final double swingAngle;
-  const WeaponDef(this.id, this.name,
-      {required this.accent,
-      this.reach = 0.52,
-      this.idleAngle = 0.42,
-      this.raiseAngle = -1.75,
-      this.swingAngle = 1.85});
+  const WeaponDef(
+    this.id,
+    this.name, {
+    required this.accent,
+    this.reach = 0.52,
+    this.idleAngle = 0.42,
+    this.raiseAngle = -1.75,
+    this.swingAngle = 1.85,
+  });
 }
 
 /// Character id -> signature weapon. Unknown ids fall back to the Kindler's
 /// brand so a future character never renders empty-handed.
 const Map<String, WeaponDef> _weapons = {
   // The balanced start: a short sword whose edge still glows from the forge.
-  'kindler': WeaponDef('ember_brand', 'Ember Brand',
-      accent: Color(0xFFF0A24C)),
+  'kindler': WeaponDef('ember_brand', 'Ember Brand', accent: Color(0xFFF0A24C)),
   // Tanky: a squat iron maul — slower arc, heavier presence.
-  'warden': WeaponDef('ward_maul', 'Ward Maul',
-      accent: Color(0xFF9FB6D9),
-      reach: 0.46,
-      idleAngle: 0.55,
-      raiseAngle: -2.0,
-      swingAngle: 1.7),
+  'warden': WeaponDef(
+    'ward_maul',
+    'Ward Maul',
+    accent: Color(0xFF9FB6D9),
+    reach: 0.46,
+    idleAngle: 0.55,
+    raiseAngle: -2.0,
+    swingAngle: 1.7,
+  ),
   // High variance: a curved luck-fang, quick and showy.
-  'gambler': WeaponDef('lucky_fang', 'Lucky Fang',
-      accent: Color(0xFFE8C24A),
-      reach: 0.44,
-      idleAngle: 0.3,
-      raiseAngle: -1.55,
-      swingAngle: 2.0),
+  'gambler': WeaponDef(
+    'lucky_fang',
+    'Lucky Fang',
+    accent: Color(0xFFE8C24A),
+    reach: 0.44,
+    idleAngle: 0.3,
+    raiseAngle: -1.55,
+    swingAngle: 2.0,
+  ),
   // Fragile but sharp: the brand iron, tip still white-hot.
-  'ascetic': WeaponDef('brand_iron', 'Brand Iron',
-      accent: Color(0xFFFF7A3C), reach: 0.58, idleAngle: 0.36),
+  'ascetic': WeaponDef(
+    'brand_iron',
+    'Brand Iron',
+    accent: Color(0xFFFF7A3C),
+    reach: 0.58,
+    idleAngle: 0.36,
+  ),
 };
 
 WeaponDef weaponFor(String characterId) =>
@@ -86,25 +101,29 @@ class WeaponView extends StatefulWidget {
   /// accent edge brightens, a heat halo grows, and sparks rise off the
   /// blade, making the die -> weapon causality visible before the swing.
   final double charge;
-  const WeaponView(this.characterId,
-      {super.key,
-      required this.height,
-      this.phase = WeaponPhase.idle,
-      this.charge = 0.0});
+  const WeaponView(
+    this.characterId, {
+    super.key,
+    required this.height,
+    this.phase = WeaponPhase.idle,
+    this.charge = 0.0,
+  });
 
   @override
   State<WeaponView> createState() => _WeaponViewState();
 }
 
-class _WeaponViewState extends State<WeaponView>
-    with TickerProviderStateMixin {
+class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
   // Slow idle sway — bounded pumps in tests, same convention as EmberDrift.
   late final AnimationController _sway = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 2600))
-    ..repeat();
+    vsync: this,
+    duration: const Duration(milliseconds: 2600),
+  )..repeat();
   // Phase transition tween (retargeted on phase change).
   late final AnimationController _move = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 220));
+    vsync: this,
+    duration: const Duration(milliseconds: 220),
+  );
   late double _from;
   late double _to;
   Curve _curve = Curves.easeOutCubic;
@@ -112,14 +131,27 @@ class _WeaponViewState extends State<WeaponView>
 
   WeaponDef get _def => weaponFor(widget.characterId);
 
+  /// PERF: the idle sway + swing tween feed the painter directly through
+  /// [CustomPainter.repaint]. They used to drive an AnimatedBuilder, i.e. a
+  /// setState 60x/s for as long as the weapon was on screen. The combat
+  /// screen's stage sits inside a LayoutBuilder, so that setState scheduled
+  /// a layout callback every frame and forced a full relayout + repaint of
+  /// the whole screen — permanently, even with nothing happening. Cached so
+  /// rebuilds don't hand the painter a fresh merge object each time.
+  late final Listenable _paintClock = Listenable.merge([_sway, _move]);
+
   @override
   void initState() {
     super.initState();
     _from = _to = _def.idleAngle;
   }
 
-  void _retarget(double target,
-      {required Duration duration, required Curve curve, bool smear = false}) {
+  void _retarget(
+    double target, {
+    required Duration duration,
+    required Curve curve,
+    bool smear = false,
+  }) {
     _from = _angle();
     _to = target;
     _curve = curve;
@@ -131,8 +163,7 @@ class _WeaponViewState extends State<WeaponView>
 
   /// Current tweened angle (before sway). Swings accelerate into contact
   /// (easeIn communicates weight); raises/recoveries ease out.
-  double _angle() =>
-      _from + (_to - _from) * _curve.transform(_move.value);
+  double _angle() => _from + (_to - _from) * _curve.transform(_move.value);
 
   @override
   void didUpdateWidget(WeaponView old) {
@@ -145,23 +176,29 @@ class _WeaponViewState extends State<WeaponView>
       switch (widget.phase) {
         case WeaponPhase.raise:
           // Anticipation: quick pull back past the shoulder.
-          _retarget(_def.raiseAngle,
-              duration: const Duration(milliseconds: 90),
-              curve: Curves.easeOut);
+          _retarget(
+            _def.raiseAngle,
+            duration: const Duration(milliseconds: 90),
+            curve: Curves.easeOut,
+          );
           break;
         case WeaponPhase.swing:
           // Strike: whip through the full arc, smear trailing the edge.
-          _retarget(_def.swingAngle,
-              duration: const Duration(milliseconds: 230),
-              curve: Curves.easeInCubic,
-              smear: true);
+          _retarget(
+            _def.swingAngle,
+            duration: const Duration(milliseconds: 230),
+            curve: Curves.easeInCubic,
+            smear: true,
+          );
           break;
         case WeaponPhase.idle:
           // Recovery: settle back to the ready pose with a little
           // follow-through overshoot (weight lives in the deceleration).
-          _retarget(_def.idleAngle,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutBack);
+          _retarget(
+            _def.idleAngle,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutBack,
+          );
           break;
       }
     }
@@ -185,22 +222,19 @@ class _WeaponViewState extends State<WeaponView>
           tween: Tween(begin: 0, end: widget.charge.clamp(0.0, 1.0)),
           duration: const Duration(milliseconds: 260),
           curve: Curves.easeOutCubic,
-          builder: (context, charge, _) => AnimatedBuilder(
-            animation: Listenable.merge([_sway, _move]),
-            builder: (context, _) {
-              final swayAmp = widget.phase == WeaponPhase.idle ? 0.05 : 0.0;
-              final angle = _angle() +
-                  math.sin(_sway.value * math.pi * 2) * swayAmp;
-              final smearFrom =
-                  _smearing && _move.isAnimating ? _from : null;
-              return CustomPaint(
-                size: size,
-                painter: _WeaponPainter(_def, angle,
-                    smearFrom: smearFrom,
-                    charge: charge,
-                    sparkTime: _sway.value),
-              );
-            },
+          builder: (context, charge, _) => CustomPaint(
+            size: size,
+            painter: _WeaponPainter(
+              _def,
+              swayAmp: widget.phase == WeaponPhase.idle ? 0.05 : 0.0,
+              angleOf: _angle,
+              sway: _sway,
+              move: _move,
+              smearing: () => _smearing && _move.isAnimating,
+              smearFromOf: () => _from,
+              charge: charge,
+              repaint: _paintClock,
+            ),
           ),
         ),
       ),
@@ -210,17 +244,34 @@ class _WeaponViewState extends State<WeaponView>
 
 class _WeaponPainter extends CustomPainter {
   final WeaponDef def;
-  final double angle;
-  final double? smearFrom; // when set, draw the smear arc from here to angle
+  final double swayAmp;
+  final double Function() angleOf;
+  final Animation<double> sway;
+  final Animation<double> move;
+  final bool Function() smearing;
+  final double Function() smearFromOf;
   final double charge; // 0..1 heat from the selected die's pips
-  final double sparkTime; // sway clock reused for charge-spark motion
+
+  /// Live values, read at paint time (see [_paintClock]).
+  double get angle => angleOf() + math.sin(sway.value * math.pi * 2) * swayAmp;
+  double? get smearFrom => smearing() ? smearFromOf() : null;
+  double get sparkTime => sway.value; // sway clock reused for spark motion
   final Paint _p = Paint();
   final Paint _outline = Paint()
     ..style = PaintingStyle.stroke
     ..strokeJoin = StrokeJoin.round
     ..color = const Color(0xCC120C08);
-  _WeaponPainter(this.def, this.angle,
-      {this.smearFrom, this.charge = 0.0, this.sparkTime = 0.0});
+  _WeaponPainter(
+    this.def, {
+    required this.swayAmp,
+    required this.angleOf,
+    required this.sway,
+    required this.move,
+    required this.smearing,
+    required this.smearFromOf,
+    this.charge = 0.0,
+    required super.repaint,
+  });
 
   double _h(int i, int salt) {
     final v = math.sin(i * 113.9 + salt * 271.3) * 43758.5453;
@@ -252,8 +303,13 @@ class _WeaponPainter extends CustomPainter {
           ],
           stops: const [0.0, 1.0],
         ).createShader(rect);
-      canvas.drawArc(rect.deflate(reach * 0.15), from - math.pi / 2,
-          angle - from, false, _p);
+      canvas.drawArc(
+        rect.deflate(reach * 0.15),
+        from - math.pi / 2,
+        angle - from,
+        false,
+        _p,
+      );
       _p.shader = null;
       // White-hot core streak on the trailing half of the smear — the glint
       // that sells speed (brighter when the swing was charged).
@@ -261,8 +317,13 @@ class _WeaponPainter extends CustomPainter {
       _p
         ..strokeWidth = reach * 0.09
         ..color = Colors.white.withValues(alpha: 0.35 + 0.45 * charge);
-      canvas.drawArc(rect.deflate(reach * 0.15),
-          angle - math.pi / 2 - coreSweep, coreSweep, false, _p);
+      canvas.drawArc(
+        rect.deflate(reach * 0.15),
+        angle - math.pi / 2 - coreSweep,
+        coreSweep,
+        false,
+        _p,
+      );
       _p.style = PaintingStyle.fill;
     }
 
@@ -277,8 +338,10 @@ class _WeaponPainter extends CustomPainter {
       // a soft aura, not a solid disc.
       _p
         ..style = PaintingStyle.fill
-        ..maskFilter =
-            MaskFilter.blur(BlurStyle.normal, reach * (0.16 + 0.10 * charge));
+        ..maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          reach * (0.16 + 0.10 * charge),
+        );
       _p.color = def.accent.withValues(alpha: 0.05 + 0.11 * charge);
       canvas.drawCircle(tip, reach * (0.16 + 0.18 * charge), _p);
       _p.color = def.accent.withValues(alpha: 0.05 + 0.10 * charge);
@@ -289,8 +352,11 @@ class _WeaponPainter extends CustomPainter {
         final f = (sparkTime * (0.7 + _h(i, 1) * 0.8) + _h(i, 2)) % 1.0;
         final x = (_h(i, 3) - 0.5) * reach * 0.30;
         final y = -reach * (0.45 + _h(i, 4) * 0.5) - f * reach * 0.22;
-        _p.color = Color.lerp(def.accent, Colors.white, _h(i, 5) * 0.5)!
-            .withValues(alpha: (1.0 - f) * (0.35 + 0.5 * charge));
+        _p.color = Color.lerp(
+          def.accent,
+          Colors.white,
+          _h(i, 5) * 0.5,
+        )!.withValues(alpha: (1.0 - f) * (0.35 + 0.5 * charge));
         canvas.drawCircle(Offset(x, y), 0.8 + _h(i, 6) * 1.4, _p);
       }
     }
@@ -318,23 +384,27 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = const Color(0xFF4A3626);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, reach * 0.10),
-                width: w * 1.1,
-                height: reach * 0.22),
-            Radius.circular(w * 0.5)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.10),
+          width: w * 1.1,
+          height: reach * 0.22,
+        ),
+        Radius.circular(w * 0.5),
+      ),
+      _p,
+    );
     _p.color = const Color(0xFF8A6A3A);
     canvas.drawCircle(Offset(0, reach * 0.22), w * 0.72, _p);
     // Crossguard.
     _p.color = const Color(0xFF6E5A3A);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset.zero, width: w * 4.4, height: w * 0.95),
-            Radius.circular(w * 0.4)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 4.4, height: w * 0.95),
+        Radius.circular(w * 0.4),
+      ),
+      _p,
+    );
     // Blade: warm steel, ember-lit edge.
     final blade = Path()
       ..moveTo(-w, -w * 0.6)
@@ -357,10 +427,12 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = w * 0.34
       ..strokeCap = StrokeCap.round
-      ..color = Color.lerp(def.accent, Colors.white, charge * 0.6)!
-          .withValues(alpha: 0.85 + 0.15 * charge);
-    canvas.drawLine(
-        Offset(w * 0.62, -w * 1.2), Offset(0, -reach * 0.97), _p);
+      ..color = Color.lerp(
+        def.accent,
+        Colors.white,
+        charge * 0.6,
+      )!.withValues(alpha: 0.85 + 0.15 * charge);
+    canvas.drawLine(Offset(w * 0.62, -w * 1.2), Offset(0, -reach * 0.97), _p);
     // Fuller groove.
     _p
       ..strokeWidth = w * 0.22
@@ -376,42 +448,59 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = const Color(0xFF4A3626);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, -reach * 0.36),
-                width: w * 0.9,
-                height: reach * 1.22),
-            Radius.circular(w * 0.4)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.36),
+          width: w * 0.9,
+          height: reach * 1.22,
+        ),
+        Radius.circular(w * 0.4),
+      ),
+      _p,
+    );
     // Grip wrap.
     _p.color = const Color(0xFF6E5A3A);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, reach * 0.06),
-                width: w * 1.05,
-                height: reach * 0.2),
-            Radius.circular(w * 0.4)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.06),
+          width: w * 1.05,
+          height: reach * 0.2,
+        ),
+        Radius.circular(w * 0.4),
+      ),
+      _p,
+    );
     // Head: squat iron block with a gold band + rivet, warden-blue sheen.
     final head = Rect.fromCenter(
-        center: Offset(0, -reach * 0.82), width: w * 4.6, height: reach * 0.34);
+      center: Offset(0, -reach * 0.82),
+      width: w * 4.6,
+      height: reach * 0.34,
+    );
     _p.shader = const LinearGradient(
       begin: Alignment.bottomCenter,
       end: Alignment.topCenter,
       colors: [Color(0xFF3C4354), Color(0xFF5C6880)],
     ).createShader(head);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)), _p);
+      RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)),
+      _p,
+    );
     _p.shader = null;
     _outline.strokeWidth = w * 0.16;
     canvas.drawRRect(
-        RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)), _outline);
+      RRect.fromRectAndRadius(head, Radius.circular(w * 0.5)),
+      _outline,
+    );
     _p.color = const Color(0xFFE8C24A);
     canvas.drawRect(
-        Rect.fromCenter(
-            center: Offset(0, -reach * 0.82), width: w * 0.5, height: reach * 0.34),
-        _p);
+      Rect.fromCenter(
+        center: Offset(0, -reach * 0.82),
+        width: w * 0.5,
+        height: reach * 0.34,
+      ),
+      _p,
+    );
     _p.color = def.accent.withValues(alpha: 0.9);
     canvas.drawCircle(Offset(-w * 1.6, -reach * 0.82), w * 0.3, _p);
     canvas.drawCircle(Offset(w * 1.6, -reach * 0.82), w * 0.3, _p);
@@ -424,28 +513,36 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = const Color(0xFF4A3626);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, reach * 0.08),
-                width: w,
-                height: reach * 0.2),
-            Radius.circular(w * 0.5)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.08),
+          width: w,
+          height: reach * 0.2,
+        ),
+        Radius.circular(w * 0.5),
+      ),
+      _p,
+    );
     _p.color = const Color(0xFFC24040);
     canvas.drawCircle(Offset(0, reach * 0.2), w * 0.55, _p);
     // Short guard.
     _p.color = const Color(0xFF8A6A3A);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset.zero, width: w * 3.0, height: w * 0.8),
-            Radius.circular(w * 0.4)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 3.0, height: w * 0.8),
+        Radius.circular(w * 0.4),
+      ),
+      _p,
+    );
     // Curved blade: crescent fang leaning into the swing direction.
     final blade = Path()
       ..moveTo(-w * 0.7, -w * 0.4)
       ..quadraticBezierTo(
-          w * 1.6, -reach * 0.5, w * 0.35, -reach) // outer edge (leading)
+        w * 1.6,
+        -reach * 0.5,
+        w * 0.35,
+        -reach,
+      ) // outer edge (leading)
       ..quadraticBezierTo(w * 0.3, -reach * 0.5, -w * 0.7, -w * 0.4)
       ..close();
     _p.shader = const LinearGradient(
@@ -477,23 +574,29 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = const Color(0xFF3A3148);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, -reach * 0.38),
-                width: w,
-                height: reach * 1.28),
-            Radius.circular(w * 0.5)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.38),
+          width: w,
+          height: reach * 1.28,
+        ),
+        Radius.circular(w * 0.5),
+      ),
+      _p,
+    );
     // Leather grip.
     _p.color = const Color(0xFF4A3626);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromCenter(
-                center: Offset(0, reach * 0.05),
-                width: w * 1.4,
-                height: reach * 0.24),
-            Radius.circular(w * 0.6)),
-        _p);
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.05),
+          width: w * 1.4,
+          height: reach * 0.24,
+        ),
+        Radius.circular(w * 0.6),
+      ),
+      _p,
+    );
     // White-hot brand head: glowing ring + core.
     final tip = Offset(0, -reach * 0.94);
     _p.color = def.accent.withValues(alpha: 0.35 + 0.3 * charge);
@@ -511,11 +614,13 @@ class _WeaponPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WeaponPainter old) =>
-      old.angle != angle ||
-      old.smearFrom != smearFrom ||
+      // Animation-driven values arrive via [repaint]; only rebuild-time
+      // inputs are compared here.
       old.def != def ||
       old.charge != charge ||
-      (charge > 0.02 && old.sparkTime != sparkTime);
+      old.swayAmp != swayAmp ||
+      old.sway != sway ||
+      old.move != move;
 }
 
 // ---------------------------------------------------------------------------
@@ -528,12 +633,13 @@ class ImpactSlash extends StatefulWidget {
   final Color color;
   final Duration duration;
   final VoidCallback onDone;
-  const ImpactSlash(
-      {super.key,
-      required this.onDone,
-      this.claws = false,
-      this.color = EmberColors.gold,
-      this.duration = const Duration(milliseconds: 340)});
+  const ImpactSlash({
+    super.key,
+    required this.onDone,
+    this.claws = false,
+    this.color = EmberColors.gold,
+    this.duration = const Duration(milliseconds: 340),
+  });
 
   @override
   State<ImpactSlash> createState() => _ImpactSlashState();
@@ -541,9 +647,10 @@ class ImpactSlash extends StatefulWidget {
 
 class _ImpactSlashState extends State<ImpactSlash>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _t =
-      AnimationController(vsync: this, duration: widget.duration)
-        ..forward().whenComplete(widget.onDone);
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  )..forward().whenComplete(widget.onDone);
 
   @override
   void dispose() {
@@ -556,8 +663,11 @@ class _ImpactSlashState extends State<ImpactSlash>
     return IgnorePointer(
       child: RepaintBoundary(
         child: CustomPaint(
-          painter: _ImpactSlashPainter(_t, claws: widget.claws,
-              color: widget.color),
+          painter: _ImpactSlashPainter(
+            _t,
+            claws: widget.claws,
+            color: widget.color,
+          ),
           size: Size.infinite,
         ),
       ),
@@ -571,7 +681,7 @@ class _ImpactSlashPainter extends CustomPainter {
   final Color color;
   final Paint _p = Paint();
   _ImpactSlashPainter(this.t, {required this.claws, required this.color})
-      : super(repaint: t);
+    : super(repaint: t);
 
   double _h(int i, int salt) {
     final v = math.sin(i * 157.3 + salt * 269.1) * 43758.5453;
@@ -616,18 +726,28 @@ class _ImpactSlashPainter extends CustomPainter {
       _p
         ..strokeWidth = r * 0.07
         ..color = Colors.white.withValues(alpha: 0.8 * fade);
-      canvas.drawArc(rect.deflate(r * 0.02), start + 0.15,
-          sweep * 0.85, false, _p);
+      canvas.drawArc(
+        rect.deflate(r * 0.02),
+        start + 0.15,
+        sweep * 0.85,
+        false,
+        _p,
+      );
     }
     // Impact sparks: fly out from the center, cooling.
     _p.style = PaintingStyle.fill;
     for (var i = 0; i < 9; i++) {
       final ang = _h(i, 1) * math.pi * 2;
       final dist = (r * 0.2 + _h(i, 2) * r * 0.9) * Curves.easeOut.transform(f);
-      final p = Offset(c.dx + math.cos(ang) * dist,
-          c.dy + math.sin(ang) * dist - f * f * 14);
-      _p.color = Color.lerp(Colors.white, color, (f * 1.6).clamp(0.0, 1.0))!
-          .withValues(alpha: fade * (0.5 + _h(i, 3) * 0.5));
+      final p = Offset(
+        c.dx + math.cos(ang) * dist,
+        c.dy + math.sin(ang) * dist - f * f * 14,
+      );
+      _p.color = Color.lerp(
+        Colors.white,
+        color,
+        (f * 1.6).clamp(0.0, 1.0),
+      )!.withValues(alpha: fade * (0.5 + _h(i, 3) * 0.5));
       canvas.drawCircle(p, (1.0 - f * 0.5) * (1.4 + _h(i, 4) * 2.0), _p);
     }
   }
@@ -646,11 +766,12 @@ class GuardFlash extends StatefulWidget {
   final int facing;
   final VoidCallback onDone;
   final Duration duration;
-  const GuardFlash(
-      {super.key,
-      required this.onDone,
-      this.facing = 1,
-      this.duration = const Duration(milliseconds: 480)});
+  const GuardFlash({
+    super.key,
+    required this.onDone,
+    this.facing = 1,
+    this.duration = const Duration(milliseconds: 480),
+  });
 
   @override
   State<GuardFlash> createState() => _GuardFlashState();
@@ -658,9 +779,10 @@ class GuardFlash extends StatefulWidget {
 
 class _GuardFlashState extends State<GuardFlash>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _t =
-      AnimationController(vsync: this, duration: widget.duration)
-        ..forward().whenComplete(widget.onDone);
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  )..forward().whenComplete(widget.onDone);
 
   @override
   void dispose() {
@@ -695,7 +817,9 @@ class _GuardFlashPainter extends CustomPainter {
     final scale = f < 0.25 ? 0.6 + (f / 0.25) * 0.5 : 1.1 - (f - 0.25) * 0.13;
     final fade = f < 0.45 ? 1.0 : 1.0 - (f - 0.45) / 0.55;
     final c = Offset(
-        size.width / 2 + facing * size.width * 0.16, size.height * 0.52);
+      size.width / 2 + facing * size.width * 0.16,
+      size.height * 0.52,
+    );
     final r = size.shortestSide * 0.30 * scale;
     // Shield arc: a vertical crescent facing the attacker.
     final rect = Rect.fromCircle(center: c, radius: r);
@@ -709,8 +833,13 @@ class _GuardFlashPainter extends CustomPainter {
     _p
       ..strokeWidth = r * 0.08
       ..color = Colors.white.withValues(alpha: 0.7 * fade);
-    canvas.drawArc(rect.deflate(r * 0.14), start + 0.12, math.pi - 0.74,
-        false, _p);
+    canvas.drawArc(
+      rect.deflate(r * 0.14),
+      start + 0.12,
+      math.pi - 0.74,
+      false,
+      _p,
+    );
     // Rune dot at the boss of the shield.
     _p
       ..style = PaintingStyle.fill
