@@ -557,3 +557,27 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   bench, #37 frame overlay open); measured 60fps + cold-start on a 2GB device
   STILL OPEN — needs a physical phone. Owner directed W2 to proceed anyway;
   the next release notes must keep carrying the device-metrics caveat.
+
+---
+## 2026-07-25 — AK-parity phase 1 (pre-gate slice of PR #48 plan)
+- Branch feat/ak-parity-phase1 off c1957c1. Scope: AKP-1, AKP-2a/2c, AKP-5,
+  AKP-6 from docs/ak-parity-plan.md. Deliberately NOT done: AKP-2b air-dash
+  (open owner question), AKP-3/4 (M-sized, post-gate), 352×198 zoom variant.
+- AKP-1 (2250da3): viewport 480×270 → 384×216 (char ≈11% of screen, AK-range),
+  look-ahead 24→32. hud_routing_test now derives button coords dynamically.
+- AKP-2a (0e3e12a): roll/dash is a first-class verb — InputIntent.rollPressed
+  edge, shared _tryRoll() (chord + button + keyboard Shift/L), ground-only.
+- AKP-5 + 2c (03bdafe): AK-style 4-button diamond (jump 56 biggest, sword 52,
+  dash 44, apple 44 auto-hide), down-chevron button (peek/drop-through),
+  pause 20→44px, idle 0.55/pressed 1.0 opacity, spawn fade. New assets
+  hud/btn_down + hud/icon_dash (CC0, tool/build_hud_extras.py, PROVENANCE.md).
+  6-test hud_layout_test: ≥44px targets, no overlaps, routing, fade.
+- AKP-6 (706af68): w1_l1 teach-before-test rework (first pit 12 tiles out,
+  3-wide, step lip blocks non-jumpers; sign teaches DASH) + hazardEject
+  damage path (kHazardEjectSpeedY/X) so pits eject instead of cheap-kill.
+  onboarding_test: naive hold-right bot survives ≥30s; design guard: no
+  hazard pit >5 wide in ANY shipped level.
+- VERIFIED: flutter analyze clean; 250/250 tests green (233 baseline + 17
+  new); web-harness screenshots confirm zoom + new HUD live in release build.
+- features.json untouched — AKP items are plan-tracked (PR #48), not
+  feature-gate items. Device metrics (P-M7) still the open gate item.
