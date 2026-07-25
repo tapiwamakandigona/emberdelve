@@ -96,7 +96,7 @@ void main() {
     }
     await tester.pumpWidget(const MaterialApp(home: LevelSelectScreen()));
     await tester.pumpAndSettle();
-    expect(find.text('EMBERWOOD'), findsOneWidget);
+    expect(find.text('WORLD 1 — EMBERWOOD'), findsOneWidget);
     expect(find.text(' 77   '), findsOneWidget); // wallet coins
     expect(find.text('Grove Golem'), findsOneWidget);
     expect(find.text('Finish all five levels to face the Golem'),
