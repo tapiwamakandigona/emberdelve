@@ -24,17 +24,21 @@ void main() {
     // settle; pump the route transition explicitly instead.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('EMBERWOOD'), findsOneWidget);
+    expect(find.text('WORLD 1 — EMBERWOOD'), findsOneWidget);
     expect(find.text('Forest Edge'), findsOneWidget);
   });
 
   testWidgets('level select locks later levels', (tester) async {
+    // Tall surface so the lazy ListView builds both world sections.
+    tester.view.physicalSize = const Size(800, 1600);
+    tester.view.devicePixelRatio = 1.0;
     await tester.pumpWidget(const MaterialApp(home: LevelSelectScreen()));
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsNWidgets(5));
+    // 5 locked in W1 + all 6 locked in the gated W2 section.
+    expect(find.byIcon(Icons.lock), findsNWidgets(11));
     AppState.save.recordFor('w1_l1').finished = true;
     await tester.pumpWidget(const MaterialApp(home: LevelSelectScreen()));
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.lock), findsNWidgets(4));
+    expect(find.byIcon(Icons.lock), findsNWidgets(10));
   });
 }

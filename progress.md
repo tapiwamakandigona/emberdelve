@@ -540,3 +540,20 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   (universal APK 37.0 MB + AAB, SHA-256s in notes). Version 1.0.0-alpha.3+15.
 - Still OPEN: on-device confirmation by owner; device frame-budget/cold-start metrics;
   P-M9 World 2; P-M10 beta.1→Play; old alpha.1 prerelease still listed.
+
+---
+## 2026-07-25 — owner-directed backlog: roll verb, footsteps, World 2 (maps-audio-visuals agent)
+- Owner DM: "take them" (the flagged-not-done items). Shipped:
+  - #41 roll verb: DOWN+JUMP on solid ground = commit-dodge with i-frames
+    (dead input before; 11-frame roll sheet finally used). 7 new tests.
+  - #42 footsteps: quiet alternating cadence, hard-gated to genuine running.
+  - #43 cave environment, #44 Soot Creeper + Cinder Diver, #45 five Cinder
+    Depths levels + Kiln Golem arena + two-world level select. P-M9 flipped
+    with evidence (36-test acceptance suite incl. bot completability).
+- Integrator work: reviewed + merged the parallel perf/controls lane's green
+  PRs #33/#34/#30 (resolving their conflicts with this lane) so both lanes
+  build on one main.
+- M7 gate status (honest): headless side done (#30 zero-alloc render, #32 sim
+  bench, #37 frame overlay open); measured 60fps + cold-start on a 2GB device
+  STILL OPEN — needs a physical phone. Owner directed W2 to proceed anyway;
+  the next release notes must keep carrying the device-metrics caveat.

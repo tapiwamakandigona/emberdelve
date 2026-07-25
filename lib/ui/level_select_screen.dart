@@ -28,7 +28,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
       backgroundColor: const Color(0xFF141420),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('EMBERWOOD',
+        title: const Text('DELVE',
             style: TextStyle(
                 fontFamily: 'Cinzel',
                 color: _gold,
@@ -56,32 +56,58 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
             filterQuality: FilterQuality.none,
             color: const Color(0xAA141420),
             colorBlendMode: BlendMode.srcATop),
-        ListView.separated(
+        ListView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-          itemCount: kWorld1.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (context, i) {
-            final entry = kWorld1[i];
-            final unlocked = isLevelUnlocked(save, i);
-            return _LevelCard(
-              index: i + 1,
-              entry: entry,
-              unlocked: unlocked,
-              onTap: unlocked
-                  ? () {
-                      AudioService.instance?.playSfx('ui_tap');
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                              builder: (_) =>
-                                  GameScreen(levelId: entry.id)))
-                          .then((_) => setState(() {}));
-                    }
-                  : null,
-            );
-          },
+          children: [
+            _worldHeader('WORLD 1 — EMBERWOOD'),
+            ..._worldCards(kWorld1),
+            const SizedBox(height: 16),
+            _worldHeader(isWorld2Unlocked(save)
+                ? 'WORLD 2 — CINDER DEPTHS'
+                : 'WORLD 2 — CINDER DEPTHS  (defeat the Grove Golem)'),
+            ..._worldCards(kWorld2),
+          ],
         ),
       ]),
     );
+  }
+
+  Widget _worldHeader(String label) => Padding(
+        padding: const EdgeInsets.only(bottom: 8, top: 4),
+        child: Text(label,
+            style: const TextStyle(
+                fontFamily: 'Cinzel',
+                color: _gold,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                letterSpacing: 2)),
+      );
+
+  List<Widget> _worldCards(List<LevelEntry> world) {
+    final save = AppState.save;
+    return [
+      for (var i = 0; i < world.length; i++) ...[
+        Builder(builder: (context) {
+          final entry = world[i];
+          final unlocked = isLevelUnlocked(save, i, world: world);
+          return _LevelCard(
+            index: i + 1,
+            entry: entry,
+            unlocked: unlocked,
+            onTap: unlocked
+                ? () {
+                    AudioService.instance?.playSfx('ui_tap');
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                            builder: (_) => GameScreen(levelId: entry.id)))
+                        .then((_) => setState(() {}));
+                  }
+                : null,
+          );
+        }),
+        if (i != world.length - 1) const SizedBox(height: 8),
+      ],
+    ];
   }
 }
 
