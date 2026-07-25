@@ -29,10 +29,28 @@ idle/walking/jumping; allocations occur only on discrete gameplay events.
 Enemy/player/physics update bodies were already allocation-free (they mutate
 pre-built `Body`/state objects; projectiles and coins are pooled or reused).
 
-Note: the Flame render layer (`components/`) draws HUD readouts procedurally
-(`Vector2` temporaries in `HudReadout.render`). That is outside the
-`Session.update` acceptance scope; revisit only if a device trace shows GC
-pressure from render.
+## 1b. Allocation audit — Flame render layer (VERIFIED, code audit)
+
+Follow-up to §1, audited 2026-07-25 across `lib/game/components/*`. The
+worst offender was not allocation but **text layout**: `TextPaint.render`
+builds + lays out a `TextPainter` behind a 10-entry LRU keyed by string —
+with 5+ HUD readouts and a once-a-second timer churning values, slots evicted
+each other and re-ran text layout every frame.
+
+| Site | Frequency | Resolution |
+| --- | --- | --- |
+| `HudReadout.render` text (coins/apples/chests/feathers/timer/boss name) | every frame | `_HudText` slots: layout only when the underlying value changes; steady-state frame is pure `TextPainter.paint` |
+| `HudReadout.render` icon positions/sizes, boss-bar RRect + ticks | every frame | precomputed statics (geometry is constant) |
+| `ItemsComponent` sign bubble `toTextPainter` | every frame while a sign is active | cached painter, rebuilt on sign change only |
+| `ItemsComponent` coin/feather `Vector2(...)` per entity | per entity, per frame | shared scratch vectors (`Sprite.render` copies into its own temps — verified against Flame 1.35.1 source; it never stores the reference) |
+| `PlayerComponent.render` / `EnemyComponent.render` position+size `Vector2` | per entity, per frame | shared scratch vectors |
+| `TileLayerComponent` fire draw positions | per fire tile, per frame | positions precomputed (pre-offset) in `rebuild()` |
+| `ParallaxBackground` per-layer src `Rect` + scaled width | per layer, per frame | precomputed at load |
+| Moving-value rects (boss HP fill, parallax dst, puff circles) | per frame | left as-is: the canvas API takes fresh `Rect`/`Offset` values; these are unavoidable small value objects |
+
+Steady-state result: no text layout, no `Vector2` churn, and no rebuilt
+static geometry in the render path; remaining per-frame allocations are the
+irreducible `Rect`/`Offset` values the `dart:ui` canvas API requires.
 
 ## 2. Frame budget on 2GB-class device — **OPEN**
 

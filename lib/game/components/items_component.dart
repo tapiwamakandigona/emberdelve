@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/text.dart';
+import 'package:flutter/painting.dart' show TextPainter;
 
 import '../ember_game.dart';
 import '../level/level_data.dart';
@@ -39,6 +40,16 @@ class ItemsComponent extends PositionComponent
   );
   final _paint = ui.Paint()..filterQuality = ui.FilterQuality.none;
   final _bubblePaint = ui.Paint()..color = const ui.Color(0xEEF4EAD5);
+
+  // Scratch vectors reused every frame (Sprite.render copies, never stores).
+  static final _drawPos = Vector2.zero();
+  static final _coinSize = Vector2(16, 16);
+  static final _featherSize = Vector2(15, 13);
+
+  // Sign-bubble cache: text layout runs only when the active sign changes,
+  // not on every frame the bubble is visible.
+  String _bubbleFor = '';
+  TextPainter? _bubbleTp;
   final _emberGlow = ui.Paint()..color = const ui.Color(0x88E86A17);
   final _doorGlow = ui.Paint()
     ..maskFilter = const ui.MaskFilter.blur(ui.BlurStyle.normal, 6);
@@ -128,8 +139,8 @@ class ItemsComponent extends PositionComponent
     final coinSprite = _coin.getSprite();
     for (final c in s.coins) {
       if (c.collected) continue;
-      coinSprite.render(canvas,
-          position: Vector2(c.x - 8, c.y - 8), size: Vector2(16, 16));
+      _drawPos.setValues(c.x - 8, c.y - 8);
+      coinSprite.render(canvas, position: _drawPos, size: _coinSize);
     }
 
     // Apple + feather pickups.
@@ -139,8 +150,8 @@ class ItemsComponent extends PositionComponent
       if (p.kind == SpawnKind.apple) {
         _drawApple(canvas, p.x, p.y);
       } else {
-        featherSprite.render(canvas,
-            position: Vector2(p.x - 7.5, p.y - 6.5), size: Vector2(15, 13));
+        _drawPos.setValues(p.x - 7.5, p.y - 6.5);
+        featherSprite.render(canvas, position: _drawPos, size: _featherSize);
       }
     }
 
@@ -159,7 +170,11 @@ class ItemsComponent extends PositionComponent
     // Active sign bubble.
     final active = s.activeSign;
     if (active != null && active.text.isNotEmpty) {
-      final tp = _bubbleText.toTextPainter(active.text);
+      if (!identical(active.text, _bubbleFor)) {
+        _bubbleFor = active.text;
+        _bubbleTp = _bubbleText.toTextPainter(active.text);
+      }
+      final tp = _bubbleTp!;
       final w = tp.width + 6, h = tp.height + 4;
       final left = active.x - w / 2;
       final top = active.y - 34 - h;
