@@ -52,6 +52,23 @@ Steady-state result: no text layout, no `Vector2` churn, and no rebuilt
 static geometry in the render path; remaining per-frame allocations are the
 irreducible `Rect`/`Offset` values the `dart:ui` canvas API requires.
 
+## 1c. Sim hot-path cost — measured (VERIFIED, headless benchmark)
+
+`test/session_bench_test.dart` drives the door-seeking bot through the two
+worst levels while timing every `LevelSession.update` (VM JIT, sandbox CPU,
+warmup excluded; 2026-07-25):
+
+| Level | n | avg | p50 | p95 | p99 | max |
+| --- | --- | --- | --- | --- | --- | --- |
+| `w1_l5` (densest) | 2022 | 23.4 µs | 15 µs | 37 µs | 123 µs | 1.55 ms |
+| `w1_boss` (all phases) | 3516 | 6.3 µs | 3 µs | 10 µs | 75 µs | 0.95 ms |
+
+The pure-Dart sim uses ~0.1–0.2% of the 16 ms frame budget — frame cost on
+device will be dominated by build/raster, not gameplay logic. The test also
+acts as a **regression guard** (generous bounds: avg < 2 ms, p99 < 8 ms);
+if it ever fails, something expensive landed in the hot path. Device AOT
+numbers will differ, but the order of magnitude carries.
+
 ## 2. Frame budget on 2GB-class device — **OPEN**
 
 Acceptance requires a profile-mode timeline (`flutter run --profile`) on real
@@ -64,6 +81,15 @@ How to run when hardware is available:
 flutter run --profile
 # DevTools -> Performance -> record w1_l5 full run + w1_boss all 3 phases
 # record avg/max build and raster times here
+```
+
+Tester-friendly alternative (no DevTools): build with the in-game overlay
+and read the numbers off the screen —
+
+```
+flutter build apk --release --dart-define=PERF_OVERLAY=true
+# bottom-left: "60 fps  avg 12.3ms  worst 15.1ms"; amber = a frame in the
+# last second blew the 16.7ms budget. Compiled out of normal builds.
 ```
 
 ## 3. Cold start ≤ 3s — **OPEN**
