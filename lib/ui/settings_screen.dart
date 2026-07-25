@@ -38,6 +38,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         children: [
+          // Stage 2 (owner-directed 2026-07-25): difficulty. Scales enemy
+          // behaviour (speed / reaction windows / detection) + one heart of
+          // slack on Easy. Never enemy hp/damage — no cheap stat walls.
+          const Padding(
+            padding: EdgeInsets.only(left: 16, top: 8, bottom: 4),
+            child: Text('DIFFICULTY',
+                style: TextStyle(
+                    color: Color(0xFFE8A33D),
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.bold)),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: SegmentedButton<String>(
+              style: SegmentedButton.styleFrom(
+                foregroundColor: Colors.white54,
+                selectedForegroundColor: Colors.black,
+                selectedBackgroundColor: const Color(0xFFE8A33D),
+              ),
+              segments: const [
+                ButtonSegment(value: 'easy', label: Text('Easy')),
+                ButtonSegment(value: 'medium', label: Text('Medium')),
+                ButtonSegment(value: 'hard', label: Text('Hard')),
+              ],
+              selected: {AppState.save.difficulty},
+              onSelectionChanged: (sel) {
+                setState(() => AppState.save.difficulty = sel.first);
+                AudioService.instance?.playSfx('ui_tap');
+                unawaited(AppState.persist());
+              },
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 16, top: 2, bottom: 8),
+            child: Text(
+                'Enemies think faster and reach farther on Hard. '
+                'Easy adds a heart of slack.',
+                style: TextStyle(color: Colors.white38, fontSize: 12)),
+          ),
+          const Divider(color: Colors.white12, height: 32),
           if (settings != null) ...[
             _SliderTile(
               label: 'Music',

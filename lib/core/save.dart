@@ -60,6 +60,7 @@ class SaveData {
   Set<String> ownedAbilities;
   Set<String> ownedSpells; // AKP-4d spell slot (owner-confirmed 2026-07-25)
   String equippedSpell; // '' = no spell equipped
+  String difficulty; // 'easy' | 'medium' | 'hard' (Stage 2, 2026-07-25)
   Map<String, LevelRecord> levels; // level id (e.g. 'w1_l1') -> record
   bool tutorialSeen;
   bool legacyBonusGranted; // one-time coin gift for v1 dice-save owners
@@ -77,6 +78,7 @@ class SaveData {
     Set<String>? ownedAbilities,
     Set<String>? ownedSpells,
     this.equippedSpell = '',
+    this.difficulty = 'medium',
     Map<String, LevelRecord>? levels,
     this.tutorialSeen = false,
     this.legacyBonusGranted = false,
@@ -104,6 +106,7 @@ class SaveData {
         'ownedAbilities': ownedAbilities.toList(),
         'ownedSpells': ownedSpells.toList(),
         'equippedSpell': equippedSpell,
+        'difficulty': difficulty,
         'levels': levels.map((k, v) => MapEntry(k, v.toJson())),
         'tutorialSeen': tutorialSeen,
         'legacyBonusGranted': legacyBonusGranted,
@@ -135,6 +138,7 @@ class SaveData {
       ownedSpells:
           ((j['ownedSpells'] as List?)?.cast<String>() ?? []).toSet(),
       equippedSpell: j['equippedSpell'] as String? ?? '',
+      difficulty: j['difficulty'] as String? ?? 'medium',
       levels: (j['levels'] as Map?)?.map((k, v) => MapEntry(
               k as String,
               LevelRecord.fromJson((v as Map).cast<String, dynamic>()))) ??

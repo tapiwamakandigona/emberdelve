@@ -1,4 +1,5 @@
 meta: name=Forest Edge
+meta: lore=Where the deep wood begins, and the road home ends.
 meta: world=1
 meta: music=combat
 meta: par_s=90

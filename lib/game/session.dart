@@ -11,6 +11,7 @@ import 'dart:math' as math;
 
 import 'core_loadout.dart';
 import '../core/rng.dart';
+import 'difficulty.dart';
 import '../meta/catalog.dart' show SpellEffect;
 import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
@@ -129,6 +130,8 @@ class LevelResults {
 class LevelSession {
   final LevelData level;
   final Loadout loadout;
+  final Difficulty difficulty; // Stage 2: scales enemy behaviour only
+  DifficultyMods get mods => DifficultyMods.of(difficulty);
   late final PlayerCore player;
   final Rng combatRng;
   final Rng dropsRng;
@@ -189,7 +192,8 @@ class LevelSession {
   final List<SessionEvent> _events = [];
   final List<PlayerEvent> _playerEvents = [];
 
-  LevelSession(this.level, this.loadout, {int seed = 0})
+  LevelSession(this.level, this.loadout,
+      {int seed = 0, this.difficulty = Difficulty.medium})
       : combatRng = Rng.create(seed, 'combat'),
         dropsRng = Rng.create(seed, 'drops') {
     grid = [
@@ -208,7 +212,9 @@ class LevelSession {
       x: p.x * kTileSize + 2,
       y: (p.y + 1) * kTileSize - 20,
       tileAt: tileAt,
-      maxHearts: loadout.maxHearts,
+      // Easy grants one heart of slack (difficulty.dart); enemy stats are
+      // never scaled, so this is the only stat knob difficulty touches.
+      maxHearts: loadout.maxHearts + mods.bonusHearts,
       weaponDamage: loadout.weapon.damage,
       weaponRange: loadout.weapon.range,
       extraAirJumps: loadout.extraAirJumps,
@@ -252,6 +258,10 @@ class LevelSession {
               x: cx - 12, y: (s.y + 1) * kTileSize - 22));
         case SpawnKind.cinderDiver:
           enemies.add(CinderDiverCore(x: cx - 14, y: cy - 12));
+        case SpawnKind.pyreWisp:
+          enemies.add(PyreWispCore(x: cx - 13, y: cy - 11));
+        case SpawnKind.slagHound:
+          enemies.add(SlagHoundCore(x: cx - 13, y: cy - 11));
         case SpawnKind.player:
           break;
         case SpawnKind.exit:
@@ -274,10 +284,16 @@ class LevelSession {
       if (tx == null || ty == null) continue;
       addHopper(tx * kTileSize + 2, (ty + 1) * kTileSize - 22);
     }
+
+    // Stage 2 difficulty: stamp the behaviour mods onto every enemy once.
+    for (final e in enemies) {
+      e.mods = mods;
+    }
   }
 
   /// Spawn a hopper explicitly (used by tests and, later, level scripting).
-  void addHopper(double x, double y) => enemies.add(HopperCore(x: x, y: y));
+  void addHopper(double x, double y) =>
+      enemies.add(HopperCore(x: x, y: y)..mods = mods);
 
   TileKind tileAt(int tx, int ty) {
     if (tx < 0 || tx >= level.width) return TileKind.solid;

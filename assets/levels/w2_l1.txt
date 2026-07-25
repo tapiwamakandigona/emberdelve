@@ -1,4 +1,5 @@
 meta: name=Ashen Gate
+meta: lore=Ash falls like snow here. It has never stopped.
 meta: world=2
 meta: env=cave
 meta: music=combat

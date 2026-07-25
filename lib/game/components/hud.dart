@@ -227,6 +227,13 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   final _chestText = _HudText(_text, 17, 42);
   final _featherText = _HudText(_text, 17, 53);
   final _timerText = _HudText(_text, EmberGame.viewWidth / 2, 6, centerX: true);
+  // Stage 2 lore intro: level name + one-line blurb, shown for the first
+  // few seconds of a run (meta: lore=... in the level file).
+  static const _loreSeconds = 4.5;
+  final _loreTitle =
+      _HudText(_text, EmberGame.viewWidth / 2, 26, centerX: true);
+  final _loreLine =
+      _HudText(_text, EmberGame.viewWidth / 2, 38, centerX: true);
   // AKP-5d: boss name sits BELOW the bar — at _barTop - 10 it overlapped
   // the level timer (both top-centre).
   final _bossName =
@@ -352,6 +359,19 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
         _bossName.text = game.session.level.name.toUpperCase();
       }
       _bossName.paint(canvas);
+    }
+
+    // Lore intro (Stage 2): name + blurb for the first seconds, then gone.
+    // Suppressed during a boss fight intro (the bar owns that space).
+    final lore = s.level.meta['lore'];
+    if (boss == null && s.time < _loreSeconds && lore != null &&
+        lore.isNotEmpty) {
+      if (_loreTitle.dirty(0)) {
+        _loreTitle.text = s.level.name.toUpperCase();
+      }
+      _loreTitle.paint(canvas);
+      if (_loreLine.dirty(0)) _loreLine.text = lore;
+      _loreLine.paint(canvas);
     }
 
     // Level timer (top-center): re-layout only when the second ticks over.

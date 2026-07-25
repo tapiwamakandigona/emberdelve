@@ -1,4 +1,5 @@
 meta: name=Kiln Golem
+meta: lore=Fired in the first kiln, it guards the last door.
 meta: world=2
 meta: env=cave
 meta: music=combat

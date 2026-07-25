@@ -1,4 +1,5 @@
 meta: name=Grove Golem
+meta: lore=The grove grew a warden. It does not want visitors.
 meta: world=1
 meta: music=combat
 meta: par_s=150
