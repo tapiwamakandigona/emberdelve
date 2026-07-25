@@ -86,10 +86,20 @@ class _ShopScreenState extends State<ShopScreen> {
     setState(() {});
   }
 
+  void _equipSpell(String id) {
+    // Tapping the equipped spell unequips it (unlike weapons/skins there is
+    // a meaningful "no spell" state — the button leaves the HUD).
+    AppState.save.equippedSpell =
+        AppState.save.equippedSpell == id ? '' : id;
+    AudioService.instance?.playSfx('ui_tap');
+    unawaited(AppState.persist());
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         backgroundColor: _bg,
         appBar: AppBar(
@@ -108,6 +118,7 @@ class _ShopScreenState extends State<ShopScreen> {
             tabs: [
               Tab(text: 'WEAPONS'),
               Tab(text: 'SKINS'),
+              Tab(text: 'SPELLS'),
               Tab(text: 'ABILITIES'),
             ],
           ),
@@ -115,6 +126,7 @@ class _ShopScreenState extends State<ShopScreen> {
         body: TabBarView(children: [
           _weaponsTab(),
           _skinsTab(),
+          _spellsTab(),
           _abilitiesTab(),
         ]),
       ),
@@ -188,6 +200,38 @@ class _ShopScreenState extends State<ShopScreen> {
               onEquip: () => _equipSkin(sk.id),
             );
           }),
+      ],
+    );
+  }
+
+  // AKP-4d (owner-confirmed 2026-07-25): AK-style spell slot — one equipped
+  // spell, one cast per level run. Premium-only: no free starter spell.
+  Widget _spellsTab() {
+    final save = AppState.save;
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        for (final sp in kSpells)
+          _ShopCard(
+            key: ValueKey('spell_${sp.id}'),
+            leading: _ShopIcon('spell_${sp.id}'),
+            title: sp.name,
+            subtitle: sp.text,
+            detail: 'One cast per level',
+            owned: save.ownedSpells.contains(sp.id),
+            equipped: save.equippedSpell == sp.id,
+            currency: sp.currency,
+            price: _priceFor(sp.currency, sp.price),
+            basePrice: sp.price,
+            canAfford: _wallet.canAfford(
+                sp.currency, _priceFor(sp.currency, sp.price)),
+            onBuy: () => _buy(
+                id: sp.id,
+                currency: sp.currency,
+                price: sp.price,
+                owned: save.ownedSpells),
+            onEquip: () => _equipSpell(sp.id),
+          ),
       ],
     );
   }

@@ -167,6 +167,34 @@ class HudThrowButton extends HudHoldButton {
   }
 }
 
+/// Spell button (AKP-4d): only visible & tappable while a spell is equipped
+/// and its one-per-run charge is unspent. Same zero-scale hide + explicit
+/// hit-test gate as HudThrowButton (see its containsLocalPoint note).
+class HudSpellButton extends HudHoldButton {
+  HudSpellButton({
+    required super.onPressed,
+    required super.position,
+    required super.size,
+  }) : super(
+          spritePath: 'hud/btn_round.png',
+          iconPath: 'hud/icon_spell.png',
+          onReleased: _noop,
+        );
+
+  static void _noop() {}
+
+  @override
+  bool containsLocalPoint(Vector2 point) =>
+      game.session.spellReady && super.containsLocalPoint(point);
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final visible = game.session.spellReady;
+    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides the sprite
+  }
+}
+
 /// Readouts drawn procedurally each frame from session state.
 class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   HudReadout() : super(priority: 10);

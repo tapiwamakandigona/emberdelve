@@ -49,6 +49,12 @@ const double kRollCooldown = 0.35; // s after the roll ends before the next
 // Tuning flag kept so it can be A/B'd on-device before the beta.
 const bool kAirDashEnabled = true;
 
+// Spells (AKP-4d, owner-confirmed 2026-07-25). One cast per level run.
+const double kSpellBurstRadius = 56.0; // px around the player centre
+const int kSpellBurstDamage = 4; // + 3s ignite on survivors
+const double kSpellVeilSeconds = 3.0; // stone veil immunity window
+const int kSpellHealHearts = 2; // hearth light restore (clamped to max)
+
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
 const double kComboWindow = 0.38; // s after a swing in which next chains

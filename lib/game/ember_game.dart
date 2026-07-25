@@ -26,6 +26,7 @@ import 'package:flutter/widgets.dart' show EdgeInsets, KeyEventResult;
 import '../audio/audio_service.dart';
 import 'haptics.dart';
 import '../core/rng.dart';
+import '../meta/catalog.dart' show SpellEffect;
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
 import 'components/decor_layer.dart';
@@ -158,6 +159,8 @@ class EmberGame extends FlameGame
   bool _touchJumpEdge = false;
   bool _touchAttackEdge = false;
   bool _touchThrowEdge = false;
+  bool _touchSpellEdge = false;
+  bool _keySpellEdge = false;
   bool _touchRollEdge = false;
 
   final Set<LogicalKeyboardKey> _keys = {};
@@ -230,6 +233,7 @@ class EmberGame extends FlameGame
   HudHoldButton? _btnLeft, _btnRight, _btnDown;
   HudHoldButton? _btnDash, _btnSword, _btnJump, _btnPause;
   HudThrowButton? _btnThrow;
+  HudSpellButton? _btnSpell;
   HudReadout? _readout;
 
   // Screen-space (logical px) safe-area padding from the hosting widget;
@@ -299,6 +303,9 @@ class EmberGame extends FlameGame
         swordX + (hudBtn - hudSmallBtn) / 2, swordY - hudSmallBtn - hudGap);
     _btnThrow!.position.setValues(jumpX + (hudJumpBtn - hudSmallBtn) / 2,
         jumpY - hudSmallBtn - hudGap);
+    // Spell (AKP-4d): caps the dash column, auto-hides without a charge.
+    _btnSpell!.position.setValues(swordX + (hudBtn - hudSmallBtn) / 2,
+        swordY - (hudSmallBtn + hudGap) * 2);
 
     _btnPause!.position.setValues(right - hudSmallBtn, top);
     _readout!.position.setValues(ins.left, ins.top);
@@ -339,6 +346,12 @@ class EmberGame extends FlameGame
       onPressed: () => _touchThrowEdge = true,
     );
     // Dash/roll (AKP-2a): diamond top-left, above the sword.
+    // Spell cast (AKP-4d): one charge per run; hides itself otherwise.
+    _btnSpell = HudSpellButton(
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchSpellEdge = true,
+    );
     _btnDash = HudHoldButton(
       spritePath: 'hud/btn_round.png',
       iconPath: 'hud/icon_dash.png',
@@ -380,6 +393,7 @@ class EmberGame extends FlameGame
       _btnRight!,
       _btnDown!,
       _btnThrow!,
+      _btnSpell!,
       _btnDash!,
       _btnSword!,
       _btnJump!,
@@ -412,6 +426,10 @@ class EmberGame extends FlameGame
       }
       if (k == LogicalKeyboardKey.keyK || k == LogicalKeyboardKey.keyC) {
         _keyThrowEdge = true;
+      }
+      // AKP-4d: spell cast on Q or M (session-level verb, one per run).
+      if (k == LogicalKeyboardKey.keyQ || k == LogicalKeyboardKey.keyM) {
+        _keySpellEdge = true;
       }
       // AKP-2a: dash/roll on Shift (the DOWN+JUMP chord still works too).
       if (k == LogicalKeyboardKey.shiftLeft ||
@@ -459,6 +477,10 @@ class EmberGame extends FlameGame
     _touchAttackEdge = _keyAttackEdge = false;
     _touchThrowEdge = _keyThrowEdge = false;
     _touchRollEdge = _keyRollEdge = false;
+    // AKP-4d: the spell is a session verb (touch button + Q/M), not part of
+    // InputIntent — it never competes with movement buffering.
+    if (_touchSpellEdge || _keySpellEdge) session.castSpell();
+    _touchSpellEdge = _keySpellEdge = false;
 
     session.cameraX = cameraPos.x;
     session.update(clamped, _intent);
@@ -549,6 +571,15 @@ class EmberGame extends FlameGame
         case SessionEventKind.chestOpen:
           AudioService.instance?.playSfx('chest_open');
           world.add(SparkleFx(at, life: 0.5));
+        case SessionEventKind.spellCast:
+          // AKP-4d: golden flash + chime; effect-specific feedback rides on
+          // the events the effect itself emits (enemyHit / heal below).
+          AudioService.instance?.playSfx('secret', volume: 0.9);
+          Haptics.light();
+          world.add(SparkleFx(at, life: 0.5));
+          if (session.loadout.spell?.effect == SpellEffect.hearthLight) {
+            AudioService.instance?.playSfx('heal');
+          }
         case SessionEventKind.secretFound:
           AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
