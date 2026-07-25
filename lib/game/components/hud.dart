@@ -10,15 +10,23 @@ import 'package:flame/text.dart';
 
 import '../ember_game.dart';
 import '../enemies/boss_core.dart';
+import '../hold_button_core.dart';
 
 /// A HUD button that reports press/release into a callback pair.
+///
+/// Mixes TapCallbacks AND DragCallbacks: a held thumb that drifts past the
+/// platform touch slop gets its tap cancelled and promoted to a drag by the
+/// gesture arena. Without drag handling the button would release mid-hold —
+/// the alpha.1 "movement controls don't work" bug. HoldButtonCore keeps the
+/// button pressed across that hand-off (see its header for the full story).
 class HudHoldButton extends SpriteComponent
-    with TapCallbacks, HasGameReference<EmberGame> {
+    with TapCallbacks, DragCallbacks, HasGameReference<EmberGame> {
   final String spritePath;
   final String? iconPath;
   final void Function() onPressed;
   final void Function() onReleased;
   SpriteComponent? _icon;
+  late final HoldButtonCore _core;
 
   HudHoldButton({
     required this.spritePath,
@@ -31,6 +39,16 @@ class HudHoldButton extends SpriteComponent
     paint = ui.Paint()
       ..filterQuality = ui.FilterQuality.none
       ..color = const ui.Color(0xAAFFFFFF);
+    _core = HoldButtonCore(
+      onPressed: () {
+        paint.color = const ui.Color(0xFFFFFFFF);
+        onPressed();
+      },
+      onReleased: () {
+        paint.color = const ui.Color(0xAAFFFFFF);
+        onReleased();
+      },
+    );
   }
 
   @override
@@ -51,21 +69,36 @@ class HudHoldButton extends SpriteComponent
   }
 
   @override
-  void onTapDown(TapDownEvent event) {
-    paint.color = const ui.Color(0xFFFFFFFF);
-    onPressed();
+  void update(double dt) {
+    super.update(dt);
+    _core.tick();
   }
 
   @override
-  void onTapUp(TapUpEvent event) {
-    paint.color = const ui.Color(0xAAFFFFFF);
-    onReleased();
+  void onTapDown(TapDownEvent event) => _core.tapDown(event.pointerId);
+
+  @override
+  void onTapUp(TapUpEvent event) => _core.tapUp(event.pointerId);
+
+  @override
+  void onTapCancel(TapCancelEvent event) => _core.tapCancel(event.pointerId);
+
+  @override
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    _core.dragStart(event.pointerId);
   }
 
   @override
-  void onTapCancel(TapCancelEvent event) {
-    paint.color = const ui.Color(0xAAFFFFFF);
-    onReleased();
+  void onDragEnd(DragEndEvent event) {
+    super.onDragEnd(event);
+    _core.dragEnd(event.pointerId);
+  }
+
+  @override
+  void onDragCancel(DragCancelEvent event) {
+    super.onDragCancel(event);
+    _core.dragCancel(event.pointerId);
   }
 }
 
