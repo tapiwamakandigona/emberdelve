@@ -26,7 +26,18 @@ native speed. Analysis: `docs/legacy-feel-plan.md`.
 | `filmstrip_tumble.png` | 10 fps × 1.2 s | Dice tumble face-cycling |
 | `filmstrip_enemyhit.png` | 5 fps × 2.4 s | Enemy wind-up → strike → feedback |
 
-## Comparable
+## Comparables
+
+`dicey/` — **hands-on** Dicey Dungeons v0.9.1 (last free public web build,
+terrycavanaghgames.com/dice/9), same rig, full Warrior floor-1 fight won:
+
+| File | Shows |
+|---|---|
+| `dicey/dd_combat_open.gif` | Combat entry, roll, Sword EVEN slot, Warrior skill panel (Tweaks budget) |
+| `dicey/dd_slot_attack.gif` | Drag die → equipment slot = attack (the die-travel metaphor, LFP-2 reference) |
+| `dicey/dd_enemy_turn.gif` | Enemy rolls its own dice + plays its equipment face-up; our hit feedback comparison |
+| `dicey/dd_fury_kill.gif` | Fury limit-break drag + killing blow + "Warrior wins!" payout |
+
 
 `snd_trailer_sheet.png` — 20-frame contact sheet from the official
 Slice & Dice 3.0 trailer (web demo is download-only). Rows 1–2: the thrown

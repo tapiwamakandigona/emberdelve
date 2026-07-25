@@ -12,10 +12,16 @@ Pixel-7-class touch emulation (412×892). Beat the layer-1 fight (Ember
 Beetle) and the layer-2 fight (Cinder Wisp) on Easy, sampled boon / reward /
 map screens; the full 15-minute session was screen-recorded and the key
 moments cut into the GIFs/filmstrips in `docs/reference/legacy-feel/`
-(see its README for the index). Comparable: **Slice & Dice** (tann, ~4.8/5,
-the premium mobile dice-builder benchmark) — its web demo is download-only,
-so comparison uses frame-by-frame analysis of the official 3.0 trailer
-(contact sheet in the same folder) plus store-page research. Code audit:
+(see its README for the index). Comparables, two of them: **Dicey Dungeons**
+(Terry Cavanagh, 1M+ copies — the genre's biggest name) — **played hands-on**
+2026-07-25 via the last free public web build (v0.9.1,
+terrycavanaghgames.com/dice/9) on the same Pixel-7 rig, screen-recorded: a
+full Warrior floor-1 fight vs a Rogue, won via tweak → sword → Fury limit
+break (GIFs in `docs/reference/legacy-feel/dicey/`, findings in §0b).
+**Slice & Dice** (tann, ~4.8/5, the premium mobile dice-builder benchmark) —
+its demo is download-only, so comparison uses frame-by-frame analysis of the
+official 3.0 trailer (contact sheet in the same folder) plus store-page
+research. Code audit:
 `combat_screen.dart` choreography constants, `fx.dart`, `weapons.dart`,
 `widgets.dart` (DieChip), `haptics.dart`, `sprites.dart`, `enemies.dart`.
 Claims are **VERIFIED** (played/recorded/code-read) unless marked ASSUMED.
@@ -51,6 +57,46 @@ GIFs: `attack_swing.gif`, `roll_tumble.gif`, `enemy_hit_block.gif`,
 The plan below is therefore not "add juice" — that exists — it is about the
 five places where the playtest showed the game still reads *flat or unclear*
 next to the genre benchmark.
+
+## 0b. What Dicey Dungeons does that we should steal (hands-on findings)
+
+Played, not watched (VERIFIED, `docs/reference/legacy-feel/dicey/`):
+
+1. **Dice are draggable objects, and slots are verbs.** Every action is
+   "physically pick a die up and drop it into an equipment card"
+   (`dd_slot_attack.gif`). The drag itself is the assignment preview — you
+   see where the die will land before you commit, and an invalid slot just
+   refuses it (Sword wants EVEN). This is the strongest possible version of
+   LFP-2's cause→effect link; our tap-select/tap-verb keeps one-thumb reach,
+   but the *die must visibly travel to the verb* to buy the same clarity.
+2. **The enemy plays your game, face-up.** On its turn the Rogue's own dice
+   roll on screen and its equipment cards (Lockpick, Dagger with "MAX 3 —
+   reuseable") flip up and get used one by one (`dd_enemy_turn.gif`).
+   Reinforces LFP-3: intent isn't a badge, it's *shared mechanics made
+   visible*. Our cheap version stays the badge — but statuses must not
+   contaminate that channel.
+3. **Manipulation is a skill with a budget.** "Tweaks: 1 left" (±1 pip) and
+   a one-shot Reroll button sit beside the dice; a *limit-break bar* (Fury:
+   "double next action") charges as you take damage and cashes in on a
+   drag (`dd_fury_kill.gif`). Direct ancestor of our risky-reroll — but DD
+   shows the budget permanently on the skill panel, while ours hides the
+   cost inside button copy (LFP-6b).
+4. **Constraint slots create the puzzle.** EVEN/MAX-3/COUNTDOWN slots turn
+   each roll into a matching problem. Our attack/block free-assignment is
+   simpler by design (spec §3) — but face-constrained *dice* (min 3,
+   +2 on max) already point the same direction; worth keeping in mind for
+   act-2 content rather than a new workstream.
+5. **What we already do better** (honest): DD v0.9's turn has zero
+   choreography — damage applies with a text pop and a red tint flash,
+   no wind-up/hit-stop/knockback (`dd_enemy_turn.gif` vs our
+   `filmstrip_enemyhit.png`); no haptics; landscape two-hand layout vs our
+   portrait one-thumb. The full commercial DD added juice later — the
+   free build makes the gap measurable.
+
+**Plan impact:** LFP-2a upgraded from "nice" to the highest-leverage item
+(DD proves the die-travel metaphor carries the genre); LFP-3 unchanged;
+LFP-6b gains "show the reroll budget on the panel like DD's Tweaks
+counter". No new workstreams.
 
 ## 1. Physical dice (LFP-1) — M
 
