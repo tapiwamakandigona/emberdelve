@@ -14,6 +14,7 @@
 //   C  chest            X  secret chest (counts as chest + secret)
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
 //   R  Rotshield        G  Grove Golem (boss)
+//   S  Soot Creeper (W2 walker)                D  Cinder Diver (W2 flyer)
 //   DECOR (purely visual, never collides):
 //   b  bush             r  rock                m  shrooms
 //   t  tree (large, background)
@@ -47,6 +48,8 @@ enum SpawnKind {
   emberTotem,
   rotshield,
   groveGolem,
+  sootCreeper,
+  cinderDiver,
 }
 
 class Spawn {
@@ -95,6 +98,8 @@ const Map<String, SpawnKind> _spawnChars = {
   'O': SpawnKind.emberTotem,
   'R': SpawnKind.rotshield,
   'G': SpawnKind.groveGolem,
+  'S': SpawnKind.sootCreeper,
+  'D': SpawnKind.cinderDiver,
 };
 
 class LevelData {
