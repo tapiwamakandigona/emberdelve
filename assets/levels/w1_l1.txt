@@ -1,10 +1,11 @@
 meta: name=Forest Edge
+meta: lore=Where the deep wood begins, and the road home ends.
 meta: world=1
 meta: music=combat
 meta: par_s=90
 meta: sign1=Hold LEFT/RIGHT to run. Tap JUMP - tap again in the air to double-jump!
 meta: sign2=Watch the fire pit! Tap SWORD to swing - three quick taps chain a combo.
-meta: sign3=DOWN + JUMP: roll on solid ground (dodges hits!) - drop through thin platforms.
+meta: sign3=Tap DASH to roll (dodges hits!) - hold DOWN to peek or drop through thin platforms.
 .
 .
 .
@@ -15,8 +16,8 @@ meta: sign3=DOWN + JUMP: roll on solid ground (dodges hits!) - drop through thin
 .................................c.................................cccc
 ...............................####...............................######
 ........c........c.c..............cc.......c.c.c..................######
-.......s........=====.........s.........=========.................B..B.B
-..P.........m...........C........m..a........T......b....t...b..C.B.XBXBs....E
-######......###############......####################....######################
-######^^^^^^###############~~~~~~####################^^^^######################
+...............s=====......s............=========.................B..B.B
+...........Pm........##.....C......ma........T......b....t...b..C.B.XBXBs....E
+#######################...####....###################....######################
+#######################^^^####~~~~###################^^^^######################
 ###############################################################################

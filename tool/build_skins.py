@@ -9,6 +9,8 @@ technique as the dice-era build_sprites.py:
   - ember_monk      = cloth -> ember orange, armor warmed
   - shadow_thief    = cloth -> deep violet, armor darkened
   - hearth_knight   = cloth -> hearth blue, armor gilded
+  - grove_sentinel  = cloth -> forest green, armor mossy   (Stage 2, 2026-07-25)
+  - ash_wraith      = cloth -> ash grey, armor charcoal    (Stage 2, 2026-07-25)
 
 "Cloth" = saturated red-hue pixels (cape/hat); "armor" = low-saturation
 pixels. Outlines, skin tones, shield golds are left alone so the silhouette
@@ -32,6 +34,8 @@ SKINS = {
     "ember_monk": (28.0, 1.05, 1.06, (1.10, 1.00, 0.82)),
     "shadow_thief": (275.0, 0.75, 0.72, (0.62, 0.62, 0.74)),
     "hearth_knight": (214.0, 0.95, 0.92, (1.12, 1.02, 0.72)),
+    "grove_sentinel": (125.0, 0.85, 0.88, (0.82, 1.02, 0.72)),
+    "ash_wraith": (270.0, 0.10, 0.80, (0.55, 0.55, 0.60)),
 }
 
 

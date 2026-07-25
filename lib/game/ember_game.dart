@@ -1,5 +1,5 @@
 // game/ember_game.dart — the Flame shell around LevelSession. Owns the level
-// lifecycle, fixed-resolution camera (480x270) with look-ahead + peek-down,
+// lifecycle, fixed-resolution camera (352x198) with look-ahead + peek-down,
 // parallax backdrop, touch HUD + keyboard input (one shared InputIntent),
 // sfx/fx event mapping, and results/fail persistence. ALL gameplay logic
 // lives in the headless session/cores — nothing here mutates game state
@@ -21,11 +21,12 @@ import 'package:flutter/gestures.dart'
         TapDownDetails,
         TapUpDetails;
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart' show KeyEventResult;
+import 'package:flutter/widgets.dart' show EdgeInsets, KeyEventResult;
 
 import '../audio/audio_service.dart';
 import 'haptics.dart';
 import '../core/rng.dart';
+import '../meta/catalog.dart' show SpellEffect;
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
 import 'components/decor_layer.dart';
@@ -38,6 +39,7 @@ import 'components/perf_overlay.dart';
 import 'components/player_component.dart';
 import 'components/tile_layer.dart';
 import 'core_loadout.dart';
+import 'difficulty.dart';
 import 'input_intent.dart';
 import 'level/level_data.dart';
 import 'player/player_core.dart';
@@ -64,8 +66,12 @@ import 'tuning.dart';
 // HudHoldButton TapCallbacks/DragCallbacks) that all existing tests cover.
 class EmberGame extends FlameGame
     with KeyboardEvents, MultiTouchTapDetector, MultiTouchDragDetector {
-  static const double viewWidth = 480;
-  static const double viewHeight = 270;
+  // AKP-1a (docs/ak-parity-plan.md): 352x198 — owner-confirmed 2026-07-25:
+  // exact Apple Knight character-size match. Same 16:9; the 24px player
+  // reads 24/198 ≈ 12.1% of screen height (AK measured ≈12.5%). Was 384x216
+  // (11.1%), originally 480x270. No sprite or physics constant changes.
+  static const double viewWidth = 352;
+  static const double viewHeight = 198;
 
   static const overlayPause = 'pause';
   static const overlayResults = 'results';
@@ -154,11 +160,15 @@ class EmberGame extends FlameGame
   bool _touchJumpEdge = false;
   bool _touchAttackEdge = false;
   bool _touchThrowEdge = false;
+  bool _touchSpellEdge = false;
+  bool _keySpellEdge = false;
+  bool _touchRollEdge = false;
 
   final Set<LogicalKeyboardKey> _keys = {};
   bool _keyJumpEdge = false;
   bool _keyAttackEdge = false;
   bool _keyThrowEdge = false;
+  bool _keyRollEdge = false;
 
   late SpriteAnimation _deathAnim;
   double _camBump = 0;
@@ -178,11 +188,16 @@ class EmberGame extends FlameGame
         : Loadout.starter();
     final seed = seedOverride ??
         DateTime.now().millisecondsSinceEpoch % rngMod;
-    session = LevelSession(level, loadout, seed: seed);
+    session = LevelSession(level, loadout,
+        seed: seed,
+        difficulty: AppState.isReady
+            ? difficultyFromId(AppState.save.difficulty)
+            : Difficulty.medium);
 
     camera.viewfinder.anchor = Anchor.center;
-    camera.viewfinder.position =
-        Vector2(session.player.body.centerX, session.player.body.centerY);
+    _camSmoothX = session.player.body.centerX;
+    _camSmoothY = session.player.body.centerY;
+    camera.viewfinder.position = Vector2(_camSmoothX, _camSmoothY);
     camera.backdrop.add(ParallaxBackground());
 
     world.add(DecorLayerComponent());
@@ -203,59 +218,193 @@ class EmberGame extends FlameGame
     AudioService.instance?.playMusic(session.level.music);
   }
 
+  // AKP-5 (docs/ak-parity-plan.md §5): AK-style control layout.
+  // Bottom-left: left/right arrows + a down-chevron (peek/drop-through —
+  // finally wires touchDown, AKP-2c). Bottom-right: 4-button diamond —
+  // jump (biggest, bottom-right), sword (left of it), dash (top-left),
+  // apple (top-right, auto-hides). Pause >= 44 logical px (AKP-5b).
+  //
+  // Alignment pass (owner-reported, 2026-07-25): the small diamond buttons
+  // (dash, apple) are CENTERED on their column (sword / jump) instead of
+  // edge-aligned, and the whole HUD respects device safe areas — display
+  // cutouts (notch / punch-hole) and gesture- or 3-button-nav bars — pushed
+  // in from the hosting widget via [setSafeArea]. Geometry lives in
+  // [_layoutHud] so it can re-run on resize / inset changes.
+  static const hudBtn = 52.0; // arrows + sword
+  static const hudJumpBtn = 56.0; // jump reads biggest, AK-style
+  static const hudSmallBtn = 44.0; // dash / apple / down / pause (>= 48dp)
+  static const hudPad = 8.0;
+  static const hudGap = 6.0;
+
+  HudHoldButton? _btnLeft, _btnRight, _btnDown;
+  HudHoldButton? _btnDash, _btnSword, _btnJump, _btnPause;
+  HudThrowButton? _btnThrow;
+  HudSpellButton? _btnSpell;
+  HudReadout? _readout;
+
+  // Screen-space (logical px) safe-area padding from the hosting widget;
+  // converted to viewport units in [hudSafeInsets].
+  EdgeInsets _safePadding = EdgeInsets.zero;
+  Vector2 _canvas = Vector2(1280, 720);
+
+  /// Called by the hosting widget (GameScreen) whenever MediaQuery padding
+  /// changes: display cutout, status bar, gesture-nav / 3-button-nav bar.
+  void setSafeArea(EdgeInsets padding) {
+    if (padding == _safePadding) return;
+    _safePadding = padding;
+    _layoutHud();
+  }
+
+  /// Safe-area padding converted from screen logical px to viewport units.
+  /// The fixed-resolution viewport is scaled uniformly and letterboxed; any
+  /// part of an inset that falls inside the letterbox band costs nothing.
+  EdgeInsets get hudSafeInsets {
+    final scale =
+        math.min(_canvas.x / viewWidth, _canvas.y / viewHeight);
+    if (scale <= 0) return EdgeInsets.zero;
+    final boxX = (_canvas.x - viewWidth * scale) / 2;
+    final boxY = (_canvas.y - viewHeight * scale) / 2;
+    double side(double inset, double box) =>
+        math.max(0, (inset - box) / scale);
+    return EdgeInsets.fromLTRB(
+      side(_safePadding.left, boxX),
+      side(_safePadding.top, boxY),
+      side(_safePadding.right, boxX),
+      side(_safePadding.bottom, boxY),
+    );
+  }
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    _canvas = size.clone();
+    _layoutHud();
+  }
+
+  void _layoutHud() {
+    if (_btnLeft == null) return; // HUD not built yet
+    final ins = hudSafeInsets;
+    final left = hudPad + ins.left;
+    final right = viewWidth - hudPad - ins.right;
+    final bottom = viewHeight - hudPad - ins.bottom;
+    final top = hudPad + ins.top;
+
+    // Left cluster: arrows bottom-aligned, down-chevron beside them.
+    final bottomY = bottom - hudBtn;
+    _btnLeft!.position.setValues(left, bottomY);
+    _btnRight!.position.setValues(left + hudBtn + hudGap, bottomY);
+    _btnDown!.position
+        .setValues(left + (hudBtn + hudGap) * 2, bottom - hudSmallBtn);
+
+    // Right diamond: jump biggest bottom-right, sword left of it; dash and
+    // apple centered above their columns (not edge-aligned — the alignment
+    // fix), so the diamond reads symmetric at any button-size mix.
+    final jumpX = right - hudJumpBtn;
+    final jumpY = bottom - hudJumpBtn;
+    final swordX = jumpX - hudBtn - hudGap;
+    final swordY = bottom - hudBtn;
+    _btnJump!.position.setValues(jumpX, jumpY);
+    _btnSword!.position.setValues(swordX, swordY);
+    _btnDash!.position.setValues(
+        swordX + (hudBtn - hudSmallBtn) / 2, swordY - hudSmallBtn - hudGap);
+    _btnThrow!.position.setValues(jumpX + (hudJumpBtn - hudSmallBtn) / 2,
+        jumpY - hudSmallBtn - hudGap);
+    // Spell (AKP-4d): caps the dash column, auto-hides without a charge.
+    _btnSpell!.position.setValues(swordX + (hudBtn - hudSmallBtn) / 2,
+        swordY - (hudSmallBtn + hudGap) * 2);
+
+    _btnPause!.position.setValues(right - hudSmallBtn, top);
+    _readout!.position.setValues(ins.left, ins.top);
+  }
+
   void _buildHud() {
-    const btn = 52.0;
-    const pad = 8.0;
-    final bottomY = viewHeight - btn - pad;
+    _btnLeft = HudHoldButton(
+      spritePath: 'hud/btn_left.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      spawnFade: true,
+      onPressed: () => touchLeft = true,
+      onReleased: () => touchLeft = false,
+    );
+    _btnRight = HudHoldButton(
+      spritePath: 'hud/btn_right.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      spawnFade: true,
+      onPressed: () => touchRight = true,
+      onReleased: () => touchRight = false,
+    );
+    // Down chevron (AKP-2c): camera peek-down + drop-through one-way
+    // platforms — previously keyboard-only on the touch build.
+    _btnDown = HudHoldButton(
+      spritePath: 'hud/btn_down.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      spawnFade: true,
+      onPressed: () => touchDown = true,
+      onReleased: () => touchDown = false,
+    );
+    // Throw (apple) button: diamond top-right, above jump; HudThrowButton
+    // hides itself whenever the pouch is empty.
+    _btnThrow = HudThrowButton(
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchThrowEdge = true,
+    );
+    // Dash/roll (AKP-2a): diamond top-left, above the sword.
+    // Spell cast (AKP-4d): one charge per run; hides itself otherwise.
+    _btnSpell = HudSpellButton(
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchSpellEdge = true,
+    );
+    _btnDash = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_dash.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: () => _touchRollEdge = true,
+      onReleased: () {},
+    );
+    _btnSword = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_sword.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudBtn),
+      onPressed: () => _touchAttackEdge = true,
+      onReleased: () {},
+    );
+    _btnJump = HudHoldButton(
+      spritePath: 'hud/btn_round.png',
+      iconPath: 'hud/icon_jump.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudJumpBtn),
+      onPressed: () {
+        _touchJumpEdge = true;
+        _touchJumpHeld = true;
+      },
+      onReleased: () => _touchJumpHeld = false,
+    );
+    _btnPause = HudHoldButton(
+      spritePath: 'hud/icon_pause.png',
+      position: Vector2.zero(),
+      size: Vector2.all(hudSmallBtn),
+      onPressed: pauseGame,
+      onReleased: () {},
+    );
+    _readout = HudReadout();
+    _layoutHud();
     camera.viewport.addAll([
-      HudHoldButton(
-        spritePath: 'hud/btn_left.png',
-        position: Vector2(pad, bottomY),
-        size: Vector2.all(btn),
-        onPressed: () => touchLeft = true,
-        onReleased: () => touchLeft = false,
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_right.png',
-        position: Vector2(pad + btn + 6, bottomY),
-        size: Vector2.all(btn),
-        onPressed: () => touchRight = true,
-        onReleased: () => touchRight = false,
-      ),
-      // Throw (apple) button sits above the sword button; HudThrowButton
-      // hides itself whenever the pouch is empty.
-      HudThrowButton(
-        position: Vector2(viewWidth - pad - btn * 2 - 6, bottomY - btn * 0.8 - 6),
-        size: Vector2.all(btn * 0.8),
-        onPressed: () => _touchThrowEdge = true,
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_round.png',
-        iconPath: 'hud/icon_sword.png',
-        position: Vector2(viewWidth - pad - btn * 2 - 6, bottomY),
-        size: Vector2.all(btn),
-        onPressed: () => _touchAttackEdge = true,
-        onReleased: () {},
-      ),
-      HudHoldButton(
-        spritePath: 'hud/btn_round.png',
-        iconPath: 'hud/icon_jump.png',
-        position: Vector2(viewWidth - pad - btn, bottomY),
-        size: Vector2.all(btn),
-        onPressed: () {
-          _touchJumpEdge = true;
-          _touchJumpHeld = true;
-        },
-        onReleased: () => _touchJumpHeld = false,
-      ),
-      HudHoldButton(
-        spritePath: 'hud/icon_pause.png',
-        position: Vector2(viewWidth - 26, 6),
-        size: Vector2.all(20),
-        onPressed: pauseGame,
-        onReleased: () {},
-      ),
-      HudReadout(),
+      _btnLeft!,
+      _btnRight!,
+      _btnDown!,
+      _btnThrow!,
+      _btnSpell!,
+      _btnDash!,
+      _btnSword!,
+      _btnJump!,
+      _btnPause!,
+      _readout!,
       // Frame-time readout for device profiling; compiled out of normal
       // builds (--dart-define=PERF_OVERLAY=true to enable — docs/perf.md §2).
       if (const bool.fromEnvironment('PERF_OVERLAY'))
@@ -283,6 +432,16 @@ class EmberGame extends FlameGame
       }
       if (k == LogicalKeyboardKey.keyK || k == LogicalKeyboardKey.keyC) {
         _keyThrowEdge = true;
+      }
+      // AKP-4d: spell cast on Q or M (session-level verb, one per run).
+      if (k == LogicalKeyboardKey.keyQ || k == LogicalKeyboardKey.keyM) {
+        _keySpellEdge = true;
+      }
+      // AKP-2a: dash/roll on Shift (the DOWN+JUMP chord still works too).
+      if (k == LogicalKeyboardKey.shiftLeft ||
+          k == LogicalKeyboardKey.shiftRight ||
+          k == LogicalKeyboardKey.keyL) {
+        _keyRollEdge = true;
       }
       if (k == LogicalKeyboardKey.escape) pauseGame();
     }
@@ -318,10 +477,16 @@ class EmberGame extends FlameGame
       ..jumpHeld = _touchJumpHeld || _keyJumpHeld
       ..jumpPressed = _touchJumpEdge || _keyJumpEdge
       ..attackPressed = _touchAttackEdge || _keyAttackEdge
-      ..throwPressed = _touchThrowEdge || _keyThrowEdge;
+      ..throwPressed = _touchThrowEdge || _keyThrowEdge
+      ..rollPressed = _touchRollEdge || _keyRollEdge;
     _touchJumpEdge = _keyJumpEdge = false;
     _touchAttackEdge = _keyAttackEdge = false;
     _touchThrowEdge = _keyThrowEdge = false;
+    _touchRollEdge = _keyRollEdge = false;
+    // AKP-4d: the spell is a session verb (touch button + Q/M), not part of
+    // InputIntent — it never competes with movement buffering.
+    if (_touchSpellEdge || _keySpellEdge) session.castSpell();
+    _touchSpellEdge = _keySpellEdge = false;
 
     session.cameraX = cameraPos.x;
     session.update(clamped, _intent);
@@ -377,6 +542,16 @@ class EmberGame extends FlameGame
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom),
               life: 0.22));
+        case PlayerEvent.airDashed:
+          // AKP-2b: slightly sharper whoosh, puff trails BEHIND the dash at
+          // body height (there is no ground under an air dash).
+          AudioService.instance?.playSfx('whoosh', volume: 0.65);
+          world.add(PuffFx(
+              Vector2(
+                  session.player.body.centerX -
+                      session.player.facing * 8,
+                  session.player.body.centerY),
+              life: 0.22));
         case PlayerEvent.attacked:
           // 3-hit combo reads as a phrase: neutral / up / down+heavy.
           AudioService.instance?.playSfx(
@@ -402,6 +577,15 @@ class EmberGame extends FlameGame
         case SessionEventKind.chestOpen:
           AudioService.instance?.playSfx('chest_open');
           world.add(SparkleFx(at, life: 0.5));
+        case SessionEventKind.spellCast:
+          // AKP-4d: golden flash + chime; effect-specific feedback rides on
+          // the events the effect itself emits (enemyHit / heal below).
+          AudioService.instance?.playSfx('secret', volume: 0.9);
+          Haptics.light();
+          world.add(SparkleFx(at, life: 0.5));
+          if (session.loadout.spell?.effect == SpellEffect.hearthLight) {
+            AudioService.instance?.playSfx('heal');
+          }
         case SessionEventKind.secretFound:
           AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
@@ -470,15 +654,32 @@ class EmberGame extends FlameGame
         ? levelH / 2
         : targetY.clamp(viewHeight / 2, levelH - viewHeight / 2);
 
-    final k = (kCameraSmooth * dt).clamp(0.0, 1.0);
-    final pos = camera.viewfinder.position;
+    // Frame-rate-independent exponential smoothing: the old `k * dt` linear
+    // factor under-corrects at low fps and over-corrects at high fps, so
+    // follow speed (and the apparent "weight" of the camera) changed with
+    // frame rate. 1 - e^(-k*dt) converges identically at any fps.
+    final k = 1 - math.exp(-kCameraSmooth * dt);
     _camBump = math.max(0, _camBump - 12 * dt);
     final bumpY = _camBump > 0 ? (_bumpRand.nextDouble() - 0.5) * _camBump * 2 : 0.0;
-    camera.viewfinder.position = Vector2(
-      pos.x + (targetX - pos.x) * k,
-      pos.y + (targetY - pos.y) * k + bumpY,
-    );
+    _camSmoothX += (targetX - _camSmoothX) * k;
+    _camSmoothY += (targetY - _camSmoothY) * k;
+    // Pixel snap (movement-stutter fix): the 352x198 viewport is upscaled
+    // ~5-6x with nearest-neighbor filtering. A camera at fractional world
+    // coordinates makes every tile edge resample differently each frame —
+    // full-screen shimmer/judder whenever the camera pans (i.e. whenever
+    // the player moves). Smoothing runs on unrounded floats so no motion is
+    // lost; only the rendered position is quantized to whole world pixels.
+    camera.viewfinder.position = _camRender
+      ..setValues(
+        _camSmoothX.roundToDouble(),
+        (_camSmoothY + bumpY).roundToDouble(),
+      );
   }
+
+  // Unrounded camera state (smoothing accumulator) + scratch render vector.
+  double _camSmoothX = 0;
+  double _camSmoothY = 0;
+  final Vector2 _camRender = Vector2.zero();
 
   // -- flow -------------------------------------------------------------------
 

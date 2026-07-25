@@ -43,6 +43,17 @@ const double kRollDuration = 0.38; // s locked in the roll
 const double kRollSpeed = 190.0; // px/s in facing direction
 const double kRollIFrames = 0.28; // s of invulnerability from roll start
 const double kRollCooldown = 0.35; // s after the roll ends before the next
+// AKP-2b (owner-confirmed 2026-07-25): AK-style air dash — the dash button
+// also fires mid-air: horizontal kRollSpeed burst, gravity suspended for
+// the duration, ONE air dash per airborne period (resets on landing).
+// Tuning flag kept so it can be A/B'd on-device before the beta.
+const bool kAirDashEnabled = true;
+
+// Spells (AKP-4d, owner-confirmed 2026-07-25). One cast per level run.
+const double kSpellBurstRadius = 56.0; // px around the player centre
+const int kSpellBurstDamage = 4; // + 3s ignite on survivors
+const double kSpellVeilSeconds = 3.0; // stone veil immunity window
+const int kSpellHealHearts = 2; // hearth light restore (clamped to max)
 
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
@@ -52,12 +63,22 @@ const double kAttackDuration = 0.22; // s per swing
 const double kHitPause = 0.040; // s freeze on connect
 const double kHurtIFrames = 1.0; // s invulnerability after taking a hit
 const double kKnockbackSpeed = 150.0; // px/s away from damage source
+// AKP-6b: hazard tiles (spike/fire pits) eject the player up and along the
+// direction of travel instead of the normal shallow knockback, which left
+// you inside the pit chain-taking hits. 340 px/s rises ~50px (3 tiles);
+// 170 px/s across ~0.6s of airtime clears a 4-tile pit from its lip.
+const double kHazardEjectSpeedY = 340.0;
+const double kHazardEjectSpeedX = 170.0;
 const double kAppleThrowSpeed = 220.0; // px/s, 45deg-ish arc
 const int kAppleDamage = 2;
 const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
 
 // Camera.
-const double kCameraLookAhead = 24.0; // px in facing direction
+// AKP-1c: 24 -> 32 for the 384x216 zoom, 32 -> 40 for the owner-confirmed
+// 352x198 AK-exact zoom (half-width shrank 192 -> 176; +8 look-ahead keeps
+// forward sight at 216px ≈ 1.8s of run travel at kRunSpeed 118 — hazards
+// must never appear later than ~1s before they need a reaction).
+const double kCameraLookAhead = 40.0; // px in facing direction
 const double kCameraSmooth = 8.0; // exp smoothing factor
 const double kCameraPeekDown = 56.0; // px when holding down
 

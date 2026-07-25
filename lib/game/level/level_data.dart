@@ -15,6 +15,7 @@
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
 //   R  Rotshield        G  Grove Golem (boss)
 //   S  Soot Creeper (W2 walker)                D  Cinder Diver (W2 flyer)
+//   W  Pyre Wisp (chasing flyer)               H  Slag Hound (charger)
 //   DECOR (purely visual, never collides):
 //   b  bush             r  rock                m  shrooms
 //   t  tree (large, background)
@@ -50,6 +51,8 @@ enum SpawnKind {
   groveGolem,
   sootCreeper,
   cinderDiver,
+  pyreWisp,
+  slagHound,
 }
 
 class Spawn {
@@ -100,6 +103,8 @@ const Map<String, SpawnKind> _spawnChars = {
   'G': SpawnKind.groveGolem,
   'S': SpawnKind.sootCreeper,
   'D': SpawnKind.cinderDiver,
+  'W': SpawnKind.pyreWisp,
+  'H': SpawnKind.slagHound,
 };
 
 class LevelData {

@@ -61,6 +61,33 @@ class Skin {
       basePower + 0.03 * (level - 1).clamp(0, maxLevel - 1);
 }
 
+// AKP-4d (owner-confirmed 2026-07-25): AK-style spell slot. One spell may
+// be equipped; it grants a single cast per level run (the charge returns
+// on the next run). All spells are premium — there is deliberately no free
+// starter spell: it is a pure economy sink like AK's magic.
+enum SpellEffect {
+  emberBurst, // AoE fire ring around the player, ignites survivors
+  stoneVeil, // several seconds of invulnerability
+  hearthLight, // restore hearts
+}
+
+class Spell {
+  final String id;
+  final String name;
+  final String text;
+  final SpellEffect effect;
+  final Currency currency;
+  final int price;
+  const Spell({
+    required this.id,
+    required this.name,
+    required this.text,
+    required this.effect,
+    required this.currency,
+    required this.price,
+  });
+}
+
 class Ability {
   final String id;
   final String name;
@@ -156,6 +183,9 @@ const List<Skin> kSkins = [
   Skin(id: 'ember_monk', name: 'Ember Monk', currency: Currency.coins, price: 800),
   Skin(id: 'shadow_thief', name: 'Shadow Thief', currency: Currency.coins, price: 1200),
   Skin(id: 'hearth_knight', name: 'Hearth Knight', currency: Currency.feathers, price: 15),
+  // Stage 2 (owner-directed 2026-07-25): two more characters.
+  Skin(id: 'grove_sentinel', name: 'Grove Sentinel', currency: Currency.coins, price: 1600),
+  Skin(id: 'ash_wraith', name: 'Ash Wraith', currency: Currency.feathers, price: 25),
 ];
 
 const List<Ability> kAbilities = [
@@ -189,6 +219,36 @@ const List<Ability> kAbilities = [
   ),
 ];
 
+const List<Spell> kSpells = [
+  Spell(
+    id: 'ember_burst',
+    name: 'Ember Burst',
+    text: 'A ring of flame erupts around you, scorching and igniting '
+        'nearby foes. Once per level.',
+    effect: SpellEffect.emberBurst,
+    currency: Currency.coins,
+    price: 700,
+  ),
+  Spell(
+    id: 'stone_veil',
+    name: 'Stone Veil',
+    text: 'Harden like kiln-fired clay: 3 seconds of immunity. '
+        'Once per level.',
+    effect: SpellEffect.stoneVeil,
+    currency: Currency.coins,
+    price: 1100,
+  ),
+  Spell(
+    id: 'hearth_light',
+    name: 'Hearth Light',
+    text: 'A warm glow restores two hearts. Once per level.',
+    effect: SpellEffect.hearthLight,
+    currency: Currency.feathers,
+    price: 10,
+  ),
+];
+
 Weapon weaponById(String id) => kWeapons.firstWhere((w) => w.id == id);
 Skin skinById(String id) => kSkins.firstWhere((s) => s.id == id);
 Ability abilityById(String id) => kAbilities.firstWhere((a) => a.id == id);
+Spell spellById(String id) => kSpells.firstWhere((s) => s.id == id);

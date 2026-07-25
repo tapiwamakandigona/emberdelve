@@ -58,6 +58,9 @@ class SaveData {
   Map<String, int> skinKills; // skin id -> lifetime kills (drives skin level)
   String equippedSkin;
   Set<String> ownedAbilities;
+  Set<String> ownedSpells; // AKP-4d spell slot (owner-confirmed 2026-07-25)
+  String equippedSpell; // '' = no spell equipped
+  String difficulty; // 'easy' | 'medium' | 'hard' (Stage 2, 2026-07-25)
   Map<String, LevelRecord> levels; // level id (e.g. 'w1_l1') -> record
   bool tutorialSeen;
   bool legacyBonusGranted; // one-time coin gift for v1 dice-save owners
@@ -73,6 +76,9 @@ class SaveData {
     Map<String, int>? skinKills,
     this.equippedSkin = 'red',
     Set<String>? ownedAbilities,
+    Set<String>? ownedSpells,
+    this.equippedSpell = '',
+    this.difficulty = 'medium',
     Map<String, LevelRecord>? levels,
     this.tutorialSeen = false,
     this.legacyBonusGranted = false,
@@ -82,6 +88,7 @@ class SaveData {
         ownedSkins = ownedSkins ?? {'red'},
         skinKills = skinKills ?? {},
         ownedAbilities = ownedAbilities ?? {},
+        ownedSpells = ownedSpells ?? {},
         levels = levels ?? {};
 
   LevelRecord recordFor(String levelId) =>
@@ -97,6 +104,9 @@ class SaveData {
         'skinKills': skinKills,
         'equippedSkin': equippedSkin,
         'ownedAbilities': ownedAbilities.toList(),
+        'ownedSpells': ownedSpells.toList(),
+        'equippedSpell': equippedSpell,
+        'difficulty': difficulty,
         'levels': levels.map((k, v) => MapEntry(k, v.toJson())),
         'tutorialSeen': tutorialSeen,
         'legacyBonusGranted': legacyBonusGranted,
@@ -125,6 +135,10 @@ class SaveData {
       equippedSkin: j['equippedSkin'] as String? ?? 'red',
       ownedAbilities:
           ((j['ownedAbilities'] as List?)?.cast<String>() ?? []).toSet(),
+      ownedSpells:
+          ((j['ownedSpells'] as List?)?.cast<String>() ?? []).toSet(),
+      equippedSpell: j['equippedSpell'] as String? ?? '',
+      difficulty: j['difficulty'] as String? ?? 'medium',
       levels: (j['levels'] as Map?)?.map((k, v) => MapEntry(
               k as String,
               LevelRecord.fromJson((v as Map).cast<String, dynamic>()))) ??
