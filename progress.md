@@ -559,3 +559,38 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   sides — pre-existing, left untouched).
 - NOT VERIFIED: on-device frame times (no device/emulator).
 - Detail: docs/improvements/perf-map-reward-input-2026-07-25.md
+
+## 2026-07-25 — perf pass 4: per-field controller notifiers + SFX voices (v0.3.15+20)
+- Attacks the ceiling the last three passes hit: GameController is one
+  ChangeNotifier, so GameRoot rebuilt the whole active screen on every
+  notifyListeners(). Now the controller publishes per-field ticks (phase, turn,
+  run, enemy, player vitals, dice, map, meta), detected by hashing each field
+  with the sim's own `hashValue` inside an override of notifyListeners() — so
+  every existing mutation path feeds them, with no second place to bump.
+- GameRoot hands CombatScreen back as the SAME widget instance (Element.
+  updateChild short-circuits), so a sim command no longer re-runs its ~1000-line
+  build(). Every other screen keeps the old whole-screen AnimatedBuilder.
+- The combat HUD is five bands: top bar (runTick), enemy panel (enemy+turn),
+  stage (enemy+run), player HP (vitals), tray + action zone (dice + input tick).
+  Each band recomputes a `_Hud` from LIVE state, so no section renders another
+  section's snapshot (the stage's assign preview re-reads live state explicitly).
+- Painted objects/frame: combat 12 BUTTON taps 100.3 -> 87.7 (-12.6%). Die-tap
+  storm, combat idle, title, reward flip and map are unchanged. Rebuilds/frame:
+  button storm 19.9 -> 19.3, DIE storm 14.1 -> 16.1 (worse, accepted: band
+  builders re-running, paints flat).
+- MEASURED TWICE, and this is the lesson: scoping WITHOUT a repaint boundary at
+  each band measured 100.3 — the same 6020 paints as the baseline, i.e. nothing.
+  Scoping WITH the boundary measured 87.7. v0.3.14 already had boundaries inside
+  the sections and still measured 100.3, because a whole-screen rebuild dirties
+  every section anyway. The two halves only pay off together.
+- Audio: v0.3.12's one-player-per-id made a retrigger RESTART the sound. Ids
+  that overlap in real play now keep 2-3 resident low-latency voices and each
+  trigger takes an idle one (die_assign/enemy_hit/coin x3; dice_roll, reroll,
+  player_hit, block, ember_gain, whoosh x2). UI clicks and stings stay single.
+- VERIFIED: analyze clean; 152/152 tests (143 + 9 new audio voice tests);
+  store-screenshot harness byte-identical to 0680f20 on all 6 PNGs incl. combat;
+  play_session smoke green; probe run on both sides with the identical file.
+- NOT VERIFIED: on-device frame times (no device/emulator); the layered SFX by
+  ear (logic is unit-tested only) — if a dice cascade sounds cluttered, lower
+  AudioService.sfxVoices, it is one table.
+- Detail: docs/improvements/perf-controller-notifiers-2026-07-25.md
