@@ -109,6 +109,11 @@ class LevelData {
 
   String get name => meta['name'] ?? 'Unnamed';
   String get music => meta['music'] ?? 'combat';
+
+  /// Environment set: 'forest' (World 1) or 'cave' (World 2). Selects the
+  /// tile atlas (tiles/tileset[_cave].png) and parallax layer family
+  /// (bg/forest_* vs bg/cave_*).
+  String get environment => meta['env'] ?? 'forest';
   int get parSeconds => int.tryParse(meta['par_s'] ?? '') ?? 120;
 
   Spawn get playerSpawn => spawns.firstWhere((s) => s.kind == SpawnKind.player);
