@@ -78,9 +78,6 @@ void main() {
         }
       });
 
-      // Bosses are a skill check by design — a bot that never aims can't
-      // survive one, and shouldn't have to.
-      final isBoss = id.endsWith('boss');
       test('a casual player is not wiped out in the opening seconds', () {
         final s = LevelSession(load(id), Loadout.starter(),
             seed: 7, difficulty: Difficulty.medium);
