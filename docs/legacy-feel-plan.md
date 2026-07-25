@@ -98,6 +98,58 @@ Played, not watched (VERIFIED, `docs/reference/legacy-feel/dicey/`):
 LFP-6b gains "show the reroll budget on the panel like DD's Tweaks
 counter". No new workstreams.
 
+## 0c. Die in the Dungeon (hands-on) — the preview benchmark
+
+Second free big-fanbase comparable, **played hands-on** 2026-07-25: **Die in
+the Dungeon CLASSIC** (Alarts — itch browser mega-hit, 4.7/5 from 2,700+
+ratings; the full game shipped on Steam 2025). Beat the floor-1 tutorial
+fight as the frog. Captures in `docs/reference/legacy-feel/ditd/`. VERIFIED:
+
+1. **Live outcome previews on the actors.** The moment a die lands on the
+   board, the enemy HP badge grows a "−3" chip and the frog grows a "+2"
+   shield chip (`ditd_place_preview.gif`). You never do arithmetic — the
+   *world* shows the result of your current plan before you commit. This is
+   the strongest argument yet for LFP-2a's running totals; DitD proves the
+   preview belongs **on the combatants**, not on the buttons. LFP-2a DoD
+   extended: preview chips render next to enemy HP and player shield, not
+   only on the verb buttons.
+2. **One commit button ("FINISH") resolves the whole plan** with the dice
+   visually flying their effects out — plan-then-resolve in one beat, close
+   to our END TURN model (validates it) but with the plan preview from #1.
+3. **Deck-thinning as a first-class reward:** after the win, "DISCARD one
+   die" is offered as an *equal* choice to "GET one new die"
+   (`ditd_kill_reward.gif`). Emberdelve's reward flow only ever adds dice —
+   pool bloat has no counter. Worth an owner decision for act-2 content
+   (noted, no new workstream).
+
+## 0d. Premium lookalikes via gameplay footage (frame analysis)
+
+No free builds exist, so per owner direction these were analysed from
+let's-play/gameplay videos of *other people playing* (reference GIFs in
+`docs/reference/legacy-feel/footage/`, © respective creators/devs,
+reference use — same precedent as the AK captures):
+
+- **Slice & Dice** (full game, no-commentary gameplay): dice are *thrown*
+  and tumble across the field on every roll (`snd_dice_throw.gif` — the
+  LFP-1 reference in real play, not trailer); during assignment, dashed
+  **targeting lines with damage numbers** connect each die to its victim
+  (`snd_target_lines.gif`) — same lesson as DitD #1: previews live in the
+  scene. Permanent **Undo** button bottom-left all turn (LFP-2b reference);
+  mana pips accumulate visibly mid-turn.
+- **Dicey Dungeons (full release**, Northernlion Warrior ep. 1): everything
+  the free v0.9 lacked got juiced — an **innate-tip bar** and "ENEMY MOVES"
+  banner headline the fight (`ddfull_intent_preview.gif`), an end-of-turn
+  **preview panel shows the enemy's next equipment** before you commit
+  (their answer to our intent badge — validates LFP-3), and the **LIMIT
+  BREAK** moment gets a full-screen banner (`ddfull_limit_break.gif`).
+  Confirms the v0.9→full delta is mostly presentation — the exact axis of
+  this plan.
+
+**Plan impact of 0c/0d:** LFP-2a DoD extended (actor-anchored preview
+chips); LFP-2b confirmed by two more benchmarks (S&D Undo, DD full undo-
+friendly previews); everything else unchanged. Still no new workstreams —
+the six hold.
+
 ## 1. Physical dice (LFP-1) — M
 
 **Current:** dice are flat UI chips in a fixed tray row. The tumble is good

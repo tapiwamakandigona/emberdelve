@@ -39,6 +39,25 @@ terrycavanaghgames.com/dice/9), same rig, full Warrior floor-1 fight won:
 | `dicey/dd_fury_kill.gif` | Fury limit-break drag + killing blow + "Warrior wins!" payout |
 
 
+`ditd/` — **hands-on** Die in the Dungeon CLASSIC (itch browser build,
+4.7/5 × 2,700+ ratings), floor-1 tutorial fight won:
+
+| File | Shows |
+|---|---|
+| `ditd/ditd_place_preview.gif` | Drag die to board → live "−N"/"+N" preview chips on enemy HP and player shield (LFP-2a reference) |
+| `ditd/ditd_finish_resolve.gif` | FINISH commit → whole board resolves in one beat |
+| `ditd/ditd_kill_reward.gif` | Kill + reward: DISCARD-a-die offered equal to GET-a-die |
+
+`footage/` — premium lookalikes, frame analysis of gameplay videos
+(© respective creators/devs, reference use):
+
+| File | Source | Shows |
+|---|---|---|
+| `footage/snd_dice_throw.gif` | Slice & Dice gameplay (YouTube, no-commentary) | Thrown physical dice in real play (LFP-1 reference) |
+| `footage/snd_target_lines.gif` | same | Dashed damage-preview lines die→victim + permanent Undo |
+| `footage/ddfull_intent_preview.gif` | Dicey Dungeons full, NL Warrior ep.1 | Innate tip bar + ENEMY MOVES banner + enemy-next-move preview |
+| `footage/ddfull_limit_break.gif` | same | Full-screen LIMIT BREAK banner moment |
+
 `snd_trailer_sheet.png` — 20-frame contact sheet from the official
 Slice & Dice 3.0 trailer (web demo is download-only). Rows 1–2: the thrown
 physical dice roll (LFP-1 reference). Row 3: per-die tooltips + computed
