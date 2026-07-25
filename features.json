@@ -38,7 +38,7 @@
     },
     {
       "id": "P-M5",
-      "title": "Content: World 1 Emberwood \u2014 5 levels + Grove Golem boss",
+      "title": "Content: World 1 Emberwood — 5 levels + Grove Golem boss",
       "acceptance": "All levels in assets/levels parse + lint clean with >=2 chests and >=1 feather each (except boss arena); boss with 3 telegraphed phases; every level completable (manual/scripted run evidence)",
       "passes": true,
       "evidence": "assets/levels/w1_l1..w1_l5 + w1_boss all parse+lint clean with >=2 secrets, 2-7 chests, 1-3 feathers each (test/world1_levels_test.dart quotas); Grove Golem 3 telegraphed phases w/ thresholds 2/3+1/3 (test/boss_core_test.dart); completability: scripted door-seeking runner bot finishes every regular level headlessly (world1_levels_test 'scripted runner bot reaches the door'), boss arena door unlock covered in boss_core_test"
@@ -77,6 +77,13 @@
       "acceptance": "Version bumped, CI green, signed AAB uploaded to the existing closed-testing track (same package id + cert), GitHub prerelease v1.0.0-beta.1 with APK + honest notes, checkpoints/ entry describing tester-facing changes",
       "passes": false,
       "evidence": ""
+    },
+    {
+      "id": "P-A1",
+      "title": "Original-asset pass 1: zero legally-required attributions",
+      "acceptance": "No shipped asset is CC-BY or otherwise attribution-required: CC-BY music (4 KM tracks), defeat theme+sting, fire ambience loop, chest sprite, and dice-era icon replaced by original Tsoro Studios work generated in-repo (tool/build_original_music.py, tool/build_original_art.py); CREDITS.md/PROVENANCE.md updated; credits-screen test asserts the no-required-attribution statement; flutter analyze + full test suite green; decoded audio peaks <= -1.3 dBFS",
+      "passes": true,
+      "evidence": "flutter analyze 'No issues found' + flutter test 233/233 passed (this commit); build logs 2026-07-25: tool/build_original_music.py decoded peaks -9.44..-2.17 dBFS (script asserts <= -1.3); grep of CREDITS.md/PROVENANCE.md shows no shipped CC-BY rows (historical section only); replaced files regenerate bit-identically from tool/ scripts with no third-party inputs"
     }
   ]
 }
