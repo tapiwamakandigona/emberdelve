@@ -60,3 +60,16 @@ increasing.
 - The tutorial thornling patrols near spawn in `w1_l1`: long uninterrupted
   holds walk the player into it and the death freeze makes later assertions
   fail. Reload between test sections or keep holds short.
+
+## Ready-made verification script
+
+`tool/webtest/verify_controls.py` is the exact Playwright/CDP driver used to verify the
+alpha.3 input fixes. With the harness built and served on port 8123:
+
+```bash
+pip install playwright && playwright install chromium
+WEBTEST_OUT=/tmp python tool/webtest/verify_controls.py
+```
+
+It tests touch hold right/left, thumb-drift-while-holding, keyboard arrows, and the jump
+button from fresh page loads, printing PASS/FAIL per scenario and an overall verdict.
