@@ -525,3 +525,37 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - NOT VERIFIED: mid-choreography frames are not pixel-covered by any
   deterministic harness; on-device frame times (no device/emulator available).
 - Detail: docs/improvements/perf-combat-scoped-rebuilds-2026-07-25.md
+
+## 2026-07-25 — perf pass 3: map glow, reward flip, input scoping, shake (v0.3.14+19)
+- HARNESS FIX FIRST: `tool/perf_probe_test.dart` booted a fresh save, so the
+  first-fight tutorial overlay covered every combat scenario — its scrim ate the
+  "12 rapid taps" (they never reached Roll/Reroll/End turn) and its layers were
+  counted in the totals. Probe now calls `c.markTutorialSeen()` after boot. The
+  combat tap-storm numbers quoted for v0.3.12/v0.3.13 measured something other
+  than their label; everything below is re-measured on BOTH sides with the fixed
+  probe (baseline = c5b8177 in a separate worktree).
+- Painted render objects per frame, v0.3.13 -> v0.3.14: map idle 221.0 -> 19.7
+  (11.2x, rebuilds 40.1 -> 0.1); map drag 221.0 -> 54.5; combat 12 rapid DIE
+  taps 151.9 -> 20.0 (7.6x); combat 12 rapid BUTTON taps 169.9 -> 100.3; reward
+  flip 86.4 -> 52.9. Title and combat idle unchanged (3.0 / 2.0).
+- Map was the worst screen in the game: every medallion animated through
+  `AnimatedBuilder`, rebuilding 20 CustomPaints + icons per frame inside the
+  scroll viewport. Now the pulse drives `CustomPainter(repaint:)` and each
+  medallion is a RepaintBoundary; unreachable nodes don't listen at all.
+- Reward `_FlipCard` rebuilt its face/back (FittedBox over text) on every flip
+  frame; both sides are now built once and rasterised behind RepaintBoundaries.
+- Combat: third scoped tick `_uiTick` (selection, `_busy`, reroll mode+select,
+  verb pulses) with the tray, action zone, preview badge and help button as
+  scoped consumers — 11 setState sites converted to `_ui()`.
+- `ShakeBox` now wraps its child in a RepaintBoundary: the whole-screen shake
+  was repainting every render object under it on each of its ~14 frames.
+- Section RepaintBoundaries on the combat HUD (top bar, enemy panel, stage,
+  player HP): alone worth 151.5 -> 100.3 on the button storm.
+- Tried and reverted (measured nothing): RepaintBoundary per tray chip.
+- Button-storm gain is capped at 1.7x by design: those taps issue sim commands,
+  and GameController/GameRoot rebuild the whole screen on notifyListeners().
+- VERIFIED: analyze clean; 143/143 tests; store-screenshot harness byte-identical
+  to c5b8177 on all 6 PNGs (committed PNGs drift from this toolchain on BOTH
+  sides — pre-existing, left untouched).
+- NOT VERIFIED: on-device frame times (no device/emulator).
+- Detail: docs/improvements/perf-map-reward-input-2026-07-25.md

@@ -48,198 +48,214 @@ class _RewardScreenState extends State<RewardScreen> {
             child: LayoutBuilder(
               builder: (context, box) {
                 final n = offers.length;
-                final cardW = ((box.maxWidth - Space.l * 2) - Space.m * (n - 1))
-                        .clamp(0.0, double.infinity) /
+                final cardW =
+                    ((box.maxWidth - Space.l * 2) - Space.m * (n - 1)).clamp(
+                      0.0,
+                      double.infinity,
+                    ) /
                     n;
                 final w = cardW.clamp(88.0, 150.0);
                 final h = (w * 1.5).clamp(120.0, box.maxHeight - Space.m * 2);
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                        for (var i = 0; i < n; i++) ...[
-                          if (i > 0) const SizedBox(width: Space.m),
-                          _FlipCard(
-                            key: ValueKey('reward-${offers[i]}-$i'),
-                            dieId: offers[i],
-                            recommended: i == recIdx,
-                            width: w,
-                            height: h,
-                            // Staggered reveal reads left-to-right.
-                            flipDelayMs: 220 + i * 240,
-                            onFlip: () {
-                              c.audio?.playSfx('event_page', volume: 0.6);
-                              Haptics.light();
-                            },
-                            onPick: () =>
-                                c.apply({'type': 'choose_reward', 'index': i + 1}),
-                          ),
-                        ],
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: SizedBox(
-                width: double.infinity,
-                child: EmberButton(
-                  'Skip',
-                  onTap: () => c.apply({'type': 'choose_reward', 'index': 0}),
-                ),
-              ),
-            ),
-          ],
-        );
-      }
-    }
-
-    /// One reward card: starts face-down (ember card back), flips face-up after
-    /// [flipDelayMs] with a 3D turn, then becomes tappable to pick.
-    class _FlipCard extends StatefulWidget {
-      final String dieId;
-      final bool recommended;
-      final double width;
-      final double height;
-      final int flipDelayMs;
-      final VoidCallback onFlip;
-      final VoidCallback onPick;
-      const _FlipCard({
-        super.key,
-        required this.dieId,
-        required this.recommended,
-        required this.width,
-        required this.height,
-        required this.flipDelayMs,
-        required this.onFlip,
-        required this.onPick,
-      });
-
-      @override
-      State<_FlipCard> createState() => _FlipCardState();
-    }
-
-    class _FlipCardState extends State<_FlipCard>
-        with SingleTickerProviderStateMixin {
-      late final AnimationController _t = AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 440),
-      );
-      Timer? _delay;
-      bool _picked = false;
-
-      @override
-      void initState() {
-        super.initState();
-        _delay = Timer(Duration(milliseconds: widget.flipDelayMs), () {
-          if (!mounted) return;
-          widget.onFlip();
-          _t.forward();
-        });
-      }
-
-      @override
-      void dispose() {
-        _delay?.cancel();
-        _t.dispose();
-        super.dispose();
-      }
-
-      @override
-      Widget build(BuildContext context) {
-        return AnimatedBuilder(
-          animation: _t,
-          builder: (context, _) {
-            final v = Curves.easeInOutCubic.transform(_t.value);
-            // Face-down = half a turn away; the face swaps in at the apex so
-            // the back is never mirrored.
-            final angle = math.pi * (1.0 - v);
-            final showFace = v > 0.5;
-            final flipped = _t.isCompleted;
-            return GestureDetector(
-              onTap: flipped && !_picked
-                  ? () {
-                      _picked = true; // double-tap guard until the phase moves on
-                      Haptics.light();
-                      widget.onPick();
-                    }
-                  : null,
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.0012) // perspective
-                  ..rotateY(angle),
-                child: showFace
-                    ? _face(context)
-                    // The back is built pre-mirrored so it reads correctly
-                    // through the first half of the turn.
-                    : Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..rotateY(math.pi),
-                        child: _back(),
+                    for (var i = 0; i < n; i++) ...[
+                      if (i > 0) const SizedBox(width: Space.m),
+                      _FlipCard(
+                        key: ValueKey('reward-${offers[i]}-$i'),
+                        dieId: offers[i],
+                        recommended: i == recIdx,
+                        width: w,
+                        height: h,
+                        // Staggered reveal reads left-to-right.
+                        flipDelayMs: 220 + i * 240,
+                        onFlip: () {
+                          c.audio?.playSfx('event_page', volume: 0.6);
+                          Haptics.light();
+                        },
+                        onPick: () =>
+                            c.apply({'type': 'choose_reward', 'index': i + 1}),
                       ),
-              ),
-            );
-          },
-        );
-      }
+                    ],
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(Space.l),
+          child: SizedBox(
+            width: double.infinity,
+            child: EmberButton(
+              'Skip',
+              onTap: () => c.apply({'type': 'choose_reward', 'index': 0}),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-      /// Ember card back: charcoal panel, ember diamond, corner pips.
-      Widget _back() {
-        return Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: EmberColors.line, width: 2),
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [EmberColors.raised, Color(0xFF17111F)],
-            ),
-          ),
-          child: Center(
-            child: Transform.rotate(
-              angle: math.pi / 4,
-              child: Container(
-                width: widget.width * 0.34,
-                height: widget.width * 0.34,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: EmberColors.ember, width: 2),
-                  color: EmberColors.ember.withValues(alpha: 0.15),
-                ),
-              ),
-            ),
-          ),
-        );
-      }
+/// One reward card: starts face-down (ember card back), flips face-up after
+/// [flipDelayMs] with a 3D turn, then becomes tappable to pick.
+class _FlipCard extends StatefulWidget {
+  final String dieId;
+  final bool recommended;
+  final double width;
+  final double height;
+  final int flipDelayMs;
+  final VoidCallback onFlip;
+  final VoidCallback onPick;
+  const _FlipCard({
+    super.key,
+    required this.dieId,
+    required this.recommended,
+    required this.width,
+    required this.height,
+    required this.flipDelayMs,
+    required this.onFlip,
+    required this.onPick,
+  });
 
-      Widget _face(BuildContext context) {
-        final def = dieDef(widget.dieId);
-        return Container(
-          width: widget.width,
-          height: widget.height,
-          padding: const EdgeInsets.all(Space.s),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: widget.recommended ? EmberColors.ember : EmberColors.line,
-              width: 2,
+  @override
+  State<_FlipCard> createState() => _FlipCardState();
+}
+
+class _FlipCardState extends State<_FlipCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 440),
+  );
+  Timer? _delay;
+  bool _picked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _delay = Timer(Duration(milliseconds: widget.flipDelayMs), () {
+      if (!mounted) return;
+      widget.onFlip();
+      _t.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _delay?.cancel();
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Perf (2026-07-25): the two faces used to be rebuilt inside the
+    // AnimatedBuilder, so every one of the ~26 flip frames re-laid-out
+    // the card's FittedBox/Text tree (three cards at once = the reward
+    // ceremony was the heaviest screen in the game after the map).
+    // Building them once per parent build keeps the widget instances
+    // identical across frames, so the framework skips their subtrees and
+    // the flip costs a transform only. The RepaintBoundary keeps each
+    // card's repaint off its neighbours and off the screen chrome.
+    // Each side is its own repaint layer too: the turn is a matrix change, so
+    // the rasterised face can just be re-composited instead of re-painting a
+    // dozen text runs every flip frame.
+    final face = RepaintBoundary(child: _face(context));
+    final back = Transform(
+      alignment: Alignment.center,
+      // The back is built pre-mirrored so it reads correctly through the
+      // first half of the turn.
+      transform: Matrix4.identity()..rotateY(math.pi),
+      child: RepaintBoundary(child: _back()),
+    );
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _t,
+        builder: (context, _) {
+          final v = Curves.easeInOutCubic.transform(_t.value);
+          // Face-down = half a turn away; the face swaps in at the apex so
+          // the back is never mirrored.
+          final angle = math.pi * (1.0 - v);
+          final showFace = v > 0.5;
+          final flipped = _t.isCompleted;
+          return GestureDetector(
+            onTap: flipped && !_picked
+                ? () {
+                    _picked = true; // double-tap guard until the phase moves on
+                    Haptics.light();
+                    widget.onPick();
+                  }
+                : null,
+            child: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.0012) // perspective
+                ..rotateY(angle),
+              child: showFace ? face : back,
             ),
-            color: widget.recommended ? EmberColors.raised : EmberColors.surface,
+          );
+        },
+      ),
+    );
+  }
+
+  /// Ember card back: charcoal panel, ember diamond, corner pips.
+  Widget _back() {
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: EmberColors.line, width: 2),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [EmberColors.raised, Color(0xFF17111F)],
+        ),
+      ),
+      child: Center(
+        child: Transform.rotate(
+          angle: math.pi / 4,
+          child: Container(
+            width: widget.width * 0.34,
+            height: widget.width * 0.34,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: EmberColors.ember, width: 2),
+              color: EmberColors.ember.withValues(alpha: 0.15),
+            ),
           ),
-          // FittedBox over a width-pinned column: text wraps at card width and
-          // the whole face scales down on short screens instead of overflowing
-          // (probes go to 320×568 at 1.3x text).
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: SizedBox(
-              width: widget.width - Space.s * 2,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
+        ),
+      ),
+    );
+  }
+
+  Widget _face(BuildContext context) {
+    final def = dieDef(widget.dieId);
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      padding: const EdgeInsets.all(Space.s),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: widget.recommended ? EmberColors.ember : EmberColors.line,
+          width: 2,
+        ),
+        color: widget.recommended ? EmberColors.raised : EmberColors.surface,
+      ),
+      // FittedBox over a width-pinned column: text wraps at card width and
+      // the whole face scales down on short screens instead of overflowing
+      // (probes go to 320×568 at 1.3x text).
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: widget.width - Space.s * 2,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               if (widget.recommended)
                 Container(
                   padding: const EdgeInsets.symmetric(

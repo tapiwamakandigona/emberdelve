@@ -84,12 +84,13 @@ class _MapScreenState extends State<MapScreen>
                   // offset 0 == bottom of the delve).
                   if (_scrolledForPos != position) {
                     _scrolledForPos = position;
-                    final target = ((curLayer - 1) * _rowH +
-                            20 +
-                            _nodeSize / 2 -
-                            cns.maxHeight * 0.45)
-                        .clamp(0.0, math.max(0.0, h - cns.maxHeight))
-                        .toDouble();
+                    final target =
+                        ((curLayer - 1) * _rowH +
+                                20 +
+                                _nodeSize / 2 -
+                                cns.maxHeight * 0.45)
+                            .clamp(0.0, math.max(0.0, h - cns.maxHeight))
+                            .toDouble();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (!mounted || !_scroll.hasClients) return;
                       _scroll.animateTo(
@@ -279,15 +280,22 @@ class _MapScreenState extends State<MapScreen>
         onTap: isReachable
             ? () => widget.c.apply({'type': 'choose_node', 'node': id})
             : null,
-        child: AnimatedBuilder(
-          animation: _pulse,
-          builder: (context, _) => CustomPaint(
+        // Perf (2026-07-25): this used to be an AnimatedBuilder around the
+        // whole medallion, so every glow frame rebuilt the CustomPaint, the
+        // icon Image and their boxes for EVERY node — 20 nodes x 60fps of
+        // widget churn inside a scroll view, which then repainted the entire
+        // delve. The pulse now drives the painter directly (repaint:) and
+        // each medallion is its own repaint layer, so an idle map paints
+        // only the halos that are actually animating.
+        child: RepaintBoundary(
+          child: CustomPaint(
             size: const Size(_nodeSize, _nodeSize),
             painter: _MedallionPainter(
               kind: kind,
               here: isHere,
               reachable: isReachable,
-              pulse: isReachable ? _pulse.value : 0,
+              // Unreachable nodes have no halo, so they don't listen at all.
+              pulse: isReachable ? _pulse : null,
             ),
             child: SizedBox(
               width: _nodeSize,
@@ -346,16 +354,20 @@ class _MedallionPainter extends CustomPainter {
   final String kind;
   final bool here;
   final bool reachable;
-  final double pulse;
+
+  /// The shared glow controller, passed straight to `repaint:` so the halo
+  /// animates without rebuilding a single widget. Null on nodes with no halo.
+  final Animation<double>? pulse;
   _MedallionPainter({
     required this.kind,
     required this.here,
     required this.reachable,
     required this.pulse,
-  });
+  }) : super(repaint: pulse);
 
   @override
   void paint(Canvas canvas, Size size) {
+    final pulse = this.pulse?.value ?? 0.0;
     final c = size.center(Offset.zero);
     final r = size.shortestSide / 2 - 2;
     final kindColor = EmberColors.kind(kind);
@@ -431,6 +443,8 @@ class _MedallionPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _MedallionPainter old) =>
       old.pulse != pulse ||
+      // `pulse` is now the animation itself; its ticks come through
+      // `repaint:`, so only the static inputs are compared here.
       old.here != here ||
       old.reachable != reachable ||
       old.kind != kind;
