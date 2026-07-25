@@ -152,6 +152,35 @@ void main() {
     expect(r.timeMs, greaterThan(0));
   });
 
+  test('3-medal run pays the perfect-clear coin bonus', () {
+    final s = session('''
+....................
+.P.c..............E.
+####################
+''');
+    stepSession(s, 4.0, (i) => i.dirX = 1);
+    final r = s.results!;
+    expect(r.medals, 3);
+    expect(r.perfectBonus, kPerfectClearBonus);
+    expect(r.totalCoins, r.coinsEarned + kPerfectClearBonus);
+  });
+
+  test('2-medal run pays no bonus: totalCoins == coinsEarned', () {
+    final s = session('''
+....................
+.......C............
+....................
+....................
+.P.c..............E.
+####################
+''');
+    stepSession(s, 4.0, (i) => i.dirX = 1);
+    final r = s.results!;
+    expect(r.medals, 2);
+    expect(r.perfectBonus, 0);
+    expect(r.totalCoins, r.coinsEarned);
+  });
+
   test('missing a chest forfeits the allChests medal', () {
     final s = session('''
 ....................

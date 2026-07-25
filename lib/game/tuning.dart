@@ -46,6 +46,12 @@ const int kCoinValue = 1;
 const int kChestCoinsMin = 12;
 const int kChestCoinsMax = 30;
 
+/// Perfect-clear bonus: earning all three medals in a single run
+/// (finished + all chests + low damage) pays this many extra coins.
+/// Paid on every perfect run, not just the first — it rewards mastery,
+/// so replaying for a clean run always feels worth it.
+const int kPerfectClearBonus = 25;
+
 // Performance budgets (enforced by review, referenced in tests).
 const int kMaxLiveParticles = 120;
 const int kMaxPooledProjectiles = 16;

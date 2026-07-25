@@ -362,7 +362,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
     if (rec.bestTimeMs == 0 || r.timeMs < rec.bestTimeMs) {
       rec.bestTimeMs = r.timeMs;
     }
-    save.coins += r.coinsEarned;
+    save.coins += r.totalCoins; // run coins + perfect-clear bonus
     save.feathers += session.feathersCollected;
     save.skinKills[save.equippedSkin] =
         (save.skinKills[save.equippedSkin] ?? 0) + session.kills;
