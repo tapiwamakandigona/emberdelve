@@ -111,7 +111,12 @@ class PlayerCore {
     final dir = stunned ? 0.0 : input.dirX.clamp(-1.0, 1.0);
     if (dir != 0) {
       facing = dir > 0 ? 1 : -1;
-      final accel = body.onGround ? kGroundAccel : kAirAccel;
+      var accel = body.onGround ? kGroundAccel : kAirAccel;
+      // Turnaround assist: reversing direction is the most latency-sensitive
+      // input on touch — boost accel while velocity opposes the stick.
+      if (body.vx != 0 && body.vx.sign != dir.sign) {
+        accel *= kTurnAccelMultiplier;
+      }
       body.vx += dir * accel * dt;
       if (body.vx.abs() > kRunSpeed) body.vx = kRunSpeed * body.vx.sign;
     } else if (body.onGround) {
@@ -177,7 +182,9 @@ class PlayerCore {
     }
     body.vy += g * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
-    integrate(body, dt, tileAt, dropThrough: dropThrough || input.down);
+    integrate(body, dt, tileAt,
+        dropThrough: dropThrough || input.down,
+        ceilingNudge: kCeilingCornerNudge);
     if (body.onGround && !wasOnGround) _events.add(PlayerEvent.landed);
     wasOnGround = body.onGround;
 
