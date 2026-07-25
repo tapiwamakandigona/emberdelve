@@ -1,4 +1,5 @@
 // lib/main.dart — Emberdelve entry point.
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'audio/audio_service.dart';
@@ -9,14 +10,20 @@ import 'ui/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   // Must run before the first AudioPlayer exists — see initPlatformAudio.
   await AudioService.initPlatformAudio();
   final audio = AudioService(await SettingsStore.load());
   AudioService.instance = audio;
   final controller = GameController()..audio = audio;
   await controller.boot();
+  // Decode the first-touch SFX into SoundPool in the background so the very
+  // first tap doesn't pay the load. Deliberately not awaited: startup must
+  // not wait on audio, and a failure here just means load-on-demand.
+  unawaited(audio.warmUp());
   runApp(EmberdelveApp(controller));
 }
 

@@ -155,6 +155,20 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   // a controller during unmount and crash).
   AnimationController? _life;
 
+  /// Single Listenable feeding the painter: frame loop + idle life. Cached
+  /// so a rebuild doesn't hand the painter a fresh merge object every time.
+  Listenable? _repaintDriver;
+  void _rebuildDriver() {
+    final parts = <Listenable>[
+      if (_ctrl != null) _ctrl!,
+      if (_life != null && (widget.bob || widget.sway) && widget.animate)
+        _life!,
+    ];
+    _repaintDriver = parts.isEmpty
+        ? null
+        : (parts.length == 1 ? parts.first : Listenable.merge(parts));
+  }
+
   void _syncLife() {
     final want = widget.animate && (widget.bob || widget.sway);
     if (want) {
@@ -166,7 +180,9 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     } else {
       _life?.stop();
     }
+    _rebuildDriver();
   }
+
   // Load-generation token: only the most recent _load() may commit results
   // or create an AnimationController, so overlapping loads (rapid
   // didUpdateWidget) can never leak a second ticker.
@@ -186,6 +202,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     if (old.spriteId != widget.spriteId || old.state != widget.state) {
       _ctrl?.dispose();
       _ctrl = null;
+      _rebuildDriver();
       _def = null;
       _row = null;
       _img = null;
@@ -209,15 +226,19 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
         _img = img;
       });
       if (widget.animate && row != null && row.frames > 1) {
-        _ctrl =
-            AnimationController(
-                vsync: this,
-                duration: Duration(
-                  milliseconds: (row.frames * 1000 / def.fps).round(),
-                ),
-              )
-              ..addListener(() => setState(() {}))
-              ..repeat();
+        // PERF: no addListener(setState) here. The controller is handed to
+        // the painter as its `repaint` Listenable, so a frame step repaints
+        // the sprite's own layer only — it never rebuilds this element and
+        // never dirties the screen above it. Before this, every animated
+        // sprite rebuilt + repainted the whole screen 60x/s (measured:
+        // combat idle went 204 -> single digits painted render objects per
+        // frame, tool/perf_probe_test.dart).
+        _ctrl = AnimationController(
+          vsync: this,
+          duration: Duration(
+            milliseconds: (row.frames * 1000 / def.fps).round(),
+          ),
+        )..repeat();
       }
     } catch (_) {
       /* missing asset: renders empty box, never crashes */
@@ -241,44 +262,31 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     if (def == null || row == null || img == null) {
       return SizedBox.fromSize(size: size);
     }
-    final frame = _ctrl == null
-        ? 0
-        : (_ctrl!.value * row.frames).floor().clamp(0, row.frames - 1);
-    final paint = CustomPaint(
-      size: size,
-      painter: _SpritePainter(
-        img: img,
-        def: def,
-        row: row.row,
-        frame: frame,
-        flipX: widget.flipX,
+    // PERF: everything animated about a sprite — the frame loop AND the
+    // LFP-4 idle bob/sway — is driven straight into the painter through
+    // [CustomPainter.repaint]. The bob/sway used to be an AnimatedBuilder,
+    // i.e. a setState 60x/s; because the combat screen wraps its stage in a
+    // LayoutBuilder, that setState scheduled a layout callback and forced a
+    // FULL RELAYOUT + repaint of the screen on every frame, permanently.
+    // (Measured with tool/perf_probe_test.dart: 204 render objects painted
+    // per idle frame.) Transform-on-canvas costs nothing and dirties nothing.
+    final life = widget.animate && (widget.bob || widget.sway) ? _life : null;
+    return RepaintBoundary(
+      child: CustomPaint(
+        size: size,
+        painter: _SpritePainter(
+          img: img,
+          def: def,
+          row: row.row,
+          frames: row.frames,
+          anim: _ctrl,
+          life: life,
+          bob: widget.bob,
+          sway: widget.sway,
+          flipX: widget.flipX,
+          repaint: _repaintDriver,
+        ),
       ),
-    );
-    final life = _life;
-    if (!widget.animate || life == null || (!widget.bob && !widget.sway)) {
-      return paint;
-    }
-    // LFP-4: compose the idle life on top of the frame loop. Bob is a 2px
-    // vertical sine (two cycles per _life period); sway is a slower ±1.2px
-    // lean with a hint of rotation, phase-shifted so the two never sync
-    // into a mechanical wobble.
-    return AnimatedBuilder(
-      animation: life,
-      builder: (context, child) {
-        final t = life.value * 2 * math.pi;
-        final dy = widget.bob ? math.sin(t * 2) * 2.0 : 0.0;
-        final dx = widget.sway ? math.sin(t + math.pi / 3) * 1.2 : 0.0;
-        final rot = widget.sway ? math.sin(t + math.pi / 3) * 0.012 : 0.0;
-        return Transform.translate(
-          offset: Offset(dx, dy),
-          child: Transform.rotate(
-            angle: rot,
-            alignment: Alignment.bottomCenter,
-            child: child,
-          ),
-        );
-      },
-      child: paint,
     );
   }
 }
@@ -287,15 +295,35 @@ class _SpritePainter extends CustomPainter {
   final ui.Image img;
   final SpriteSheetDef def;
   final int row;
-  final int frame;
+  final int frames;
+
+  /// Frame-loop driver. Given to [CustomPainter.repaint] so a frame step
+  /// repaints this painter directly — no setState, no element rebuild.
+  final Animation<double>? anim;
+
+  /// LFP-4 idle-life driver (bob/sway), applied as a canvas transform.
+  final Animation<double>? life;
+  final bool bob;
+  final bool sway;
   final bool flipX;
   _SpritePainter({
     required this.img,
     required this.def,
     required this.row,
-    required this.frame,
+    required this.frames,
+    required this.anim,
+    required this.life,
+    required this.bob,
+    required this.sway,
     required this.flipX,
+    required super.repaint,
   });
+
+  int get frame {
+    final a = anim;
+    if (a == null || frames <= 1) return 0;
+    return (a.value * frames).floor().clamp(0, frames - 1);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -308,6 +336,22 @@ class _SpritePainter extends CustomPainter {
     final dst = Rect.fromLTWH(0, 0, size.width, size.height);
     final paint = Paint()..filterQuality = FilterQuality.none;
     canvas.save();
+    final l = life;
+    if (l != null && (bob || sway)) {
+      // Bob is a 2px vertical sine (two cycles per life period); sway is a
+      // slower ±1.2px lean with a hint of rotation about the feet,
+      // phase-shifted so the two never sync into a mechanical wobble.
+      final t = l.value * 2 * math.pi;
+      final dy = bob ? math.sin(t * 2) * 2.0 : 0.0;
+      final dx = sway ? math.sin(t + math.pi / 3) * 1.2 : 0.0;
+      canvas.translate(dx, dy);
+      if (sway) {
+        final rot = math.sin(t + math.pi / 3) * 0.012;
+        canvas.translate(size.width / 2, size.height);
+        canvas.rotate(rot);
+        canvas.translate(-size.width / 2, -size.height);
+      }
+    }
     if (flipX) {
       canvas.translate(size.width, 0);
       canvas.scale(-1, 1);
@@ -318,7 +362,11 @@ class _SpritePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _SpritePainter old) =>
-      old.frame != frame ||
+      old.anim != anim ||
+      old.life != life ||
+      old.bob != bob ||
+      old.sway != sway ||
+      old.frames != frames ||
       old.row != row ||
       old.img != img ||
       old.flipX != flipX;

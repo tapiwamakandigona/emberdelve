@@ -74,42 +74,52 @@ class _EmberButtonState extends State<EmberButton> {
         onTapUp: enabled ? (_) => setState(() => _down = false) : null,
         onTapCancel: enabled ? () => setState(() => _down = false) : null,
         onTap: enabled ? handleTap : null,
-        child: AnimatedScale(
-          scale: _down ? 0.96 : 1.0,
-          duration: const Duration(milliseconds: 80),
-          child: CustomPaint(
-            painter: _ButtonPainter(tier: tier, enabled: enabled, down: _down),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: Space.xl,
-                vertical: widget.dense ? Space.m : Space.l,
+        // PERF: the press animation (AnimatedScale over a painted slab, plus
+        // the primary tier's MaskFilter.blur under-glow) used to repaint the
+        // whole screen for its full 80ms — so hammering a button held the
+        // entire UI in a repaint storm. The boundary keeps it to this button.
+        child: RepaintBoundary(
+          child: AnimatedScale(
+            scale: _down ? 0.96 : 1.0,
+            duration: const Duration(milliseconds: 80),
+            child: CustomPaint(
+              painter: _ButtonPainter(
+                tier: tier,
+                enabled: enabled,
+                down: _down,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (widget.icon != null) ...[
-                    Icon(widget.icon, size: 18, color: fg),
-                    const SizedBox(width: Space.s),
-                  ],
-                  // Flexible + soft-wrap (v0.3.1 F4): long labels (event
-                  // options) wrap to a second line instead of clipping
-                  // off-screen at phone widths.
-                  Flexible(
-                    child: Text(
-                      widget.label,
-                      textAlign: TextAlign.center,
-                      softWrap: true,
-                      style: TextStyle(
-                        fontFamily: 'Cinzel',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: fg,
-                        letterSpacing: 0.6,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Space.xl,
+                  vertical: widget.dense ? Space.m : Space.l,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.icon != null) ...[
+                      Icon(widget.icon, size: 18, color: fg),
+                      const SizedBox(width: Space.s),
+                    ],
+                    // Flexible + soft-wrap (v0.3.1 F4): long labels (event
+                    // options) wrap to a second line instead of clipping
+                    // off-screen at phone widths.
+                    Flexible(
+                      child: Text(
+                        widget.label,
+                        textAlign: TextAlign.center,
+                        softWrap: true,
+                        style: TextStyle(
+                          fontFamily: 'Cinzel',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: fg,
+                          letterSpacing: 0.6,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
