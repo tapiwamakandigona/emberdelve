@@ -6,10 +6,13 @@
 // down buttons actually drive their verbs through the full tap-routing
 // pipeline, and the spawn-fade keeps the movement cluster translucent for
 // the first second.
+import 'dart:io' show File;
+import 'dart:ui' as ui;
 import 'dart:ui' show Rect;
 
 import 'package:flame/components.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/widgets.dart' show EdgeInsets;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:emberdelve/core/save.dart';
@@ -148,5 +151,90 @@ void main() {
       game.update(1 / 60);
     }
     expect(left.paint.color.a, closeTo(0.55, 0.02));
+  });
+
+  // -- alignment + safe-area pass (owner-reported, 2026-07-25) --------------
+
+  test('dash and apple are centered on their diamond columns', () async {
+    final game = await bootGame();
+    final jump = byIcon(game, 'hud/icon_jump.png');
+    final sword = byIcon(game, 'hud/icon_sword.png');
+    final dash = byIcon(game, 'hud/icon_dash.png');
+    final apple =
+        buttons(game).whereType<HudThrowButton>().single;
+    expect(rectOf(dash).center.dx, closeTo(rectOf(sword).center.dx, 0.01),
+        reason: 'dash must sit centered above the sword column');
+    expect(rectOf(apple).center.dx, closeTo(rectOf(jump).center.dx, 0.01),
+        reason: 'apple must sit centered above the jump column');
+  });
+
+  test('safe-area insets keep every control inside the safe region',
+      () async {
+    final game = await bootGame();
+    // Landscape phone: display cutout on the left, gesture bar bottom,
+    // small cutout spill on the right — screen logical px.
+    game.setSafeArea(const EdgeInsets.fromLTRB(59, 0, 24, 34));
+    final ins = game.hudSafeInsets;
+    // 800x450 canvas over a 352x198 view = uniform x2.2727, no letterbox:
+    // the full inset must survive the conversion.
+    expect(ins.left, closeTo(59 / (800 / 352), 0.01));
+    expect(ins.bottom, closeTo(34 / (800 / 352), 0.01));
+    for (final b in buttons(game)) {
+      final r = rectOf(b);
+      expect(r.left, greaterThanOrEqualTo(ins.left),
+          reason: '${b.spritePath}/${b.iconPath} under the left cutout');
+      expect(r.right, lessThanOrEqualTo(EmberGame.viewWidth - ins.right),
+          reason: '${b.spritePath}/${b.iconPath} under the right inset');
+      expect(r.top, greaterThanOrEqualTo(ins.top));
+      expect(r.bottom, lessThanOrEqualTo(EmberGame.viewHeight - ins.bottom),
+          reason: '${b.spritePath}/${b.iconPath} under the nav bar');
+    }
+    // And clearing the insets restores the flush layout.
+    game.setSafeArea(EdgeInsets.zero);
+    final jump = byIcon(game, 'hud/icon_jump.png');
+    expect(rectOf(jump).right, EmberGame.viewWidth - 8);
+  });
+
+  test('letterbox bands absorb safe insets before the HUD moves', () async {
+    final game = await bootGame();
+    // 900x450 canvas: scale stays 450/198 -> 800px of world width, 50px
+    // black band each side. A 50px cutout lives entirely in the band.
+    game.onGameResize(Vector2(900, 450));
+    game.setSafeArea(const EdgeInsets.only(left: 50));
+    expect(game.hudSafeInsets.left, closeTo(0, 1e-9));
+    // Only the part of the inset that crosses the band costs HUD space.
+    game.setSafeArea(const EdgeInsets.only(left: 73));
+    expect(game.hudSafeInsets.left, closeTo(23 / (450 / 198), 0.01));
+  });
+
+  test('button icons are optically centered in their art (drift guard)',
+      () async {
+    // The dash icon shipped 6px left of center once (owner-reported);
+    // decode every glyph icon and assert its opaque bbox is centered.
+    for (final name in ['icon_dash', 'icon_jump', 'icon_sword']) {
+      final bytes =
+          File('assets/images/hud/$name.png').readAsBytesSync();
+      final codec = await ui.instantiateImageCodec(bytes);
+      final img = (await codec.getNextFrame()).image;
+      final data =
+          (await img.toByteData(format: ui.ImageByteFormat.rawRgba))!;
+      int minX = img.width, maxX = -1, minY = img.height, maxY = -1;
+      for (var y = 0; y < img.height; y++) {
+        for (var x = 0; x < img.width; x++) {
+          final a = data.getUint8((y * img.width + x) * 4 + 3);
+          if (a > 20) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+      final cx = (minX + maxX + 1) / 2, cy = (minY + maxY + 1) / 2;
+      expect(cx, closeTo(img.width / 2, 1.5),
+          reason: '$name glyph is horizontally off-center');
+      expect(cy, closeTo(img.height / 2, 1.5),
+          reason: '$name glyph is vertically off-center');
+    }
   });
 }
