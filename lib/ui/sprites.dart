@@ -6,6 +6,7 @@
 // (heroes add a 1-frame hit row). Attack/death are choreographed in the UI
 // layer with tweens + flashes, not sprite frames.
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +67,10 @@ class SpriteMeta {
         final rows = <String, SpriteRowDef>{};
         for (final r in (e['rows'] as List).cast<Map<String, dynamic>>()) {
           rows[r['state'] as String] = SpriteRowDef(
-              r['state'] as String, r['frames'] as int, r['row'] as int);
+            r['state'] as String,
+            r['frames'] as int,
+            r['row'] as int,
+          );
         }
         out[id] = SpriteSheetDef(
           id: id,
@@ -112,23 +116,57 @@ class SpriteView extends StatefulWidget {
   final double height;
   final bool flipX;
   final bool animate;
-  const SpriteView(this.spriteId,
-      {super.key,
-      this.state = 'idle',
-      required this.height,
-      this.flipX = false,
-      this.animate = true});
+
+  /// LFP-4a: procedural idle bob (~2px sine at stage scale). The sheets'
+  /// idle rows are either single-frame (soot_shade etc. — rendered fully
+  /// static before this) or sub-pixel at combat size, so the *body* never
+  /// read as alive. The bob runs on its own ticker, independent of the
+  /// frame loop, so every combatant breathes even on 1-frame rows.
+  final bool bob;
+
+  /// LFP-4b: threat sway — a slow ±1px lean while the enemy's intent shows
+  /// an attack, so the badge has body language (echoes the 190ms wind-up
+  /// that plays when the hit actually comes).
+  final bool sway;
+  const SpriteView(
+    this.spriteId, {
+    super.key,
+    this.state = 'idle',
+    required this.height,
+    this.flipX = false,
+    this.animate = true,
+    this.bob = false,
+    this.sway = false,
+  });
 
   @override
   State<SpriteView> createState() => _SpriteViewState();
 }
 
-class _SpriteViewState extends State<SpriteView>
-    with SingleTickerProviderStateMixin {
+class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   SpriteSheetDef? _def;
   SpriteRowDef? _row;
   ui.Image? _img;
   AnimationController? _ctrl;
+
+  // LFP-4: idle-life ticker (bob + threat sway), independent of the frame
+  // loop so 1-frame rows breathe too. 2.8s period: two full bob cycles.
+  // Created on demand (NOT late final: a lazy dispose() would try to build
+  // a controller during unmount and crash).
+  AnimationController? _life;
+
+  void _syncLife() {
+    final want = widget.animate && (widget.bob || widget.sway);
+    if (want) {
+      _life ??= AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 2800),
+      );
+      if (!_life!.isAnimating) _life!.repeat();
+    } else {
+      _life?.stop();
+    }
+  }
   // Load-generation token: only the most recent _load() may commit results
   // or create an AnimationController, so overlapping loads (rapid
   // didUpdateWidget) can never leak a second ticker.
@@ -137,12 +175,14 @@ class _SpriteViewState extends State<SpriteView>
   @override
   void initState() {
     super.initState();
+    _syncLife();
     _load();
   }
 
   @override
   void didUpdateWidget(SpriteView old) {
     super.didUpdateWidget(old);
+    _syncLife();
     if (old.spriteId != widget.spriteId || old.state != widget.state) {
       _ctrl?.dispose();
       _ctrl = null;
@@ -169,20 +209,25 @@ class _SpriteViewState extends State<SpriteView>
         _img = img;
       });
       if (widget.animate && row != null && row.frames > 1) {
-        _ctrl = AnimationController(
-          vsync: this,
-          duration:
-              Duration(milliseconds: (row.frames * 1000 / def.fps).round()),
-        )
-          ..addListener(() => setState(() {}))
-          ..repeat();
+        _ctrl =
+            AnimationController(
+                vsync: this,
+                duration: Duration(
+                  milliseconds: (row.frames * 1000 / def.fps).round(),
+                ),
+              )
+              ..addListener(() => setState(() {}))
+              ..repeat();
       }
-    } catch (_) {/* missing asset: renders empty box, never crashes */}
+    } catch (_) {
+      /* missing asset: renders empty box, never crashes */
+    }
   }
 
   @override
   void dispose() {
     _ctrl?.dispose();
+    _life?.dispose();
     super.dispose();
   }
 
@@ -199,10 +244,41 @@ class _SpriteViewState extends State<SpriteView>
     final frame = _ctrl == null
         ? 0
         : (_ctrl!.value * row.frames).floor().clamp(0, row.frames - 1);
-    return CustomPaint(
+    final paint = CustomPaint(
       size: size,
       painter: _SpritePainter(
-          img: img, def: def, row: row.row, frame: frame, flipX: widget.flipX),
+        img: img,
+        def: def,
+        row: row.row,
+        frame: frame,
+        flipX: widget.flipX,
+      ),
+    );
+    final life = _life;
+    if (!widget.animate || life == null || (!widget.bob && !widget.sway)) {
+      return paint;
+    }
+    // LFP-4: compose the idle life on top of the frame loop. Bob is a 2px
+    // vertical sine (two cycles per _life period); sway is a slower ±1.2px
+    // lean with a hint of rotation, phase-shifted so the two never sync
+    // into a mechanical wobble.
+    return AnimatedBuilder(
+      animation: life,
+      builder: (context, child) {
+        final t = life.value * 2 * math.pi;
+        final dy = widget.bob ? math.sin(t * 2) * 2.0 : 0.0;
+        final dx = widget.sway ? math.sin(t + math.pi / 3) * 1.2 : 0.0;
+        final rot = widget.sway ? math.sin(t + math.pi / 3) * 0.012 : 0.0;
+        return Transform.translate(
+          offset: Offset(dx, dy),
+          child: Transform.rotate(
+            angle: rot,
+            alignment: Alignment.bottomCenter,
+            child: child,
+          ),
+        );
+      },
+      child: paint,
     );
   }
 }
@@ -213,20 +289,22 @@ class _SpritePainter extends CustomPainter {
   final int row;
   final int frame;
   final bool flipX;
-  _SpritePainter(
-      {required this.img,
-      required this.def,
-      required this.row,
-      required this.frame,
-      required this.flipX});
+  _SpritePainter({
+    required this.img,
+    required this.def,
+    required this.row,
+    required this.frame,
+    required this.flipX,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final src = Rect.fromLTWH(
-        (frame * def.frameW).toDouble(),
-        (row * def.frameH).toDouble(),
-        def.frameW.toDouble(),
-        def.frameH.toDouble());
+      (frame * def.frameW).toDouble(),
+      (row * def.frameH).toDouble(),
+      def.frameW.toDouble(),
+      def.frameH.toDouble(),
+    );
     final dst = Rect.fromLTWH(0, 0, size.width, size.height);
     final paint = Paint()..filterQuality = FilterQuality.none;
     canvas.save();
