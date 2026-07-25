@@ -15,6 +15,12 @@ const double kGroundFriction = 1600.0;
 // Jumping (feel spec: coyote 0.10s, buffer 0.12s, variable height).
 const double kJumpSpeed = 292.0; // initial jump velocity px/s (clears 2 tiles+)
 const double kJumpCutMultiplier = 0.45; // vy *= this when jump released early
+// Asymmetric gravity (feel research: falls should read snappier than rises —
+// 1.5-2.0x is the platformer convention; Celeste additionally halves gravity
+// around the apex while jump is held, buying air control without floatiness).
+const double kFallGravityMultiplier = 1.6; // gravity scale while vy > 0
+const double kApexGravityMultiplier = 0.55; // gravity scale in the apex window
+const double kApexHangSpeed = 40.0; // |vy| px/s that counts as "at the apex"
 const double kCoyoteTime = 0.10; // s of grace after walking off a ledge
 const double kJumpBufferTime = 0.12; // s a jump press is remembered
 const int kMaxAirJumps = 1; // double jump (2 with triple-jump special)
