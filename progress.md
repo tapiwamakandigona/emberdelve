@@ -458,3 +458,9 @@ ship a GitHub release. Everything presentation-only; sim untouched again.
 Evidence: flutter analyze clean; full flutter test green; play_session
 harness green. No lib/sim or lib/data change across the whole branch —
 golden anchors, replays and saves byte-identical.
+
+## 2026-07-25 — Release v0.3.11 published (Viktor)
+- PR #52 merged into legacy/dice-builder (merge head bd5d33f).
+- CI workflow_dispatch run 30153939057: tests + signed release build green (cert SHA-256 verified in CI). VERIFIED.
+- Tag v0.3.11 created on bd5d33f; GitHub Release published with emberdelve-v0.3.11.apk (38295092 B) and .aab (57191187 B) assets: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.11
+- Deferred: LFP-2b in-turn undo, LFP-5 settings toggle (PR #49 open questions).
