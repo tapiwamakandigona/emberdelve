@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/text.dart';
+import 'package:flutter/painting.dart' show TextPainter;
 
 import '../ember_game.dart';
 import '../enemies/boss_core.dart';
@@ -27,6 +28,7 @@ class HudHoldButton extends SpriteComponent
   final void Function() onReleased;
   SpriteComponent? _icon;
   late final HoldButtonCore _core;
+
 
   HudHoldButton({
     required this.spritePath,
@@ -130,11 +132,22 @@ class HudThrowButton extends HudHoldButton {
     ));
   }
 
+  /// A zero-scaled component does NOT "kill taps": Flame inverts the
+  /// (singular) transform, every canvas point collapses to local (0,0), and
+  /// (0,0) is inside the button — so the hidden throw button swallowed every
+  /// tap on screen before the movement arrows could see it (checked earlier
+  /// in reversed child order; jump/attack/pause are checked before it and
+  /// kept working, which is why only left/right looked broken). Gate hit
+  /// testing on visibility explicitly.
+  @override
+  bool containsLocalPoint(Vector2 point) =>
+      game.session.applesHeld > 0 && super.containsLocalPoint(point);
+
   @override
   void update(double dt) {
     super.update(dt);
     final visible = game.session.applesHeld > 0;
-    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides + kills taps
+    scale = visible ? Vector2.all(1) : Vector2.zero(); // hides the sprite
   }
 }
 
@@ -160,6 +173,36 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   final _bossBarTick = ui.Paint()..color = const ui.Color(0x88FFFFFF);
   final _heartEmpty = ui.Paint()..color = const ui.Color(0x66201826);
   final _spritePaint = ui.Paint()..filterQuality = ui.FilterQuality.none;
+
+  // Per-slot text caches: TextPaint's internal painter cache is a 10-entry
+  // LRU shared across every string — five readouts churning values would
+  // constantly evict each other and re-run text layout. Each slot below
+  // re-layouts only when ITS value actually changes (perf.md §render).
+  final _coinText = _HudText(_text, 17, 18);
+  final _appleText = _HudText(_text, 17, 30);
+  final _chestText = _HudText(_text, 17, 42);
+  final _featherText = _HudText(_text, 17, 53);
+  final _timerText = _HudText(_text, EmberGame.viewWidth / 2, 6, centerX: true);
+  final _bossName = _HudText(_text, EmberGame.viewWidth / 2, _barTop - 10, centerX: true);
+
+  // Fixed geometry, allocated once (icon positions/sizes never change).
+  static final _coinPos = Vector2(4, 16);
+  static final _applePos = Vector2(4, 28);
+  static final _chestPos = Vector2(4, 40);
+  static final _featherPos = Vector2(5, 52);
+  static final _icon12 = Vector2(12, 12);
+  static final _featherSize = Vector2(11, 10);
+
+  // Boss bar geometry (constant), precomputed once.
+  static const _barW = 180.0, _barH = 6.0, _barTop = 18.0;
+  static const _barLeft = (EmberGame.viewWidth - _barW) / 2;
+  static final _bossBackRRect = ui.RRect.fromRectAndRadius(
+      const ui.Rect.fromLTWH(_barLeft - 1, _barTop - 1, _barW + 2, _barH + 2),
+      const ui.Radius.circular(2));
+  static const _tick1 =
+      ui.Rect.fromLTWH(_barLeft + _barW * 2 / 3, _barTop, 1, _barH);
+  static const _tick2 =
+      ui.Rect.fromLTWH(_barLeft + _barW * 1 / 3, _barTop, 1, _barH);
 
   @override
   Future<void> onLoad() async {
@@ -208,63 +251,98 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
 
     // Coins.
     _coinSprite.render(canvas,
-        position: Vector2(4, 16), size: Vector2(12, 12),
-        overridePaint: _spritePaint);
-    _text.render(canvas, '${s.coinsCollected}', Vector2(17, 18));
+        position: _coinPos, size: _icon12, overridePaint: _spritePaint);
+    if (_coinText.dirty(s.coinsCollected)) {
+      _coinText.text = '${s.coinsCollected}';
+    }
+    _coinText.paint(canvas);
 
     // Apples.
     _appleSprite.render(canvas,
-        position: Vector2(4, 28), size: Vector2(12, 12),
-        overridePaint: _spritePaint);
-    _text.render(canvas, '${s.applesHeld}', Vector2(17, 30));
+        position: _applePos, size: _icon12, overridePaint: _spritePaint);
+    if (_appleText.dirty(s.applesHeld)) {
+      _appleText.text = '${s.applesHeld}';
+    }
+    _appleText.paint(canvas);
 
     // Chests opened/total (only when the level has chests).
     if (s.chestTotal > 0) {
       _chestSprite.render(canvas,
-          position: Vector2(4, 40), size: Vector2(12, 12),
-          overridePaint: _spritePaint);
-      _text.render(
-          canvas, '${s.chestsOpened}/${s.chestTotal}', Vector2(17, 42));
+          position: _chestPos, size: _icon12, overridePaint: _spritePaint);
+      if (_chestText.dirty(s.chestsOpened * 1000 + s.chestTotal)) {
+        _chestText.text = '${s.chestsOpened}/${s.chestTotal}';
+      }
+      _chestText.paint(canvas);
     }
 
     // Feather icon when collected this run.
     if (s.feathersCollected > 0) {
       _featherSprite.render(canvas,
-          position: Vector2(5, 52), size: Vector2(11, 10),
+          position: _featherPos, size: _featherSize,
           overridePaint: _spritePaint);
       if (s.feathersCollected > 1) {
-        _text.render(canvas, '${s.feathersCollected}', Vector2(17, 53));
+        if (_featherText.dirty(s.feathersCollected)) {
+          _featherText.text = '${s.feathersCollected}';
+        }
+        _featherText.paint(canvas);
       }
     }
 
     // Boss HP bar (top-center, under the timer) with phase threshold ticks.
     final boss = s.boss;
     if (boss != null) {
-      const barW = 180.0, barH = 6.0;
-      final left = (EmberGame.viewWidth - barW) / 2;
-      const top = 18.0;
-      canvas.drawRRect(
-          ui.RRect.fromRectAndRadius(
-              ui.Rect.fromLTWH(left - 1, top - 1, barW + 2, barH + 2),
-              const ui.Radius.circular(2)),
-          _bossBarBack);
+      canvas.drawRRect(_bossBackRRect, _bossBarBack);
       final frac = boss.hp / GroveGolemCore.maxHp;
       canvas.drawRect(
-          ui.Rect.fromLTWH(left, top, barW * frac, barH), _bossBarFill);
+          ui.Rect.fromLTWH(_barLeft, _barTop, _barW * frac, _barH),
+          _bossBarFill);
       // Phase threshold ticks at 2/3 and 1/3.
-      for (final t in const [2 / 3, 1 / 3]) {
-        canvas.drawRect(
-            ui.Rect.fromLTWH(left + barW * t, top, 1, barH), _bossBarTick);
-      }
-      _text.render(canvas, 'GROVE GOLEM', Vector2(EmberGame.viewWidth / 2, top - 10),
-          anchor: Anchor.topCenter);
+      canvas.drawRect(_tick1, _bossBarTick);
+      canvas.drawRect(_tick2, _bossBarTick);
+      if (_bossName.dirty(0)) _bossName.text = 'GROVE GOLEM';
+      _bossName.paint(canvas);
     }
 
-    // Level timer (top-center).
+    // Level timer (top-center): re-layout only when the second ticks over.
     final t = s.time.floor();
-    final mm = (t ~/ 60).toString().padLeft(1, '0');
-    final ss = (t % 60).toString().padLeft(2, '0');
-    _text.render(canvas, '$mm:$ss', Vector2(EmberGame.viewWidth / 2, 6),
-        anchor: Anchor.topCenter);
+    if (_timerText.dirty(t)) {
+      final mm = t ~/ 60;
+      final ss = (t % 60).toString().padLeft(2, '0');
+      _timerText.text = '$mm:$ss';
+    }
+    _timerText.paint(canvas);
   }
+}
+
+/// One HUD text slot: caches its laid-out TextPainter and rebuilds it only
+/// when [key] changes. Rendering a slot is then a pure `TextPainter.paint`
+/// — no string interpolation, no TextSpan/TextPainter construction, and no
+/// text layout in the steady-state frame. (TextPaint.toTextPainter has its
+/// own cache, but it is a 10-entry LRU shared across all strings — mixed
+/// HUD readouts + timer churn would evict each other every frame.)
+class _HudText {
+  _HudText(this._style, this._x, this._y, {this.centerX = false});
+
+  final TextPaint _style;
+  final double _x, _y;
+  final bool centerX;
+  int _key = -0x7fffffff; // sentinel: first dirty() is always true
+  ui.Offset _offset = ui.Offset.zero;
+  TextPainter? _tp;
+
+  /// True when [key] differs from the cached one; caller must then set
+  /// [text]. Marks the new key as current either way.
+  bool dirty(int key) {
+    if (key == _key) return false;
+    _key = key;
+    return true;
+  }
+
+  set text(String value) {
+    final tp = _style.toTextPainter(value);
+    _tp = tp;
+    _offset = ui.Offset(centerX ? _x - tp.width / 2 : _x, _y);
+  }
+
+  void paint(ui.Canvas canvas) => _tp?.paint(canvas, _offset);
 }

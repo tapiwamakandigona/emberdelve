@@ -33,8 +33,12 @@ int _tileHi(double v) => ((v / kTileSize).ceil() - 1);
 
 /// Move [b] by its velocity over [dt], resolving collisions against the grid.
 /// [dropThrough] lets the body pass one-way platforms (down+jump input).
+/// [ceilingNudge] > 0 enables corner correction on upward movement: when the
+/// body clips a ceiling lip by at most that many px on one side (a single
+/// blocking column at the edge of its span), it is nudged sideways around
+/// the corner instead of bonking. Forgiveness for the player; enemies pass 0.
 void integrate(Body b, double dt, TileQuery tileAt,
-    {bool dropThrough = false}) {
+    {bool dropThrough = false, double ceilingNudge = 0}) {
   b.onGround = false;
   b.hitCeiling = false;
   b.hitWall = false;
@@ -47,7 +51,7 @@ void integrate(Body b, double dt, TileQuery tileAt,
 
   for (var i = 0; i < steps; i++) {
     _stepX(b, sdt, tileAt);
-    _stepY(b, sdt, tileAt, dropThrough);
+    _stepY(b, sdt, tileAt, dropThrough, ceilingNudge);
   }
 }
 
@@ -79,7 +83,8 @@ void _stepX(Body b, double dt, TileQuery tileAt) {
   }
 }
 
-void _stepY(Body b, double dt, TileQuery tileAt, bool dropThrough) {
+void _stepY(
+    Body b, double dt, TileQuery tileAt, bool dropThrough, double nudge) {
   final dy = b.vy * dt;
   if (dy == 0) return;
   final prevBottom = b.bottom;
@@ -103,14 +108,38 @@ void _stepY(Body b, double dt, TileQuery tileAt, bool dropThrough) {
     }
   } else {
     final ty = _tileLo(b.top + 0.001);
+    var firstSolid = -1, lastSolid = -1, solidCount = 0;
     for (var tx = tx0; tx <= tx1; tx++) {
       if (_isSolid(tileAt(tx, ty))) {
-        b.y = (ty + 1) * kTileSize;
-        b.vy = 0;
-        b.hitCeiling = true;
-        return;
+        if (firstSolid < 0) firstSolid = tx;
+        lastSolid = tx;
+        solidCount++;
       }
     }
+    if (firstSolid < 0) return;
+    // Corner correction: exactly one blocking column, at the edge of the
+    // body's span, overlapped by <= nudge px, with clear air on the other
+    // side — slide around the lip and keep rising.
+    if (nudge > 0 && solidCount == 1) {
+      if (firstSolid == tx0) {
+        final shift = (tx0 + 1) * kTileSize - b.left + 0.01;
+        final newRightTx = _tileLo(b.right + shift - 0.001);
+        if (shift <= nudge && !_isSolid(tileAt(newRightTx, ty))) {
+          b.x += shift;
+          return;
+        }
+      } else if (lastSolid == tx1) {
+        final shift = b.right - tx1 * kTileSize + 0.01;
+        final newLeftTx = _tileLo(b.left - shift + 0.001);
+        if (shift <= nudge && !_isSolid(tileAt(newLeftTx, ty))) {
+          b.x -= shift;
+          return;
+        }
+      }
+    }
+    b.y = (ty + 1) * kTileSize;
+    b.vy = 0;
+    b.hitCeiling = true;
   }
 }
 
@@ -125,6 +154,20 @@ bool groundBelow(Body b, TileQuery tileAt) {
     if (t == TileKind.platform && onTileTop) return true;
   }
   return false;
+}
+
+/// True when the tile row under the body's feet contains a one-way platform
+/// (and no solid): used to disambiguate DOWN+JUMP = drop-through vs roll.
+bool platformBelow(Body b, TileQuery tileAt) {
+  final ty = _tileLo(b.bottom + 0.5);
+  final tx0 = _tileLo(b.left + 0.01), tx1 = _tileHi(b.right - 0.01);
+  var sawPlatform = false;
+  for (var tx = tx0; tx <= tx1; tx++) {
+    final t = tileAt(tx, ty);
+    if (_isSolid(t)) return false;
+    if (t == TileKind.platform) sawPlatform = true;
+  }
+  return sawPlatform;
 }
 
 /// Hazard contact: any spikes/fire tile overlapping a slightly shrunken box.

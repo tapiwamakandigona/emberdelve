@@ -11,14 +11,38 @@ const double kRunSpeed = 118.0; // px/s
 const double kGroundAccel = 1400.0;
 const double kAirAccel = 900.0;
 const double kGroundFriction = 1600.0;
+// Turnaround assist: extra accel while input opposes current velocity —
+// reversing at full run speed snaps in ~0.05s instead of ~0.17s. Touch-first
+// games live and die on this (direction changes are the most common input).
+const double kTurnAccelMultiplier = 2.0;
 
 // Jumping (feel spec: coyote 0.10s, buffer 0.12s, variable height).
 const double kJumpSpeed = 292.0; // initial jump velocity px/s (clears 2 tiles+)
 const double kJumpCutMultiplier = 0.45; // vy *= this when jump released early
+// Asymmetric gravity (feel research: falls should read snappier than rises —
+// 1.5-2.0x is the platformer convention; Celeste additionally halves gravity
+// around the apex while jump is held, buying air control without floatiness).
+const double kFallGravityMultiplier = 1.6; // gravity scale while vy > 0
+const double kApexGravityMultiplier = 0.55; // gravity scale in the apex window
+const double kApexHangSpeed = 40.0; // |vy| px/s that counts as "at the apex"
 const double kCoyoteTime = 0.10; // s of grace after walking off a ledge
 const double kJumpBufferTime = 0.12; // s a jump press is remembered
 const int kMaxAirJumps = 1; // double jump (2 with triple-jump special)
 const double kAirJumpSpeed = 265.0;
+// Ceiling corner correction (Celeste-style forgiveness): a rising jump that
+// clips a ceiling lip by up to this many px slides around it instead of
+// bonking. Player-only; enemies keep exact collision.
+const double kCeilingCornerNudge = 4.0;
+
+// Footsteps: cadence while running on ground. Deliberately quiet +
+// alternating samples so it never grates on phone speakers.
+const double kFootstepInterval = 0.26; // s between steps at full run
+
+// Roll (DOWN+JUMP on solid ground): a quick commit-dodge. 11-frame sheet.
+const double kRollDuration = 0.38; // s locked in the roll
+const double kRollSpeed = 190.0; // px/s in facing direction
+const double kRollIFrames = 0.28; // s of invulnerability from roll start
+const double kRollCooldown = 0.35; // s after the roll ends before the next
 
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
