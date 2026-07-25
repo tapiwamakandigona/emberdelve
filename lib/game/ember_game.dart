@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show KeyEventResult;
 
 import '../audio/audio_service.dart';
+import 'haptics.dart';
 import '../core/rng.dart';
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
@@ -240,6 +241,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
               Vector2(session.player.body.centerX, session.player.body.bottom)));
         case PlayerEvent.hurt:
           AudioService.instance?.playSfx('player_hit');
+          Haptics.medium(); // taking a hit is the beat that must land
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
         case PlayerEvent.attacked:
@@ -268,6 +270,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
           _camBump = e.crit ? 3.0 : 1.5;
         case SessionEventKind.enemyDeath:
           AudioService.instance?.playSfx('enemy_death');
+          Haptics.light(); // kill confirm
           world.add(DeathFx(at, _deathAnim.clone()));
         case SessionEventKind.wallHit:
           AudioService.instance?.playSfx('block', volume: 0.7);
@@ -288,9 +291,11 @@ class EmberGame extends FlameGame with KeyboardEvents {
           AudioService.instance?.playSfx('whoosh', volume: 0.45);
         case SessionEventKind.bossPhase:
           AudioService.instance?.playSfx('enemy_hit', volume: 0.9);
+          Haptics.heavy();
           _camBump = 4.0;
         case SessionEventKind.bossDefeated:
           AudioService.instance?.playSfx('unlock');
+          Haptics.heavy();
           _camBump = 5.0;
         case SessionEventKind.emberShotBroke:
           world.add(PuffFx(at,
@@ -301,6 +306,7 @@ class EmberGame extends FlameGame with KeyboardEvents {
           overlays.add(overlayResults);
         case SessionEventKind.levelFailed:
           AudioService.instance?.playMusic('defeat', loop: false);
+          Haptics.heavy();
           overlays.add(overlayFail);
       }
     }
