@@ -61,6 +61,8 @@ class SaveData {
   Map<String, LevelRecord> levels; // level id (e.g. 'w1_l1') -> record
   bool tutorialSeen;
   bool legacyBonusGranted; // one-time coin gift for v1 dice-save owners
+  String dailyBestDate; // dailyKey of the recorded daily best ('' = none)
+  int dailyBestTimeMs; // best Daily Delve time for dailyBestDate (0 = none)
 
   SaveData({
     this.coins = 0,
@@ -74,6 +76,8 @@ class SaveData {
     Map<String, LevelRecord>? levels,
     this.tutorialSeen = false,
     this.legacyBonusGranted = false,
+    this.dailyBestDate = '',
+    this.dailyBestTimeMs = 0,
   })  : ownedWeapons = ownedWeapons ?? {'squire_blade'},
         ownedSkins = ownedSkins ?? {'red'},
         skinKills = skinKills ?? {},
@@ -96,6 +100,8 @@ class SaveData {
         'levels': levels.map((k, v) => MapEntry(k, v.toJson())),
         'tutorialSeen': tutorialSeen,
         'legacyBonusGranted': legacyBonusGranted,
+        'dailyBestDate': dailyBestDate,
+        'dailyBestTimeMs': dailyBestTimeMs,
       };
 
   factory SaveData.fromJson(Map<String, dynamic> j) {
@@ -125,6 +131,8 @@ class SaveData {
           {},
       tutorialSeen: j['tutorialSeen'] as bool? ?? false,
       legacyBonusGranted: j['legacyBonusGranted'] as bool? ?? false,
+      dailyBestDate: j['dailyBestDate'] as String? ?? '',
+      dailyBestTimeMs: (j['dailyBestTimeMs'] as num?)?.toInt() ?? 0,
     );
   }
 }

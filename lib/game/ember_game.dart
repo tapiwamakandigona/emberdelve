@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart' show KeyEventResult;
 
 import '../audio/audio_service.dart';
 import '../core/rng.dart';
+import '../meta/daily.dart';
 import '../ui/app_state.dart';
 import 'components/enemy_component.dart';
 import 'components/fx.dart';
@@ -39,9 +40,10 @@ class EmberGame extends FlameGame with KeyboardEvents {
   static const overlayFail = 'fail';
 
   final String levelId;
-  final int? seedOverride; // tests
+  final int? seedOverride; // tests + Daily Delve (deterministic daily seed)
+  final bool daily; // Daily Delve run: wallet + daily best only, no records
 
-  EmberGame({required this.levelId, this.seedOverride})
+  EmberGame({required this.levelId, this.seedOverride, this.daily = false})
       : super(
           camera: CameraComponent.withFixedResolution(
               width: viewWidth, height: viewHeight),
@@ -353,6 +355,22 @@ class EmberGame extends FlameGame with KeyboardEvents {
     _resultsPersisted = true;
     final r = session.results!;
     final save = AppState.save;
+    if (daily) {
+      // Daily Delve is a remix: it pays out normally but never touches
+      // campaign level records (would skew unlock progression). Best time
+      // is kept for today only — yesterday's record simply ages out.
+      final key = dailyKey(DateTime.now());
+      if (save.dailyBestDate != key || r.timeMs < save.dailyBestTimeMs) {
+        save.dailyBestDate = key;
+        save.dailyBestTimeMs = r.timeMs;
+      }
+      save.coins += r.totalCoins;
+      save.feathers += session.feathersCollected;
+      save.skinKills[save.equippedSkin] =
+          (save.skinKills[save.equippedSkin] ?? 0) + session.kills;
+      AppState.persist();
+      return;
+    }
     final rec = save.recordFor(levelId);
     rec.finished = rec.finished || r.finished;
     rec.allChests = rec.allChests || r.allChests;

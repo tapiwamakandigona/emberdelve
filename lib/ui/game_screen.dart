@@ -9,7 +9,10 @@ import '../game/session.dart';
 
 class GameScreen extends StatefulWidget {
   final String levelId;
-  const GameScreen({super.key, required this.levelId});
+  final int? seed; // Daily Delve passes the deterministic daily seed
+  final bool daily;
+  const GameScreen(
+      {super.key, required this.levelId, this.seed, this.daily = false});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -21,7 +24,10 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _game = EmberGame(levelId: widget.levelId);
+    _game = EmberGame(
+        levelId: widget.levelId,
+        seedOverride: widget.seed,
+        daily: widget.daily);
   }
 
   @override
@@ -31,8 +37,11 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _replay() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => GameScreen(levelId: widget.levelId)));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (_) => GameScreen(
+            levelId: widget.levelId,
+            seed: widget.seed,
+            daily: widget.daily)));
   }
 
   void _leave() => Navigator.of(context).pop();

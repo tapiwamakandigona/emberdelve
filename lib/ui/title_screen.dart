@@ -4,7 +4,11 @@
 import 'package:flutter/material.dart';
 
 import '../audio/audio_service.dart';
+import '../meta/daily.dart';
+import '../meta/progress_state.dart';
+import 'app_state.dart';
 import 'credits_screen.dart';
+import 'game_screen.dart';
 import 'level_select_screen.dart';
 import 'settings_screen.dart';
 import 'shop_screen.dart';
@@ -40,9 +44,33 @@ class _TitleScreenState extends State<TitleScreen>
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => screen))
         .then((_) {
-      // Coming back from gameplay: restore the menu theme.
+      // Coming back from gameplay: restore the menu theme and refresh
+      // the Daily Delve best-time line.
       AudioService.instance?.playMusic('title_menu');
+      if (mounted) setState(() {});
     });
+  }
+
+  /// 'Old Orchard · best 1:07' or 'Old Orchard' if no run today.
+  String get _dailySubtitle {
+    final now = DateTime.now();
+    final id = dailyLevelId(now);
+    final title = kWorld1
+        .firstWhere((e) => e.id == id, orElse: () => LevelEntry(id, id))
+        .title;
+    if (AppState.isReady &&
+        AppState.save.dailyBestDate == dailyKey(now) &&
+        AppState.save.dailyBestTimeMs > 0) {
+      final s = AppState.save.dailyBestTimeMs ~/ 1000;
+      return '$title  ·  best ${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
+    }
+    return title;
+  }
+
+  void _playDaily() {
+    final now = DateTime.now();
+    _open(GameScreen(
+        levelId: dailyLevelId(now), seed: dailySeed(now), daily: true));
   }
 
   @override
@@ -126,6 +154,32 @@ class _TitleScreenState extends State<TitleScreen>
                         fontFamily: 'Cinzel',
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2)),
+              ),
+              const SizedBox(height: 10),
+              // Daily Delve — deterministic daily remix. No streaks, no
+              // countdown copy: just today's level and today's best.
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFFE8A33D),
+                  side: const BorderSide(color: Color(0x66E8A33D)),
+                  backgroundColor: const Color(0x66141420),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 28, vertical: 10),
+                ),
+                onPressed: _playDaily,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  const Text('DAILY DELVE',
+                      style: TextStyle(
+                          fontFamily: 'Cinzel',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          letterSpacing: 2)),
+                  Text(_dailySubtitle,
+                      style: const TextStyle(
+                          color: Colors.white60,
+                          fontSize: 11,
+                          letterSpacing: 0.5)),
+                ]),
               ),
               const SizedBox(height: 12),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
