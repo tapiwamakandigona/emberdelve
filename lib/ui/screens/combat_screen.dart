@@ -74,8 +74,15 @@ class _CombatScreenState extends State<CombatScreen> {
   //
   // Anything sim-driven (HP, dice faces, phase) still goes through setState:
   // those genuinely change the whole screen.
+  //   _uiTick     — pure input state: die selection, the busy input lock,
+  //                 reroll mode + its multi-select, and the verb-button
+  //                 arrival pulses. Consumers: the dice tray, the action
+  //                 zone, the assignment preview, the help button. A die tap
+  //                 changes nothing the top bar, HP bars, enemy panel or
+  //                 sprite stage can see, so they no longer rebuild for it.
   final ValueNotifier<int> _choreoTick = ValueNotifier(0);
   final ValueNotifier<int> _fxTick = ValueNotifier(0);
+  final ValueNotifier<int> _uiTick = ValueNotifier(0);
 
   /// Mutate choreography flags and rebuild only the combatants.
   void _choreo(VoidCallback f) {
@@ -89,6 +96,15 @@ class _CombatScreenState extends State<CombatScreen> {
     if (!mounted) return;
     f();
     _fxTick.value++;
+  }
+
+  /// Mutate pure input state and rebuild only the tray + action zone.
+  /// (Anything that also changes sim state goes through the controller, which
+  /// rebuilds the screen anyway — use [setState] there.)
+  void _ui(VoidCallback f) {
+    if (!mounted) return;
+    f();
+    _uiTick.value++;
   }
 
   int? selected; // 1-based die index
@@ -243,6 +259,7 @@ class _CombatScreenState extends State<CombatScreen> {
   void dispose() {
     _choreoTick.dispose();
     _fxTick.dispose();
+    _uiTick.dispose();
     super.dispose();
   }
 
@@ -459,7 +476,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (!_busy || !_resolving) return;
     if (_ffwd >= 2) return;
     Haptics.light();
-    setState(() => _ffwd = _ffwd + 1);
+    _ui(() => _ffwd = _ffwd + 1);
   }
 
   /// Run the queued action once the current choreography finishes (F2).
@@ -552,7 +569,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (dmg == null) {
       // invalid command (e.g. block-only die): no swing
       _busy = false;
-      if (mounted) setState(() {});
+      _ui(() {});
       return;
     }
     // Anticipation squash before the lunge (visuals.md #9).
@@ -637,7 +654,7 @@ class _CombatScreenState extends State<CombatScreen> {
       _choreo(() => _enemyFlash = false);
     }
     _busy = false;
-    if (mounted) setState(() {});
+    _ui(() {});
     _drainQueue();
   }
 
@@ -658,7 +675,7 @@ class _CombatScreenState extends State<CombatScreen> {
       'action': 'block',
     });
     Haptics.light();
-    setState(() => selected = null);
+    _ui(() => selected = null);
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
     if (da != null) {
@@ -689,7 +706,7 @@ class _CombatScreenState extends State<CombatScreen> {
     _busy = true;
     _ffwd = 0; // LFP-5: each resolution starts at full speed
     _resolving = true;
-    setState(() {
+    _ui(() {
       selected = null;
       _rerollMode = false;
       _rerollSel.clear();
@@ -794,7 +811,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (mounted) await _enemyDeath(events);
     _busy = false;
     _resolving = false;
-    if (mounted) setState(() {});
+    _ui(() {});
     _drainQueue();
   }
 
@@ -869,72 +886,84 @@ class _CombatScreenState extends State<CombatScreen> {
     final trayViewH = visRows * chipH + (visRows - 1) * Space.s;
     final hiddenDice = math.max(0, dice0.length - visRows * perRow);
 
+    // Section repaint boundaries (perf, 2026-07-25): the HUD is one Column
+    // under a single boundary, so ANY animating pixel — an HP bar tweening, a
+    // sprite frame, a lunge — repainted every other section's text and boxes
+    // too (~17 paragraphs per frame during a swing). One boundary per fixed
+    // section keeps each animation's repaint inside its own band.
     final combat = Column(
       children: [
-        _TopBar(c),
+        RepaintBoundary(child: _TopBar(c)),
         // Enemy header: name + HP (intent lives on the stage, over the enemy).
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            Space.l,
-            compact ? Space.s : Space.l,
-            Space.l,
-            compact ? Space.xs : Space.s,
-          ),
-          child: Panel(
-            padding: EdgeInsets.all(compact ? Space.s : Space.m),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        enemy['name'] as String,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: EmberText.h2.copyWith(
-                          color: enemy['boss'] == true
-                              ? EmberColors.kindBoss
-                              : enemy['elite'] == true
-                              ? EmberColors.kindElite
-                              : EmberColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    // Replayable how-to-play (v0.3.10): the tutorial used to
-                    // show once, ever — a tester considered REINSTALLING to
-                    // see it again. This reopens the same overlay any time.
-                    Semantics(
-                      label: 'How to play',
-                      button: true,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: _busy || _tutStep >= 0
-                            ? null
-                            : () => setState(() => _tutStep = 0),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Space.s,
-                            vertical: Space.xs,
-                          ),
-                          child: Icon(
-                            Icons.help_outline,
-                            size: 20,
-                            color: EmberColors.textDim,
+        RepaintBoundary(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              Space.l,
+              compact ? Space.s : Space.l,
+              Space.l,
+              compact ? Space.xs : Space.s,
+            ),
+            child: Panel(
+              padding: EdgeInsets.all(compact ? Space.s : Space.m),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          enemy['name'] as String,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: EmberText.h2.copyWith(
+                            color: enemy['boss'] == true
+                                ? EmberColors.kindBoss
+                                : enemy['elite'] == true
+                                ? EmberColors.kindElite
+                                : EmberColors.textPrimary,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: Space.s),
-                StatBar(
-                  value: enemyHp,
-                  max: enemy['max_hp'] as int,
-                  block: enemy['block'] as int? ?? 0,
-                  color: EmberColors.danger,
-                  label: 'ENEMY HP · TURN ${st['turn']}',
-                ),
-              ],
+                      // Replayable how-to-play (v0.3.10): the tutorial used to
+                      // show once, ever — a tester considered REINSTALLING to
+                      // see it again. This reopens the same overlay any time.
+                      // Reads the input lock, so it listens to _uiTick like
+                      // the rest of the input surfaces.
+                      ValueListenableBuilder<int>(
+                        valueListenable: _uiTick,
+                        builder: (context, _, _) => Semantics(
+                          label: 'How to play',
+                          button: true,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: _busy || _tutStep >= 0
+                                ? null
+                                : () => setState(() => _tutStep = 0),
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Space.s,
+                                vertical: Space.xs,
+                              ),
+                              child: Icon(
+                                Icons.help_outline,
+                                size: 20,
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.s),
+                  StatBar(
+                    value: enemyHp,
+                    max: enemy['max_hp'] as int,
+                    block: enemy['block'] as int? ?? 0,
+                    color: EmberColors.danger,
+                    label: 'ENEMY HP · TURN ${st['turn']}',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -944,36 +973,38 @@ class _CombatScreenState extends State<CombatScreen> {
         // so the number is on screen BEFORE the tap, not discovered on the
         // HP bar afterwards.
         Expanded(
-          child: _stage(
-            enemy,
-            intent,
-            compact: compact,
-            preview: selected != null && rolled != null && !_rerollMode
-                ? () {
-                    final a = _assignPreview(
-                      player,
-                      enemy,
-                      selected!,
-                      'attack',
-                    );
-                    final b = _assignPreview(player, enemy, selected!, 'block');
-                    return [
-                      if (a >= 0) 'ATTACK +$a',
-                      if (b >= 0) 'BLOCK +$b',
-                    ].join('  ·  ');
-                  }()
-                : null,
+          child: RepaintBoundary(
+            child: _stage(
+              enemy,
+              intent,
+              compact: compact,
+              // Evaluated inside the preview's own ValueListenableBuilder so
+              // selecting a die repaints the badge, not the whole stage.
+              preview: () {
+                if (selected == null || rolled == null || _rerollMode) {
+                  return null;
+                }
+                final a = _assignPreview(player, enemy, selected!, 'attack');
+                final b = _assignPreview(player, enemy, selected!, 'block');
+                return [
+                  if (a >= 0) 'ATTACK +$a',
+                  if (b >= 0) 'BLOCK +$b',
+                ].join('  ·  ');
+              },
+            ),
           ),
         ),
         // Player HP
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Space.l),
-          child: StatBar(
-            value: (player['hp'] as int).clamp(0, player['max_hp'] as int),
-            max: player['max_hp'] as int,
-            block: player['block'] as int,
-            color: EmberColors.hp,
-            label: 'YOUR HP',
+        RepaintBoundary(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            child: StatBar(
+              value: (player['hp'] as int).clamp(0, player['max_hp'] as int),
+              max: player['max_hp'] as int,
+              block: player['block'] as int,
+              color: EmberColors.hp,
+              label: 'YOUR HP',
+            ),
           ),
         ),
         SizedBox(height: compact ? Space.s : Space.m),
@@ -998,62 +1029,71 @@ class _CombatScreenState extends State<CombatScreen> {
                       // tray while inbound; only clip when the tray truly
                       // scrolls (then folded rows must stay hidden).
                       clipBehavior: trayScrolls ? Clip.hardEdge : Clip.none,
-                      child: Wrap(
-                        spacing: Space.s,
-                        runSpacing: Space.s,
-                        alignment: WrapAlignment.center,
-                        children: [
-                          for (var i = 1; i <= dice0.length; i++)
-                            KeyedSubtree(
-                              // LFP-2a: slot geometry for the assign ghost.
-                              key: _chipKeys.putIfAbsent(i, GlobalKey.new),
-                              child: _trayChip(
-                                chipScale,
-                                DieChip(
-                                  dice0[i - 1],
-                                  value: rolled != null ? rolled[i - 1] : null,
-                                  assigned: assigned['$i'] != null,
-                                  selected: _rerollMode
-                                      ? _rerollSel.contains(i)
-                                      : selected == i,
-                                  maxed: maxed != null && maxed[i - 1],
-                                  contribution: _assignedValue[i],
-                                  flight: true, // LFP-1: thrown, not refreshed
-                                  onSettle: Haptics.light, // LFP-1b rattle
-                                  rollToken:
-                                      _rollGen * 4096 + (_reflyGen[i] ?? 0),
-                                  // 50 ms cascade so the tumble reads left-to-right.
-                                  tumbleDelayMs: (i - 1) * 50,
-                                  // v0.3.1 F1/F2: selection is pure UI state, so dice
-                                  // stay tappable during choreography; a spent die
-                                  // answers with an explicit call-out instead of
-                                  // silently eating the tap.
-                                  onTap: rolled == null
-                                      ? null
-                                      : assigned['$i'] != null
-                                      ? () => _note(
-                                          'ALREADY ASSIGNED',
-                                          color: EmberColors.textDim,
-                                          icon: Icons.do_not_disturb_alt,
-                                        )
-                                      : _rerollMode
-                                      ? () => setState(
-                                          () => _rerollSel.contains(i)
-                                              ? _rerollSel.remove(i)
-                                              : _rerollSel.add(i),
-                                        )
-                                      : () {
-                                          Haptics.light();
-                                          setState(
-                                            () => selected = selected == i
-                                                ? null
-                                                : i,
-                                          );
-                                        },
+                      // Selection lives on _uiTick, so tapping a die repaints
+                      // the tray alone (the chips themselves already animate
+                      // internally).
+                      child: ValueListenableBuilder<int>(
+                        valueListenable: _uiTick,
+                        builder: (context, _, _) => Wrap(
+                          spacing: Space.s,
+                          runSpacing: Space.s,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            for (var i = 1; i <= dice0.length; i++)
+                              KeyedSubtree(
+                                // LFP-2a: slot geometry for the assign ghost.
+                                key: _chipKeys.putIfAbsent(i, GlobalKey.new),
+                                child: _trayChip(
+                                  chipScale,
+                                  DieChip(
+                                    dice0[i - 1],
+                                    value: rolled != null
+                                        ? rolled[i - 1]
+                                        : null,
+                                    assigned: assigned['$i'] != null,
+                                    selected: _rerollMode
+                                        ? _rerollSel.contains(i)
+                                        : selected == i,
+                                    maxed: maxed != null && maxed[i - 1],
+                                    contribution: _assignedValue[i],
+                                    flight:
+                                        true, // LFP-1: thrown, not refreshed
+                                    onSettle: Haptics.light, // LFP-1b rattle
+                                    rollToken:
+                                        _rollGen * 4096 + (_reflyGen[i] ?? 0),
+                                    // 50 ms cascade so the tumble reads left-to-right.
+                                    tumbleDelayMs: (i - 1) * 50,
+                                    // v0.3.1 F1/F2: selection is pure UI state, so dice
+                                    // stay tappable during choreography; a spent die
+                                    // answers with an explicit call-out instead of
+                                    // silently eating the tap.
+                                    onTap: rolled == null
+                                        ? null
+                                        : assigned['$i'] != null
+                                        ? () => _note(
+                                            'ALREADY ASSIGNED',
+                                            color: EmberColors.textDim,
+                                            icon: Icons.do_not_disturb_alt,
+                                          )
+                                        : _rerollMode
+                                        ? () => _ui(
+                                            () => _rerollSel.contains(i)
+                                                ? _rerollSel.remove(i)
+                                                : _rerollSel.add(i),
+                                          )
+                                        : () {
+                                            Haptics.light();
+                                            _ui(
+                                              () => selected = selected == i
+                                                  ? null
+                                                  : i,
+                                            );
+                                          },
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -1138,184 +1178,192 @@ class _CombatScreenState extends State<CombatScreen> {
             Space.l,
             compact ? Space.s : Space.l,
           ),
-          child: rolled == null
-              ? SizedBox(
-                  width: double.infinity,
-                  child: EmberButton(
-                    'Roll',
-                    primary: true,
-                    dense: compact,
-                    icon: Icons.casino,
-                    onTap: _busy
-                        ? null
-                        : () {
-                            Haptics.light();
-                            setState(() {
-                              selected = null;
-                              _assignedValue.clear(); // fresh turn (LFP-2c)
-                              _reflyGen.clear(); // fresh throw set (LFP-1c)
-                              _rollGen++; // trigger the dice throw cascade
-                            });
-                            final events = c.apply({'type': 'roll'});
-                            // Combo call-outs land after the tumble reads.
-                            Future.delayed(
-                              const Duration(milliseconds: 550),
-                              () {
-                                if (mounted) _announceCombos(events);
-                              },
-                            );
-                          },
-                  ),
-                )
-              : _rerollMode
-              // Risky-reroll confirm: pick unassigned dice, then commit.
-              ? Column(
-                  children: [
-                    Text(
-                      freeReroll
-                          ? 'Pick dice to reroll — FREE this turn'
-                          // LFP-6b: "each lands −1 pip" read as "−1 from the
-                          // CURRENT face"; the actual rule is reroll first,
-                          // THEN subtract 1 (a rolled 1 can come back higher).
-                          : 'Pick dice to reroll — new face −1 pip',
-                      style: EmberText.micro.copyWith(
-                        color: freeReroll
-                            ? EmberColors.success
-                            : EmberColors.textDim,
-                      ),
-                    ),
-                    const SizedBox(height: Space.s),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: EmberButton(
-                            'Cancel',
-                            ghost: true,
-                            dense: compact,
-                            onTap: () => setState(() {
-                              _rerollMode = false;
-                              _rerollSel.clear();
-                            }),
-                          ),
-                        ),
-                        const SizedBox(width: Space.m),
-                        Expanded(
-                          child: EmberButton(
-                            'Reroll (${_rerollSel.length})',
-                            primary: true,
-                            dense: compact,
-                            icon: Icons.casino,
-                            onTap: _rerollSel.isNotEmpty && !_busy
-                                ? _doRiskyReroll
-                                : null,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-              : Column(
-                  children: [
-                    Row(
-                      children: [
-                        // Enabled during choreography too: taps land in the
-                        // one-slot queue instead of being dropped (F2).
-                        Expanded(
-                          child: _Pulse(
-                            token: _attackPulse,
-                            child: EmberButton(
-                              'Attack',
-                              key: _attackKey,
-                              dense: compact,
-                              icon: Icons.gps_fixed,
-                              onTap: selected != null ? _attack : null,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: Space.m),
-                        Expanded(
-                          child: _Pulse(
-                            token: _blockPulse,
-                            child: EmberButton(
-                              'Block',
-                              key: _blockKey,
-                              dense: compact,
-                              icon: Icons.shield,
-                              onTap: selected != null ? _block : null,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: compact ? Space.s : Space.m),
-                    Row(
-                      children: [
-                        if (rerolls > 0)
-                          Expanded(
-                            child: EmberButton(
-                              'Reroll ($rerolls)',
-                              dense: compact,
-                              icon: Icons.replay,
-                              onTap: selected != null && !_busy
-                                  ? () {
-                                      final die = selected!;
-                                      final events = c.apply({
-                                        'type': 'reroll',
-                                        'die': die,
-                                      });
-                                      setState(() {
-                                        // LFP-1c: the rerolled die re-flies
-                                        // (charge rerolls used to not even
-                                        // retumble).
-                                        if (_find(events, 'reroll_used') !=
-                                            null) {
-                                          _reflyGen[die] =
-                                              (_reflyGen[die] ?? 0) + 1;
-                                        }
-                                      });
-                                      // A charge reroll re-detects combos
-                                      // (m4 §3) — announce them like the
-                                      // roll/risky paths do.
-                                      _announceCombos(events);
-                                    }
-                                  : null,
-                            ),
-                          ),
-                        if (rerolls > 0) const SizedBox(width: Space.m),
-                        // Risky reroll (m4 contract §1): once per turn, −1 pip
-                        // per rerolled die — waived after a straight (FREE).
-                        Expanded(
-                          child: EmberButton(
-                            riskyUsed
-                                ? 'Reroll spent'
-                                : freeReroll
-                                ? 'Risky reroll · FREE'
-                                : 'Risky reroll · new face −1',
-                            dense: compact,
-                            icon: Icons.casino,
-                            onTap: riskyUsed || _busy
-                                ? null
-                                : () => setState(() {
-                                    _rerollMode = true;
-                                    _rerollSel.clear();
-                                    selected = null;
-                                  }),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: compact ? Space.s : Space.m),
-                    SizedBox(
+          // The whole action zone reads pure input state (selection, the
+          // busy lock, reroll mode, the verb pulses), so it rebuilds on
+          // _uiTick instead of dragging the stage and HUD along.
+          child: RepaintBoundary(
+            child: ValueListenableBuilder<int>(
+              valueListenable: _uiTick,
+              builder: (context, _, _) => rolled == null
+                  ? SizedBox(
                       width: double.infinity,
                       child: EmberButton(
-                        'End turn',
+                        'Roll',
                         primary: true,
                         dense: compact,
-                        onTap: _endTurn,
+                        icon: Icons.casino,
+                        onTap: _busy
+                            ? null
+                            : () {
+                                Haptics.light();
+                                setState(() {
+                                  selected = null;
+                                  _assignedValue.clear(); // fresh turn (LFP-2c)
+                                  _reflyGen.clear(); // fresh throw set (LFP-1c)
+                                  _rollGen++; // trigger the dice throw cascade
+                                });
+                                final events = c.apply({'type': 'roll'});
+                                // Combo call-outs land after the tumble reads.
+                                Future.delayed(
+                                  const Duration(milliseconds: 550),
+                                  () {
+                                    if (mounted) _announceCombos(events);
+                                  },
+                                );
+                              },
                       ),
+                    )
+                  : _rerollMode
+                  // Risky-reroll confirm: pick unassigned dice, then commit.
+                  ? Column(
+                      children: [
+                        Text(
+                          freeReroll
+                              ? 'Pick dice to reroll — FREE this turn'
+                              // LFP-6b: "each lands −1 pip" read as "−1 from the
+                              // CURRENT face"; the actual rule is reroll first,
+                              // THEN subtract 1 (a rolled 1 can come back higher).
+                              : 'Pick dice to reroll — new face −1 pip',
+                          style: EmberText.micro.copyWith(
+                            color: freeReroll
+                                ? EmberColors.success
+                                : EmberColors.textDim,
+                          ),
+                        ),
+                        const SizedBox(height: Space.s),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: EmberButton(
+                                'Cancel',
+                                ghost: true,
+                                dense: compact,
+                                onTap: () => _ui(() {
+                                  _rerollMode = false;
+                                  _rerollSel.clear();
+                                }),
+                              ),
+                            ),
+                            const SizedBox(width: Space.m),
+                            Expanded(
+                              child: EmberButton(
+                                'Reroll (${_rerollSel.length})',
+                                primary: true,
+                                dense: compact,
+                                icon: Icons.casino,
+                                onTap: _rerollSel.isNotEmpty && !_busy
+                                    ? _doRiskyReroll
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Row(
+                          children: [
+                            // Enabled during choreography too: taps land in the
+                            // one-slot queue instead of being dropped (F2).
+                            Expanded(
+                              child: _Pulse(
+                                token: _attackPulse,
+                                child: EmberButton(
+                                  'Attack',
+                                  key: _attackKey,
+                                  dense: compact,
+                                  icon: Icons.gps_fixed,
+                                  onTap: selected != null ? _attack : null,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: Space.m),
+                            Expanded(
+                              child: _Pulse(
+                                token: _blockPulse,
+                                child: EmberButton(
+                                  'Block',
+                                  key: _blockKey,
+                                  dense: compact,
+                                  icon: Icons.shield,
+                                  onTap: selected != null ? _block : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: compact ? Space.s : Space.m),
+                        Row(
+                          children: [
+                            if (rerolls > 0)
+                              Expanded(
+                                child: EmberButton(
+                                  'Reroll ($rerolls)',
+                                  dense: compact,
+                                  icon: Icons.replay,
+                                  onTap: selected != null && !_busy
+                                      ? () {
+                                          final die = selected!;
+                                          final events = c.apply({
+                                            'type': 'reroll',
+                                            'die': die,
+                                          });
+                                          setState(() {
+                                            // LFP-1c: the rerolled die re-flies
+                                            // (charge rerolls used to not even
+                                            // retumble).
+                                            if (_find(events, 'reroll_used') !=
+                                                null) {
+                                              _reflyGen[die] =
+                                                  (_reflyGen[die] ?? 0) + 1;
+                                            }
+                                          });
+                                          // A charge reroll re-detects combos
+                                          // (m4 §3) — announce them like the
+                                          // roll/risky paths do.
+                                          _announceCombos(events);
+                                        }
+                                      : null,
+                                ),
+                              ),
+                            if (rerolls > 0) const SizedBox(width: Space.m),
+                            // Risky reroll (m4 contract §1): once per turn, −1 pip
+                            // per rerolled die — waived after a straight (FREE).
+                            Expanded(
+                              child: EmberButton(
+                                riskyUsed
+                                    ? 'Reroll spent'
+                                    : freeReroll
+                                    ? 'Risky reroll · FREE'
+                                    : 'Risky reroll · new face −1',
+                                dense: compact,
+                                icon: Icons.casino,
+                                onTap: riskyUsed || _busy
+                                    ? null
+                                    : () => _ui(() {
+                                        _rerollMode = true;
+                                        _rerollSel.clear();
+                                        selected = null;
+                                      }),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: compact ? Space.s : Space.m),
+                        SizedBox(
+                          width: double.infinity,
+                          child: EmberButton(
+                            'End turn',
+                            primary: true,
+                            dense: compact,
+                            onTap: _endTurn,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+            ),
+          ),
         ),
       ],
     );
@@ -1355,9 +1403,9 @@ class _CombatScreenState extends State<CombatScreen> {
                             curve: Curves.easeIn,
                             onEnd: () {
                               if (!mounted) return;
-                              setState(() {
-                                _ghosts.remove(g);
-                                // Arrival pulse on the verb button.
+                              _fxUpdate(() => _ghosts.remove(g));
+                              // Arrival pulse on the verb button.
+                              _ui(() {
                                 if (g.action == 'attack') {
                                   _attackPulse++;
                                 } else {
@@ -1476,7 +1524,7 @@ class _CombatScreenState extends State<CombatScreen> {
     Map enemy,
     Map intent, {
     bool compact = false,
-    String? preview,
+    required String? Function() preview,
   }) {
     final enemyId = enemy['id'] as String? ?? '';
     final big = enemy['boss'] == true || enemy['elite'] == true;
@@ -1626,34 +1674,44 @@ class _CombatScreenState extends State<CombatScreen> {
               // LFP-2a: assignment preview — floats at the stage floor
               // between the combatants (no layout height, no button-label
               // change, so the play harness and height budgets are safe).
-              if (preview != null && preview.isNotEmpty)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: Space.s,
-                  child: IgnorePointer(
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Space.m,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: EmberColors.raised.withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: EmberColors.line),
-                        ),
-                        child: Text(
-                          preview,
-                          style: EmberText.micro.copyWith(
-                            color: EmberColors.textPrimary,
-                            letterSpacing: 0.5,
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: Space.s,
+                child: IgnorePointer(
+                  child: RepaintBoundary(
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: _uiTick,
+                      builder: (context, _, _) {
+                        final text = preview();
+                        if (text == null || text.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        return Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Space.m,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: EmberColors.raised.withValues(alpha: 0.92),
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(color: EmberColors.line),
+                            ),
+                            child: Text(
+                              text,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textPrimary,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ),
+              ),
               // Transient overlay layers, scoped to _fxTick: a damage pop
               // or a call-out spawning/expiring rebuilds THIS stack only —
               // it used to setState the whole 1000-line screen build.
