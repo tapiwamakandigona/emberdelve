@@ -428,3 +428,33 @@ blocked on the owner's open questions in the plan.
 Evidence: flutter analyze clean; full `flutter test` green (138 + 5 new);
 tool/play_session_test green. Sim untouched — golden anchors and replays are
 byte-identical by construction (no file under lib/sim/ or lib/data/ changed).
+
+## 2026-07-25 — v0.3.11 phase 2: LFP-1 physical dice, LFP-2a die flight, LFP-4 idle life (owner-directed "fix the issues and make the update")
+
+Owner asked Viktor to implement the remaining playtest-gap workstreams and
+ship a GitHub release. Everything presentation-only; sim untouched again.
+
+- LFP-1a/1b/1c: rolls now THROW the dice — launch from a bottom-center thumb
+  origin, per-die arc + alternating spin, one soft bounce into the slot, all
+  inside the existing 520ms budget with the same face-cycling. Settle beats
+  fire per-die light haptics (stagger = rattle). Risky/charge rerolls re-fly
+  only the rerolled dice via per-die _reflyGen tokens (the old code re-tumbled
+  the whole tray on risky rerolls; charge rerolls didn't animate at all).
+  Rendering is programmatic 2.5-D (plan open question 2 answered with the
+  free, decision-#7-safe option; a pre-rendered sheet can replace it later).
+- LFP-2a (flight half): on assign, a ghost of the die flies from its tray
+  slot to the verb button (230ms easeIn) and the button pulses on arrival.
+  With the preview pill + contribution labels from phase 1 this completes
+  LFP-2a. LFP-2b undo remains OPEN — it needs the sim-seam decision (unassign
+  command vs commit-at-end-turn, PR #49 question 1); not implementable
+  without relitigating a standing decision, so deferred, not forgotten.
+- LFP-4a/4b: root-caused the static stage — several sheets have 1-frame idle
+  rows, which rendered with no AnimationController at all; multi-frame bobs
+  were sub-pixel at stage scale. SpriteView gains a procedural idle ticker:
+  ~2px sine bob (both combatants) + slow ±1px threat sway on the enemy while
+  an attack is telegraphed. Independent of frame count by construction.
+- features.json: LFP-1..6 lifted in with evidence per the harness protocol.
+
+Evidence: flutter analyze clean; full flutter test green; play_session
+harness green. No lib/sim or lib/data change across the whole branch —
+golden anchors, replays and saves byte-identical.

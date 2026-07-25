@@ -133,6 +133,48 @@
       "acceptance": "Upload keystore recovered and stored outside repo; Gradle release signingConfig (key.properties, debug fallback); CI job builds signed APK+AAB on main pushes/dispatch with apksigner cert-fingerprint gate; updates install over previous release-signed installs without uninstall",
       "passes": true,
       "evidence": "CI run 30018705918 green (build-android-release, fingerprint gate passed); cert SHA-256 03:1A:CB:...:7A:0D valid to 2066; docs/release.md; keystore held privately by owner-side orchestrator (never committed)"
+    },
+    {
+      "id": "LFP-1",
+      "title": "Physical dice roll (throw-in arc, bounce, settle; presentation-only)",
+      "acceptance": "On roll, tray dice launch from a bottom-center throw origin with per-die arc, spin and one soft bounce, settling into their slots within the 520ms budget; faces cycle mid-flight; settle beats fire per-die light haptics; risky/charge rerolls re-fly ONLY the rerolled dice; determinism untouched (result sim-decided before the animation starts)",
+      "passes": true,
+      "evidence": "lib/ui/widgets.dart DieChip(flight:true,onSettle:) + combat_screen per-die _reflyGen tokens; flutter analyze clean, full flutter test + tool/play_session_test green at feat/legacy-feel-pregate; no lib/sim change (goldens byte-identical)"
+    },
+    {
+      "id": "LFP-2",
+      "title": "Assignment legibility: preview, die flight to verb, contribution labels (2b undo deferred)",
+      "acceptance": "Selecting a die shows the resolved ATTACK/BLOCK numbers (modifiers, combos, relics) BEFORE commit; on assign a ghost die flies to the verb button which pulses; spent chips show their real contribution; preview math pinned to sim die_assigned values by a replay drift-guard test. LFP-2b in-turn undo is NOT included (blocked on the sim-seam owner decision, PR #49 open question 1)",
+      "passes": true,
+      "evidence": "assignPreview() + drift guard in test/feel_pregate_test.dart (10 seeded runs, every assignment asserted); ghost flight + _Pulse in combat_screen.dart; 143+ tests green"
+    },
+    {
+      "id": "LFP-3",
+      "title": "Status stacks separated from the intent badge + long-press tooltips",
+      "acceptance": "Burn renders as a status chip on the enemy body, visually distinct and positionally separate from the intent badge; long-press on either names it in a 2s call-out; tutorial card 1 separates plan vs status",
+      "passes": true,
+      "evidence": "test/feel_pregate_test.dart asserts chip sits below badge + tooltip text renders; screenshots via existing probes green"
+    },
+    {
+      "id": "LFP-4",
+      "title": "Idle life on the combat stage (bob + threat sway)",
+      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count — root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
+      "passes": true,
+      "evidence": "lib/ui/sprites.dart _life ticker (bob/sway params), wired in combat_screen stage; analyze clean, widget suite green"
+    },
+    {
+      "id": "LFP-5",
+      "title": "Tap-to-fast-forward enemy resolution (never hides info, only duration)",
+      "acceptance": "During enemy resolution, 1 tap = 2x speed with call-outs at 1s, 2 taps = skip-to-state; all pops/call-outs/state changes still occur; death moments keep full length; bot test reaches next input >=40% faster",
+      "passes": true,
+      "evidence": "test/feel_pregate_test.dart LFP-5 DoD test: 450ms vs 700ms to next input on a pinned fight"
+    },
+    {
+      "id": "LFP-6",
+      "title": "Playtest small fixes: reroll copy, boon RECOMMENDED, splash legibility",
+      "acceptance": "Risky-reroll copy states reroll-then-subtract; boon screen has the reward screen's deterministic RECOMMENDED default; the '19/20 spawn' reads correctly (overkill splash called out in combat; corrected diagnosis: no floor-vs-round bug exists in combatBegin)",
+      "passes": true,
+      "evidence": "PR #52 commit c8a3d62 + tests (recommendedIndex determinism, single RECOMMENDED chip render); sim untouched"
     }
   ]
 }

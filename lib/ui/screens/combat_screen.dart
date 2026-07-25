@@ -85,6 +85,12 @@ class _CombatScreenState extends State<CombatScreen> {
   // Juice: roll generation triggers the dice tumble; shake key drives screen
   // shake; pops are floating damage numbers over the stage.
   int _rollGen = 0;
+
+  // LFP-1c: per-die reflight generations — a risky/charge reroll re-flies
+  // ONLY the rerolled dice (the old `_rollGen++` on risky rerolls re-tumbled
+  // the whole tray, including dice that never moved). A chip's effective
+  // roll token is `_rollGen * 4096 + _reflyGen[i]`.
+  final Map<int, int> _reflyGen = {};
   final GlobalKey<ShakeBoxState> _shakeKey = GlobalKey<ShakeBoxState>();
   final List<_Pop> _pops = [];
   int _popId = 0;
@@ -121,6 +127,36 @@ class _CombatScreenState extends State<CombatScreen> {
   // cleared on every new roll. The chip label shows it ("+7 SPENT"), making
   // the silent arithmetic visible after the fact too.
   final Map<int, int> _assignedValue = {};
+
+  // LFP-2a die flight: on assign, a ghost of the die flies from its tray
+  // slot to the verb button (230ms easeIn), which pulses on arrival — the
+  // cause→effect link the tray's grey-out never gave. Geometry is captured
+  // through GlobalKeys and rendered in root-Stack coordinates.
+  final GlobalKey _rootKey = GlobalKey();
+  final GlobalKey _attackKey = GlobalKey();
+  final GlobalKey _blockKey = GlobalKey();
+  final Map<int, GlobalKey> _chipKeys = {};
+  final List<_Ghost> _ghosts = [];
+  int _ghostId = 0;
+  int _attackPulse = 0;
+  int _blockPulse = 0;
+
+  /// Root-stack-local center of the widget under [key], or null.
+  Offset? _centerOf(GlobalKey key) {
+    final box = key.currentContext?.findRenderObject() as RenderBox?;
+    final root = _rootKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || root == null || !box.attached || !box.hasSize) {
+      return null;
+    }
+    return root.globalToLocal(box.localToGlobal(box.size.center(Offset.zero)));
+  }
+
+  /// Spawn the assign ghost for [die] flying to the [action] button.
+  void _spawnGhost(int die, String action, int value, Offset? from) {
+    final to = _centerOf(action == 'attack' ? _attackKey : _blockKey);
+    if (from == null || to == null || !mounted) return;
+    setState(() => _ghosts.add(_Ghost(_ghostId++, from, to, value, action)));
+  }
 
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
   static const _contact = Duration(milliseconds: 250);
@@ -342,7 +378,10 @@ class _CombatScreenState extends State<CombatScreen> {
       _rerollMode = false;
       _rerollSel.clear();
       if (_find(events, 'risky_reroll') != null) {
-        _rollGen++; // retumble the tray on a successful reroll
+        // LFP-1c: only the picked dice re-fly.
+        for (final d in dice) {
+          _reflyGen[d] = (_reflyGen[d] ?? 0) + 1;
+        }
       }
     });
     _announceCombos(events);
@@ -446,6 +485,11 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     _busy = true;
     _lastSwingCharge = _weaponCharge; // freeze the heat for the swing itself
+    // LFP-2a: capture the chip's slot geometry before the apply dims it.
+    final assignedDie = selected!;
+    final ghostFrom = _chipKeys[assignedDie] != null
+        ? _centerOf(_chipKeys[assignedDie]!)
+        : null;
     // Boss deaths get a longer hold: the kill moment below needs the stage.
     final isBoss = _enemy?['boss'] == true;
     final events = widget.c.apply({
@@ -456,7 +500,11 @@ class _CombatScreenState extends State<CombatScreen> {
     selected = null;
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
-    if (da != null) _assignedValue[da['die'] as int] = da['value'] as int;
+    if (da != null) {
+      _assignedValue[da['die'] as int] = da['value'] as int;
+      // LFP-2a: the die visibly travels to the verb it was spent on.
+      _spawnGhost(assignedDie, 'attack', da['value'] as int, ghostFrom);
+    }
     final dmg = _find(events, 'damage_dealt');
     if (dmg == null) {
       // invalid command (e.g. block-only die): no swing
@@ -556,6 +604,11 @@ class _CombatScreenState extends State<CombatScreen> {
       _queued = ('block', selected); // F2: remember, don't drop
       return;
     }
+    // LFP-2a: capture the chip's slot geometry before the apply dims it.
+    final assignedDie = selected!;
+    final ghostFrom = _chipKeys[assignedDie] != null
+        ? _centerOf(_chipKeys[assignedDie]!)
+        : null;
     final events = widget.c.apply({
       'type': 'assign',
       'die': selected,
@@ -565,7 +618,11 @@ class _CombatScreenState extends State<CombatScreen> {
     setState(() => selected = null);
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
-    if (da != null) _assignedValue[da['die'] as int] = da['value'] as int;
+    if (da != null) {
+      _assignedValue[da['die'] as int] = da['value'] as int;
+      // LFP-2a: the die visibly travels to the verb it was spent on.
+      _spawnGhost(assignedDie, 'block', da['value'] as int, ghostFrom);
+    }
     // Block used to be completely silent — now the guard visibly comes up.
     final gained = _find(events, 'block_gained');
     if (gained != null) {
@@ -894,52 +951,63 @@ class _CombatScreenState extends State<CombatScreen> {
                   ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: trayViewH),
                     child: SingleChildScrollView(
+                      // LFP-1: flying dice must be able to draw outside the
+                      // tray while inbound; only clip when the tray truly
+                      // scrolls (then folded rows must stay hidden).
+                      clipBehavior: trayScrolls ? Clip.hardEdge : Clip.none,
                       child: Wrap(
                         spacing: Space.s,
                         runSpacing: Space.s,
                         alignment: WrapAlignment.center,
                         children: [
                           for (var i = 1; i <= dice0.length; i++)
-                            _trayChip(
-                              chipScale,
-                              DieChip(
-                                dice0[i - 1],
-                                value: rolled != null ? rolled[i - 1] : null,
-                                assigned: assigned['$i'] != null,
-                                selected: _rerollMode
-                                    ? _rerollSel.contains(i)
-                                    : selected == i,
-                                maxed: maxed != null && maxed[i - 1],
-                                contribution: _assignedValue[i],
-                                rollToken: _rollGen,
-                                // 50 ms cascade so the tumble reads left-to-right.
-                                tumbleDelayMs: (i - 1) * 50,
-                                // v0.3.1 F1/F2: selection is pure UI state, so dice
-                                // stay tappable during choreography; a spent die
-                                // answers with an explicit call-out instead of
-                                // silently eating the tap.
-                                onTap: rolled == null
-                                    ? null
-                                    : assigned['$i'] != null
-                                    ? () => _note(
-                                        'ALREADY ASSIGNED',
-                                        color: EmberColors.textDim,
-                                        icon: Icons.do_not_disturb_alt,
-                                      )
-                                    : _rerollMode
-                                    ? () => setState(
-                                        () => _rerollSel.contains(i)
-                                            ? _rerollSel.remove(i)
-                                            : _rerollSel.add(i),
-                                      )
-                                    : () {
-                                        Haptics.light();
-                                        setState(
-                                          () => selected = selected == i
-                                              ? null
-                                              : i,
-                                        );
-                                      },
+                            KeyedSubtree(
+                              // LFP-2a: slot geometry for the assign ghost.
+                              key: _chipKeys.putIfAbsent(i, GlobalKey.new),
+                              child: _trayChip(
+                                chipScale,
+                                DieChip(
+                                  dice0[i - 1],
+                                  value: rolled != null ? rolled[i - 1] : null,
+                                  assigned: assigned['$i'] != null,
+                                  selected: _rerollMode
+                                      ? _rerollSel.contains(i)
+                                      : selected == i,
+                                  maxed: maxed != null && maxed[i - 1],
+                                  contribution: _assignedValue[i],
+                                  flight: true, // LFP-1: thrown, not refreshed
+                                  onSettle: Haptics.light, // LFP-1b rattle
+                                  rollToken:
+                                      _rollGen * 4096 + (_reflyGen[i] ?? 0),
+                                  // 50 ms cascade so the tumble reads left-to-right.
+                                  tumbleDelayMs: (i - 1) * 50,
+                                  // v0.3.1 F1/F2: selection is pure UI state, so dice
+                                  // stay tappable during choreography; a spent die
+                                  // answers with an explicit call-out instead of
+                                  // silently eating the tap.
+                                  onTap: rolled == null
+                                      ? null
+                                      : assigned['$i'] != null
+                                      ? () => _note(
+                                          'ALREADY ASSIGNED',
+                                          color: EmberColors.textDim,
+                                          icon: Icons.do_not_disturb_alt,
+                                        )
+                                      : _rerollMode
+                                      ? () => setState(
+                                          () => _rerollSel.contains(i)
+                                              ? _rerollSel.remove(i)
+                                              : _rerollSel.add(i),
+                                        )
+                                      : () {
+                                          Haptics.light();
+                                          setState(
+                                            () => selected = selected == i
+                                                ? null
+                                                : i,
+                                          );
+                                        },
+                                ),
                               ),
                             ),
                         ],
@@ -1028,7 +1096,8 @@ class _CombatScreenState extends State<CombatScreen> {
                             setState(() {
                               selected = null;
                               _assignedValue.clear(); // fresh turn (LFP-2c)
-                              _rollGen++; // trigger the dice tumble cascade
+                              _reflyGen.clear(); // fresh throw set (LFP-1c)
+                              _rollGen++; // trigger the dice throw cascade
                             });
                             final events = c.apply({'type': 'roll'});
                             // Combo call-outs land after the tumble reads.
@@ -1095,20 +1164,28 @@ class _CombatScreenState extends State<CombatScreen> {
                         // Enabled during choreography too: taps land in the
                         // one-slot queue instead of being dropped (F2).
                         Expanded(
-                          child: EmberButton(
-                            'Attack',
-                            dense: compact,
-                            icon: Icons.gps_fixed,
-                            onTap: selected != null ? _attack : null,
+                          child: _Pulse(
+                            token: _attackPulse,
+                            child: EmberButton(
+                              'Attack',
+                              key: _attackKey,
+                              dense: compact,
+                              icon: Icons.gps_fixed,
+                              onTap: selected != null ? _attack : null,
+                            ),
                           ),
                         ),
                         const SizedBox(width: Space.m),
                         Expanded(
-                          child: EmberButton(
-                            'Block',
-                            dense: compact,
-                            icon: Icons.shield,
-                            onTap: selected != null ? _block : null,
+                          child: _Pulse(
+                            token: _blockPulse,
+                            child: EmberButton(
+                              'Block',
+                              key: _blockKey,
+                              dense: compact,
+                              icon: Icons.shield,
+                              onTap: selected != null ? _block : null,
+                            ),
                           ),
                         ),
                       ],
@@ -1124,11 +1201,21 @@ class _CombatScreenState extends State<CombatScreen> {
                               icon: Icons.replay,
                               onTap: selected != null && !_busy
                                   ? () {
+                                      final die = selected!;
                                       final events = c.apply({
                                         'type': 'reroll',
-                                        'die': selected,
+                                        'die': die,
                                       });
-                                      setState(() {});
+                                      setState(() {
+                                        // LFP-1c: the rerolled die re-flies
+                                        // (charge rerolls used to not even
+                                        // retumble).
+                                        if (_find(events, 'reroll_used') !=
+                                            null) {
+                                          _reflyGen[die] =
+                                              (_reflyGen[die] ?? 0) + 1;
+                                        }
+                                      });
                                       // A charge reroll re-detects combos
                                       // (m4 §3) — announce them like the
                                       // roll/risky paths do.
@@ -1188,9 +1275,65 @@ class _CombatScreenState extends State<CombatScreen> {
         child: ShakeBox(
           key: _shakeKey,
           child: Stack(
+            key: _rootKey,
             fit: StackFit.expand,
             children: [
               combat,
+              // LFP-2a: assign ghosts — the spent die flies to its verb.
+              for (final g in _ghosts)
+                TweenAnimationBuilder<double>(
+                  key: ValueKey('ghost-${g.id}'),
+                  tween: Tween(begin: 0, end: 1),
+                  duration: const Duration(milliseconds: 230),
+                  curve: Curves.easeIn,
+                  onEnd: () {
+                    if (!mounted) return;
+                    setState(() {
+                      _ghosts.remove(g);
+                      // Arrival pulse on the verb button.
+                      if (g.action == 'attack') {
+                        _attackPulse++;
+                      } else {
+                        _blockPulse++;
+                      }
+                    });
+                  },
+                  builder: (context, f, _) {
+                    final p = Offset.lerp(g.from, g.to, f)!;
+                    final color = g.action == 'attack'
+                        ? EmberColors.danger
+                        : EmberColors.block;
+                    return Positioned(
+                      left: p.dx - 19,
+                      top: p.dy - 19,
+                      child: IgnorePointer(
+                        child: Opacity(
+                          opacity: (1.0 - f * 0.55).clamp(0.0, 1.0),
+                          child: Transform.scale(
+                            scale: 1.0 - f * 0.35,
+                            child: Container(
+                              width: 38,
+                              height: 38,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: EmberColors.raised,
+                                borderRadius: BorderRadius.circular(9),
+                                border: Border.all(color: color, width: 1.5),
+                              ),
+                              child: Text(
+                                '+${g.value}',
+                                style: EmberText.value.copyWith(
+                                  fontSize: 16,
+                                  color: color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               // Boss kill flash: white-out that decays into the ember dissolve.
               IgnorePointer(
                 child: AnimatedOpacity(
@@ -1292,6 +1435,7 @@ class _CombatScreenState extends State<CombatScreen> {
                           _characterId,
                           key: ValueKey('hero-$_characterId'),
                           height: heroH,
+                          bob: true, // LFP-4a: the stage always breathes
                         ),
                         spriteHeight: heroH,
                         lungeToward: 1,
@@ -1325,6 +1469,12 @@ class _CombatScreenState extends State<CombatScreen> {
                               key: ValueKey('enemy-$enemyId'),
                               height: enemyH,
                               flipX: true,
+                              bob: true, // LFP-4a
+                              // LFP-4b: slow lean while an attack is
+                              // telegraphed — the badge gets body language.
+                              sway:
+                                  intent['kind'] == 'attack' ||
+                                  intent['kind'] == 'attack_block',
                             ),
                             spriteHeight: enemyH,
                             // Slight depth scale: the enemy stands a step closer.
@@ -1599,6 +1749,38 @@ class _CombatScreenState extends State<CombatScreen> {
       duration: lunge ? _contact : _knockTime,
       curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
       child: w,
+    );
+  }
+}
+
+/// LFP-2a: one in-flight assign ghost (die → verb button).
+class _Ghost {
+  final int id;
+  final Offset from;
+  final Offset to;
+  final int value;
+  final String action; // 'attack' | 'block'
+  const _Ghost(this.id, this.from, this.to, this.value, this.action);
+}
+
+/// LFP-2a: pulses its child (1.0 → ~1.07 → 1.0) every time [token] changes —
+/// the verb button visibly "receives" the die. token 0 renders statically so
+/// nothing pulses on first build.
+class _Pulse extends StatelessWidget {
+  final int token;
+  final Widget child;
+  const _Pulse({required this.token, required this.child});
+  @override
+  Widget build(BuildContext context) {
+    if (token == 0) return child;
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('pulse-$token'),
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOut,
+      builder: (context, f, c) =>
+          Transform.scale(scale: 1.0 + math.sin(f * math.pi) * 0.07, child: c),
+      child: child,
     );
   }
 }
