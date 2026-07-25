@@ -8,6 +8,10 @@ class _TutorialOverlay extends StatelessWidget {
   const _TutorialOverlay(
       {required this.step, required this.onNext, required this.onSkip});
 
+  /// Number of cards — the combat screen's step handler ends the overlay
+  /// after the last card without hard-coding the count.
+  static int get cardCount => _cards.length;
+
   static const _cards = [
     (
       Icons.visibility,
@@ -26,6 +30,13 @@ class _TutorialOverlay extends StatelessWidget {
       'MATCHING FACES PAY',
       'A PAIR adds +2, a TRIPLE ignites the enemy with burn, and a straight '
           'earns a FREE risky reroll. Forge dice bigger at rest fires.'
+    ),
+    (
+      Icons.shield,
+      'BLOCK FADES FAST',
+      'Block absorbs the hit shown on the badge, then melts before your '
+          'next roll. Stack block on turns a BIG attack is telegraphed — '
+          'and spend nothing on block when the badge only shows a shield.'
     ),
   ];
 
@@ -64,11 +75,11 @@ class _TutorialOverlay extends StatelessWidget {
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   EmberButton('Skip', ghost: true, onTap: onSkip),
                   const SizedBox(width: Space.m),
-                  EmberButton(step >= 2 ? 'Got it' : 'Next',
+                  EmberButton(step >= _cards.length - 1 ? 'Got it' : 'Next',
                       primary: true, onTap: onNext),
                 ]),
                 const SizedBox(height: Space.s),
-                Text('${step + 1} / 3', style: EmberText.micro),
+                Text('${step + 1} / ${_cards.length}', style: EmberText.micro),
               ]),
             ),
           ),
