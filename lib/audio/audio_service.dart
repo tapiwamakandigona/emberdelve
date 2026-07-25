@@ -22,6 +22,10 @@ class AudioService {
     'title_menu': 'audio/music/title_menu.ogg',
     'map': 'audio/music/map.ogg',
     'combat': 'audio/music/combat.ogg',
+    // World 2 got its own bed in the 2026-07-25 audio pass: before that every
+    // one of the twelve levels played 'combat' and boss_combat.ogg shipped
+    // unreferenced.
+    'cave_combat': 'audio/music/cave_combat.ogg',
     'boss_combat': 'audio/music/boss_combat.ogg',
     'victory': 'audio/music/victory.ogg',
     'defeat': 'audio/music/defeat.ogg',

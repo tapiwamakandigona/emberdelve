@@ -14,11 +14,10 @@ samples, images, or soundfonts used):
 
 - **Music** — "Delve Below" (title), "Wayfarer's Ledger" (map), "Sparks in
   the Undergrowth" (combat), "Grove Golem's Wrath" (boss), "Embers Fade"
-  (defeat theme + sting): original compositions, synthesized in-repo.
-- **Fire ambience loop**, low-HP heartbeat danger loop, jump/double-jump
-  blips, secret chime: synthesized SFX.
-- **Treasure chest** animation, **app icon** ("ember in the delve"):
-  original pixel art.
+  (defeat theme + sting): original compositions, synthesized in-repo and
+  re-mastered for phone speakers in the 2026-07-25 audio pass.
+- **Treasure chest** animation, **campfire checkpoint**, **app icon**
+  ("ember in the delve"): original pixel art.
 
 ## Third-party art (all CC0 1.0 — courtesy credits)
 
@@ -28,6 +27,16 @@ samples, images, or soundfonts used):
 - **Pixel Adventure 1** by **Pixel Frog** — https://pixelfrog-assets.itch.io/pixel-adventure-1 — apple item, fire trap.
 - **Items #1** by **GrafxKid** — https://opengameart.org/content/various-items — coin animation.
 - **Mobile Controls** by **Kenney** — https://kenney.nl/assets/mobile-controls — touch buttons and icons.
+
+## Third-party audio (all CC0 1.0 — courtesy credits)
+
+- **Impact Sounds**, **RPG Audio**, **Interface Sounds**, **UI Audio** and
+  **Music Jingles** by **Kenney** — https://kenney.nl — landings, impacts,
+  chest creak, latches, UI clicks, victory/defeat stings.
+- **RPG Sound Pack** by **artisticdude** — https://opengameart.org/content/rpg-sound-pack — sword swings.
+- **The Essential Retro Video Game Sound Effects Collection** by **Juhani Junkala** — https://opengameart.org/content/512-sound-effects-8-bit-style — coins, pickups, damage, boss explosion, low-health bed.
+- **100 CC0 SFX #2** by **rubberduck** — https://opengameart.org/content/100-cc0-sfx-2 — jumps, dashes, hits, footsteps, cave ambience.
+- **Crystal Cave (song18)** by **cynicmusic** — https://opengameart.org/content/crystal-cave-song18 — World 2 "Cinder Depths" music.
 
 ## Third-party audio (all CC0 1.0 — courtesy credits)
 
