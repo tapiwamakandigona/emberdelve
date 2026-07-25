@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
@@ -45,8 +46,11 @@ void main() {
     test('die boons outrank stat boons; bigger die wins', () {
       // keen_start grants a d6 — beats gold and max-HP boons.
       expect(
-        BoonScreen.recommendedIndex(
-            ['ember_purse', 'stout_heart', 'keen_start']),
+        BoonScreen.recommendedIndex([
+          'ember_purse',
+          'stout_heart',
+          'keen_start',
+        ]),
         equals(2),
       );
       // No die boon: max HP outranks gold.
@@ -118,6 +122,111 @@ void main() {
     });
   });
 
+  group('LFP-2a assignment preview', () {
+    test('preview matches the sim die_assigned value across whole runs', () {
+      // Drift guard: assignPreview is a presentation-side twin of the sim's
+      // assign math. Replay scripted runs on several seeds and assert the
+      // preview equals the sim's own resolved value for EVERY assignment.
+      var checked = 0;
+      for (final seed in [1, 2, 3, 7, 11, 42, 99, 1234, 424242, 1842571558]) {
+        final sim = Sim(seed);
+        sim.apply({'type': 'start_run', 'character': 'kindler'});
+        var guard = 0;
+        while (sim.phase != 'run_won' &&
+            sim.phase != 'run_lost' &&
+            guard++ < 400) {
+          switch (sim.phase) {
+            case 'map':
+              final map = sim.state()['map'] as Map;
+              final edges = (map['edges'] as Map).cast<String, List>();
+              final next = (edges['${map['position']}'] as List)
+                  .cast<int>()
+                  .first;
+              sim.apply({'type': 'choose_node', 'node': next});
+              break;
+            case 'player_turn':
+              final player = sim.state()['player'] as Map;
+              final enemy = sim.state()['enemy'] as Map;
+              if (player['rolled'] == null) {
+                sim.apply({'type': 'roll'});
+                break;
+              }
+              final rolled = (player['rolled'] as List).cast<int>();
+              final assigned = (player['assigned'] as Map);
+              final relics =
+                  ((sim.state()['run'] as Map?)?['relics'] as List?)
+                      ?.cast<String>() ??
+                  const [];
+              var acted = false;
+              for (var d = 1; d <= rolled.length; d++) {
+                if (assigned['$d'] != null) continue;
+                // Alternate actions so both formulas stay covered.
+                final action = d.isEven ? 'block' : 'attack';
+                final expected = assignPreview(
+                  player,
+                  enemy,
+                  relics,
+                  d,
+                  action,
+                );
+                final events = sim.apply({
+                  'type': 'assign',
+                  'die': d,
+                  'action': action,
+                });
+                final da = events
+                    .where((e) => e['type'] == 'die_assigned')
+                    .toList();
+                if (expected < 0) {
+                  expect(
+                    da,
+                    isEmpty,
+                    reason:
+                        'seed $seed die $d $action: preview said '
+                        'invalid but the sim assigned',
+                  );
+                } else {
+                  expect(
+                    da,
+                    isNotEmpty,
+                    reason:
+                        'seed $seed die $d $action: preview said '
+                        '$expected but the sim rejected',
+                  );
+                  expect(
+                    da.first['value'],
+                    equals(expected),
+                    reason: 'seed $seed die $d $action drifted',
+                  );
+                  checked++;
+                }
+                acted = true;
+                break; // state changed (combos/kill) — recompute
+              }
+              if (!acted) sim.apply({'type': 'end_turn'});
+              break;
+            case 'reward':
+              sim.apply({'type': 'choose_reward', 'index': 1});
+              break;
+            case 'rest':
+              sim.apply({'type': 'rest'});
+              break;
+            case 'shop':
+              sim.apply({'type': 'leave_shop'});
+              break;
+            case 'event':
+              sim.apply({'type': 'event_choose', 'option': 1});
+              break;
+            default:
+              guard = 400;
+          }
+        }
+      }
+      // The guard is only meaningful if it actually checked assignments.
+      expect(checked, greaterThan(80));
+    });
+  });
+
   group('LFP-5 resolution fast-forward', () {
     testWidgets('tapping during enemy resolution reaches input ≥40% faster', (
       tester,
@@ -151,9 +260,7 @@ void main() {
       // choreography holds _busy).
       bool rollEnabled() {
         final btns = tester.widgetList<EmberButton>(
-          find.byWidgetPredicate(
-            (w) => w is EmberButton && w.label == 'Roll',
-          ),
+          find.byWidgetPredicate((w) => w is EmberButton && w.label == 'Roll'),
         );
         return btns.isNotEmpty && btns.first.onTap != null;
       }
@@ -172,8 +279,8 @@ void main() {
           if (fastForward && (ms == 100 || ms == 150)) {
             // Tap the stage (empty area under the enemy header) twice:
             // 2x, then skip-to-state.
-            final size = tester.view.physicalSize /
-                tester.view.devicePixelRatio;
+            final size =
+                tester.view.physicalSize / tester.view.devicePixelRatio;
             await tester.tapAt(Offset(size.width / 2, size.height * 0.42));
           }
           if (rollEnabled()) return ms;
@@ -186,7 +293,8 @@ void main() {
       expect(
         fast <= normal * 0.6,
         isTrue,
-        reason: 'fast-forwarded turn ($fast ms) must be ≥40% faster than '
+        reason:
+            'fast-forwarded turn ($fast ms) must be ≥40% faster than '
             'full choreography ($normal ms)',
       );
       await pumpFor(tester, 2400); // drain call-outs before teardown

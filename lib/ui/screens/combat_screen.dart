@@ -1,6 +1,50 @@
 // lib/ui/screens/combat_screen.dart — part of screens.dart (see library header there).
 part of '../screens.dart';
 
+/// LFP-2a: what assigning [die] to [action] will resolve for, computed from
+/// public sim state + content data (dieDef mods, combo_bonus, relic hooks) —
+/// the same inputs sim/combat.dart reads. Returns -1 when the die can't take
+/// the action (attack_only/block_only). PRESENTATION-ONLY twin of the sim's
+/// assign math: test/feel_pregate_test.dart replays a scripted run and
+/// asserts this against every die_assigned event the sim emits, so the two
+/// cannot drift silently.
+int assignPreview(
+  Map player,
+  Map enemy,
+  List<String> relics,
+  int die,
+  String action,
+) {
+  final rolled = (player['rolled'] as List).cast<int>();
+  final def = dieDef((player['dice'] as List).cast<String>()[die - 1]);
+  final mods = def.mods;
+  if (action == 'attack' && mods['block_only'] == true) return -1;
+  if (action == 'block' && mods['attack_only'] == true) return -1;
+  final maxed = (player['rolled_max'] as List?)?.cast<bool>();
+  final onMax = (maxed != null && maxed[die - 1])
+      ? (mods['on_max_bonus'] as int? ?? 0)
+      : 0;
+  final combo = (player['combo_bonus'] as List?)?.cast<int>();
+  int hook(String h) {
+    var t = 0;
+    for (final id in relics) {
+      t += relicDef(id).hooks[h] ?? 0;
+    }
+    return t;
+  }
+
+  var v = rolled[die - 1] + onMax + (combo != null ? combo[die - 1] : 0);
+  if (action == 'attack') {
+    v += (mods['attack_bonus'] as int? ?? 0) + hook('attack_flat');
+    if (enemy['boss'] == true || enemy['elite'] == true) {
+      v += hook('elite_damage');
+    }
+  } else {
+    v += (mods['block_bonus'] as int? ?? 0) + hook('block_flat');
+  }
+  return v;
+}
+
 class CombatScreen extends StatefulWidget {
   final GameController c;
   const CombatScreen(this.c, {super.key});
@@ -72,6 +116,12 @@ class _CombatScreenState extends State<CombatScreen> {
   Map? _enemy;
   String _characterId = defaultCharacter;
 
+  // LFP-2c: what each spent die actually contributed (from its die_assigned
+  // event, so modifiers/combos/relics are included) — keyed by die index,
+  // cleared on every new roll. The chip label shows it ("+7 SPENT"), making
+  // the silent arithmetic visible after the fact too.
+  final Map<int, int> _assignedValue = {};
+
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
   static const _contact = Duration(milliseconds: 250);
   static const _squashTime = Duration(milliseconds: 90);
@@ -132,6 +182,21 @@ class _CombatScreenState extends State<CombatScreen> {
       () => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)),
     );
   }
+
+  /// LFP-2a: what assigning [selected] to [action] will resolve for (or -1
+  /// when the action is invalid for that die). Thin wrapper over the public
+  /// [assignPreview] so the drift guard in test/feel_pregate_test.dart can
+  /// pin the shared function against the sim's own die_assigned values.
+  int _assignPreview(Map player, Map enemy, int die, String action) =>
+      assignPreview(
+        player,
+        enemy,
+        ((widget.c.state?['run'] as Map?)?['relics'] as List?)
+                ?.cast<String>() ??
+            const [],
+        die,
+        action,
+      );
 
   /// Weapon choreography rides the existing squash/lunge flags: pull back in
   /// anticipation, whip through the smear arc during the lunge.
@@ -389,6 +454,9 @@ class _CombatScreenState extends State<CombatScreen> {
       'action': 'attack',
     }, terminalHold: Duration(milliseconds: isBoss ? 1900 : 1300));
     selected = null;
+    // LFP-2c: remember what the die actually contributed (incl. modifiers).
+    final da = _find(events, 'die_assigned');
+    if (da != null) _assignedValue[da['die'] as int] = da['value'] as int;
     final dmg = _find(events, 'damage_dealt');
     if (dmg == null) {
       // invalid command (e.g. block-only die): no swing
@@ -495,6 +563,9 @@ class _CombatScreenState extends State<CombatScreen> {
     });
     Haptics.light();
     setState(() => selected = null);
+    // LFP-2c: remember what the die actually contributed (incl. modifiers).
+    final da = _find(events, 'die_assigned');
+    if (da != null) _assignedValue[da['die'] as int] = da['value'] as int;
     // Block used to be completely silent — now the guard visibly comes up.
     final gained = _find(events, 'block_gained');
     if (gained != null) {
@@ -768,7 +839,32 @@ class _CombatScreenState extends State<CombatScreen> {
           ),
         ),
         // The stage: hero (left) vs enemy (right), animated sprite loops.
-        Expanded(child: _stage(enemy, intent, compact: compact)),
+        // LFP-2a: while a die is selected, the stage shows what assigning it
+        // will actually resolve for — modifiers, combos and relics included —
+        // so the number is on screen BEFORE the tap, not discovered on the
+        // HP bar afterwards.
+        Expanded(
+          child: _stage(
+            enemy,
+            intent,
+            compact: compact,
+            preview: selected != null && rolled != null && !_rerollMode
+                ? () {
+                    final a = _assignPreview(
+                      player,
+                      enemy,
+                      selected!,
+                      'attack',
+                    );
+                    final b = _assignPreview(player, enemy, selected!, 'block');
+                    return [
+                      if (a >= 0) 'ATTACK +$a',
+                      if (b >= 0) 'BLOCK +$b',
+                    ].join('  ·  ');
+                  }()
+                : null,
+          ),
+        ),
         // Player HP
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -814,6 +910,7 @@ class _CombatScreenState extends State<CombatScreen> {
                                     ? _rerollSel.contains(i)
                                     : selected == i,
                                 maxed: maxed != null && maxed[i - 1],
+                                contribution: _assignedValue[i],
                                 rollToken: _rollGen,
                                 // 50 ms cascade so the tumble reads left-to-right.
                                 tumbleDelayMs: (i - 1) * 50,
@@ -930,6 +1027,7 @@ class _CombatScreenState extends State<CombatScreen> {
                             Haptics.light();
                             setState(() {
                               selected = null;
+                              _assignedValue.clear(); // fresh turn (LFP-2c)
                               _rollGen++; // trigger the dice tumble cascade
                             });
                             final events = c.apply({'type': 'roll'});
@@ -1152,7 +1250,12 @@ class _CombatScreenState extends State<CombatScreen> {
         );
 
   /// stage; the enemy's next intent floats above it as an icon badge.
-  Widget _stage(Map enemy, Map intent, {bool compact = false}) {
+  Widget _stage(
+    Map enemy,
+    Map intent, {
+    bool compact = false,
+    String? preview,
+  }) {
     final enemyId = enemy['id'] as String? ?? '';
     final big = enemy['boss'] == true || enemy['elite'] == true;
     final heroH = compact ? 72.0 : 104.0;
@@ -1274,6 +1377,37 @@ class _CombatScreenState extends State<CombatScreen> {
                   ],
                 ),
               ),
+              // LFP-2a: assignment preview — floats at the stage floor
+              // between the combatants (no layout height, no button-label
+              // change, so the play harness and height budgets are safe).
+              if (preview != null && preview.isNotEmpty)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: Space.s,
+                  child: IgnorePointer(
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Space.m,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: EmberColors.raised.withValues(alpha: 0.92),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: EmberColors.line),
+                        ),
+                        child: Text(
+                          preview,
+                          style: EmberText.micro.copyWith(
+                            color: EmberColors.textPrimary,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
               for (final (idx, n)
                   in _notes.where((n) => n.onEnemy).toList().indexed)
