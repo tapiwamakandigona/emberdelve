@@ -140,7 +140,12 @@ class EnemyComponent extends PositionComponent
     final sprite = ticker.getSprite();
     final w = sprite.srcSize.x, h = sprite.srcSize.y;
     canvas.save();
-    if (core.facing < 0) {
+    // ALL enemy strips in this art set face LEFT in the source frames
+    // (Sunny Land-derived bases + their recolors), while the player strips
+    // face RIGHT. So enemies mirror when facing RIGHT (facing > 0) — the
+    // opposite of the player. Getting this backwards makes every enemy
+    // moonwalk (owner-reported "enemies moving in reverse", 2026-07-25).
+    if (core.facing > 0) {
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
@@ -150,9 +155,13 @@ class EnemyComponent extends PositionComponent
         position: _drawPos,
         size: _drawSize,
         overridePaint: core.hurtFlash > 0 ? _flashPaint : _tint);
+    canvas.restore();
     if (core.kind == EnemyKind.rotshield) {
-      // Shield plate on the (post-flip) right edge = the facing side.
-      final rect = ui.Rect.fromLTWH(b.centerX + 8, b.top - 2, 5, b.h + 2);
+      // Shield plate on the facing side. Drawn OUTSIDE the mirror transform
+      // with an explicit facing offset, so it stays glued to the shield arm
+      // regardless of which way the body strip is mirrored.
+      final left = core.facing > 0 ? b.centerX + 8 : b.centerX - 13;
+      final rect = ui.Rect.fromLTWH(left, b.top - 2, 5, b.h + 2);
       canvas.drawRRect(
           ui.RRect.fromRectAndRadius(rect, const ui.Radius.circular(2)),
           _shieldPaint);
@@ -160,7 +169,6 @@ class EnemyComponent extends PositionComponent
           ui.Rect.fromLTWH(rect.left + 1, rect.top + 2, 1, rect.height - 4),
           _shieldRim);
     }
-    canvas.restore();
   }
 
   /// Stone base + fire crown; the fire dims while the totem recharges.
@@ -205,7 +213,9 @@ class EnemyComponent extends PositionComponent
     final sprite = ticker.getSprite();
     const w = 72.0, h = 56.0;
     canvas.save();
-    if (core.facing < 0) {
+    // Thornling-derived strip: source art faces LEFT, mirror when facing
+    // right (see the orientation note in render()).
+    if (core.facing > 0) {
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
