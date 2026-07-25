@@ -63,10 +63,11 @@ const int kAppleDamage = 2;
 const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
 
 // Camera.
-// AKP-1c: 24 -> 32 to give back forward sight lost to the 384x216 zoom
-// (fewer tiles visible per screen; hazards must never appear later than ~1s
-// of travel time before they need a reaction).
-const double kCameraLookAhead = 32.0; // px in facing direction
+// AKP-1c: 24 -> 32 for the 384x216 zoom, 32 -> 40 for the owner-confirmed
+// 352x198 AK-exact zoom (half-width shrank 192 -> 176; +8 look-ahead keeps
+// forward sight at 216px ≈ 1.8s of run travel at kRunSpeed 118 — hazards
+// must never appear later than ~1s before they need a reaction).
+const double kCameraLookAhead = 40.0; // px in facing direction
 const double kCameraSmooth = 8.0; // exp smoothing factor
 const double kCameraPeekDown = 56.0; // px when holding down
 
