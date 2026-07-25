@@ -156,6 +156,20 @@ bool groundBelow(Body b, TileQuery tileAt) {
   return false;
 }
 
+/// True when the tile row under the body's feet contains a one-way platform
+/// (and no solid): used to disambiguate DOWN+JUMP = drop-through vs roll.
+bool platformBelow(Body b, TileQuery tileAt) {
+  final ty = _tileLo(b.bottom + 0.5);
+  final tx0 = _tileLo(b.left + 0.01), tx1 = _tileHi(b.right - 0.01);
+  var sawPlatform = false;
+  for (var tx = tx0; tx <= tx1; tx++) {
+    final t = tileAt(tx, ty);
+    if (_isSolid(t)) return false;
+    if (t == TileKind.platform) sawPlatform = true;
+  }
+  return sawPlatform;
+}
+
 /// Hazard contact: any spikes/fire tile overlapping a slightly shrunken box.
 bool touchesHazard(Body b, TileQuery tileAt) {
   const inset = 2.0;

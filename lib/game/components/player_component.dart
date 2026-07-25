@@ -53,6 +53,8 @@ class PlayerComponent extends PositionComponent
       PlayerState.run: await _load('run', 6, s22, 0.09),
       PlayerState.jump: await _load('jump', 4, s22, 0.08, loop: false),
       PlayerState.fall: await _load('fall', 4, s22, 0.08, loop: false),
+      PlayerState.roll:
+          await _load('roll', 11, s22, kRollDuration / 11, loop: false),
       PlayerState.hurt: await _load('hit', 6, s22, 0.05, loop: false),
       PlayerState.dead: await _load('hit', 6, s22, 0.05, loop: false),
     };
