@@ -63,7 +63,7 @@ void main() {
     // shop_flow_test — widget tests stay on FakeAsync turf.)
   });
 
-  testWidgets('credits render CREDITS.md with the CC-BY chest attribution',
+  testWidgets('credits render CREDITS.md (original-asset pass: no CC-BY left)',
       (tester) async {
     // CREDITS.md is a registered pubspec asset; flutter test serves the real
     // bundle, but the async load needs a runAsync flush (FakeAsync would
@@ -75,13 +75,18 @@ void main() {
     expect(find.text('CREDITS & LICENSES'), findsOneWidget);
     // Content rendered (top of the document is on screen).
     expect(find.textContaining('Tsoro Studios'), findsWidgets);
-    // The legally-required CC BY chest attribution must be reachable,
-    // visible content (ListView builds lazily — scroll to it).
+    // Since the 2026-07-25 original-asset pass (docs/original-assets.md)
+    // nothing shipped is CC-BY: the doc must state that no attribution is
+    // legally required, and the courtesy CC0 credits must be reachable
+    // (ListView builds lazily — scroll to them).
+    expect(
+        find.textContaining('no shipped asset legally requires attribution'),
+        findsOneWidget);
     await tester.scrollUntilVisible(
-        find.textContaining('dustdfg'), 120,
+        find.textContaining('pixivan'), 120,
         scrollable: find.byType(Scrollable));
-    expect(find.textContaining('dustdfg'), findsOneWidget);
-    expect(find.textContaining('CC BY 4.0'), findsWidgets);
+    expect(find.textContaining('pixivan'), findsOneWidget);
+    expect(find.textContaining('CC0'), findsWidgets);
   });
 
   testWidgets(

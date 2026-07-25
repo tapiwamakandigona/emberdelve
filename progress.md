@@ -559,6 +559,29 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   the next release notes must keep carrying the device-metrics caveat.
 
 ---
+## 2026-07-25 — Original-asset pass 1: zero required attributions (feat/original-assets)
+- Owner ask: can we make our own audio/music/graphics that closely replicate the
+  originals without violating copyright, so no credits are ever *required* — research
+  it, then do it. Research doc: docs/original-assets.md (mechanics/style free;
+  assets/characters/melodies protected; CC-BY attribution non-waivable -> replace;
+  no-AI-asset rule kept because purely AI-generated work isn't copyrightable, USCO 2023/2025).
+- Replaced ALL CC-BY assets with original in-repo-generated work (P-A1, passes=true):
+  4 music loops + defeat theme/sting (original compositions, numpy synthesis,
+  tool/build_original_music.py), fire ambience loop (procedural crackle), chest
+  sprite (original 3-frame design, tool/build_original_art.py), app icon + mipmaps
+  (original "ember in the delve" mark; old icon was CC-BY glyph + stale dice branding).
+- CREDITS.md rewritten (courtesy-only credits, history section), PROVENANCE.md
+  appended with the replacement table + mastering evidence.
+- CHECK CHANGE (called out per protocol): test/meta_screens_test.dart credits test
+  asserted the dustdfg CC-BY line; that line is intentionally gone, so the test now
+  asserts the no-required-attribution statement + courtesy CC0 credits reachable.
+- Verified: flutter analyze clean, flutter test 233/233, decoded audio peaks <= -1.3 dBFS.
+- NOTE for owner: app icon changed = visible Play-listing branding change; revert
+  trivially by dropping the icon commit hunks if unwanted. Music is synthesized
+  chiptune-orchestral — replace with commissioned tracks later if wanted; swapping
+  files keeps the same paths/loop contract.
+
+---
 ## 2026-07-25 — AK-parity phase 1 (pre-gate slice of PR #48 plan)
 - Branch feat/ak-parity-phase1 off c1957c1. Scope: AKP-1, AKP-2a/2c, AKP-5,
   AKP-6 from docs/ak-parity-plan.md. Deliberately NOT done: AKP-2b air-dash
