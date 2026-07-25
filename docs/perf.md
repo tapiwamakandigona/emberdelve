@@ -48,6 +48,15 @@ flutter run --profile
 # record avg/max build and raster times here
 ```
 
+Tester-friendly alternative (no DevTools): build with the in-game overlay
+and read the numbers off the screen —
+
+```
+flutter build apk --release --dart-define=PERF_OVERLAY=true
+# bottom-left: "60 fps  avg 12.3ms  worst 15.1ms"; amber = a frame in the
+# last second blew the 16.7ms budget. Compiled out of normal builds.
+```
+
 ## 3. Cold start ≤ 3s — **OPEN**
 
 Same constraint: needs a physical device stopwatch/`adb shell am start -W`
