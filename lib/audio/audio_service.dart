@@ -32,6 +32,8 @@ class AudioService {
     'jump': 'audio/sfx/jump.ogg',
     'double_jump': 'audio/sfx/double_jump.ogg',
     'land': 'audio/sfx/land.ogg',
+    'step1': 'audio/sfx/step1.ogg',
+    'step2': 'audio/sfx/step2.ogg',
     'swing1': 'audio/sfx/swing1.ogg',
     'swing2': 'audio/sfx/swing2.ogg',
     'swing3': 'audio/sfx/swing3.ogg',
