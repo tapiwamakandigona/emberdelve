@@ -158,13 +158,7 @@ class PlayerCore {
         // the roll cools down the press is consumed (never an accidental
         // jump — DOWN+JUMP always means "roll" on solid ground).
         jumpBuffer = 0;
-        if (!attacking && rollCooldown <= 0) {
-          rollTime = kRollDuration;
-          rollCooldown = kRollDuration + kRollCooldown;
-          if (iFrames < kRollIFrames) iFrames = kRollIFrames;
-          body.vx = facing * kRollSpeed;
-          _events.add(PlayerEvent.rolled);
-        }
+        _tryRoll();
       } else if (coyote > 0) {
         body.vy = -kJumpSpeed;
         coyote = 0;
@@ -177,6 +171,14 @@ class PlayerCore {
         _events.add(PlayerEvent.airJumped);
       }
     }
+    // AKP-2a: dedicated dash/roll button — same commit-dodge as the
+    // DOWN+JUMP chord, ground-only (air-dash is an open owner question,
+    // plan §2 AKP-2b). Rejected presses are simply dropped: a dash button
+    // must never buffer into a surprise roll half a second later.
+    if (input.rollPressed && grounded && !stunned && !rolling) {
+      _tryRoll();
+    }
+
     // Variable height: releasing jump early cuts upward velocity.
     if (jumpWasHeld && !input.jumpHeld && body.vy < 0) {
       body.vy *= kJumpCutMultiplier;
@@ -230,6 +232,17 @@ class PlayerCore {
         state = body.vx.abs() > 5 ? PlayerState.run : PlayerState.idle;
       }
     }
+  }
+
+  /// Start a roll if allowed (not mid-attack, cooldown elapsed). Shared by
+  /// the DOWN+JUMP chord and the dedicated dash/roll button (AKP-2a).
+  void _tryRoll() {
+    if (attacking || rollCooldown > 0) return;
+    rollTime = kRollDuration;
+    rollCooldown = kRollDuration + kRollCooldown;
+    if (iFrames < kRollIFrames) iFrames = kRollIFrames;
+    body.vx = facing * kRollSpeed;
+    _events.add(PlayerEvent.rolled);
   }
 
   /// Apply [amount] hearts of damage from a source at x=[from].
