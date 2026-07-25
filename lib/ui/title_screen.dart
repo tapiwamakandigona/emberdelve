@@ -28,6 +28,7 @@ class _TitleScreenState extends State<TitleScreen>
   void initState() {
     super.initState();
     AudioService.instance?.playMusic('title_menu');
+    AudioService.instance?.setAmbience(true); // ember-crackle bed under title
     _drift = AnimationController(
         vsync: this, duration: const Duration(seconds: 60))
       ..repeat();
@@ -41,12 +42,14 @@ class _TitleScreenState extends State<TitleScreen>
 
   void _open(Widget screen) {
     AudioService.instance?.playSfx('ui_tap');
+    AudioService.instance?.setAmbience(false);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => screen))
         .then((_) {
       // Coming back from gameplay: restore the menu theme and refresh
       // the Daily Delve best-time line.
       AudioService.instance?.playMusic('title_menu');
+      AudioService.instance?.setAmbience(true);
       if (mounted) setState(() {});
     });
   }
