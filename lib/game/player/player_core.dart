@@ -47,6 +47,10 @@ class PlayerCore {
   double rollCooldown = 0;
   int comboIndex = 0; // 0..kComboHits-1, index of CURRENT swing
   int airJumpsUsed = 0;
+  /// Seconds since the last jump impulse, and whether an early release is
+  /// waiting for [kMinJumpHold] to elapse before it cuts the rise.
+  double sinceJump = 999;
+  bool cutArmed = false;
   bool airDashUsed = false; // AKP-2b: one air dash per airborne period
   bool _airDashing = false; // current roll started mid-air (gravity off)
   bool wasOnGround = false;
@@ -168,11 +172,15 @@ class PlayerCore {
         body.vy = -kJumpSpeed;
         coyote = 0;
         jumpBuffer = 0;
+        sinceJump = 0;
+        cutArmed = false;
         _events.add(PlayerEvent.jumped);
       } else if (airJumpsUsed < kMaxAirJumps + extraAirJumps) {
         body.vy = -kAirJumpSpeed;
         airJumpsUsed++;
         jumpBuffer = 0;
+        sinceJump = 0;
+        cutArmed = false;
         _events.add(PlayerEvent.airJumped);
       }
     }
@@ -190,10 +198,19 @@ class PlayerCore {
       }
     }
 
-    // Variable height: releasing jump early cuts upward velocity.
-    if (jumpWasHeld && !input.jumpHeld && body.vy < 0) {
+    // Variable height: releasing jump early cuts upward velocity — but never
+    // below kMinJumpSpeed. Without the floor, a quick tap on a touch button
+    // (one or two frames of hold) left ~7px of rise: not enough to clear a
+    // single 16px block, so tap-jumps read as "the jump button didn't work".
+    // The floor guarantees every registered jump clears one tile; holding
+    // still buys the full 2+ tiles.
+    sinceJump += dt;
+    if (jumpWasHeld && !input.jumpHeld && body.vy < 0) cutArmed = true;
+    if (cutArmed && body.vy < 0 && sinceJump >= kMinJumpHold) {
       body.vy *= kJumpCutMultiplier;
+      cutArmed = false;
     }
+    if (body.vy >= 0) cutArmed = false;
     jumpWasHeld = input.jumpHeld;
 
     // --- attack
@@ -305,6 +322,35 @@ class PlayerCore {
       _events.add(PlayerEvent.hurt);
     }
     return true;
+  }
+
+  /// Put the player back at [x],[y] after a checkpoint death: full hearts,
+  /// every timer cleared, a grace window so the respawn can't chain into the
+  /// same threat that just killed them.
+  void reviveAt(double x, double y, {double iFrames = 1.5}) {
+    body
+      ..x = x
+      ..y = y
+      ..vx = 0
+      ..vy = 0
+      ..onGround = false;
+    hearts = maxHearts;
+    state = PlayerState.idle;
+    this.iFrames = iFrames;
+    hurtTime = 0;
+    attackTime = 0;
+    attackBuffer = 0;
+    rollTime = 0;
+    rollCooldown = 0;
+    jumpBuffer = 0;
+    coyote = 0;
+    airJumpsUsed = 0;
+    airDashUsed = false;
+    sinceJump = 999;
+    cutArmed = false;
+    comboIndex = 0;
+    comboWindow = 0;
+    _events.clear();
   }
 
   void kill() {

@@ -39,6 +39,8 @@ enum SessionEventKind {
   bossDefeated, // data: x,y — big burst + the exit unlocks
   emberShot, // data: x,y — Ember Totem fired
   emberShotBroke, // data: x,y — ember hit terrain / player / limits
+  checkpointLit, // data: x,y — campfire lit, respawn point moved
+  respawned, // data: x,y — died with lives left, back at the checkpoint
   levelComplete,
   levelFailed,
   spellCast, // AKP-4d: data x,y = player centre; one cast per run
@@ -72,6 +74,13 @@ class ChestEntity {
   final bool secret;
   bool opened = false;
   ChestEntity(this.x, this.y, {required this.secret});
+}
+
+/// A campfire checkpoint: lights on touch and becomes the respawn point.
+class CheckpointEntity {
+  final double x, y; // centre px
+  bool lit = false;
+  CheckpointEntity(this.x, this.y);
 }
 
 class SignEntity {
@@ -145,6 +154,7 @@ class LevelSession {
   final List<CoinEntity> coins = [];
   final List<PickupEntity> pickups = [];
   final List<ChestEntity> chests = [];
+  final List<CheckpointEntity> checkpoints = [];
   final List<SignEntity> signs = [];
   final List<AppleProjectile> _applePool =
       List.generate(kMaxPooledProjectiles, (_) => AppleProjectile());
@@ -162,6 +172,11 @@ class LevelSession {
 
   // Run state.
   double time = 0;
+  /// Attempts left in this run. A death with lives to spare costs one life
+  /// and rewinds to the last lit campfire instead of ending the level.
+  int lives = kStartingLives;
+  int deaths = 0;
+  double respawnX = 0, respawnY = 0;
   int coinsCollected = 0;
   int applesHeld = 0;
   int feathersCollected = 0;
@@ -221,6 +236,8 @@ class LevelSession {
       meleePower: loadout.meleePower,
     );
     cameraX = player.body.centerX;
+    respawnX = player.body.x;
+    respawnY = player.body.y;
 
     var signIndex = 0;
     for (final s in level.spawns) {
@@ -236,6 +253,8 @@ class LevelSession {
           chests.add(ChestEntity(cx, cy, secret: false));
         case SpawnKind.secretChest:
           chests.add(ChestEntity(cx, cy, secret: true));
+        case SpawnKind.checkpoint:
+          checkpoints.add(CheckpointEntity(cx, (s.y + 1) * kTileSize - 8));
         case SpawnKind.sign:
           signIndex++;
           signs.add(SignEntity(cx, cy, level.meta['sign$signIndex'] ?? ''));
@@ -288,8 +307,13 @@ class LevelSession {
     // Stage 2 difficulty: stamp the behaviour mods onto every enemy once.
     for (final e in enemies) {
       e.mods = mods;
+      _enemyHome[e] = (x: e.body.x, y: e.body.y);
     }
   }
+
+  /// Where each enemy started, so a checkpoint respawn can clear the space
+  /// the player is coming back into (see [_onDeath]).
+  final Map<EnemyCore, ({double x, double y})> _enemyHome = {};
 
   /// Spawn a hopper explicitly (used by tests and, later, level scripting).
   void addHopper(double x, double y) =>
@@ -365,7 +389,7 @@ class LevelSession {
       _swingWalls.clear();
     }
     if (pev.contains(PlayerEvent.died)) {
-      _fail();
+      _onDeath();
       return;
     }
     if (pev.contains(PlayerEvent.hurt)) hitsTaken++;
@@ -374,8 +398,21 @@ class LevelSession {
     if (player.body.top > (level.height + 3) * kTileSize) {
       player.kill();
       _playerEvents.addAll(player.takeEvents());
-      _fail();
+      _onDeath();
       return;
+    }
+
+    // --- checkpoints: light the campfire you walk into
+    for (final c in checkpoints) {
+      if (c.lit) continue;
+      if ((player.body.centerX - c.x).abs() < kCheckpointRadius &&
+          (player.body.centerY - c.y).abs() < kCheckpointRadius + 8) {
+        c.lit = true;
+        respawnX = c.x - player.body.w / 2;
+        respawnY = c.y - player.body.h + 8;
+        _events.add(SessionEvent(SessionEventKind.checkpointLit,
+            x: c.x, y: c.y));
+      }
     }
 
     // --- enemies
@@ -424,7 +461,7 @@ class LevelSession {
           final dpev = player.takeEvents();
           _playerEvents.addAll(dpev);
           if (dpev.contains(PlayerEvent.died)) {
-            _fail();
+            _onDeath();
             return;
           }
         }
@@ -436,7 +473,7 @@ class LevelSession {
           final dpev = player.takeEvents();
           _playerEvents.addAll(dpev);
           if (dpev.contains(PlayerEvent.died)) {
-            _fail();
+            _onDeath();
             return;
           }
         }
@@ -561,7 +598,7 @@ class LevelSession {
           final dpev = player.takeEvents();
           _playerEvents.addAll(dpev);
           if (dpev.contains(PlayerEvent.died)) {
-            _fail();
+            _onDeath();
             return;
           }
         }
@@ -744,6 +781,42 @@ class LevelSession {
       lowDamage: hitsTaken <= 1,
     );
     _events.add(const SessionEvent(SessionEventKind.levelComplete));
+  }
+
+  /// A death costs a life and rewinds to the last lit campfire (or the level
+  /// spawn). Only running out of lives ends the run — the measured alpha
+  /// behaviour, one hit-chain and the whole level restarts, is what made the
+  /// game read as unfair next to Apple Knight.
+  void _onDeath() {
+    if (over) return;
+    deaths++;
+    if (lives <= 1) {
+      lives = 0;
+      _fail();
+      return;
+    }
+    lives--;
+    player.reviveAt(respawnX, respawnY, iFrames: kRespawnIFrames);
+    cameraX = player.body.centerX;
+    // Clear the landing zone. Without this a campfire next to a patrol route
+    // means respawning straight back into the thing that just killed you —
+    // measured: three lives gone at one spot in under 15 s. Enemies that were
+    // crowding the respawn go home; nothing dead is resurrected.
+    for (final e in enemies) {
+      if (!e.alive) continue;
+      if ((e.centerX - player.body.centerX).abs() > kRespawnClearRadius) {
+        continue;
+      }
+      final home = _enemyHome[e];
+      if (home == null) continue;
+      e.body
+        ..x = home.x
+        ..y = home.y
+        ..vx = 0
+        ..vy = 0;
+    }
+    _events.add(SessionEvent(SessionEventKind.respawned,
+        x: player.body.centerX, y: player.body.centerY));
   }
 
   void _fail() {

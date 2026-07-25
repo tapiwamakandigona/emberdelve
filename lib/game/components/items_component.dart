@@ -30,6 +30,8 @@ class ItemsComponent extends PositionComponent
   late ui.Image _door;
   late ui.Image _doorOpen;
   late ui.Image _sign;
+  late ui.Image _fireOut;
+  late ui.Image _fireLit;
 
   static final _bubbleText = TextPaint(
     style: const TextStyle(
@@ -73,6 +75,8 @@ class ItemsComponent extends PositionComponent
     _door = await game.images.load('props/door.png');
     _doorOpen = await game.images.load('props/door_open.png');
     _sign = await game.images.load('props/sign.png');
+    _fireOut = await game.images.load('props/campfire_out.png');
+    _fireLit = await game.images.load('props/campfire_lit.png');
   }
 
   @override
@@ -108,6 +112,24 @@ class ItemsComponent extends PositionComponent
       ui.Rect.fromLTWH(s.exitX - 11, s.exitY - 33, 22, 33),
       _paint,
     );
+
+    // Checkpoints: a cold campfire until you touch it, then a lit one with a
+    // soft breathing glow so a rescued run is visible from a screen away.
+    for (final cp in s.checkpoints) {
+      if (cp.lit) {
+        final pulse = 0.5 + 0.5 * math.sin(_doorPulse * 5);
+        _doorGlow.color =
+            ui.Color.fromARGB((50 + 45 * pulse).round(), 0xE8, 0x6A, 0x17);
+        canvas.drawCircle(
+            ui.Offset(cp.x, cp.y - 4), 14 + 3 * pulse, _doorGlow);
+      }
+      canvas.drawImageRect(
+        cp.lit ? _fireLit : _fireOut,
+        const ui.Rect.fromLTWH(0, 0, 16, 16),
+        ui.Rect.fromLTWH(cp.x - 8, cp.y - 8, 16, 16),
+        _paint,
+      );
+    }
 
     // Signs.
     for (final sign in s.signs) {

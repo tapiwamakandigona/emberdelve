@@ -623,6 +623,18 @@ class EmberGame extends FlameGame
         case SessionEventKind.emberShotBroke:
           world.add(PuffFx(at,
               color: const Color(0xCCE86A17), radius: 4, life: 0.25));
+        case SessionEventKind.checkpointLit:
+          AudioService.instance?.playSfx('unlock', volume: 0.8);
+          Haptics.light();
+          world.add(SparkleFx(at, life: 0.6));
+        case SessionEventKind.respawned:
+          // A life spent, not a run lost: quick puff at the campfire and a
+          // camera snap so the player never wonders where they went.
+          AudioService.instance?.playSfx('heal', volume: 0.7);
+          world.add(PuffFx(at, radius: 8, life: 0.35));
+          _camSmoothX = at.x;
+          _camSmoothY = at.y;
+          _camBump = 2.0;
         case SessionEventKind.levelComplete:
           _persistResults();
           AudioService.instance?.playMusic('victory', loop: false);

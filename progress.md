@@ -221,3 +221,88 @@ heads (`feat/content-depth` #54, `feat/telemetry-v2` #47, `telemetry-phase1`
 - VERIFIED: analyze clean (1 pre-existing info), full suite 279/279 green —
   incl. per-level completability bots, gap budget, hazard-run <= 5, quotas,
   secret-behind-cracked-wall, lore, onboarding invariants.
+
+---
+## 2026-07-25 — owner-directed alpha pass: bugs, audio, level depth (fix/alpha-polish)
+Owner (DM): "quite some bugs… find better audio and sound effects… level design
+is not as deep as Apple Knight… play apple knight for inspiration… open a PR and
+produce an APK." Everything below is labelled VERIFIED (measured here) or
+ASSUMED.
+
+### Method
+- Toolchain built in-sandbox: Flutter 3.32.7 (CI-pinned), JDK 17, Android SDK 35.
+- **Apple Knight played first-hand** in the Poki web build (Unity, desktop
+  viewport, keyboard bindings) — new observations beyond the alpha.3 reference
+  pack: AK has **campfire checkpoints** ("Light this campfire to activate the
+  checkpoint"), a **lives** counter, attackable **levers**, 3-4 stacked terrain
+  tiers per screen, coin columns as skill invitations, and damage numbers +
+  white swing arcs. Screenshots kept out of the repo (copyright).
+- Emberdelve driven headlessly (session bots) and in the browser harness.
+
+### VERIFIED defects found
+1. **Every level killed a casual player in 4-16 s.** Sweep over all 12 levels
+   with a hold-right/jump-when-stalled/swing bot: 6 levels ended the run in
+   4-16 s (first damage 1.0-2.4 s), the other 6 stalled at 10-26 %. Root cause
+   was pacing, not physics: the first enemy stood 1-2 s from spawn in nearly
+   every level, and a death threw away the whole run.
+2. **A tap-jump rose ~7 px** — less than one 16 px tile. On touch, quick taps
+   read as dropped inputs (kJumpCutMultiplier applied with no floor).
+3. **World 2's boss arena was a byte-identical copy of World 1's**, same Grove
+   Golem entity, renamed "Kiln Golem" in meta only.
+4. **All twelve levels played the same music track.** `boss_combat.ogg`
+   (661 KB) shipped in every APK with no level referencing it.
+5. **The SFX/music set was inaudible on a phone.** Band analysis: land.ogg
+   100 % of energy < 300 Hz, danger_loop 100 %, enemy_death 99.8 %, player_hit
+   99.4 %, jump 96.6 %; music beds 88-91 %. Phone loudspeakers reproduce almost
+   nothing below ~500 Hz. Level spread across the set was 37 dB.
+6. **w2_l3's strongroom shaft was one tile wide** — narrower than the player
+   body, so its secret chest was unreachable and the lip trapped runners.
+7. Deaths from enemy contact, boss hazards and ember shots bypassed the new
+   checkpoint path (three direct `_fail()` call sites) — found by re-running
+   the sweep after the first checkpoint implementation.
+
+### Fixes
+- **Campfire checkpoints + lives** (AK's model): new `K` legend char,
+  `CheckpointEntity`, `kStartingLives` 3, respawn heals and grants 2 s of
+  i-frames, and enemies within 96 px of the respawn are sent home so a
+  campfire can never become a meat grinder. HUD shows lives; new campfire art
+  from `tool/build_checkpoint_art.py` (original, CC0).
+- **Minimum jump hold** (`kMinJumpHold` 0.09 s): the cut cannot land before the
+  jump has been rising that long, so a tap clears ~1.5 tiles while a full hold
+  still buys the whole 2.3-tile arc (variable height preserved — pinned by
+  physics_test).
+- **World 1 re-authored from scratch** via the new `tool/level_author.py` DSL:
+  three terrain tiers, high/low branching routes, 12-tile safe teaching runway,
+  two campfires per level, shallow escapable spike pits on bedrock instead of
+  chain-death wells, strongrooms behind cracked walls, canopy sky-vaults.
+- **World 2 pacing pass** (`tool/w2_pacing_pass.py`, mechanical, layouts kept):
+  16-tile enemy runway, 14-tile hazard runway, no enemy within 3 columns of a
+  hazard, max 3 enemies per 20-tile window, early hazard runs capped at 2
+  columns, three campfires placed away from patrols and hazards.
+- **Kiln Golem arena rebuilt**: fire channels split the floor into three
+  islands with plinths and an upper platform run. (ASSUMED-follow-up: the boss
+  *behaviour* is still GroveGolemCore — a distinct moveset is the next step.)
+- **Audio v3**: whole SFX set rebuilt from recorded CC0 sources and mastered
+  through a phone-speaker model (`tool/build_audio_v3.py`); music re-mastered
+  and World 2 given its own bed, boss arenas wired to `boss_combat`
+  (`tool/build_music_v3.py`). Measurements ship in `tool/audio_mix.json`.
+- **Web harness fixed**: it crashed with a null-check error on death or level
+  complete (no `overlayBuilderMap`), which blocked automated full-clear
+  verification; telemetry widened to run state, chests, kills, damage.
+
+### VERIFIED results
+- `flutter analyze`: clean. `flutter test`: **325/325 green** (279 baseline +
+  46 new in `fairness_test.dart` and `audio_mix_test.dart`).
+- Survivability sweep after the fixes: **no level ends a run in under 21 s**
+  (was 4-16 s in six levels); W1 l1-l4 and several W2 levels survive the full
+  180 s sample; w2_l3 now clears at 97 %.
+- Audio: every foreground one-shot within ~1 dB of one phone-band target
+  (-22 dBFS) with >= 35 % of its energy above 500 Hz; music beds at -26 dBFS.
+  Audio payload 3.8 MB -> 1.9 MB.
+
+### CHECK CHANGES (called out per protocol)
+- `game_screen_smoke_test.dart` pinned the old tutorial (3 signs, 1 enemy). It
+  now pins the new contract: 4 signs (the campfire is taught before the first
+  hazard), 2 thornlings, 2 checkpoints. Same intent, new content.
+- `physics_test` "early release rises less than full hold" still passes
+  unchanged — the minimum-hold window was chosen so variable height survives.
