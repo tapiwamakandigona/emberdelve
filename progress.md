@@ -464,3 +464,40 @@ golden anchors, replays and saves byte-identical.
 - CI workflow_dispatch run 30153939057: tests + signed release build green (cert SHA-256 verified in CI). VERIFIED.
 - Tag v0.3.11 created on bd5d33f; GitHub Release published with emberdelve-v0.3.11.apk (38295092 B) and .aab (57191187 B) assets: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.11
 - Deferred: LFP-2b in-turn undo, LFP-5 settings toggle (PR #49 open questions).
+
+## 2026-07-25 — Perf: repaint storm + SFX tap latency (v0.3.12+17, Viktor)
+Owner report on released v0.3.11: laggy, glitchy audio, and "when I click a
+button too quick it lags a lot".
+
+Measured with a new `tool/perf_probe_test.dart` (counts render objects painted
+and elements rebuilt per frame via `debugOnProfilePaint` /
+`debugOnRebuildDirtyWidget`), root-caused with
+`debugPrintMarkNeedsPaintStacks` / `debugPrintMarkNeedsLayoutStacks`.
+
+- VERIFIED before -> after, render objects painted per frame:
+  title idle 49.6 -> 3.0; title 12 rapid taps 167.9 -> 38.8;
+  combat idle 204.0 -> 2.0; combat 12 rapid real taps 207.2 -> 95.4.
+  Elements rebuilt per idle frame 2-3 -> 0.
+- Cause: `SpriteView`, `WeaponView` and `EmberLogotype` drove always-on
+  animations with `setState` 60x/s. The combat stage sits in a `LayoutBuilder`
+  and the title screen in a scroll view, so each of those setStates scheduled a
+  layout callback -> full relayout + full repaint of the screen, every frame,
+  permanently. All three now feed `CustomPainter.repaint` and read
+  `animation.value` at paint time; sprite bob/sway moved into canvas
+  transforms.
+- Cause: `EmberButton`'s press animation had no `RepaintBoundary`, so every tap
+  repainted the whole screen for 80ms (with `MaskFilter.blur` on the primary
+  tier). Boundaried.
+- Cause: `_LogotypePainter` laid out five `TextPainter`s per frame. Cached; the
+  breathing glow pass is quantised to 24 buckets (sub-visible steps).
+- Cause: `playSfx` used default-mode players, so Android re-prepared a
+  MediaPlayer per tap (JNI + asset read + codec prepare on the platform
+  thread). Now one preloaded `PlayerMode.lowLatency` (SoundPool) player per
+  sound id, stop -> resume to retrigger, with a background warm-up of the six
+  first-touch sounds from `main()`.
+- VERIFIED: `flutter analyze` clean; `flutter test` 143/143; play_session
+  harness 4 runs, 0 problems. No `lib/sim` or `lib/data` change.
+- NOT VERIFIED: on-device frame times and audio latency — no Android device or
+  emulator was available in the sandbox. Paint/rebuild counts are exact and
+  framework-level; the transfer to real hardware is inferred.
+- Detail: docs/improvements/perf-repaint-and-sfx-2026-07-25.md
