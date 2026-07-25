@@ -306,3 +306,28 @@ ASSUMED.
   hazard), 2 thornlings, 2 checkpoints. Same intent, new content.
 - `physics_test` "early release rises less than full hold" still passes
   unchanged — the minimum-hold window was chosen so variable height survives.
+
+## 2026-07-25 — release: v1.0.0-alpha.5 pre-release (owner request)
+
+Owner: "publish the alpha 5 as pre-release on github releases."
+
+- **VERIFIED** `pubspec.yaml` bumped to `1.0.0-alpha.5+17` (commit `696a400`);
+  PR CI run 30164664613 on that SHA: success.
+- **VERIFIED** PR #58 merged into `main` (merge commit `e35858e`).
+- **VERIFIED** main-push CI run 30165034323 on `e35858e`: both jobs success
+  ("Analyze + test (headless)", "Build signed Android release (APK + AAB)").
+- **VERIFIED** artifacts `emberdelve-release-apk` / `-aab` downloaded from that
+  run; `aapt2 dump badging` reports `versionCode='17'
+  versionName='1.0.0-alpha.5'`; `apksigner verify --print-certs` reports signer
+  SHA-256 `031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d`
+  == the expected upload key, so it installs over alpha.1–alpha.4.
+- **VERIFIED** release published: tag `v1.0.0-alpha.5` -> `e35858e`,
+  `prerelease: true`, `draft: false`, assets
+  `emberdelve-v1.0.0-alpha.5.apk` (24,184,091 B) and
+  `emberdelve-v1.0.0-alpha.5.aab` (43,200,161 B), both state `uploaded`.
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.5
+- Note for the record: the APK hand-delivered to the owner earlier in the day
+  was built before the version bump and reported `1.0.0-alpha.4+16` despite
+  being named alpha.5. The release asset is the correct `1.0.0-alpha.5+17`.
+- Open follow-ups unchanged: Kiln Golem moveset (reuses GroveGolemCore),
+  World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).
