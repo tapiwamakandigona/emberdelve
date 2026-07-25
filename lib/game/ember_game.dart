@@ -271,14 +271,14 @@ class EmberGame extends FlameGame with KeyboardEvents {
       switch (e.kind) {
         case SessionEventKind.coin:
           AudioService.instance?.playSfx('coin', volume: 0.5);
-          world.add(PuffFx(at,
-              color: const Color(0xAAF2C14E), radius: 3, life: 0.2));
+          world.add(SparkleFx(at));
         case SessionEventKind.applePickup:
           AudioService.instance?.playSfx('heal', volume: 0.6);
         case SessionEventKind.feather:
           AudioService.instance?.playSfx('feather');
         case SessionEventKind.chestOpen:
           AudioService.instance?.playSfx('chest_open');
+          world.add(SparkleFx(at, life: 0.5));
         case SessionEventKind.secretFound:
           AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
