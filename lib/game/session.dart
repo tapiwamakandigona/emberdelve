@@ -244,6 +244,11 @@ class LevelSession {
         case SpawnKind.groveGolem:
           enemies.add(GroveGolemCore(
               x: cx - 22, y: (s.y + 1) * kTileSize - 52));
+        case SpawnKind.sootCreeper:
+          enemies.add(SootCreeperCore(
+              x: cx - 12, y: (s.y + 1) * kTileSize - 22));
+        case SpawnKind.cinderDiver:
+          enemies.add(CinderDiverCore(x: cx - 14, y: cy - 12));
         case SpawnKind.player:
           break;
         case SpawnKind.exit:
