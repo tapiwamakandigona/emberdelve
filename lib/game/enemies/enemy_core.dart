@@ -11,7 +11,16 @@ import '../level/level_data.dart';
 import '../physics.dart';
 import '../tuning.dart';
 
-enum EnemyKind { thornling, ashbat, hopper, emberTotem, rotshield, groveGolem }
+enum EnemyKind {
+  thornling,
+  ashbat,
+  hopper,
+  emberTotem,
+  rotshield,
+  groveGolem,
+  sootCreeper,
+  cinderDiver,
+}
 
 abstract class EnemyCore {
   final EnemyKind kind;
@@ -282,6 +291,104 @@ class RotshieldCore extends EnemyCore {
           below == TileKind.crackedWall ||
           below == TileKind.platform;
       if (!walkable) facing = -facing;
+    }
+  }
+}
+
+/// Soot Creeper (World 2) — heavy soot-caked walker. Tankier and a touch
+/// faster than a Thornling, turns at walls but NOT at ledges: it walks
+/// straight off and keeps crawling wherever it lands. Reads as "relentless".
+class SootCreeperCore extends EnemyCore {
+  static const double speed = 34;
+
+  SootCreeperCore({required super.x, required super.y})
+      : super(kind: EnemyKind.sootCreeper, w: 24, h: 22, hp: 9);
+
+  @override
+  void behave(double dt, TileQuery tileAt,
+      {required double playerX, required double playerY}) {
+    body.vx = facing * speed;
+    body.vy += kGravity * dt;
+    if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
+    integrate(body, dt, tileAt);
+    if (body.hitWall) facing = -facing;
+    // Deliberately no ledge probe: creepers drop off edges.
+  }
+}
+
+/// Cinder Diver (World 2) — hovers at its anchor; when the player crosses
+/// underneath it telegraphs (shudder), then dives at them, and climbs back
+/// to the anchor afterwards. Fragile but scary in vertical rooms.
+class CinderDiverCore extends EnemyCore {
+  static const double aggroHalfWidth = 3 * kTileSize;
+  static const double telegraphTime = 0.4;
+  static const double diveSpeed = 200;
+  static const double climbSpeed = 55;
+  static const double cooldown = 1.2;
+
+  final double anchorX, anchorY;
+  double t = 0;
+
+  /// idle -> telegraph -> dive -> climb -> idle
+  String phase = 'idle';
+  double phaseLeft = 0;
+  double _dvx = 0, _dvy = 0;
+
+  CinderDiverCore({required super.x, required super.y})
+      : anchorX = x,
+        anchorY = y,
+        super(kind: EnemyKind.cinderDiver, w: 28, h: 24, hp: 3);
+
+  /// Render hint: shudder amplitude while telegraphing.
+  bool get telegraphing => phase == 'telegraph';
+
+  @override
+  void behave(double dt, TileQuery tileAt,
+      {required double playerX, required double playerY}) {
+    t += dt;
+    switch (phase) {
+      case 'idle':
+        // Gentle hover around the anchor.
+        body.x = anchorX + math.sin(t * 1.3) * 6;
+        body.y = anchorY + math.sin(t * 2.1) * 4;
+        facing = playerX >= centerX ? 1 : -1;
+        final below = playerY > centerY + kTileSize;
+        if (below && (playerX - centerX).abs() < aggroHalfWidth) {
+          phase = 'telegraph';
+          phaseLeft = telegraphTime;
+        }
+      case 'telegraph':
+        phaseLeft -= dt;
+        if (phaseLeft <= 0) {
+          final dx = playerX - centerX, dy = playerY - centerY;
+          final d = math.sqrt(dx * dx + dy * dy).clamp(1.0, 9999.0);
+          _dvx = dx / d * diveSpeed;
+          _dvy = (dy / d * diveSpeed).abs(); // always downward
+          phase = 'dive';
+          phaseLeft = 1.0; // max dive time
+        }
+      case 'dive':
+        phaseLeft -= dt;
+        body.vx = _dvx;
+        body.vy = _dvy;
+        integrate(body, dt, tileAt);
+        facing = _dvx >= 0 ? 1 : -1;
+        if (body.onGround || body.hitWall || phaseLeft <= 0) {
+          phase = 'climb';
+          phaseLeft = cooldown;
+        }
+      case 'climb':
+        final dx = anchorX - body.x, dy = anchorY - body.y;
+        final d = math.sqrt(dx * dx + dy * dy);
+        if (d < 3) {
+          body.x = anchorX;
+          body.y = anchorY;
+          phase = 'idle';
+        } else {
+          body.x += dx / d * climbSpeed * dt;
+          body.y += dy / d * climbSpeed * dt;
+        }
+        facing = dx >= 0 ? 1 : -1;
     }
   }
 }

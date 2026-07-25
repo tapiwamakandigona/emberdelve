@@ -259,3 +259,10 @@ Deterministic recolors of already-shipped Sunny Land CC0 art by
 (greens→cold ash, browns→dark basalt) and `bg/cave_{back,middle,front}.png`
 (deep violet-gray dusk) + `bg/cave_lights.png` (ember glow). Same CC0
 licensing as the source files.
+
+## World 2 enemies — added 2026-07-25
+
+Recolors of shipped Sunny Land CC0 sheets by `tool/build_w2_enemies.py`:
+`enemies/soot_creeper.png` (from thornling.png — blues→soot, accents→ember)
+and `enemies/cinder_diver.png` (from ashbat.png — plumage→dark ash,
+beak/talons→hot ember). CC0, same as sources.
