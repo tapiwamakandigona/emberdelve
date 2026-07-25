@@ -38,6 +38,7 @@ flutter:
     - assets/images/player/skins/shadow_thief/
     - assets/images/player/skins/hearth_knight/
     - assets/images/props/
+    - assets/images/shop/
     - assets/images/tiles/
     - assets/audio/music/
     - assets/audio/sfx/
