@@ -86,8 +86,9 @@ class AudioService {
   static Future<void> initPlatformAudio() async {
     try {
       await AudioPlayer.global.setAudioContext(
-        AudioContextConfig(focus: AudioContextConfigFocus.mixWithOthers)
-            .build(),
+        AudioContextConfig(
+          focus: AudioContextConfigFocus.mixWithOthers,
+        ).build(),
       );
     } catch (_) {}
   }
@@ -100,9 +101,19 @@ class AudioService {
   AudioPlayer? _ambience;
   AudioPlayer? _danger;
 
-  final List<AudioPlayer> _sfxPool = [];
-  int _sfxNext = 0;
-  static const _sfxPoolSize = 6;
+  /// One preloaded low-latency player per SFX id (see [playSfx]).
+  final Map<String, AudioPlayer> _sfxPlayers = {};
+  final Set<String> _sfxLoading = {};
+
+  /// Ids worth having ready before the first tap ever happens.
+  static const _warmSfx = [
+    'ui_tap',
+    'ui_back',
+    'dice_roll',
+    'die_assign',
+    'reroll',
+    'coin',
+  ];
 
   // -- Music ----------------------------------------------------------------
 
@@ -201,8 +212,10 @@ class AudioService {
         p = AudioPlayer();
         _ambience = p;
         p.setReleaseMode(ReleaseMode.loop);
-        p.play(AssetSource(sfxPaths['ember_ambience_loop']!),
-            volume: settings.effectiveMusic * _ambienceLevel);
+        p.play(
+          AssetSource(sfxPaths['ember_ambience_loop']!),
+          volume: settings.effectiveMusic * _ambienceLevel,
+        );
       } catch (_) {
         // Same retry rule as playMusic: a failed start must not occupy the
         // slot, or ambience stays silent until the next off/on phase swing.
@@ -232,8 +245,10 @@ class AudioService {
         p = AudioPlayer();
         _danger = p;
         p.setReleaseMode(ReleaseMode.loop);
-        p.play(AssetSource(sfxPaths['danger_loop']!),
-            volume: settings.effectiveMusic * _dangerLevel);
+        p.play(
+          AssetSource(sfxPaths['danger_loop']!),
+          volume: settings.effectiveMusic * _dangerLevel,
+        );
       } catch (_) {
         if (_danger == p) _danger = null;
       }
@@ -251,20 +266,82 @@ class AudioService {
 
   // -- SFX --------------------------------------------------------------------
 
+  /// A one-shot SFX.
+  ///
+  /// PERF (2026-07-25): this used to round-robin a pool of six DEFAULT-mode
+  /// players and call `stop()` + `play(AssetSource(...))` on every tap. On
+  /// Android that means PlayerMode.mediaPlayer, so each tap tore down and
+  /// re-prepared a MediaPlayer — a JNI hop plus an asset read plus a codec
+  /// prepare, on the platform thread, *while* the UI was mid-tap. That is
+  /// audible as the SFX arriving late or glitching, and it lands right on
+  /// top of the frame the tap has to render, which is why hammering a button
+  /// felt so much worse than tapping it once.
+  ///
+  /// Now: one player per sound id, created in [PlayerMode.lowLatency]
+  /// (SoundPool on Android — the sample is decoded and resident in memory,
+  /// playback is a single non-blocking native call) with the source set once
+  /// up front. Re-triggering is stop -> resume, which SoundPool implements as
+  /// "start a new stream from the decoded sample". Every SFX asset is <=56KB,
+  /// well inside SoundPool's per-sample budget.
+  ///
+  /// Re-triggering a sound that is still playing restarts it rather than
+  /// layering it — the same behaviour the old six-player pool gave once more
+  /// than six sounds were in flight, and the right behaviour for UI clicks.
   Future<void> playSfx(String id, {double volume = 1.0}) async {
     final path = sfxPaths[id];
     if (path == null) return;
     final v = settings.effectiveSfx * volume;
     if (v <= 0) return;
     try {
-      if (_sfxPool.length < _sfxPoolSize) {
-        _sfxPool.add(AudioPlayer()..setReleaseMode(ReleaseMode.stop));
+      final p = _sfxPlayers[id];
+      if (p == null) {
+        // Not resident yet: load it, then play. Only the very first use of a
+        // sound can pay this, and [warmUp] removes it for the common ones.
+        final loaded = await _ensureSfx(id, path);
+        if (loaded == null) return;
+        await loaded.setVolume(v.clamp(0.0, 1.0));
+        await loaded.resume();
+        return;
       }
-      final p = _sfxPool[_sfxNext % _sfxPool.length];
-      _sfxNext++;
       await p.stop();
-      await p.play(AssetSource(path), volume: v.clamp(0.0, 1.0));
+      await p.setVolume(v.clamp(0.0, 1.0));
+      await p.resume();
     } catch (_) {}
+  }
+
+  /// Create + preload the low-latency player for [id]. Concurrent callers for
+  /// the same id don't stack up duplicate players.
+  Future<AudioPlayer?> _ensureSfx(String id, String path) async {
+    final existing = _sfxPlayers[id];
+    if (existing != null) return existing;
+    if (_sfxLoading.contains(id)) return null;
+    _sfxLoading.add(id);
+    AudioPlayer? p;
+    try {
+      p = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+      await p.setPlayerMode(PlayerMode.lowLatency);
+      // Resolves once the sample is decoded and resident.
+      await p.setSource(AssetSource(path));
+      _sfxPlayers[id] = p;
+      return p;
+    } catch (_) {
+      try {
+        await p?.dispose();
+      } catch (_) {}
+      return null;
+    } finally {
+      _sfxLoading.remove(id);
+    }
+  }
+
+  /// Preload the SFX a player hits in the first seconds. Called from main()
+  /// after [initPlatformAudio]; failures are silent and simply mean the first
+  /// use of that sound loads on demand.
+  Future<void> warmUp() async {
+    for (final id in _warmSfx) {
+      final path = sfxPaths[id];
+      if (path != null) await _ensureSfx(id, path);
+    }
   }
 
   /// Immediate, non-choreographed SFX for a batch of sim events.
@@ -285,7 +362,8 @@ class AudioService {
     try {
       _music?.pause();
       _ambience?.pause();
-      for (final p in _sfxPool) {
+      _danger?.pause();
+      for (final p in _sfxPlayers.values) {
         p.stop();
       }
     } catch (_) {}
@@ -296,6 +374,7 @@ class AudioService {
     try {
       _music?.resume();
       _ambience?.resume();
+      _danger?.resume();
     } catch (_) {}
   }
 
