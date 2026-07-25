@@ -19,6 +19,12 @@ const double kTurnAccelMultiplier = 2.0;
 // Jumping (feel spec: coyote 0.10s, buffer 0.12s, variable height).
 const double kJumpSpeed = 292.0; // initial jump velocity px/s (clears 2 tiles+)
 const double kJumpCutMultiplier = 0.45; // vy *= this when jump released early
+// Minimum jump hold: the cut cannot land until the jump has been rising for
+// this long. A one-frame tap on a touch button used to leave ~7px of rise —
+// less than one 16px tile — so tap-jumps read as dropped inputs. With the
+// window a tap clears ~1.5 tiles and a full hold still buys the whole
+// 2.3-tile arc, so variable height survives.
+const double kMinJumpHold = 0.09;
 // Asymmetric gravity (feel research: falls should read snappier than rises —
 // 1.5-2.0x is the platformer convention; Celeste additionally halves gravity
 // around the apex while jump is held, buying air control without floatiness).
@@ -85,6 +91,18 @@ const double kCameraPeekDown = 56.0; // px when holding down
 // Player.
 const int kBaseMaxHearts = 3;
 const int kHeartsHardCap = 5;
+
+// Lives & checkpoints (Apple-Knight parity, 2026-07-25 alpha pass).
+// Measured problem: a bot playing every shipped level lost all three hearts
+// in 4-16s and was thrown back to the level select — the whole run gone.
+// AK answers this with lit-campfire checkpoints plus a small pool of lives,
+// so a mistake costs a section, never the level. Same model here.
+const int kStartingLives = 3; // extra attempts per level run
+const double kRespawnIFrames = 2.0; // grace after a checkpoint respawn
+/// Enemies this close to a respawn are sent back to their patrol start, so a
+/// campfire can never become a meat grinder.
+const double kRespawnClearRadius = 96.0;
+const double kCheckpointRadius = 14.0; // px from campfire centre to light it
 
 // Economy pacing.
 const int kCoinValue = 1;

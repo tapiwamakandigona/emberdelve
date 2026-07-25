@@ -10,6 +10,7 @@
 //   .  empty            #  solid block         =  one-way platform
 //   ^  spikes (hazard)  ~  fire (hazard)       B  cracked wall (breakable)
 //   P  player spawn     E  exit door           s  tutorial sign
+//   K  checkpoint campfire (lights on touch, respawn point after a death)
 //   c  coin             a  apple pickup        f  feather (rare currency)
 //   C  chest            X  secret chest (counts as chest + secret)
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
@@ -39,6 +40,7 @@ enum SpawnKind {
   player,
   exit,
   sign,
+  checkpoint,
   coin,
   apple,
   feather,
@@ -91,6 +93,7 @@ const Map<String, SpawnKind> _spawnChars = {
   'P': SpawnKind.player,
   'E': SpawnKind.exit,
   's': SpawnKind.sign,
+  'K': SpawnKind.checkpoint,
   'c': SpawnKind.coin,
   'a': SpawnKind.apple,
   'f': SpawnKind.feather,
@@ -233,6 +236,13 @@ class LevelData {
     }
     if (!grounded) {
       throw LevelParseException('player spawn has no safe ground below');
+    }
+    // A checkpoint the player can't stand on is a checkpoint they can't
+    // light: campfires must sit on solid ground, like decor.
+    for (final c in l.spawns.where((s) => s.kind == SpawnKind.checkpoint)) {
+      if (c.y + 1 >= l.height || l.tiles[c.y + 1][c.x] != TileKind.solid) {
+        throw LevelParseException('$c has no solid ground below');
+      }
     }
     // Decor is set dressing: it must sit in open air on solid ground so it
     // never reads as an interactable or floats mid-air.
