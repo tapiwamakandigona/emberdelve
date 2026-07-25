@@ -4,6 +4,7 @@
 import 'dart:async' show unawaited;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
@@ -53,6 +54,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: (v) => setState(() => settings.sfxVolume = v),
               onChangeEnd: (v) {
                 audio!.playSfx('ui_tap');
+                SettingsStore.save(settings);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Haptics',
+                  style: TextStyle(color: Colors.white)),
+              subtitle: const Text('Vibrate on hits and boss beats',
+                  style: TextStyle(color: Colors.white38, fontSize: 12)),
+              activeColor: const Color(0xFFE8A33D),
+              value: settings.haptics,
+              onChanged: (v) {
+                setState(() => settings.haptics = v);
+                if (v) HapticFeedback.mediumImpact(); // instant preview
                 SettingsStore.save(settings);
               },
             ),
