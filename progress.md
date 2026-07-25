@@ -469,3 +469,15 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
 - Evidence: flutter analyze clean; 153/153 tests (was 143) incl. new perfect-bonus
   session tests + test/daily_test.dart (determinism, pool bounds, rotation, save
   round-trip, legacy-save defaults). P-M8 flipped.
+
+---
+## 2026-07-25 — alpha.1 movement bug fixed + alpha.2 (orchestrator)
+- Owner field report: "movement controls were not working on the pre release."
+- Root cause (verified against Flutter/Flame source): HUD hold buttons were
+  TapCallbacks-only; the gesture arena cancels a tap once a held thumb drifts past
+  touch slop and promotes it to a drag → left/right released mid-hold on devices.
+  Headless/CI tests use clean synthetic taps, so it never showed.
+- Fix 49c7e44: HudHoldButton = TapCallbacks + DragCallbacks over pure-Dart
+  HoldButtonCore (limbo hand-off across tapCancel→dragStart, per-frame tick for
+  genuine cancels, multi-touch safe). Regression suite test/hold_button_test.dart.
+  160/160 tests, analyze clean. Version bumped to 1.0.0-alpha.2+14 for the fixed build.
