@@ -39,6 +39,7 @@ import 'components/perf_overlay.dart';
 import 'components/player_component.dart';
 import 'components/tile_layer.dart';
 import 'core_loadout.dart';
+import 'difficulty.dart';
 import 'input_intent.dart';
 import 'level/level_data.dart';
 import 'player/player_core.dart';
@@ -187,7 +188,11 @@ class EmberGame extends FlameGame
         : Loadout.starter();
     final seed = seedOverride ??
         DateTime.now().millisecondsSinceEpoch % rngMod;
-    session = LevelSession(level, loadout, seed: seed);
+    session = LevelSession(level, loadout,
+        seed: seed,
+        difficulty: AppState.isReady
+            ? difficultyFromId(AppState.save.difficulty)
+            : Difficulty.medium);
 
     camera.viewfinder.anchor = Anchor.center;
     camera.viewfinder.position =

@@ -1,4 +1,5 @@
 meta: name=Bramble Hollow
+meta: lore=The brambles grew over something that wanted hiding.
 meta: world=1
 meta: music=combat
 meta: par_s=120

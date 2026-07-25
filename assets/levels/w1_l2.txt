@@ -1,4 +1,5 @@
 meta: name=Old Orchard
+meta: lore=The trees still bear fruit. Nobody picks it anymore.
 meta: world=1
 meta: music=combat
 meta: par_s=110

@@ -67,6 +67,17 @@ class EnemyComponent extends PositionComponent
         _main = await load('enemies/soot_creeper.png', 6, Vector2(36, 28), 0.14);
       case EnemyKind.cinderDiver:
         _main = await load('enemies/cinder_diver.png', 5, Vector2(32, 41), 0.1);
+      case EnemyKind.pyreWisp:
+        // Stage 2: bright pyre-gold recolor of the ashbat strip
+        // (tool/build_new_enemies.py, CC0 Sunny Land base).
+        _main = await load('enemies/pyre_wisp.png', 4, Vector2(40, 41), 0.09);
+      case EnemyKind.slagHound:
+        // Stage 2: molten recolor of the hopper strips; the jump strip is
+        // the crouch/charge pose (telegraph + charge read instantly).
+        _main =
+            await load('enemies/slag_hound.png', 4, Vector2(35, 32), 0.14);
+        _alt = await load(
+            'enemies/slag_hound_charge.png', 2, Vector2(35, 32), 0.10);
       case EnemyKind.groveGolem:
         // Boss: 2x-scaled, moss-tinted thornling composite (CC0 Sunny Land)
         // + rock.png for its lobbed rocks. No unverified art added.
@@ -105,6 +116,10 @@ class EnemyComponent extends PositionComponent
     }
     if (core is HopperCore && _alt != null) {
       _show((core as HopperCore).airborne ? _alt! : _main!);
+    }
+    if (core is SlagHoundCore && _alt != null) {
+      final h = core as SlagHoundCore;
+      _show(h.telegraphing || h.charging ? _alt! : _main!);
     }
     if (!core.sleeping) _ticker?.update(dt);
   }
