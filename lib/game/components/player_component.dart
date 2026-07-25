@@ -20,6 +20,11 @@ class PlayerComponent extends PositionComponent
   SpriteAnimationTicker? _ticker;
   double _blinkClock = 0;
 
+  // Scratch vectors reused every frame (Sprite.render copies them into its
+  // own temps; it never keeps the reference) — no per-frame allocations.
+  static final _drawPos = Vector2.zero();
+  static final _drawSize = Vector2.zero();
+
   Future<SpriteAnimation> _load(
       String name, int frames, Vector2 size, double stepTime,
       {bool loop = true}) async {
@@ -83,15 +88,14 @@ class PlayerComponent extends PositionComponent
     final w = sprite.srcSize.x, h = sprite.srcSize.y;
     // Anchor the frame bottom-center on the body's bottom-center.
     final b = core.body;
-    final drawX = b.centerX - w / 2;
-    final drawY = b.bottom - h;
     canvas.save();
     if (core.facing < 0) {
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
-    sprite.render(canvas,
-        position: Vector2(drawX, drawY), size: Vector2(w, h));
+    _drawPos.setValues(b.centerX - w / 2, b.bottom - h);
+    _drawSize.setValues(w, h);
+    sprite.render(canvas, position: _drawPos, size: _drawSize);
     canvas.restore();
   }
 }
