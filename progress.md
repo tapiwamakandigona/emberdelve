@@ -612,3 +612,25 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   no spell equipped), akp_airdash_midair.png.
 - Next (owner, same DM): more characters + enemies, map/pacing pass,
   per-level lore blurbs, Easy/Med/Hard + smarter AI → follow-up PR.
+
+---
+## 2026-07-25 — Stage 2: content depth (owner "go", branch feat/content-depth)
+- cf1eb7b two new characters: Grove Sentinel (1600c) + Ash Wraith (25f),
+  full 9-sheet sets via build_skins.py recolor pipeline (CC0).
+- b596887 difficulty + AI + enemies + lore:
+  - Easy/Med/Hard (settings picker, save.difficulty): scales enemy speed /
+    telegraph windows / detection + 1 heart on Easy. NEVER hp/damage —
+    pinned by test ("no cheap stat walls").
+  - Smarter AI: thornling hunt-burst, hopper leads moving targets,
+    rotshield guard-turn vs backstab campers, totem/diver ranges scaled.
+  - New enemies: Pyre Wisp (chasing spirit, hp3) + Slag Hound (telegraph →
+    charge, ledge-safe). 'W'/'H' legend chars, placed in 6 levels by
+    swapping existing enemies (density preserved, all bots still pass).
+  - Lore: meta: lore= in all 12 levels (≤58 chars, tested); HUD intro
+    shows name + blurb for the first 4.5s (evidence:
+    docs/ak-parity/evidence/stage2_lore_intro.png).
+- VERIFIED: analyze clean, 279/279 tests (267 + 12 stage2_test.dart);
+  web-harness release screenshot confirms lore intro live.
+- Map/pacing: no geometry changes needed — gap-budget + completability
+  guards all green with the new enemy mix; new enemies add threat variety
+  without new leap-of-faith or chokepoint risks.
