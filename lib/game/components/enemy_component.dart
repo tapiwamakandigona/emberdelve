@@ -63,6 +63,10 @@ class EnemyComponent extends PositionComponent
           ..filterQuality = ui.FilterQuality.none
           ..colorFilter = const ui.ColorFilter.mode(
               ui.Color(0xFF7FA05A), ui.BlendMode.modulate);
+      case EnemyKind.sootCreeper:
+        _main = await load('enemies/soot_creeper.png', 6, Vector2(36, 28), 0.14);
+      case EnemyKind.cinderDiver:
+        _main = await load('enemies/cinder_diver.png', 5, Vector2(32, 41), 0.1);
       case EnemyKind.groveGolem:
         // Boss: 2x-scaled, moss-tinted thornling composite (CC0 Sunny Land)
         // + rock.png for its lobbed rocks. No unverified art added.
