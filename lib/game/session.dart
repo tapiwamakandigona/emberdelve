@@ -25,6 +25,7 @@ enum SessionEventKind {
   applePickup,
   feather,
   chestOpen,
+  secretFound,
   enemyHit, // data: x,y crit
   enemyDeath, // data: x,y
   wallHit,
@@ -600,7 +601,11 @@ class LevelSession {
       final dx = ch.x - player.body.centerX, dy = ch.y - player.body.centerY;
       if (dx * dx + dy * dy <= 18 * 18) {
         ch.opened = true;
-        if (ch.secret) secretsFound++;
+        if (ch.secret) {
+          secretsFound++;
+          _events.add(
+              SessionEvent(SessionEventKind.secretFound, x: ch.x, y: ch.y));
+        }
         final n = dropsRng.range(kChestCoinsMin, kChestCoinsMax);
         for (var i = 0; i < n; i++) {
           final ang = dropsRng.range(-70, 70) * 3.14159 / 180;
