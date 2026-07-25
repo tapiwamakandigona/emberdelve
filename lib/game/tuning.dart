@@ -11,6 +11,10 @@ const double kRunSpeed = 118.0; // px/s
 const double kGroundAccel = 1400.0;
 const double kAirAccel = 900.0;
 const double kGroundFriction = 1600.0;
+// Turnaround assist: extra accel while input opposes current velocity —
+// reversing at full run speed snaps in ~0.05s instead of ~0.17s. Touch-first
+// games live and die on this (direction changes are the most common input).
+const double kTurnAccelMultiplier = 2.0;
 
 // Jumping (feel spec: coyote 0.10s, buffer 0.12s, variable height).
 const double kJumpSpeed = 292.0; // initial jump velocity px/s (clears 2 tiles+)
@@ -25,6 +29,10 @@ const double kCoyoteTime = 0.10; // s of grace after walking off a ledge
 const double kJumpBufferTime = 0.12; // s a jump press is remembered
 const int kMaxAirJumps = 1; // double jump (2 with triple-jump special)
 const double kAirJumpSpeed = 265.0;
+// Ceiling corner correction (Celeste-style forgiveness): a rising jump that
+// clips a ceiling lip by up to this many px slides around it instead of
+// bonking. Player-only; enemies keep exact collision.
+const double kCeilingCornerNudge = 4.0;
 
 // Combat.
 const double kAttackBufferTime = 0.15; // s an attack press is remembered
