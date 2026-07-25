@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Emberdelve — Privacy Policy</title>
-<meta name="description" content="Emberdelve collects no data. None. Fully offline, no internet permission, no ads, no tracking.">
+<meta name="description" content="Emberdelve collects no personal data. Optional, opt-in anonymous gameplay analytics only — off by default. No ads, no tracking.">
 <style>
   :root {
     --bg: #14101e;
@@ -64,37 +64,59 @@
 <body>
 <main>
   <h1>Emberdelve — Privacy Policy</h1>
-  <div class="updated">Last updated: 2026-07-24 · <code>com.tsorostudios.emberdelve</code></div>
+  <div class="updated">Last updated: 2026-07-25 · <code>com.tsorostudios.emberdelve</code></div>
 
-  <p>Emberdelve (“the app”) is a single-player, fully offline dice roguelite
+  <p>Emberdelve (“the app”) is a single-player pixel action-platformer
   by Tsoro Studios (Tapiwa Makandigona).</p>
 
-  <div class="promise"><b>The short version: Emberdelve collects no data. None.</b></div>
+  <div class="promise"><b>The short version: Emberdelve collects no personal
+  data.</b> The only thing it can ever send is anonymous gameplay statistics,
+  and only if you explicitly opt in — off by default, revocable any time in
+  Settings.</div>
 
   <h2>Details</h2>
   <ul>
-    <li><b>No network access.</b> The app does not declare the internet
-      permission — or any other data-relevant permission — so it is technically
-      incapable of transmitting anything off your device. The only permission
-      it declares is <code>VIBRATE</code>, used solely for the optional in-game
-      haptics (controller-style rumble); it touches no data.</li>
     <li><b>No personal data collected.</b> No accounts, no names, no email
-      addresses, no contacts, no location, no identifiers.</li>
-    <li><b>No analytics, no ads, no trackers.</b> The app contains no analytics
-      SDKs, no advertising SDKs, and no third-party tracking code of any kind.</li>
-    <li><b>Local save data only.</b> Your game progress (run state, unlocks,
+      addresses, no contacts, no location, no advertising identifiers, no
+      free-text input.</li>
+    <li><b>Optional, opt-in gameplay analytics.</b> On first launch the app
+      asks whether you want to share anonymous gameplay statistics (which
+      levels you play, whether you finish them, and which settings you use)
+      to help us fix bugs and improve the game. <b>Nothing is sent unless you
+      tap “Allow”</b>, and you can change your choice any time in Settings →
+      “Gameplay analytics”. If you opt in, this data is processed on our
+      behalf by <a href="https://firebase.google.com/support/privacy">Google
+      Firebase Analytics</a>. Ad personalization signals are disabled and the
+      app never accesses the advertising ID.</li>
+    <li><b>No ads, no trackers, no data sales.</b> The app contains no
+      advertising SDKs and no third-party tracking beyond the optional
+      analytics described above. We never sell or share data.</li>
+    <li><b>Local save data only.</b> Your game progress (coins, unlocks,
       settings) is stored only in the app’s private storage on your device.
       Deleting the app deletes it. It never leaves your device.</li>
-    <li><b>Children.</b> Since the app collects nothing and communicates with
-      nothing, no data is collected from anyone, including children.</li>
+    <li><b>Permissions.</b> <code>VIBRATE</code> (optional in-game haptics)
+      and <code>INTERNET</code>/<code>ACCESS_NETWORK_STATE</code> (used solely
+      for the optional analytics above; if you never opt in, nothing is
+      transmitted).</li>
+    <li><b>Children.</b> The app collects no personal data from anyone,
+      including children. Analytics, when enabled, are anonymous gameplay
+      statistics only.</li>
   </ul>
 
   <h2>Google Play data-safety summary</h2>
   <table>
     <tr><th>Question</th><th>Answer</th></tr>
-    <tr><td>Does the app collect or share user data?</td><td>No</td></tr>
-    <tr><td>Data encrypted in transit?</td><td>N/A — no data leaves the device</td></tr>
-    <tr><td>Can users request data deletion?</td><td>N/A — nothing is collected; uninstalling removes local saves</td></tr>
+    <tr><td>Does the app collect or share user data?</td><td>Only optional,
+      user-enabled anonymous app-interaction analytics (Firebase Analytics);
+      no personal data; nothing shared with third parties for their own
+      purposes</td></tr>
+    <tr><td>Is data collection optional?</td><td>Yes — off by default,
+      opt-in, revocable in Settings</td></tr>
+    <tr><td>Data encrypted in transit?</td><td>Yes (when analytics are
+      enabled)</td></tr>
+    <tr><td>Can users request data deletion?</td><td>Turning analytics off
+      stops collection; uninstalling removes local saves. For analytics-data
+      deletion requests, contact the developer via the Play listing</td></tr>
   </table>
 
   <h2>Changes &amp; contact</h2>
