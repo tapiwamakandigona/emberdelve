@@ -174,6 +174,14 @@ def main():
         # Medal pop: Kenney Interface confirmation, bright and tiny.
         encode(kint / "confirmation_001.ogg", OUT / "medal.ogg", atrim="start=0:end=0.6")
 
+        # Footsteps: two alternating soft grass steps, heavily attenuated —
+        # they run at cadence under gameplay and must never grate on phone
+        # speakers (played at ~0.25 volume on top of this).
+        encode(sfx100 / "sfx100v2_footstep_01.ogg", OUT / "step1.ogg",
+               gain_db=-8, atrim="start=0:end=0.22")
+        encode(sfx100 / "sfx100v2_footstep_02.ogg", OUT / "step2.ogg",
+               gain_db=-8, atrim="start=0:end=0.22", asetrate=0.96)
+
     print("done.")
 
 

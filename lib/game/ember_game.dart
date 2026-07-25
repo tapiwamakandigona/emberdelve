@@ -160,6 +160,8 @@ class EmberGame extends FlameGame
 
   late SpriteAnimation _deathAnim;
   double _camBump = 0;
+  double _stepClock = 0;
+  bool _stepAlt = false;
   final math.Random _bumpRand = math.Random();
   bool _resultsPersisted = false;
 
@@ -320,6 +322,22 @@ class EmberGame extends FlameGame
     _handlePlayerEvents();
     _handleSessionEvents();
     _followCamera(clamped);
+
+    // Footsteps: cadence-gated, only while genuinely running on ground.
+    final p = session.player;
+    if (p.state == PlayerState.run && p.body.vx.abs() > kRunSpeed * 0.5) {
+      _stepClock -= clamped;
+      if (_stepClock <= 0) {
+        _stepClock = kFootstepInterval;
+        _stepAlt = !_stepAlt;
+        AudioService.instance
+            ?.playSfx(_stepAlt ? 'step1' : 'step2', volume: 0.28);
+      }
+    } else {
+      // Re-arm so the first step lands just after movement starts (not
+      // instantly on a tap, which reads as a click).
+      _stepClock = kFootstepInterval * 0.5;
+    }
 
     // Low-HP heartbeat bed under the combat music (dedupes internally).
     AudioService.instance?.setDanger(
