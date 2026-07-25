@@ -60,8 +60,9 @@ void main() {
   test('every touch target is >= 44 logical px and inside the view', () async {
     final game = await bootGame();
     final all = buttons(game);
-    expect(all.length, 8,
-        reason: 'left, right, down, dash, sword, jump, apple, pause');
+    expect(all.length, 9,
+        reason:
+            'left, right, down, dash, sword, jump, apple, spell, pause');
     for (final b in all) {
       expect(b.size.x, greaterThanOrEqualTo(44),
           reason: '${b.spritePath}/${b.iconPath} narrower than 44px');

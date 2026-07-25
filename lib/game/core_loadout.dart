@@ -14,6 +14,7 @@ class Loadout {
   final int appleCapacity;
   final bool coinMagnet;
   final String skinId;
+  final Spell? spell; // AKP-4d: equipped spell, one cast per run (null = none)
 
   const Loadout({
     required this.weapon,
@@ -23,6 +24,7 @@ class Loadout {
     required this.appleCapacity,
     required this.coinMagnet,
     required this.skinId,
+    this.spell,
   });
 
   bool get wallBreaker => weapon.special == WeaponSpecial.wallBreaker;
@@ -38,6 +40,10 @@ class Loadout {
       appleCapacity: progress.appleCapacity(save),
       coinMagnet: save.ownedAbilities.contains('coin_magnet'),
       skinId: save.equippedSkin,
+      spell: save.equippedSpell.isNotEmpty &&
+              save.ownedSpells.contains(save.equippedSpell)
+          ? spellById(save.equippedSpell)
+          : null,
     );
   }
 

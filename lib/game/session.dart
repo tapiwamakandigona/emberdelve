@@ -11,6 +11,7 @@ import 'dart:math' as math;
 
 import 'core_loadout.dart';
 import '../core/rng.dart';
+import '../meta/catalog.dart' show SpellEffect;
 import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
 import 'input_intent.dart';
@@ -39,6 +40,7 @@ enum SessionEventKind {
   emberShotBroke, // data: x,y — ember hit terrain / player / limits
   levelComplete,
   levelFailed,
+  spellCast, // AKP-4d: data x,y = player centre; one cast per run
 }
 
 class SessionEvent {
@@ -164,6 +166,7 @@ class LevelSession {
   int kills = 0;
   int secretsFound = 0;
   double hitPause = 0;
+  bool spellUsed = false; // AKP-4d: the equipped spell's single run charge
   bool completed = false;
   bool failed = false;
   bool get over => completed || failed;
@@ -633,6 +636,45 @@ class LevelSession {
         b.top < exitY) {
       _complete();
     }
+  }
+
+  /// AKP-4d: whether the spell button should show (spell equipped, charge
+  /// unspent, run still live).
+  bool get spellReady => loadout.spell != null && !spellUsed && !over;
+
+  /// Cast the equipped spell (AKP-4d). One charge per run. Returns true if
+  /// the cast happened. Spells ignore Rotshield block — magic pierces
+  /// shields, which is the slot's identity vs the sword.
+  bool castSpell() {
+    if (!spellReady || player.state == PlayerState.dead) return false;
+    spellUsed = true;
+    final p = player.body;
+    switch (loadout.spell!.effect) {
+      case SpellEffect.emberBurst:
+        for (final e in enemies) {
+          if (!e.alive || e.sleeping) continue;
+          final dx = e.centerX - p.centerX;
+          final dy = e.centerY - p.centerY;
+          if (dx * dx + dy * dy <=
+              kSpellBurstRadius * kSpellBurstRadius) {
+            e.damage(kSpellBurstDamage);
+            if (e.alive) e.burnLeft = 3.0;
+            _events.add(SessionEvent(SessionEventKind.enemyHit,
+                x: e.centerX, y: e.centerY));
+            if (!e.alive) _onEnemyDeath(e);
+          }
+        }
+      case SpellEffect.stoneVeil:
+        if (player.iFrames < kSpellVeilSeconds) {
+          player.iFrames = kSpellVeilSeconds;
+        }
+      case SpellEffect.hearthLight:
+        player.hearts =
+            math.min(player.maxHearts, player.hearts + kSpellHealHearts);
+    }
+    _events.add(SessionEvent(SessionEventKind.spellCast,
+        x: p.centerX, y: p.centerY));
+    return true;
   }
 
   void _onEnemyDeath(EnemyCore e) {

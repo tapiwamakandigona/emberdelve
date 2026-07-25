@@ -80,6 +80,7 @@ void main() {
         ...kWeapons.map((w) => w.id),
         ...kSkins.map((s) => s.id),
         ...kAbilities.map((a) => a.id),
+        ...kSpells.map((s) => s.id),
       ];
       expect(ids.toSet().length, ids.length);
     });
@@ -87,6 +88,9 @@ void main() {
     test('exactly one free starter weapon and skin', () {
       expect(kWeapons.where((w) => w.price == 0).length, 1);
       expect(kSkins.where((s) => s.price == 0).length, 1);
+      // Spells are deliberately premium-only (AKP-4d): the slot is a pure
+      // economy sink like AK's magic. No free starter spell, ever.
+      expect(kSpells.where((s) => s.price == 0), isEmpty);
     });
 
     test('stats sane', () {

@@ -193,6 +193,7 @@ Assembled by `tool/build_assets.py` from these verified packs (license checked o
 | Animated pixel-art treasure chests | dustdfg | https://opengameart.org/content/animated-pixel-art-treasure-chests | **CC-BY 4.0** (credited in CREDITS.md) | items/chest |
 | Mobile Controls | Kenney | https://kenney.nl/assets/mobile-controls | CC0 1.0 | hud buttons + icons; hud/btn_down.png is btn_left.png rotated 90° (tool/build_hud_extras.py) |
 | Dash icon | original (Tsoro Studios, drawn by tool/build_hud_extras.py) | this repo | CC0 1.0 | hud/icon_dash.png |
+| Spell icons | original (Tsoro Studios, drawn by tool/build_spell_icons.py) | this repo | CC0 1.0 | hud/icon_spell.png, shop/spell_ember_burst.png, shop/spell_stone_veil.png, shop/spell_hearth_light.png |
 
 Full per-pack evidence recorded at curation time (staging MANIFEST, 2026-07-24).
 
