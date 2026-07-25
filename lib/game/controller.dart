@@ -14,12 +14,107 @@ import '../data/dice.dart';
 import '../data/relics.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
+import '../sim/hashing.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
 
 class GameController extends ChangeNotifier {
   Sim? sim;
   MetaState meta = MetaState();
+
+  // -------------------------------------------------------------------------
+  // Per-field change ticks (perf, v0.3.15)
+  //
+  // This controller is a single ChangeNotifier, so `GameRoot` rebuilt the WHOLE
+  // active screen on every notifyListeners() — a die roll re-ran the combat
+  // screen's ~1000-line build() including the top bar, the enemy panel and the
+  // sprite stage, none of which read the dice. Scoping rebuilds *inside* the
+  // screens hit that ceiling (measured 1.7x and stuck).
+  //
+  // These notifiers fire only when the field they name actually changed value,
+  // detected by hashing the field after every notification (the sim's own
+  // deterministic hasher, `hashValue`). Because the detection hangs off an
+  // override of [notifyListeners], EVERY existing mutation path feeds them —
+  // there is no second place to remember to bump.
+  //
+  // Screens may listen to `this` (whole-screen rebuild, unchanged behaviour) or
+  // to the ticks they actually read. Ticks are never a substitute for reading
+  // state: consumers still read `state()` when they rebuild.
+  final ValueNotifier<int> phaseTick = ValueNotifier(0);
+  final ValueNotifier<int> turnTick = ValueNotifier(0);
+  final ValueNotifier<int> runTick = ValueNotifier(0);
+  final ValueNotifier<int> enemyTick = ValueNotifier(0);
+
+  /// Player HP / max HP / block only — NOT the dice.
+  final ValueNotifier<int> playerVitalsTick = ValueNotifier(0);
+
+  /// The dice pool and everything about this turn's roll: faces, assignment,
+  /// maxed flags, rerolls left, risky/free reroll state.
+  final ValueNotifier<int> diceTick = ValueNotifier(0);
+
+  /// Delve map (nodes, position) — the map screen's data.
+  final ValueNotifier<int> mapTick = ValueNotifier(0);
+
+  /// Meta/profile state (embers, unlocks, theme, tutorial flag).
+  final ValueNotifier<int> metaTick = ValueNotifier(0);
+
+  static const _vitalKeys = ['hp', 'max_hp', 'block'];
+  static const _diceKeys = [
+    'dice',
+    'rolled',
+    'rolled_max',
+    'assigned',
+    'rerolls_left',
+    'risky_used',
+    'free_reroll',
+  ];
+
+  final Map<String, int> _tickHash = {};
+
+  /// Bump [tick] when the hash of [value] changed since the last check.
+  void _syncTick(String key, ValueNotifier<int> tick, Object? value) {
+    final h = hashValue(17, value);
+    final prev = _tickHash[key];
+    if (prev == h) return;
+    _tickHash[key] = h;
+    // First observation seeds the hash without firing: nobody is listening to
+    // a value they have not read yet, and a spurious first tick would rebuild
+    // the very subtree that just built.
+    if (prev != null) tick.value++;
+  }
+
+  Map<String, Object?> _subset(Map? src, List<String> keys) => {
+    for (final k in keys)
+      if (src != null && src[k] != null) k: src[k],
+  };
+
+  @override
+  void notifyListeners() {
+    final st = sim?.state();
+    final player = st?['player'] as Map?;
+    _syncTick('phase', phaseTick, sim?.phase ?? 'none');
+    _syncTick('turn', turnTick, st?['turn']);
+    _syncTick('run', runTick, st?['run']);
+    _syncTick('enemy', enemyTick, st?['enemy']);
+    _syncTick('vitals', playerVitalsTick, _subset(player, _vitalKeys));
+    _syncTick('dice', diceTick, _subset(player, _diceKeys));
+    _syncTick('map', mapTick, st?['map']);
+    _syncTick('meta', metaTick, meta.toJson());
+    super.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    phaseTick.dispose();
+    turnTick.dispose();
+    runTick.dispose();
+    enemyTick.dispose();
+    playerVitalsTick.dispose();
+    diceTick.dispose();
+    mapTick.dispose();
+    metaTick.dispose();
+    super.dispose();
+  }
 
   /// Wired by main(); null in tests, so gameplay never depends on audio.
   AudioService? audio;
