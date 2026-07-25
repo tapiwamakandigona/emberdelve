@@ -39,7 +39,8 @@ void main() {
     expect(game.session.enemies.length, 1); // the tutorial thornling
     expect(game.session.signs[0].text, contains('JUMP'));
     expect(game.session.signs[1].text, contains('SWORD'));
-    expect(game.session.signs[2].text, contains('DOWN + JUMP'));
+    // AKP-2a: roll is taught via its dedicated button now (chord still works).
+    expect(game.session.signs[2].text, contains('DASH'));
     // M5 content pass: tutorial now meets world quotas (2 plain chests +
     // 2 secret chests in the cracked vault).
     expect(game.session.chestTotal, 4);
