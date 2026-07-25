@@ -207,4 +207,95 @@ void main() {
     c.update(dt, InputIntent()); // state machine settles next frame
     expect(c.state, PlayerState.hurt);
   });
+
+  // ---- AKP-2a: dedicated dash/roll button (InputIntent.rollPressed) -------
+
+  group('dash button (rollPressed)', () {
+    test('press on solid ground rolls: state, speed, i-frames, event', () {
+      final c = settle(flat);
+      var first = true;
+      step(c, 0.1, (i) {
+        if (first) {
+          i.rollPressed = true;
+          first = false;
+        }
+      });
+      final events = c.takeEvents();
+      expect(events, contains(PlayerEvent.rolled));
+      expect(events, isNot(contains(PlayerEvent.jumped)));
+      expect(c.state, PlayerState.roll);
+      expect(c.body.vx, closeTo(kRollSpeed * c.facing, 1));
+      expect(c.iFrames, greaterThan(0));
+    });
+
+    test('press in the air is dropped (ground-only, no buffering)', () {
+      final c = settle(flat);
+      // Jump, then press dash mid-air.
+      var jumped = false;
+      step(c, dt * 2, (i) {
+        if (!jumped) {
+          i.jumpPressed = true;
+          jumped = true;
+        }
+        i.jumpHeld = true;
+      });
+      c.takeEvents();
+      expect(c.body.onGround, isFalse, reason: 'must be airborne');
+      var pressed = false;
+      step(c, 0.1, (i) {
+        i.jumpHeld = true;
+        if (!pressed) {
+          i.rollPressed = true;
+          pressed = true;
+        }
+      });
+      expect(c.takeEvents(), isNot(contains(PlayerEvent.rolled)));
+      // And the dropped press must NOT fire later on landing (no buffer).
+      step(c, 1.0, (i) {});
+      expect(c.takeEvents(), isNot(contains(PlayerEvent.rolled)));
+    });
+
+    test('press respects the roll cooldown', () {
+      final c = settle(flat);
+      var first = true;
+      step(c, kRollDuration + 0.05, (i) {
+        if (first) {
+          i.rollPressed = true;
+          first = false;
+        }
+      });
+      c.takeEvents();
+      expect(c.rolling, isFalse);
+      var pressed = false;
+      step(c, 0.05, (i) {
+        if (!pressed) {
+          i.rollPressed = true;
+          pressed = true;
+        }
+      });
+      expect(c.takeEvents(), isNot(contains(PlayerEvent.rolled)),
+          reason: 'cooldown must block the dash button too');
+    });
+
+    test('press mid-attack is dropped', () {
+      final c = settle(flat);
+      var first = true;
+      step(c, dt * 2, (i) {
+        if (first) {
+          i.attackPressed = true;
+          first = false;
+        }
+      });
+      c.takeEvents();
+      expect(c.attacking, isTrue);
+      var pressed = false;
+      step(c, dt * 2, (i) {
+        if (!pressed) {
+          i.rollPressed = true;
+          pressed = true;
+        }
+      });
+      expect(c.takeEvents(), isNot(contains(PlayerEvent.rolled)));
+    });
+  });
 }

@@ -67,6 +67,17 @@ class EnemyComponent extends PositionComponent
         _main = await load('enemies/soot_creeper.png', 6, Vector2(36, 28), 0.14);
       case EnemyKind.cinderDiver:
         _main = await load('enemies/cinder_diver.png', 5, Vector2(32, 41), 0.1);
+      case EnemyKind.pyreWisp:
+        // Stage 2: bright pyre-gold recolor of the ashbat strip
+        // (tool/build_new_enemies.py, CC0 Sunny Land base).
+        _main = await load('enemies/pyre_wisp.png', 4, Vector2(40, 41), 0.09);
+      case EnemyKind.slagHound:
+        // Stage 2: molten recolor of the hopper strips; the jump strip is
+        // the crouch/charge pose (telegraph + charge read instantly).
+        _main =
+            await load('enemies/slag_hound.png', 4, Vector2(35, 32), 0.14);
+        _alt = await load(
+            'enemies/slag_hound_charge.png', 2, Vector2(35, 32), 0.10);
       case EnemyKind.groveGolem:
         // Boss: 2x-scaled, moss-tinted thornling composite (CC0 Sunny Land)
         // + rock.png for its lobbed rocks. No unverified art added.
@@ -106,6 +117,10 @@ class EnemyComponent extends PositionComponent
     if (core is HopperCore && _alt != null) {
       _show((core as HopperCore).airborne ? _alt! : _main!);
     }
+    if (core is SlagHoundCore && _alt != null) {
+      final h = core as SlagHoundCore;
+      _show(h.telegraphing || h.charging ? _alt! : _main!);
+    }
     if (!core.sleeping) _ticker?.update(dt);
   }
 
@@ -125,7 +140,12 @@ class EnemyComponent extends PositionComponent
     final sprite = ticker.getSprite();
     final w = sprite.srcSize.x, h = sprite.srcSize.y;
     canvas.save();
-    if (core.facing < 0) {
+    // ALL enemy strips in this art set face LEFT in the source frames
+    // (Sunny Land-derived bases + their recolors), while the player strips
+    // face RIGHT. So enemies mirror when facing RIGHT (facing > 0) — the
+    // opposite of the player. Getting this backwards makes every enemy
+    // moonwalk (owner-reported "enemies moving in reverse", 2026-07-25).
+    if (core.facing > 0) {
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
@@ -135,9 +155,13 @@ class EnemyComponent extends PositionComponent
         position: _drawPos,
         size: _drawSize,
         overridePaint: core.hurtFlash > 0 ? _flashPaint : _tint);
+    canvas.restore();
     if (core.kind == EnemyKind.rotshield) {
-      // Shield plate on the (post-flip) right edge = the facing side.
-      final rect = ui.Rect.fromLTWH(b.centerX + 8, b.top - 2, 5, b.h + 2);
+      // Shield plate on the facing side. Drawn OUTSIDE the mirror transform
+      // with an explicit facing offset, so it stays glued to the shield arm
+      // regardless of which way the body strip is mirrored.
+      final left = core.facing > 0 ? b.centerX + 8 : b.centerX - 13;
+      final rect = ui.Rect.fromLTWH(left, b.top - 2, 5, b.h + 2);
       canvas.drawRRect(
           ui.RRect.fromRectAndRadius(rect, const ui.Radius.circular(2)),
           _shieldPaint);
@@ -145,7 +169,6 @@ class EnemyComponent extends PositionComponent
           ui.Rect.fromLTWH(rect.left + 1, rect.top + 2, 1, rect.height - 4),
           _shieldRim);
     }
-    canvas.restore();
   }
 
   /// Stone base + fire crown; the fire dims while the totem recharges.
@@ -190,7 +213,9 @@ class EnemyComponent extends PositionComponent
     final sprite = ticker.getSprite();
     const w = 72.0, h = 56.0;
     canvas.save();
-    if (core.facing < 0) {
+    // Thornling-derived strip: source art faces LEFT, mirror when facing
+    // right (see the orientation note in render()).
+    if (core.facing > 0) {
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }

@@ -14,6 +14,7 @@ enum PlayerEvent {
   landed,
   attacked,
   rolled,
+  airDashed,
   hurt,
   died,
   droppedThrough,
@@ -46,6 +47,8 @@ class PlayerCore {
   double rollCooldown = 0;
   int comboIndex = 0; // 0..kComboHits-1, index of CURRENT swing
   int airJumpsUsed = 0;
+  bool airDashUsed = false; // AKP-2b: one air dash per airborne period
+  bool _airDashing = false; // current roll started mid-air (gravity off)
   bool wasOnGround = false;
   bool jumpWasHeld = false;
 
@@ -76,6 +79,7 @@ class PlayerCore {
   bool get attacking => attackTime > 0;
 
   bool get rolling => rollTime > 0;
+  bool get airDashing => _airDashing && rolling;
 
   /// Active attack hitbox (null when not in the damage window).
   ({double x, double y, double w, double h, int damage})? get attackHitbox {
@@ -143,6 +147,7 @@ class PlayerCore {
     if (grounded) {
       coyote = kCoyoteTime;
       airJumpsUsed = 0;
+      airDashUsed = false; // AKP-2b: landing re-arms the air dash
     }
     var dropThrough = false;
     if (jumpBuffer > 0 && !stunned && !rolling) {
@@ -158,13 +163,7 @@ class PlayerCore {
         // the roll cools down the press is consumed (never an accidental
         // jump — DOWN+JUMP always means "roll" on solid ground).
         jumpBuffer = 0;
-        if (!attacking && rollCooldown <= 0) {
-          rollTime = kRollDuration;
-          rollCooldown = kRollDuration + kRollCooldown;
-          if (iFrames < kRollIFrames) iFrames = kRollIFrames;
-          body.vx = facing * kRollSpeed;
-          _events.add(PlayerEvent.rolled);
-        }
+        _tryRoll();
       } else if (coyote > 0) {
         body.vy = -kJumpSpeed;
         coyote = 0;
@@ -177,6 +176,20 @@ class PlayerCore {
         _events.add(PlayerEvent.airJumped);
       }
     }
+    // AKP-2a: dedicated dash/roll button — same commit-dodge as the
+    // DOWN+JUMP chord. On the ground it is the classic roll; in the air
+    // (AKP-2b, owner-confirmed 2026-07-25) it is AK's air dash: a flat
+    // horizontal burst with gravity suspended, once per airborne period.
+    // Rejected presses are simply dropped: a dash button must never buffer
+    // into a surprise roll half a second later.
+    if (input.rollPressed && !stunned && !rolling) {
+      if (grounded) {
+        _tryRoll();
+      } else if (kAirDashEnabled && !airDashUsed) {
+        _tryRoll(air: true);
+      }
+    }
+
     // Variable height: releasing jump early cuts upward velocity.
     if (jumpWasHeld && !input.jumpHeld && body.vy < 0) {
       body.vy *= kJumpCutMultiplier;
@@ -203,6 +216,16 @@ class PlayerCore {
     } else if (body.vy > 0) {
       g = kGravity * kFallGravityMultiplier;
     }
+    // AKP-2b: an air dash holds its height — gravity fully suspended and
+    // vertical velocity zeroed for the whole dash window.
+    if (_airDashing) {
+      if (rolling) {
+        g = 0;
+        body.vy = 0;
+      } else {
+        _airDashing = false;
+      }
+    }
     body.vy += g * dt;
     if (body.vy > kMaxFallSpeed) body.vy = kMaxFallSpeed;
     integrate(body, dt, tileAt,
@@ -213,7 +236,7 @@ class PlayerCore {
 
     // --- hazards
     if (iFrames <= 0 && touchesHazard(body, tileAt)) {
-      damage(1, from: body.centerX);
+      damage(1, from: body.centerX, hazardEject: true);
     }
 
     // --- state
@@ -232,18 +255,47 @@ class PlayerCore {
     }
   }
 
+  /// Start a roll if allowed (not mid-attack, cooldown elapsed). Shared by
+  /// the DOWN+JUMP chord and the dedicated dash/roll button (AKP-2a).
+  /// With [air] (AKP-2b) it becomes the air dash: same speed/i-frames but
+  /// height is held for the duration and the charge arms only on landing.
+  void _tryRoll({bool air = false}) {
+    if (attacking || rollCooldown > 0) return;
+    rollTime = kRollDuration;
+    rollCooldown = kRollDuration + kRollCooldown;
+    if (iFrames < kRollIFrames) iFrames = kRollIFrames;
+    body.vx = facing * kRollSpeed;
+    if (air) {
+      airDashUsed = true;
+      _airDashing = true;
+      body.vy = 0;
+    }
+    _events.add(air ? PlayerEvent.airDashed : PlayerEvent.rolled);
+  }
+
   /// Apply [amount] hearts of damage from a source at x=[from].
   /// Returns true if damage landed (not invulnerable).
-  bool damage(int amount, {required double from}) {
+  ///
+  /// [hazardEject] (AKP-6b): hazard-tile damage launches the player up and
+  /// along the direction of travel so a pit throws you back OUT — the
+  /// normal knockback left you at the pit bottom, chain-dying every time
+  /// the i-frames lapsed.
+  bool damage(int amount, {required double from, bool hazardEject = false}) {
     if (iFrames > 0 || state == PlayerState.dead) return false;
     hearts -= amount;
     iFrames = kHurtIFrames;
     hurtTime = 0.25;
     attackTime = 0;
     rollTime = 0;
-    final dir = body.centerX >= from ? 1 : -1;
-    body.vx = dir * kKnockbackSpeed;
-    body.vy = -kKnockbackSpeed * 0.6;
+    if (hazardEject) {
+      final travel = body.vx.abs() > 5 ? body.vx.sign : -facing.toDouble();
+      body.vx = travel * kHazardEjectSpeedX;
+      body.vy = -kHazardEjectSpeedY;
+    } else {
+      final dir = body.centerX >= from ? 1 : -1;
+      body.vx = dir * kKnockbackSpeed;
+      body.vy = -kKnockbackSpeed * 0.6;
+    }
     body.onGround = false;
     if (hearts <= 0) {
       hearts = 0;

@@ -11,6 +11,8 @@ import 'dart:math' as math;
 
 import 'core_loadout.dart';
 import '../core/rng.dart';
+import 'difficulty.dart';
+import '../meta/catalog.dart' show SpellEffect;
 import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
 import 'input_intent.dart';
@@ -39,6 +41,7 @@ enum SessionEventKind {
   emberShotBroke, // data: x,y — ember hit terrain / player / limits
   levelComplete,
   levelFailed,
+  spellCast, // AKP-4d: data x,y = player centre; one cast per run
 }
 
 class SessionEvent {
@@ -127,6 +130,8 @@ class LevelResults {
 class LevelSession {
   final LevelData level;
   final Loadout loadout;
+  final Difficulty difficulty; // Stage 2: scales enemy behaviour only
+  DifficultyMods get mods => DifficultyMods.of(difficulty);
   late final PlayerCore player;
   final Rng combatRng;
   final Rng dropsRng;
@@ -164,6 +169,7 @@ class LevelSession {
   int kills = 0;
   int secretsFound = 0;
   double hitPause = 0;
+  bool spellUsed = false; // AKP-4d: the equipped spell's single run charge
   bool completed = false;
   bool failed = false;
   bool get over => completed || failed;
@@ -186,7 +192,8 @@ class LevelSession {
   final List<SessionEvent> _events = [];
   final List<PlayerEvent> _playerEvents = [];
 
-  LevelSession(this.level, this.loadout, {int seed = 0})
+  LevelSession(this.level, this.loadout,
+      {int seed = 0, this.difficulty = Difficulty.medium})
       : combatRng = Rng.create(seed, 'combat'),
         dropsRng = Rng.create(seed, 'drops') {
     grid = [
@@ -205,7 +212,9 @@ class LevelSession {
       x: p.x * kTileSize + 2,
       y: (p.y + 1) * kTileSize - 20,
       tileAt: tileAt,
-      maxHearts: loadout.maxHearts,
+      // Easy grants one heart of slack (difficulty.dart); enemy stats are
+      // never scaled, so this is the only stat knob difficulty touches.
+      maxHearts: loadout.maxHearts + mods.bonusHearts,
       weaponDamage: loadout.weapon.damage,
       weaponRange: loadout.weapon.range,
       extraAirJumps: loadout.extraAirJumps,
@@ -249,6 +258,10 @@ class LevelSession {
               x: cx - 12, y: (s.y + 1) * kTileSize - 22));
         case SpawnKind.cinderDiver:
           enemies.add(CinderDiverCore(x: cx - 14, y: cy - 12));
+        case SpawnKind.pyreWisp:
+          enemies.add(PyreWispCore(x: cx - 13, y: cy - 11));
+        case SpawnKind.slagHound:
+          enemies.add(SlagHoundCore(x: cx - 13, y: cy - 11));
         case SpawnKind.player:
           break;
         case SpawnKind.exit:
@@ -271,10 +284,16 @@ class LevelSession {
       if (tx == null || ty == null) continue;
       addHopper(tx * kTileSize + 2, (ty + 1) * kTileSize - 22);
     }
+
+    // Stage 2 difficulty: stamp the behaviour mods onto every enemy once.
+    for (final e in enemies) {
+      e.mods = mods;
+    }
   }
 
   /// Spawn a hopper explicitly (used by tests and, later, level scripting).
-  void addHopper(double x, double y) => enemies.add(HopperCore(x: x, y: y));
+  void addHopper(double x, double y) =>
+      enemies.add(HopperCore(x: x, y: y)..mods = mods);
 
   TileKind tileAt(int tx, int ty) {
     if (tx < 0 || tx >= level.width) return TileKind.solid;
@@ -633,6 +652,45 @@ class LevelSession {
         b.top < exitY) {
       _complete();
     }
+  }
+
+  /// AKP-4d: whether the spell button should show (spell equipped, charge
+  /// unspent, run still live).
+  bool get spellReady => loadout.spell != null && !spellUsed && !over;
+
+  /// Cast the equipped spell (AKP-4d). One charge per run. Returns true if
+  /// the cast happened. Spells ignore Rotshield block — magic pierces
+  /// shields, which is the slot's identity vs the sword.
+  bool castSpell() {
+    if (!spellReady || player.state == PlayerState.dead) return false;
+    spellUsed = true;
+    final p = player.body;
+    switch (loadout.spell!.effect) {
+      case SpellEffect.emberBurst:
+        for (final e in enemies) {
+          if (!e.alive || e.sleeping) continue;
+          final dx = e.centerX - p.centerX;
+          final dy = e.centerY - p.centerY;
+          if (dx * dx + dy * dy <=
+              kSpellBurstRadius * kSpellBurstRadius) {
+            e.damage(kSpellBurstDamage);
+            if (e.alive) e.burnLeft = 3.0;
+            _events.add(SessionEvent(SessionEventKind.enemyHit,
+                x: e.centerX, y: e.centerY));
+            if (!e.alive) _onEnemyDeath(e);
+          }
+        }
+      case SpellEffect.stoneVeil:
+        if (player.iFrames < kSpellVeilSeconds) {
+          player.iFrames = kSpellVeilSeconds;
+        }
+      case SpellEffect.hearthLight:
+        player.hearts =
+            math.min(player.maxHearts, player.hearts + kSpellHealHearts);
+    }
+    _events.add(SessionEvent(SessionEventKind.spellCast,
+        x: p.centerX, y: p.centerY));
+    return true;
   }
 
   void _onEnemyDeath(EnemyCore e) {

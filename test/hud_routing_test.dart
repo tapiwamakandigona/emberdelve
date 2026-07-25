@@ -42,8 +42,21 @@ Future<EmberGame> bootGame() async {
   return game;
 }
 
-/// Canvas point (800x450 canvas -> 480x270 view, scale 5/3) of a view point.
-Offset canvasPoint(double vx, double vy) => Offset(vx * 5 / 3, vy * 5 / 3);
+/// Canvas point (800x450 canvas -> viewWidth x viewHeight view) of a view
+/// point. Derived from EmberGame's constants so camera-zoom changes (AKP-1)
+/// never silently invalidate these routing tests.
+Offset canvasPoint(double vx, double vy) => Offset(
+    vx * 800 / EmberGame.viewWidth, vy * 800 / EmberGame.viewWidth);
+
+/// Canvas-space centre of the HUD button using [spritePath] — geometry is
+/// read from the mounted game, not hard-coded, so layout passes (AKP-5)
+/// keep these tests honest: they verify ROUTING, not pixel positions.
+Offset buttonCentre(EmberGame game, String spritePath) {
+  final b = game.camera.viewport.children
+      .whereType<HudHoldButton>()
+      .firstWhere((c) => c.spritePath == spritePath);
+  return canvasPoint(b.position.x + b.size.x / 2, b.position.y + b.size.y / 2);
+}
 
 TapDownDetails tapDown(Offset global) =>
     TapDownDetails(globalPosition: global, localPosition: global);
@@ -51,13 +64,10 @@ TapDownDetails tapDown(Offset global) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // HUD geometry (ember_game.dart): btn=52 pad=8, bottomY=210.
-  final rightBtn = canvasPoint(92, 236); // right arrow centre
-  final leftBtn = canvasPoint(34, 236); // left arrow centre
-
   test('hit test resolves the arrow buttons, not the hidden throw button',
       () async {
     final game = await bootGame();
+    final rightBtn = buttonCentre(game, 'hud/btn_right.png');
     expect(game.session.applesHeld, 0, reason: 'no apples at spawn');
     final hitsRight = game
         .componentsAtPoint(Vector2(rightBtn.dx, rightBtn.dy))
@@ -73,6 +83,8 @@ void main() {
 
   test('held tap on right/left arrows moves the player', () async {
     final game = await bootGame();
+    final rightBtn = buttonCentre(game, 'hud/btn_right.png');
+    final leftBtn = buttonCentre(game, 'hud/btn_left.png');
     final x0 = game.session.player.body.centerX;
 
     // Press right arrow via the real game-level gesture API.
@@ -107,6 +119,7 @@ void main() {
   test('thumb drift (tap cancel -> drag takeover) keeps the button held',
       () async {
     final game = await bootGame();
+    final rightBtn = buttonCentre(game, 'hud/btn_right.png');
     final x0 = game.session.player.body.centerX;
 
     // Real arena sequence when a held thumb drifts past the touch slop:
@@ -138,6 +151,7 @@ void main() {
   test('genuine tap cancel (no drag takeover) releases within one frame',
       () async {
     final game = await bootGame();
+    final leftBtn = buttonCentre(game, 'hud/btn_left.png');
     game.handleTapDown(4, tapDown(leftBtn));
     expect(game.touchLeft, isTrue);
     game.handleTapCancel(4); // e.g. app backgrounded — no dragStart follows

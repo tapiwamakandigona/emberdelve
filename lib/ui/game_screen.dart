@@ -50,6 +50,18 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Safe-area pass (2026-07-25): the game canvas stays edge-to-edge (no
+    // letterboxing the world), but the touch HUD inside EmberGame is inset
+    // so no control sits under a display cutout or the gesture/3-button nav
+    // bar. viewPadding (not padding) so hidden-but-reappearing system bars
+    // in immersive modes are still respected.
+    final mq = MediaQuery.of(context);
+    _game.setSafeArea(EdgeInsets.fromLTRB(
+      mq.viewPadding.left,
+      mq.viewPadding.top,
+      mq.viewPadding.right,
+      mq.viewPadding.bottom,
+    ));
     return Scaffold(
       backgroundColor: Colors.black,
       body: GameWidget<EmberGame>(

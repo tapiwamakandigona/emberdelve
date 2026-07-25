@@ -91,9 +91,12 @@ class AudioService {
   AudioPlayer? _ambience;
   AudioPlayer? _danger;
 
-  final List<AudioPlayer> _sfxPool = [];
-  int _sfxNext = 0;
-  static const _sfxPoolSize = 6;
+  // SFX voices: per-id players prepared ONCE, then replayed with a cheap
+  // native stop+resume. See [playSfx] for why this is load-bearing for
+  // frame pacing (the previous design caused gameplay stutter).
+  final Map<String, List<AudioPlayer>> _sfx = {};
+  final Map<String, int> _sfxNext = {};
+  static const _sfxVoicesPerId = 2;
 
   // -- Music ----------------------------------------------------------------
 
@@ -208,19 +211,45 @@ class AudioService {
 
   // -- SFX --------------------------------------------------------------------
 
+  /// One-shot SFX with prepared, low-latency voices (movement-stutter fix,
+  /// owner-reported 2026-07-25).
+  ///
+  /// The previous implementation round-robined 6 shared players and called
+  /// `p.play(AssetSource(path))` on EVERY shot — audioplayers re-sets the
+  /// source each time, which on Android is a full MediaPlayer release +
+  /// setDataSource + prepare on the platform thread. Footsteps fire every
+  /// 0.26 s while running, so the game hitched rhythmically exactly during
+  /// movement.
+  ///
+  /// Now each sfx id lazily gets [_sfxVoicesPerId] players in
+  /// [PlayerMode.lowLatency] (Android: SoundPool) with the source set ONCE
+  /// — SoundPool keeps the decoded sample loaded and shares the soundId
+  /// between voices of the same asset. Each shot is then stop() + resume(),
+  /// a cheap native replay with zero re-preparation (verified against
+  /// audioplayers 6.6.0 / audioplayers_android 5.2.1 internals). Two voices
+  /// per id let rapid repeats (coin bursts, combo swings) overlap instead
+  /// of cutting each other off.
   Future<void> playSfx(String id, {double volume = 1.0}) async {
     final path = sfxPaths[id];
     if (path == null) return;
     final v = settings.effectiveSfx * volume;
     if (v <= 0) return;
     try {
-      if (_sfxPool.length < _sfxPoolSize) {
-        _sfxPool.add(AudioPlayer()..setReleaseMode(ReleaseMode.stop));
+      final voices = _sfx[id] ??= [];
+      if (voices.length < _sfxVoicesPerId) {
+        final p = AudioPlayer();
+        voices.add(p);
+        // Order matters: mode must be set before the source is attached.
+        await p.setPlayerMode(PlayerMode.lowLatency);
+        await p.setReleaseMode(ReleaseMode.stop);
+        await p.setSource(AssetSource(path));
       }
-      final p = _sfxPool[_sfxNext % _sfxPool.length];
-      _sfxNext++;
+      final n = (_sfxNext[id] ?? -1) + 1;
+      _sfxNext[id] = n;
+      final p = voices[n % voices.length];
       await p.stop();
-      await p.play(AssetSource(path), volume: v.clamp(0.0, 1.0));
+      await p.setVolume(v.clamp(0.0, 1.0));
+      await p.resume();
     } catch (_) {}
   }
 
@@ -233,8 +262,11 @@ class AudioService {
     try {
       _music?.pause();
       _ambience?.pause();
-      for (final p in _sfxPool) {
-        p.stop();
+      _danger?.pause();
+      for (final voices in _sfx.values) {
+        for (final p in voices) {
+          p.stop();
+        }
       }
     } catch (_) {}
   }
@@ -244,6 +276,7 @@ class AudioService {
     try {
       _music?.resume();
       _ambience?.resume();
+      _danger?.resume();
     } catch (_) {}
   }
 
