@@ -176,6 +176,12 @@ void main() {
     final dir = Directory('$outDir/save')..createSync(recursive: true);
     final c = GameController(saveDirOverride: dir.path);
     await tester.binding.runAsync(() => c.boot());
+    // HARNESS BUG, fixed 2026-07-25: the probe boots a FRESH save, so the
+    // first-fight tutorial overlay covered the combat screen — its scrim ate
+    // the "rapid tap" gestures (they never reached Roll/Reroll) and its own
+    // layers were counted in the combat paint totals. Measure the game, not
+    // the tutorial.
+    c.markTutorialSeen();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -233,6 +239,40 @@ void main() {
         await pumpFrames(tester, 60);
       });
 
+      // -- 4b. Combat die-selection tap storm -----------------------------
+      // Pure-UI state: tapping dice only toggles `selected`, no sim command.
+      // This is the \"tapping around the tray feels heavy\" case and it is the
+      // one a scoped rebuild can actually fix (sim commands rebuild the
+      // screen through the controller no matter what).
+      // Dice are only tappable once they are on the table, so roll first
+      // (and let the throw cascade settle) before measuring.
+      final rollBtn = buttonWithLabel('Roll');
+      if (rollBtn.evaluate().isNotEmpty) {
+        await tester.tap(rollBtn.first, warnIfMissed: false);
+        await pumpFrames(tester, 60);
+      }
+      drain(tester);
+      final chips = find.byWidgetPredicate(
+        (w) => w is DieChip && w.onTap != null,
+      );
+      // ignore: avoid_print
+      print('PERF tappable dice=${chips.evaluate().length}');
+      if (chips.evaluate().isNotEmpty) {
+        await measure(tester, 'combat_die_tap_storm_12', () async {
+          for (var i = 0; i < 12; i++) {
+            final f = find.byWidgetPredicate(
+              (w) => w is DieChip && w.onTap != null,
+            );
+            if (f.evaluate().isEmpty) break;
+            final n = f.evaluate().length;
+            await tester.tap(f.at(i % n), warnIfMissed: false);
+            await pumpFrames(tester, 5);
+          }
+          await pumpFrames(tester, 20);
+        });
+      }
+      drain(tester);
+
       // -- 5. Combat rapid tap storm --------------------------------------
       // Hammer the primary action button the way an impatient player does.
       // Real taps, hammered: the impatient-player case. Re-finds the primary
@@ -251,6 +291,61 @@ void main() {
         }
         await pumpFrames(tester, 20);
       });
+    }
+    drain(tester);
+
+    // -- 6. Reward flip ceremony -----------------------------------------
+    // Drive the bot until the reward screen opens, then measure the staggered
+    // card flip (cards flip at 220/460/700ms, 440ms each => ~1.2s of turn).
+    var guard2 = 0;
+    while (c.phase != 'reward' && guard2++ < 400) {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+      await pumpFrames(tester, 1);
+    }
+    drain(tester);
+    // ignore: avoid_print
+    print('PERF reached phase=${c.phase} after $guard2 bot commands');
+    if (c.phase == 'reward') {
+      await measure(tester, 'reward_flip_90f', () async {
+        await pumpFrames(tester, 90);
+      });
+    }
+    drain(tester);
+
+    // -- 7. Map screen ----------------------------------------------------
+    // The map's reachable-node glow pulses forever, so \"idle\" is the cost the
+    // player actually pays while deciding where to go.
+    var guard3 = 0;
+    while (c.phase != 'map' && guard3++ < 200) {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+      await pumpFrames(tester, 2);
+    }
+    drain(tester);
+    // ignore: avoid_print
+    print('PERF reached phase=${c.phase} after $guard3 bot commands');
+    if (c.phase == 'map') {
+      await pumpFrames(tester, 60); // let the auto-follow scroll settle
+      await measure(tester, 'map_idle_60f', () async {
+        await pumpFrames(tester, 60);
+      });
+      // A drag on the delve: scrolling while the glow pulses is the worst
+      // case (every node repaints inside a moving viewport).
+      final scroller = find.byType(SingleChildScrollView);
+      if (scroller.evaluate().isNotEmpty) {
+        await measure(tester, 'map_drag_60f', () async {
+          final g = await tester.startGesture(tester.getCenter(scroller.first));
+          for (var i = 0; i < 30; i++) {
+            await g.moveBy(const Offset(0, 4));
+            await pumpFrames(tester, 1);
+          }
+          await g.up();
+          await pumpFrames(tester, 30);
+        });
+      }
     }
     drain(tester);
 
