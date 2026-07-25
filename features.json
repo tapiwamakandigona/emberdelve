@@ -61,8 +61,8 @@
       "id": "P-M8",
       "title": "Game-feel & retention polish: medals economy, results juice, daily delve",
       "acceptance": "Results screen shows per-medal breakdown (time/chests/no-hit) with replay CTA; 3-medal completion pays a documented coin bonus; optional seeded 'Daily Delve' remix of a World 1 level (deterministic via lib/core/rng.dart daily seed) with its own best-run record on the title screen; no dark patterns (no streak decay, no FOMO copy) verified against spec section 7; tests cover medal calc + daily seed determinism",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "Results overlay (lib/ui/game_screen.dart _ResultsOverlay) shows per-medal breakdown (Finished/All chests/Low damage) + Replay CTA (pre-existing, M0-M5). 3-medal bonus: kPerfectClearBonus=25 in tuning.dart, LevelResults.perfectBonus/totalCoins, persisted via _persistResults, 'PERFECT! +25 coins' callout (commit a980f15). Daily Delve: lib/meta/daily.dart deterministic date->seed->level (pool w1_l2..w1_l5), title-screen button with today's best, daily runs never touch campaign records, per-day best in save schema (commit 7595ce2). No streaks/decay/FOMO copy. Tests: session_test perfect-bonus cases + test/daily_test.dart determinism/round-trip; flutter analyze clean, 153/153 tests pass. Note: medal set is finished/all-chests/low-damage per shipped design (acceptance's 'time/chests/no-hit' wording predates it)."
     },
     {
       "id": "P-M9",

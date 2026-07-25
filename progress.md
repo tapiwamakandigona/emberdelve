@@ -451,3 +451,21 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   (medal economy, Daily Delve, no dark patterns), M9 World 2 “Cinder Depths”, M10
   v1.0.0-beta.1 to the Play closed-testing track. Rationale: alpha is feature-complete for
   World 1; the riskiest unknown is real-device performance, so it gates content expansion.
+
+---
+## 2026-07-25 — M8 shipped: medal economy + Daily Delve (orchestrator)
+- Perfect-clear bonus (a980f15): kPerfectClearBonus=25 coins paid on every 3-medal run
+  (finished + all chests + low damage). LevelResults.perfectBonus/totalCoins; wallet
+  persist uses totalCoins; results overlay shows a gold "PERFECT! +25 coins" callout.
+  Per-medal breakdown + Replay CTA already existed from M0–M5 — not rebuilt.
+- Daily Delve (7595ce2): lib/meta/daily.dart — pure-Dart date→seed (hashDomainString on
+  'daily:YYYY-MM-DD') → level pick from w1_l2..w1_l5 via core Rng. Same remix for every
+  player on the same date, stable across restarts. Title-screen DAILY DELVE button shows
+  today's level + today's best. Daily runs pay wallet normally but never write campaign
+  LevelRecords (no unlock skew); per-day best stored in save (field-tolerant, old saves
+  default cleanly, no schema bump). Deliberately no streaks/decay/FOMO copy (spec §7).
+- Note: acceptance wording said "time/chests/no-hit" medals; shipped design is
+  finished/all-chests/low-damage — interpreted against the existing design, no churn.
+- Evidence: flutter analyze clean; 153/153 tests (was 143) incl. new perfect-bonus
+  session tests + test/daily_test.dart (determinism, pool bounds, rotation, save
+  round-trip, legacy-save defaults). P-M8 flipped.
