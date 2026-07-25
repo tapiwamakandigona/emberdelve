@@ -481,3 +481,14 @@ table, lessons): `checkpoints/05-play-closed-testing-day1.md`.
   HoldButtonCore (limbo hand-off across tapCancel→dragStart, per-frame tick for
   genuine cancels, multi-touch safe). Regression suite test/hold_button_test.dart.
   160/160 tests, analyze clean. Version bumped to 1.0.0-alpha.2+14 for the fixed build.
+
+---
+## 2026-07-25 — v1.0.0-alpha.2 prerelease published (orchestrator)
+- CI run 30142485118 on 6cc9e00: green; APK cert verified in CI against the permanent
+  upload key (031acb42…7a0d). 160/160 tests, analyze clean.
+- Published https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.2
+  with universal APK (36.8 MB) + AAB, SHA-256s in notes. Notes call out the movement
+  fix, Perfect Clear bonus, Daily Delve, and the honest OPEN items (device frame
+  budget / cold start unmeasured; World 2 not started).
+- Session wrap: P-M7 partial (allocation pass done, hardware metrics OPEN),
+  P-M8 done, P-M9 (World 2) + P-M10 (beta.1) remain open for next session.
