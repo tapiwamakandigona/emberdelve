@@ -208,36 +208,70 @@ class EmberGame extends FlameGame
     AudioService.instance?.playMusic(session.level.music);
   }
 
+  // AKP-5 (docs/ak-parity-plan.md §5): AK-style control layout.
+  // Bottom-left: left/right arrows + a down-chevron (peek/drop-through —
+  // finally wires touchDown, AKP-2c). Bottom-right: 4-button diamond —
+  // jump (biggest, bottom-right), sword (left of it), dash (top-left),
+  // apple (top-right, auto-hides). Pause >= 44 logical px (AKP-5b).
   void _buildHud() {
-    const btn = 52.0;
+    const btn = 52.0; // arrows + sword
+    const jumpBtn = 56.0; // jump reads biggest, AK-style
+    const smallBtn = 44.0; // dash / apple / down / pause (>= 48dp at 216p)
     const pad = 8.0;
+    const gap = 6.0;
     final bottomY = viewHeight - btn - pad;
+    final jumpX = viewWidth - pad - jumpBtn;
+    final jumpY = viewHeight - pad - jumpBtn;
+    final swordX = jumpX - btn - gap;
+    final swordY = viewHeight - pad - btn;
     camera.viewport.addAll([
       HudHoldButton(
         spritePath: 'hud/btn_left.png',
         position: Vector2(pad, bottomY),
         size: Vector2.all(btn),
+        spawnFade: true,
         onPressed: () => touchLeft = true,
         onReleased: () => touchLeft = false,
       ),
       HudHoldButton(
         spritePath: 'hud/btn_right.png',
-        position: Vector2(pad + btn + 6, bottomY),
+        position: Vector2(pad + btn + gap, bottomY),
         size: Vector2.all(btn),
+        spawnFade: true,
         onPressed: () => touchRight = true,
         onReleased: () => touchRight = false,
       ),
-      // Throw (apple) button sits above the sword button; HudThrowButton
+      // Down chevron (AKP-2c): camera peek-down + drop-through one-way
+      // platforms — previously keyboard-only on the touch build.
+      HudHoldButton(
+        spritePath: 'hud/btn_down.png',
+        position:
+            Vector2(pad + btn * 2 + gap * 2, viewHeight - pad - smallBtn),
+        size: Vector2.all(smallBtn),
+        spawnFade: true,
+        onPressed: () => touchDown = true,
+        onReleased: () => touchDown = false,
+      ),
+      // Throw (apple) button: diamond top-right, above jump; HudThrowButton
       // hides itself whenever the pouch is empty.
       HudThrowButton(
-        position: Vector2(viewWidth - pad - btn * 2 - 6, bottomY - btn * 0.8 - 6),
-        size: Vector2.all(btn * 0.8),
+        position: Vector2(jumpX + jumpBtn - smallBtn, jumpY - smallBtn - gap),
+        size: Vector2.all(smallBtn),
         onPressed: () => _touchThrowEdge = true,
+      ),
+      // Dash/roll (AKP-2a): diamond top-left, above the sword.
+      HudHoldButton(
+        spritePath: 'hud/btn_round.png',
+        iconPath: 'hud/icon_dash.png',
+        position: Vector2(swordX, swordY - smallBtn - gap),
+        size: Vector2.all(smallBtn),
+        onPressed: () => _touchRollEdge = true,
+        onReleased: () {},
       ),
       HudHoldButton(
         spritePath: 'hud/btn_round.png',
         iconPath: 'hud/icon_sword.png',
-        position: Vector2(viewWidth - pad - btn * 2 - 6, bottomY),
+        position: Vector2(swordX, swordY),
         size: Vector2.all(btn),
         onPressed: () => _touchAttackEdge = true,
         onReleased: () {},
@@ -245,8 +279,8 @@ class EmberGame extends FlameGame
       HudHoldButton(
         spritePath: 'hud/btn_round.png',
         iconPath: 'hud/icon_jump.png',
-        position: Vector2(viewWidth - pad - btn, bottomY),
-        size: Vector2.all(btn),
+        position: Vector2(jumpX, jumpY),
+        size: Vector2.all(jumpBtn),
         onPressed: () {
           _touchJumpEdge = true;
           _touchJumpHeld = true;
@@ -255,8 +289,8 @@ class EmberGame extends FlameGame
       ),
       HudHoldButton(
         spritePath: 'hud/icon_pause.png',
-        position: Vector2(viewWidth - 26, 6),
-        size: Vector2.all(20),
+        position: Vector2(viewWidth - smallBtn - gap, 6),
+        size: Vector2.all(smallBtn),
         onPressed: pauseGame,
         onReleased: () {},
       ),

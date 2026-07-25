@@ -22,17 +22,28 @@ import '../hold_button_core.dart';
 /// button pressed across that hand-off (see its header for the full story).
 class HudHoldButton extends SpriteComponent
     with TapCallbacks, DragCallbacks, HasGameReference<EmberGame> {
+  // AKP-5c: idle buttons sit at ~0.55 opacity (AK-style) so they stop
+  // visually blocking pickups; a pressed button snaps to full opacity.
+  static const _idleColor = ui.Color(0x8CFFFFFF);
+  static const _pressedColor = ui.Color(0xFFFFFFFF);
+  // AKP-5c: movement buttons additionally fade for the first second after
+  // spawn so the player is never hidden behind them on levels that spawn
+  // near the screen's left edge.
+  static const _spawnFadeColor = ui.Color(0x40FFFFFF);
+  static const _spawnFadeSeconds = 1.0;
+
   final String spritePath;
   final String? iconPath;
+  final bool spawnFade;
   final void Function() onPressed;
   final void Function() onReleased;
   SpriteComponent? _icon;
   late final HoldButtonCore _core;
 
-
   HudHoldButton({
     required this.spritePath,
     this.iconPath,
+    this.spawnFade = false,
     required this.onPressed,
     required this.onReleased,
     required Vector2 position,
@@ -40,14 +51,14 @@ class HudHoldButton extends SpriteComponent
   }) : super(position: position, size: size, priority: 10) {
     paint = ui.Paint()
       ..filterQuality = ui.FilterQuality.none
-      ..color = const ui.Color(0xAAFFFFFF);
+      ..color = _idleColor;
     _core = HoldButtonCore(
       onPressed: () {
-        paint.color = const ui.Color(0xFFFFFFFF);
+        paint.color = _pressedColor;
         onPressed();
       },
       onReleased: () {
-        paint.color = const ui.Color(0xAAFFFFFF);
+        paint.color = _idleColor;
         onReleased();
       },
     );
@@ -74,6 +85,11 @@ class HudHoldButton extends SpriteComponent
   void update(double dt) {
     super.update(dt);
     _core.tick();
+    if (spawnFade && !_core.pressed) {
+      paint.color = game.session.time < _spawnFadeSeconds
+          ? _spawnFadeColor
+          : _idleColor;
+    }
   }
 
   @override
@@ -183,7 +199,10 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   final _chestText = _HudText(_text, 17, 42);
   final _featherText = _HudText(_text, 17, 53);
   final _timerText = _HudText(_text, EmberGame.viewWidth / 2, 6, centerX: true);
-  final _bossName = _HudText(_text, EmberGame.viewWidth / 2, _barTop - 10, centerX: true);
+  // AKP-5d: boss name sits BELOW the bar — at _barTop - 10 it overlapped
+  // the level timer (both top-centre).
+  final _bossName =
+      _HudText(_text, EmberGame.viewWidth / 2, _barTop + _barH + 3, centerX: true);
 
   // Fixed geometry, allocated once (icon positions/sizes never change).
   static final _coinPos = Vector2(4, 16);
@@ -194,7 +213,9 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   static final _featherSize = Vector2(11, 10);
 
   // Boss bar geometry (constant), precomputed once.
-  static const _barW = 180.0, _barH = 6.0, _barTop = 18.0;
+  // Bar top at 20: the timer text (y=6, 8px font) ends ~y16 — bar + name
+  // stack cleanly under it (AKP-5d).
+  static const _barW = 180.0, _barH = 6.0, _barTop = 20.0;
   static const _barLeft = (EmberGame.viewWidth - _barW) / 2;
   static final _bossBackRRect = ui.RRect.fromRectAndRadius(
       const ui.Rect.fromLTWH(_barLeft - 1, _barTop - 1, _barW + 2, _barH + 2),
