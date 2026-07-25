@@ -191,6 +191,16 @@ class _ResultsOverlay extends StatelessWidget {
       _medal('Finished', results.finished),
       _medal('All chests', results.allChests),
       _medal('Low damage', results.lowDamage),
+      if (results.perfectBonus > 0) ...[
+        const SizedBox(height: 8),
+        Text('PERFECT!  +${results.perfectBonus} coins',
+            style: const TextStyle(
+                fontFamily: 'Cinzel',
+                fontSize: 14,
+                letterSpacing: 2,
+                color: Color(0xFFE8A33D),
+                fontWeight: FontWeight.bold)),
+      ],
       const SizedBox(height: 16),
       Row(mainAxisSize: MainAxisSize.min, children: [
         TextButton(onPressed: onReplay, child: const Text('Replay')),

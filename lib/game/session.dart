@@ -114,6 +114,12 @@ class LevelResults {
     required this.lowDamage,
   });
   int get medals => (finished ? 1 : 0) + (allChests ? 1 : 0) + (lowDamage ? 1 : 0);
+
+  /// Extra coins for a 3-medal run (see kPerfectClearBonus in tuning.dart).
+  int get perfectBonus => medals == 3 ? kPerfectClearBonus : 0;
+
+  /// What the wallet actually receives for this run.
+  int get totalCoins => coinsEarned + perfectBonus;
 }
 
 class LevelSession {
