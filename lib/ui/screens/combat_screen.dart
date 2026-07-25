@@ -89,6 +89,21 @@ class _CombatScreenState extends State<CombatScreen> {
         if (mounted) setState(() => _splash = false);
       });
     }
+    // LFP-6a: overkill splash carried into THIS enemy — call the dent out on
+    // the stage (the enemy opens below max HP by design, not by bug). Delayed
+    // past the flame wipe so the call-out lands on a readable stage.
+    final splashIn = widget.c.takeSplashIn();
+    if (splashIn != null && splashIn > 0) {
+      Future.delayed(const Duration(milliseconds: 900), () {
+        if (!mounted) return;
+        _note(
+          'OVERKILL SPLASH −$splashIn',
+          color: EmberColors.ember,
+          icon: Icons.double_arrow,
+          onEnemy: true,
+        );
+      });
+    }
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
@@ -855,7 +870,10 @@ class _CombatScreenState extends State<CombatScreen> {
                     Text(
                       freeReroll
                           ? 'Pick dice to reroll — FREE this turn'
-                          : 'Pick dice to reroll — each lands −1 pip',
+                          // LFP-6b: "each lands −1 pip" read as "−1 from the
+                          // CURRENT face"; the actual rule is reroll first,
+                          // THEN subtract 1 (a rolled 1 can come back higher).
+                          : 'Pick dice to reroll — new face −1 pip',
                       style: EmberText.micro.copyWith(
                         color: freeReroll
                             ? EmberColors.success
@@ -950,7 +968,7 @@ class _CombatScreenState extends State<CombatScreen> {
                                 ? 'Reroll spent'
                                 : freeReroll
                                 ? 'Risky reroll · FREE'
-                                : 'Risky reroll · −1 pip',
+                                : 'Risky reroll · new face −1',
                             dense: compact,
                             icon: Icons.casino,
                             onTap: riskyUsed || _busy
