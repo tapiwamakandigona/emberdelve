@@ -244,3 +244,10 @@ two-tone ember tint → 20px pixelation → x4 nearest → 80x80 PNG under
 | shop/ability_apple_pouch.png | shiny-apple.svg | Lorc | CC BY 3.0 |
 | shop/ability_haggler.png | price-tag.svg | Delapouite | CC BY 3.0 |
 | shop/ability_chest_radar.png | radar-sweep.svg | Lorc | CC BY 3.0 |
+
+## Footsteps — added 2026-07-25
+
+| File | Source file | Pack / Work | Author | License | Modifications |
+|---|---|---|---|---|---|
+| sfx/step1.ogg | sfx100v2_footstep_01.ogg | 100 CC0 SFX #2 (RD-100) | rubberduck | CC0 | gain −8 dB, trimmed 0.22 s |
+| sfx/step2.ogg | sfx100v2_footstep_02.ogg | 100 CC0 SFX #2 (RD-100) | rubberduck | CC0 | gain −8 dB, pitch ×0.96, trimmed 0.22 s |

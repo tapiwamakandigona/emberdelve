@@ -34,6 +34,10 @@ const double kAirJumpSpeed = 265.0;
 // bonking. Player-only; enemies keep exact collision.
 const double kCeilingCornerNudge = 4.0;
 
+// Footsteps: cadence while running on ground. Deliberately quiet +
+// alternating samples so it never grates on phone speakers.
+const double kFootstepInterval = 0.26; // s between steps at full run
+
 // Roll (DOWN+JUMP on solid ground): a quick commit-dodge. 11-frame sheet.
 const double kRollDuration = 0.38; // s locked in the roll
 const double kRollSpeed = 190.0; // px/s in facing direction
