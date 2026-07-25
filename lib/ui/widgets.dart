@@ -505,6 +505,11 @@ class DieChip extends StatefulWidget {
   /// Increment per roll to trigger the tumble; [tumbleDelayMs] staggers dice.
   final int rollToken;
   final int tumbleDelayMs;
+
+  /// LFP-2c: what this die actually contributed when it was assigned
+  /// (modifiers, combos and relics included) — shown on the spent label so
+  /// "5 rolled, 7 landed" stops being silent arithmetic.
+  final int? contribution;
   const DieChip(
     this.dieId, {
     super.key,
@@ -515,6 +520,7 @@ class DieChip extends StatefulWidget {
     this.onTap,
     this.rollToken = 0,
     this.tumbleDelayMs = 0,
+    this.contribution,
   });
 
   @override
@@ -552,7 +558,11 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     if (widget.value != null) a11y.write(', rolled ${widget.value}');
     if (widget.maxed && !widget.assigned) a11y.write(', max roll');
     if (widget.assigned) {
-      a11y.write(', spent');
+      a11y.write(
+        widget.contribution != null
+            ? ', spent for ${widget.contribution}'
+            : ', spent',
+      );
     } else if (widget.selected) {
       a11y.write(', selected');
     }
@@ -649,7 +659,16 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                   if (glowSelected)
                     CustomPaint(painter: _DieRingPainter(EmberColors.ember))
                   else if (glowMaxed)
-                    CustomPaint(painter: _DieRingPainter(EmberColors.gold)),
+                    CustomPaint(painter: _DieRingPainter(EmberColors.gold))
+                  // LFP-2c: modded dice (boon/forged/shop specials) carry a
+                  // quiet accent ring all the time, so "this die is special"
+                  // stops being knowledge you need the shop card for.
+                  else if (def.mods.isNotEmpty && !widget.assigned)
+                    CustomPaint(
+                      painter: _DieRingPainter(
+                        EmberColors.kindElite.withValues(alpha: 0.5),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -662,7 +681,9 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   widget.assigned && value != null
-                      ? 'd${def.size} SPENT'
+                      ? (widget.contribution != null
+                            ? '+${widget.contribution} SPENT'
+                            : 'd${def.size} SPENT')
                       : value != null && widget.maxed
                       ? 'd${def.size} MAX'
                       : 'd${def.size}',
