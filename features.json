@@ -68,8 +68,8 @@
       "id": "P-M9",
       "title": "World 2 'Cinder Depths': 5 levels + boss, 2 new enemies, cave tileset",
       "acceptance": "assets/levels/w2_l1..w2_l5 + w2_boss parse+lint clean and pass the same quota + scripted-runner completability suite as World 1; >=2 new enemy cores with headless tests; cave/lava tileset + parallax from CC0/CC-BY sources recorded in PROVENANCE.md and CREDITS.md; world select gates World 2 behind the Grove Golem kill; boss with >=3 telegraphed phases",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "World 2 'Cinder Depths' shipped 2026-07-25: cave tileset+parallax (tool/build_cave_assets.py, env=cave meta switch), 2 new enemies Soot Creeper 'S' + Cinder Diver 'D' (enemy_core.dart, w2_enemies_test.dart 5 cases), 5 levels + Kiln Golem boss arena (assets/levels/w2_*.txt via tool/build_w2_levels.py), kWorld2 registry gated on w1_boss, level-select two-world UI. world2_levels_test.dart: 36 tests incl. quotas, secret-vault rule, runner-bot completability for all 5 levels, unlock gating, progressive diver introduction. PRs #43/#44/#45."
     },
     {
       "id": "P-M10",
