@@ -97,7 +97,10 @@
     <li><b>Permissions.</b> <code>VIBRATE</code> (optional in-game haptics)
       and <code>INTERNET</code>/<code>ACCESS_NETWORK_STATE</code> (used solely
       for the optional analytics above; if you never opt in, nothing is
-      transmitted).</li>
+      transmitted). The Google Analytics library also adds <code>WAKE_LOCK</code>
+      and a Play Store install-referrer binding of its own; the advertising-ID
+      permissions it would normally add are removed from our build. No
+      permission requires a runtime prompt.</li>
     <li><b>Children.</b> The app collects no personal data from anyone,
       including children. Analytics, when enabled, are anonymous gameplay
       statistics only.</li>

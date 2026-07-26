@@ -32,7 +32,10 @@ off by default and can be turned off again any time in Settings.
   app deletes it. It never leaves your device.
 - **Permissions.** `VIBRATE` (optional in-game haptics) and
   `INTERNET`/`ACCESS_NETWORK_STATE` (used solely for the optional analytics
-  above; if you never opt in, nothing is transmitted).
+  above; if you never opt in, nothing is transmitted). The Google Analytics
+  library also adds `WAKE_LOCK` and a Play Store install-referrer binding of
+  its own; the advertising-ID permissions it would normally add are removed
+  from our build. No permission requires a runtime prompt.
 - **Children.** The app collects no personal data from anyone, including
   children. Analytics, when enabled, are anonymous gameplay statistics only.
 

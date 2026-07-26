@@ -6,8 +6,16 @@
     <!-- Telemetry: opt-in Firebase Analytics only (docs/telemetry-events.md). -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- Never collect the advertising ID (no ads, no ad personalization). -->
+    <!-- Never collect the advertising ID (no ads, no ad personalization).
+         The Play measurement SDK also merges in the Privacy Sandbox
+         AdServices permissions; this game does no ads, attribution or
+         conversion measurement, so all three are force-removed. Verify with
+         `aapt2 dump badging` after touching this block. -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
         tools:node="remove"/>
     <application
         android:label="emberdelve"
