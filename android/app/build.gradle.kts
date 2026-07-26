@@ -4,6 +4,8 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    // Firebase Analytics config (consent-gated; see docs/telemetry-events.md).
+    id("com.google.gms.google-services")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -20,7 +22,10 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.tsorostudios.emberdelve"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Pinned above flutter.ndkVersion: firebase_core, path_provider_android
+    // and shared_preferences_android all require r27, and Flutter's default is
+    // older (build-time warning today, hard failure later).
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import '../core/save.dart';
+import '../telemetry/telemetry_service.dart';
 import 'app_state.dart';
 import 'credits_screen.dart';
 
@@ -116,6 +117,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Audio unavailable',
                   style: TextStyle(color: Colors.white38)),
             ),
+          const Divider(color: Colors.white12, height: 32),
+          SwitchListTile(
+            title: const Text('Gameplay analytics',
+                style: TextStyle(color: Colors.white)),
+            subtitle: const Text(
+                'Anonymous level/settings stats to help improve the game. '
+                'Off by default; no personal data ever.',
+                style: TextStyle(color: Colors.white38, fontSize: 12)),
+            activeColor: const Color(0xFFE8A33D),
+            value: TelemetryService.instance.analyticsConsented,
+            onChanged: (v) {
+              TelemetryService.instance
+                  .logEvent('settings_changed', {'setting': 'analytics_consent', 'value': '$v'});
+              TelemetryService.instance.setAnalyticsConsent(v);
+              setState(() {});
+            },
+          ),
           const Divider(color: Colors.white12, height: 32),
           ListTile(
             leading:

@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'core/save.dart';
+import 'telemetry/consent_dialog.dart';
+import 'telemetry/telemetry_bootstrap.dart';
+import 'telemetry/telemetry_service.dart';
 import 'ui/app_state.dart';
 import 'ui/title_screen.dart';
 
@@ -24,6 +27,11 @@ Future<void> main() async {
   final save = await store.load();
   AppState.init(store: store, save: save);
 
+  // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
+  // no-op if Firebase is unconfigured; nothing fires before opt-in.
+  await initTelemetry();
+  TelemetryService.instance.logEvent('app_open');
+
   runApp(const EmberdelveApp());
 }
 
@@ -41,7 +49,7 @@ class EmberdelveApp extends StatelessWidget {
         fontFamily: 'Inter',
         useMaterial3: true,
       ),
-      home: const TitleScreen(),
+      home: const TelemetryConsentGate(child: TitleScreen()),
     );
   }
 }
