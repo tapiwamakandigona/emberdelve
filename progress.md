@@ -622,3 +622,20 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - NOT DONE (still open from remaining-work §2): N-seed nightly sweep in CI —
   scheduled workflows only run from the repo's default branch (main, the
   platformer), so wiring it needs an owner decision on where it lives.
+## 2026-07-26 — perf pass 5: map drag + title storm (remaining-work §5) (v0.3.16+21)
+- title_tap_storm 38.8 -> 14.5 paints/frame; map_drag 54.5 -> 9.5. Idle, combat
+  and reward scenarios re-measured flat. Same probe file both sides.
+- REAL title cause (the button already HAD a boundary): any setState below a
+  LayoutBuilder marks it needs-layout, and its relayout marks needs-paint up to
+  the nearest ANCESTOR boundary — which was the route. Fix: boundary above the
+  title LayoutBuilder + one below around the scroll view. Rule: a LayoutBuilder
+  with animating descendants needs a repaint boundary above it.
+- REAL map cause: SingleChildScrollView paints its child at the scroll offset
+  with no boundary, so a drag repainted every non-boundaried Stack child
+  (badges, marker, node chrome). The remaining-work §5 parchment theory was
+  WRONG — that layer was already boundaried and measured flat. Fix: one
+  boundary under the scroll view (+ one around the walking delver marker).
+- VERIFIED: analyze clean; 152/152 tests; store-screenshot harness
+  byte-identical on all 6 PNGs vs legacy baseline on this toolchain.
+- NOT VERIFIED: on-device frame times (frame-trace emulator job, PR #70).
+- Detail: docs/improvements/perf-map-title-2026-07-26.md
