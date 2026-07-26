@@ -487,3 +487,14 @@ Owner (DM): "work on alpha version of emberdelve."
   checkpoints/09-alpha6-w2-reauthor-juice-kiln.md written (tester-facing
   changes: enterable vaults fix, W2 re-author, Kiln Golem fight, AKP-3 juice).
 - Release evidence appended after CI + prerelease publish (see below).
+- **VERIFIED** release PR #67 squash-merged to main as 1301606a; main-push CI
+  run 30197743835 green (Analyze + test (headless) + Build signed Android
+  release success).
+- **VERIFIED** CI APK badging: com.tsorostudios.emberdelve, versionCode 18,
+  versionName 1.0.0-alpha.6; signer cert SHA-256 031acb42...4d44b7a0d matches
+  the pinned upload key (also enforced in the CI build job).
+- **VERIFIED** GitHub prerelease v1.0.0-alpha.6 published on 1301606a with
+  emberdelve-v1.0.0-alpha.6.{apk,aab}; release asset sha256 digests match the
+  locally verified CI artifacts (apk 026e51a1..., aab b276a19d...).
+- Still open: P-M7 on-device perf (needs hardware), P-M10 beta.1 to Play
+  closed testing (owner call), AKP-4 weapon identity.
