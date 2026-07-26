@@ -99,7 +99,10 @@ void main() {
         final l = load(entry.id);
         final s = LevelSession(l, Loadout.starter(), seed: 7);
         if (entry.isBoss) {
-          expect(s.enemies.whereType<GroveGolemCore>().length, 1);
+          // w2_boss fields the Kiln Golem — its own core, not a Grove reskin.
+          expect(s.enemies.whereType<KilnGolemCore>().length, 1);
+          expect(s.enemies.whereType<GroveGolemCore>(), isEmpty,
+              reason: 'W2 boss must not reuse the World 1 boss core');
           expect(s.exitLocked, isTrue);
         } else {
           expect(s.enemies.whereType<SootCreeperCore>(), isNotEmpty,

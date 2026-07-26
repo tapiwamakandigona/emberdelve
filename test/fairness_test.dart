@@ -37,7 +37,8 @@ LevelData load(String id) =>
 
 const _enemyKinds = {
   SpawnKind.thornling, SpawnKind.ashbat, SpawnKind.emberTotem,
-  SpawnKind.rotshield, SpawnKind.groveGolem, SpawnKind.sootCreeper,
+  SpawnKind.rotshield, SpawnKind.groveGolem, SpawnKind.kilnGolem,
+  SpawnKind.sootCreeper,
   SpawnKind.cinderDiver, SpawnKind.pyreWisp, SpawnKind.slagHound,
 };
 
