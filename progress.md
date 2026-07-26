@@ -715,3 +715,19 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   subjective feel (owner sign-off). No timing changes requested.
 - Only genuinely open item left in remaining-work-2026-07-25.md: §1's real-device
   raster trace, which needs the owner's phone.
+
+## 2026-07-26 — Release v0.3.18+23 (post-sign-off build)
+
+- Cut on owner request after the §6 sign-off. No gameplay/engine/asset change vs
+  v0.3.17: `git diff v0.3.17..909e10d -- lib/ android/ assets/` is empty; the tag
+  exists to carry a fresh versionCode (23) for the next Play closed-testing
+  upload and to mark §6 as closed.
+- Commits since v0.3.17: 318eb12 (progress: §6 sign-off), 909e10d (version bump).
+- VERIFIED from CI run 30203648154 (sha 909e10d, both jobs success): analyze
+  "No issues found!", 155/155 tests, SFX headroom gate exit 0 (all reachable
+  cascades clear -1.0 dBTP), store-screenshot gate byte-identical, APK V2 signer
+  cert SHA-256 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+  (permanent upload key, O=Tsoro Studios / CN=Emberdelve Upload Key).
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.18
+  Assets emberdelve-v0.3.18.apk (sha256 b650ecfc...4b5ea) and .aab (397b6126...55f65).
+- Still open: §1 real-device raster trace (needs the owner's phone over USB).
