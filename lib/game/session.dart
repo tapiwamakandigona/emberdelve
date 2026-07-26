@@ -199,9 +199,9 @@ class LevelSession {
 
   /// Boss bookkeeping: the exit stays locked while a Grove Golem lives.
   int _bossPhaseSeen = 1;
-  GroveGolemCore? get boss =>
-      enemies.whereType<GroveGolemCore>().where((b) => b.alive).firstOrNull;
-  bool get bossPresent => enemies.whereType<GroveGolemCore>().isNotEmpty;
+  BossCore? get boss =>
+      enemies.whereType<BossCore>().where((b) => b.alive).firstOrNull;
+  bool get bossPresent => enemies.whereType<BossCore>().isNotEmpty;
   bool get exitLocked => boss != null;
 
   // Melee swing bookkeeping: one damage application per enemy per swing.
@@ -273,6 +273,9 @@ class LevelSession {
         case SpawnKind.rotshield:
           enemies.add(RotshieldCore(
               x: cx - 13, y: (s.y + 1) * kTileSize - 24));
+        case SpawnKind.kilnGolem:
+          enemies.add(KilnGolemCore(
+              x: cx - 22, y: (s.y + 1) * kTileSize - 52));
         case SpawnKind.groveGolem:
           enemies.add(GroveGolemCore(
               x: cx - 22, y: (s.y + 1) * kTileSize - 52));
@@ -453,7 +456,7 @@ class LevelSession {
         }
       }
       // Boss extras: phase-change events + hazard collision.
-      if (e is GroveGolemCore && !e.sleeping) {
+      if (e is BossCore && !e.sleeping) {
         if (e.phase != _bossPhaseSeen) {
           _bossPhaseSeen = e.phase;
           _events.add(SessionEvent(SessionEventKind.bossPhase,
@@ -740,7 +743,7 @@ class LevelSession {
     kills++;
     _events.add(
         SessionEvent(SessionEventKind.enemyDeath, x: e.centerX, y: e.centerY));
-    if (e is GroveGolemCore) {
+    if (e is BossCore) {
       // Victory burst: a shower of coins + feathers, then the door opens.
       final n = dropsRng.range(45, 60);
       for (var i = 0; i < n; i++) {

@@ -99,7 +99,11 @@ void main() {
         final l = load(entry.id);
         final s = LevelSession(l, Loadout.starter(), seed: 7);
         if (entry.isBoss) {
-          expect(s.enemies.whereType<GroveGolemCore>().length, 1);
+          // Contract change (2026-07-26): W2's boss is the Kiln Golem with its
+          // own moveset, no longer a re-tinted GroveGolemCore. Same intent —
+          // "the boss level spawns exactly one boss and locks the exit".
+          expect(s.enemies.whereType<KilnGolemCore>().length, 1);
+          expect(s.enemies.whereType<GroveGolemCore>(), isEmpty);
           expect(s.exitLocked, isTrue);
         } else {
           expect(s.enemies.whereType<SootCreeperCore>(), isNotEmpty,

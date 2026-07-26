@@ -19,6 +19,7 @@ enum EnemyKind {
   emberTotem,
   rotshield,
   groveGolem,
+  kilnGolem,
   sootCreeper,
   cinderDiver,
   pyreWisp,
