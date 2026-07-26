@@ -498,3 +498,45 @@ Owner (DM): "work on alpha version of emberdelve."
   locally verified CI artifacts (apk 026e51a1..., aab b276a19d...).
 - Still open: P-M7 on-device perf (needs hardware), P-M10 beta.1 to Play
   closed testing (owner call), AKP-4 weapon identity.
+
+---
+## 2026-07-26 — AKP-4 weapon identity (feat/akp4-weapon-identity)
+Owner (DM): "start" — proceeded with the last open workable item: AKP-4
+(P-M7 blocked on hardware, P-M10 owner call; AKP-4d already shipped 6d40dc8).
+
+- AKP-4a — render the equipped weapon:
+  - tool/build_weapon_sprites.py splits the baked-in ivory blade (#fffff2 —
+    VERIFIED that exact color is blade/swing-FX-only in the pixivan pack)
+    out of all 9 player sheets into assets/images/player/body/ (bladeless)
+    + assets/images/player/weapons/<id>/ (6 per-weapon overlays: hilt→blade
+    →tip recolor gradient from the grip, 1px head dilation for axe/hammer).
+    The baked swing crescents inherit the weapon tint for free.
+  - build_skins.py now recolors the bladeless body sheets (all skins
+    regenerated); PlayerComponent drives a weapon-overlay ticker in lockstep
+    with the body ticker (same transform: flip/squash/blink); shop
+    SkinPreview composites the equipped weapon; missing sheets degrade to
+    bare hands, never a crash. PROVENANCE.md updated (all CC0-derived).
+- AKP-4b — per-special identity:
+  - Skypiercer lunge IMPLEMENTED (was stats-only despite the specialText
+    promise): kLungeSpeed 150 px/s burst at swing start; ground friction
+    bleeds it in ~0.09s ≈ 7px step; wall-clipped by the normal integrator;
+    horizontal-only so jump height and reachability contracts are untouched.
+    + dash-streak PuffFx on swing.
+  - Ember Fang hits shed ember SparkleFx; Woodsman's Axe one-chop wallBreak
+    puffs bigger rubble (radius 7→10).
+- AKP-4c — apple lob: launch flattened 40°→22.5° (feel-notes rec; speed 220
+  kept — flight is flatter/faster, flat-ground range ~unchanged ≈56px, no
+  test pinned the old angle). Held throw button (touch or K/C) shows a faint
+  arc-preview dot trail computed from the projectile's own launch params +
+  gravity (Session.appleArcPreview, preallocated buffers, zero per-frame
+  allocations); throw itself stays on the press edge.
+- Webtest harness: ?weapon=<id> and ?apples=N params (harness-only).
+
+### VERIFIED
+- flutter analyze: No issues found. Tests 363/363 green (356 baseline + 7
+  new in test/weapon_identity_test.dart: overlay sheet completeness /
+  dimensions / per-weapon pixel-difference, lunge steps forward ~7px while
+  control weapon stays put, lunge never clips a wall, 22.5° launch vector,
+  arc preview matches a 120Hz-stepped projectile to <0.01px on every dot).
+- In-game evidence (web harness, release build): per-weapon idle + mid-swing
+  screenshots + apple arc preview in docs/ak-parity/evidence/akp4/.

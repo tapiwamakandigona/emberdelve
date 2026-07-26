@@ -124,12 +124,12 @@ class HudHoldButton extends SpriteComponent
 class HudThrowButton extends HudHoldButton {
   HudThrowButton({
     required super.onPressed,
+    // AKP-4c: release ends the arc preview; the throw itself stays on the
+    // press edge (tap-to-throw latency is untouched).
+    super.onReleased = _noop,
     required super.position,
     required super.size,
-  }) : super(
-          spritePath: 'hud/btn_round.png',
-          onReleased: _noop,
-        );
+  }) : super(spritePath: 'hud/btn_round.png');
 
   static void _noop() {}
 
