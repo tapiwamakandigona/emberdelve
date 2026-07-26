@@ -17,6 +17,11 @@ dependencies:
   path_provider: ^2.1.4
   # Music loops + SFX one-shots (kept from v1).
   audioplayers: ^6.1.0
+  # Consent-gated, opt-in analytics (lib/telemetry/, docs/telemetry-events.md).
+  firebase_core: ^3.8.0
+  firebase_analytics: ^11.3.6
+  # Persists the player's analytics consent choice.
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

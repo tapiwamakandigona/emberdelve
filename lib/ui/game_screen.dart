@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../game/ember_game.dart';
 import '../game/session.dart';
+import '../telemetry/telemetry_service.dart';
 
 class GameScreen extends StatefulWidget {
   final String levelId;
@@ -22,6 +23,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   late final EmberGame _game;
+  bool _endLogged = false;
 
   @override
   void initState() {
@@ -30,10 +32,33 @@ class _GameScreenState extends State<GameScreen> {
         levelId: widget.levelId,
         seedOverride: widget.seed,
         daily: widget.daily);
+    TelemetryService.instance.logEvent('level_started',
+        {'level_id': widget.levelId, 'daily': widget.daily ? 1 : 0});
+  }
+
+  /// Log the level outcome exactly once per GameScreen (overlay builders may
+  /// rebuild; dispose covers mid-level quits). Schema: telemetry-events.md.
+  void _logEndOnce(String outcome) {
+    if (_endLogged) return;
+    _endLogged = true;
+    final r = _game.session.results;
+    TelemetryService.instance.logEvent('level_ended', {
+      'level_id': widget.levelId,
+      'daily': widget.daily ? 1 : 0,
+      'outcome': outcome,
+      if (r != null && outcome == 'won') ...{
+        'time_s': r.timeMs ~/ 1000,
+        'coins': r.coinsEarned,
+        'medals': (r.finished ? 1 : 0) +
+            (r.allChests ? 1 : 0) +
+            (r.lowDamage ? 1 : 0),
+      },
+    });
   }
 
   @override
   void dispose() {
+    _logEndOnce('quit'); // no-op if a won/failed outcome was already logged
     AudioService.instance?.playMusic('title_menu');
     super.dispose();
   }
@@ -71,15 +96,21 @@ class _GameScreenState extends State<GameScreen> {
                 onResume: game.resumeGame,
                 onLeave: _leave,
               ),
-          EmberGame.overlayResults: (context, game) => _ResultsOverlay(
-                results: game.session.results!,
-                onReplay: _replay,
-                onContinue: _leave,
-              ),
-          EmberGame.overlayFail: (context, game) => _FailOverlay(
-                onRetry: _replay,
-                onLeave: _leave,
-              ),
+          EmberGame.overlayResults: (context, game) {
+            _logEndOnce('won');
+            return _ResultsOverlay(
+              results: game.session.results!,
+              onReplay: _replay,
+              onContinue: _leave,
+            );
+          },
+          EmberGame.overlayFail: (context, game) {
+            _logEndOnce('failed');
+            return _FailOverlay(
+              onRetry: _replay,
+              onLeave: _leave,
+            );
+          },
         },
       ),
     );
