@@ -698,3 +698,20 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   rebuilds 14.1 -> 16.1) stays as previously accepted.
 - VERIFIED on the merged tree: analyze clean, 155/155 tests, headroom tool exits
   0, signed release build from CI (workflow_dispatch on legacy/dice-builder).
+
+## 2026-07-26 — §6 subjective SFX pass: owner sign-off (closed)
+
+- The headroom tool's cascades are compressed worst cases (8 playSfx calls in
+  480 ms) and are NOT representative of play — the owner listened to
+  full_attack_turn and correctly heard "2 misaligned audio clips". Lesson: never
+  present a stress mix as a feel sample.
+- Re-rendered the same mix model at the real choreography offsets (whoosh 0,
+  enemy_hit +250, ember_gain +470, one coin +1170; ~680 ms per attack cycle;
+  handleEvents de-dupe means one hit and one coin per attack):
+  single attack -3.7 dBTP / -17.3 LUFS, three-attack turn -3.7 dBTP / -17.8 LUFS
+  — i.e. ~2.8 dB below the -0.9 dBTP ceiling case.
+- VERIFIED (owner, Slack 2026-07-26): "that sounds good the new ones u made are
+  good". §6 is now closed on both axes — objective headroom (CI-gated) and
+  subjective feel (owner sign-off). No timing changes requested.
+- Only genuinely open item left in remaining-work-2026-07-25.md: §1's real-device
+  raster trace, which needs the owner's phone.
