@@ -172,6 +172,7 @@ class EmberGame extends FlameGame
 
   late SpriteAnimation _deathAnim;
   double _camBump = 0;
+  late PlayerComponent _playerComponent;
   double _stepClock = 0;
   bool _stepAlt = false;
   final math.Random _bumpRand = math.Random();
@@ -203,7 +204,7 @@ class EmberGame extends FlameGame
     world.add(DecorLayerComponent());
     world.add(TileLayerComponent());
     world.add(ItemsComponent());
-    world.add(PlayerComponent());
+    world.add(_playerComponent = PlayerComponent());
     for (final core in session.enemies) {
       world.add(EnemyComponent(core));
     }
@@ -530,11 +531,13 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('double_jump', volume: 0.55);
         case PlayerEvent.landed:
           AudioService.instance?.playSfx('land', volume: 0.5);
+          _playerComponent.triggerSquash(); // AKP-3a
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom)));
         case PlayerEvent.hurt:
           AudioService.instance?.playSfx('player_hit');
           Haptics.medium(); // taking a hit is the beat that must land
+          _camBump = 3.0; // AKP-3e: getting hit shakes; normal hits never do
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
         case PlayerEvent.rolled:
@@ -590,7 +593,14 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
           AudioService.instance?.playSfx('enemy_hit');
-          _camBump = e.crit ? 3.0 : 1.5;
+          // AKP-3e: shake only on the beats that earn it — crits and the
+          // combo finisher. Every normal hit shaking reads as noise (and
+          // the plan calls it a motion-sickness risk).
+          if (e.crit || session.player.comboIndex == 2) _camBump = 3.0;
+          // AKP-3c: floating damage number (skipped silently at the cap).
+          if (e.amount > 0 && DamageNumberFx.hasBudget) {
+            world.add(DamageNumberFx(at.clone(), e.amount, crit: e.crit));
+          }
         case SessionEventKind.enemyDeath:
           AudioService.instance?.playSfx('enemy_death');
           Haptics.light(); // kill confirm
