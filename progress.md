@@ -622,3 +622,25 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - NOT DONE (still open from remaining-work §2): N-seed nightly sweep in CI —
   scheduled workflows only run from the repo's default branch (main, the
   platformer), so wiring it needs an owner decision on where it lives.
+
+## 2026-07-26 — §3 combat choreography: one knob, and the measurement that says not to turn it
+
+- All seven swing beats (contact, squash, enemy wind-up, hit-stop, knock, flash
+  tail, death) now derive from `_CombatScreenState.choreoPercent` via `_pace()`.
+  Pacing is a one-line change; the relative anatomy is preserved by construction
+  and no beat can fall below one 60 Hz frame.
+- MEASURED with tool/perf_probe_test.dart, `combat_tap_storm_12`, one variable:
+  70% -> 50 frames, 4835 paints, 96.7/frame; 100% -> 60 frames, 5261 paints,
+  87.7/frame; 130% -> 70 frames, 5742 paints, 82.0/frame.
+- VERIFIED and contrary to the §3 assumption: shortening the choreography 30%
+  removes only 8% of the paints but 17% of the frames, so paints per frame go
+  UP (87.7 -> 96.7). A snappier swing is a denser swing. "Shorter tweens" would
+  have made the jank proxy worse while spending feel; the only lever that lowers
+  it is fewer SIMULTANEOUS animating layers.
+- Default stays 100 because the §1 emulator trace measured this exact scenario
+  at 1.21 ms average / 7.40 ms p99 build with ZERO frames over the 16.7 ms
+  budget — there is ~9 ms of headroom, so the pacing costs nothing measurable.
+  Changing it is therefore purely a feel call, and the knob makes it cheap.
+- VERIFIED: analyze clean; 152/152 tests; probe at the default reproduces the
+  pre-change baseline exactly (60 frames, 5261 paints, 87.7/frame).
+- Detail: docs/improvements/choreo-knob-2026-07-26.md
