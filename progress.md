@@ -556,3 +556,26 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
 - pubspec 1.0.0-alpha.6+18 → 1.0.0-alpha.7+19 (versionCode 19).
 - checkpoints/10-alpha7-weapon-identity.md: tester-facing notes.
 - No code changes in this release PR.
+
+### VERIFIED — v1.0.0-alpha.7 shipped
+- PR #73 squash-merged to main as 38137e2 (branch deleted); PR CI
+  "Analyze + test (headless)" green, mergeStateStatus CLEAN before merge.
+- Main CI run 30201005775 on 38137e2: both jobs success — "Analyze + test
+  (headless)" and "Build signed Android release (APK + AAB)"; CI's own
+  signer check against EXPECTED_CERT_SHA256 passed (untouched).
+- Artifacts downloaded from that run and re-verified locally:
+  pyaxmlparser badging → package com.tsorostudios.emberdelve,
+  versionCode 19, versionName 1.0.0-alpha.7. Signer cert SHA-256 recomputed
+  from META-INF/CERT.RSA = 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb69
+  79f68564d44b7a0d — exact match to the pinned upload key, so it installs
+  over alpha.1–alpha.6.
+- GitHub prerelease v1.0.0-alpha.7 published on 38137e2 with both CI assets
+  (state: uploaded):
+  emberdelve-v1.0.0-alpha.7.apk  25,545,105 B
+    sha256 d3c3cff1558bbbf439c293c35807c2496071d63b7583c3ad23d7184cbda6bbe0
+  emberdelve-v1.0.0-alpha.7.aab  45,347,574 B
+    sha256 de4ff93945ed7c97450439d8557f6882c52267333d978481b7c3b4d1cce1698d
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v1.0.0-alpha.7
+- No local build shipped (CI artifacts only); no Play upload (P-M10 stays an
+  owner call).
+- Still open: P-M7 (on-device perf, needs hardware), P-M10 (Play beta.1).
