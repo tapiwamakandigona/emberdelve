@@ -32,7 +32,9 @@ jobs:
       # fails if any reachable one crosses 0 dBTP.
       - name: SFX mix-bus headroom (true-peak ceiling)
         run: |
-          python3 -m pip install --quiet numpy
+          # ffmpeg is not on the runner image; it does the decode + EBU R128 measurement.
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python3 -m pip install --quiet --break-system-packages numpy
           python3 tool/sfx_headroom.py
 
   build-android-release:
