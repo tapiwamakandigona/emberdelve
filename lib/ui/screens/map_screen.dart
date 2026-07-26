@@ -277,6 +277,12 @@ class _MapScreenState extends State<MapScreen>
       left: center.dx - _nodeSize / 2,
       bottom: center.dy - _nodeSize / 2,
       child: GestureDetector(
+        // Stable hook for tests/tools (same pattern as the reward screen's
+        // ValueKey('reward-...')): the play harness taps nodes by id. The
+        // old structural finder (GestureDetector wrapping AnimatedBuilder)
+        // silently broke when the 2026-07-25 perf pass removed the
+        // AnimatedBuilder — a key can't rot like that.
+        key: ValueKey('map-node-$id'),
         onTap: isReachable
             ? () => widget.c.apply({'type': 'choose_node', 'node': id})
             : null,

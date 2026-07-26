@@ -594,3 +594,31 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   ear (logic is unit-tested only) — if a dice cascade sounds cluttered, lower
   AudioService.sfxVoices, it is one table.
 - Detail: docs/improvements/perf-controller-notifiers-2026-07-25.md
+
+## 2026-07-26 — deterministic play session + invariant oracle (remaining-work §2)
+- `tool/play_session_test.dart` is now a real fuzz test, not a crash-catcher:
+  run N plays seed `EMBER_SESSION_SEED + N` (default base 1842571558, the
+  golden anchor), injected via a one-shot `GameController.debugNextRunSeed`
+  seam consumed by startRun when no explicit seed is passed. A failure prints
+  the exact reproducing command line.
+- Per-step sim oracle: player/enemy HP and economy bounds, assigned ⊆ rolled,
+  legal phase set + phase-transition graph, dead-actor ⇒ phase-change,
+  rerolls/block/embers/gold/pending_splash never negative. Violations (plus
+  STUCK and step-budget overrun) now FAIL the test; UI-probing misses stay
+  report-only warnings. Stale `steps >= 900` budget check fixed to 2500.
+- The oracle immediately caught a rotted finder: the map-node tap predicate
+  (GestureDetector wrapping AnimatedBuilder) broke when the 2026-07-25 perf
+  pass removed the medallion AnimatedBuilder — the harness had been reporting
+  "green" while never getting past the map. Medallions now carry
+  `ValueKey('map-node-<id>')` (reward-screen pattern) and the harness taps by
+  id. Also fixed: a missed "Delve again" tap double-counted runsFinished and
+  silently skipped a run's seed (report showed runs 0,1,3).
+- VERIFIED: analyze clean; 152/152 tests; play session green on default base
+  seed AND EMBER_SESSION_SEED=7 (seeds 7..10, 4/4 runs); byte-identical
+  report.txt across two executions of the same seed (determinism proof).
+- ASSUMED (reasoned, not measured): the map_screen change is a ValueKey only —
+  no paint/layout effect, so the store-screenshot gate was not re-run (that
+  gate also has known toolchain drift on committed PNGs, see v0.3.14 entry).
+- NOT DONE (still open from remaining-work §2): N-seed nightly sweep in CI —
+  scheduled workflows only run from the repo's default branch (main, the
+  platformer), so wiring it needs an owner decision on where it lives.
