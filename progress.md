@@ -331,3 +331,54 @@ Owner: "publish the alpha 5 as pre-release on github releases."
   being named alpha.5. The release asset is the correct `1.0.0-alpha.5+17`.
 - Open follow-ups unchanged: Kiln Golem moveset (reuses GroveGolemCore),
   World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).
+
+---
+## 2026-07-26 — Kiln Golem gets its own fight (fix/kiln-golem-moveset)
+Owner (DM): "if there are any issues that need fixing/improvement open a pr
+for em." No open tracker issues; the highest-priority VERIFIED open defect on
+main was the alpha.5 follow-up: **w2_boss "Kiln Golem" was GroveGolemCore** —
+the same World 1 fight renamed and retinted.
+
+### Changes
+- `boss_core.dart`: extracted shared abstract `BossCore` (telegraphed
+  idle→telegraph→attack→recover machine, self-owned hazards, phase math off
+  `maxHpTotal`, hazardHits/hazardSourceX/telegraphPulse). GroveGolemCore
+  behaviour is unchanged (same timings/attacks; per-attack code moved under
+  the hooks). New `KilnGolemCore`, fire moveset: P1 ember mortar (aimed
+  0.58 s-flight lobs that ignite 1.5 s fire patches where they land), P2
+  + vent wall (4 flame pillars marching from the golem toward the player,
+  staggered warnings, jump the wave), P3 1.5x speed + 3-ember volley and the
+  vent wall marches both directions. New hazards: emberBomb / firePatch /
+  flamePillar. Hazard iteration is index-based so a landing ember can append
+  its patch mid-update without ConcurrentModificationError.
+- Session/HUD made boss-kind-agnostic (`whereType<BossCore>`,
+  `boss.maxHpTotal` instead of the hardcoded GroveGolemCore.maxHp).
+- New legend char `M` = kilnGolem; w2_boss.txt swaps G→M and its sign now
+  describes the real fight (layout untouched — arena stays as tuned).
+- Renderer: kiln case (terracotta tint, same CC0 thornling base — zero new
+  art); ember/patch/pillar drawn procedurally; grove keeps moss tint
+  unconditionally (the env-dependent tint hack is gone with its reason).
+
+### VERIFIED
+- analyze: 1 pre-existing info (settings activeColor deprecation — left
+  alone: replacement API risk on CI's pinned 3.32.7 not worth an info).
+- tests: **334/334 green** (325 baseline + 9 in kiln_golem_test.dart:
+  spawn/lock, phases+events, telegraph-before-hazard, no-grove-hazards in any
+  phase, mortar arcs + ignites + punishes an idle player, vent warnings
+  before eruptions + >=4 marching pillars, >=3-ember volley, door unlock,
+  victory burst).
+- Real-arena sim (temp test, removed): crude jump/attack bot in w2_boss.txt
+  — fight functions end to end, boss damaged, emberBomb+firePatch seen;
+  same bot vs w1_boss for parity: both fights end a lobotomized bot (bosses
+  stay a skill check by design, fairness_test exemption unchanged).
+
+### CHECK CHANGES (called out per protocol)
+- `world2_levels_test.dart`: the boss-entity check now pins KilnGolemCore
+  and asserts GroveGolemCore is ABSENT from w2_boss (was: expects
+  GroveGolemCore). Same intent — "the boss spawns" — plus the regression
+  guard against reskinning.
+- `fairness_test.dart`: kilnGolem added to the enemy-kind set used by the
+  spawn-runway rule (data list, no logic change).
+
+### Open follow-ups (unchanged)
+- World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).

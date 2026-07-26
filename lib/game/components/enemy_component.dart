@@ -83,14 +83,19 @@ class EnemyComponent extends PositionComponent
         // + rock.png for its lobbed rocks. No unverified art added.
         _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
         _rock = await game.images.load('props/rock.png');
-        // Golem tint follows the world: mossy in Emberwood, kiln-fired
-        // terracotta in the Cinder Depths (same core, distinct look).
-        final cave = game.session.level.environment == 'cave';
         _tint = ui.Paint()
           ..filterQuality = ui.FilterQuality.none
-          ..colorFilter = ui.ColorFilter.mode(
-              cave ? const ui.Color(0xFFC9704A) : const ui.Color(0xFF87A96B),
-              ui.BlendMode.modulate);
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFF87A96B), ui.BlendMode.modulate);
+      case EnemyKind.kilnGolem:
+        // Boss: same 2x thornling base fired kiln-terracotta. Its fire
+        // hazards (embers / patches / vent pillars) are drawn procedurally
+        // in _renderBoss — no new art assets.
+        _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
+        _tint = ui.Paint()
+          ..filterQuality = ui.FilterQuality.none
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFFC9704A), ui.BlendMode.modulate);
     }
     _show(_main!);
   }
@@ -133,8 +138,9 @@ class EnemyComponent extends PositionComponent
       _renderTotem(canvas, ticker);
       return;
     }
-    if (core.kind == EnemyKind.groveGolem) {
-      _renderGolem(canvas, ticker);
+    if (core.kind == EnemyKind.groveGolem ||
+        core.kind == EnemyKind.kilnGolem) {
+      _renderBoss(canvas, ticker);
       return;
     }
     final sprite = ticker.getSprite();
@@ -204,11 +210,12 @@ class EnemyComponent extends PositionComponent
   static final _firePaint = ui.Paint()
     ..filterQuality = ui.FilterQuality.none;
 
-  /// Boss: 2x-scaled tinted thornling body; telegraph = red pulse tint.
-  /// Hazards (shockwaves / root-spike warnings + spikes / rocks) are drawn
-  /// here too since the core owns them.
-  void _renderGolem(ui.Canvas canvas, SpriteAnimationTicker ticker) {
-    final golem = core as GroveGolemCore;
+  /// Bosses: 2x-scaled tinted thornling body; telegraph = red pulse tint.
+  /// Hazards (grove: shockwaves / root spikes / rocks — kiln: ember bombs /
+  /// fire patches / vent pillars) are drawn here too since the core owns
+  /// them. Kiln fire is procedural paint work: no art assets needed.
+  void _renderBoss(ui.Canvas canvas, SpriteAnimationTicker ticker) {
+    final golem = core as BossCore;
     final b = core.body;
     final sprite = ticker.getSprite();
     const w = 72.0, h = 56.0;
@@ -265,9 +272,51 @@ class EnemyComponent extends PositionComponent
             canvas.drawOval(
                 ui.Rect.fromLTWH(r.x, r.y, r.w, r.h), _spikePaint);
           }
+        case BossHazardKind.emberBomb:
+          // Glowing mortar ember: hot core + halo.
+          canvas.drawOval(
+              ui.Rect.fromLTWH(r.x - 2, r.y - 2, r.w + 4, r.h + 4),
+              _emberHalo);
+          canvas.drawOval(ui.Rect.fromLTWH(r.x, r.y, r.w, r.h), _emberCore);
+        case BossHazardKind.firePatch:
+          // Burning ground: ember bed + flame lobes that gutter out as the
+          // patch expires (hz.life runs down from KilnGolemCore.patchLife).
+          final k = (hz.life / KilnGolemCore.patchLife).clamp(0.0, 1.0);
+          canvas.drawOval(
+              ui.Rect.fromLTWH(hz.x - 10, hz.y - 4, 20, 5), _emberHalo);
+          final flameH = 4 + 6 * k;
+          for (final off in const [-6.0, 0.0, 6.0]) {
+            canvas.drawOval(
+                ui.Rect.fromLTWH(
+                    hz.x + off - 2.5, hz.y - 2 - flameH, 5, flameH),
+                off == 0 ? _flameInner : _flameOuter);
+          }
+        case BossHazardKind.flamePillar:
+          if (!hz.harmful) {
+            // Vent warning: a glowing crack on the floor.
+            canvas.drawRect(
+                ui.Rect.fromLTWH(hz.x - 6, hz.y - 2, 12, 2), _emberCore);
+          } else {
+            // Erupting column: outer flame + hot inner tongue.
+            canvas.drawRRect(
+                ui.RRect.fromRectAndRadius(
+                    ui.Rect.fromLTWH(r.x, r.y, r.w, r.h),
+                    const ui.Radius.circular(4)),
+                _flameOuter);
+            canvas.drawRRect(
+                ui.RRect.fromRectAndRadius(
+                    ui.Rect.fromLTWH(r.x + 3, r.y + 4, r.w - 6, r.h - 6),
+                    const ui.Radius.circular(3)),
+                _flameInner);
+          }
       }
     }
   }
+
+  static final _emberHalo = ui.Paint()..color = const ui.Color(0x88E8623D);
+  static final _emberCore = ui.Paint()..color = const ui.Color(0xFFF2C14B);
+  static final _flameOuter = ui.Paint()..color = const ui.Color(0xCCE8623D);
+  static final _flameInner = ui.Paint()..color = const ui.Color(0xEEF2C14B);
 
   static final _telegraphPaint = ui.Paint()
     ..filterQuality = ui.FilterQuality.none
