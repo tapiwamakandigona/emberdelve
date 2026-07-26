@@ -387,12 +387,27 @@ class AudioService {
     }
   }
 
-  /// Immediate, non-choreographed SFX for a batch of sim events.
-  void handleEvents(List<Map<String, Object?>> events) {
-    final played = <String>{};
+  /// Which SFX ids a batch of sim events should fire, in order, each at most
+  /// once. The de-duplication is a mix-bus guarantee, not a nicety: two copies
+  /// of the same sample started on the same frame sum coherently at +6 dB and
+  /// clip (see `tool/sfx_headroom.py`, scenario `coin_3x_simultaneous`), so
+  /// identical ids must never start together. Pure and static so the invariant
+  /// is testable without a platform player.
+  @visibleForTesting
+  static List<String> sfxIdsForEvents(List<Map<String, Object?>> events) {
+    final ids = <String>[];
+    final seen = <String>{};
     for (final e in events) {
       final id = eventSfx[e['type']];
-      if (id != null && played.add(id)) playSfx(id);
+      if (id != null && seen.add(id)) ids.add(id);
+    }
+    return ids;
+  }
+
+  /// Immediate, non-choreographed SFX for a batch of sim events.
+  void handleEvents(List<Map<String, Object?>> events) {
+    for (final id in sfxIdsForEvents(events)) {
+      playSfx(id);
     }
   }
 
