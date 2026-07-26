@@ -548,3 +548,11 @@ Owner (DM): "start" — proceeded with the last open workable item: AKP-4
 - No release cut this run (feature-only; next release alpha.7 on owner call).
 - Still open: P-M7 (on-device perf, needs hardware), P-M10 (Play beta.1,
   owner call).
+
+## 2026-07-26 — release v1.0.0-alpha.7+19 (chore/release-alpha7)
+Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
+(AKP-4 weapon identity, merged as 1cb919b, was unreleased).
+
+- pubspec 1.0.0-alpha.6+18 → 1.0.0-alpha.7+19 (versionCode 19).
+- checkpoints/10-alpha7-weapon-identity.md: tester-facing notes.
+- No code changes in this release PR.
