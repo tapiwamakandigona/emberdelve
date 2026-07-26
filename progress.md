@@ -462,3 +462,22 @@ full re-authoring, plus a defect it flushed out of BOTH worlds.
   12 reachability). Runner-bot completability + fairness suites green on
   the new layouts; full-clear seek-bot probe (temp, removed) collected
   every ground-route collectible; w2_l5 runner bot finishes in 21s.
+
+## 2026-07-26 — Land the open follow-up PRs; salvage from stale #62
+Owner (DM): "work on alpha version of emberdelve."
+
+- **VERIFIED** integration main + #64 + #65 locally on Flutter 3.32.7:
+  analyze clean, 356/356 tests green.
+- **VERIFIED** PR #64 squash-merged (208938f): World 2 re-authored in the
+  design DSL + collectible-reachability contract; fixes the shipped
+  unenterable-sky-vault defect in both worlds.
+- **VERIFIED** PR #65 squash-merged (a38751c) after resolving the
+  progress.md append conflict against post-#64 main and re-running the
+  suite (356/356) + PR CI green on the resolved head (e678b41).
+- Salvaged from stale umbrella #62 (superseded by #61+#64+#65):
+  `tool/survivability_sweep.dart`, the casual-bot measurement tool behind
+  fairness claims. **VERIFIED** it runs on current main
+  (SWEEP_SECONDS=30, w1_l1 68% reached/alive, w2_l1 63%/alive).
+  Not salvaged: #62's camera_shake.dart module + kHitPauseHeavy (superseded
+  by #65's tuned-shake approach), kiln_boss_test.dart (superseded by #61's
+  kiln_golem_test.dart, legend M not Q).
