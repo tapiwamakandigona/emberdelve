@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
+import 'telemetry/consent_dialog.dart';
+import 'telemetry/telemetry_bootstrap.dart';
+import 'telemetry/telemetry_service.dart';
 import 'ui/screens.dart';
 import 'ui/theme.dart';
 
@@ -24,6 +27,10 @@ Future<void> main() async {
   // first tap doesn't pay the load. Deliberately not awaited: startup must
   // not wait on audio, and a failure here just means load-on-demand.
   unawaited(audio.warmUp());
+  // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
+  // no-op if Firebase is unconfigured; nothing fires before opt-in.
+  await initTelemetry();
+  TelemetryService.instance.logEvent('app_open');
   runApp(EmberdelveApp(controller));
 }
 
@@ -74,7 +81,7 @@ class _EmberdelveAppState extends State<EmberdelveApp>
       title: 'Emberdelve',
       debugShowCheckedModeBanner: false,
       theme: buildEmberTheme(),
-      home: GameRoot(widget.controller),
+      home: TelemetryConsentGate(child: GameRoot(widget.controller)),
     );
   }
 }

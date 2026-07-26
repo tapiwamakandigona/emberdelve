@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
+import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import '../data/relics.dart';
 import '../meta/meta.dart';
@@ -257,6 +258,13 @@ class GameController extends ChangeNotifier {
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
     });
+    // Opt-in analytics only; no-op without consent (docs/telemetry-events.md).
+    TelemetryService.instance.logEvent('run_started', {
+      'character': character ?? defaultCharacter,
+      'ascension': '$ascension',
+      'difficulty': diff,
+      'daily': '${daily != null}',
+    });
   }
 
   /// Sticky difficulty preference behind the title-screen selector.
@@ -454,6 +462,13 @@ class GameController extends ChangeNotifier {
     final char = sim!.run?['character'] as String? ?? defaultCharacter;
     meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
     meta.addRunRecord(_runRecord(result: 'abandoned', embers: 0));
+    // Opt-in analytics only; no-op without consent (docs/telemetry-events.md).
+    TelemetryService.instance.logEvent('run_ended', {
+      'result': 'abandoned',
+      'character': char,
+      'floor': '$floorReached',
+      'embers': '0',
+    });
     MetaStore.save(meta);
     _clearSave();
     sim = null;
@@ -538,6 +553,13 @@ class GameController extends ChangeNotifier {
         embers: banked,
       ),
     );
+    // Opt-in analytics only; no-op without consent (docs/telemetry-events.md).
+    TelemetryService.instance.logEvent('run_ended', {
+      'result': sim!.phase == 'run_won' ? 'won' : 'lost',
+      'character': char,
+      'floor': '$floorReached',
+      'embers': '$banked',
+    });
     MetaStore.save(meta);
     _clearSave();
   }

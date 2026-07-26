@@ -21,6 +21,8 @@ plugins {
     // AGP 8.9.1+ is the first release that officially supports compileSdk 36.
     id("com.android.application") version "8.9.2" apply false
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+    // Firebase (processes android/app/google-services.json at build time).
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 include(":app")
