@@ -540,3 +540,11 @@ Owner (DM): "start" — proceeded with the last open workable item: AKP-4
   arc preview matches a 120Hz-stepped projectile to <0.01px on every dot).
 - In-game evidence (web harness, release build): per-weapon idle + mid-swing
   screenshots + apple arc preview in docs/ak-parity/evidence/akp4/.
+
+## 2026-07-26 — AKP-4 merged to main
+- PR #69 squash-merged as 1cb919b (branch feat/akp4-weapon-identity deleted).
+- VERIFIED: PR CI "Analyze + test (headless)" pass (1m14s,
+  run 30198891118); mergeStateStatus CLEAN before merge.
+- No release cut this run (feature-only; next release alpha.7 on owner call).
+- Still open: P-M7 (on-device perf, needs hardware), P-M10 (Play beta.1,
+  owner call).
