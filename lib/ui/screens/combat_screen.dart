@@ -204,16 +204,37 @@ class _CombatScreenState extends State<CombatScreen> {
     _fxUpdate(() => _ghosts.add(_Ghost(_ghostId++, from, to, value, action)));
   }
 
+  /// ONE KNOB for the whole swing anatomy (remaining-work §3).
+  ///
+  /// Every beat below is derived from this percentage, so pacing is a one-line
+  /// change instead of eight edits that can drift out of sync: 100 is the
+  /// timing v0.3.15 shipped, 80 is a 20% snappier swing, 120 a heavier one.
+  /// Only the RELATIVE anatomy is fixed (anticipation < contact, hit-stop is
+  /// the shortest beat, death is the longest) — that ratio is what reads as
+  /// "a hit", and scaling keeps it intact.
+  ///
+  /// Measured, so the knob is not a guess: dropping to 70 shortens the swing
+  /// by ~200 ms but does NOT reduce paints/frame (see
+  /// docs/improvements/choreo-knob-2026-07-26.md) — fewer frames of the same
+  /// animation is the same cost per frame. It is a pacing control, not a perf
+  /// control, and 100 stays the default because the profile trace shows the
+  /// UI thread has ~9 ms of headroom per frame at the current pacing.
+  static const int choreoPercent = 100;
+
+  /// Scales a beat by [choreoPercent], never below one frame at 60 Hz.
+  static Duration _pace(int ms) =>
+      Duration(milliseconds: math.max(16, ms * choreoPercent ~/ 100));
+
   // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
-  static const _contact = Duration(milliseconds: 250);
-  static const _squashTime = Duration(milliseconds: 90);
+  static final _contact = _pace(250);
+  static final _squashTime = _pace(90);
   // Enemy anticipation runs longer than the player's: their wind-up is the
   // player's last cue to read the incoming hit.
-  static const _enemyWindupTime = Duration(milliseconds: 190);
-  static const _hitStop = Duration(milliseconds: 80);
-  static const _knockTime = Duration(milliseconds: 140);
-  static const _flashTail = Duration(milliseconds: 120);
-  static const _deathTime = Duration(milliseconds: 700);
+  static final _enemyWindupTime = _pace(190);
+  static final _hitStop = _pace(80);
+  static final _knockTime = _pace(140);
+  static final _flashTail = _pace(120);
+  static final _deathTime = _pace(700);
   // Call-out lifetime (v0.3.10): was TextPop's 1s default — testers couldn't
   // read PAIR/FREE-REROLL/BLOCKED before it faded. 2s holds the text ~1.3s.
   static const _noteLife = Duration(milliseconds: 2000);

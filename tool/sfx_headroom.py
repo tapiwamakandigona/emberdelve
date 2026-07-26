@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -264,6 +265,11 @@ LAST_ROWS: list[dict] = []
 
 
 def check(write_clips: Path | None) -> int:
+    if shutil.which("ffmpeg") is None:
+        raise SystemExit(
+            "ffmpeg not found — it does the decoding and the EBU R128 measurement.\n"
+            "  Ubuntu/Debian: sudo apt-get install ffmpeg"
+        )
     caps = read_voice_caps()
     needed = {t.sfx_id for s in scenarios() for t in s.triggers}
     clips = {sid: decode(SFX_DIR / f"{sid}.ogg") for sid in sorted(needed)}
