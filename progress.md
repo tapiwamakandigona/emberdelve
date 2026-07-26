@@ -594,3 +594,29 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   ear (logic is unit-tested only) — if a dice cascade sounds cluttered, lower
   AudioService.sfxVoices, it is one table.
 - Detail: docs/improvements/perf-controller-notifiers-2026-07-25.md
+
+## 2026-07-26 — §6 layered SFX: mix-bus headroom measured and guarded (v0.3.17)
+
+- Closed the measurable half of remaining-work §6 without an ear check.
+  `tool/sfx_headroom.py` rebuilds the worst-case cascades offline from the
+  shipped .ogg assets — parsing `sfxVoices` out of the Dart source, modelling
+  voice stealing, applying the real per-call trims at slider max — and measures
+  sample peak, EBU R128 true peak and integrated loudness of each.
+- VERIFIED: every reachable cascade clears 0 dBTP. Loudest is the full attack
+  turn (whoosh + 3 hits + ember gain + 3 coins) at -0.9 dBTP; the dice cascades
+  sit at -3.2 to -3.5 dBTP.
+- VERIFIED and worth remembering: identical samples started on the SAME frame
+  sum coherently (+9.5 dB for three copies) and clip hard — coin x3 aligned is
+  +5.9 dBTP / 122 clipped samples. That case is unreachable only because
+  `handleEvents` plays each id at most once per event batch, which until now was
+  an undocumented, load-bearing detail.
+- Pinned it: `handleEvents` now delegates to a pure `sfxIdsForEvents`, and
+  test/audio_voices_test.dart gained three "mix-bus invariants" tests (de-dupe,
+  ordering/unknown events, golden `sfxVoices` table). Bump a cap and they fail,
+  which is the signal to re-run the tool.
+- The headroom check runs in CI on every PR, so a hotter .ogg master fails the
+  build instead of shipping a clipped cascade.
+- ASSUMED (owner, unchanged): whether a four-die cascade sounds good rather than
+  cluttered. `--write-clips` renders every cascade as mp3 for that check.
+- VERIFIED: analyze clean; 155/155 tests; headroom tool exits 0.
+- Detail: docs/improvements/sfx-headroom-2026-07-26.md
