@@ -76,4 +76,51 @@ void main() {
       }
     });
   });
+
+  // -- Mix-bus invariants (v0.3.17) -------------------------------------------
+  //
+  // `tool/sfx_headroom.py` renders the worst-case cascades from the shipped
+  // .ogg assets and measures true peak. Its verdict "every reachable cascade
+  // clears 0 dBTP" rests on two facts about this file. If either changes, the
+  // measurement is stale — these tests fail so the tool gets re-run.
+  group('SFX mix-bus invariants', () {
+    test('a batch of events never fires the same id twice', () {
+      // gold_gained + gold_spent + bought all map to 'coin'. Three coin voices
+      // started on the same frame sum coherently to +5.9 dBTP (measured); the
+      // de-dupe is what keeps that scenario unreachable.
+      final ids = AudioService.sfxIdsForEvents(const [
+        {'type': 'gold_gained'},
+        {'type': 'bought'},
+        {'type': 'gold_spent'},
+        {'type': 'die_assigned'},
+        {'type': 'die_assigned'},
+      ]);
+      expect(ids, ['coin', 'die_assign']);
+    });
+
+    test('unmapped and unknown event types are ignored, order is kept', () {
+      final ids = AudioService.sfxIdsForEvents(const [
+        {'type': 'combat_started'},
+        {'type': 'dice_rolled'},
+        {'type': 'not_a_real_event'},
+        {'type': 'embers_gained'},
+      ]);
+      expect(ids, ['dice_roll', 'ember_gain']);
+    });
+
+    test('audited voice caps — bump one and re-run tool/sfx_headroom.py', () {
+      // Golden copy of the table the headroom measurement was taken against.
+      expect(AudioService.sfxVoices, {
+        'dice_roll': 2,
+        'die_assign': 3,
+        'reroll': 2,
+        'enemy_hit': 3,
+        'player_hit': 2,
+        'block': 2,
+        'coin': 3,
+        'ember_gain': 2,
+        'whoosh': 2,
+      });
+    });
+  });
 }
