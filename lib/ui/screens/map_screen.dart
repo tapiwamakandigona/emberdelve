@@ -100,51 +100,64 @@ class _MapScreenState extends State<MapScreen>
                       );
                     });
                   }
+                  // PERF (2026-07-26, remaining-work §5): the viewport paints
+                  // its child at the scroll offset, so without a boundary HERE
+                  // every drag frame repainted every non-boundaried child in
+                  // the Stack below (badges, delver marker, node chrome:
+                  // probe map_drag 54.5 paints/frame). With it, a drag is a
+                  // layer translation; only the pulsing medallions keep
+                  // painting inside their own boundaries.
                   return SingleChildScrollView(
                     reverse: true,
                     controller: _scroll,
-                    child: SizedBox(
-                      height: h,
-                      width: cns.maxWidth,
-                      child: Stack(
-                        children: [
-                          // Trails + fog-of-war + descent tint, painted once.
-                          RepaintBoundary(
-                            child: CustomPaint(
-                              size: Size(cns.maxWidth, h),
-                              painter: _MapScenePainter(
-                                nodes,
-                                edges,
-                                cns.maxWidth,
-                                layers,
-                                position,
-                                reachable,
-                                curLayer,
+                    child: RepaintBoundary(
+                      child: SizedBox(
+                        height: h,
+                        width: cns.maxWidth,
+                        child: Stack(
+                          children: [
+                            // Trails + fog-of-war + descent tint, painted once.
+                            RepaintBoundary(
+                              child: CustomPaint(
+                                size: Size(cns.maxWidth, h),
+                                painter: _MapScenePainter(
+                                  nodes,
+                                  edges,
+                                  cns.maxWidth,
+                                  layers,
+                                  position,
+                                  reachable,
+                                  curLayer,
+                                ),
                               ),
                             ),
-                          ),
-                          for (final e in nodes.entries)
-                            _nodeWidget(
-                              context,
-                              e.value,
+                            for (final e in nodes.entries)
+                              _nodeWidget(
+                                context,
+                                e.value,
+                                cns.maxWidth,
+                                position,
+                                reachable,
+                              ),
+                            // Honest reward telegraphs: the sim pre-resolves each
+                            // fight/elite node's offers at start_run; the badge shows
+                            // its `reward_preview` verbatim (never invented here).
+                            for (final e in nodes.entries)
+                              if (e.value['reward_preview'] is String)
+                                _telegraphBadge(
+                                  e.value,
+                                  cns.maxWidth,
+                                  reachable,
+                                ),
+                            _delverMarker(
+                              nodes,
                               cns.maxWidth,
+                              h,
                               position,
-                              reachable,
+                              characterId,
                             ),
-                          // Honest reward telegraphs: the sim pre-resolves each
-                          // fight/elite node's offers at start_run; the badge shows
-                          // its `reward_preview` verbatim (never invented here).
-                          for (final e in nodes.entries)
-                            if (e.value['reward_preview'] is String)
-                              _telegraphBadge(e.value, cns.maxWidth, reachable),
-                          _delverMarker(
-                            nodes,
-                            cns.maxWidth,
-                            h,
-                            position,
-                            characterId,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -197,19 +210,21 @@ class _MapScreenState extends State<MapScreen>
         );
       },
       child: IgnorePointer(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SpriteView(characterId, height: 30, animate: false),
-            Container(
-              width: 14,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2),
+        child: RepaintBoundary(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SpriteView(characterId, height: 30, animate: false),
+              Container(
+                width: 14,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
