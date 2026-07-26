@@ -686,3 +686,15 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - VERIFIED: analyze clean; 152/152 tests; probe at the default reproduces the
   pre-change baseline exactly (60 frames, 5261 paints, 87.7/frame).
 - Detail: docs/improvements/choreo-knob-2026-07-26.md
+
+## 2026-07-26 — v0.3.17+22 released (remaining-work §1/§2/§3/§5/§6/§7 landed)
+
+- Merged in order onto legacy/dice-builder: #68 (§2 deterministic play session +
+  oracle), #70 (§1 emulator frame trace CI), #71 (§7 combat_screen split),
+  #72 (§5 map/title paint fixes), #74 (§6 SFX headroom tool + CI guard),
+  #75 (§3 choreoPercent knob). Version 0.3.16+21 -> 0.3.17+22.
+- Everything in remaining-work-2026-07-25.md is now either shipped or reduced to
+  an explicit owner feel call with the measurement attached. Only §4 (die-tap
+  rebuilds 14.1 -> 16.1) stays as previously accepted.
+- VERIFIED on the merged tree: analyze clean, 155/155 tests, headroom tool exits
+  0, signed release build from CI (workflow_dispatch on legacy/dice-builder).
