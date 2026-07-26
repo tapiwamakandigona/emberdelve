@@ -10,7 +10,6 @@ import 'package:flame/text.dart';
 import 'package:flutter/painting.dart' show TextPainter;
 
 import '../ember_game.dart';
-import '../enemies/boss_core.dart';
 import '../hold_button_core.dart';
 
 /// A HUD button that reports press/release into a callback pair.
@@ -356,7 +355,7 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
     final boss = s.boss;
     if (boss != null) {
       canvas.drawRRect(_bossBackRRect, _bossBarBack);
-      final frac = boss.hp / GroveGolemCore.maxHp;
+      final frac = boss.hp / boss.maxHpValue;
       canvas.drawRect(
           ui.Rect.fromLTWH(_barLeft, _barTop, _barW * frac, _barH),
           _bossBarFill);

@@ -83,14 +83,19 @@ class EnemyComponent extends PositionComponent
         // + rock.png for its lobbed rocks. No unverified art added.
         _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.18);
         _rock = await game.images.load('props/rock.png');
-        // Golem tint follows the world: mossy in Emberwood, kiln-fired
-        // terracotta in the Cinder Depths (same core, distinct look).
-        final cave = game.session.level.environment == 'cave';
         _tint = ui.Paint()
           ..filterQuality = ui.FilterQuality.none
-          ..colorFilter = ui.ColorFilter.mode(
-              cave ? const ui.Color(0xFFC9704A) : const ui.Color(0xFF87A96B),
-              ui.BlendMode.modulate);
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFF87A96B), ui.BlendMode.modulate);
+      case EnemyKind.kilnGolem:
+        // World 2's boss: kiln-fired terracotta, and it animates faster than
+        // the Grove Golem because it fights faster.
+        _main = await load('enemies/thornling.png', 6, Vector2(36, 28), 0.14);
+        _rock = await game.images.load('props/rock.png');
+        _tint = ui.Paint()
+          ..filterQuality = ui.FilterQuality.none
+          ..colorFilter = const ui.ColorFilter.mode(
+              ui.Color(0xFFC9704A), ui.BlendMode.modulate);
     }
     _show(_main!);
   }
@@ -133,7 +138,7 @@ class EnemyComponent extends PositionComponent
       _renderTotem(canvas, ticker);
       return;
     }
-    if (core.kind == EnemyKind.groveGolem) {
+    if (core.kind == EnemyKind.groveGolem || core.kind == EnemyKind.kilnGolem) {
       _renderGolem(canvas, ticker);
       return;
     }
@@ -205,10 +210,11 @@ class EnemyComponent extends PositionComponent
     ..filterQuality = ui.FilterQuality.none;
 
   /// Boss: 2x-scaled tinted thornling body; telegraph = red pulse tint.
-  /// Hazards (shockwaves / root-spike warnings + spikes / rocks) are drawn
-  /// here too since the core owns them.
+  /// Hazards (shockwaves / root-spike warnings + spikes / rocks for the Grove
+  /// Golem, heat waves / geysers / magma for the Kiln Golem) are drawn here
+  /// too, since the core owns them.
   void _renderGolem(ui.Canvas canvas, SpriteAnimationTicker ticker) {
-    final golem = core as GroveGolemCore;
+    final golem = core as BossCore;
     final b = core.body;
     final sprite = ticker.getSprite();
     const w = 72.0, h = 56.0;
@@ -220,9 +226,12 @@ class EnemyComponent extends PositionComponent
       canvas.scale(-1, 1);
     }
     ui.Paint? paint = _tint;
+    final charging = golem is KilnGolemCore && golem.charging;
     if (core.hurtFlash > 0) {
       paint = _flashPaint;
-    } else if (golem.telegraphPulse > 0.5) {
+    } else if (golem.telegraphPulse > 0.5 || charging) {
+      // A committed charge glows the same colour as the wind-up, so the
+      // player can always tell "this body will hurt me right now".
       paint = _telegraphPaint;
     }
     _drawPos.setValues(b.centerX - w / 2, b.bottom - h);
@@ -265,6 +274,52 @@ class EnemyComponent extends PositionComponent
             canvas.drawOval(
                 ui.Rect.fromLTWH(r.x, r.y, r.w, r.h), _spikePaint);
           }
+        case BossHazardKind.heatWave:
+          // A wall of flame: hot core, cooler crown, so its jumpable height
+          // reads at a glance.
+          canvas.drawRRect(
+              ui.RRect.fromRectAndRadius(
+                  ui.Rect.fromLTWH(r.x, r.y, r.w, r.h),
+                  const ui.Radius.circular(4)),
+              _wavePaint);
+          canvas.drawRRect(
+              ui.RRect.fromRectAndRadius(
+                  ui.Rect.fromLTWH(r.x + 3, r.y + r.h * 0.35, r.w - 6,
+                      r.h * 0.65),
+                  const ui.Radius.circular(3)),
+              _waveCore);
+        case BossHazardKind.geyser:
+          if (!hz.harmful) {
+            // Vent mark on the floor while it charges.
+            canvas.drawRect(
+                ui.Rect.fromLTWH(hz.x - 7, hz.y - 3, 14, 3), _ventPaint);
+            canvas.drawRect(
+                ui.Rect.fromLTWH(hz.x - 3, hz.y - 6, 6, 3), _ventPaint);
+          } else {
+            // Tapered column: wide at the vent, narrow at the top.
+            final path = ui.Path()
+              ..moveTo(r.x, hz.y)
+              ..lineTo(hz.x - 3, r.y)
+              ..lineTo(hz.x + 3, r.y)
+              ..lineTo(r.x + r.w, hz.y)
+              ..close();
+            canvas.drawPath(path, _wavePaint);
+            canvas.drawRect(
+                ui.Rect.fromLTWH(hz.x - 2, r.y + 4, 4, r.h - 4), _waveCore);
+          }
+        case BossHazardKind.magmaBomb:
+          canvas.drawOval(ui.Rect.fromLTWH(r.x, r.y, r.w, r.h), _bombPaint);
+          canvas.drawOval(
+              ui.Rect.fromLTWH(r.x + 2, r.y + 2, r.w - 4, r.h - 4),
+              _waveCore);
+        case BossHazardKind.magmaPool:
+          canvas.drawRRect(
+              ui.RRect.fromRectAndRadius(
+                  ui.Rect.fromLTWH(r.x, r.y, r.w, r.h),
+                  const ui.Radius.circular(3)),
+              _poolPaint);
+          canvas.drawRect(
+              ui.Rect.fromLTWH(r.x + 3, r.y + 1, r.w - 6, 2), _waveCore);
       }
     }
   }
@@ -277,4 +332,10 @@ class EnemyComponent extends PositionComponent
   static final _shockCore = ui.Paint()..color = const ui.Color(0xCCE8A33D);
   static final _warnPaint = ui.Paint()..color = const ui.Color(0xCCD53C3C);
   static final _spikePaint = ui.Paint()..color = const ui.Color(0xFF6B4A2B);
+  // Kiln Golem palette: molten orange with a white-hot core.
+  static final _wavePaint = ui.Paint()..color = const ui.Color(0xCCE8621A);
+  static final _waveCore = ui.Paint()..color = const ui.Color(0xEEFFD08A);
+  static final _ventPaint = ui.Paint()..color = const ui.Color(0xCCD53C3C);
+  static final _bombPaint = ui.Paint()..color = const ui.Color(0xFF8C3B1E);
+  static final _poolPaint = ui.Paint()..color = const ui.Color(0xBBD8481A);
 }

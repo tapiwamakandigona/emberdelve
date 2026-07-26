@@ -14,7 +14,7 @@
 //   c  coin             a  apple pickup        f  feather (rare currency)
 //   C  chest            X  secret chest (counts as chest + secret)
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
-//   R  Rotshield        G  Grove Golem (boss)
+//   R  Rotshield        G  Grove Golem (boss)   Q  Kiln Golem (boss)
 //   S  Soot Creeper (W2 walker)                D  Cinder Diver (W2 flyer)
 //   W  Pyre Wisp (chasing flyer)               H  Slag Hound (charger)
 //   DECOR (purely visual, never collides):
@@ -51,6 +51,7 @@ enum SpawnKind {
   emberTotem,
   rotshield,
   groveGolem,
+  kilnGolem,
   sootCreeper,
   cinderDiver,
   pyreWisp,
@@ -104,6 +105,7 @@ const Map<String, SpawnKind> _spawnChars = {
   'O': SpawnKind.emberTotem,
   'R': SpawnKind.rotshield,
   'G': SpawnKind.groveGolem,
+  'Q': SpawnKind.kilnGolem,
   'S': SpawnKind.sootCreeper,
   'D': SpawnKind.cinderDiver,
   'W': SpawnKind.pyreWisp,
