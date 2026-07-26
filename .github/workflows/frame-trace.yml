@@ -1,0 +1,120 @@
+name: Frame trace (emulator)
+
+# Remaining-work §1: get real frame times instead of paint-count proxies.
+# Runs the integration frame trace in --profile mode on an Android emulator
+# (KVM-accelerated, GitHub-hosted runner) and publishes frame build/raster
+# percentiles per scenario to the job summary + artifacts.
+#
+# Honest caveat, recorded where the numbers are made: the emulator rasterizes
+# on SwiftShader (software GPU). UI-thread build times are representative;
+# raster times are pessimistic vs. real hardware. The same test runs verbatim
+# on a physical phone when one is available.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ci/frame-trace-emulator]
+
+env:
+  FLUTTER_VERSION: 3.32.7
+  API_LEVEL: 34
+
+jobs:
+  frame-trace:
+    name: Profile-mode frame trace on emulator
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}
+
+      - name: Create AVD snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run frame trace (profile mode)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # Frame trace measures animations — do NOT disable them.
+          disable-animations: false
+          # NOTE: the action runs each script line via sh -c separately —
+          # keep the command on ONE line (continuations break it).
+          script: flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart --target=integration_test/frame_trace_test.dart
+
+      - name: Summarize frame times
+        if: always()
+        run: |
+          python3 - <<'EOF'
+          import json, glob, os
+          rows = []
+          for path in sorted(glob.glob('build/frame_trace/*.timeline_summary.json')):
+              name = os.path.basename(path).replace('.timeline_summary.json', '')
+              with open(path) as f:
+                  s = json.load(f)
+              rows.append((name, s))
+          out = ['## Frame trace (profile mode, Android emulator, SwiftShader raster)', '',
+                 '| scenario | avg build ms | 90% build | 99% build | worst build | avg raster ms | 90% raster | worst raster | missed budget (build/raster) |',
+                 '|---|---|---|---|---|---|---|---|---|']
+          for name, s in rows:
+              g = lambda k: s.get(k, 'n/a')
+              out.append(f"| {name} | {g('average_frame_build_time_millis')} | {g('90th_percentile_frame_build_time_millis')} | {g('99th_percentile_frame_build_time_millis')} | {g('worst_frame_build_time_millis')} | {g('average_frame_rasterizer_time_millis')} | {g('90th_percentile_frame_rasterizer_time_millis')} | {g('worst_frame_rasterizer_time_millis')} | {g('missed_frame_build_budget_count')}/{g('missed_frame_rasterizer_budget_count')} |")
+          if not rows:
+              out.append('')
+              out.append('**No summaries found** — the drive step failed before reporting.')
+          text = '\n'.join(out)
+          print(text)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+              f.write(text + '\n')
+          EOF
+
+      - name: Upload timelines
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frame-trace
+          path: build/frame_trace/
+          if-no-files-found: warn
