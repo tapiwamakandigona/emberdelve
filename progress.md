@@ -382,3 +382,51 @@ the same World 1 fight renamed and retinted.
 
 ### Open follow-ups (unchanged)
 - World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).
+
+---
+## 2026-07-26 — World 2 re-authored + reachability contract (feat/world2-reauthor)
+Owner (DM): "go ahead" on the follow-up stack after #61. This is the World 2
+full re-authoring, plus a defect it flushed out of BOTH worlds.
+
+### World 2 rebuilt in the design DSL
+- w2_l1..w2_l5 moved into `tool/level_author.py` (same DSL, rules and
+  teach-then-test pacing as World 1); `tool/build_w2_levels.py` and
+  `tool/w2_pacing_pass.py` deleted as superseded. W1 + both boss arenas
+  regenerate byte-identical from the tool (idempotence check before touching
+  anything).
+- Level identities, macro structure first: Ashen Gate = surface shelf, a
+  real gate (hollow sealed gatehouse over the road) and terraces stepping
+  down into the cave; Ember Vault = one grand sealed treasury (cracked
+  doors at body height, gold + diver guards + a reliquary inside); Soot
+  Falls = stepped basins with coin-trickle drop lines and the fallers' room
+  behind a cracked curtain; Magma Gallery = a pillar colonnade carrying an
+  upper gallery over a magma-channel hall; Kiln Works = rising work floors
+  around the great kiln (fire in its throat), ramping down to the boss
+  door. Rosters and introduction order preserved from alpha.5. Cave read:
+  ceiling + stalactite drips kept >= 4 rows out of play space.
+
+### VERIFIED defect (shipped, both worlds): unenterable secret vaults
+- `sky_vault` built a 1-tile (16px) interior and 1-tile doors; the player
+  body is ~20px. Physically impossible to enter — measured in-session: the
+  body cannot pass the door (playerX pinned at the wall), so **every
+  sky-vault secret in w1_l1..w1_l5 was uncollectable and the "all chests"
+  medal unattainable on those levels.** Interior + doors are now 2 tiles;
+  approach platforms re-aligned. Also fixed: w1_l1's upper route needed a
+  5-row rise (budget is 4); w1_l3/l4/l5 vault approaches got a mid step;
+  w2_l5 had a 4-deep trench (chain-death well) before the kiln — filled.
+
+### New contract: collectible reachability
+- `tool/reachability_lint.py` + `test/reachability_test.dart` (same
+  algorithm): jump-physics flood fill (double-jump budgets verified
+  empirically: a standing double jump lands a 4-row ledge; ~6 columns of
+  air reach; body needs head clearance; cracked walls count as breakable).
+  Every c/a/f/C/X/K/E in every shipped level must be reachable. The door
+  bots prove the exit; this proves the loot. It fails the alpha.5 levels
+  as shipped and passes after the fixes.
+
+### VERIFIED results
+- analyze clean (2 pre-existing infos: settings activeColor x2, the second
+  arrived with #47); tests **353/353 green** (341 post-#61/#47 baseline +
+  12 reachability). Runner-bot completability + fairness suites green on
+  the new layouts; full-clear seek-bot probe (temp, removed) collected
+  every ground-route collectible; w2_l5 runner bot finishes in 21s.
