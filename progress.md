@@ -331,3 +331,70 @@ Owner: "publish the alpha 5 as pre-release on github releases."
   being named alpha.5. The release asset is the correct `1.0.0-alpha.5+17`.
 - Open follow-ups unchanged: Kiln Golem moveset (reuses GroveGolemCore),
   World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).
+
+## 2026-07-26 — owner "open this as a pr": AK juice, Kiln Golem moveset, World 2 re-author
+
+Branch `feat/ak-juice-kiln-golem` off `main@4fdb44a`. Scope = the three
+follow-ups the alpha.5 report recommended, in that order.
+
+### 1. AKP-3 juice (docs/ak-parity-plan.md §3) — commit d540a30
+- `SwingArcFx`: procedural weapon-tinted crescent per swing, wider/longer on
+  the finisher. No new art asset (nothing to license, nothing to atlas).
+- `DamageNumberFx`: floating numbers, cached text layout, crits bigger and
+  weapon-tinted, capped at `kMaxDamageNumbers` (8) with oldest dropped.
+- Landing squash-and-stretch about the feet; player hurt flash.
+- Heavy hit-pause (`kHitPauseHeavy` 0.075s) on crit/finisher vs `kHitPause`
+  0.040s otherwise.
+- `lib/game/camera_shake.dart`: shake became a capped, decaying, deterministic
+  budget on both axes. It used to be a Y-only bump fired on EVERY enemy hit
+  (screen rattled through normal play). Now: player hurt, crit/finisher, wall
+  break, boss phase, boss death; respawn resets it.
+- `SessionEvent.amount` carries damage dealt (melee/apple/ember burst).
+
+### 2. Kiln Golem gets its own fight — commit ee55cd0
+`BossCore` now holds the shared boss contract (telegraph state machine, hazard
+list, `hazardHits`/`hazardSourceX`, phase thresholds, exit lock); each boss owns
+its moveset + hazard integration. `KilnGolemCore` (72 hp, legend `Q` — `K` is
+the campfire): heat wave you JUMP (22px tall), a 4/6-vent geyser cascade that
+marches at you, a committed charge that ends on the wall and leaves a 1.4s
+(0.9s enraged) punish window, and phase-3 magma bombs leaving expiring pools.
+Grove Golem behaviour unchanged (regression test asserts World 1 never sees a
+kiln hazard). HUD bar reads `boss.maxHpValue` instead of a hard-coded constant.
+
+### 3. World 2 re-authored — commit f36a163
+All five Cinder Depths levels are now authored in `tool/level_author.py` (they
+were generator output with a mechanical pacing pass on top): safe runway, three
+tiers, high/low branches with different payoffs, campfires every third,
+secrets behind cracked walls — in a cave vocabulary (ceilings, chimneys, lava
+channels, galleries, vaults). New `tool/survivability_sweep.dart` is the
+casual-bot measurement tool (kept out of `test/` so CI stays fast).
+
+### VERIFIED results
+- `flutter analyze`: clean (CI is fatal on warnings). `flutter test`: **350/350**
+  green (325 on main + 14 juice + 11 Kiln Golem; the level suites re-ran
+  against the rebuilt World 2 rather than gaining cases).
+- Casual-bot sweep, 180s window (`flutter test tool/survivability_sweep.dart`),
+  final geometry: w1_l1 180s/68%, w1_l2 180s/50%, w1_l3 180s/40%,
+  w1_l4 180s/45%, w1_l5 24.4s/45%, w1_boss 13.9s/46%, w2_l1 180s/61%,
+  w2_l2 23.8s/78%, w2_l3 180s/52%, w2_l4 17.9s/43%, w2_l5 180s/39%,
+  w2_boss 43.7s/42%. Every level clears the fairness floor (>=12s and >=30% of
+  the level); w2_l4 is now the harshest non-boss level in World 2.
+- Design guard learned the hard way this pass: `test/onboarding_test.dart` caps
+  hazard runs at 5 columns (the AKP-6b ejection arc's reach), and the first
+  World 2 draft shipped 6-, 15- and 21-column lava channels. `tool/`s new
+  `channel()` helper lays long hazards as <=4-column segments split by
+  standable islands, and `check_hazard_runs()` now fails at author time.
+
+### CHECK CHANGES (called out per protocol)
+- `world2_levels_test` pinned "w2_boss spawns a `GroveGolemCore`" — that
+  assertion pinned the bug the owner reported. It now requires exactly one
+  `KilnGolemCore` and zero `GroveGolemCore`s. Same intent, new contract.
+- `fairness_test`'s enemy-kind set gained `SpawnKind.kilnGolem` so the
+  spawn-runway rule still covers the World 2 boss.
+
+### NOT done (honest gaps)
+- Nothing was tested on a device or by a human; "it feels good" is unmeasured.
+  The juice is verified by unit tests and code, not by eyes on a phone.
+- AKP-4a weapon sprites are still not rendered (only the arc/number tint from
+  4b). AKP-2b air-dash balance, P-M7 on-device perf and P-M10 remain open.
+- No new enemies, no World 3, enemy AI untouched.

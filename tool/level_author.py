@@ -120,6 +120,32 @@ def pit(l: Level, x0: int, x1: int, kind: str = "^"):
     l.fill(x0, x1, 17, 17, kind)
 
 
+MAX_HAZARD_RUN = 5  # test/onboarding_test.dart: the ejection arc's limit
+
+
+def channel(l: Level, x0: int, x1: int, kind: str = "~", seg: int = 4,
+            island: int = 2):
+    """A long hazard channel broken into jumpable segments by solid islands.
+
+    A single 20-tile lava river reads dramatic and plays like a death corridor:
+    the hazard-ejection arc can only rescue a pit up to MAX_HAZARD_RUN wide, so
+    anything longer must be crossed in stages. Returns the island x-ranges so
+    the caller can put coins / ledges / enemies on them.
+    """
+    assert seg <= MAX_HAZARD_RUN, "segment wider than the ejection arc"
+    islands = []
+    x = x0
+    while x <= x1:
+        end = min(x + seg - 1, x1)
+        l.fill(x, end, 16, 17, ".")
+        l.fill(x, end, 17, 17, kind)
+        x = end + 1
+        if x <= x1:
+            islands.append((x, min(x + island - 1, x1)))
+            x += island
+    return islands
+
+
 def sky_vault(l: Level, x0: int, x1: int, top: int, treasure: str = "X"):
     """A sealed pocket in the air: solid shell, cracked-wall doors on both
     sides, a floor you can stand on and loot inside."""
@@ -575,9 +601,7 @@ def w2_l3():
     l.put(46, 6, "f")
     l.put(43, 8, "W")
     # --- ...or stay low: a wider channel with island stepping stones
-    pit(l, 42, 47, "~")
-    l.ledge(43, 44, 15, depth=1)
-    l.ledge(46, 47, 15, depth=1)
+    channel(l, 42, 47, "~", seg=2, island=2)
     l.put(52, 15, "S")
     l.put(50, 15, "a")
     l.put(56, 15, "K")
@@ -632,13 +656,11 @@ def w2_l4():
     l.plat(42, 62, 8)
     l.row(7, [(46, "c"), (50, "c"), (54, "c"), (58, "c")])
     l.put(60, 7, "f")
-    l.fill(42, 62, 16, 17, ".")
-    l.fire(42, 62, 17)
-    for x in (44, 49, 54, 59):
-        l.ledge(x, x + 2, 15, depth=1)
-        l.put(x + 1, 14, "c")
-    l.ledge(46, 48, 12, depth=2)
-    l.put(47, 11, "C")
+    for i, (ix0, ix1) in enumerate(channel(l, 42, 62, "~", seg=4, island=2)):
+        l.put(ix0, 15, "c")
+        if i == 1:
+            l.ledge(ix0, ix1, 12, depth=2)
+            l.put(ix0, 11, "C")
     l.put(40, 15, "S")
     l.put(64, 15, "H")
     l.put(66, 15, "K")
@@ -653,10 +675,9 @@ def w2_l4():
     l.put(80, 15, "S")
     l.put(94, 15, "D")
     # --- collapsed gallery: alternating ledges over a wide magma channel
-    pit(l, 98, 108, "~")
-    for i, x in enumerate((98, 102, 106)):
-        l.ledge(x, x + 2, 14 - i, depth=1)
-        l.put(x + 1, 13 - i, "c")
+    for i, (ix0, _) in enumerate(channel(l, 98, 108, "~", seg=4, island=2)):
+        l.ledge(ix0, ix0 + 1, 14 - i, depth=1)
+        l.put(ix0, 13 - i, "c")
     l.plat(97, 101, 10)
     l.plat(104, 109, 10)
     l.put(112, 15, "H")
@@ -707,7 +728,8 @@ def w2_l5():
     l.row(10, [(72, "c"), (78, "c"), (82, "c")])
     l.put(75, 10, "R")
     l.put(80, 10, "R")
-    pit(l, 70, 84, "~")
+    for ix0, ix1 in channel(l, 70, 84, "~", seg=4, island=2):
+        l.put(ix0, 15, "c")
     chimney(l, 68, 78, [14, 8, 6])
     l.put(74, 5, "f")
     l.put(86, 15, "K")
@@ -773,6 +795,20 @@ ALL = {
     "w2_l5": w2_l5, "w2_boss": w2_boss,
 }
 
+def check_hazard_runs(name: str, l: Level):
+    """Fail at author time, not in CI: no hazard run wider than the ejection
+    arc can recover (test/onboarding_test.dart pins the same rule)."""
+    run = 0
+    for x in range(l.w):
+        hazard = any(l.g[y][x] in "^~" for y in range(l.h))
+        run = run + 1 if hazard else 0
+        assert run <= MAX_HAZARD_RUN, (
+            f"{name}: hazard run of {run} columns ending at x={x} "
+            f"(max {MAX_HAZARD_RUN})")
+
+
 if __name__ == "__main__":
     for name, fn in ALL.items():
-        fn().write(name)
+        level = fn()
+        check_hazard_runs(name, level)
+        level.write(name)
