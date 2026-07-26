@@ -334,7 +334,9 @@ Owner: "publish the alpha 5 as pre-release on github releases."
 
 ## 2026-07-26 — owner "open this as a pr": AK juice, Kiln Golem moveset, World 2 re-author
 
-Branch `feat/ak-juice-kiln-golem` off `main@4fdb44a`. Scope = the three
+Branch `feat/ak-juice-kiln-golem`, rebased onto `main@7f07ccc` (after PR #47's
+opt-in telemetry merged; no file overlap, `LevelResults` untouched by this work
+so the new `level_ended` call site needed no change). Scope = the three
 follow-ups the alpha.5 report recommended, in that order.
 
 ### 1. AKP-3 juice (docs/ak-parity-plan.md §3) — commit d540a30
@@ -371,8 +373,8 @@ casual-bot measurement tool (kept out of `test/` so CI stays fast).
 
 ### VERIFIED results
 - `flutter analyze`: clean (CI is fatal on warnings). `flutter test`: **350/350**
-  green (325 on main + 14 juice + 11 Kiln Golem; the level suites re-ran
-  against the rebuilt World 2 rather than gaining cases).
+  green pre-rebase and **357/357** after rebasing onto `main@7f07ccc`
+  (332 on the new main + 14 juice + 11 Kiln Golem).
 - Casual-bot sweep, 180s window (`flutter test tool/survivability_sweep.dart`),
   final geometry: w1_l1 180s/68%, w1_l2 180s/50%, w1_l3 180s/40%,
   w1_l4 180s/45%, w1_l5 24.4s/45%, w1_boss 13.9s/46%, w2_l1 180s/61%,
