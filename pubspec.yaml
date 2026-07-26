@@ -39,6 +39,13 @@ flutter:
     - assets/images/hud/
     - assets/images/items/
     - assets/images/player/
+    - assets/images/player/body/
+    - assets/images/player/weapons/squire_blade/
+    - assets/images/player/weapons/woodsman_axe/
+    - assets/images/player/weapons/ember_fang/
+    - assets/images/player/weapons/warden_blade/
+    - assets/images/player/weapons/skypiercer/
+    - assets/images/player/weapons/wind_gods_hammer/
     - assets/images/player/skins/ember_monk/
     - assets/images/player/skins/shadow_thief/
     - assets/images/player/skins/hearth_knight/

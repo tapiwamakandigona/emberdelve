@@ -227,6 +227,19 @@ gilded). Outlines and skin tones untouched. Outputs:
 `assets/images/player/skins/<id>/{idle,run,jump,fall,hit,roll,attack1-3}.png`
 — same CC0 licensing as the source pack.
 
+## Weapon overlay sheets + bladeless body sheets — added 2026-07-26 (AKP-4a)
+
+`tool/build_weapon_sprites.py` splits the baked-in ivory blade (`#fffff2`,
+that exact color is blade/swing-FX-only in the pack) out of the base knight
+sheets (Royal Knight Platformer by pixivan, CC0 — see the v2 packs table
+above) into:
+- `assets/images/player/body/*.png` — bladeless body sheets ('red' skin;
+  `tool/build_skins.py` now recolors these, so all skins are bladeless);
+- `assets/images/player/weapons/<weapon_id>/*.png` — per-weapon overlays:
+  a deterministic hilt→blade→tip recolor gradient of the extracted blade
+  mask (plus a 1px head dilation for axe/hammer silhouettes).
+All derived exclusively from the CC0 source pack — same CC0 licensing.
+
 ## Shop icons — added 2026-07-25
 
 Built by `tool/build_shop_icons.py`: SVG rasterized 512px → alpha-mask glyph →

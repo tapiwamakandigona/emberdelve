@@ -30,6 +30,9 @@ class PlayerCore {
   final double weaponRange;
   final int extraAirJumps; // triple-jump special = +1
   final double meleePower;
+  // AKP-4b: lunge special (Skypiercer) — swings burst you forward. The
+  // specialText has promised this since P-M4; before AKP-4 it was stats-only.
+  final bool hasLunge;
 
   int hearts;
   int facing = 1; // -1 left, 1 right
@@ -68,6 +71,7 @@ class PlayerCore {
     this.weaponRange = 18,
     this.extraAirJumps = 0,
     this.meleePower = 1.0,
+    this.hasLunge = false,
   })  : body = Body(x: x, y: y, w: 12, h: 20),
         hearts = maxHearts;
 
@@ -219,6 +223,9 @@ class PlayerCore {
       comboIndex = comboWindow > 0 ? (comboIndex + 1) % kComboHits : 0;
       comboWindow = 0;
       attackTime = kAttackDuration;
+      // AKP-4b: lunge special — a forward burst at swing start, ground or
+      // air. Friction/walls handle the rest; jump height is untouched.
+      if (hasLunge) body.vx = facing * kLungeSpeed;
       _events.add(PlayerEvent.attacked);
     }
 

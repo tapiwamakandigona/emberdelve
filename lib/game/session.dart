@@ -12,7 +12,7 @@ import 'dart:math' as math;
 import 'core_loadout.dart';
 import '../core/rng.dart';
 import 'difficulty.dart';
-import '../meta/catalog.dart' show SpellEffect;
+import '../meta/catalog.dart' show SpellEffect, WeaponSpecial;
 import 'enemies/boss_core.dart';
 import 'enemies/enemy_core.dart';
 import 'input_intent.dart';
@@ -238,6 +238,7 @@ class LevelSession {
       weaponRange: loadout.weapon.range,
       extraAirJumps: loadout.extraAirJumps,
       meleePower: loadout.meleePower,
+      hasLunge: loadout.weapon.special == WeaponSpecial.lunge,
     );
     cameraX = player.body.centerX;
     respawnX = player.body.x;
@@ -378,9 +379,9 @@ class LevelSession {
         p.active = true;
         p.x = player.facing > 0 ? player.body.right : player.body.left;
         p.y = player.body.top + 4;
-        // ~40 degrees up in the facing direction.
-        p.vx = player.facing * kAppleThrowSpeed * 0.766;
-        p.vy = -kAppleThrowSpeed * 0.643;
+        // AKP-4c: ~22.5° up in the facing direction (flat AK-style lob).
+        p.vx = player.facing * kAppleThrowSpeed * kAppleThrowCos;
+        p.vy = -kAppleThrowSpeed * kAppleThrowSin;
         _events.add(SessionEvent(SessionEventKind.appleThrown, x: p.x, y: p.y));
       }
     }
@@ -735,6 +736,41 @@ class LevelSession {
     _events.add(SessionEvent(SessionEventKind.spellCast,
         x: p.centerX, y: p.centerY));
     return true;
+  }
+
+  /// AKP-4c: fills [xs]/[ys] with up to [kApplePreviewDots] points along the
+  /// trajectory an apple thrown RIGHT NOW would follow — same launch point,
+  /// velocity and gravity as the projectile integrator (fine-stepped Euler,
+  /// one dot every [kApplePreviewStep] s), stopping at the first solid or
+  /// cracked tile. Returns the dot count. Buffers are caller-owned so the
+  /// render layer can preallocate; an honest preview or none at all.
+  int appleArcPreview(List<double> xs, List<double> ys) {
+    var x = player.facing > 0 ? player.body.right : player.body.left;
+    var y = player.body.top + 4;
+    final vx = player.facing * kAppleThrowSpeed * kAppleThrowCos;
+    var vy = -kAppleThrowSpeed * kAppleThrowSin;
+    const dt = 1 / 120;
+    // Integer step counting (never float time accumulation): a dot lands
+    // exactly every stepsPerDot integration steps, so the preview and a
+    // 120Hz-stepped projectile agree to the float ulp.
+    final stepsPerDot = (kApplePreviewStep / dt).round();
+    var n = 0;
+    var step = 0;
+    while (n < kApplePreviewDots && n < xs.length) {
+      vy += kGravity * dt;
+      x += vx * dt;
+      y += vy * dt;
+      step++;
+      final tile = tileAt((x / kTileSize).floor(), (y / kTileSize).floor());
+      if (tile == TileKind.solid || tile == TileKind.crackedWall) break;
+      if (y > (level.height + 4) * kTileSize) break;
+      if (step % stepsPerDot == 0) {
+        xs[n] = x;
+        ys[n] = y;
+        n++;
+      }
+    }
+    return n;
   }
 
   void _onEnemyDeath(EnemyCore e) {

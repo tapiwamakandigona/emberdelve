@@ -26,9 +26,10 @@ import 'package:flutter/widgets.dart' show EdgeInsets, KeyEventResult;
 import '../audio/audio_service.dart';
 import 'haptics.dart';
 import '../core/rng.dart';
-import '../meta/catalog.dart' show SpellEffect;
+import '../meta/catalog.dart' show SpellEffect, WeaponSpecial;
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
+import 'components/apple_arc_preview.dart';
 import 'components/decor_layer.dart';
 import 'components/enemy_component.dart';
 import 'components/fx.dart';
@@ -160,6 +161,7 @@ class EmberGame extends FlameGame
   bool _touchJumpEdge = false;
   bool _touchAttackEdge = false;
   bool _touchThrowEdge = false;
+  bool _touchThrowHeld = false; // AKP-4c: arc preview while held
   bool _touchSpellEdge = false;
   bool _keySpellEdge = false;
   bool _touchRollEdge = false;
@@ -205,6 +207,7 @@ class EmberGame extends FlameGame
     world.add(TileLayerComponent());
     world.add(ItemsComponent());
     world.add(_playerComponent = PlayerComponent());
+    world.add(AppleArcPreview()); // AKP-4c
     for (final core in session.enemies) {
       world.add(EnemyComponent(core));
     }
@@ -350,7 +353,11 @@ class EmberGame extends FlameGame
     _btnThrow = HudThrowButton(
       position: Vector2.zero(),
       size: Vector2.all(hudSmallBtn),
-      onPressed: () => _touchThrowEdge = true,
+      onPressed: () {
+        _touchThrowEdge = true;
+        _touchThrowHeld = true; // AKP-4c: keep held -> arc preview
+      },
+      onReleased: () => _touchThrowHeld = false,
     );
     // Dash/roll (AKP-2a): diamond top-left, above the sword.
     // Spell cast (AKP-4d): one charge per run; hides itself otherwise.
@@ -462,6 +469,15 @@ class EmberGame extends FlameGame
       _keys.contains(LogicalKeyboardKey.space) ||
       _keys.contains(LogicalKeyboardKey.keyW) ||
       _keys.contains(LogicalKeyboardKey.arrowUp);
+  bool get _keyThrowHeld =>
+      _keys.contains(LogicalKeyboardKey.keyK) ||
+      _keys.contains(LogicalKeyboardKey.keyC);
+
+  /// AKP-4c: the arc preview draws only while the throw button is held with
+  /// apples in the pouch and the player alive — an empty pouch has nothing
+  /// to preview.
+  bool get throwPreviewActive =>
+      _intent.throwHeld && session.applesHeld > 0 && !session.player.isDead;
 
   // -- frame ------------------------------------------------------------------
 
@@ -479,6 +495,7 @@ class EmberGame extends FlameGame
       ..jumpPressed = _touchJumpEdge || _keyJumpEdge
       ..attackPressed = _touchAttackEdge || _keyAttackEdge
       ..throwPressed = _touchThrowEdge || _keyThrowEdge
+      ..throwHeld = _touchThrowHeld || _keyThrowHeld
       ..rollPressed = _touchRollEdge || _keyRollEdge;
     _touchJumpEdge = _keyJumpEdge = false;
     _touchAttackEdge = _keyAttackEdge = false;
@@ -556,6 +573,17 @@ class EmberGame extends FlameGame
                   session.player.body.centerY),
               life: 0.22));
         case PlayerEvent.attacked:
+          // AKP-4b: Skypiercer's lunge leaves a dash streak behind the
+          // burst, same read as the air-dash trail.
+          if (session.loadout.weapon.special == WeaponSpecial.lunge) {
+            world.add(PuffFx(
+                Vector2(
+                    session.player.body.centerX - session.player.facing * 7,
+                    session.player.body.centerY + 4),
+                color: const Color(0x99A9D1F7),
+                radius: 4,
+                life: 0.2));
+          }
           // 3-hit combo reads as a phrase: neutral / up / down+heavy.
           AudioService.instance?.playSfx(
               'swing${session.player.comboIndex.clamp(0, 2) + 1}',
@@ -601,6 +629,12 @@ class EmberGame extends FlameGame
           if (e.amount > 0 && DamageNumberFx.hasBudget) {
             world.add(DamageNumberFx(at.clone(), e.amount, crit: e.crit));
           }
+          // AKP-4b: Ember Fang identity — hits shed embers (the ignite DoT
+          // is session-side; this is its visual receipt).
+          if (session.loadout.burnOnHit) {
+            world.add(SparkleFx(at.clone(),
+                color: const Color(0xFFF2A24B), life: 0.3));
+          }
         case SessionEventKind.enemyDeath:
           AudioService.instance?.playSfx('enemy_death');
           Haptics.light(); // kill confirm
@@ -609,8 +643,12 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('block', volume: 0.7);
         case SessionEventKind.wallBreak:
           AudioService.instance?.playSfx('block');
+          // AKP-4b: the Woodsman's Axe one-chop break earns a heavier
+          // rubble burst than chipping a wall down with a sword.
           world.add(PuffFx(at,
-              color: const Color(0xCC8A7B66), radius: 7, life: 0.4));
+              color: const Color(0xCC8A7B66),
+              radius: session.loadout.wallBreaker ? 10 : 7,
+              life: session.loadout.wallBreaker ? 0.5 : 0.4));
         case SessionEventKind.appleThrown:
           AudioService.instance?.playSfx('whoosh', volume: 0.5);
         case SessionEventKind.appleBroke:

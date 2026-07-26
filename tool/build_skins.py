@@ -25,6 +25,10 @@ from PIL import Image
 
 REPO = Path(__file__).resolve().parent.parent
 SRC = REPO / "assets" / "images" / "player"
+# AKP-4a: skins recolor the BLADELESS body sheets (tool/build_weapon_sprites.py
+# splits the baked-in sword out); the equipped weapon is a separate overlay
+# sheet drawn on top, so it keeps its identity across every skin.
+BODY = SRC / "body"
 ANIMS = ["idle", "run", "jump", "fall", "hit", "roll",
          "attack1", "attack2", "attack3"]
 
@@ -80,7 +84,7 @@ def main():
         out_dir = SRC / "skins" / skin
         out_dir.mkdir(parents=True, exist_ok=True)
         for anim in ANIMS:
-            src = SRC / f"{anim}.png"
+            src = BODY / f"{anim}.png"
             out = out_dir / f"{anim}.png"
             remap(Image.open(src), hue, s_mul, v_mul, armor).save(out)
         print(f"skin {skin}: {len(ANIMS)} sheets -> "
