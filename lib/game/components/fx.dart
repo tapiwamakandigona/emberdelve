@@ -92,3 +92,78 @@ class SparkleFx extends PositionComponent {
     }
   }
 }
+
+/// AKP-3c: floating damage number. The TextPainter is laid out once at
+/// construction (no per-frame text work); the number drifts up ~14px and
+/// fades over its life. Crits render bigger and hotter. A static live
+/// counter caps simultaneous numbers so swarm fights cannot flood the
+/// frame budget — when the cap is hit the number is simply skipped, which
+/// is invisible in play.
+class DamageNumberFx extends PositionComponent {
+  static const int maxLive = 24;
+  static int _live = 0;
+
+  /// True when a new number may spawn (checked by the caller so a skipped
+  /// number costs nothing at all).
+  static bool get hasBudget => _live < maxLive;
+
+  /// Test hook: clear the accounting between tests.
+  static void resetLiveForTest() => _live = 0;
+
+  final double life;
+  final ui.Paragraph _solid;
+  final ui.Paragraph _faded;
+  double _t = 0;
+
+  DamageNumberFx(Vector2 at, int amount, {bool crit = false})
+      : life = crit ? 0.7 : 0.5,
+        _solid = _build(amount, crit, 1.0),
+        _faded = _build(amount, crit, 0.45),
+        super(position: at, priority: 5) {
+    _live++;
+  }
+
+  // Two pre-baked alpha variants instead of a per-frame saveLayer: an
+  // offscreen compositing layer per live number would wreck the Android
+  // frame budget for a two-step fade nobody can see the difference in.
+  static ui.Paragraph _build(int amount, bool crit, double alpha) {
+    final base =
+        crit ? const ui.Color(0xFFF2C14B) : const ui.Color(0xFFF4EFE6);
+    final builder = ui.ParagraphBuilder(ui.ParagraphStyle(
+      textAlign: ui.TextAlign.center,
+      fontSize: crit ? 10 : 7,
+      fontWeight: ui.FontWeight.bold,
+    ))
+      ..pushStyle(ui.TextStyle(
+        color: base.withValues(alpha: alpha),
+        shadows: [
+          ui.Shadow(
+              offset: const ui.Offset(0, 1),
+              color: const ui.Color(0xFF1A1410).withValues(alpha: 0.8 * alpha)),
+        ],
+      ))
+      ..addText('$amount');
+    return builder.build()..layout(const ui.ParagraphConstraints(width: 40));
+  }
+
+  @override
+  void onRemove() {
+    _live--;
+    super.onRemove();
+  }
+
+  @override
+  void update(double dt) {
+    _t += dt;
+    if (_t >= life) removeFromParent();
+  }
+
+  @override
+  void render(ui.Canvas canvas) {
+    final k = (_t / life).clamp(0.0, 1.0);
+    // Ease-out rise; swap to the faded variant for the last third.
+    final rise = 14 * (1 - (1 - k) * (1 - k));
+    canvas.drawParagraph(
+        k < 0.66 ? _solid : _faded, ui.Offset(-20, -10 - rise));
+  }
+}

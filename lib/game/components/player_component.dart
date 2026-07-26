@@ -1,6 +1,7 @@
 // PlayerComponent: draws PlayerCore state. NO gameplay logic here — the core
 // (via the session) owns movement/combat; this picks animation strips, flips
 // by facing, and blinks during i-frames.
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
@@ -9,6 +10,7 @@ import 'package:flame/sprite.dart';
 import '../ember_game.dart';
 import '../player/player_core.dart';
 import '../tuning.dart';
+import '../../meta/catalog.dart';
 
 class PlayerComponent extends PositionComponent
     with HasGameReference<EmberGame> {
@@ -19,6 +21,31 @@ class PlayerComponent extends PositionComponent
   SpriteAnimation? _current;
   SpriteAnimationTicker? _ticker;
   double _blinkClock = 0;
+
+  // AKP-3a: landing squash-and-stretch. Set from ember_game on the landed
+  // event; decays here. Render-only — the body/hitbox never changes.
+  static const double _squashTime = 0.08;
+  double _squash = 0;
+
+  void triggerSquash() => _squash = _squashTime;
+
+  /// Test hooks: the squash is render-only state with a fixed decay.
+  bool get squashActive => _squash > 0;
+  void decaySquash(double dt) => _squash = math.max(0, _squash - dt);
+
+  // AKP-3b: swing-arc overlay, tinted per weapon special. One paint reused
+  // across frames; the arc path is rebuilt only while attacking.
+  static final _arcPaint = ui.Paint()
+    ..style = ui.PaintingStyle.stroke
+    ..strokeCap = ui.StrokeCap.round;
+  static const _specialTints = {
+    WeaponSpecial.none: ui.Color(0xE6F4EFE6),
+    WeaponSpecial.wallBreaker: ui.Color(0xE6D8CDBd),
+    WeaponSpecial.burn: ui.Color(0xE6F2A24B),
+    WeaponSpecial.bonusHeart: ui.Color(0xE6E8848D),
+    WeaponSpecial.lunge: ui.Color(0xE6A9D1F7),
+    WeaponSpecial.tripleJump: ui.Color(0xE6BFE8A9),
+  };
 
   // Scratch vectors reused every frame (Sprite.render copies them into its
   // own temps; it never keeps the reference) — no per-frame allocations.
@@ -81,6 +108,7 @@ class PlayerComponent extends PositionComponent
   void update(double dt) {
     final core = game.session.player;
     _blinkClock += dt;
+    decaySquash(dt);
     if (core.state == PlayerState.attack) {
       _setAnim(_attacks[core.comboIndex.clamp(0, _attacks.length - 1)]);
     } else {
@@ -109,9 +137,48 @@ class PlayerComponent extends PositionComponent
       canvas.translate(b.centerX * 2, 0);
       canvas.scale(-1, 1);
     }
+    // AKP-3a: squash on landing — wider and shorter, anchored at the feet,
+    // easing back to 1:1 over ~80ms. Pure render transform.
+    if (_squash > 0) {
+      final k = _squash / _squashTime; // 1 -> 0
+      final sx = 1 + 0.15 * k, sy = 1 - 0.15 * k;
+      canvas.translate(b.centerX, b.bottom);
+      canvas.scale(sx, sy);
+      canvas.translate(-b.centerX, -b.bottom);
+    }
     _drawPos.setValues(b.centerX - w / 2, b.bottom - h);
     _drawSize.setValues(w, h);
     sprite.render(canvas, position: _drawPos, size: _drawSize);
+    // AKP-3b: swing arc — a white crescent sweeping with the attack frame,
+    // in front of the player, tinted per weapon special. This is the single
+    // biggest "reads like AK" win in combat (docs/ak-parity-plan.md §3).
+    if (core.state == PlayerState.attack) {
+      final progress =
+          (ticker.clock / ticker.totalDuration()).clamp(0.0, 1.0);
+      // The arc lives in the swing's middle 60%: wind-up and recovery bare.
+      if (progress > 0.15 && progress < 0.75) {
+        final swing = (progress - 0.15) / 0.6; // 0..1 across the arc
+        final radius = 14.0 + game.session.loadout.weapon.range * 0.5;
+        // Alternate sweep direction by combo step so the phrase reads
+        // down-slash / up-slash / big down-slash.
+        final up = core.comboIndex == 1;
+        final start = up ? 0.9 - swing * 1.8 : -0.9 + swing * 1.8;
+        _arcPaint
+          ..color = _specialTints[game.session.loadout.weapon.special] ??
+              const ui.Color(0xE6F4EFE6)
+          ..strokeWidth = core.comboIndex == 2 ? 3.0 : 2.0;
+        canvas.drawArc(
+          ui.Rect.fromCircle(
+              center: ui.Offset(b.centerX + radius * 0.35,
+                  b.centerY - 2),
+              radius: radius),
+          start - 0.35,
+          0.7,
+          false,
+          _arcPaint,
+        );
+      }
+    }
     canvas.restore();
   }
 }
