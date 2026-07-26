@@ -67,6 +67,10 @@ const double kComboWindow = 0.38; // s after a swing in which next chains
 const int kComboHits = 3; // 3-hit chain; 3rd hit +50% damage
 const double kAttackDuration = 0.22; // s per swing
 const double kHitPause = 0.040; // s freeze on connect
+// AKP-3d: a connect that matters (crit or the 3-hit finisher) freezes longer
+// than a plain hit. Apple Knight's combat reads heavy because the heavy beats
+// stop the frame; the light ones do not.
+const double kHitPauseHeavy = 0.075; // s freeze on crit / combo finisher
 const double kHurtIFrames = 1.0; // s invulnerability after taking a hit
 const double kKnockbackSpeed = 150.0; // px/s away from damage source
 // AKP-6b: hazard tiles (spike/fire pits) eject the player up and along the
@@ -87,6 +91,33 @@ const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
 const double kCameraLookAhead = 40.0; // px in facing direction
 const double kCameraSmooth = 8.0; // exp smoothing factor
 const double kCameraPeekDown = 56.0; // px when holding down
+
+// Game juice (AKP-3, docs/ak-parity-plan.md §3). All small, all capped: the
+// Android perf budget and motion-sickness both punish generous FX.
+/// Landing squash-and-stretch window (s) and the scale applied at its start.
+const double kLandSquashTime = 0.09;
+const double kLandSquashScaleX = 1.16;
+const double kLandSquashScaleY = 0.84;
+/// Player sprite flashes red for this long after taking a hit (the i-frame
+/// blink alone reads as "invisible", not as "that hurt").
+const double kPlayerHurtFlash = 0.14;
+/// Swing arc overlay lifetime (s). One arc per swing, facing-flipped.
+const double kSwingArcLife = 0.16;
+/// Floating damage numbers: lifetime (s), rise distance (px) and how many may
+/// live at once (oldest is dropped past the cap — see kMaxLiveParticles).
+const double kDamageNumberLife = 0.55;
+const double kDamageNumberRise = 14.0;
+const int kMaxDamageNumbers = 8;
+/// Camera shake amplitudes (px) per beat, and the decay rate (px/s).
+/// Deliberately NOT fired on ordinary hits: constant shake is the fastest way
+/// to make a phone game feel cheap and nauseating.
+const double kShakeHurt = 3.0; // player took damage
+const double kShakeHeavyHit = 2.0; // crit or combo finisher connected
+const double kShakeBossSlam = 3.5; // boss phase change / heavy boss attack
+const double kShakeBossDeath = 4.5;
+const double kShakeWallBreak = 1.5;
+const double kShakeMax = 4.5; // hard cap, whatever asks for more
+const double kShakeDecay = 16.0; // px/s
 
 // Player.
 const int kBaseMaxHearts = 3;

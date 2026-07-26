@@ -26,7 +26,7 @@ import 'package:flutter/widgets.dart' show EdgeInsets, KeyEventResult;
 import '../audio/audio_service.dart';
 import 'haptics.dart';
 import '../core/rng.dart';
-import '../meta/catalog.dart' show SpellEffect;
+import '../meta/catalog.dart' show SpellEffect, WeaponSpecial;
 import '../meta/daily.dart';
 import '../ui/app_state.dart';
 import 'components/decor_layer.dart';
@@ -38,6 +38,7 @@ import 'components/parallax_bg.dart';
 import 'components/perf_overlay.dart';
 import 'components/player_component.dart';
 import 'components/tile_layer.dart';
+import 'camera_shake.dart';
 import 'core_loadout.dart';
 import 'difficulty.dart';
 import 'input_intent.dart';
@@ -171,10 +172,13 @@ class EmberGame extends FlameGame
   bool _keyRollEdge = false;
 
   late SpriteAnimation _deathAnim;
-  double _camBump = 0;
+  late final PlayerComponent _playerComponent;
+  /// AKP-3e: shake is a budget, not a free-for-all — see camera_shake.dart.
+  final CameraShake _shake = CameraShake();
+  /// AKP-3c: live damage numbers, oldest first, capped at kMaxDamageNumbers.
+  final List<DamageNumberFx> _damageNumbers = [];
   double _stepClock = 0;
   bool _stepAlt = false;
-  final math.Random _bumpRand = math.Random();
   bool _resultsPersisted = false;
 
   Vector2 get cameraPos => camera.viewfinder.position;
@@ -203,7 +207,8 @@ class EmberGame extends FlameGame
     world.add(DecorLayerComponent());
     world.add(TileLayerComponent());
     world.add(ItemsComponent());
-    world.add(PlayerComponent());
+    _playerComponent = PlayerComponent();
+    world.add(_playerComponent);
     for (final core in session.enemies) {
       world.add(EnemyComponent(core));
     }
@@ -532,9 +537,12 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('land', volume: 0.5);
           world.add(PuffFx(
               Vector2(session.player.body.centerX, session.player.body.bottom)));
+          _playerComponent.squash(); // AKP-3a
         case PlayerEvent.hurt:
           AudioService.instance?.playSfx('player_hit');
           Haptics.medium(); // taking a hit is the beat that must land
+          _playerComponent.hurtFlash(); // AKP-3d
+          _shake.bump(kShakeHurt); // AKP-3e: the one beat that always shakes
         case PlayerEvent.died:
           break; // handled via SessionEventKind.levelFailed
         case PlayerEvent.rolled:
@@ -557,6 +565,7 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx(
               'swing${session.player.comboIndex.clamp(0, 2) + 1}',
               volume: 0.7);
+          _spawnSwingArc(); // AKP-3b
         case PlayerEvent.droppedThrough:
           break;
       }
@@ -590,7 +599,13 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('secret');
         case SessionEventKind.enemyHit:
           AudioService.instance?.playSfx('enemy_hit');
-          _camBump = e.crit ? 3.0 : 1.5;
+          if (e.amount > 0) _spawnDamageNumber(e);
+          // AKP-3e: only heavy connects shake. A bump on every hit made the
+          // whole screen rattle through normal play.
+          final heavy = e.crit ||
+              session.player.comboIndex == kComboHits - 1 &&
+                  session.player.attackTime > 0;
+          if (heavy) _shake.bump(kShakeHeavyHit);
         case SessionEventKind.enemyDeath:
           AudioService.instance?.playSfx('enemy_death');
           Haptics.light(); // kill confirm
@@ -601,6 +616,7 @@ class EmberGame extends FlameGame
           AudioService.instance?.playSfx('block');
           world.add(PuffFx(at,
               color: const Color(0xCC8A7B66), radius: 7, life: 0.4));
+          _shake.bump(kShakeWallBreak);
         case SessionEventKind.appleThrown:
           AudioService.instance?.playSfx('whoosh', volume: 0.5);
         case SessionEventKind.appleBroke:
@@ -615,11 +631,11 @@ class EmberGame extends FlameGame
         case SessionEventKind.bossPhase:
           AudioService.instance?.playSfx('enemy_hit', volume: 0.9);
           Haptics.heavy();
-          _camBump = 4.0;
+          _shake.bump(kShakeBossSlam);
         case SessionEventKind.bossDefeated:
           AudioService.instance?.playSfx('boss_death');
           Haptics.heavy();
-          _camBump = 5.0;
+          _shake.bump(kShakeBossDeath);
         case SessionEventKind.emberShotBroke:
           world.add(PuffFx(at,
               color: const Color(0xCCE86A17), radius: 4, life: 0.25));
@@ -634,7 +650,8 @@ class EmberGame extends FlameGame
           world.add(PuffFx(at, radius: 8, life: 0.35));
           _camSmoothX = at.x;
           _camSmoothY = at.y;
-          _camBump = 2.0;
+          // A respawn is a reset, not an impact: kill any leftover shake.
+          _shake.reset();
         case SessionEventKind.levelComplete:
           _persistResults();
           AudioService.instance?.playMusic('victory', loop: false);
@@ -645,6 +662,56 @@ class EmberGame extends FlameGame
           overlays.add(overlayFail);
       }
     }
+  }
+
+  // -- AKP-3 juice helpers ----------------------------------------------------
+
+  /// Weapon identity for the swing arc + crit numbers (AKP-4b, the cheap half:
+  /// colour per special, no new art). Falls back to plain steel white.
+  Color get _weaponTint => switch (session.loadout.weapon.special) {
+        WeaponSpecial.burn => const Color(0xFFFFA24A),
+        WeaponSpecial.lunge => const Color(0xFF9BE0FF),
+        WeaponSpecial.wallBreaker => const Color(0xFFE8D9B0),
+        WeaponSpecial.bonusHeart => const Color(0xFFFFB3C7),
+        WeaponSpecial.tripleJump => const Color(0xFFCBB6FF),
+        WeaponSpecial.none => const Color(0xFFFFFFFF),
+      };
+
+  /// AKP-3b: one arc per swing, in front of the player, weapon-tinted. The
+  /// finisher (3rd combo hit) swings wider and reaches further, so the phrase
+  /// escalates visually as well as in damage.
+  void _spawnSwingArc() {
+    final p = session.player;
+    final finisher = p.comboIndex == kComboHits - 1;
+    final reach = (finisher ? 30.0 : 24.0) + session.loadout.weapon.range * 0.5;
+    world.add(SwingArcFx(
+      Vector2(p.body.centerX + p.facing * 6, p.body.centerY - 2),
+      facing: p.facing,
+      color: _weaponTint,
+      reach: reach,
+      sweep: finisher ? 2.3 : 1.9,
+      life: kSwingArcLife,
+    ));
+  }
+
+  /// AKP-3c: floating damage number over the enemy that was hit, capped so a
+  /// crowded fight cannot flood the particle budget.
+  void _spawnDamageNumber(SessionEvent e) {
+    _damageNumbers.removeWhere((d) => d.isRemoved || d.parent == null);
+    while (_damageNumbers.length >= kMaxDamageNumbers) {
+      _damageNumbers.removeAt(0).removeFromParent();
+    }
+    // Small deterministic-ish horizontal scatter so stacked hits do not
+    // overprint into an unreadable blob.
+    final jitter = ((e.x + e.y).round() % 7) - 3.0;
+    final fx = DamageNumberFx(
+      Vector2(e.x + jitter, e.y - 10),
+      amount: e.amount,
+      crit: e.crit,
+      color: e.crit ? _weaponTint : const Color(0xFFF4EAD5),
+    );
+    _damageNumbers.add(fx);
+    world.add(fx);
   }
 
   void _followCamera(double dt) {
@@ -671,8 +738,7 @@ class EmberGame extends FlameGame
     // follow speed (and the apparent "weight" of the camera) changed with
     // frame rate. 1 - e^(-k*dt) converges identically at any fps.
     final k = 1 - math.exp(-kCameraSmooth * dt);
-    _camBump = math.max(0, _camBump - 12 * dt);
-    final bumpY = _camBump > 0 ? (_bumpRand.nextDouble() - 0.5) * _camBump * 2 : 0.0;
+    _shake.update(dt);
     _camSmoothX += (targetX - _camSmoothX) * k;
     _camSmoothY += (targetY - _camSmoothY) * k;
     // Pixel snap (movement-stutter fix): the 352x198 viewport is upscaled
@@ -683,8 +749,8 @@ class EmberGame extends FlameGame
     // lost; only the rendered position is quantized to whole world pixels.
     camera.viewfinder.position = _camRender
       ..setValues(
-        _camSmoothX.roundToDouble(),
-        (_camSmoothY + bumpY).roundToDouble(),
+        (_camSmoothX + _shake.offsetX).roundToDouble(),
+        (_camSmoothY + _shake.offsetY).roundToDouble(),
       );
   }
 
