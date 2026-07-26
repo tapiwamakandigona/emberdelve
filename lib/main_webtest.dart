@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 
 import 'core/save.dart';
 import 'game/ember_game.dart';
+import 'meta/catalog.dart' show kWeapons;
 import 'ui/app_state.dart';
 
 /// Game-level event instrumentation: counts events that reach the component
@@ -45,6 +46,17 @@ void main() {
   final params = Uri.base.queryParameters;
   final levelId = params['level'] ?? 'w1_l1';
   final seed = int.tryParse(params['seed'] ?? '') ?? 42;
+  // AKP-4a evidence: ?weapon=<catalog id> boots with that weapon owned +
+  // equipped (harness-only; the in-memory save never persists).
+  final weapon = params['weapon'];
+  if (weapon != null && kWeapons.any((w) => w.id == weapon)) {
+    AppState.save.ownedWeapons.add(weapon);
+    AppState.save.equippedWeapon = weapon;
+  }
+  // AKP-4c evidence: ?apples=N pre-fills the pouch (harness-only) so the
+  // held-throw arc preview can be exercised without hunting pickups.
+  final apples = int.tryParse(params['apples'] ?? '') ?? 0;
+  var applesApplied = false;
 
   final game = EmberGame(levelId: levelId, seedOverride: seed);
 
@@ -53,6 +65,10 @@ void main() {
     final obj = JSObject();
     var loaded = false;
     try {
+      if (!applesApplied && apples > 0) {
+        game.session.applesHeld = apples;
+        applesApplied = true;
+      }
       final body = game.session.player.body;
       obj.setProperty('x'.toJS, body.centerX.toJS);
       obj.setProperty('y'.toJS, body.centerY.toJS);

@@ -75,8 +75,24 @@ const double kKnockbackSpeed = 150.0; // px/s away from damage source
 // 170 px/s across ~0.6s of airtime clears a 4-tile pit from its lip.
 const double kHazardEjectSpeedY = 340.0;
 const double kHazardEjectSpeedX = 170.0;
-const double kAppleThrowSpeed = 220.0; // px/s, 45deg-ish arc
+// AKP-4c: apple lob flattened 40° -> 22.5° (feel-notes vs the AK reference:
+// AK's lob is flat and readable; the 40° arc overshot close targets and the
+// apex hid behind the HUD). Speed stays 220 px/s — flight time drops and
+// flat-ground range is nearly unchanged (~56px), so level balance holds.
+const double kAppleThrowSpeed = 220.0; // px/s
+const double kAppleThrowCos = 0.924; // cos 22.5°
+const double kAppleThrowSin = 0.383; // sin 22.5°
 const int kAppleDamage = 2;
+// AKP-4c: honest arc preview while the throw button is held — dots sampled
+// from the SAME launch params + gravity the projectile integrates with.
+const double kApplePreviewStep = 0.05; // s between preview dots
+const int kApplePreviewDots = 10;
+// AKP-4b: Skypiercer's lunge special — a forward velocity burst at swing
+// start. Ground friction (1600) bleeds 150 px/s in ~0.09s ≈ a 7px step
+// forward per swing: reads as AK's aggressive lunge without breaking any
+// reachability contract (it is horizontal-only and wall-clipped by the
+// normal integrator).
+const double kLungeSpeed = 150.0; // px/s at swing start
 const double kEmberShotSpeed = 120.0; // px/s, Ember Totem spit (dodgeable)
 
 // Camera.

@@ -512,6 +512,7 @@ class SkinPreview extends StatefulWidget {
 
 class _SkinPreviewState extends State<SkinPreview> {
   ui.Image? _sheet;
+  ui.Image? _weapon; // AKP-4a: equipped-weapon overlay on the idle preview
   Timer? _timer;
   int _frame = 0;
   static const _frames = 5;
@@ -523,25 +524,41 @@ class _SkinPreviewState extends State<SkinPreview> {
     _load();
   }
 
+  Future<ui.Image> _decode(ByteData bytes) async {
+    final codec =
+        await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    return (await codec.getNextFrame()).image;
+  }
+
   Future<void> _load() async {
     ByteData bytes;
     try {
+      // AKP-4a: skins are bladeless body sheets; 'red' = player/body/.
       bytes = await rootBundle.load(widget.skinId == 'red'
-          ? 'assets/images/player/idle.png'
+          ? 'assets/images/player/body/idle.png'
           : 'assets/images/player/skins/${widget.skinId}/idle.png');
     } catch (_) {
       // Missing skin sheet (catalog/art drift): preview the base knight
       // rather than crash the shop.
       bytes = await rootBundle.load('assets/images/player/idle.png');
     }
-    final codec =
-        await ui.instantiateImageCodec(bytes.buffer.asUint8List());
-    final frameInfo = await codec.getNextFrame();
+    final sheet = await _decode(bytes);
+    // AKP-4a: the equipped weapon rides on top so the preview matches what
+    // the level actually renders. Missing sheet -> bare hands, never a crash.
+    ui.Image? weapon;
+    try {
+      weapon = await _decode(await rootBundle.load(
+          'assets/images/player/weapons/${AppState.save.equippedWeapon}/idle.png'));
+    } catch (_) {}
     if (!mounted) {
-      frameInfo.image.dispose();
+      sheet.dispose();
+      weapon?.dispose();
       return;
     }
-    setState(() => _sheet = frameInfo.image);
+    setState(() {
+      _sheet = sheet;
+      _weapon = weapon;
+    });
     _timer = Timer.periodic(const Duration(milliseconds: 140), (_) {
       if (mounted) setState(() => _frame = (_frame + 1) % _frames);
     });
@@ -551,6 +568,7 @@ class _SkinPreviewState extends State<SkinPreview> {
   void dispose() {
     _timer?.cancel();
     _sheet?.dispose();
+    _weapon?.dispose();
     super.dispose();
   }
 
@@ -567,16 +585,18 @@ class _SkinPreviewState extends State<SkinPreview> {
       child: _sheet == null
           ? const SizedBox.shrink()
           : CustomPaint(
-              painter: _SkinFramePainter(_sheet!, _frame, _fw, _fh)),
+              painter:
+                  _SkinFramePainter(_sheet!, _weapon, _frame, _fw, _fh)),
     );
   }
 }
 
 class _SkinFramePainter extends CustomPainter {
   final ui.Image sheet;
+  final ui.Image? weapon; // AKP-4a: same frame geometry, drawn on top
   final int frame;
   final double fw, fh;
-  _SkinFramePainter(this.sheet, this.frame, this.fw, this.fh);
+  _SkinFramePainter(this.sheet, this.weapon, this.frame, this.fw, this.fh);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -585,15 +605,15 @@ class _SkinFramePainter extends CustomPainter {
         center: Offset(size.width / 2, size.height / 2),
         width: fw * scale,
         height: fh * scale);
-    canvas.drawImageRect(
-      sheet,
-      Rect.fromLTWH(frame * fw, 0, fw, fh),
-      dst,
-      Paint()..filterQuality = FilterQuality.none,
-    );
+    final src = Rect.fromLTWH(frame * fw, 0, fw, fh);
+    final paint = Paint()..filterQuality = FilterQuality.none;
+    canvas.drawImageRect(sheet, src, dst, paint);
+    if (weapon != null) {
+      canvas.drawImageRect(weapon!, src, dst, paint);
+    }
   }
 
   @override
   bool shouldRepaint(_SkinFramePainter old) =>
-      old.frame != frame || old.sheet != sheet;
+      old.frame != frame || old.sheet != sheet || old.weapon != weapon;
 }
