@@ -50,7 +50,11 @@ class SessionEvent {
   final SessionEventKind kind;
   final double x, y;
   final bool crit;
-  const SessionEvent(this.kind, {this.x = 0, this.y = 0, this.crit = false});
+
+  /// Damage dealt, for enemyHit events (AKP-3c floating damage numbers).
+  final int amount;
+  const SessionEvent(this.kind,
+      {this.x = 0, this.y = 0, this.crit = false, this.amount = 0});
 }
 
 class CoinEntity {
@@ -503,7 +507,7 @@ class LevelSession {
           if (loadout.burnOnHit && e.alive) e.burnLeft = 3.0;
           hitPause = kHitPause;
           _events.add(SessionEvent(SessionEventKind.enemyHit,
-              x: e.centerX, y: e.centerY, crit: crit));
+              x: e.centerX, y: e.centerY, crit: crit, amount: dmg));
           if (!e.alive) _onEnemyDeath(e);
         }
       }
@@ -560,7 +564,7 @@ class LevelSession {
         }
         e.damage(kAppleDamage);
         _events.add(SessionEvent(SessionEventKind.enemyHit,
-            x: e.centerX, y: e.centerY));
+            x: e.centerX, y: e.centerY, amount: kAppleDamage));
         _events.add(SessionEvent(SessionEventKind.appleBroke, x: a.x, y: a.y));
         if (!e.alive) _onEnemyDeath(e);
         break;
@@ -716,7 +720,7 @@ class LevelSession {
             e.damage(kSpellBurstDamage);
             if (e.alive) e.burnLeft = 3.0;
             _events.add(SessionEvent(SessionEventKind.enemyHit,
-                x: e.centerX, y: e.centerY));
+                x: e.centerX, y: e.centerY, amount: kSpellBurstDamage));
             if (!e.alive) _onEnemyDeath(e);
           }
         }

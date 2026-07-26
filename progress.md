@@ -384,6 +384,38 @@ the same World 1 fight renamed and retinted.
 - World 2 full re-authoring, AK-parity juice (AKP-3), on-device perf (P-M7).
 
 ---
+## 2026-07-26 — AKP-3 animation & game juice (feat/akp3-juice)
+Owner (DM): "go ahead" on the follow-up stack. AKP-3 from
+docs/ak-parity-plan.md §3 — the "reads like AK" combat pass. AKP-3d
+(enemy hit-flash) already shipped earlier; this lands the rest. All render
+side: no gameplay value, hitbox or timing changed.
+
+- **AKP-3a landing squash**: PlayerComponent scales 1.15x/0.85y anchored at
+  the feet for 80ms on PlayerEvent.landed, easing to 1:1 (render transform
+  only). Dust on land/dash already existed.
+- **AKP-3b swing arcs**: procedural white crescent (canvas.drawArc) swept
+  across the middle 60% of each attack animation, in front of the player,
+  flipped with facing, direction alternating per combo step, thicker on the
+  finisher, tinted per weapon special (none/wallBreaker/burn/bonusHeart/
+  lunge/tripleJump each get a hue). Zero new art assets.
+- **AKP-3c damage numbers**: SessionEvent gains `amount` (emitted at all
+  four damage sites: melee, apple, spell burst; burn ticks deliberately
+  silent). DamageNumberFx: ui.Paragraph laid out once at construction, two
+  pre-baked alpha variants instead of a per-frame saveLayer (offscreen
+  layer per number would eat the Android frame budget), ease-out rise,
+  crits bigger/golden/longer-lived, hard cap of 24 live numbers with
+  constructor/onRemove accounting (skips silently at the cap).
+- **AKP-3e camera shake**: hurt now bumps the camera (3.0); normal enemy
+  hits no longer do — shake only on crits and the combo finisher (the old
+  every-hit 1.5 bump was exactly the motion-sickness noise the plan warns
+  about). bossPhase/bossDefeated bumps unchanged.
+
+VERIFIED: analyze clean (2 pre-existing activeColor infos), tests
+**344/344** (3 new in juice_test.dart: enemyHit carries real damage,
+damage-number cap accounting + crit-lives-longer, squash decay). Remaining
+AKP-3 DoD item that needs hardware: side-by-side capture vs the AK
+reference + perf overlay on the fire-pit scene (folds into P-M7).
+
 ## 2026-07-26 — World 2 re-authored + reachability contract (feat/world2-reauthor)
 Owner (DM): "go ahead" on the follow-up stack after #61. This is the World 2
 full re-authoring, plus a defect it flushed out of BOTH worlds.
