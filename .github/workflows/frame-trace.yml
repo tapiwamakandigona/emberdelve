@@ -81,10 +81,9 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           # Frame trace measures animations — do NOT disable them.
           disable-animations: false
-          script: |
-            flutter drive --profile \
-              --driver=test_driver/perf_driver.dart \
-              --target=integration_test/frame_trace_test.dart
+          # NOTE: the action runs each script line via sh -c separately —
+          # keep the command on ONE line (continuations break it).
+          script: flutter drive --profile --driver=test_driver/perf_driver.dart --target=integration_test/frame_trace_test.dart
 
       - name: Summarize frame times
         if: always()
