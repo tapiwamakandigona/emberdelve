@@ -481,3 +481,9 @@ Owner (DM): "work on alpha version of emberdelve."
   Not salvaged: #62's camera_shake.dart module + kHitPauseHeavy (superseded
   by #65's tuned-shake approach), kiln_boss_test.dart (superseded by #61's
   kiln_golem_test.dart, legend M not Q).
+
+## 2026-07-26 — release: v1.0.0-alpha.6+18
+- pubspec bumped 1.0.0-alpha.5+17 -> 1.0.0-alpha.6+18; checkpoint
+  checkpoints/09-alpha6-w2-reauthor-juice-kiln.md written (tester-facing
+  changes: enterable vaults fix, W2 re-author, Kiln Golem fight, AKP-3 juice).
+- Release evidence appended after CI + prerelease publish (see below).

@@ -3,7 +3,7 @@ description: "Emberdelve — pixel action-platformer. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 1.0.0-alpha.5+17
+version: 1.0.0-alpha.6+18
 
 environment:
   sdk: ^3.8.1
