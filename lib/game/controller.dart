@@ -231,6 +231,12 @@ class GameController extends ChangeNotifier {
     return _saveQueue;
   }
 
+  /// Test seam (tool/play_session_test.dart): when set, the next [startRun]
+  /// without an explicit [seed] consumes this value instead of the clock, so
+  /// harness runs are reproducible from a command line. One-shot: cleared on
+  /// use. Never set by production UI code.
+  int? debugNextRunSeed;
+
   void startRun({
     String? character,
     int ascension = 0,
@@ -240,8 +246,12 @@ class GameController extends ChangeNotifier {
     String? difficulty,
   }) {
     // Deterministic-enough seed for real play; runs are still fully replayable
-    // from their seed. Daily runs pin [seed] via [startDailyRun].
-    final s = seed ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
+    // harness pins it via [debugNextRunSeed] (one-shot override).
+    final s = seed ??
+        debugNextRunSeed ??
+        DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    debugNextRunSeed = null;
     sim = Sim(s);
     _bankedThisRun = false;
     dailyDate = daily;

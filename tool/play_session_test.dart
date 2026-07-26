@@ -3,9 +3,21 @@
 // screenshots every phase, and records every framework exception. Run:
 //
 //   flutter test tool/play_session_test.dart
+//   EMBER_SESSION_SEED=7 flutter test tool/play_session_test.dart   # other seeds
 //
 // Plays 4 bot-guided runs end to end via hit-tested taps; screenshots land
 // in build/play_session/ with a report.txt of every framework exception.
+//
+// DETERMINISM (remaining-work §2): run N uses seed EMBER_SESSION_SEED + N
+// (default base 1842571558, the golden-anchor seed), injected via
+// GameController.debugNextRunSeed. A failure is therefore reproducible from
+// the command line printed in the failure message.
+//
+// ORACLE (remaining-work §2): every loop step checks sim invariants —
+// HP/economy bounds, assigned ⊆ rolled, legal phase set and phase-transition
+// graph, dead actors imply a phase change. Violations FAIL the test (unlike
+// UI-probing warnings, which stay report-only): this file is a fuzz test,
+// no longer just a crash-catcher.
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -25,8 +37,85 @@ const shotSize = Size(360, 800);
 const pixelRatio = 2.0;
 final rootKey = GlobalKey();
 final List<String> problems = [];
+final List<String> violations = []; // invariant/stuck failures — these FAIL
 final List<String> log = [];
 String ctx = 'start';
+
+/// Base seed for the session; run N (0-based) plays seed [baseSeed] + N.
+final int baseSeed =
+    int.tryParse(Platform.environment['EMBER_SESSION_SEED'] ?? '') ??
+        1842571558; // the long-lived golden-anchor seed
+
+/// Legal sim phase-transition graph (self-loops always allowed). Anchors:
+/// start_run → boon|map (run_layer.dart 166/174), boon → map (221),
+/// map → player_turn|rest|shop|event (263-465, combatBegin), event may also
+/// start a fight (events.dart combatBegin) or return to map (497),
+/// rest|shop → map (338/356/452), reward → map (328), combat resolution →
+/// reward|run_won|run_lost|map (587-666). 'title' is the controller-level
+/// null-sim state; a finished run restarts via startRun (→ boon|map).
+const Map<String, Set<String>> legalNext = {
+  'title': {'boon', 'map'},
+  'idle': {'boon', 'map'},
+  'boon': {'map'},
+  'map': {'player_turn', 'rest', 'shop', 'event'},
+  'player_turn': {'reward', 'map', 'run_won', 'run_lost'},
+  'reward': {'map'},
+  'rest': {'map'},
+  'shop': {'map'},
+  'event': {'map', 'player_turn'},
+  'run_won': {'title', 'boon', 'map'},
+  'run_lost': {'title', 'boon', 'map'},
+};
+
+/// Sim-state oracle, checked on every loop step. The sim is synchronous —
+/// commands resolve fully before the UI choreographs — so any state the
+/// harness observes between taps must already satisfy these.
+void checkInvariants(Map<String, Object?>? st, String phase, int step) {
+  if (st == null) return;
+  void bad(String what) =>
+      violations.add('INVARIANT step $step phase $phase: $what');
+  final pl = (st['player'] as Map?) ?? const {};
+  final hp = pl['hp'] as int?, maxHp = pl['max_hp'] as int?;
+  if (hp != null && maxHp != null && hp > maxHp) {
+    bad('player hp $hp > max_hp $maxHp');
+  }
+  if (hp != null && hp <= 0 && phase != 'run_lost') {
+    bad('player hp $hp <= 0 outside run_lost (zombie run)');
+  }
+  if ((pl['block'] as int? ?? 0) < 0) bad('player block ${pl['block']} < 0');
+  if ((pl['rerolls_left'] as int? ?? 0) < 0) {
+    bad('rerolls_left ${pl['rerolls_left']} < 0');
+  }
+  final rolled = (pl['rolled'] as List?)?.cast<int>();
+  final assigned = (pl['assigned'] as Map?) ?? const {};
+  if (assigned.isNotEmpty && rolled == null) {
+    bad('assigned dice ${assigned.keys} with no rolled dice');
+  }
+  for (final k in assigned.keys) {
+    final i = int.tryParse('$k');
+    if (i == null || i < 1 || (rolled != null && i > rolled.length)) {
+      bad('assigned key $k outside rolled range 1..${rolled?.length}');
+    }
+    final v = assigned[k];
+    if (v != 'attack' && v != 'block') bad('assigned[$k] = $v (not a verb)');
+  }
+  final run = (st['run'] as Map?) ?? const {};
+  for (final key in const ['embers', 'gold', 'pending_splash']) {
+    final v = run[key] as int?;
+    if (v != null && v < 0) bad('run.$key $v < 0');
+  }
+  final enemy = st['enemy'] as Map?;
+  if (enemy != null && phase == 'player_turn') {
+    final ehp = enemy['hp'] as int?, emax = enemy['max_hp'] as int?;
+    if (ehp != null && ehp <= 0) bad('enemy hp $ehp <= 0 in player_turn');
+    if (ehp != null && emax != null && ehp > emax) {
+      bad('enemy hp $ehp > max_hp $emax');
+    }
+    if ((enemy['block'] as int? ?? 0) < 0) {
+      bad('enemy block ${enemy['block']} < 0');
+    }
+  }
+}
 
 Future<void> loadRealFonts() async {
   Future<ByteData> asset(String path) => rootBundle.load(path);
@@ -156,10 +245,30 @@ void main() {
     var steps = 0;
     String? lastPhase;
     var stuck = 0;
+    var lastPhaseName = 'title';
+    Object? countedRun; // the sim instance whose finish was already counted
+    log.add('base seed: $baseSeed (run N plays seed base+N)');
 
     while (runsFinished < 4 && steps++ < 2500) {
       final phase = c.phase ?? 'title';
       ctx = phase;
+      checkInvariants(c.state, phase, steps);
+      if (phase != lastPhaseName) {
+        final allowed = legalNext[lastPhaseName];
+        if (allowed == null) {
+          violations.add('INVARIANT step $steps: unknown phase $lastPhaseName');
+        } else if (!allowed.contains(phase)) {
+          violations.add(
+              'INVARIANT step $steps: illegal transition $lastPhaseName → $phase');
+        }
+        final seed = c.sim?.runSeed;
+        if (lastPhaseName == 'title' ||
+            lastPhaseName == 'run_won' ||
+            lastPhaseName == 'run_lost') {
+          log.add('run $runsFinished started: phase $phase, seed $seed');
+        }
+        lastPhaseName = phase;
+      }
       // Stuck detection keyed on phase + combat turn + rolled/assigned state,
       // so long fights don't false-positive.
       final pl = (c.state?['player'] as Map?) ?? {};
@@ -176,7 +285,8 @@ void main() {
       }
       lastPhase = stKey;
       if (stuck > 40) {
-        problems.add('STUCK: $stKey after 40 identical steps (run $runsFinished)');
+        violations
+            .add('STUCK: $stKey after 40 identical steps (run $runsFinished)');
         await shot(tester, 'STUCK_$phase', once: false);
         break;
       }
@@ -217,6 +327,10 @@ void main() {
               await pumpFor(tester, 500);
             }
           }
+          // Determinism: the upcoming startRun (via the character screen or
+          // the plain Delve button) consumes this one-shot seed, so run N
+          // always plays baseSeed + N regardless of the wall clock.
+          c.debugNextRunSeed = baseSeed + runsFinished;
           if (await tapButton(tester, 'Choose a delver')) {
             await pumpFor(tester, 700);
             ctx = 'character';
@@ -246,32 +360,38 @@ void main() {
           await pumpFor(tester, 600);
           break;
         case 'map':
-          final nodesF = find.byWidgetPredicate((w) =>
-              w is GestureDetector &&
-              w.onTap != null &&
-              w.child is AnimatedBuilder);
-          final n = nodesF.evaluate().length;
-          if (n == 0) {
-            problems.add('map: no tappable node found');
+          // Tap nodes via their stable ValueKey('map-node-<id>') — the old
+          // structural finder (GestureDetector around AnimatedBuilder) rotted
+          // when the 2026-07-25 perf pass rebuilt the medallion tree, and the
+          // harness spent every map visit reporting 'no tappable node'.
+          final m = c.state!['map'] as Map;
+          final pos = m['position'] as int;
+          final reach = ((m['edges'] as Map)['$pos'] as List).cast<int>();
+          if (reach.isEmpty) {
+            problems.add('map: no reachable node from position $pos');
             await pumpFor(tester, 400);
             break;
           }
-          // Follow the sim bot's macro choice: map its target node id to the
-          // build-order index among reachable nodes.
-          var tapIndex = rng.nextInt(n);
+          // Follow the sim bot's macro choice when it has one.
           final cmd = botCmd(c.sim!);
-          if (cmd?['type'] == 'choose_node') {
-            final m = c.state!['map'] as Map;
-            final pos = m['position'] as int;
-            final reach = ((m['edges'] as Map)['$pos'] as List).cast<int>();
-            final ordered = [
-              for (final k in (m['nodes'] as Map).keys)
-                ((m['nodes'] as Map)[k] as Map)['id'] as int
-            ].where(reach.contains).toList();
-            final want = ordered.indexOf(cmd!['node'] as int);
-            if (want >= 0 && want < n) tapIndex = want;
+          final targetId = (cmd?['type'] == 'choose_node' &&
+                  reach.contains(cmd!['node'] as int))
+              ? cmd['node'] as int
+              : reach[rng.nextInt(reach.length)];
+          final nodeF = find.byKey(ValueKey('map-node-$targetId'));
+          if (nodeF.evaluate().isEmpty) {
+            problems.add('map: node $targetId (reachable) not on screen');
+            await pumpFor(tester, 400);
+            break;
           }
-          await tester.tap(nodesF.at(tapIndex), warnIfMissed: false);
+          try {
+            await tester.ensureVisible(nodeF.first);
+          } catch (_) {
+            // The map can be mid-transition (intro sweep / rebuild) when we
+            // probe; a failed scroll-into-view just means this step's tap may
+            // miss and the next loop step retries. Never a correctness issue.
+          }
+          await tester.tap(nodeF.first, warnIfMissed: false);
           await pumpFor(tester, 900);
           break;
         case 'player_turn':
@@ -375,10 +495,19 @@ void main() {
           break;
         case 'run_won':
         case 'run_lost':
-          await pumpFor(tester, 1200);
-          await shot(tester, 'summary_$phase', once: false);
-          runsFinished++;
+          // Count each finished run ONCE, keyed on the sim instance: if the
+          // restart tap below misses (animation still settling), this case
+          // re-enters next step and must not double-count. Pre-fix, a missed
+          // tap silently skipped a run's seed (0,1,3 in the report).
+          if (!identical(c.sim, countedRun)) {
+            countedRun = c.sim;
+            runsFinished++;
+            await pumpFor(tester, 1200);
+            await shot(tester, 'summary_$phase', once: false);
+          }
           if (runsFinished < 4) {
+            // runsFinished was just incremented: seed the NEXT run.
+            c.debugNextRunSeed = baseSeed + runsFinished;
             if (!await tapButton(tester, 'Delve again')) {
               await tapButton(tester, 'Back to the fire');
             }
@@ -391,17 +520,27 @@ void main() {
       }
     }
 
-    if (steps >= 900) problems.add('play loop hit step budget (900)');
+    if (steps >= 2500) violations.add('play loop hit step budget (2500)');
     log.add('runs finished: $runsFinished, steps: $steps');
     await pumpFor(tester, 3200); // drain animations (covers the 2s call-outs, v0.3.10)
 
     final report = StringBuffer()
       ..writeln('== PLAY SESSION REPORT ==')
       ..writeln(log.join('\n'))
-      ..writeln('-- problems (${problems.length}) --')
+      ..writeln('-- violations (${violations.length}) — these fail the test --')
+      ..writeln(violations.join('\n'))
+      ..writeln('-- problems (${problems.length}) — report-only warnings --')
       ..writeln(problems.join('\n'));
     File('$outDir/report.txt').writeAsStringSync(report.toString());
-    // Never fail: this is a reconnaissance harness.
-    expect(true, isTrue);
+    // UI-probing misses (problems) stay report-only; sim-invariant breaks,
+    // stuck loops and budget overruns are real failures with a repro line.
+    expect(violations, isEmpty,
+        reason: 'Invariant violations — reproduce with:\n'
+            '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart\n'
+            '${violations.join('\n')}');
+    if (runsFinished < 4) {
+      fail('only $runsFinished/4 runs finished — reproduce with:\n'
+          '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart');
+    }
   }, timeout: const Timeout(Duration(minutes: 15)));
 }
