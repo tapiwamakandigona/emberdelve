@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 0.4.0+24
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.12.0
 
 dependencies:
   flutter:
@@ -18,7 +18,10 @@ dependencies:
   audioplayers: ^6.1.0
   # Play Billing for the one-time Ember Forge unlock (spec R8). The plugin
   # adds com.android.vending.BILLING via manifest merge — no manual entry.
-  in_app_purchase: ^3.2.0
+  # 3.3.0 pulls in_app_purchase_android >=0.5.0, which is Google Play Billing
+  # Library 8.0.0. Play deprecates the 7.x line and rejects updates that still
+  # ship it after 31 Aug 2026, so this floor is a store requirement, not taste.
+  in_app_purchase: ^3.3.0
 
 dev_dependencies:
   flutter_test:
