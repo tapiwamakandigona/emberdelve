@@ -809,3 +809,40 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - Still open: M4-2 (a real license-tester purchase + restore on a Play build).
   Billing 8 makes that on-device check more valuable, not less — it is the one
   thing no CI job can prove.
+
+## 2026-08-10 — v0.4.1+26: keep minSdk 21 (device-support regression caught at Play review)
+
+Uploading 0.4.1+25 to the closed alpha surfaced a hard Play error:
+
+> This release no longer supports 1,972 devices that were supported in your
+> previous release. If you proceed, your app will not be available to new users
+> on these unsupported devices, and updates will not be available to users who
+> already have your app installed on these devices.
+
+Play's device-delta table: Phone -1,556 (-11%), Tablet -415 (-6%), TV -1 (-14%).
+
+Root cause (VERIFIED from the two artifacts' proto manifests):
+- v24 AAB `base/manifest/AndroidManifest.xml`: `minSdkVersion 21` (built on Flutter 3.32.7)
+- v25 AAB: `minSdkVersion 24` (built on Flutter 3.44.9)
+
+`android/app/build.gradle.kts` used `minSdk = flutter.minSdkVersion`, so the
+Flutter 3.32.7 -> 3.44.9 bump (required by in_app_purchase 3.3.0 / Dart 3.12)
+silently raised the floor from API 21 to API 24.
+
+This was NOT required by billing. VERIFIED by downloading the AARs from
+maven.google.com and reading their manifests:
+- `com.android.billingclient:billing:8.0.0` -> `android:minSdkVersion="21"`
+- `com.android.billingclient:billing:7.1.1` -> `android:minSdkVersion="21"`
+
+Fix: pin `minSdk = 21` explicitly in `android/app/build.gradle.kts` with a
+comment recording why. Billing 8 is retained, so the 31 Aug 2026 Play deadline
+is still met, and device support returns to parity with 0.4.0 (24).
+
+versionCode 25 was already consumed by the upload to the draft release (Play
+never allows a version code to be reused), so this ships as 0.4.1+26.
+
+Gate: the release build must produce `minSdkVersion 21` AND billing `8.0.0`
+with zero `queryPurchaseHistory` strings in classes.dex, and be signed by the
+existing upload key (SHA-256 031acb42...4b7a0d). If a transitive dependency
+turns out to require API 24, CI fails at manifest merge - which is the correct
+place to find out, not Play.
