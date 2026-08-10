@@ -731,3 +731,47 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 - Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.18
   Assets emberdelve-v0.3.18.apk (sha256 b650ecfc...4b5ea) and .aab (397b6126...55f65).
 - Still open: §1 real-device raster trace (needs the owner's phone over USB).
+
+## 2026-08-10 — v0.4.0+24: the Ember Forge (Play Billing full unlock, spec R8)
+
+- Owner directives (Viktor app chat, 2026-08-10): production access is granted
+  (per-app; Emberdelve needs no further tester gate), monetize without
+  annoying players, everything production-ready. Market research (r/roguelites,
+  r/AndroidGaming pricing threads, Slice & Dice / Dicey Dungeons comps) says:
+  free game + ONE one-time unlock under $5, no ads — the audience punishes
+  everything else. Design chosen: the **Ember Forge** — free forever: full
+  easy/normal runs, all delvers (ember-priced), Daily Delve, themes; the one
+  purchase (`ember_forge_unlock`, $4.99 tier) opens HARD + the Ascension
+  ladder + all future acts. Passes the §Ethics test: the whole game is free,
+  the endgame is the supporter's tier.
+- Implementation (all gating OUTSIDE the sealed sim — start_run params only):
+  - `lib/meta/forge.dart`: gate helpers (`canSelectDifficulty`,
+    `maxAscensionFor`, `clampRunParams`) — pure, unit-tested.
+  - `lib/meta/store_service.dart`: `StoreGateway` seam over
+    package:in_app_purchase (^3.2.0) + `StoreService` lifecycle: subscribe
+    stream FIRST, then availability/product query, silent startup restore;
+    purchased/restored ⇒ grant → acknowledge (in that order — redelivery-safe);
+    cancel is not an error; entitlement is sticky (never revoked locally).
+  - `GameController`: `grantForgeUnlock()` (idempotent, queued atomic meta
+    save), startRun clamp (defense-in-depth), setPreferredDifficulty guard,
+    boot migration (pre-Forge profile stuck on hard moves the VISIBLE
+    selector to normal — no silent switch).
+  - `MetaState.forgeUnlocked` (field-tolerant; locked profiles serialize
+    WITHOUT the key so pre-Forge saves stay byte-stable).
+  - UI: `forge_sheet.dart` (the ONLY place money is mentioned; localized Play
+    price; restore link; honest failure copy), lock icon on the HARD segment
+    (FittedBox — 320px/1.3x overflow probe stays green), Ascension panel on
+    the character screen, ONE quiet victory-only summary CTA (never a popup),
+    Settings restore row. Total UI copy passes §Ethics blacklist.
+- Contract change, deliberate: meta_ledger first-run test now pins "locked
+  profile cannot select hard" (was: hard freely selectable). Updated WITH
+  the feature per owner-approved monetization — not to make a failing test
+  pass silently; the new test is stricter (asserts the refusal too).
+- VERIFIED locally on the CI-pinned Flutter 3.32.7: analyze clean, 171/171
+  tests green (`flutter analyze` + `flutter test`, sandbox run 2026-08-10).
+- features.json: added M4-2 (passes:false — needs a real license-tester
+  purchase + restore on a Play build for device evidence).
+- Play Console side still needed (owner/Viktor, tracked outside the repo):
+  create one-time product `ember_forge_unlock` ($4.99 base, launch intro
+  $2.99 optional), add tester emails as license testers, upload the v0.4.0
+  AAB to closed testing, verify purchase+restore on-device, then M4-2 flips.

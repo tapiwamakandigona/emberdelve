@@ -326,6 +326,13 @@ class _DifficultySelector extends StatelessWidget {
                   child: GestureDetector(
                     key: ValueKey('difficulty-$id'),
                     onTap: () {
+                      // Ember Forge (v0.4.0): HARD is part of the Forge. A
+                      // tap on the locked segment opens the sheet instead of
+                      // silently failing — the lock icon says why.
+                      if (!canSelectDifficulty(c.meta, id)) {
+                        showForgeSheet(context, c);
+                        return;
+                      }
                       AudioService.instance?.playSfx('ui_tap');
                       c.setPreferredDifficulty(id);
                     },
@@ -343,14 +350,30 @@ class _DifficultySelector extends StatelessWidget {
                               : Colors.transparent,
                         ),
                       ),
-                      child: Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        style: EmberText.micro.copyWith(
-                          color: id == current
-                              ? EmberColors.textPrimary
-                              : EmberColors.textDim,
-                          fontWeight: FontWeight.w700,
+                      // FittedBox: the lock+label pair must never overflow
+                      // the segment on 320px screens at 1.3x text (overflow
+                      // probe) — scale down instead.
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!canSelectDifficulty(c.meta, id)) ...[
+                              const Icon(Icons.lock,
+                                  size: 11, color: EmberColors.textDim),
+                              const SizedBox(width: 3),
+                            ],
+                            Text(
+                              label,
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: id == current
+                                    ? EmberColors.textPrimary
+                                    : EmberColors.textDim,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

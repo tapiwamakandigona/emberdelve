@@ -79,6 +79,28 @@ class SummaryScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: EmberText.micro.copyWith(color: EmberColors.textDim)),
         ),
+        // Ember Forge (v0.4.0): ONE quiet panel, only on a WON run, only
+        // while locked — the peak-joy moment is the only honest time to ask.
+        // Never a popup, never blocks the buttons below (§Ethics).
+        if (won && !c.meta.forgeUnlocked) ...[
+          const SizedBox(height: Space.l),
+          Panel(
+            color: EmberColors.raised,
+            child: Row(children: [
+              const Icon(Icons.local_fire_department,
+                  color: EmberColors.ember, size: 20),
+              const SizedBox(width: Space.m),
+              Expanded(
+                  child: Text(
+                      'The dark goes deeper. HARD and the Ascension '
+                      'ladder wait in the Ember Forge.',
+                      style: EmberText.body)),
+              EmberButton('Open', dense: true,
+                  key: const ValueKey('forge-victory-cta'),
+                  onTap: () => showForgeSheet(context, c)),
+            ]),
+          ),
+        ],
         const Spacer(),
         // Fast restart (backlog #8): straight into a new run — boon pick
         // included — without a detour through the title.

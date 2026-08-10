@@ -15,6 +15,8 @@ import '../data/themes.dart';
 import '../game/controller.dart';
 import '../game/daily_share.dart';
 import '../game/seed_input.dart';
+import '../meta/forge.dart';
+import 'forge_sheet.dart';
 import 'art.dart';
 import 'fx.dart';
 import 'haptics.dart';

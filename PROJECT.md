@@ -31,10 +31,11 @@
 8. **Audio (M2+):** real recorded SFX only (Sonniss GDC bundles / Leohpaz / Kenney CC0). No AI audio. Licensed (non-CC0) assets must never enter a public repo.
 9. **Milestones:** M0 skeleton → M1 prototype (full seeded run) → M2 vertical slice → M3 content → M4 release. One milestone per work session; gate via `features.json` + checkpoint.
 
-## Play publishing status (updated 2026-07-24)
-- **Closed testing (Alpha) is LIVE**: passed Google Play review; release 12 (v0.3.9+12), 177 countries. Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve · opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve · tester group: emberdelve@googlegroups.com.
-- **Production gate:** 12+ opted-in testers for 14 continuous days (personal dev account). Criterion met 2026-07-24 → earliest "Apply for production" ~2026-08-07. A dip below 12 resets the clock; app updates and listing edits do NOT.
-- **Public commitment:** an in-game tutorial was promised to testers "in the next update" — treat as a blocker for the next release.
+## Play publishing status (updated 2026-08-10)
+- **PRODUCTION ACCESS GRANTED 2026-08-09** (Play Console email): the 12-tester/14-day gate is permanently cleared for this app. Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve · opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve · tester group: emberdelve@googlegroups.com.
+- Play tracks still carry old builds (internal 12/v0.3.9, alpha 19/v0.3.14); testers are 6 releases behind. **Target-API deadline 2026-08-31** is against the old v0.3.9 build — uploading any current AAB (targetSdk 36) clears it.
+- The tutorial promised to testers shipped in v0.3.9+ (first-fight overlay, F11). No open public commitments.
+- **Monetization (v0.4.0): the Ember Forge** — free forever: full easy/normal runs, all delvers, Daily Delve; one-time IAP `ember_forge_unlock` ($4.99) opens HARD + Ascension + future acts. See progress.md 2026-08-10 and features.json M4-2 (device evidence pending).
 - Details + verified Play mechanics: `docs/release.md` §"Google Play closed testing" and the tail of `progress.md`.
 
 ## Session-start ritual (for any AI/human resuming)

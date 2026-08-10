@@ -3,7 +3,7 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.3.18+23
+version: 0.4.0+24
 
 environment:
   sdk: ^3.8.1
@@ -16,6 +16,9 @@ dependencies:
   path_provider: ^2.1.4
   # Music loops + SFX one-shots (assets-integration).
   audioplayers: ^6.1.0
+  # Play Billing for the one-time Ember Forge unlock (spec R8). The plugin
+  # adds com.android.vending.BILLING via manifest merge — no manual entry.
+  in_app_purchase: ^3.2.0
 
 dev_dependencies:
   flutter_test:

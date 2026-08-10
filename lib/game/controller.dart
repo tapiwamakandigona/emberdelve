@@ -12,6 +12,7 @@ import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';
 import '../data/relics.dart';
+import '../meta/forge.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
@@ -153,6 +154,13 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
+    // Ember Forge migration (v0.4.0): a pre-Forge profile may have HARD as
+    // its sticky preference. The clamp in startRun would already force
+    // normal; also move the VISIBLE selector so what's highlighted is what
+    // they get (same no-silent-switch rule as the easy steering below).
+    if (!meta.forgeUnlocked && meta.preferredDifficulty == 'hard') {
+      meta.preferredDifficulty = 'normal';
+    }
     // First-run on-ramp (v0.3.3): steer a brand-new profile toward easy by
     // moving the VISIBLE selector — what's highlighted is what they get, so
     // there is never a silent difficulty switch. One tap ends the steering.
@@ -257,13 +265,18 @@ class GameController extends ChangeNotifier {
     dailyDate = daily;
     // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
     // exact same delve, so it always runs on normal (spec §Ethics fairness).
-    final diff = daily != null
+    // Ember Forge gate (v0.4.0, spec R8): UI locks are the polite layer;
+    // this clamp is the guarantee. Daily runs are pinned to normal above.
+    final wanted = daily != null
         ? 'normal'
         : (difficulty ?? meta.preferredDifficulty);
+    final allowed =
+        clampRunParams(meta, difficulty: wanted, ascension: ascension);
+    final diff = allowed.difficulty;
     apply({
       'type': 'start_run',
       if (character != null) 'character': character,
-      'ascension': ascension,
+      'ascension': allowed.ascension,
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
     });
@@ -274,11 +287,23 @@ class GameController extends ChangeNotifier {
   /// choice and ends the first-run easy steering for good.
   void setPreferredDifficulty(String d) {
     if (!const {'easy', 'normal', 'hard'}.contains(d)) return;
+    if (!canSelectDifficulty(meta, d)) return; // Forge-locked (v0.4.0)
     if (meta.preferredDifficulty == d && meta.difficultyChosen) return;
     meta.preferredDifficulty = d;
     meta.difficultyChosen = true;
     MetaStore.save(meta);
     notifyListeners();
+  }
+
+  /// Grant the Ember Forge entitlement (purchase or restore confirmed by
+  /// Play Billing — see meta/store_service.dart). Idempotent; persists via
+  /// the same queued, atomic MetaStore.save as every other meta mutation.
+  Future<void> grantForgeUnlock() async {
+    if (meta.forgeUnlocked) return;
+    meta.forgeUnlocked = true;
+    audio?.playSfx('unlock');
+    notifyListeners();
+    await MetaStore.save(meta);
   }
 
   /// Buy a hearth color with embers (v0.3.3 ledger cosmetics).
