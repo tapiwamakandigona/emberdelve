@@ -73,7 +73,17 @@ void main() {
     expect(c.meta.difficultyChosen, isTrue);
     expect(c.meta.steerToEasy, isFalse);
 
-    // And an explicit different pick sticks.
+    // And an explicit different pick sticks — within the free tier.
+    c.setPreferredDifficulty('normal');
+    expect(c.meta.effectiveDifficulty, 'normal');
+
+    // Ember Forge (v0.4.0, owner-approved monetization): HARD is part of
+    // the Forge. A locked profile's tap is refused (the UI routes it to the
+    // Forge sheet instead); a Forge owner's pick sticks as before.
+    c.setPreferredDifficulty('hard');
+    expect(c.meta.effectiveDifficulty, 'normal',
+        reason: 'locked profiles cannot select hard');
+    c.meta.forgeUnlocked = true;
     c.setPreferredDifficulty('hard');
     expect(c.meta.effectiveDifficulty, 'hard');
   });
