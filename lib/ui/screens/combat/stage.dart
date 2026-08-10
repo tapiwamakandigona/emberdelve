@@ -430,12 +430,18 @@ extension _CombatStageBand on _CombatScreenState {
         transform: squash
             ? (windup
                   ? (Matrix4.identity()
-                      ..translate(lungeToward * -8.0)
+                      // vector_math deprecated the polymorphic translate/scale
+                      // in favour of the typed variants. These are the exact
+                      // desugarings of the old calls: translate(d) was
+                      // translateByDouble(d, 0, 0, 1) and scale(x, y) was
+                      // scaleByDouble(x, y, x, 1) — the z factor mirrored x.
+                      ..translateByDouble(lungeToward * -8.0, 0.0, 0.0, 1.0)
                       ..rotateZ(
                         lungeToward * -0.07,
                       ) // top tips away from target
-                      ..scale(1.06, 0.90))
-                  : (Matrix4.identity()..scale(1.08, 0.86)))
+                      ..scaleByDouble(1.06, 0.90, 1.06, 1.0))
+                  : (Matrix4.identity()
+                      ..scaleByDouble(1.08, 0.86, 1.08, 1.0)))
             : Matrix4.identity(),
         child: w,
       ),
