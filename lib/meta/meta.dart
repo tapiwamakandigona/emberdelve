@@ -59,6 +59,13 @@ class MetaState {
   // floors, seed, embers, daily(optional true).
   List<Map<String, Object?>> runHistory;
   static const int runHistoryCap = 30;
+  // v0.4.0 Ember Forge (spec R8): true once the one-time full unlock has been
+  // purchased (or restored) through Play Billing. Deliberately sticky: once
+  // granted it is never revoked locally — an offline session or a transient
+  // store error must never take paid content away (§Ethics: no punishment).
+  // The source of truth for *granting* is always a Play purchase event
+  // (see meta/store_service.dart), never this file alone.
+  bool forgeUnlocked;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -81,6 +88,7 @@ class MetaState {
     this.lastDailyFloor = 0,
     this.lastDailyFloors = 0,
     List<Map<String, Object?>>? runHistory,
+    this.forgeUnlocked = false,
   })  : runHistory = runHistory ?? [],
         unlockedCharacters = unlocked ?? {defaultCharacter},
         charRuns = charRuns ?? {},
@@ -110,6 +118,7 @@ class MetaState {
         if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
         if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
         if (runHistory.isNotEmpty) 'runHistory': runHistory,
+        if (forgeUnlocked) 'forgeUnlocked': true,
       };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -159,6 +168,7 @@ class MetaState {
             .whereType<Map>()
             .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))
             .toList(),
+        forgeUnlocked: j['forgeUnlocked'] as bool? ?? false,
       );
 
   /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched
