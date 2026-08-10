@@ -7,8 +7,10 @@ on:
   workflow_dispatch:
 
 env:
-  # Flutter stable pinned. Update deliberately (channel stable, Dart >= 3.8.1).
-  FLUTTER_VERSION: 3.32.7
+  # Flutter stable pinned. Update deliberately (channel stable, Dart >= 3.12.0).
+  # 3.44.9 is the current stable line (Dart 3.12.2) and the floor required by
+  # in_app_purchase 3.3.0 / Play Billing Library 8.
+  FLUTTER_VERSION: 3.44.9
 
 jobs:
   test:
