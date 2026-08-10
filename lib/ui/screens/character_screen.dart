@@ -14,7 +14,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
   Widget build(BuildContext context) {
     final c = widget.c;
     final m = c.meta;
-    final maxAsc = m.bestAscension.clamp(0, 20);
+    final maxAsc = maxAscensionFor(m); // Forge-gated (v0.4.0)
     return Scaffold(
       appBar: AppBar(
           title: Text('Choose a delver', style: EmberText.h2),
@@ -34,6 +34,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
           Text('Higher rungs make every enemy hit harder. Unlock the next by '
               'winning at the current one.', style: EmberText.bodyDim),
           const SizedBox(height: Space.s),
+          // Ember Forge (v0.4.0): the ladder is the Forge's endgame tier.
+          if (!m.forgeUnlocked) ...[
+            Panel(
+              child: Row(children: [
+                const Icon(Icons.lock, color: EmberColors.textDim, size: 18),
+                const SizedBox(width: Space.m),
+                Expanded(
+                    child: Text('The Ascension ladder is part of the '
+                        'Ember Forge.', style: EmberText.bodyDim)),
+                EmberButton('Open', dense: true,
+                    onTap: () => showForgeSheet(context, widget.c)),
+              ]),
+            ),
+            const SizedBox(height: Space.s),
+          ],
           Row(children: [
             IconButton(
                 onPressed: ascension > 0

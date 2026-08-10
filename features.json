@@ -158,7 +158,7 @@
     {
       "id": "LFP-4",
       "title": "Idle life on the combat stage (bob + threat sway)",
-      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count — root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
+      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count \u2014 root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
       "passes": true,
       "evidence": "lib/ui/sprites.dart _life ticker (bob/sway params), wired in combat_screen stage; analyze clean, widget suite green"
     },
@@ -175,6 +175,13 @@
       "acceptance": "Risky-reroll copy states reroll-then-subtract; boon screen has the reward screen's deterministic RECOMMENDED default; the '19/20 spawn' reads correctly (overkill splash called out in combat; corrected diagnosis: no floor-vs-round bug exists in combatBegin)",
       "passes": true,
       "evidence": "PR #52 commit c8a3d62 + tests (recommendedIndex determinism, single RECOMMENDED chip render); sim untouched"
+    },
+    {
+      "id": "M4-2",
+      "title": "Ember Forge unlock: one-time IAP, gate, restore (spec R8)",
+      "acceptance": "Play Billing one-time product ember_forge_unlock purchasable in a Play-signed build; HARD + ascension>0 locked without it and open with it; purchase grants + acknowledges + persists; restore works from Settings and the Forge sheet AND silently at startup after reinstall; cancel/error never grant; entitlement never revoked locally; all gating outside the sealed sim",
+      "passes": false,
+      "evidence": "Unit layer proven in test/forge_unlock_test.dart (gate + full purchase lifecycle on a fake gateway, 171/171 suite green). NEEDS DEVICE EVIDENCE: a real license-tester purchase + restore on a Play build before this may flip to true."
     }
   ]
 }

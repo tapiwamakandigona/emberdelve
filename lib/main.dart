@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
+import 'meta/store_service.dart';
 import 'ui/screens.dart';
 import 'ui/theme.dart';
 
@@ -20,6 +21,17 @@ Future<void> main() async {
   AudioService.instance = audio;
   final controller = GameController()..audio = audio;
   await controller.boot();
+  // Ember Forge billing (v0.4.0, spec R8). Wired after boot so the
+  // entitlement check reads the loaded profile; init is deliberately not
+  // awaited — startup never blocks on Google Play, and a purchase event
+  // arriving later just lands through the stream.
+  final store = StoreService(
+    gateway: PlayStoreGateway(),
+    alreadyOwned: () => controller.meta.forgeUnlocked,
+    onEntitled: controller.grantForgeUnlock,
+  );
+  StoreService.instance = store;
+  unawaited(store.init());
   // Decode the first-touch SFX into SoundPool in the background so the very
   // first tap doesn't pay the load. Deliberately not awaited: startup must
   // not wait on audio, and a failure here just means load-on-demand.
