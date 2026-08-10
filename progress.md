@@ -775,3 +775,37 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   create one-time product `ember_forge_unlock` ($4.99 base, launch intro
   $2.99 optional), add tester emails as license testers, upload the v0.4.0
   AAB to closed testing, verify purchase+restore on-device, then M4-2 flips.
+
+## 2026-08-10 — v0.4.1+25: Play Billing Library 8 (deadline build, no gameplay change)
+
+- Why: Play Console notification, verbatim — "Your app uses a version of Google
+  Play Billing Library that will be deprecated soon. Update to a newer version
+  by 31 August 2026 to prevent your updates from being rejected." Release 24
+  ships Billing **7.1.1**; Play only counts what is uploaded, so a code fix
+  without a new versionCode would not have satisfied it.
+- No gameplay/engine/asset change vs v0.4.0+24. The delta is a dependency +
+  toolchain bump (PR #77, merged as ccb2f59) plus three analyzer call-site
+  desugarings, and this version bump.
+  - `in_app_purchase ^3.2.0 -> ^3.3.0`, which resolves
+    `in_app_purchase_android 0.4.0+5 -> 0.5.2` = **Play Billing 8.0.0**.
+  - `environment.sdk ^3.8.1 -> ^3.12.0`; CI `FLUTTER_VERSION 3.32.7 -> 3.44.9`
+    (in_app_purchase 3.3.0 requires Dart >= 3.12 / Flutter >= 3.44).
+  - The only API removed in in_app_purchase_android 0.5.x is
+    `queryPurchaseHistory`, which `lib/meta/store_service.dart` never called —
+    so **zero** billing call-site changes were needed.
+  - The newer Flutter ships vector_math 2.2.0, which deprecates
+    `Matrix4.translate`/`scale`; `flutter analyze --fatal-warnings` is fatal on
+    those. Fixed by exact desugarings in `lib/ui/screens/combat/stage.dart`
+    (`translateByDouble(d, 0.0, 0.0, 1.0)`, `scaleByDouble(x, y, x, 1.0)`),
+    NOT by relaxing the analyzer gate.
+- VERIFIED before the merge, CI run 31436779563 (sha d315b87, both jobs success):
+  analyze + tests + SFX headroom green, and the APK V2 signer cert SHA-256 is
+  still 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+  (permanent upload key).
+- VERIFIED in the artifact, not just the lockfile: unzip the AAB and run
+  `strings base/dex/classes.dex | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`.
+  Release 24 -> `7.1.1` and a `queryPurchaseHistory` string. This tree -> `8.0.0`,
+  no `7.1.1`, no `queryPurchaseHistory`.
+- Still open: M4-2 (a real license-tester purchase + restore on a Play build).
+  Billing 8 makes that on-device check more valuable, not less — it is the one
+  thing no CI job can prove.
