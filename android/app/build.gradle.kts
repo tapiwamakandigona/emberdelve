@@ -38,7 +38,10 @@ android {
         applicationId = "com.tsorostudios.emberdelve"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Pinned deliberately. Flutter 3.44's default flutter.minSdkVersion is 24,
+        // which would have dropped ~1,972 device models that 0.4.0 (24) supported.
+        // Play Billing 8.0.0 itself declares minSdkVersion 21, so 21 stays valid.
+        minSdk = 21
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
