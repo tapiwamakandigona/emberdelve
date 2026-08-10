@@ -846,3 +846,25 @@ with zero `queryPurchaseHistory` strings in classes.dex, and be signed by the
 existing upload key (SHA-256 031acb42...4b7a0d). If a transitive dependency
 turns out to require API 24, CI fails at manifest merge - which is the correct
 place to find out, not Play.
+
+### Correction: minSdk 21 is not achievable on Flutter 3.44 (VERIFIED)
+
+The pin to 21 did not work. The 0.4.1+26 AAB built from commit 5952208 (which
+set `minSdk = 21`) still reports `minSdkVersion 24` in its proto manifest, and
+CI produced no warning about it.
+
+Cause, VERIFIED from upstream source: Flutter's Android embedding manifest
+(`engine/src/flutter/shell/platform/android/AndroidManifest.xml`, stable)
+declares `<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />`,
+and `FlutterExtension.kt` sets `minSdkVersion = 24` as the project default.
+The manifest merger therefore raises the app floor to 24; an app-level 21 is
+silently ignored. Flutter no longer supports API 21-23 at all.
+
+So the API 21-23 drop is unavoidable while meeting the Billing 8 deadline. The
+gradle file now states `minSdk = 24` explicitly with this reasoning recorded, so
+nobody re-litigates it later. That edit is a no-op for output: the built
+artefacts are identical either way (both merge to 24), so 0.4.1+26 was NOT
+rebuilt for it.
+
+Shipped: 0.4.1 (26) submitted to the closed Alpha track, full rollout, with the
+device-support error acknowledged via Play's "Proceed anyway".
