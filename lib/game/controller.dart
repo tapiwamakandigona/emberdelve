@@ -352,6 +352,36 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // v0.4.3 P1 ember sink — dice skins + Codex, same shape as hearth colors:
+  // meta owns the rules (price, dedupe), the controller owns persistence,
+  // sfx, and notification. Pure cosmetics/lore — the sim never sees any of it.
+  bool buyDieSkin(String id) {
+    final ok = meta.tryBuyDieSkin(id);
+    if (ok) {
+      MetaStore.save(meta);
+      audio?.playSfx('unlock');
+    }
+    notifyListeners();
+    return ok;
+  }
+
+  void setActiveDieSkin(String id) {
+    if (!meta.ownedDieSkins.contains(id) || meta.activeDieSkin == id) return;
+    meta.activeDieSkin = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  bool buyCodexEntry(String id) {
+    final ok = meta.tryBuyCodex(id);
+    if (ok) {
+      MetaStore.save(meta);
+      audio?.playSfx('unlock');
+    }
+    notifyListeners();
+    return ok;
+  }
+
   /// Daily Delve: everyone starts from the same seed for the device's local
   /// calendar date (same map, same offers, same boon offering). No streaks,
   /// no expiry — just a shared delve (spec §Ethics).

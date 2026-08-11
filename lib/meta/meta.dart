@@ -10,6 +10,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
+import '../data/codex.dart';
+import '../data/skins.dart';
 import '../data/themes.dart';
 
 /// Schema version stamped into emberdelve_meta.json (v0.3.4).
@@ -44,6 +46,11 @@ class MetaState {
   // Pure ember sink after all delvers unlock; no gameplay effect, no FOMO.
   Set<String> ownedThemes;
   String activeTheme;
+  // v0.4.3 P1 ember sink — dice skins + Codex. Same charter as hearth
+  // colors: pure cosmetics / lore, ember-priced, never a gameplay effect.
+  Set<String> ownedDieSkins;
+  String activeDieSkin;
+  Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
   // copyable result. ONE record — deliberately no daily history, no streaks,
@@ -94,6 +101,9 @@ class MetaState {
     this.bestExactStreak = 0,
     Set<String>? ownedThemes,
     this.activeTheme = defaultTheme,
+    Set<String>? ownedDieSkins,
+    this.activeDieSkin = defaultDieSkin,
+    Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
     this.lastDailyFloor = 0,
@@ -112,7 +122,9 @@ class MetaState {
         unlockedCharacters = unlocked ?? {defaultCharacter},
         charRuns = charRuns ?? {},
         charWins = charWins ?? {},
-        ownedThemes = ownedThemes ?? {defaultTheme};
+        ownedThemes = ownedThemes ?? {defaultTheme},
+        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
+        ownedCodex = ownedCodex ?? {};
 
   Map<String, Object?> toJson() => {
         'schema': metaSchemaVersion,
@@ -132,6 +144,9 @@ class MetaState {
         'bestExactStreak': bestExactStreak,
         'ownedThemes': ownedThemes.toList(),
         'activeTheme': activeTheme,
+        'ownedDieSkins': ownedDieSkins.toList(),
+        'activeDieSkin': activeDieSkin,
+        if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
         if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
         if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
         if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
@@ -186,6 +201,14 @@ class MetaState {
         activeTheme: hearthThemes.containsKey(j['activeTheme'])
             ? j['activeTheme'] as String
             : defaultTheme,
+        ownedDieSkins: ((j['ownedDieSkins'] as List?)?.cast<String>().toSet()
+              ?..add(defaultDieSkin)) ??
+            {defaultDieSkin},
+        activeDieSkin: dieSkins.containsKey(j['activeDieSkin'])
+            ? j['activeDieSkin'] as String
+            : defaultDieSkin,
+        ownedCodex:
+            ((j['ownedCodex'] as List?)?.cast<String>().toSet()) ?? {},
         lastDailyDate: j['lastDailyDate'] as String?,
         lastDailyWon: j['lastDailyWon'] as bool? ?? false,
         lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
@@ -238,6 +261,26 @@ class MetaState {
     if (embers < t.costEmbers) return false;
     embers -= t.costEmbers;
     ownedThemes.add(id);
+    return true;
+  }
+
+  /// Try to buy a dice skin with embers; returns true on success.
+  bool tryBuyDieSkin(String id) {
+    final s = dieSkins[id];
+    if (s == null || ownedDieSkins.contains(id)) return false;
+    if (embers < s.costEmbers) return false;
+    embers -= s.costEmbers;
+    ownedDieSkins.add(id);
+    return true;
+  }
+
+  /// Try to buy a Codex entry with embers; returns true on success.
+  bool tryBuyCodex(String id) {
+    final e = codexById[id];
+    if (e == null || ownedCodex.contains(id)) return false;
+    if (embers < e.costEmbers) return false;
+    embers -= e.costEmbers;
+    ownedCodex.add(id);
     return true;
   }
 

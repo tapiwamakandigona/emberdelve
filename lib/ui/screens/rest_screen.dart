@@ -91,7 +91,9 @@ class RestScreen extends StatelessWidget {
   Widget _chip(String id) => SizedBox(
         width: 48,
         height: 60,
-        child: FittedBox(fit: BoxFit.contain, child: DieChip(id)),
+        child: FittedBox(
+            fit: BoxFit.contain,
+            child: DieChip(id, skin: c.meta.activeDieSkin)),
       );
 }
 
