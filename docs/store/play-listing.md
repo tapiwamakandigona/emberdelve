@@ -13,7 +13,7 @@ Emberdelve: Dice Roguelite
 
 ## Short description (80 chars max)
 
-Fair dice, real choices. A pocket roguelite with zero ads and zero tracking.
+Fair dice, real choices. A pocket dice roguelite with zero ads, played offline.
 
 ## Full description (4000 chars max)
 
@@ -43,7 +43,7 @@ Pick a starting boon and delve again in seconds — 15 boons keep restarts
 fresh.
 
 FAIR BY DESIGN
-• Zero ads, zero tracking — fully offline
+• Zero ads, plays fully offline — analytics only if you switch it on
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
 • A daily seeded delve, shared by everyone
@@ -52,6 +52,14 @@ FAIR BY DESIGN
   Ascension ladder — no subscriptions, no consumables, ever
 
 Made for one-thumb portrait play. Delve in.
+
+## Telemetry note (0.4.3+, added 2026-08-11)
+
+v0.4.3 bundles Firebase Analytics with collection disabled in the manifest until the
+player opts in (`lib/telemetry/`). Two consequences for this listing:
+- The old "zero tracking" wording is no longer accurate and has been replaced above.
+- The Play Console **Data safety form must be updated before 0.4.3 is uploaded**
+  (analytics data, not linked to identity, optional/user-controlled).
 
 ## Category / tags
 
