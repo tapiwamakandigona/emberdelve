@@ -105,7 +105,9 @@ class BoonScreen extends StatelessWidget {
         ? SizedBox(
             width: 52,
             height: 64,
-            child: FittedBox(fit: BoxFit.contain, child: DieChip(dieId)),
+            child: FittedBox(
+                fit: BoxFit.contain,
+                child: DieChip(dieId, skin: c.meta.activeDieSkin)),
           )
         : e.containsKey('gold')
         ? _gain(

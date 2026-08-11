@@ -6,6 +6,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/data/skins.dart';
+import 'package:emberdelve/data/themes.dart';
+import 'package:emberdelve/ui/codex_screen.dart';
 import 'package:emberdelve/ui/ledger_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/settings_screen.dart';
@@ -258,10 +261,36 @@ void main() {
         ..bestExactStreak = 23
         ..charRuns.addAll({'kindler': 500, 'warden': 300, 'gambler': 242})
         ..charWins.addAll({'kindler': 480, 'warden': 290, 'gambler': 223})
-        ..ownedThemes.addAll({'frostfire', 'witchlight', 'goldvein'})
-        ..activeTheme = 'witchlight';
+        ..ownedThemes.addAll(hearthThemes.keys)
+        ..activeTheme = 'witchlight'
+        // v0.4.3 P1: skins owned + codex progress = every card variant lit.
+        ..ownedDieSkins.addAll(dieSkins.keys)
+        ..activeDieSkin = 'obsidian'
+        ..ownedCodex.add('enemy:cinder_wisp');
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
+      );
+      _drain(tester);
+      await pumpFor(tester, 400);
+      expect(
+        problems,
+        isEmpty,
+        reason: 'layout problems:\n${problems.join('\n')}',
+      );
+    });
+
+    testWidgets('codex screen fits at $size', (tester) async {
+      tester.view.physicalSize = size * tester.view.devicePixelRatio;
+      addTearDown(tester.view.resetPhysicalSize);
+      problems.clear();
+      ctx('codex@$size');
+      // Mixed owned/locked entries = both card layouts on screen at once.
+      final c = GameController();
+      c.meta
+        ..embers = 88888
+        ..ownedCodex.addAll({'enemy:cinder_wisp', 'relic:ember_ring'});
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: CodexScreen(c)),
       );
       _drain(tester);
       await pumpFor(tester, 400);

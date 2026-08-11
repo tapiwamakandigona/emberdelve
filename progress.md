@@ -1050,3 +1050,29 @@ Test-file edits called out per harness rules: sim_test boss-anchor block
 
 VERIFIED: flutter analyze clean; 187/187 tests green locally (was 182);
 autoplay 200 seeds: 64% winrate, invalids=0, golden self-consistent.
+
+## 2026-08-11 — P1 ember sink shipped (retention-2026-08-11 P1)
+
+Feature branch feat/ember-sink → PR into legacy/dice-builder. Everything
+cosmetic/lore only per charter: prices up front, no timers, no FOMO, zero
+sim impact.
+
+1. **Hearth colors 4 → 12.** Eight new themes (ashrose → voidcoal), price
+   ladder 120–400 embers, data-only in data/themes.dart.
+2. **Dice skins (new).** data/skins.dart: 7 skins (default bone free +
+   6 priced 150–400). DieChip gets a `skin` param — multiply tint over the
+   die art + skin ink in _FacePainter. Default is the identity paint:
+   unskinned chips render pixel-identical (pinned in test). Wired at all
+   6 render sites (tray, boon, rest, reward flip-card, shop, ledger swatch).
+3. **The Codex (new).** data/codex.dart: 53 lore entries — every enemy (30,
+   commons 15 / elites 20 / bosses 30 embers) and every relic (23, 20 embers).
+   Names/rules never paywalled — lore only. New CodexScreen, entry point on
+   the Ledger. Coverage pinned: a new enemy/relic without lore fails CI.
+4. **Meta:** ownedDieSkins/activeDieSkin/ownedCodex + buy methods mirror
+   hearth colors; field-tolerant load (no schema bump needed — additive),
+   unknown active skin falls back to bone. Total new sink ≈ 3,175 embers.
+
+Tests: new ember_sink_test.dart (8 cases: catalog invariants, purchase
+rules, JSON round-trip, ledger cards, codex buy flow); overflow probe
+extended (codex screen at all sizes, ledger with all skins owned).
+VERIFIED: flutter analyze clean; 207/207 tests green locally (was 194).

@@ -64,6 +64,7 @@ class _RewardScreenState extends State<RewardScreen> {
                       _FlipCard(
                         key: ValueKey('reward-${offers[i]}-$i'),
                         dieId: offers[i],
+                        skin: c.meta.activeDieSkin,
                         recommended: i == recIdx,
                         width: w,
                         height: h,
@@ -102,6 +103,7 @@ class _RewardScreenState extends State<RewardScreen> {
 /// [flipDelayMs] with a 3D turn, then becomes tappable to pick.
 class _FlipCard extends StatefulWidget {
   final String dieId;
+  final String skin; // v0.4.3 P1: lit cosmetic dice skin (paint only)
   final bool recommended;
   final double width;
   final double height;
@@ -111,6 +113,7 @@ class _FlipCard extends StatefulWidget {
   const _FlipCard({
     super.key,
     required this.dieId,
+    required this.skin,
     required this.recommended,
     required this.width,
     required this.height,
@@ -278,7 +281,7 @@ class _FlipCardState extends State<_FlipCard>
                     ),
                   ),
                 ),
-              DieChip(widget.dieId),
+              DieChip(widget.dieId, skin: widget.skin),
               const SizedBox(height: Space.s),
               FittedBox(
                 fit: BoxFit.scaleDown,
