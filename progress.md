@@ -1076,3 +1076,16 @@ Tests: new ember_sink_test.dart (8 cases: catalog invariants, purchase
 rules, JSON round-trip, ledger cards, codex buy flow); overflow probe
 extended (codex screen at all sizes, ledger with all skins owned).
 VERIFIED: flutter analyze clean; 207/207 tests green locally (was 194).
+
+## 2026-08-11 — v0.4.3 (28) released on GitHub
+Tag v0.4.3 at 3b6b916; assets from CI run 31488900632 (signed build at the
+exact release sha). VERIFIED badging: com.tsorostudios.emberdelve,
+versionCode 28, versionName 0.4.3; APK v2-signed, APK+AAB signer cert
+SHA-256 matches the pinned upload key
+031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d.
+sha256: apk f708e68a2095472f28e732f98bd1436b0a15db66cf8abdd4720a003cc185f3ac,
+aab a1b67fe76b847217a034b01f9610a05014ae517090d9083236494195b35c6d05.
+Ships: opt-in telemetry (#63), achievement toasts + bug sweep (#78),
+P1 ember sink — dice skins, the Codex, 12 hearth colors (#79).
+NOT yet uploaded to Google Play. Prerequisite before Play upload:
+update the Play Console Data safety form (telemetry added this version).
