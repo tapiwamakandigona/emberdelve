@@ -2,9 +2,11 @@ package com.tsorostudios.emberdelve
 
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import com.google.android.gms.games.PlayGamesSdk
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -22,6 +24,14 @@ import io.flutter.plugin.common.MethodChannel
  * and the one-shot was issued, false otherwise (caller falls back).
  */
 class MainActivity : FlutterActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Play Games Services v2 (v0.5.0): manual init because the manifest
+        // removes PlayGamesInitProvider — sign-in only ever happens when the
+        // player taps Connect in Settings (opt-in), never automatically.
+        PlayGamesSdk.initialize(this)
+    }
+
     private val vibrator: Vibrator? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)

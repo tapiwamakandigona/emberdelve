@@ -88,3 +88,11 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Play Games Services v2 SDK, needed directly (not just via the
+    // games_services plugin) for the manual PlayGamesSdk.initialize call in
+    // MainActivity — auto sign-in is disabled in the manifest because
+    // connecting is an explicit opt-in tap in Settings.
+    implementation("com.google.android.gms:play-services-games-v2:21.0.0")
+}
