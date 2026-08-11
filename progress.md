@@ -1115,3 +1115,25 @@ missed week).
   all_d4 20% / elites_only 3% — a real difficulty ladder.
 NOT released yet (v0.4.3 is still in Play review). Ship v0.4.4 after 0.4.3
 clears, via the usual signed-CI + verify + release recipe.
+
+## 2026-08-11 — fix: post-encounter progression glitch (map back-and-forth)
+Owner report: after defeating an enemy or progressing, the progression
+glitches a bit back and forth. Two stacked causes, both on return-to-map:
+1) PhaseSwitcher.build() collapsed to a BARE widget.child when idle but
+   wrapped AnimatedBuilder>Stack>KeyedSubtree while transitioning — the tree
+   SHAPE changed when a transition settled (380ms), so Flutter REMOUNTED the
+   just-revealed screen. The map mounts at the fade midpoint (~190ms), starts
+   the delver walk (650ms) + follow scroll (450ms), then loses its State at
+   380ms — both animations snapped back and replayed. Fix: the wrapper is now
+   permanent (identical shape idle vs transitioning; overlay is a
+   SizedBox.shrink when idle); the KeyedSubtree key changes only at the
+   midpoint reveal — the one intended remount.
+2) The map's follow-scroll always ANIMATED from offset 0 (delve floor) on
+   arrival, sweeping the camera bottom→delver every visit mid-run. Fix: first
+   follow of a visit jumpTo (invisible — happens behind the fade at full
+   black), later moves within a visit still animate.
+Regression tests: test/progression_glitch_test.dart — (a) MapScreen State
+identity across the transition settling, (b) mid-run arrival (bot-driven to
+layer >= 4) is framed on the delver immediately with no post-arrival camera
+motion. Both FAILED before the fix, pass after.
+VERIFIED: flutter analyze clean; 230/230 tests green (was 228).
