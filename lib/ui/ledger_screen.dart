@@ -3,11 +3,19 @@
 // caveat 3): every number is REAL and earned (§Ethics honesty — no faked
 // progress, no timers, no FOMO), and hearth colors are a pure-cosmetic ember
 // sink with prices shown up front.
+//
+// v0.5.0 adds the Delver's Ledger achievement list. Same honesty rule: every
+// bar is REAL banked progress (see meta/achievements.dart), nothing is a
+// teaser, and no achievement grants anything — they are recognition only, so
+// the list can never turn into a grind gate.
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
+import '../data/achievements.dart';
 import '../data/characters.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
+import '../meta/achievements.dart' as ach;
+import '../meta/meta.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -91,6 +99,35 @@ class LedgerScreen extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: Space.xl),
+                  // Achievements (v0.5.0). Earned first, then the ones closest
+                  // to done, then the rest — so the list opens on what the
+                  // player has actually achieved.
+                  Row(children: [
+                    Expanded(
+                        child: Text('ACHIEVEMENTS', style: EmberText.micro)),
+                    Text('${ach.earnedCount(m)} of ${ach.achievementCount}',
+                        style: EmberText.label
+                            .copyWith(color: EmberColors.textDim)),
+                  ]),
+                  const SizedBox(height: Space.s),
+                  Panel(
+                    key: const ValueKey('achievements'),
+                    child: Column(children: [
+                      for (final (i, def) in _ordered(m).indexed) ...[
+                        if (i > 0)
+                          const Divider(
+                              color: EmberColors.line, height: Space.xl),
+                        _achievementRow(m, def),
+                      ],
+                    ]),
+                  ),
+                  const SizedBox(height: Space.s),
+                  Text(
+                      'Achievements are recognition only — they never change '
+                      'a delve, and none of them expires.',
+                      style: EmberText.micro
+                          .copyWith(color: EmberColors.textDim)),
+                  const SizedBox(height: Space.xl),
                   // Hearth colors: tap an owned color to light it; tap a
                   // locked one to buy it with embers (price always shown).
                   Row(children: [
@@ -153,6 +190,83 @@ class LedgerScreen extends StatelessWidget {
           Text('${daily ? 'daily · ' : ''}$diff · ${r['date']}',
               style: EmberText.micro.copyWith(color: EmberColors.textDim)),
         ]),
+      ),
+    ]);
+  }
+
+  /// Earned (authoring order), then unearned by descending real progress,
+  /// then untouched ones. Deterministic: ties keep authoring order.
+  List<AchievementDef> _ordered(MetaState meta) {
+    final earned = <AchievementDef>[];
+    final started = <AchievementDef>[];
+    final untouched = <AchievementDef>[];
+    for (final id in achievementsOrder) {
+      final def = achievements[id];
+      if (def == null) continue;
+      if (ach.isEarned(meta, def)) {
+        earned.add(def);
+      } else if (ach.progress(meta, def) > 0) {
+        started.add(def);
+      } else {
+        untouched.add(def);
+      }
+    }
+    started.sort((a, b) {
+      final c = ach.progress(meta, b).compareTo(ach.progress(meta, a));
+      if (c != 0) return c;
+      return achievementsOrder
+          .indexOf(a.id)
+          .compareTo(achievementsOrder.indexOf(b.id));
+    });
+    return [...earned, ...started, ...untouched];
+  }
+
+  Widget _achievementRow(MetaState meta, AchievementDef def) {
+    final earned = ach.isEarned(meta, def);
+    final value = ach.statValue(meta, def.stat, def.param);
+    final p = ach.progress(meta, def);
+    final titleColor =
+        earned ? EmberColors.textPrimary : EmberColors.textDisabled;
+    return Row(children: [
+      Icon(earned ? Icons.military_tech : Icons.radio_button_unchecked,
+          color: earned ? EmberColors.gold : EmberColors.textDisabled, size: 20),
+      const SizedBox(width: Space.m),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(def.name,
+                style: EmberText.body.copyWith(color: titleColor)),
+            const SizedBox(height: 2),
+            Text(def.text,
+                style: EmberText.micro.copyWith(color: EmberColors.textDim)),
+            // Only draw a bar for goals actually under way: an empty bar on an
+            // untouched goal reads as failure rather than as an invitation.
+            if (!earned && p > 0) ...[
+              const SizedBox(height: Space.s),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(
+                  value: p,
+                  minHeight: 3,
+                  backgroundColor: EmberColors.line,
+                  valueColor:
+                      const AlwaysStoppedAnimation(EmberColors.ember),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+      const SizedBox(width: Space.s),
+      Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+              earned ? 'EARNED' : '$value / ${def.target}',
+              style: EmberText.label.copyWith(
+                  color: earned ? EmberColors.gold : EmberColors.textDisabled)),
+        ),
       ),
     ]);
   }
