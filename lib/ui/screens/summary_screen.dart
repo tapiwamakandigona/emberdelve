@@ -178,6 +178,27 @@ class SummaryScreen extends StatelessWidget {
           ),
           const SizedBox(height: Space.m),
         ],
+        // P5 (v0.5.0): straight to the board this run just landed on. Only
+        // for a finished Daily/Weekly AND only while Play Games is connected
+        // — normal runs and unconnected players see nothing.
+        if (PlayGamesService.instance.connected &&
+            (c.dailyResultShareText != null ||
+                c.weeklyResultShareText != null)) ...[
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Leaderboard',
+                key: const ValueKey('summary-leaderboard'),
+                ghost: true,
+                icon: Icons.leaderboard, onTap: () {
+              AudioService.instance?.playSfx('ui_tap');
+              PlayGamesService.instance.showLeaderboards(
+                  leaderboardId: c.dailyResultShareText != null
+                      ? PlayGamesService.dailyLeaderboardId
+                      : PlayGamesService.weeklyLeaderboardId);
+            }),
+          ),
+          const SizedBox(height: Space.m),
+        ],
         SizedBox(
           width: double.infinity,
           child: EmberButton('Back to the fire',

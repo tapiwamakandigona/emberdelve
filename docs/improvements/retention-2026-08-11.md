@@ -132,11 +132,16 @@ week. Title button + declared-rule blurb + recap, in-run badge, copyable summary
 difficulty ladder. 21 new tests (`test/weekly_test.dart`). Future: leaderboard hook (P5) can read the
 weekly seed+mutator directly.
 
-**P4 — Cloud save (~2–3 days).** Progress currently lives in one local file via `path_provider`.
-A wiped phone is a lost player, permanently. Play Games Services saved games, or Appwrite.
+**P4 — Cloud save. ✅ SHIPPED v0.5.0+30 (2026-08-11).** Play Games Services v2 saved games: whole
+MetaState as one snapshot ('emberdelve_meta'), pull→merge→push on connect/resume, push after every
+banked run. Merge contract in `lib/meta/cloud_merge.dart` (max/union/OR/fresher-side). Opt-in
+"Connect" in Settings — never a forced sign-in (manifest removes PlayGamesInitProvider).
 
-**P5 — Daily leaderboard (~3–5 days, needs a backend).** The strongest honest daily hook: a shared
-seed plus other people's results. Needs infrastructure and moderation thinking, so it is last.
+**P5 — Daily/Weekly leaderboards. ✅ SHIPPED v0.5.0+30 (2026-08-11).** No custom backend needed —
+PGS leaderboards: Daily Delve `CgkIhL-el7YREAIQAQ`, Weekly Delve `CgkIhL-el7YREAIQAg`. Score =
+embers banked by a finished Daily/Weekly (the number the summary already shows). Submitted from
+`_bankRun` only while connected; summary gains a Leaderboard button, Settings a View button.
+Moderation: PGS tamper protection is ON for both boards.
 
 ### One business question, not an engineering one
 

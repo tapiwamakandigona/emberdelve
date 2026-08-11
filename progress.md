@@ -1170,3 +1170,30 @@ the greedy autoplay bot (proven terminating across 360 fuzz runs) and a
 guard assertion. New regression test: two controllers starting the weekly
 land on the identical, canonical weeklySeed(weekIndex).
 VERIFIED: analyze clean; 234/234 tests green; resume_labels ran 5x stable.
+
+## 2026-08-11 — P4 cloud save + P5 leaderboards (Play Games Services v2) → v0.5.0+30
+Retention plan items P4/P5 (docs/improvements/retention-2026-08-11.md).
+Console: PGS project "Emberdelve" (id 598659800964) linked to cloud project
+gen-lang-client-0980262477; Saved Games enabled; OAuth consent screen +
+Android OAuth client (Play app-signing SHA-1); credential saved. Leaderboards
+created: Daily Delve CgkIhL-el7YREAIQAQ, Weekly Delve CgkIhL-el7YREAIQAg.
+Code: lib/meta/play_games_service.dart — backend-injected gate (same
+architecture as TelemetryService: plugin-import-free, headless-testable;
+main.dart wires games_services 5.3.0 on Android only). Connecting is OPT-IN
+via a Settings "Connect" tap (§Ethics — same consent charter as analytics);
+manifest removes PlayGamesInitProvider so PGS never auto-signs-in, and
+MainActivity calls PlayGamesSdk.initialize manually.
+Cloud save (P4): whole MetaState snapshot as ONE PGS saved game
+('emberdelve_meta'). Sync = pull → mergeMetaStates (lib/meta/cloud_merge.dart:
+max for monotonic counters, union for owned sets, OR for sticky flags
+incl. forgeUnlocked, fresher-side — higher lifetimeEmbers — for spendables/
+recaps/history) → adopt locally → push merged. Push also after every banked
+run. Local stays authoritative; every cloud step is best-effort.
+Leaderboards (P5): score = embers banked by a FINISHED Daily/Weekly (the
+number the summary already shows — no hidden formula), submitted from
+_bankRun only when connected. Summary gains a "Leaderboard" button for
+connected daily/weekly finishes; Settings gains PLAY GAMES section
+(Connect/Disconnect + View boards), hidden entirely off-Android.
+Sim untouched — save blobs and goldens byte-identical.
+VERIFIED: analyze clean; 259/259 tests green (was 234; +25 new in
+cloud_merge_test, play_games_service_test).

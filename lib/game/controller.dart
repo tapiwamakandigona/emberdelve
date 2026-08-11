@@ -17,6 +17,7 @@ import '../data/enemies.dart';
 import '../meta/achievements.dart';
 import '../meta/forge.dart';
 import '../meta/meta.dart';
+import '../meta/play_games_service.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
 import '../sim/sim.dart';
@@ -787,6 +788,16 @@ class GameController extends ChangeNotifier {
       markSeen(meta, fresh);
     }
     MetaStore.save(meta);
+    // P4/P5 (v0.5.0): mirror the fresh snapshot to the Play Games cloud save
+    // and submit a finished Daily/Weekly Delve to its leaderboard. Both are
+    // silent no-ops unless the player connected Play Games in Settings
+    // (opt-in, §Ethics) — and never block or fail the bank itself.
+    unawaited(PlayGamesService.instance.pushSnapshot(meta));
+    unawaited(PlayGamesService.instance.submitRunScore(
+      isDaily: dailyDate != null,
+      isWeekly: weeklyIndex != null,
+      embersBanked: banked,
+    ));
     _clearSave();
   }
 
@@ -854,6 +865,16 @@ class GameController extends ChangeNotifier {
   void announce(String message) {
     flash = message;
     notifyListeners();
+  }
+
+  /// Adopt a cloud-merged meta snapshot (P4, see meta/cloud_merge.dart) as
+  /// the live profile and persist it. Called by the Play Games sync after
+  /// connect/resume — never mid-run banking (the merge inputs both came from
+  /// banked state, so nothing here can double-count a run in progress).
+  Future<void> adoptMeta(MetaState merged) async {
+    meta = merged;
+    notifyListeners();
+    await MetaStore.save(meta);
   }
 
   /// Chained on the same queue as [_autosave], so a pending queued save can
