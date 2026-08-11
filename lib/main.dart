@@ -3,11 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:games_services/games_services.dart';
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
 import 'meta/play_games_service.dart';
+import 'meta/reminder_service.dart';
 import 'meta/store_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
@@ -64,11 +69,69 @@ Future<void> main() async {
   pgs.loadLocalHook = () async => controller.meta;
   pgs.adoptMergedHook = controller.adoptMeta;
   unawaited(pgs.resumeIfWanted());
+  // Daily Delve reminder (v0.6.0): OFF by default, enabled only by an
+  // explicit Settings tap. Backends wired on Android only; the service is a
+  // silent no-op everywhere else. Rescheduling is not awaited — startup
+  // never blocks on the notifications plugin.
+  final reminder = ReminderService.instance;
+  await reminder.load();
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    unawaited(_wireReminderBackends(reminder));
+  }
   // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
   // no-op if Firebase is unconfigured; nothing fires before opt-in.
   await initTelemetry();
   TelemetryService.instance.logEvent('app_open');
   runApp(EmberdelveApp(controller));
+}
+
+/// Wire the real notification backends (Android). Kept out of main()'s
+/// critical path: plugin init, the TZ database load and the reschedule all
+/// happen after the first frame is on its way.
+Future<void> _wireReminderBackends(ReminderService reminder) async {
+  try {
+    final plugin = FlutterLocalNotificationsPlugin();
+    await plugin.initialize(
+      settings: const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      ),
+    );
+    tzdata.initializeTimeZones();
+    try {
+      tz.setLocalLocation(tz.getLocation(
+          (await FlutterTimezone.getLocalTimezone()).identifier));
+    } catch (_) {
+      // Unknown zone name => keep the timezone package default; a shifted
+      // reminder hour is acceptable, a crash is not.
+    }
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'daily_delve', 'Daily Delve reminder',
+        channelDescription:
+            'One optional notification when a new Daily Delve seed is live.',
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
+      ),
+    );
+    reminder.permissionBackend = () async =>
+        await plugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestNotificationsPermission() ??
+        false;
+    reminder.scheduleBackend = (id, when, title, body) => plugin.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: tz.TZDateTime.from(when, tz.local),
+          notificationDetails: details,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        );
+    reminder.cancelAllBackend = () => plugin.cancelAll();
+    await reminder.rescheduleIfEnabled();
+  } catch (_) {
+    // Notifications unavailable => the Settings section stays hidden.
+  }
 }
 
 class EmberdelveApp extends StatefulWidget {

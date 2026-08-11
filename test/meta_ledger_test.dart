@@ -77,12 +77,12 @@ void main() {
     c.setPreferredDifficulty('normal');
     expect(c.meta.effectiveDifficulty, 'normal');
 
-    // Ember Forge (v0.4.0, owner-approved monetization): HARD is part of
-    // the Forge. A locked profile's tap is refused (the UI routes it to the
-    // Forge sheet instead); a Forge owner's pick sticks as before.
+    // v0.6.0: HARD is free (it was Forge-gated v0.4.0–v0.5.0) — any
+    // profile's explicit hard pick sticks. The Forge now gates only the
+    // Ascension ladder (see forge_unlock_test.dart).
     c.setPreferredDifficulty('hard');
-    expect(c.meta.effectiveDifficulty, 'normal',
-        reason: 'locked profiles cannot select hard');
+    expect(c.meta.effectiveDifficulty, 'hard',
+        reason: 'hard is free as of v0.6.0');
     c.meta.forgeUnlocked = true;
     c.setPreferredDifficulty('hard');
     expect(c.meta.effectiveDifficulty, 'hard');

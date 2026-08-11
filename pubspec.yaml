@@ -3,7 +3,7 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.5.0+30
+version: 0.6.0+31
 
 environment:
   sdk: ^3.12.0
@@ -29,6 +29,12 @@ dependencies:
   # Play Games Services v2 (P4 cloud save + P5 leaderboards, v0.5.0).
   # Opt-in connect only — see lib/meta/play_games_service.dart header.
   games_services: ^5.3.0
+  # Opt-in Daily Delve reminder (v0.6.0) — local notifications only, no
+  # push infra, OFF by default. See lib/meta/reminder_service.dart header.
+  flutter_local_notifications: ^22.3.0
+  # zonedSchedule needs a TZ database + the device's IANA zone name.
+  timezone: ^0.11.1
+  flutter_timezone: ^5.1.0
 
 dev_dependencies:
   flutter_test:
