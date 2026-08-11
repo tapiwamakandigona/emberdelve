@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
+import '../data/achievements.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/dice.dart';

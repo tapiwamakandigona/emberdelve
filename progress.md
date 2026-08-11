@@ -1003,3 +1003,50 @@ it is not an original silhouette. Recorded per-file in PROVENANCE.md.
 - `content_test`'s `bosses == 3` became `bosses == 6` plus a real guard: it now
   asserts `bossForSeed(20260723) == 'ember_tyrant'`, i.e. the property the magic
   number was standing in for.
+
+## 2026-08-11 — Bug sweep on the Ledger release (fix/ledger-bug-sweep)
+
+Owner (app chat): "work on all these … Find bugs." Sweep target: everything
+that shipped in 0.4.x/v0.5.0-era code. Also cut the missing GitHub release
+v0.4.2 (tag at 1963e8b; CI-run-31459628277 artifacts, badging versionCode 27 +
+signer 031acb42…4b7a0d re-verified locally before upload) and closed stale
+PRs #60 (all items shipped or tracked elsewhere) and #27 (superseded by #47/#63).
+
+Bugs found and fixed (each with a pinned test):
+
+1. **Achievement announcements never fired.** `_bankRun` collected
+   `pendingAchievements` "for the summary screen", but NO widget read the
+   list (`takePendingAchievements` had zero call sites) — and markSeen
+   guaranteed the toast could never fire later either. The one moment the
+   Ledger pays off was silently dropped. Fix: summary screen renders an
+   achievements-earned panel (key `achievements-earned`) next to the run
+   result; startRun clears the list; dead `takePendingAchievements` removed.
+   Tests: summary_achievements_test.dart (widget), meta_ledger_test
+   (collect/clear lifecycle).
+2. **"The Whole Bestiary" lied.** `all_three_bosses` still asked for 3
+   bosses ("Beat all three…") after the same release grew the roster to 6.
+   Fix: target 6, text "all six". Id kept for seenAchievements compat.
+3. **"Four Ways Down" counted one way.** `every_delver_clears` promised all
+   four delvers but read `char_wins[ascetic] >= 4`. Fix: new honest stat
+   `delvers_cleared` = distinct ROSTER characters with >= 1 win (junk
+   charWins keys can never inflate it); def now demands genuinely all four.
+4. **Exact-kill streak survived death.** A lost fight left `exactStreak`
+   untouched, so streak_three was earnable as 2 exacts, die, 1 exact.
+   Fix: `encounter_lost` resets the streak (best remains the high-water mark).
+5. **Rung 21.** Winning at ascension 20 minted `bestAscension = 21` on a
+   0–20 ladder (display-only — forge.dart clamps play). Fix: clamp at bank.
+6. **first_delve overclaimed.** runsPlayed counts abandoned runs; text said
+   "Finish". Copy now: "End your first run — win, die, or walk away."
+7. **Boss goldens pinned** (the promised follow-up that never landed):
+   bossGoldens in sim_test now asserts all six per-boss hashes, values
+   identical across CI 31447535252 + 31459628277 + local 3.44.9 run.
+8. **Soft-lock guard for the event deck** (found no live bug — pinned the
+   invariant): every event must keep >= 1 option that is legal in any state
+   (no gold cost, no lose_random_die). All 28 current events comply.
+
+Test-file edits called out per harness rules: sim_test boss-anchor block
+(pin, documented), content_test + achievements_test + meta_ledger_test
+(new cases only), new summary_achievements_test.dart. No assertion weakened.
+
+VERIFIED: flutter analyze clean; 187/187 tests green locally (was 182);
+autoplay 200 seeds: 64% winrate, invalids=0, golden self-consistent.

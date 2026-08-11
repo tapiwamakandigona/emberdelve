@@ -142,7 +142,8 @@ class GameController extends ChangeNotifier {
   String? _lastEnemyId;
   bool _restedThisRun = false;
   /// Achievements earned by the run that just ended and not yet announced.
-  /// The summary screen reads and clears this; nothing else may write it.
+  /// The summary screen renders it in the same breath as the run result;
+  /// [startRun] clears it. Nothing else may write it.
   List<String> pendingAchievements = const [];
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
@@ -278,6 +279,9 @@ class GameController extends ChangeNotifier {
     _bankedThisRun = false;
     _lastEnemyId = null;
     _restedThisRun = false;
+    // The last run's announcements are done with; a stale list must never
+    // resurface on the next summary.
+    pendingAchievements = const [];
     dailyDate = daily;
     // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
     // exact same delve, so it always runs on normal (spec §Ethics fairness).
@@ -586,6 +590,13 @@ class GameController extends ChangeNotifier {
     final exact = events.any((e) => e['type'] == 'exact_kill');
     final fightWon = events.any((e) => e['type'] == 'encounter_won');
     if (exact) meta.exactKills += 1;
+    // A lost fight breaks the row: "N fights in a row on exact kills" must
+    // never span a death (§Ethics honesty — the ledger cannot credit a streak
+    // the player visibly broke). Persistence rides the _bankRun save that
+    // follows every terminal phase.
+    if (events.any((e) => e['type'] == 'encounter_lost')) {
+      meta.exactStreak = 0;
+    }
     if (!fightWon) return;
     meta.exactStreak = exact ? meta.exactStreak + 1 : 0;
     if (meta.exactStreak > meta.bestExactStreak) {
@@ -609,7 +620,12 @@ class GameController extends ChangeNotifier {
       meta.runsWon += 1;
       meta.charWins[char] = (meta.charWins[char] ?? 0) + 1;
       final asc = run['ascension'] as int? ?? 0;
-      if (asc >= meta.bestAscension) meta.bestAscension = asc + 1;
+      // Best ascension = highest rung unlocked; a win at rung N opens N+1.
+      // The ladder tops out at rung 20 (forge.dart clamps the same), so a
+      // win at 20 must not mint a rung 21 in the ledger.
+      if (asc >= meta.bestAscension) {
+        meta.bestAscension = (asc + 1).clamp(0, 20);
+      }
     }
     // Daily Delve record (v0.3.4): only a FINISHED daily counts as played —
     // abandoning mid-run records nothing. One record, no history/streaks.
@@ -661,13 +677,6 @@ class GameController extends ChangeNotifier {
     }
     MetaStore.save(meta);
     _clearSave();
-  }
-
-  /// Read and clear the achievements earned by the run that just ended.
-  List<String> takePendingAchievements() {
-    final out = pendingAchievements;
-    pendingAchievements = const [];
-    return out;
   }
 
   Map<String, Object?> _runRecord({
