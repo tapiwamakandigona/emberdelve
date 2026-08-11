@@ -1156,3 +1156,17 @@ Regression: test/resume_labels_test.dart (3 tests — resumed weekly banks,
 resumed daily banks, normal saves carry no labels). Weekly+daily resume
 tests FAIL with the restore block disabled (proof run recorded).
 VERIFIED: analyze clean; 233/233 tests green (was 230).
+
+## 2026-08-11 — CRITICAL bug: Weekly Delve seed was never pinned (caught pre-release)
+The release-dispatch CI run flaked on the new resume_labels weekly test —
+and the flake exposed the real bug: startWeeklyRun never passed a seed, so
+weeklySeed(index) (written, unit-tested in weekly_test) was DEAD CODE and
+every player's "Weekly Delve" ran on a random clock seed. Only the modifier
+was shared; the title blurb and share text's "same seed ... for everyone"
+claim was false. Fix: startRun(seed: weeklySeed(index), ...) in
+startWeeklyRun. Also hardened the resume_labels test driver: the trivial
+roll-without-assign policy stalls on rare seeds under guard — replaced with
+the greedy autoplay bot (proven terminating across 360 fuzz runs) and a
+guard assertion. New regression test: two controllers starting the weekly
+land on the identical, canonical weeklySeed(weekIndex).
+VERIFIED: analyze clean; 234/234 tests green; resume_labels ran 5x stable.
