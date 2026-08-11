@@ -161,6 +161,23 @@ class SummaryScreen extends StatelessWidget {
           ),
           const SizedBox(height: Space.m),
         ],
+        // Weekly result share (P3): same plain-text copy, only when this run
+        // WAS the weekly. States the seed + modifier fact and stops.
+        if (c.weeklyResultShareText != null) ...[
+          SizedBox(
+            width: double.infinity,
+            child: EmberButton('Copy weekly result',
+                key: const ValueKey('copy-weekly-result'),
+                ghost: true,
+                icon: Icons.copy, onTap: () async {
+              final text = c.weeklyResultShareText;
+              if (text == null) return;
+              await Clipboard.setData(ClipboardData(text: text));
+              c.announce('Result copied');
+            }),
+          ),
+          const SizedBox(height: Space.m),
+        ],
         SizedBox(
           width: double.infinity,
           child: EmberButton('Back to the fire',

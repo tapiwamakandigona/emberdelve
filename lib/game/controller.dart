@@ -21,6 +21,7 @@ import '../sim/daily.dart';
 import '../sim/hashing.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
+import 'weekly.dart';
 
 class GameController extends ChangeNotifier {
   Sim? sim;
@@ -151,6 +152,13 @@ class GameController extends ChangeNotifier {
   /// simply loses the badge, never any state).
   String? dailyDate;
 
+  /// Week index while the current run is a Weekly Delve; null otherwise.
+  /// Presentation/banking label only — the run's mutators live in the sim and
+  /// survive save/restore on their own (a resumed weekly loses only the
+  /// title badge, never a rule).
+  int? weeklyIndex;
+  String? weeklyMutator; // the modifier id this weekly is running under
+
   /// Tests inject a temp directory here; production uses path_provider.
   final String? saveDirOverride;
   GameController({this.saveDirOverride});
@@ -267,6 +275,7 @@ class GameController extends ChangeNotifier {
     int? seed,
     String? daily,
     String? difficulty,
+    List<String> mutators = const [],
   }) {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
@@ -283,13 +292,19 @@ class GameController extends ChangeNotifier {
     // resurface on the next summary.
     pendingAchievements = const [];
     dailyDate = daily;
-    // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
-    // exact same delve, so it always runs on normal (spec §Ethics fairness).
-    // Ember Forge gate (v0.4.0, spec R8): UI locks are the polite layer;
-    // this clamp is the guarantee. Daily runs are pinned to normal above.
-    final wanted = daily != null
-        ? 'normal'
-        : (difficulty ?? meta.preferredDifficulty);
+    // Weekly badge/banking labels are set by [startWeeklyRun]; any other
+    // entry point (normal, daily, restart) clears them so a fresh run never
+    // inherits a stale weekly badge or banks against the wrong week.
+    weeklyIndex = null;
+    weeklyMutator = null;
+    // Daily and Weekly Delves are shared-seed challenges: everyone plays the
+    // exact same delve, so they always run on normal (spec §Ethics fairness).
+    // The modifier IS the difficulty knob for the weekly. Ember Forge gate
+    // (v0.4.0, spec R8): UI locks are the polite layer; this clamp is the
+    // guarantee. Shared runs are pinned to normal above.
+    final shared = daily != null || mutators.isNotEmpty;
+    final wanted =
+        shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
     final allowed =
         clampRunParams(meta, difficulty: wanted, ascension: ascension);
     final diff = allowed.difficulty;
@@ -299,6 +314,7 @@ class GameController extends ChangeNotifier {
       'ascension': allowed.ascension,
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
+      if (mutators.isNotEmpty) 'mutators': mutators,
     });
     // Opt-in analytics only; no-op without consent (docs/telemetry-events.md).
     TelemetryService.instance.logEvent('run_started', {
@@ -394,6 +410,20 @@ class GameController extends ChangeNotifier {
       boons: true,
       daily: label,
     );
+  }
+
+  /// Weekly Delve: everyone plays the same seed AND the same declared
+  /// modifier for the current Monday-aligned week (spec §Ethics — a shared
+  /// challenge, no streaks, no expiry). The modifier is picked deterministic-
+  /// ally from the week index, so the whole player base sees the same rule.
+  void startWeeklyRun({String? character}) {
+    final now = DateTime.now();
+    final index = weekIndexForDate(now);
+    final mutator = weeklyMutatorFor(index);
+    // startRun clears the weekly labels, so stamp them AFTER it returns.
+    startRun(character: character, boons: true, mutators: [mutator]);
+    weeklyIndex = index;
+    weeklyMutator = mutator;
   }
 
   /// Fast restart from the death/victory ledger: a new run (fresh seed) with
@@ -557,6 +587,8 @@ class GameController extends ChangeNotifier {
     _clearSave();
     sim = null;
     dailyDate = null;
+    weeklyIndex = null;
+    weeklyMutator = null;
     _bankedThisRun = false;
     _lastEnemyId = null;
     _restedThisRun = false;
@@ -665,6 +697,16 @@ class GameController extends ChangeNotifier {
       meta.lastDailyFloor = floorReached;
       meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
     }
+    // Weekly Delve record (P3): same charter as the daily — only a FINISHED
+    // weekly records anything, and it's one record with no history/streaks.
+    if (weeklyIndex != null) {
+      meta.lastWeeklyKey = weeklyKey(weeklyIndex!);
+      meta.lastWeeklyWon = sim!.phase == 'run_won';
+      meta.lastWeeklyFloor = floorReached;
+      meta.lastWeeklyFloors = (sim!.map?['layers'] as int?) ?? 0;
+      meta.lastWeeklyMutator = weeklyMutator ?? '';
+      meta.weekliesPlayed += 1;
+    }
     // v0.5.0 Delver's Ledger counters. All banked from what actually happened
     // this run: the deepest layer stood on, a finished daily, a win with no
     // rest node visited, a win on hard, and the boss id that fell.
@@ -751,6 +793,23 @@ class GameController extends ChangeNotifier {
     );
   }
 
+  /// Copyable Weekly Delve result for the summary screen, or null when this
+  /// run wasn't the weekly (or hasn't ended). Built from the banked meta
+  /// record so it matches the title recap exactly (same charter as
+  /// [dailyResultShareText]).
+  String? get weeklyResultShareText {
+    if (weeklyIndex == null) return null;
+    if (meta.lastWeeklyKey != weeklyKey(weeklyIndex!)) return null;
+    if (!_terminal.contains(sim?.phase) || sim?.phase == 'idle') return null;
+    return weeklyShareText(
+      index: weeklyIndex!,
+      mutatorId: meta.lastWeeklyMutator,
+      won: meta.lastWeeklyWon,
+      floor: meta.lastWeeklyFloor,
+      floors: meta.lastWeeklyFloors,
+    );
+  }
+
   /// Surface a toast from UI actions that don't go through the sim
   /// (e.g. "Result copied").
   void announce(String message) {
@@ -774,6 +833,8 @@ class GameController extends ChangeNotifier {
   void endToTitle() {
     sim = null;
     dailyDate = null;
+    weeklyIndex = null;
+    weeklyMutator = null;
     notifyListeners();
     _syncAudio();
   }

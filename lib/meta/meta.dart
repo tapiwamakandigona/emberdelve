@@ -59,6 +59,17 @@ class MetaState {
   bool lastDailyWon;
   int lastDailyFloor; // 1-based layer reached (boss layer when won)
   int lastDailyFloors; // total layers on that day's map
+  // P3 Weekly Delve record — same one-record, no-streaks, no-expiry charter
+  // as the daily above (spec §Ethics). Remembers only the most recent week
+  // finished so the title shows an honest recap and the summary a copyable
+  // result. `lastWeeklyKey` is the weekly.dart key ('Week of YYYY-MM-DD');
+  // `lastWeeklyMutator` is the modifier id that week ran under.
+  String? lastWeeklyKey;
+  bool lastWeeklyWon;
+  int lastWeeklyFloor;
+  int lastWeeklyFloors;
+  String lastWeeklyMutator;
+  int weekliesPlayed; // Weekly Delves FINISHED (abandoning counts for nothing)
   // v0.3.4 run history (review note #4): one small record per ENDED run
   // (won/lost/abandoned), newest first, capped — enough for a ledger page
   // and per-run seed replay, small enough to never bloat the save.
@@ -108,6 +119,12 @@ class MetaState {
     this.lastDailyWon = false,
     this.lastDailyFloor = 0,
     this.lastDailyFloors = 0,
+    this.lastWeeklyKey,
+    this.lastWeeklyWon = false,
+    this.lastWeeklyFloor = 0,
+    this.lastWeeklyFloors = 0,
+    this.lastWeeklyMutator = '',
+    this.weekliesPlayed = 0,
     List<Map<String, Object?>>? runHistory,
     this.forgeUnlocked = false,
     Set<String>? bossesBeaten,
@@ -151,6 +168,12 @@ class MetaState {
         if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
         if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
         if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
+        if (lastWeeklyKey != null) 'lastWeeklyKey': lastWeeklyKey,
+        if (lastWeeklyKey != null) 'lastWeeklyWon': lastWeeklyWon,
+        if (lastWeeklyKey != null) 'lastWeeklyFloor': lastWeeklyFloor,
+        if (lastWeeklyKey != null) 'lastWeeklyFloors': lastWeeklyFloors,
+        if (lastWeeklyKey != null) 'lastWeeklyMutator': lastWeeklyMutator,
+        if (weekliesPlayed > 0) 'weekliesPlayed': weekliesPlayed,
         if (runHistory.isNotEmpty) 'runHistory': runHistory,
         if (forgeUnlocked) 'forgeUnlocked': true,
         if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
@@ -213,6 +236,12 @@ class MetaState {
         lastDailyWon: j['lastDailyWon'] as bool? ?? false,
         lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
         lastDailyFloors: j['lastDailyFloors'] as int? ?? 0,
+        lastWeeklyKey: j['lastWeeklyKey'] as String?,
+        lastWeeklyWon: j['lastWeeklyWon'] as bool? ?? false,
+        lastWeeklyFloor: j['lastWeeklyFloor'] as int? ?? 0,
+        lastWeeklyFloors: j['lastWeeklyFloors'] as int? ?? 0,
+        lastWeeklyMutator: j['lastWeeklyMutator'] as String? ?? '',
+        weekliesPlayed: j['weekliesPlayed'] as int? ?? 0,
         runHistory: ((j['runHistory'] as List?) ?? const [])
             .whereType<Map>()
             .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))

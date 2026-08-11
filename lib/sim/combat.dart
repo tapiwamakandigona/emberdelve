@@ -286,8 +286,14 @@ void _encounterLost(Sim sim, List<Map<String, Object?>> events) {
 int _rollOne(Sim sim, String id, List<bool> maxedOut,
     List<Map<String, Object?>> events) {
   final def = dieDef(id);
-  final raw = sim.rng['combat']!.die(def.size);
-  final isMax = raw == def.size;
+  // P3 'all_d4' (Flint Week): every die rolls on 4 faces. Smaller dice are
+  // already <= 4, so only d6+ shrink. The die keeps its mods (attack_bonus,
+  // min_value, ...) — only its face count changes. Off the Weekly Delve
+  // hasMutator is always false, so this is exactly def.size (no drift).
+  final faces =
+      sim.hasMutator('all_d4') && def.size > 4 ? 4 : def.size;
+  final raw = sim.rng['combat']!.die(faces);
+  final isMax = raw == faces;
   maxedOut.add(isMax);
   if (isMax) {
     final g = relicSum(sim, 'on_max_gold');

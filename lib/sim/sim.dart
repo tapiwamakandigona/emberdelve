@@ -68,6 +68,15 @@ class Sim {
   String? combatOver; // transient "won"|"lost" flag consumed by runPost
   int eventHash = 0;
   int eventCount = 0;
+  // P3 Weekly Delve run modifiers. EMPTY for every normal and Daily run, so
+  // every mutator branch below is skipped and normal runs stay byte-for-byte
+  // identical (the golden anchor proves it). Set once at start_run from
+  // cmd['mutators']; then read-only for the rest of the run.
+  Set<String> mutators = <String>{};
+
+  /// True when the run is playing under mutator [id] (always false off the
+  /// Weekly Delve). The single, cheap gate every mutator seam checks.
+  bool hasMutator(String id) => mutators.contains(id);
 
   Sim(this.runSeed) {
     for (final name in simStreams) {
@@ -102,6 +111,9 @@ class Sim {
       'combat_over': combatOver,
       'event_hash': eventHash,
       'event_count': eventCount,
+      // Only stamped for Weekly Delve runs, so normal/Daily save blobs stay
+      // byte-identical to pre-P3 saves (sorted for a stable serialization).
+      if (mutators.isNotEmpty) 'mutators': (mutators.toList()..sort()),
       'rng': {for (final name in simStreams) name: rng[name]!.snapshot()},
     };
     return snap;
@@ -138,6 +150,10 @@ class Sim {
     sim.combatOver = snap['combat_over'] as String?;
     sim.eventHash = snap['event_hash'] as int;
     sim.eventCount = snap['event_count'] as int;
+    // Absent on normal/Daily and all pre-P3 saves -> empty set (no mutators).
+    sim.mutators = snap['mutators'] == null
+        ? <String>{}
+        : (snap['mutators'] as List).cast<String>().toSet();
     final rngSnap = snap['rng'] as Map;
     for (final name in simStreams) {
       sim.rng[name] =
