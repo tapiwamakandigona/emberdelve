@@ -36,8 +36,22 @@ void main() {
   });
 
   tearDown(() async {
+    // Drain BOTH write queues before deleting the temp dir: _bankRun fires
+    // MetaStore.save without awaiting, and controller autosaves are queued —
+    // a recursive delete racing an in-flight write throws "Directory not
+    // empty" (flaked on CI run 31502537643). Awaiting one more save rides
+    // the shared MetaStore queue to the end; the per-test controllers flush
+    // their own queues before the test returns. Retry the delete anyway.
+    await MetaStore.save(MetaState());
     MetaStore.dirOverride = null;
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('the Weekly Delve is seed-pinned to the week (shared delve for all)',
@@ -59,6 +73,8 @@ void main() {
     c2.startWeeklyRun();
     expect(c2.sim!.runSeed, expected,
         reason: 'two players starting the weekly must get the same delve');
+    await c1.flushSaves();
+    await c2.flushSaves();
   });
 
   test('a resumed Weekly Delve keeps its identity and banks its record',
@@ -88,6 +104,7 @@ void main() {
     expect(c2.meta.weekliesPlayed, 1);
     expect(c2.weeklyResultShareText, isNotNull,
         reason: 'summary must still offer the weekly share text');
+    await c2.flushSaves();
   });
 
   test('a resumed Daily Delve keeps its identity and banks its record',
@@ -110,6 +127,7 @@ void main() {
     expect(c2.meta.lastDailyDate, label,
         reason: 'finished resumed daily must bank the daily record');
     expect(c2.dailyResultShareText, isNotNull);
+    await c2.flushSaves();
   });
 
   test('normal runs write no labels and resume without any', () async {
@@ -128,5 +146,6 @@ void main() {
     expect(c2.dailyDate, isNull);
     expect(c2.weeklyIndex, isNull);
     expect(c2.weeklyMutator, isNull);
+    await c2.flushSaves();
   });
 }
