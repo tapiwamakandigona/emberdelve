@@ -32,10 +32,9 @@ const int goldenV6 = 2013675017;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
-// `seed % bossCount` and moves every one of these values; the anchors are being
-// re-established from the measured build in the next commit (see
-// `bossAnchorSeeds` below and progress.md). Old v0.4 values, for the record:
-// Colossus 578589309 @ seed 20260725, Matriarch 1077392826 @ seed 20260724.
+// `seed % bossCount` and moved every one of these values. Old v0.4 values,
+// for the record: Colossus 578589309 @ seed 20260725, Matriarch 1077392826
+// @ seed 20260724.
 //
 // Consecutive seeds 20260722..20260727 are congruent to 0..5 mod 6, so they hit
 // each boss exactly once in boss-list order.
@@ -46,6 +45,21 @@ const Map<int, String> bossAnchorSeeds = {
   20260725: 'cinder_hierophant',
   20260726: 'the_bellows',
   20260727: 'ashfall_twins',
+};
+
+// Per-boss goldens, pinned 2026-08-11 from measured builds, not guesses:
+// identical values printed by CI runs 31447535252 and 31459628277 and by a
+// local Flutter 3.44.9 run. ember_tyrant equals goldenV6 by construction
+// (same seed 20260723). If content is deliberately added to the spawn/event
+// pools, re-anchor ALL of these from a real build and record old -> new in
+// progress.md — never by editing a single one to green.
+const Map<String, int> bossGoldens = {
+  'ashen_colossus': 1729684958,
+  'ember_tyrant': 2013675017,
+  'pyre_matriarch': 537528265,
+  'cinder_hierophant': 1258842264,
+  'the_bellows': 1746127677,
+  'ashfall_twins': 1800621184,
 };
 
 void main() {
@@ -132,19 +146,16 @@ void main() {
       // because of a modulus accident.
       expect(bossAnchorSeeds.values.toSet().length,
           equals(bossAnchorSeeds.length));
-      // Each boss run must be reproducible run-to-run. The per-boss golden
-      // constants are re-established in the follow-up commit; this asserts the
-      // property that actually matters (determinism), and prints the measured
-      // hashes so they can be pinned from a real build instead of guessed.
-      final measured = <String, int>{};
+      // Each boss run must be reproducible run-to-run AND match its pinned
+      // golden (bossGoldens above), so a drift in any single boss fight is
+      // caught even when the shared v6 anchor happens to survive.
       bossAnchorSeeds.forEach((seed, boss) {
         final a = playRun(seed).sim.eventHash;
         final b = playRun(seed).sim.eventHash;
         expect(b, equals(a), reason: '$boss run is not reproducible');
-        measured[boss] = a;
+        expect(a, equals(bossGoldens[boss]),
+            reason: '$boss run drifted from its pinned golden');
       });
-      // ignore: avoid_print
-      print('V0.5.0 BOSS ANCHORS: $measured');
     });
   });
 

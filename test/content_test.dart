@@ -108,6 +108,21 @@ void main() {
     });
   });
 
+  test('events: every event keeps at least one always-legal option', () {
+    // Soft-lock guard: an option is refused when it costs gold the player
+    // lacks or sheds a die at the 3-die floor. If EVERY option of an event
+    // could be refused at once, a broke 3-die player would be stuck on the
+    // event screen with nothing to tap. Each event must keep one option
+    // that is legal in any state (no gold cost, no lose_random_die).
+    events.forEach((id, e) {
+      final alwaysLegal = e.options.any((o) =>
+          ((o.effects['gold'] as int?) ?? 0) >= 0 &&
+          !o.effects.containsKey('lose_random_die'));
+      expect(alwaysLegal, isTrue,
+          reason: '$id could soft-lock a player with 0 gold and 3 dice');
+    });
+  });
+
   test('boons: order matches, legal effects, valid gain_die ids, >=6 ids', () {
     expect(boonsOrder.toSet(), equals(boons.keys.toSet()));
     expect(boons.length, greaterThanOrEqualTo(6));

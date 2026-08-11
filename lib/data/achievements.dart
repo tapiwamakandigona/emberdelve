@@ -20,6 +20,7 @@
 //   wins_no_rest       MetaState.winsNoRest
 //   themes_owned       MetaState.ownedThemes.length
 //   hard_wins          MetaState.hardWins
+//   delvers_cleared    distinct roster characters with >= 1 win (charWins)
 //
 // DESIGN NOTE — why achievements and not streaks. Spec §Ethics bans decaying
 // streaks and loss framing, which rules out the usual retention lever. The
@@ -76,6 +77,7 @@ const Set<String> achievementStats = {
   'wins_no_rest',
   'themes_owned',
   'hard_wins',
+  'delvers_cleared',
 };
 
 const List<String> achievementsOrder = [
@@ -105,8 +107,10 @@ const List<String> achievementsOrder = [
 
 const Map<String, AchievementDef> achievements = {
   // --- first hour ---------------------------------------------------------
+  // Text is honest about the counter: runsPlayed also counts a run the
+  // player walked away from (abandonRun), so "finish" would overclaim.
   'first_delve': AchievementDef('first_delve', 'Into the Delve',
-      'Finish your first run, however it ends.',
+      'End your first run — win, die, or walk away.',
       stat: 'runs_played', target: 1),
   'first_blood': AchievementDef('first_blood', 'Exact Change',
       'End a fight on exactly the damage needed.',
@@ -174,17 +178,23 @@ const Map<String, AchievementDef> achievements = {
   'full_roster': AchievementDef('full_roster', 'Full Hearth',
       'Unlock every delver.',
       stat: 'chars_unlocked', target: 4),
+  // v0.5.0 fix: the name promises all four delvers, so the counter must too.
+  // (It shipped reading 4 Ascetic wins — name and stat told different
+  // stories, which fails the §Ethics honesty test.)
   'every_delver_clears': AchievementDef('every_delver_clears', 'Four Ways Down',
-      'Win at least 4 runs as the Ascetic — the hardest start there is.',
-      stat: 'char_wins', target: 4, param: 'ascetic'),
+      'Win a run with every delver — all four of them.',
+      stat: 'delvers_cleared', target: 4),
 
   // --- the bestiary -----------------------------------------------------
   'tyrant_felled': AchievementDef('tyrant_felled', 'Tyrant Felled',
       'Beat any boss on the final layer.',
       stat: 'bosses_beaten', target: 1),
+  // v0.5.0 fix: the bestiary grew to six bosses in the same release this
+  // shipped in, so "all three" was stale on arrival. Id kept (it lives in
+  // players' seenAchievements sets); target/text follow the real roster.
   'all_three_bosses': AchievementDef('all_three_bosses', 'The Whole Bestiary',
-      'Beat all three bosses at least once each.',
-      stat: 'bosses_beaten', target: 3),
+      'Beat all six bosses at least once each.',
+      stat: 'bosses_beaten', target: 6),
 
   // --- the hoard --------------------------------------------------------
   'embers_thousand': AchievementDef('embers_thousand', 'Ember Hoard',
