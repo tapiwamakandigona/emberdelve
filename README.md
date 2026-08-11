@@ -4,7 +4,7 @@ A dark, turn-based **dice-builder roguelite** for Android. Roll, assign, and for
 
 [<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60">](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve)
 
-**Free on [Google Play](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve) (public early access)** · no ads, no tracking, no energy timers · [download page](https://tapiwa.me/emberdelve/)
+**Free on [Google Play](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve) (public early access)** · no ads, no energy timers, no tracking unless you opt in · [download page](https://tapiwa.me/emberdelve/)
 
 **Tsoro Studios** · Flutter 3.32 / Dart (sealed pure-Dart sim) · public repo
 
