@@ -16,6 +16,10 @@ dependencies:
   path_provider: ^2.1.4
   # Music loops + SFX one-shots (assets-integration).
   audioplayers: ^6.1.0
+  # Consent-gated, opt-in analytics (docs/telemetry-events.md).
+  firebase_core: ^3.8.0
+  firebase_analytics: ^11.3.6
+  shared_preferences: ^2.3.3
   # Play Billing for the one-time Ember Forge unlock (spec R8). The plugin
   # adds com.android.vending.BILLING via manifest merge — no manual entry.
   # 3.3.0 pulls in_app_purchase_android >=0.5.0, which is Google Play Billing

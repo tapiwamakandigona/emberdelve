@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "598659800964",
+    "project_id": "gen-lang-client-0980262477",
+    "storage_bucket": "gen-lang-client-0980262477.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598659800964:android:00ab32df351446f91047d1",
+        "android_client_info": {
+          "package_name": "com.tsorostudios.emberdelve"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUr4nc1Z8viJP5gH9d3j8oN75EPkL9gvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
