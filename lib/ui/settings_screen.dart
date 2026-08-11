@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import '../meta/play_games_service.dart';
+import '../meta/reminder_service.dart';
 import '../meta/store_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
@@ -128,6 +129,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }),
             ]),
           ),
+          // Daily Delve reminder (v0.6.0): opt-in, neutral-fact copy, one
+          // notification a day at most, quietly stops after a week away.
+          // Hidden entirely on builds without the platform backends.
+          if (ReminderService.instance.available) ...[
+            const SizedBox(height: Space.xl),
+            Text('NOTIFICATIONS', style: EmberText.micro),
+            const SizedBox(height: Space.s),
+            AnimatedBuilder(
+              animation: ReminderService.instance.tick,
+              builder: (context, _) {
+                final rem = ReminderService.instance;
+                return Panel(
+                  child: Row(children: [
+                    Icon(Icons.notifications_none,
+                        color: rem.enabled
+                            ? EmberColors.ember
+                            : EmberColors.textDim,
+                        size: 20),
+                    const SizedBox(width: Space.m),
+                    Expanded(
+                        child: Text('Daily Delve reminder',
+                            style: EmberText.body)),
+                    _EmberToggle(
+                        key: const ValueKey('daily-reminder'),
+                        value: rem.enabled,
+                        onChanged: (v) async {
+                          AudioService.instance?.playSfx('ui_tap');
+                          if (v) {
+                            await rem.enable();
+                          } else {
+                            await rem.disable();
+                          }
+                          if (mounted) setState(() {});
+                        }),
+                  ]),
+                );
+              },
+            ),
+          ],
           // Play Games (v0.5.0, P4+P5): opt-in connect. Hidden entirely on
           // builds without the platform backends (tests, web, desktop).
           if (PlayGamesService.instance.available) ...[
@@ -340,7 +380,7 @@ class _EmberThumb extends SliderComponentShape {
 class _EmberToggle extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
-  const _EmberToggle({required this.value, required this.onChanged});
+  const _EmberToggle({required this.value, required this.onChanged, super.key});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

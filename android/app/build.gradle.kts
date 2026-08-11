@@ -33,6 +33,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // flutter_local_notifications (v0.6.0 Daily Delve reminder) uses
+        // java.time — needs core-library desugaring on minSdk 24.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -95,4 +98,7 @@ dependencies {
     // MainActivity — auto sign-in is disabled in the manifest because
     // connecting is an explicit opt-in tap in Settings.
     implementation("com.google.android.gms:play-services-games-v2:21.0.0")
+    // Core-library desugaring runtime (see compileOptions above). 2.1.4 is
+    // the floor flutter_local_notifications 22.x itself compiles against.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

@@ -106,11 +106,11 @@ void main() {
   });
 
   group('R8 gating', () {
-    test('easy/normal are free; hard needs the Forge', () {
+    test('easy/normal/hard are all free (v0.6.0: hard left the Forge)', () {
       final locked = MetaState();
       expect(canSelectDifficulty(locked, 'easy'), isTrue);
       expect(canSelectDifficulty(locked, 'normal'), isTrue);
-      expect(canSelectDifficulty(locked, 'hard'), isFalse);
+      expect(canSelectDifficulty(locked, 'hard'), isTrue);
       final open = MetaState(forgeUnlocked: true);
       expect(canSelectDifficulty(open, 'hard'), isTrue);
     });
@@ -124,11 +124,12 @@ void main() {
       expect(maxAscensionFor(MetaState(forgeUnlocked: true)), 0);
     });
 
-    test('clampRunParams forces normal + rung 0 for locked profiles', () {
+    test('clampRunParams keeps hard but forces rung 0 for locked profiles',
+        () {
       final locked = MetaState(bestAscension: 5);
       final p = clampRunParams(locked, difficulty: 'hard', ascension: 5);
-      expect(p.difficulty, 'normal');
-      expect(p.ascension, 0);
+      expect(p.difficulty, 'hard'); // v0.6.0: hard is free
+      expect(p.ascension, 0); // the ladder is still the Forge's tier
       // And passes entitled requests through untouched.
       final open = MetaState(bestAscension: 5, forgeUnlocked: true);
       final q = clampRunParams(open, difficulty: 'hard', ascension: 5);

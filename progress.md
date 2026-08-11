@@ -1197,3 +1197,33 @@ connected daily/weekly finishes; Settings gains PLAY GAMES section
 Sim untouched — save blobs and goldens byte-identical.
 VERIFIED: analyze clean; 259/259 tests green (was 234; +25 new in
 cloud_merge_test, play_games_service_test).
+
+## 2026-08-11 — HARD goes free + opt-in Daily Delve reminder → v0.6.0+31
+Both remaining retention-doc items (docs/improvements/retention-2026-08-11.md
+§5), approved by the owner's blanket go-ahead for the recommendation list.
+HARD free (the "business question"): freeDifficulties now includes 'hard';
+the Forge gates ONLY the Ascension ladder. The v0.4.0 boot clamp that forced
+a non-Forge hard preference back to normal is deleted (clampRunParams remains
+the entitlement guarantee, now passing hard through for everyone). Forge
+sheet, victory panel and settings copy updated — the sheet no longer lists
+HARD as a perk. Rationale: hard is the natural week-two content; gating it
+cost more players at cliff 3 than it converted (see doc). A pre-0.6.0
+profile whose hard preference was clamped keeps its stored 'normal' — moving
+it back silently would be a surprise switch.
+Daily Delve reminder (the "judgement call", shipped as OPT-IN):
+lib/meta/reminder_service.dart — backend-injected, plugin-import-free (same
+architecture as TelemetryService/PlayGamesService). OFF by default; the
+Settings toggle asks POST_NOTIFICATIONS at runtime; denial = stays off.
+Copy is a neutral fact ("Today's Delve is ready") — §Ethics: no loss frames,
+no streak threats (a test bans the words). Scheduling: next 7 daily slots at
+10:00 local as ONE-OFF inexact notifications (no exact-alarm permission),
+window rebuilt every launch after cancelAll — so reminders quietly STOP
+after a week away instead of nagging a lapsed player forever. Pure slot
+math in nextReminderTimes() (DST-safe via civil-day constructor arithmetic).
+flutter_local_notifications 22.3.0 + timezone/flutter_timezone; gradle gains
+core-library desugaring (2.1.4); manifest adds the two plugin receivers
+(not exported) + RECEIVE_BOOT_COMPLETED. No new data collection — local
+notifications only, Data safety form unchanged.
+Sim untouched — save blobs and goldens byte-identical.
+VERIFIED: analyze clean; 272/272 tests green (was 259; +13 new in
+reminder_service_test; 2 forge/ledger tests updated to the new contract).

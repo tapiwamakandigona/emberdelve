@@ -6,6 +6,11 @@
     <!-- Telemetry: opt-in Firebase Analytics only (docs/telemetry-events.md). -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Daily Delve reminder (v0.6.0, opt-in): re-register the scheduled
+         slots after a device reboot. POST_NOTIFICATIONS itself merges in
+         from the flutter_local_notifications plugin manifest and is only
+         requested at runtime when the player flips the Settings toggle. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Never collect the advertising ID (no ads, no ad personalization).
          The Play measurement SDK also merges in the Privacy Sandbox
          AdServices permissions; this game does no ads, attribution or
@@ -69,6 +74,22 @@
             tools:node="remove"
             android:name="com.google.android.gms.games.provider.PlayGamesInitProvider"
             android:authorities="com.tsorostudios.emberdelve.playgamesinitprovider" />
+        <!-- Daily Delve reminder (v0.6.0): flutter_local_notifications
+             delivery + reboot re-registration receivers. Both are internal
+             (not exported) and inert unless the player opted in. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

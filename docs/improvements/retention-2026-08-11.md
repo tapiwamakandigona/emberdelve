@@ -145,6 +145,8 @@ Moderation: PGS tamper protection is ON for both boards.
 
 ### One business question, not an engineering one
 
+**✅ DONE v0.6.0 (2026-08-11): `hard` is free; only the ascension ladder is paid.**
+
 **Consider making `hard` free and keeping only the ascension ladder paid.** Hard difficulty is the
 natural week-two content; today it sits behind the same gate as the endgame ladder. Players who
 churn at cliff 3 never convert, so gating the *second week* likely costs more Forge sales than it
@@ -158,6 +160,8 @@ timed events that expire, or any near-miss amplification that is not real. They 
 §Ethics, and on the achievement data above, streak mechanics *underperform* metric goals anyway.
 An **opt-in, neutral** "today's Delve is ready" notification is arguably compatible with the charter
 — it is a fact, not a loss frame — but it is a judgement call for the owner, not a default.
+**✅ Shipped opt-in v0.6.0 (2026-08-11)** — OFF by default, neutral copy (word-ban test), 7-day
+window that quietly stops for lapsed players (`lib/meta/reminder_service.dart`).
 
 ## 6. How we will know it worked
 

@@ -1,7 +1,7 @@
 // lib/ui/forge_sheet.dart — the Ember Forge purchase sheet (spec R8, v0.4.0).
 //
 // The single place the game ever asks for money. Shown only when the player
-// taps a locked thing (HARD, the Ascension ladder) or the one quiet victory
+// taps a locked thing (the Ascension ladder; HARD is free as of v0.6.0) or the one quiet victory
 // panel — never as a popup, never on a timer (§Ethics).
 //
 // Copy rules: say exactly what is paid and what is free, price comes from
@@ -77,9 +77,9 @@ class ForgeSheet extends StatelessWidget {
                 if (owned) ...[
                   Panel(
                     child: Text(
-                      'The Forge burns for you. HARD and the Ascension '
-                      'ladder are open — thank you for keeping a solo '
-                      'delve alive.',
+                      'The Forge burns for you. The Ascension ladder '
+                      'is open — thank you for keeping a solo delve '
+                      'alive.',
                       style: EmberText.body,
                     ),
                   ),
@@ -97,8 +97,6 @@ class ForgeSheet extends StatelessWidget {
                         Text('ONE PURCHASE OPENS THE ENDGAME',
                             style: EmberText.micro),
                         const SizedBox(height: Space.m),
-                        _perk(Icons.whatshot,
-                            'HARD difficulty — brutal foes, embers ×1.25'),
                         _perk(Icons.stairs,
                             'The Ascension ladder — 20 rungs of stacked '
                             'challenge, earned one win at a time'),
