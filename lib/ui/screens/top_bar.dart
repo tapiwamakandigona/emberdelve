@@ -55,6 +55,15 @@ class _TopBar extends StatelessWidget {
             ),
             const SizedBox(width: Space.m),
           ],
+          // Weekly Delve badge: shows the declared modifier so the rule is
+          // always in view during the run, not just on the title screen.
+          if (c.weeklyMutator != null) ...[
+            Text(
+              'WEEKLY · ${mutatorDef(c.weeklyMutator!).name}',
+              style: EmberText.micro.copyWith(color: EmberColors.gold),
+            ),
+            const SizedBox(width: Space.m),
+          ],
           Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
           const SizedBox(width: 4),
           Text('${(run['relics'] as List).length}', style: EmberText.label),

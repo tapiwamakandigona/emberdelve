@@ -16,7 +16,8 @@ Map<String, Object?>? botCmd(Sim sim,
     {String? character,
     int ascension = 0,
     bool boons = true,
-    String difficulty = 'normal'}) {
+    String difficulty = 'normal',
+    List<String> mutators = const []}) {
   final phase = sim.phase;
   switch (phase) {
     case 'idle':
@@ -26,6 +27,7 @@ Map<String, Object?>? botCmd(Sim sim,
         'ascension': ascension,
         if (boons) 'boons': true,
         if (difficulty != 'normal') 'difficulty': difficulty,
+        if (mutators.isNotEmpty) 'mutators': mutators,
       };
     case 'boon':
       // Prefer a die boon (permanent pool value), else take the first.
@@ -192,6 +194,7 @@ RunResult playRun(int seed,
     int ascension = 0,
     bool boons = true,
     String difficulty = 'normal',
+    List<String> mutators = const [],
     int? snapAt,
     int maxCmds = 4000}) {
   var sim = Sim(seed);
@@ -201,7 +204,8 @@ RunResult playRun(int seed,
         character: character,
         ascension: ascension,
         boons: boons,
-        difficulty: difficulty);
+        difficulty: difficulty,
+        mutators: mutators);
     if (cmd == null) break;
     final evs = sim.apply(cmd);
     applied += 1;

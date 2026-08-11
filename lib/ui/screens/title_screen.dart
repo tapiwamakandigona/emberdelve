@@ -168,6 +168,47 @@ class TitleScreen extends StatelessWidget {
                               ),
                             ],
                             const SizedBox(height: Space.m),
+                            // Weekly Delve (P3): one shared seed AND one declared
+                            // modifier per Monday-aligned week — the same challenge
+                            // for everyone. No streaks, no expiry (§Ethics).
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Weekly Delve — ${_weeklyModifierName()}',
+                                key: const ValueKey('weekly-delve'),
+                                icon: Icons.event_repeat,
+                                onTap: () => c.startWeeklyRun(
+                                  character: defaultCharacter,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: Space.xs),
+                            // The rule, spelled out before you commit — the modifier
+                            // IS the difficulty, so it must never be a surprise.
+                            Text(
+                              _weeklyModifierBlurb(),
+                              key: const ValueKey('weekly-modifier'),
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            // Weekly recap: a small honest checkmark for the week it
+                            // was played. Replaying stays allowed — no lockout.
+                            if (m.lastWeeklyKey == weeklyKey(_thisWeek())) ...[
+                              const SizedBox(height: Space.s),
+                              Text(
+                                weeklyRecapLine(
+                                  won: m.lastWeeklyWon,
+                                  floor: m.lastWeeklyFloor,
+                                  floors: m.lastWeeklyFloors,
+                                ),
+                                key: const ValueKey('weekly-recap'),
+                                style: EmberText.micro,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                            const SizedBox(height: Space.m),
                             SizedBox(
                               width: double.infinity,
                               child: EmberButton(
@@ -282,6 +323,18 @@ class TitleScreen extends StatelessWidget {
     final now = DateTime.now();
     return '${months[now.month - 1]} ${now.day}';
   }
+
+  /// The current Monday-aligned week index (local clock). One place so the
+  /// button, blurb, and recap can never disagree about which week it is.
+  static int _thisWeek() => weekIndexForDate(DateTime.now());
+
+  /// Display name of this week's declared modifier, e.g. "Flint Week".
+  static String _weeklyModifierName() =>
+      mutatorDef(weeklyMutatorFor(_thisWeek())).name;
+
+  /// One-line description of this week's modifier, shown under the button.
+  static String _weeklyModifierBlurb() =>
+      mutatorDef(weeklyMutatorFor(_thisWeek())).blurb;
 }
 
 /// Three-segment easy/normal/hard switch (v0.3.2). Sticky via MetaState and
