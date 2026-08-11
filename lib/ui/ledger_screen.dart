@@ -12,10 +12,14 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/characters.dart';
+import '../data/codex.dart';
+import '../data/skins.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
 import '../meta/achievements.dart' as ach;
 import '../meta/meta.dart';
+import 'codex_screen.dart';
+import 'fx.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -149,6 +153,66 @@ class LedgerScreen extends StatelessWidget {
                   Text(
                       'Hearth colors retint the fire on the title screen. '
                       'Pure cosmetics — the delve itself never changes.',
+                      style: EmberText.micro
+                          .copyWith(color: EmberColors.textDim)),
+                  const SizedBox(height: Space.xl),
+                  // Dice skins: same contract as hearth colors — tap an
+                  // owned skin to lit it, tap a locked one to buy it.
+                  Row(children: [
+                    Expanded(
+                        child: Text('DICE SKINS', style: EmberText.micro)),
+                    const Icon(Icons.local_fire_department,
+                        color: EmberColors.ember, size: 14),
+                    const SizedBox(width: 4),
+                    Text('${m.embers}',
+                        style:
+                            EmberText.label.copyWith(color: EmberColors.ember)),
+                  ]),
+                  const SizedBox(height: Space.s),
+                  for (final id in dieSkinsOrder) ...[
+                    _skinCard(context, id),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const SizedBox(height: Space.s),
+                  Text(
+                      'Dice skins repaint every die in play. Pure cosmetics '
+                      '— faces, rolls and odds never change.',
+                      style: EmberText.micro
+                          .copyWith(color: EmberColors.textDim)),
+                  const SizedBox(height: Space.xl),
+                  // The Codex: lore entries bought with embers, on their own
+                  // screen so the Ledger stays scannable.
+                  Text('THE CODEX', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  Panel(
+                    child: Row(children: [
+                      const Icon(Icons.menu_book,
+                          color: EmberColors.gold, size: 20),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('The Codex', style: EmberText.body),
+                              const SizedBox(height: 2),
+                              Text(
+                                  '${m.ownedCodex.length} of '
+                                  '${codexEntries.length} entries unsealed',
+                                  style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim)),
+                            ]),
+                      ),
+                      EmberButton('OPEN', dense: true, onTap: () {
+                        AudioService.instance?.playSfx('ui_tap');
+                        Navigator.of(context)
+                            .push(emberRoute((_) => CodexScreen(c)));
+                      }),
+                    ]),
+                  ),
+                  const SizedBox(height: Space.s),
+                  Text(
+                      'Enemy and relic lore, unsealed with embers. Flavor '
+                      'only — every rule stays readable in play for free.',
                       style: EmberText.micro
                           .copyWith(color: EmberColors.textDim)),
                 ]);
@@ -321,6 +385,77 @@ class LedgerScreen extends StatelessWidget {
         ),
       ),
     ]);
+  }
+
+  /// Same contract as [_themeCard]: tap owned to lit, tap locked to buy
+  /// (price always visible). The swatch is a live skinned d6 chip, so what
+  /// you see is exactly what the tray will paint.
+  Widget _skinCard(BuildContext context, String id) {
+    final s = dieSkins[id]!;
+    final m = c.meta;
+    final owned = m.ownedDieSkins.contains(id);
+    final active = m.activeDieSkin == id;
+    final affordable = m.embers >= s.costEmbers;
+    return GestureDetector(
+      key: ValueKey('skin-$id'),
+      onTap: () {
+        if (active) return;
+        if (owned) {
+          AudioService.instance?.playSfx('ui_tap');
+          c.setActiveDieSkin(id);
+        } else if (c.buyDieSkin(id)) {
+          c.setActiveDieSkin(id);
+        } else {
+          AudioService.instance?.playSfx('ui_back');
+        }
+      },
+      child: Panel(
+        color: active ? EmberColors.raised : EmberColors.surface,
+        child: Row(children: [
+          SizedBox(
+            width: 34,
+            height: 42,
+            child: FittedBox(
+                fit: BoxFit.contain, child: DieChip('d6', skin: id)),
+          ),
+          const SizedBox(width: Space.m),
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(s.name, style: EmberText.body),
+                  const SizedBox(height: 2),
+                  Text(s.text,
+                      style: EmberText.micro
+                          .copyWith(color: EmberColors.textDim)),
+                ]),
+          ),
+          const SizedBox(width: Space.s),
+          if (active)
+            Text('LIT',
+                style: EmberText.micro.copyWith(
+                    color: EmberColors.ember, fontWeight: FontWeight.w700))
+          else if (owned)
+            Text('OWNED',
+                style:
+                    EmberText.micro.copyWith(color: EmberColors.textDim))
+          else
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.local_fire_department,
+                  size: 14,
+                  color: affordable
+                      ? EmberColors.ember
+                      : EmberColors.textDisabled),
+              const SizedBox(width: 2),
+              Text('${s.costEmbers}',
+                  style: EmberText.label.copyWith(
+                      color: affordable
+                          ? EmberColors.ember
+                          : EmberColors.textDisabled)),
+            ]),
+        ]),
+      ),
+    );
   }
 
   Widget _themeCard(BuildContext context, String id) {

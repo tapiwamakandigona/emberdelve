@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../data/dice.dart';
+import '../data/skins.dart';
 import 'theme.dart';
 
 // ---------------------------------------------------------------------------
@@ -532,6 +533,11 @@ class DieChip extends StatefulWidget {
   /// LFP-1b: fires once when a flying die lands (the stagger across the
   /// tray turns per-die light haptics into a rattle).
   final VoidCallback? onSettle;
+
+  /// v0.4.3 P1: cosmetic dice skin id (data/skins.dart). Null or unknown
+  /// falls back to the default bone skin, which renders exactly as before
+  /// skins existed. Paint only — never touches values, faces, or semantics.
+  final String? skin;
   const DieChip(
     this.dieId, {
     super.key,
@@ -545,6 +551,7 @@ class DieChip extends StatefulWidget {
     this.contribution,
     this.flight = false,
     this.onSettle,
+    this.skin,
   });
 
   @override
@@ -705,6 +712,23 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     // gold MAX halo or the selection ring on a die whose taps do nothing.
     final glowSelected = widget.selected && !widget.assigned;
     final glowMaxed = widget.maxed && !widget.assigned;
+    // v0.4.3 P1: cosmetic skin — a multiply tint over the cream die art plus
+    // a matching pip ink. The default bone skin is the identity tint, so an
+    // unskinned chip is pixel-identical to pre-skin builds.
+    final skin = dieSkinDef(widget.skin);
+    final Widget dieArt = skin.bodyArgb == 0xFFFFFFFF
+        ? Image.asset(
+            'assets/images/ui/dice/die_d${def.size}.png',
+            filterQuality: FilterQuality.none,
+          )
+        : ColorFiltered(
+            colorFilter:
+                ColorFilter.mode(Color(skin.bodyArgb), BlendMode.modulate),
+            child: Image.asset(
+              'assets/images/ui/dice/die_d${def.size}.png',
+              filterQuality: FilterQuality.none,
+            ),
+          );
     final borderColor = glowSelected
         ? EmberColors.ember
         : glowMaxed
@@ -736,11 +760,9 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Pixel die art at exactly 0.5x of its 128px source.
-                  Image.asset(
-                    'assets/images/ui/dice/die_d${def.size}.png',
-                    filterQuality: FilterQuality.none,
-                  ),
+                  // Pixel die art at exactly 0.5x of its 128px source
+                  // (skin-tinted when a non-default skin is lit).
+                  dieArt,
                   // Face content: rolled values as pips (numeral on the d4 —
                   // the square pip layouts spill off the triangle), and a dim
                   // engraved size numeral while unrolled, so a die never
@@ -752,6 +774,7 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                       sides: def.size,
                       maxed: glowMaxed,
                       selected: glowSelected,
+                      ink: Color(skin.inkArgb),
                     ),
                   ),
                   if (glowSelected)
@@ -834,14 +857,19 @@ class _FacePainter extends CustomPainter {
   final int sides;
   final bool maxed;
   final bool selected;
+
+  /// v0.4.3 P1: pip/numeral ink from the lit dice skin. Defaults to the
+  /// original bone ink so every pre-skin call site paints unchanged.
+  final Color ink;
   _FacePainter({
     required this.value,
     required this.sides,
     this.maxed = false,
     this.selected = false,
+    this.ink = _boneInk,
   });
 
-  static const _ink = Color(0xFF241407);
+  static const _boneInk = Color(0xFF241407);
 
   /// The d4 triangle's visual centroid sits below its bounding-box center;
   /// content drawn at the box center floats toward the apex.
@@ -982,7 +1010,7 @@ class _FacePainter extends CustomPainter {
         canvas,
         size,
         '$sides',
-        color: _ink.withValues(alpha: 0.30),
+        color: ink.withValues(alpha: 0.30),
         fontSize: size.shortestSide * 0.30,
         weight: FontWeight.w700,
       );
@@ -993,7 +1021,7 @@ class _FacePainter extends CustomPainter {
         canvas,
         size,
         '$v',
-        color: _ink,
+        color: ink,
         rim: (maxed ? EmberColors.gold : const Color(0xFFFFD98A)).withValues(
           alpha: maxed ? 0.9 : 0.5,
         ),
@@ -1007,7 +1035,7 @@ class _FacePainter extends CustomPainter {
     // (d4 triangle is the tightest); dense values pack slightly smaller.
     final extent = size.shortestSide * (pips.length > 9 ? 0.20 : 0.17);
     final radius = size.shortestSide * (pips.length > 6 ? 0.045 : 0.06);
-    final pip = Paint()..color = const Color(0xFF241407);
+    final pip = Paint()..color = ink;
     final rim = Paint()
       ..color = (maxed ? EmberColors.gold : const Color(0xFFFFD98A)).withValues(
         alpha: maxed ? 0.9 : 0.5,
@@ -1024,7 +1052,8 @@ class _FacePainter extends CustomPainter {
       old.value != value ||
       old.sides != sides ||
       old.maxed != maxed ||
-      old.selected != selected;
+      old.selected != selected ||
+      old.ink != ink;
 }
 
 // ---------------------------------------------------------------------------
