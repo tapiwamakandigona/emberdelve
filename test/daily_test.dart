@@ -1,8 +1,8 @@
 // Daily Delve determinism + save round-trip (P-M8).
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/rng.dart';
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/meta/daily.dart';
+import 'package:emberwood/core/rng.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/meta/daily.dart';
 
 void main() {
   final jul25 = DateTime(2026, 7, 25, 14, 30); // time of day must not matter

@@ -5,12 +5,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/ui/app_state.dart';
-import 'package:emberdelve/ui/credits_screen.dart';
-import 'package:emberdelve/ui/level_select_screen.dart';
-import 'package:emberdelve/ui/settings_screen.dart';
-import 'package:emberdelve/ui/title_screen.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/ui/app_state.dart';
+import 'package:emberwood/ui/credits_screen.dart';
+import 'package:emberwood/ui/level_select_screen.dart';
+import 'package:emberwood/ui/settings_screen.dart';
+import 'package:emberwood/ui/title_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

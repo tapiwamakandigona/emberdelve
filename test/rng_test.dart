@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/rng.dart';
+import 'package:emberwood/core/rng.dart';
 
 void main() {
   test('deterministic across instances, domain-separated', () {

@@ -110,7 +110,7 @@ void main() {
   });
 
   runApp(MaterialApp(
-    title: 'Emberdelve (web test harness)',
+    title: 'Emberwood (web test harness)',
     debugShowCheckedModeBanner: false,
     home: Scaffold(
       backgroundColor: Colors.black,

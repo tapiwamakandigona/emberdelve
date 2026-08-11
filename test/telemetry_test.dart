@@ -1,7 +1,7 @@
 // test/telemetry_test.dart — consent gating for TelemetryService: no event
 // may reach the backend until (a) the player opted in AND (b) Firebase is
 // configured. Also covers persistence of the choice.
-import 'package:emberdelve/telemetry/telemetry_service.dart';
+import 'package:emberwood/telemetry/telemetry_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

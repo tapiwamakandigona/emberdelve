@@ -6,14 +6,14 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/core_loadout.dart';
-import 'package:emberdelve/game/enemies/boss_core.dart';
-import 'package:emberdelve/game/enemies/enemy_core.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/input_intent.dart';
-import 'package:emberdelve/game/session.dart';
-import 'package:emberdelve/game/tuning.dart';
-import 'package:emberdelve/meta/progress_state.dart';
+import 'package:emberwood/game/core_loadout.dart';
+import 'package:emberwood/game/enemies/boss_core.dart';
+import 'package:emberwood/game/enemies/enemy_core.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/input_intent.dart';
+import 'package:emberwood/game/session.dart';
+import 'package:emberwood/game/tuning.dart';
+import 'package:emberwood/meta/progress_state.dart';
 
 LevelData load(String id) =>
     LevelData.parse(File('assets/levels/$id.txt').readAsStringSync());

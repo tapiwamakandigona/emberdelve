@@ -1,11 +1,11 @@
 // Grove Golem boss: phase thresholds, telegraphed attacks per phase,
 // hazard damage windows, exit-door lock, and the victory burst.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/core_loadout.dart';
-import 'package:emberdelve/game/enemies/boss_core.dart';
-import 'package:emberdelve/game/input_intent.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/session.dart';
+import 'package:emberwood/game/core_loadout.dart';
+import 'package:emberwood/game/enemies/boss_core.dart';
+import 'package:emberwood/game/input_intent.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/session.dart';
 
 const dt = 1 / 120;
 

@@ -20,7 +20,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.tsorostudios.emberdelve"
+    namespace = "com.tsorostudios.emberwood"
     compileSdk = flutter.compileSdkVersion
     // Pinned above flutter.ndkVersion: firebase_core, path_provider_android
     // and shared_preferences_android all require r27, and Flutter's default is
@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tsorostudios.emberdelve"
+        applicationId = "com.tsorostudios.emberwood"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

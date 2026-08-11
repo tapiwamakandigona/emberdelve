@@ -1,6 +1,6 @@
 // FrameStats windowing math for the PERF_OVERLAY readout.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/components/perf_overlay.dart';
+import 'package:emberwood/game/components/perf_overlay.dart';
 
 void main() {
   test('steady 60fps window: fps/avg/worst correct', () {

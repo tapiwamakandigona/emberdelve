@@ -21,8 +21,8 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:emberdelve/audio/audio_service.dart';
-import 'package:emberdelve/game/level/level_data.dart';
+import 'package:emberwood/audio/audio_service.dart';
+import 'package:emberwood/game/level/level_data.dart';
 
 void main() {
   group('mix report (tool/audio_mix.json)', () {
