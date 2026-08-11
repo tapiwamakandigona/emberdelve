@@ -1137,3 +1137,22 @@ identity across the transition settling, (b) mid-run arrival (bot-driven to
 layer >= 4) is framed on the delver immediately with no post-arrival camera
 motion. Both FAILED before the fix, pass after.
 VERIFIED: flutter analyze clean; 230/230 tests green (was 228).
+
+## 2026-08-11 — bug hunt: resumed Daily/Weekly identity loss (pre-0.4.4 release)
+Sweep before the v0.4.4 Play release. Sim core fuzzed clean: 360 bot runs
+(60 seeds x {normal, easy, hard, all_d4, elites_only, no_shops}), 56,537
+commands, a snapshot->jsonRoundTrip->restore twin applied EVERY command —
+0 event/state-hash divergences, 0 bot invalids, all runs terminated.
+REAL BUG (controller layer): dailyDate/weeklyIndex/weeklyMutator lived only
+in controller memory. Kill + resume a Daily/Weekly Delve and it finished as
+a PLAIN run — _bankRun gates every daily/weekly record on those fields, so
+the recap, the share button, dailiesPlayed/weekliesPlayed all silently
+skipped (the field comments even claimed "loses only the badge" — false).
+Fix: _autosave stamps a 'run_labels' key alongside the sim snapshot (only
+when set — normal-run save blobs stay byte-identical; Sim.restore ignores
+foreign keys) and boot() restores it. New @visibleForTesting flushSaves()
+awaits the private save queue.
+Regression: test/resume_labels_test.dart (3 tests — resumed weekly banks,
+resumed daily banks, normal saves carry no labels). Weekly+daily resume
+tests FAIL with the restore block disabled (proof run recorded).
+VERIFIED: analyze clean; 233/233 tests green (was 230).

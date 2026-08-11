@@ -148,14 +148,15 @@ class GameController extends ChangeNotifier {
   List<String> pendingAchievements = const [];
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
-  /// Presentation-only label (not persisted with the save — a resumed run
-  /// simply loses the badge, never any state).
+  /// Persisted alongside the sim snapshot ('run_labels') and restored by
+  /// [boot], because [_bankRun] gates the daily record on it — a resumed
+  /// daily must still record its result when it ends.
   String? dailyDate;
 
   /// Week index while the current run is a Weekly Delve; null otherwise.
-  /// Presentation/banking label only — the run's mutators live in the sim and
-  /// survive save/restore on their own (a resumed weekly loses only the
-  /// title badge, never a rule).
+  /// The run's mutators live in the sim and survive save/restore on their
+  /// own; this label is persisted with the save too ('run_labels') so a
+  /// resumed weekly still banks its record and shows its badge.
   int? weeklyIndex;
   String? weeklyMutator; // the modifier id this weekly is running under
 
@@ -196,6 +197,15 @@ class GameController extends ChangeNotifier {
           _bankedThisRun = false;
           _lastEnemyId = null;
           _restedThisRun = false;
+          // Restore the run-identity labels saved by _autosave, so a resumed
+          // Daily/Weekly Delve still banks its record (and shows its badge)
+          // when it ends. Absent on normal runs and on pre-fix saves.
+          final labels = snap['run_labels'];
+          if (labels is Map) {
+            dailyDate = labels['daily'] as String?;
+            weeklyIndex = (labels['weekly_index'] as num?)?.toInt();
+            weeklyMutator = labels['weekly_mutator'] as String?;
+          }
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -250,7 +260,22 @@ class GameController extends ChangeNotifier {
   Future<void> _saveQueue = Future.value();
   Future<void> _autosave() {
     if (sim == null) return Future.value();
-    final snap = jsonEncode(sim!.snapshot());
+    final snapMap = sim!.snapshot();
+    // Run-identity labels ride ALONGSIDE the sim snapshot (Sim.restore reads
+    // only its own keys, so this is invisible to the sim). Without them a
+    // Daily/Weekly Delve that is killed and resumed finished as a plain run:
+    // _bankRun gates every daily/weekly record on these fields, so the recap,
+    // the share button and the played-counters silently vanished (bug-hunt
+    // 2026-08-11). Only stamped when set, so normal-run save blobs stay
+    // byte-identical.
+    if (dailyDate != null || weeklyIndex != null) {
+      snapMap['run_labels'] = {
+        if (dailyDate != null) 'daily': dailyDate,
+        if (weeklyIndex != null) 'weekly_index': weeklyIndex,
+        if (weeklyMutator != null) 'weekly_mutator': weeklyMutator,
+      };
+    }
+    final snap = jsonEncode(snapMap);
     _saveQueue = _saveQueue.then((_) async {
       try {
         final f = await _runFile();
@@ -261,6 +286,11 @@ class GameController extends ChangeNotifier {
     });
     return _saveQueue;
   }
+
+  /// Test seam: await every queued save/clear (the queue is otherwise
+  /// private). Production code never needs this — writes are ordered.
+  @visibleForTesting
+  Future<void> flushSaves() => _saveQueue;
 
   /// Test seam (tool/play_session_test.dart): when set, the next [startRun]
   /// without an explicit [seed] consumes this value instead of the clock, so
