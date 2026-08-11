@@ -1089,3 +1089,29 @@ Ships: opt-in telemetry (#63), achievement toasts + bug sweep (#78),
 P1 ember sink — dice skins, the Codex, 12 hearth colors (#79).
 NOT yet uploaded to Google Play. Prerequisite before Play upload:
 update the Play Console Data safety form (telemetry added this version).
+
+## 2026-08-11 — P3 Weekly Delve + run mutators (v0.4.4+29, feat/weekly-delve-mutators)
+Retention plan P3 done. A Monday-aligned 7-day shared seed with ONE declared
+modifier per week, no streaks / no expiry (spec §Ethics — a missed week is a
+missed week).
+- data/mutators.dart: catalog — all_d4 (Flint Week), elites_only (Elite
+  Gauntlet), no_shops (No Quarter). sim reads only the id string.
+- sim/daily.dart: weeklySeed(weekIndex) pure, namespaced apart from daily.
+- game/weekly.dart: Monday-aligned week index (DateTime-free civil-day math),
+  mondayOfWeek inverse, weeklyKey, deterministic weeklyMutatorFor(index),
+  honest recap/share strings.
+- sim: opt-in sim.mutators set. EMPTY on every normal/Daily run, so all
+  mutator branches are skipped and the golden anchor is BYTE-FOR-BYTE
+  unchanged (goldenV6=2013675017 and all 6 boss goldens still pass). Applied
+  at 3 seams: combat _rollOne face cap (all_d4), map relabel before reward
+  telegraphs (elites_only/no_shops, consumes no rng), run_started stamp.
+  Snapshot only carries 'mutators' when non-empty (pre-P3 saves stay clean).
+- meta: lastWeekly{Key,Won,Floor,Floors,Mutator} + weekliesPlayed, one record.
+- controller: startWeeklyRun(); banks weekly record; weeklyResultShareText.
+- UI: title Weekly Delve button + declared-rule blurb + recap, in-run WEEKLY
+  badge, summary copy-weekly-result.
+- Tests: 228 total (was 207) — test/weekly_test.dart adds 21. analyze clean.
+  Autoplay 150 seeds/mutator, 0 invalids: normal 64% / no_shops 65% /
+  all_d4 20% / elites_only 3% — a real difficulty ladder.
+NOT released yet (v0.4.3 is still in Play review). Ship v0.4.4 after 0.4.3
+clears, via the usual signed-CI + verify + release recipe.

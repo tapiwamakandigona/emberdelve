@@ -295,6 +295,10 @@ void main() {
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
     await pumpFor(tester, 300);
+    // The title column is scroll-safe; on the small test viewport the button
+    // can sit below the fold, so bring it into view before tapping.
+    await tester.ensureVisible(find.text('Choose a delver'));
+    await pumpFor(tester, 100);
     await tester.tap(find.text('Choose a delver'));
     await pumpFor(tester, 700);
     // Top cards render; lower ones are lazily built when scrolled into view.

@@ -18,3 +18,16 @@ int dailySeed(int year, int month, int day) {
   if (seed == 0) seed = 1; // 0 is a fixed point of the LCG
   return seed;
 }
+
+/// Deterministic seed for the Weekly Delve of a given Monday-aligned week
+/// index (see game/weekly.dart for the date→index math). Same week index ->
+/// same seed on every device, forever. Result in [1, 2^31-2].
+///
+/// Namespaced apart from daily/custom seeds so a week and a day can never
+/// collide onto the same delve. Pure, DateTime-free (the caller supplies the
+/// index) — the sim stays a pure function, exactly like [dailySeed].
+int weeklySeed(int weekIndex) {
+  var seed = hashDomainString('emberdelve-weekly:$weekIndex');
+  if (seed == 0) seed = 1; // 0 is a fixed point of the LCG
+  return seed;
+}

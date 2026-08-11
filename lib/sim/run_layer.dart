@@ -115,6 +115,13 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final difficulty = difficulties.contains(cmd['difficulty'])
       ? cmd['difficulty'] as String
       : 'normal';
+  // P3 Weekly Delve modifiers. Set once, here, from the start command; empty
+  // for every normal/Daily run so all mutator branches below are skipped and
+  // the golden anchor is untouched. Unknown ids are simply ignored by the
+  // seams that consume them, so a future catalog entry can't crash old code.
+  sim.mutators = (cmd['mutators'] is List)
+      ? (cmd['mutators'] as List).whereType<String>().toSet()
+      : <String>{};
   final charId = cmd['character'] as String?;
   final ch = characterDef(charId);
   // Apply character loadout.
@@ -140,6 +147,12 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final map = generateMap(sim.rng['map']!);
   map['position'] = map['start'];
   map['visited'] = <int>[map['start'] as int];
+  // P3 mutators reshape the map BEFORE reward telegraphs resolve, so the
+  // "elites drop a guaranteed rare" preview stays honest for converted
+  // nodes. These transforms consume NO rng (pure relabels of the already-
+  // generated map), and the whole block is skipped when mutators is empty —
+  // normal runs generate and telegraph exactly as before.
+  if (sim.mutators.isNotEmpty) _applyMapMutators(sim, map);
   _resolveRewardTelegraphs(sim, map);
   sim.map = map;
   final nodeCount = (map['nodes'] as Map).length;
@@ -153,6 +166,10 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     // Only stamped when off-normal so pre-difficulty event logs (and the
     // golden hash) stay byte-identical for normal runs.
     if (difficulty != 'normal') 'difficulty': difficulty,
+    // Likewise only stamped on the Weekly Delve (sorted, comma-joined) so
+    // normal/Daily event logs and every golden are unchanged.
+    if (sim.mutators.isNotEmpty)
+      'mutators': (sim.mutators.toList()..sort()).join(','),
   });
   if (cmd['boons'] == true) {
     // Restart flow (m4 §6): deterministic 1-of-3 starting-boon offering from
@@ -226,6 +243,32 @@ void runChooseBoon(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 // `reward_preview` on the node — the exact best die the fight will offer.
 // Elites always carry one guaranteed tier-3 (rare) die. runPost serves these
 // stored offers verbatim, so the preview can never lie.
+// P3 Weekly Delve map transforms. Pure relabels of an already-generated map;
+// consumes NO rng, so the map layout and every downstream rng draw are the
+// same as an unmutated run of the same seed — only node KINDS change. Only
+// middle nodes are ever touched; start and boss are left alone.
+//
+//   elites_only  every regular fight -> elite (each combat can drop a rare).
+//   no_shops     every shop -> fight (removes the map's only gold sink).
+//
+// Unknown mutator ids are ignored here (forward-compatible with the catalog).
+void _applyMapMutators(Sim sim, Map<String, Object?> map) {
+  final nodes = (map['nodes'] as Map).cast<String, Map>();
+  final count = nodes.length;
+  final elitesOnly = sim.hasMutator('elites_only');
+  final noShops = sim.hasMutator('no_shops');
+  // Walk in numeric id order for determinism; skip start (1) and boss (last).
+  // Two independent passes in one loop so the mutators compose: a shop first
+  // becomes a fight (no_shops), and that fight can then become an elite
+  // (elites_only). The Weekly Delve runs one mutator at a time, but keeping
+  // them orthogonal means a future "double week" needs no new code.
+  for (var id = 2; id <= count - 1; id++) {
+    final node = nodes['$id']!;
+    if (noShops && node['kind'] == 'shop') node['kind'] = 'fight';
+    if (elitesOnly && node['kind'] == 'fight') node['kind'] = 'elite';
+  }
+}
+
 void _resolveRewardTelegraphs(Sim sim, Map<String, Object?> map) {
   final offer = sim.rng['offer']!;
   final nodes = (map['nodes'] as Map).cast<String, Map>();

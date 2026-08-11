@@ -121,10 +121,16 @@ this is the cheapest quality-per-hour work in the codebase: **17 → 30 enemies*
 **16 → 28 events**, plus ~10 relics. Target: a player should not see a repeat regular enemy inside
 one run, and should meet a new boss on runs 1–6. This is the direct answer to "less boring".
 
-**P3 — Weekly Delve + run mutators (~2 days).** `dailySeed()` already gives free deterministic
-seeds. Add a 7-day seed with a declared modifier ("every die is a d4", "elites only", "no shops")
-and a local best. Mutators are the retention engine of the whole subgenre — Slice & Dice's "too many
-modes" *is* its long tail. No streaks, no expiry pressure: a missed week is simply a missed week.
+**P3 — Weekly Delve + run mutators — DONE (v0.4.4, 2026-08-11).** Monday-aligned 7-day seed
+(`weeklySeed`/`game/weekly.dart`) with ONE declared modifier per week, picked deterministically
+from `data/mutators.dart` (`all_d4` Flint Week, `elites_only` Elite Gauntlet, `no_shops` No Quarter).
+Modifiers live in the sealed sim as an opt-in `sim.mutators` set — empty on every normal/Daily run,
+so the golden anchor is byte-for-byte unchanged. Local best kept in meta (`lastWeekly*`,
+`weekliesPlayed`), one record, no streaks, no expiry (§Ethics) — a missed week is simply a missed
+week. Title button + declared-rule blurb + recap, in-run badge, copyable summary result. Autoplay
+(150 seeds/mutator, 0 invalids): normal 64% → no_shops 65% → all_d4 20% → elites_only 3% — a real
+difficulty ladder. 21 new tests (`test/weekly_test.dart`). Future: leaderboard hook (P5) can read the
+weekly seed+mutator directly.
 
 **P4 — Cloud save (~2–3 days).** Progress currently lives in one local file via `path_provider`.
 A wiped phone is a lost player, permanently. Play Games Services saved games, or Appwrite.
