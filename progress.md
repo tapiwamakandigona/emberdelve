@@ -930,3 +930,34 @@ authoring order, then in-progress ones sorted by real progress, then untouched
 ones. A progress bar is drawn ONLY for goals actually under way — an empty bar on
 an untouched goal reads as failure rather than as an invitation. Footer states
 plainly that achievements change nothing and never expire.
+
+## 2026-08-11 — P2: content volume (enemies 17→30, events 16→28)
+
+Data-only, zero logic changes, per the retention assessment: repetition starts
+around runs 3-5 because 9 regular enemies and 16 events is a small deck.
+
+Enemies **17 → 30**: regulars 9 → 17, elites 5 → 7, bosses **3 → 6**. Every
+addition sits inside the measured v0.3.0 bands (early hp 24-36 / swings 15-23,
+late hp 34-58 / 19-28, elite hp 48-72 / 21-31, boss hp 94-112 / 21-36), so the
+200-seed autoplay gate should hold. Each new enemy has a distinct *rhythm* —
+front-loaded, never-guards, two-in-three-guarded, same-beat attack_block — since
+a new name on an old pattern is not new content.
+
+**Boss count check done BEFORE committing:** `bossForSeed` indexes the boss list
+by `seed % length`. The golden anchor seed 20260723 is congruent to 1 mod 3 *and*
+mod 6, so index 1 is still `ember_tyrant` and the v6 golden replay survives the
+3 → 6 change. Verified by parsing the file: boss order is
+`[ashen_colossus, ember_tyrant, pyre_matriarch, cinder_hierophant, the_bellows,
+ashfall_twins]`, `20260723 % 6 == 1`. **Any future change to the boss count must
+redo this arithmetic first.**
+
+Events **16 → 28**. Deck size is what keeps a run surprising, since the pick is
+uniform over events not yet seen this run: at 28 entries a 7-node path almost
+never repeats, and the second and third runs of an evening still show new rooms.
+Design rule applied to every new entry: at least one option costs something
+real. A deck of free gifts is a deck of non-decisions and quietly inflates the
+run economy.
+
+EXPECTED: the golden sim hash moves. Adding to the eligible spawn/event pools
+changes what the seeded streams draw, which is exactly what the documented
+process says will happen — re-anchor deliberately and record old → new below.
