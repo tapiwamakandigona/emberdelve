@@ -16,7 +16,7 @@ import '../data/themes.dart';
 /// v1 = every file written before the field existed (absence ⇒ 1). Readers
 /// stay field-tolerant — every field has a default — so bumping this is only
 /// needed when a MIGRATION must run, not when fields are merely added.
-const int metaSchemaVersion = 2;
+const int metaSchemaVersion = 3;
 
 class MetaState {
   int embers;
@@ -66,6 +66,17 @@ class MetaState {
   // The source of truth for *granting* is always a Play purchase event
   // (see meta/store_service.dart), never this file alone.
   bool forgeUnlocked;
+  // v0.5.0 Delver's Ledger (see data/achievements.dart). Five real counters
+  // that the ledger reads, plus the set of achievements already announced so a
+  // toast fires once and never again. Every counter here is banked at run end
+  // in GameController._bankRun — none of them is derived or estimated, because
+  // a progress bar built on a guess would be a lie (§Ethics honesty).
+  Set<String> bossesBeaten; // distinct boss enemy ids put down on layer N
+  Set<String> seenAchievements; // ids whose earned-toast has been shown
+  int bestFloor; // deepest 1-based layer ever reached, won or lost
+  int dailiesPlayed; // Daily Delves FINISHED (abandoning counts for nothing)
+  int winsNoRest; // runs won without visiting a single rest node
+  int hardWins; // runs won on hard
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -89,7 +100,15 @@ class MetaState {
     this.lastDailyFloors = 0,
     List<Map<String, Object?>>? runHistory,
     this.forgeUnlocked = false,
+    Set<String>? bossesBeaten,
+    Set<String>? seenAchievements,
+    this.bestFloor = 0,
+    this.dailiesPlayed = 0,
+    this.winsNoRest = 0,
+    this.hardWins = 0,
   })  : runHistory = runHistory ?? [],
+        bossesBeaten = bossesBeaten ?? {},
+        seenAchievements = seenAchievements ?? {},
         unlockedCharacters = unlocked ?? {defaultCharacter},
         charRuns = charRuns ?? {},
         charWins = charWins ?? {},
@@ -119,6 +138,13 @@ class MetaState {
         if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
         if (runHistory.isNotEmpty) 'runHistory': runHistory,
         if (forgeUnlocked) 'forgeUnlocked': true,
+        if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
+        if (seenAchievements.isNotEmpty)
+          'seenAchievements': seenAchievements.toList(),
+        if (bestFloor > 0) 'bestFloor': bestFloor,
+        if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
+        if (winsNoRest > 0) 'winsNoRest': winsNoRest,
+        if (hardWins > 0) 'hardWins': hardWins,
       };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -169,7 +195,34 @@ class MetaState {
             .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))
             .toList(),
         forgeUnlocked: j['forgeUnlocked'] as bool? ?? false,
+        bossesBeaten:
+            ((j['bossesBeaten'] as List?)?.cast<String>().toSet()) ?? {},
+        seenAchievements:
+            ((j['seenAchievements'] as List?)?.cast<String>().toSet()) ?? {},
+        // Pre-v0.5.0 saves have no bestFloor. Seeding it from the run history
+        // (the deepest floor we can actually prove) is honest; inventing a
+        // number from runsPlayed would not be.
+        bestFloor: j['bestFloor'] as int? ??
+            _deepestFloorIn((j['runHistory'] as List?) ?? const []),
+        dailiesPlayed: j['dailiesPlayed'] as int? ??
+            // A pre-v0.5.0 profile with a recorded daily has provably finished
+            // at least one; anything beyond that is unknowable, so claim one.
+            ((j['lastDailyDate'] is String) ? 1 : 0),
+        winsNoRest: j['winsNoRest'] as int? ?? 0,
+        hardWins: j['hardWins'] as int? ?? 0,
       );
+
+  /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only
+  /// to migrate pre-v0.5.0 saves (see [fromJson]).
+  static int _deepestFloorIn(List raw) {
+    var best = 0;
+    for (final r in raw) {
+      if (r is! Map) continue;
+      final f = r['floor'];
+      if (f is int && f > best) best = f;
+    }
+    return best;
+  }
 
   /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched
   /// the selector is steered toward easy — visibly, on the selector itself,

@@ -868,3 +868,41 @@ rebuilt for it.
 
 Shipped: 0.4.1 (26) submitted to the closed Alpha track, full rollout, with the
 device-support error acknowledged via Play's "Proceed anyway".
+
+## 2026-08-11 — P0: Delver's Ledger achievements (data + meta + counters)
+
+Owner picked "P0 achievements, then P2 content volume" after the retention
+assessment (`docs/improvements/retention-2026-08-11.md`).
+
+Why achievements and not the usual retention levers: spec §Ethics bans decaying
+streaks, timers and loss framing. The measured alternative is *metric*
+achievements — on Trophy's April 2026 platform data, completing a metric
+achievement on day one correlates with 33.96% D30 retention versus 20.46% for
+none, while streak achievements reach only 25.57%, and retention rises
+monotonically with achievement difficulty. So the ethics-compatible lever is
+also the stronger one. Several entries are deliberately hard for that reason.
+
+Added:
+- `lib/data/achievements.dart` — 37 defs, content-as-data, zero logic. Fixed
+  stat vocabulary of 14 real MetaState counters, so a progress bar can never
+  show a number the player did not earn. No rewards of any kind: recognition
+  only, so the ledger can never become a grind gate.
+- `lib/meta/achievements.dart` — pure evaluation (`statValue`, `progress`,
+  `isEarned`, `earnedAchievements`, `unseenAchievements`, `markSeen`,
+  `nearestAchievements`). Outside the sealed sim; reads meta only.
+- `lib/meta/meta.dart` — schema **v2 → v3** with five new banked counters
+  (`bestFloor`, `dailiesPlayed`, `winsNoRest`, `hardWins`) plus
+  `bossesBeaten` and `seenAchievements` sets. Migration is deliberately
+  conservative: `bestFloor` is recovered from the existing run history (a
+  provable number) and `dailiesPlayed` claims exactly 1 when an old save has a
+  recorded daily. Nothing unprovable is invented.
+- `lib/game/controller.dart` — `recordLedgerStats` observes `encounter_started`
+  and `rested` events only; `_bankRun` banks the counters and collects newly
+  earned ids into `pendingAchievements` for the summary screen.
+- `test/achievements_test.dart` — schema validity, targets inside real content,
+  fresh profile earns nothing and is "near" nothing, progress real/monotonic/
+  clamped, every stat wired to a live counter, toast fires once, round trip,
+  honest migration from a v2 save, and a guard that earning achievements never
+  changes any entitlement.
+
+The sim is untouched, so the golden hash is unaffected. UI comes next.
