@@ -119,6 +119,30 @@ void main() {
     expect(c.meta.exactStreak, 1);
   });
 
+  test('a lost fight breaks the exact-kill streak', () {
+    // "N fights in a row on exact kills" must never span a death: exact-kill
+    // two fights, die, then exact-kill one more — that is a streak of 1,
+    // not 3 (streak_three would otherwise be earnable dishonestly).
+    final c = GameController();
+    void win() => c.recordCombatStats([
+          {'type': 'exact_kill', 'embers': 5},
+          {'type': 'encounter_won', 'turns': 3},
+        ]);
+
+    win();
+    win();
+    expect(c.meta.exactStreak, 2);
+    c.recordCombatStats([
+      {'type': 'encounter_lost', 'turns': 4},
+    ]);
+    expect(c.meta.exactStreak, 0, reason: 'a death breaks the row');
+    expect(c.meta.bestExactStreak, 2, reason: 'the high-water mark survives');
+    win();
+    expect(c.meta.exactStreak, 1,
+        reason: 'post-death exacts start a new row, not resume the old one');
+    expect(c.meta.bestExactStreak, 2);
+  });
+
   test('run end banks per-character stats and lifetime embers', () {
     final c = GameController();
     c.startRun(character: 'kindler', seed: 11, boons: true);
@@ -143,6 +167,28 @@ void main() {
     } else {
       expect(c.meta.charWins['kindler'], isNull);
     }
+  });
+
+  test('run end collects fresh achievements; the next startRun clears them',
+      () {
+    final c = GameController();
+    c.startRun(character: 'kindler', seed: 11, boons: true);
+    var guard = 0;
+    while (guard++ < 400 && c.phase != 'run_won' && c.phase != 'run_lost') {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+    }
+    expect({'run_won', 'run_lost'}.contains(c.phase), isTrue,
+        reason: 'bot must reach a terminal phase (guard=$guard)');
+    // Any first run ends with runsPlayed 1, so first_delve is always fresh
+    // here. The summary reads this list; nothing may have consumed it early.
+    expect(c.pendingAchievements, contains('first_delve'));
+    expect(c.meta.seenAchievements.containsAll(c.pendingAchievements), isTrue,
+        reason: 'announced achievements are marked seen in the same bank');
+    c.startRun(character: 'kindler', seed: 12);
+    expect(c.pendingAchievements, isEmpty,
+        reason: 'a new run must never resurface the last run\'s toasts');
   });
 
   test('hearth colors: buy deducts embers, refuses when broke or owned', () {

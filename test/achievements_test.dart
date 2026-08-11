@@ -57,6 +57,10 @@ void main() {
           expect(a.target, lessThanOrEqualTo(20),
               reason: '${a.id} exceeds the top rung');
           break;
+        case 'delvers_cleared':
+          expect(a.target, lessThanOrEqualTo(characters.length),
+              reason: '${a.id} asks for wins with more delvers than exist');
+          break;
       }
     }
   });
@@ -127,6 +131,23 @@ void main() {
           reason: '$stat reads 0 on a fully populated profile');
     }
     expect(statValue(m, 'not_a_stat'), equals(0));
+  });
+
+  test('delvers_cleared counts distinct roster winners, junk keys never', () {
+    final m = MetaState();
+    expect(statValue(m, 'delvers_cleared'), equals(0));
+    m.charWins['kindler'] = 3; // many wins with one delver still count once
+    expect(statValue(m, 'delvers_cleared'), equals(1));
+    m.charWins['warden'] = 1;
+    m.charWins['gambler'] = 0; // a played-but-never-won delver is not a win
+    expect(statValue(m, 'delvers_cleared'), equals(2));
+    m.charWins['not_a_delver'] = 99; // hand-edited save junk must not count
+    expect(statValue(m, 'delvers_cleared'), equals(2));
+    for (final id in characters.keys) {
+      m.charWins[id] = 1;
+    }
+    expect(statValue(m, 'delvers_cleared'), equals(characters.length));
+    expect(isEarned(m, achievements['every_delver_clears']!), isTrue);
   });
 
   test('a toast fires once: unseen empties after markSeen', () {

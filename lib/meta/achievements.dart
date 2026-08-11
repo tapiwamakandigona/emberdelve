@@ -8,6 +8,7 @@
 // There is no padding, no head start, and no decay — a progress bar built from
 // [progress] can only ever show what the player actually did.
 import '../data/achievements.dart';
+import '../data/characters.dart';
 import 'meta.dart';
 
 /// Current value of [stat] for [m]. Unknown stats return 0 rather than throwing:
@@ -44,6 +45,10 @@ int statValue(MetaState m, String stat, [String? param]) {
       return m.ownedThemes.length;
     case 'hard_wins':
       return m.hardWins;
+    case 'delvers_cleared':
+      // Distinct ROSTER characters with a win: junk charWins keys from a
+      // hand-edited save can never inflate this past the real roster.
+      return characters.keys.where((id) => (m.charWins[id] ?? 0) > 0).length;
     default:
       return 0;
   }

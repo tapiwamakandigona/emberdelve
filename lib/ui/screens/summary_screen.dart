@@ -53,6 +53,40 @@ class SummaryScreen extends StatelessWidget {
                 '${run['gold']}'),
           ]),
         ),
+        // Delver's Ledger (v0.5.0): achievements this run earned, announced
+        // in the same breath as the result. _bankRun collects them and
+        // startRun clears them, so this list is exactly this run's harvest.
+        // Recognition only — no reward talk, no next-goal teaser (§Ethics).
+        if (c.pendingAchievements.isNotEmpty) ...[
+          const SizedBox(height: Space.l),
+          Panel(
+            key: const ValueKey('achievements-earned'),
+            color: EmberColors.raised,
+            child: Column(children: [
+              for (final (i, id) in c.pendingAchievements.indexed) ...[
+                if (i > 0)
+                  const Divider(color: EmberColors.line, height: Space.xl),
+                Row(children: [
+                  const Icon(Icons.military_tech,
+                      color: EmberColors.gold, size: 20),
+                  const SizedBox(width: Space.m),
+                  Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(achievements[id]?.name ?? id,
+                              style: EmberText.body
+                                  .copyWith(color: EmberColors.gold)),
+                          Text(achievements[id]?.text ?? '',
+                              style: EmberText.micro
+                                  .copyWith(color: EmberColors.textDim)),
+                        ]),
+                  ),
+                ]),
+              ],
+            ]),
+          ),
+        ],
         if (insight != null) ...[
           const SizedBox(height: Space.l),
           Panel(
