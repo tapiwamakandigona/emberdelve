@@ -177,13 +177,9 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
-    // Ember Forge migration (v0.4.0): a pre-Forge profile may have HARD as
-    // its sticky preference. The clamp in startRun would already force
-    // normal; also move the VISIBLE selector so what's highlighted is what
-    // they get (same no-silent-switch rule as the easy steering below).
-    if (!meta.forgeUnlocked && meta.preferredDifficulty == 'hard') {
-      meta.preferredDifficulty = 'normal';
-    }
+    // v0.6.0: HARD is free (was Forge-gated v0.4.0–v0.5.0). The old boot
+    // clamp that forced a non-Forge hard preference back to normal is gone;
+    // clampRunParams in startRun still guarantees only entitled params run.
     // First-run on-ramp (v0.3.3): steer a brand-new profile toward easy by
     // moving the VISIBLE selector — what's highlighted is what they get, so
     // there is never a silent difficulty switch. One tap ends the steering.

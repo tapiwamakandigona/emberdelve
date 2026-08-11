@@ -1,14 +1,19 @@
-// lib/meta/forge.dart — the Ember Forge gate (spec R8, v0.4.0).
+// lib/meta/forge.dart — the Ember Forge gate (spec R8, v0.4.0; revised v0.6.0).
 //
 // ONE one-time purchase ("Ember Forge") unlocks the endgame:
-//   - HARD difficulty
 //   - the Ascension ladder (rungs above 0)
-// Everything else stays free forever: full runs on easy/normal, every delver
-// (ember-priced, as designed), the Daily Delve, themes, the ledger. No ads,
-// no consumables, no timers — the gate must pass the spec §Ethics test:
-// "would the player endorse it if we explained exactly how it works?"
-// Explanation we stand behind: the complete game is free; the endgame ladder
-// is the supporter's tier that funds future acts.
+// Everything else stays free forever: full runs on easy/normal/HARD, every
+// delver (ember-priced, as designed), the Daily and Weekly Delve, themes, the
+// ledger. No ads, no consumables, no timers — the gate must pass the spec
+// §Ethics test: "would the player endorse it if we explained exactly how it
+// works?" Explanation we stand behind: the complete game is free; the endgame
+// ladder is the supporter's tier that funds future acts.
+//
+// v0.6.0: HARD moved to the free tier (retention doc 2026-08-11 §5 business
+// question). Hard is the natural week-two content; gating it cost more
+// players than it converted. The ladder alone remains the supporter's tier.
+// A profile whose sticky preference was clamped off hard pre-0.6.0 keeps its
+// stored 'normal' — moving it back silently would be a surprise switch.
 //
 // All gating happens OUTSIDE the sealed sim — these helpers only shape the
 // start_run params the player may choose, never the resolution of a run.
@@ -17,8 +22,8 @@ import 'meta.dart';
 /// Play Console product id of the one-time Ember Forge unlock.
 const String forgeProductId = 'ember_forge_unlock';
 
-/// Difficulties selectable without the Forge.
-const Set<String> freeDifficulties = {'easy', 'normal'};
+/// Difficulties selectable without the Forge (v0.6.0: hard is free).
+const Set<String> freeDifficulties = {'easy', 'normal', 'hard'};
 
 /// May [m] start a run at difficulty [id]?
 bool canSelectDifficulty(MetaState m, String id) =>

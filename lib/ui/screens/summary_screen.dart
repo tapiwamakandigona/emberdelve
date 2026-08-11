@@ -126,8 +126,8 @@ class SummaryScreen extends StatelessWidget {
               const SizedBox(width: Space.m),
               Expanded(
                   child: Text(
-                      'The dark goes deeper. HARD and the Ascension '
-                      'ladder wait in the Ember Forge.',
+                      'The dark goes deeper. The Ascension ladder '
+                      'waits in the Ember Forge.',
                       style: EmberText.body)),
               EmberButton('Open', dense: true,
                   key: const ValueKey('forge-victory-cta'),
