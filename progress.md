@@ -961,3 +961,45 @@ run economy.
 EXPECTED: the golden sim hash moves. Adding to the eligible spawn/event pools
 changes what the seeded streams draw, which is exactly what the documented
 process says will happen — re-anchor deliberately and record old → new below.
+
+### Sprites for the 13 new enemies
+
+`test/assets_test.dart` correctly refused the roster growth: every enemy needs a
+sheet plus a `sprite_meta.json` entry, and 13 were missing. The original 0x72
+source pack is not vendored here and the old `build_sprites.py` is gone, so the
+sheets were produced the way v0.4 already produced `ashen_colossus` and
+`pyre_matriarch` — a palette swap of a bundled sheet (all CC0).
+
+New tool `tool/gen_variant_sprites.py`: deterministic HSV remap of an existing
+sheet, alpha and pixel boundaries preserved, frame geometry copied verbatim so
+the meta entry stays valid. `--check` re-derives every output and fails if a
+sheet drifts from the generator, so the art is reproducible rather than a binary
+nobody can regenerate.
+
+First pass was wrong and a visual check caught it: three variants
+(`flue_crawler`, `smoke_stalker`, `the_bellows`) came out indistinguishable from
+their sources, because a hue rotation does nothing to near-grey pixels and
+nothing to a red source shifted 12 degrees. Added a `saturation_floor` that lifts
+visible near-greys before the hue applies (leaving pure black/white outlines
+alone), and moved `the_bellows` to brass so it does not read as a second
+`basalt_shell`. All 13 verified distinct on a source-vs-variant contact sheet.
+
+**Stated plainly: this is placeholder-grade art.** A recolour reads as a related
+creature — a normal roguelite convention, and why each pairing is plausible — but
+it is not an original silhouette. Recorded per-file in PROVENANCE.md.
+
+### Golden re-anchor (v0.5.0)
+
+- `goldenV6` **1842571558 → 2013675017**, measured on CI run 31447154606 with the
+  30-enemy roster and 28-event deck in place. Resolution rules are untouched;
+  only what the seeded spawn/offering streams draw has changed, which is exactly
+  the documented consequence of adding content.
+- The per-boss anchors could not be re-pinned from a guess, so
+  `goldenColossus`/`goldenMatriarch` were replaced by `bossAnchorSeeds`
+  (20260722..20260727, congruent to 0..5 mod 6, hitting each of the six bosses
+  exactly once in list order). The test now asserts the seed→boss mapping exactly
+  and asserts per-boss run determinism, and prints the measured hashes so the
+  constants get pinned from a real build in the follow-up commit.
+- `content_test`'s `bosses == 3` became `bosses == 6` plus a real guard: it now
+  asserts `bossForSeed(20260723) == 'ember_tyrant'`, i.e. the property the magic
+  number was standing in for.

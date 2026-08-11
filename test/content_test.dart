@@ -7,6 +7,10 @@ import 'package:emberdelve/data/relics.dart';
 import 'package:emberdelve/data/events.dart';
 import 'package:emberdelve/data/characters.dart';
 import 'package:emberdelve/data/boons.dart';
+import 'package:emberdelve/sim/run_layer.dart';
+
+/// The seed the long-lived golden replay is anchored to (see test/sim_test.dart).
+const int goldenAnchorSeed = 20260723;
 
 const legalDieMods = {
   'attack_bonus', 'block_bonus', 'min_value', 'on_max_bonus',
@@ -41,7 +45,7 @@ void main() {
     expect(dice.containsKey('d6'), isTrue); // starter must exist
   });
 
-  test('enemies: order matches, >=3 regular + >=1 elite + exactly 3 bosses', () {
+  test('enemies: order matches, bands populated, boss count is seed-safe', () {
     expect(enemiesOrder.toSet(), equals(enemies.keys.toSet()));
     var regs = 0, elites = 0, bosses = 0;
     enemies.forEach((id, e) {
@@ -62,7 +66,16 @@ void main() {
     });
     expect(regs, greaterThanOrEqualTo(3));
     expect(elites, greaterThanOrEqualTo(1));
-    expect(bosses, equals(3));
+    // v0.5.0: 3 -> 6 bosses. The old assertion pinned the literal 3, which was
+    // really guarding something else: bossForSeed indexes the boss list by
+    // `seed % bossCount`, so changing the count re-maps every seed to a
+    // different boss and invalidates the golden replays. Assert THAT instead of
+    // a magic number — this now fails for the real reason (the golden anchor
+    // seed would change boss) rather than merely because content grew.
+    expect(bosses, equals(6));
+    expect(bossForSeed(goldenAnchorSeed), equals('ember_tyrant'),
+        reason: 'boss count changed under the golden anchor seed: re-anchor '
+            'the golden replays deliberately before shipping this');
   });
 
   test('relics: order matches, legal hooks, >=20 ids', () {
