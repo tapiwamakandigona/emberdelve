@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import '../meta/store_service.dart';
+import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'haptics.dart';
 import 'theme.dart';
@@ -103,6 +104,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Answer "ON" with a buzz you can feel — instant
                     // on-device confirmation that haptics actually work.
                     if (v) Haptics.preview();
+                  }),
+            ]),
+          ),
+          const SizedBox(height: Space.xl),
+          Text('PRIVACY', style: EmberText.micro),
+          const SizedBox(height: Space.s),
+          Panel(
+            child: Row(children: [
+              const Icon(Icons.insights,
+                  color: EmberColors.textDim, size: 20),
+              const SizedBox(width: Space.m),
+              Expanded(
+                  child: Text('Gameplay analytics', style: EmberText.body)),
+              _EmberToggle(
+                  value: TelemetryService.instance.analyticsConsented,
+                  onChanged: (v) {
+                    TelemetryService.instance.logEvent('settings_changed',
+                        {'setting': 'analytics_consent', 'value': '$v'});
+                    TelemetryService.instance.setAnalyticsConsent(v);
+                    setState(() {});
                   }),
             ]),
           ),
