@@ -32,16 +32,16 @@ Future<void> main() async {
   await initTelemetry();
   TelemetryService.instance.logEvent('app_open');
 
-  runApp(const EmberdelveApp());
+  runApp(const EmberwoodApp());
 }
 
-class EmberdelveApp extends StatelessWidget {
-  const EmberdelveApp({super.key});
+class EmberwoodApp extends StatelessWidget {
+  const EmberwoodApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Emberdelve',
+      title: 'Emberwood',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,

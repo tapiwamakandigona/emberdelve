@@ -2,7 +2,7 @@
 // a held D-pad thumb drifting past the touch slop made the gesture arena
 // cancel the tap (and promote it to a drag), releasing the button mid-hold.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/hold_button_core.dart';
+import 'package:emberwood/game/hold_button_core.dart';
 
 void main() {
   late int presses;

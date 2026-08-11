@@ -23,10 +23,10 @@ import 'package:flame/components.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/game/components/hud.dart';
-import 'package:emberdelve/game/ember_game.dart';
-import 'package:emberdelve/ui/app_state.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/game/components/hud.dart';
+import 'package:emberwood/game/ember_game.dart';
+import 'package:emberwood/ui/app_state.dart';
 
 /// Boots a fully mounted game the same way GameWidget would, headlessly.
 Future<EmberGame> bootGame() async {

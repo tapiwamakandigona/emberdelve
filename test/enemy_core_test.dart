@@ -1,9 +1,9 @@
 // Headless enemy AI tests: patrol/turn logic, flyer/hopper behavior,
 // damage → hurt flash → death.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/enemies/enemy_core.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/tuning.dart';
+import 'package:emberwood/game/enemies/enemy_core.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/tuning.dart';
 
 const dt = 1 / 120;
 

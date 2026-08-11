@@ -15,11 +15,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart' show EdgeInsets;
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/game/components/hud.dart';
-import 'package:emberdelve/game/ember_game.dart';
-import 'package:emberdelve/game/player/player_core.dart' show PlayerState;
-import 'package:emberdelve/ui/app_state.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/game/components/hud.dart';
+import 'package:emberwood/game/ember_game.dart';
+import 'package:emberwood/game/player/player_core.dart' show PlayerState;
+import 'package:emberwood/ui/app_state.dart';
 
 Future<EmberGame> bootGame() async {
   AppState.diskWrites = false;

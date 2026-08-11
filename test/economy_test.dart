@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/meta/catalog.dart';
-import 'package:emberdelve/meta/economy.dart';
+import 'package:emberwood/meta/catalog.dart';
+import 'package:emberwood/meta/economy.dart';
 
 void main() {
   group('Wallet', () {

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:598659800964:android:00ab32df351446f91047d1",
+        "mobilesdk_app_id": "1:598659800964:android:9a080f57b12755db1047d1",
         "android_client_info": {
-          "package_name": "com.tsorostudios.emberdelve"
+          "package_name": "com.tsorostudios.emberwood"
         }
       },
       "oauth_client": [],

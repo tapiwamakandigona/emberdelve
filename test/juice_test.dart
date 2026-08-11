@@ -3,12 +3,12 @@
 // squash timer is render-only state that decays.
 import 'package:flame/components.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/components/fx.dart';
-import 'package:emberdelve/game/components/player_component.dart';
-import 'package:emberdelve/game/core_loadout.dart';
-import 'package:emberdelve/game/input_intent.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/session.dart';
+import 'package:emberwood/game/components/fx.dart';
+import 'package:emberwood/game/components/player_component.dart';
+import 'package:emberwood/game/core_loadout.dart';
+import 'package:emberwood/game/input_intent.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/session.dart';
 
 const dt = 1 / 120;
 

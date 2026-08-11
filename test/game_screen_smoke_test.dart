@@ -6,10 +6,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/game/ember_game.dart';
-import 'package:emberdelve/ui/app_state.dart';
-import 'package:emberdelve/ui/game_screen.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/game/ember_game.dart';
+import 'package:emberwood/ui/app_state.dart';
+import 'package:emberwood/ui/game_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

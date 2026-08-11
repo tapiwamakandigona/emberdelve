@@ -3,13 +3,13 @@
 // pierces Rotshield block), Stone Veil (timed immunity), Hearth Light
 // (heal, clamped to max hearts). No spell equipped = no cast, no button.
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/game/core_loadout.dart';
-import 'package:emberdelve/game/input_intent.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/session.dart';
-import 'package:emberdelve/game/tuning.dart';
-import 'package:emberdelve/meta/catalog.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/game/core_loadout.dart';
+import 'package:emberwood/game/input_intent.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/session.dart';
+import 'package:emberwood/game/tuning.dart';
+import 'package:emberwood/meta/catalog.dart';
 
 const dt = 1 / 120;
 

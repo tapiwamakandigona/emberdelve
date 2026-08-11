@@ -5,7 +5,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:emberdelve/game/level/level_data.dart';
+import 'package:emberwood/game/level/level_data.dart';
 
 void main() {
   test('environment defaults to forest, cave via meta', () {
