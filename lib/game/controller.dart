@@ -450,8 +450,17 @@ class GameController extends ChangeNotifier {
     final now = DateTime.now();
     final index = weekIndexForDate(now);
     final mutator = weeklyMutatorFor(index);
+    // The seed MUST be pinned to the week (bug-hunt 2026-08-11): weeklySeed
+    // existed and was unit-tested but was never wired in here, so every
+    // player got a random clock seed — "one shared delve" was only sharing
+    // the modifier, and the share text's shared-seed claim was false.
+    startRun(
+      character: character,
+      seed: weeklySeed(index),
+      boons: true,
+      mutators: [mutator],
+    );
     // startRun clears the weekly labels, so stamp them AFTER it returns.
-    startRun(character: character, boons: true, mutators: [mutator]);
     weeklyIndex = index;
     weeklyMutator = mutator;
   }
