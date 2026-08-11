@@ -2,9 +2,9 @@
 // silent (not crash) when audio/settings never initialized.
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/audio/audio_service.dart';
-import 'package:emberdelve/audio/settings.dart';
-import 'package:emberdelve/game/haptics.dart';
+import 'package:emberwood/audio/audio_service.dart';
+import 'package:emberwood/audio/settings.dart';
+import 'package:emberwood/game/haptics.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

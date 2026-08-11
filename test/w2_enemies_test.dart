@@ -1,8 +1,8 @@
 // World 2 enemies: Soot Creeper (relentless walker, drops off ledges) and
 // Cinder Diver (anchor hover -> telegraph -> dive -> climb back).
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/enemies/enemy_core.dart';
-import 'package:emberdelve/game/level/level_data.dart';
+import 'package:emberwood/game/enemies/enemy_core.dart';
+import 'package:emberwood/game/level/level_data.dart';
 
 
 const dt = 1 / 60;

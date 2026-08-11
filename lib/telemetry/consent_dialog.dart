@@ -53,7 +53,7 @@ Future<void> showTelemetryConsentDialog(BuildContext context) async {
       },
       child: AlertDialog(
         backgroundColor: const Color(0xFF1E1E2E),
-        title: const Text('Help improve Emberdelve',
+        title: const Text('Help improve Emberwood',
             style: TextStyle(
                 fontFamily: 'Cinzel',
                 color: Color(0xFFE8A33D),

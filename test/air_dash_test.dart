@@ -3,10 +3,10 @@
 // the roll window, i-frames as on the ground roll, and exactly ONE air dash
 // per airborne period (landing re-arms it).
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/game/input_intent.dart';
-import 'package:emberdelve/game/level/level_data.dart';
-import 'package:emberdelve/game/player/player_core.dart';
-import 'package:emberdelve/game/tuning.dart';
+import 'package:emberwood/game/input_intent.dart';
+import 'package:emberwood/game/level/level_data.dart';
+import 'package:emberwood/game/player/player_core.dart';
+import 'package:emberwood/game/tuning.dart';
 
 const dt = 1 / 60;
 

@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:emberdelve/core/save.dart';
-import 'package:emberdelve/main.dart';
-import 'package:emberdelve/ui/app_state.dart';
-import 'package:emberdelve/ui/level_select_screen.dart';
+import 'package:emberwood/core/save.dart';
+import 'package:emberwood/main.dart';
+import 'package:emberwood/ui/app_state.dart';
+import 'package:emberwood/ui/level_select_screen.dart';
 
 void main() {
   late Directory tmp;
@@ -17,7 +17,7 @@ void main() {
 
   testWidgets('title screen renders and navigates to level select',
       (tester) async {
-    await tester.pumpWidget(const EmberdelveApp());
+    await tester.pumpWidget(const EmberwoodApp());
     expect(find.text('EMBERDELVE'), findsOneWidget);
     await tester.tap(find.text('PLAY'));
     // M4 title runs a looping parallax drift — pumpAndSettle would never

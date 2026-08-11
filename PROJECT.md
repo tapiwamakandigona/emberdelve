@@ -1,4 +1,4 @@
-# PROJECT.md — Emberdelve (v2: action platformer)
+# PROJECT.md — Emberwood (formerly Emberdelve v2: action platformer)
 
 **Goal:** A 2D **pixel action-platformer** for Android (Google Play), built with Flutter + Flame. Inspired by *Apple Knight*'s loop — run/jump/double-jump, melee combat, coins, treasure chests, secret rooms, level-based worlds, and a meta shop (weapons · skins · abilities) — but tighter, fairer, and better optimised. Landscape, touch-first, 2–5 minute levels. Free download, no forced ads.
 
@@ -22,7 +22,7 @@
 ## Standing decisions (do not relitigate without owner)
 1. **Engine:** Flutter (stable 3.32.x, Dart ≥3.8.1) + **Flame** (pinned in pubspec). Owner mandate: Flutter for consistency with their other apps.
 2. **Repo:** public. Only CC0 / CC-BY assets with attribution shipped in-app (`PROVENANCE.md`). No license may forbid redistribution.
-3. **Package id / signing:** `com.tsorostudios.emberdelve` and the permanent upload keystore are **immutable** — the Play closed-testing track depends on them. Never regenerate keys; never change `EXPECTED_CERT_SHA256` in CI.
+3. **Package id / signing:** `com.tsorostudios.emberwood` (renamed from `com.tsorostudios.emberdelve` on 2026-08-11, owner-directed, so the platformer can never collide with Emberdelve Classic on Play — Classic keeps the original id). This app is NOT yet on any Play track; when it ships it goes up as a NEW Play listing. The permanent upload keystore is shared and **immutable** — never regenerate keys; never change `EXPECTED_CERT_SHA256` in CI.
 4. **Architecture seam:** game logic (`lib/game/`) is engine-code but *headless-testable*: level parsing, physics resolution, economy, and save data have zero rendering dependencies and are covered by `flutter test`. Determinism where it matters (drops, daily seeds) via seeded RNG (`lib/core/rng.dart`).
 5. **Gameplay loop:** level-based worlds → collect coins/apples/chests/secrets → spend in shop (weapons with stats+specials, skins with levels, abilities) → replay for 3-medal completion. Fair-addictive: mastery and collection, never dark patterns.
 6. **Monetization:** free; optional one-time supporter IAP later. **Banned:** energy timers, decaying streaks, FOMO-expiring content, loss-framed notifications, pay-to-win.

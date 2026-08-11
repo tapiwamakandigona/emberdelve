@@ -1,10 +1,12 @@
-# Emberdelve
+# Emberwood
 
-A crisp **pixel action-platformer** for Android. Delve through the cursed forest of Emberwood — slash beasts, loot chests, hunt secret rooms, and gear up in the shop. Apple-Knight-style loop, tighter feel, no ad spam.
+A crisp **pixel action-platformer** for Android. Fight through the cursed forest of Emberwood — slash beasts, loot chests, hunt secret rooms, and gear up in the shop. Apple-Knight-style loop, tighter feel, no ad spam.
 
 **Tsoro Studios** · Flutter 3.32 + Flame · public repo
 
-> **v2 pivot (2026-07-24):** Emberdelve was reborn as an action platformer. The original
+> **v2 pivot (2026-07-24):** this game began as a v2 rewrite of Emberdelve, reborn as an action platformer.
+> **Renamed (2026-08-11, owner-directed):** the platformer is now **Emberwood** (`com.tsorostudios.emberwood`) —
+> a separate app, so it can never collide with Emberdelve Classic on Google Play. The original
 > dice-builder roguelite is preserved on branch [`legacy/dice-builder`](../../tree/legacy/dice-builder),
 > tag `v0.3.10-legacy`, and the ["Emberdelve Classic" release](../../releases/tag/v0.3.10-legacy).
 
