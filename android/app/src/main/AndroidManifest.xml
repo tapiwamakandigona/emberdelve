@@ -57,6 +57,18 @@
         <meta-data
             android:name="google_analytics_default_allow_ad_personalization_signals"
             android:value="false" />
+        <!-- Play Games Services v2 (v0.5.0): the PGS project id from
+             Play Console > Grow > Play Games Services > Configuration. -->
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/game_services_project_id" />
+        <!-- Kill PGS auto sign-in: connecting is an explicit opt-in tap in
+             Settings (same consent charter as analytics). The SDK is instead
+             initialized manually in MainActivity.onCreate. -->
+        <provider
+            tools:node="remove"
+            android:name="com.google.android.gms.games.provider.PlayGamesInitProvider"
+            android:authorities="com.tsorostudios.emberdelve.playgamesinitprovider" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

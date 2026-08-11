@@ -2,9 +2,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:games_services/games_services.dart';
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
+import 'meta/play_games_service.dart';
 import 'meta/store_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
@@ -39,6 +42,28 @@ Future<void> main() async {
   // first tap doesn't pay the load. Deliberately not awaited: startup must
   // not wait on audio, and a failure here just means load-on-demand.
   unawaited(audio.warmUp());
+  // Play Games Services (P4 cloud save + P5 leaderboards, v0.5.0). Backends
+  // are wired only on Android; everywhere else every call is a silent no-op.
+  // Connecting is OPT-IN via Settings — resumeIfWanted only acts on a
+  // remembered "Connect" choice and never pops UI on its own.
+  final pgs = PlayGamesService.instance;
+  await pgs.load();
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    pgs.signInBackend = () async {
+      await GameAuth.signIn();
+      return await GameAuth.isSignedIn;
+    };
+    pgs.saveGameBackend =
+        (data, name) async => SaveGame.saveGame(data: data, name: name);
+    pgs.loadGameBackend = (name) => SaveGame.loadGame(name: name);
+    pgs.submitScoreBackend = (id, value) async => Leaderboards.submitScore(
+        score: Score(androidLeaderboardID: id, value: value));
+    pgs.showLeaderboardsBackend = (id) async =>
+        Leaderboards.showLeaderboards(androidLeaderboardID: id ?? '');
+  }
+  pgs.loadLocalHook = () async => controller.meta;
+  pgs.adoptMergedHook = controller.adoptMeta;
+  unawaited(pgs.resumeIfWanted());
   // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
   // no-op if Firebase is unconfigured; nothing fires before opt-in.
   await initTelemetry();

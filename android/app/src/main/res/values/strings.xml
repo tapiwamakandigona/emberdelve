@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Play Games Services project id (v0.5.0). NOT the OAuth client id:
+         PGS wants the numeric project id from Play Console configuration. -->
+    <string name="game_services_project_id" translatable="false">598659800964</string>
+</resources>

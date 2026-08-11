@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
+import '../meta/play_games_service.dart';
 import '../meta/store_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
@@ -127,6 +128,68 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }),
             ]),
           ),
+          // Play Games (v0.5.0, P4+P5): opt-in connect. Hidden entirely on
+          // builds without the platform backends (tests, web, desktop).
+          if (PlayGamesService.instance.available) ...[
+            const SizedBox(height: Space.xl),
+            Text('PLAY GAMES', style: EmberText.micro),
+            const SizedBox(height: Space.s),
+            AnimatedBuilder(
+              animation: PlayGamesService.instance.tick,
+              builder: (context, _) {
+                final pgs = PlayGamesService.instance;
+                final on = pgs.connected;
+                return Column(children: [
+                  Panel(
+                    child: Row(children: [
+                      Icon(Icons.cloud_done,
+                          color: on ? EmberColors.ember : EmberColors.textDim,
+                          size: 20),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                          child: Text(
+                              on
+                                  ? 'Connected — progress backed up, '
+                                      'Delve leaderboards on.'
+                                  : 'Back up progress and join the '
+                                      'Delve leaderboards.',
+                              style: EmberText.body)),
+                      EmberButton(on ? 'Disconnect' : 'Connect',
+                          key: const ValueKey('pgs-connect'),
+                          dense: true, onTap: () async {
+                        AudioService.instance?.playSfx('ui_tap');
+                        if (on) {
+                          await pgs.disconnect();
+                        } else {
+                          await pgs.connect();
+                        }
+                        if (mounted) setState(() {});
+                      }),
+                    ]),
+                  ),
+                  if (on) ...[
+                    const SizedBox(height: Space.s),
+                    Panel(
+                      child: Row(children: [
+                        const Icon(Icons.leaderboard,
+                            color: EmberColors.textDim, size: 20),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                            child: Text('Daily & Weekly Delve boards',
+                                style: EmberText.body)),
+                        EmberButton('View',
+                            key: const ValueKey('pgs-leaderboards'),
+                            dense: true, onTap: () {
+                          AudioService.instance?.playSfx('ui_tap');
+                          pgs.showLeaderboards();
+                        }),
+                      ]),
+                    ),
+                  ],
+                ]);
+              },
+            ),
+          ],
           const SizedBox(height: Space.xl),
           // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
           // a player on a new device must never have to hunt for it.
