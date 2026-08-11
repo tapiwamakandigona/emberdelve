@@ -61,15 +61,30 @@ void main() {
     }
   });
 
-  test('a fresh profile has earned nothing and is close to nothing', () {
+  test('a fresh profile has earned nothing, and any starting progress is real',
+      () {
     final m = MetaState();
     expect(earnedAchievements(m), isEmpty);
     expect(earnedCount(m), equals(0));
     expect(unseenAchievements(m), isEmpty);
-    // Zero progress is not "nearly there" — the near list must stay empty.
-    expect(nearestAchievements(m), isEmpty);
+    // A brand-new profile genuinely owns one delver and one hearth colour, so
+    // 1-of-4 progress on those two is the truth, not a head start. Every OTHER
+    // achievement must sit at exactly zero: no teaser bars (section Ethics).
+    const inventoryStats = {'chars_unlocked', 'themes_owned'};
     for (final a in achievements.values) {
-      expect(progress(m, a), equals(0.0), reason: '${a.id} starts at a lie');
+      if (inventoryStats.contains(a.stat)) {
+        expect(statValue(m, a.stat, a.param), equals(1),
+            reason: '${a.id} must read the real starting inventory');
+        expect(progress(m, a), closeTo(1 / a.target, 1e-9));
+      } else {
+        expect(progress(m, a), equals(0.0), reason: '${a.id} starts at a lie');
+      }
+    }
+    // Consequently the "nearly there" list may only ever contain those two,
+    // never a goal the player has not touched.
+    for (final def in nearestAchievements(m)) {
+      expect(inventoryStats.contains(def.stat), isTrue,
+          reason: '${def.id} is not something the player has started');
     }
   });
 

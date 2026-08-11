@@ -906,3 +906,27 @@ Added:
   changes any entitlement.
 
 The sim is untouched, so the golden hash is unaffected. UI comes next.
+
+### CI run 31446847919 — one honest test failure, fixed in the test
+
+`a fresh profile has earned nothing and is close to nothing` failed:
+`nearestAchievements(MetaState())` returned two defs, not none.
+
+The code was right and the test was wrong. A brand-new profile really does own
+one delver (`kindler`) and one hearth colour (`emberglow`), so `full_roster` and
+`hearth_keeper` legitimately sit at 1/4. Showing that is honest; asserting it
+away would have been the lie. The assertion is now stronger and true: nothing is
+EARNED on a fresh profile, the only non-zero bars are the two real inventory
+counts (and they must read exactly 1), every other achievement sits at exactly
+zero, and the "nearly there" list may contain nothing else.
+
+No production code was changed to make a check pass.
+
+### Ledger UI for achievements
+
+`lib/ui/ledger_screen.dart` gains an ACHIEVEMENTS panel between RECENT DELVES and
+HEARTH COLORS: `earned / total` in the section header, then earned entries in
+authoring order, then in-progress ones sorted by real progress, then untouched
+ones. A progress bar is drawn ONLY for goals actually under way — an empty bar on
+an untouched goal reads as failure rather than as an invitation. Footer states
+plainly that achievements change nothing and never expire.
