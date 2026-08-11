@@ -541,13 +541,24 @@ class _PhaseSwitcherState extends State<PhaseSwitcher>
 
   @override
   Widget build(BuildContext context) {
-    if (_old == null) return widget.child;
+    // The tree SHAPE here is identical whether idle or transitioning:
+    // AnimatedBuilder > Stack > [KeyedSubtree(screen), IgnorePointer(overlay)].
+    // It used to collapse to a bare `widget.child` when idle, which changed
+    // the element tree's shape at both ENDS of every transition and made
+    // Flutter remount the visible screen from scratch — the map screen's
+    // delver walk and follow-scroll restarted mid-flight ~190ms after
+    // arriving, reading as progression glitching back and forth after every
+    // encounter (owner report 2026-08-11). Keeping the wrapper permanent
+    // preserves the screen State across the transition settling; the
+    // KeyedSubtree key only changes at the midpoint reveal, which is the one
+    // remount we actually want.
     return AnimatedBuilder(
       animation: _t,
       builder: (context, _) {
+        final transitioning = _old != null;
         final f = _t.value;
         // Old covers the first half, new reveals in the second.
-        final showNew = f >= 0.5;
+        final showNew = !transitioning || f >= 0.5;
         return Stack(
           fit: StackFit.expand,
           children: [
@@ -556,7 +567,9 @@ class _PhaseSwitcherState extends State<PhaseSwitcher>
               child: showNew ? widget.child : _old!,
             ),
             IgnorePointer(
-              child: _wipe
+              child: !transitioning
+                  ? const SizedBox.shrink()
+                  : _wipe
                   ? CustomPaint(
                       painter: _FlameWipePainter(f),
                       size: Size.infinite,

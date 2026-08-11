@@ -83,6 +83,13 @@ class _MapScreenState extends State<MapScreen>
                   // the reachable row above is always on screen (reverse list:
                   // offset 0 == bottom of the delve).
                   if (_scrolledForPos != position) {
+                    // First follow of a visit JUMPS (the screen mounts behind
+                    // the phase fade at its darkest, so the cut is invisible);
+                    // animating from offset 0 swept the camera up from the
+                    // delve floor on EVERY arrival mid-run — half of the
+                    // "progression glitches back and forth" owner report
+                    // (2026-08-11). Later moves within the same visit animate.
+                    final firstFollow = _scrolledForPos == null;
                     _scrolledForPos = position;
                     final target =
                         ((curLayer - 1) * _rowH +
@@ -93,11 +100,15 @@ class _MapScreenState extends State<MapScreen>
                             .toDouble();
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (!mounted || !_scroll.hasClients) return;
-                      _scroll.animateTo(
-                        target,
-                        duration: const Duration(milliseconds: 450),
-                        curve: Curves.easeOutCubic,
-                      );
+                      if (firstFollow) {
+                        _scroll.jumpTo(target);
+                      } else {
+                        _scroll.animateTo(
+                          target,
+                          duration: const Duration(milliseconds: 450),
+                          curve: Curves.easeOutCubic,
+                        );
+                      }
                     });
                   }
                   // PERF (2026-07-26, remaining-work §5): the viewport paints
