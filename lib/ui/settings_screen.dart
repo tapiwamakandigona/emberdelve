@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
+import '../meta/store_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'haptics.dart';
@@ -126,6 +127,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }),
             ]),
           ),
+          const SizedBox(height: Space.xl),
+          // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
+          // a player on a new device must never have to hunt for it.
+          Text('THE EMBER FORGE', style: EmberText.micro),
+          const SizedBox(height: Space.s),
+          if (StoreService.instance != null)
+            AnimatedBuilder(
+              animation: StoreService.instance!.tick,
+              builder: (context, _) {
+                final store = StoreService.instance!;
+                final owned = store.state == ForgeStoreState.owned;
+                return Panel(
+                  child: Row(children: [
+                    Icon(Icons.local_fire_department,
+                        color: owned
+                            ? EmberColors.ember
+                            : EmberColors.textDim,
+                        size: 20),
+                    const SizedBox(width: Space.m),
+                    Expanded(
+                        child: Text(
+                            owned
+                                ? 'The Forge is open on this profile.'
+                                : 'Bought the Forge before? Bring it here.',
+                            style: EmberText.body)),
+                    if (!owned)
+                      EmberButton('Restore',
+                          key: const ValueKey('settings-restore'),
+                          dense: true, onTap: () {
+                        AudioService.instance?.playSfx('ui_tap');
+                        store.restore();
+                      }),
+                  ]),
+                );
+              },
+            )
+          else
+            Panel(
+                child: Text('Purchases are unavailable in this build.',
+                    style: EmberText.bodyDim)),
           const SizedBox(height: Space.xl),
           Text('ABOUT', style: EmberText.micro),
           const SizedBox(height: Space.s),

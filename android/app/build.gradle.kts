@@ -43,7 +43,21 @@ android {
         applicationId = "com.tsorostudios.emberdelve"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Pinned to 24 deliberately, to state the real floor instead of inheriting it.
+        //
+        // 0.4.0 (24) shipped minSdk 21 (Flutter 3.32.7). The Play Billing 8 upgrade
+        // needs in_app_purchase 3.3.0 -> Flutter >= 3.44, and Flutter's own embedding
+        // manifest declares <uses-sdk android:minSdkVersion="24">, so the manifest
+        // merger raises the app to 24 no matter what is written here. Setting 21 here
+        // is silently ignored (verified: an AAB built with minSdk = 21 still reported
+        // minSdkVersion 24). Billing itself is not the cause - both billing 8.0.0 and
+        // 7.1.1 AARs declare minSdkVersion 21.
+        //
+        // Consequence, accepted in 0.4.1 (26): ~1,972 device models that 0.4.0
+        // supported (API 21-23, Android 5.0-6.0) no longer get the app or updates.
+        // The only alternative was staying on Billing 7, which Play rejects for
+        // updates after 31 Aug 2026.
+        minSdk = 24
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName

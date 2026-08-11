@@ -319,6 +319,251 @@
    ],
    "fps": 8,
    "scale": 3
+  },
+  {
+   "id": "scoria_tick",
+   "source_base": "ember_beetle (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "char_sprite",
+   "source_base": "cinder_wisp (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "flue_crawler",
+   "source_base": "ash_rat (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "cinder_pup",
+   "source_base": "soot_hound (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "clinker_ogre",
+   "source_base": "slag_brute (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "smoke_stalker",
+   "source_base": "ash_reaper (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "basalt_shell",
+   "source_base": "kiln_golem (v0.5.0 palette variant)",
+   "frame_w": 64,
+   "frame_h": 72,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 2
+  },
+  {
+   "id": "wick_widow",
+   "source_base": "ash_wraith (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "bellows_knight",
+   "source_base": "forge_warden (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "quench_hag",
+   "source_base": "ash_wraith (v0.5.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "cinder_hierophant",
+   "source_base": "pyre_matriarch (v0.5.0 palette variant)",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "the_bellows",
+   "source_base": "kiln_golem (v0.5.0 palette variant)",
+   "frame_w": 64,
+   "frame_h": 72,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 2
+  },
+  {
+   "id": "ashfall_twins",
+   "source_base": "ember_tyrant (v0.5.0 palette variant)",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
   }
  ],
  "characters": [

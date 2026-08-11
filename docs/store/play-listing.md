@@ -43,11 +43,13 @@ Pick a starting boon and delve again in seconds — 15 boons keep restarts
 fresh.
 
 FAIR BY DESIGN
-• Zero ads, zero tracking, no internet permission — fully offline
+• Zero ads, zero tracking — fully offline
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
 • A daily seeded delve, shared by everyone
-• Easy, normal, and hard difficulties
+• Free forever: full runs, every delver, the daily
+• One honest one-time unlock (the Ember Forge) opens HARD and the
+  Ascension ladder — no subscriptions, no consumables, ever
 
 Made for one-thumb portrait play. Delve in.
 
@@ -60,13 +62,16 @@ Made for one-thumb portrait play. Delve in.
 
 - Violence: mild fantasy violence (stylized pixel creatures, no gore) → likely
   Everyone 10+ / PEGI 7
-- No user interaction/communication, no data sharing, no purchases yet
-  (update the questionnaire if/when the one-time IAP unlock ships)
+- No user interaction/communication, no data sharing
+- Digital purchases: YES — one optional one-time unlock (the Ember Forge,
+  v0.4.0+); no loot boxes, no gambling mechanics, no subscriptions
 - No gambling with real money; contains dice but no wagering
 
 ## Data safety form
 
-- Collects no data, shares no data (see docs/store/privacy-policy.md)
+- Collects no data, shares no data (see docs/store/privacy-policy.md).
+  Purchases are processed entirely by Google Play Billing; the app stores
+  only a local owns/doesn't-own flag and never sees payment details.
 - Privacy policy URL:
   https://tapiwamakandigona.github.io/emberdelve/store/privacy-policy.html
   (GitHub Pages, serves main:/docs — the styled page is

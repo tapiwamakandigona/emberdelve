@@ -13,6 +13,9 @@ import '../data/characters.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import '../data/relics.dart';
+import '../data/enemies.dart';
+import '../meta/achievements.dart';
+import '../meta/forge.dart';
 import '../meta/meta.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
@@ -132,6 +135,15 @@ class GameController extends ChangeNotifier {
   }
 
   bool _bankedThisRun = false;
+  // v0.5.0 Delver's Ledger observation. Both are per-RUN scratch, reset with
+  // _bankedThisRun, and both are read from sim EVENTS only — the sim is not
+  // touched. _lastEnemyId is the enemy of the encounter in progress, which on
+  // a win is by definition the boss that just fell.
+  String? _lastEnemyId;
+  bool _restedThisRun = false;
+  /// Achievements earned by the run that just ended and not yet announced.
+  /// The summary screen reads and clears this; nothing else may write it.
+  List<String> pendingAchievements = const [];
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Presentation-only label (not persisted with the save — a resumed run
@@ -154,6 +166,13 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
+    // Ember Forge migration (v0.4.0): a pre-Forge profile may have HARD as
+    // its sticky preference. The clamp in startRun would already force
+    // normal; also move the VISIBLE selector so what's highlighted is what
+    // they get (same no-silent-switch rule as the easy steering below).
+    if (!meta.forgeUnlocked && meta.preferredDifficulty == 'hard') {
+      meta.preferredDifficulty = 'normal';
+    }
     // First-run on-ramp (v0.3.3): steer a brand-new profile toward easy by
     // moving the VISIBLE selector — what's highlighted is what they get, so
     // there is never a silent difficulty switch. One tap ends the steering.
@@ -166,6 +185,8 @@ class GameController extends ChangeNotifier {
             !_terminal.contains(snap['phase'])) {
           sim = Sim.restore(snap);
           _bankedThisRun = false;
+          _lastEnemyId = null;
+          _restedThisRun = false;
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -232,6 +253,12 @@ class GameController extends ChangeNotifier {
     return _saveQueue;
   }
 
+  /// Test seam (tool/play_session_test.dart): when set, the next [startRun]
+  /// without an explicit [seed] consumes this value instead of the clock, so
+  /// harness runs are reproducible from a command line. One-shot: cleared on
+  /// use. Never set by production UI code.
+  int? debugNextRunSeed;
+
   void startRun({
     String? character,
     int ascension = 0,
@@ -241,20 +268,31 @@ class GameController extends ChangeNotifier {
     String? difficulty,
   }) {
     // Deterministic-enough seed for real play; runs are still fully replayable
-    // from their seed. Daily runs pin [seed] via [startDailyRun].
-    final s = seed ?? DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
+    // harness pins it via [debugNextRunSeed] (one-shot override).
+    final s = seed ??
+        debugNextRunSeed ??
+        DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
+    debugNextRunSeed = null;
     sim = Sim(s);
     _bankedThisRun = false;
+    _lastEnemyId = null;
+    _restedThisRun = false;
     dailyDate = daily;
     // Daily Delve is a shared-seed leaderboard-of-honor: everyone plays the
     // exact same delve, so it always runs on normal (spec §Ethics fairness).
-    final diff = daily != null
+    // Ember Forge gate (v0.4.0, spec R8): UI locks are the polite layer;
+    // this clamp is the guarantee. Daily runs are pinned to normal above.
+    final wanted = daily != null
         ? 'normal'
         : (difficulty ?? meta.preferredDifficulty);
+    final allowed =
+        clampRunParams(meta, difficulty: wanted, ascension: ascension);
+    final diff = allowed.difficulty;
     apply({
       'type': 'start_run',
       if (character != null) 'character': character,
-      'ascension': ascension,
+      'ascension': allowed.ascension,
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
     });
@@ -272,11 +310,23 @@ class GameController extends ChangeNotifier {
   /// choice and ends the first-run easy steering for good.
   void setPreferredDifficulty(String d) {
     if (!const {'easy', 'normal', 'hard'}.contains(d)) return;
+    if (!canSelectDifficulty(meta, d)) return; // Forge-locked (v0.4.0)
     if (meta.preferredDifficulty == d && meta.difficultyChosen) return;
     meta.preferredDifficulty = d;
     meta.difficultyChosen = true;
     MetaStore.save(meta);
     notifyListeners();
+  }
+
+  /// Grant the Ember Forge entitlement (purchase or restore confirmed by
+  /// Play Billing — see meta/store_service.dart). Idempotent; persists via
+  /// the same queued, atomic MetaStore.save as every other meta mutation.
+  Future<void> grantForgeUnlock() async {
+    if (meta.forgeUnlocked) return;
+    meta.forgeUnlocked = true;
+    audio?.playSfx('unlock');
+    notifyListeners();
+    await MetaStore.save(meta);
   }
 
   /// Buy a hearth color with embers (v0.3.3 ledger cosmetics).
@@ -474,6 +524,8 @@ class GameController extends ChangeNotifier {
     sim = null;
     dailyDate = null;
     _bankedThisRun = false;
+    _lastEnemyId = null;
+    _restedThisRun = false;
     notifyListeners();
     _syncAudio();
   }
@@ -503,6 +555,26 @@ class GameController extends ChangeNotifier {
     }
   }
 
+  /// v0.5.0 Delver's Ledger observation: remember which enemy is being fought
+  /// and whether this run has rested. Both are pure event observation, so the
+  /// sealed sim and the golden hash are untouched.
+  @visibleForTesting
+  void recordLedgerStats(List<Map<String, Object?>> events) {
+    for (final e in events) {
+      switch (e['type']) {
+        case 'encounter_started':
+          final id = e['enemy'];
+          if (id is String) _lastEnemyId = id;
+          break;
+        case 'rested':
+          // Any visit to a rest node counts, even a 0 HP "move on" — the
+          // achievement is about skipping the node, not about the heal.
+          _restedThisRun = true;
+          break;
+      }
+    }
+  }
+
   /// v0.3.3 ledger stats: lifetime exact-kill count and the exact-kill
   /// streak (consecutive fights ended with an exact kill; a fight won any
   /// other way resets it). Pure observation of sim events — the sim itself
@@ -510,6 +582,7 @@ class GameController extends ChangeNotifier {
   /// on a fight won we save immediately so a crash can't eat a streak.
   @visibleForTesting
   void recordCombatStats(List<Map<String, Object?>> events) {
+    recordLedgerStats(events);
     final exact = events.any((e) => e['type'] == 'exact_kill');
     final fightWon = events.any((e) => e['type'] == 'encounter_won');
     if (exact) meta.exactKills += 1;
@@ -546,6 +619,24 @@ class GameController extends ChangeNotifier {
       meta.lastDailyFloor = floorReached;
       meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
     }
+    // v0.5.0 Delver's Ledger counters. All banked from what actually happened
+    // this run: the deepest layer stood on, a finished daily, a win with no
+    // rest node visited, a win on hard, and the boss id that fell.
+    final reached = floorReached;
+    if (reached > meta.bestFloor) meta.bestFloor = reached;
+    if (dailyDate != null) meta.dailiesPlayed += 1;
+    if (sim!.phase == 'run_won') {
+      if (!_restedThisRun) meta.winsNoRest += 1;
+      if ((run['difficulty'] as String? ?? 'normal') == 'hard') {
+        meta.hardWins += 1;
+      }
+      // The encounter in progress at a win is the boss by construction. Guard
+      // on the roster anyway so a future enemy id can never poison the set.
+      final boss = _lastEnemyId;
+      if (boss != null && (enemies[boss]?.boss ?? false)) {
+        meta.bossesBeaten.add(boss);
+      }
+    }
     // Run history (v0.3.4): one small record per ended run, newest first.
     meta.addRunRecord(
       _runRecord(
@@ -560,8 +651,23 @@ class GameController extends ChangeNotifier {
       'floor': '$floorReached',
       'embers': '$banked',
     });
+    // Newly earned achievements are collected AFTER every counter above is
+    // banked, so the summary screen can announce them in the same breath as
+    // the run result. markSeen keeps a toast from ever firing twice.
+    final fresh = unseenAchievements(meta);
+    if (fresh.isNotEmpty) {
+      pendingAchievements = fresh;
+      markSeen(meta, fresh);
+    }
     MetaStore.save(meta);
     _clearSave();
+  }
+
+  /// Read and clear the achievements earned by the run that just ended.
+  List<String> takePendingAchievements() {
+    final out = pendingAchievements;
+    pendingAchievements = const [];
+    return out;
   }
 
   Map<String, Object?> _runRecord({

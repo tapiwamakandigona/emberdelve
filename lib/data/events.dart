@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (M3 content: 16 events).
+// data/events.dart — Emberdelve event deck (v0.5.0: 28 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -43,6 +43,13 @@ const List<String> eventsOrder = [
   'dice_ghost', 'molten_spring', 'beggar_wisp', 'cracked_geode',
   'old_delver', 'ash_garden', 'tyrants_echo', 'gamblers_table',
   'sealed_vault', 'ember_moths', 'broken_cart', 'whispering_coals',
+  // v0.5.0 additions. Deck size drives how long a run stays surprising: the
+  // pick is uniform over events NOT yet seen this run, so 28 entries means a
+  // 7-node path almost never repeats itself, and the second and third runs of
+  // an evening still show new rooms.
+  'slag_pool', 'the_tally_stone', 'quenching_trough', 'hollow_bellows',
+  'ash_pilgrim', 'coin_in_the_coals', 'the_long_stair', 'ember_wardens_rest',
+  'cracked_crucible', 'the_debtor', 'soot_market', 'last_delvers_pack',
 ];
 
 const Map<String, EventDef> events = {
@@ -188,6 +195,124 @@ const Map<String, EventDef> events = {
         OptionDef('Listen (gain a random die of any tier)',
             {'gain_random_die': 3}),
         OptionDef('Scatter the coals (+10 gold)', {'gold': 10}),
+      ]),
+  // ---- v0.5.0 additions -------------------------------------------------
+  // Design rule for every entry below: at least one option must cost
+  // something real. A deck of free gifts is a deck of non-decisions, and it
+  // also quietly inflates the run economy.
+  'slag_pool': EventDef(
+      'slag_pool',
+      'Slag Pool',
+      'Molten slag, skinned over with grey. Something glints under it.',
+      [
+        OptionDef('Reach in (-9 hp, gain a random die of any tier)',
+            {'hp': -9, 'gain_random_die': 3}),
+        OptionDef('Skim the surface (+14 gold)', {'gold': 14}),
+        OptionDef('Move on', {}),
+      ]),
+  'the_tally_stone': EventDef(
+      'the_tally_stone',
+      'The Tally Stone',
+      'Scratches cover the stone. Every delver before you counted something.',
+      [
+        OptionDef('Add your mark (+12 embers)', {'embers': 12}),
+        OptionDef('Read the marks instead (+18 gold)', {'gold': 18}),
+      ]),
+  'quenching_trough': EventDef(
+      'quenching_trough',
+      'Quenching Trough',
+      'Black water, still warm. Steel was cooled here, and often.',
+      [
+        OptionDef('Drink deep (heal 35%)', {'heal_pct': 35}),
+        OptionDef('Temper a die in it (gain a Keen Ember)',
+            {'gain_die': 'd6_keen'}),
+        OptionDef('Leave it', {}),
+      ]),
+  'hollow_bellows': EventDef(
+      'hollow_bellows',
+      'Hollow Bellows',
+      'A great bellows, leather split. Air still moves through it, faintly.',
+      [
+        OptionDef('Breathe it in (+4 max hp)', {'max_hp': 4}),
+        OptionDef('Strip the leather (+20 gold)', {'gold': 20}),
+      ]),
+  'ash_pilgrim': EventDef(
+      'ash_pilgrim',
+      'Ash Pilgrim',
+      'A figure kneels in the ash, facing further down. She does not look up.',
+      [
+        OptionDef('Give her 20 gold (gain a random relic)',
+            {'gold': -20, 'gain_random_relic': 1}),
+        OptionDef('Kneel beside her (+10 embers)', {'embers': 10}),
+        OptionDef('Step around her', {}),
+      ]),
+  'coin_in_the_coals': EventDef(
+      'coin_in_the_coals',
+      'Coin in the Coals',
+      'A single coin sits in the embers, glowing. It has been there a while.',
+      [
+        OptionDef('Pick it out barehanded (-6 hp, +40 gold)',
+            {'hp': -6, 'gold': 40}),
+        OptionDef('Leave it burning', {}),
+      ]),
+  'the_long_stair': EventDef(
+      'the_long_stair',
+      'The Long Stair',
+      'Steps cut straight down, far past the light. A shortcut, or a drop.',
+      [
+        OptionDef('Take the stair (-10 hp, +16 embers)',
+            {'hp': -10, 'embers': 16}),
+        OptionDef('Take the slow way round (heal 15%)', {'heal_pct': 15}),
+      ]),
+  'ember_wardens_rest': EventDef(
+      'ember_wardens_rest',
+      "Ember Warden's Rest",
+      'An old warden sits against her shield, long past waking. Her kit is intact.',
+      [
+        OptionDef('Take her ward iron (gain a Ward Iron)',
+            {'gain_die': 'd6_ward'}),
+        OptionDef('Take her purse (+28 gold)', {'gold': 28}),
+        OptionDef('Leave her as she is (+8 embers)', {'embers': 8}),
+      ]),
+  'cracked_crucible': EventDef(
+      'cracked_crucible',
+      'Cracked Crucible',
+      'A crucible split clean in half. Whatever it held got out.',
+      [
+        OptionDef('Melt a die down (lose a random die, +45 gold)',
+            {'lose_random_die': 1, 'gold': 45}),
+        OptionDef('Salvage the shards (+10 gold)', {'gold': 10}),
+      ]),
+  'the_debtor': EventDef(
+      'the_debtor',
+      'The Debtor',
+      'A man counts coins he does not have, over and over. He offers a wager.',
+      [
+        OptionDef('Stake 30 gold (+70 gold back)',
+            {'gold': -30, 'gold_after': 70}),
+        OptionDef('Stake 15 gold (+32 gold back)',
+            {'gold': -15, 'gold_after': 32}),
+        OptionDef('Refuse the wager', {}),
+      ]),
+  'soot_market': EventDef(
+      'soot_market',
+      'Soot Market',
+      'Three stalls, no traders. Prices are scratched into the ash beside each.',
+      [
+        OptionDef('Buy the sealed box (-25 gold, gain a random die)',
+            {'gold': -25, 'gain_random_die': 2}),
+        OptionDef('Buy the flask (-12 gold, heal 30%)',
+            {'gold': -12, 'heal_pct': 30}),
+        OptionDef('Buy nothing', {}),
+      ]),
+  'last_delvers_pack': EventDef(
+      'last_delvers_pack',
+      "Last Delver's Pack",
+      'A pack, neatly closed, set down deliberately. He meant to come back.',
+      [
+        OptionDef('Open it (gain a Stout Ember, -4 max hp from the weight)',
+            {'gain_die': 'd6_stout', 'max_hp': -4}),
+        OptionDef('Carry it out for him (+14 embers)', {'embers': 14}),
       ]),
 };
 

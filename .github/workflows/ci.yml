@@ -2,13 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'legacy/**']
   pull_request:
   workflow_dispatch:
 
 env:
-  # Flutter stable pinned. Update deliberately (channel stable, Dart >= 3.8.1).
-  FLUTTER_VERSION: 3.32.7
+  # Flutter stable pinned. Update deliberately (channel stable, Dart >= 3.12.0).
+  # 3.44.9 is the current stable line (Dart 3.12.2) and the floor required by
+  # in_app_purchase 3.3.0 / Play Billing Library 8.
+  FLUTTER_VERSION: 3.44.9
 
 jobs:
   test:
@@ -27,6 +29,15 @@ jobs:
         run: flutter analyze
       - name: Test (sim determinism, map, content, autoplay balance, UI smoke)
         run: flutter test
+      # Layered SFX can only clip on the mix bus, which no widget test can see.
+      # This renders the worst-case cascades from the shipped .ogg assets and
+      # fails if any reachable one crosses 0 dBTP.
+      - name: SFX mix-bus headroom (true-peak ceiling)
+        run: |
+          # ffmpeg is not on the runner image; it does the decode + EBU R128 measurement.
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python3 -m pip install --quiet --break-system-packages numpy
+          python3 tool/sfx_headroom.py
 
   build-android-release:
     name: Build signed Android release (APK + AAB)

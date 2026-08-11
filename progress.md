@@ -594,3 +594,412 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   ear (logic is unit-tested only) — if a dice cascade sounds cluttered, lower
   AudioService.sfxVoices, it is one table.
 - Detail: docs/improvements/perf-controller-notifiers-2026-07-25.md
+
+## 2026-07-26 — deterministic play session + invariant oracle (remaining-work §2)
+- `tool/play_session_test.dart` is now a real fuzz test, not a crash-catcher:
+  run N plays seed `EMBER_SESSION_SEED + N` (default base 1842571558, the
+  golden anchor), injected via a one-shot `GameController.debugNextRunSeed`
+  seam consumed by startRun when no explicit seed is passed. A failure prints
+  the exact reproducing command line.
+- Per-step sim oracle: player/enemy HP and economy bounds, assigned ⊆ rolled,
+  legal phase set + phase-transition graph, dead-actor ⇒ phase-change,
+  rerolls/block/embers/gold/pending_splash never negative. Violations (plus
+  STUCK and step-budget overrun) now FAIL the test; UI-probing misses stay
+  report-only warnings. Stale `steps >= 900` budget check fixed to 2500.
+- The oracle immediately caught a rotted finder: the map-node tap predicate
+  (GestureDetector wrapping AnimatedBuilder) broke when the 2026-07-25 perf
+  pass removed the medallion AnimatedBuilder — the harness had been reporting
+  "green" while never getting past the map. Medallions now carry
+  `ValueKey('map-node-<id>')` (reward-screen pattern) and the harness taps by
+  id. Also fixed: a missed "Delve again" tap double-counted runsFinished and
+  silently skipped a run's seed (report showed runs 0,1,3).
+- VERIFIED: analyze clean; 152/152 tests; play session green on default base
+  seed AND EMBER_SESSION_SEED=7 (seeds 7..10, 4/4 runs); byte-identical
+  report.txt across two executions of the same seed (determinism proof).
+- ASSUMED (reasoned, not measured): the map_screen change is a ValueKey only —
+  no paint/layout effect, so the store-screenshot gate was not re-run (that
+  gate also has known toolchain drift on committed PNGs, see v0.3.14 entry).
+- NOT DONE (still open from remaining-work §2): N-seed nightly sweep in CI —
+  scheduled workflows only run from the repo's default branch (main, the
+  platformer), so wiring it needs an owner decision on where it lives.
+## 2026-07-26 — perf pass 5: map drag + title storm (remaining-work §5) (v0.3.16+21)
+- title_tap_storm 38.8 -> 14.5 paints/frame; map_drag 54.5 -> 9.5. Idle, combat
+  and reward scenarios re-measured flat. Same probe file both sides.
+- REAL title cause (the button already HAD a boundary): any setState below a
+  LayoutBuilder marks it needs-layout, and its relayout marks needs-paint up to
+  the nearest ANCESTOR boundary — which was the route. Fix: boundary above the
+  title LayoutBuilder + one below around the scroll view. Rule: a LayoutBuilder
+  with animating descendants needs a repaint boundary above it.
+- REAL map cause: SingleChildScrollView paints its child at the scroll offset
+  with no boundary, so a drag repainted every non-boundaried Stack child
+  (badges, marker, node chrome). The remaining-work §5 parchment theory was
+  WRONG — that layer was already boundaried and measured flat. Fix: one
+  boundary under the scroll view (+ one around the walking delver marker).
+- VERIFIED: analyze clean; 152/152 tests; store-screenshot harness
+  byte-identical on all 6 PNGs vs legacy baseline on this toolchain.
+- NOT VERIFIED: on-device frame times (frame-trace emulator job, PR #70).
+- Detail: docs/improvements/perf-map-title-2026-07-26.md
+## 2026-07-26 — §6 layered SFX: mix-bus headroom measured and guarded (v0.3.17)
+
+- Closed the measurable half of remaining-work §6 without an ear check.
+  `tool/sfx_headroom.py` rebuilds the worst-case cascades offline from the
+  shipped .ogg assets — parsing `sfxVoices` out of the Dart source, modelling
+  voice stealing, applying the real per-call trims at slider max — and measures
+  sample peak, EBU R128 true peak and integrated loudness of each.
+- VERIFIED: every reachable cascade clears 0 dBTP. Loudest is the full attack
+  turn (whoosh + 3 hits + ember gain + 3 coins) at -0.9 dBTP; the dice cascades
+  sit at -3.2 to -3.5 dBTP.
+- VERIFIED and worth remembering: identical samples started on the SAME frame
+  sum coherently (+9.5 dB for three copies) and clip hard — coin x3 aligned is
+  +5.9 dBTP / 122 clipped samples. That case is unreachable only because
+  `handleEvents` plays each id at most once per event batch, which until now was
+  an undocumented, load-bearing detail.
+- Pinned it: `handleEvents` now delegates to a pure `sfxIdsForEvents`, and
+  test/audio_voices_test.dart gained three "mix-bus invariants" tests (de-dupe,
+  ordering/unknown events, golden `sfxVoices` table). Bump a cap and they fail,
+  which is the signal to re-run the tool.
+- The headroom check runs in CI on every PR, so a hotter .ogg master fails the
+  build instead of shipping a clipped cascade.
+- ASSUMED (owner, unchanged): whether a four-die cascade sounds good rather than
+  cluttered. `--write-clips` renders every cascade as mp3 for that check.
+- VERIFIED: analyze clean; 155/155 tests; headroom tool exits 0.
+- Detail: docs/improvements/sfx-headroom-2026-07-26.md
+
+## 2026-07-26 — §3 combat choreography: one knob, and the measurement that says not to turn it
+
+- All seven swing beats (contact, squash, enemy wind-up, hit-stop, knock, flash
+  tail, death) now derive from `_CombatScreenState.choreoPercent` via `_pace()`.
+  Pacing is a one-line change; the relative anatomy is preserved by construction
+  and no beat can fall below one 60 Hz frame.
+- MEASURED with tool/perf_probe_test.dart, `combat_tap_storm_12`, one variable:
+  70% -> 50 frames, 4835 paints, 96.7/frame; 100% -> 60 frames, 5261 paints,
+  87.7/frame; 130% -> 70 frames, 5742 paints, 82.0/frame.
+- VERIFIED and contrary to the §3 assumption: shortening the choreography 30%
+  removes only 8% of the paints but 17% of the frames, so paints per frame go
+  UP (87.7 -> 96.7). A snappier swing is a denser swing. "Shorter tweens" would
+  have made the jank proxy worse while spending feel; the only lever that lowers
+  it is fewer SIMULTANEOUS animating layers.
+- Default stays 100 because the §1 emulator trace measured this exact scenario
+  at 1.21 ms average / 7.40 ms p99 build with ZERO frames over the 16.7 ms
+  budget — there is ~9 ms of headroom, so the pacing costs nothing measurable.
+  Changing it is therefore purely a feel call, and the knob makes it cheap.
+- VERIFIED: analyze clean; 152/152 tests; probe at the default reproduces the
+  pre-change baseline exactly (60 frames, 5261 paints, 87.7/frame).
+- Detail: docs/improvements/choreo-knob-2026-07-26.md
+
+## 2026-07-26 — v0.3.17+22 released (remaining-work §1/§2/§3/§5/§6/§7 landed)
+
+- Merged in order onto legacy/dice-builder: #68 (§2 deterministic play session +
+  oracle), #70 (§1 emulator frame trace CI), #71 (§7 combat_screen split),
+  #72 (§5 map/title paint fixes), #74 (§6 SFX headroom tool + CI guard),
+  #75 (§3 choreoPercent knob). Version 0.3.16+21 -> 0.3.17+22.
+- Everything in remaining-work-2026-07-25.md is now either shipped or reduced to
+  an explicit owner feel call with the measurement attached. Only §4 (die-tap
+  rebuilds 14.1 -> 16.1) stays as previously accepted.
+- VERIFIED on the merged tree: analyze clean, 155/155 tests, headroom tool exits
+  0, signed release build from CI (workflow_dispatch on legacy/dice-builder).
+
+## 2026-07-26 — §6 subjective SFX pass: owner sign-off (closed)
+
+- The headroom tool's cascades are compressed worst cases (8 playSfx calls in
+  480 ms) and are NOT representative of play — the owner listened to
+  full_attack_turn and correctly heard "2 misaligned audio clips". Lesson: never
+  present a stress mix as a feel sample.
+- Re-rendered the same mix model at the real choreography offsets (whoosh 0,
+  enemy_hit +250, ember_gain +470, one coin +1170; ~680 ms per attack cycle;
+  handleEvents de-dupe means one hit and one coin per attack):
+  single attack -3.7 dBTP / -17.3 LUFS, three-attack turn -3.7 dBTP / -17.8 LUFS
+  — i.e. ~2.8 dB below the -0.9 dBTP ceiling case.
+- VERIFIED (owner, Slack 2026-07-26): "that sounds good the new ones u made are
+  good". §6 is now closed on both axes — objective headroom (CI-gated) and
+  subjective feel (owner sign-off). No timing changes requested.
+- Only genuinely open item left in remaining-work-2026-07-25.md: §1's real-device
+  raster trace, which needs the owner's phone.
+
+## 2026-07-26 — Release v0.3.18+23 (post-sign-off build)
+
+- Cut on owner request after the §6 sign-off. No gameplay/engine/asset change vs
+  v0.3.17: `git diff v0.3.17..909e10d -- lib/ android/ assets/` is empty; the tag
+  exists to carry a fresh versionCode (23) for the next Play closed-testing
+  upload and to mark §6 as closed.
+- Commits since v0.3.17: 318eb12 (progress: §6 sign-off), 909e10d (version bump).
+- VERIFIED from CI run 30203648154 (sha 909e10d, both jobs success): analyze
+  "No issues found!", 155/155 tests, SFX headroom gate exit 0 (all reachable
+  cascades clear -1.0 dBTP), store-screenshot gate byte-identical, APK V2 signer
+  cert SHA-256 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+  (permanent upload key, O=Tsoro Studios / CN=Emberdelve Upload Key).
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.18
+  Assets emberdelve-v0.3.18.apk (sha256 b650ecfc...4b5ea) and .aab (397b6126...55f65).
+- Still open: §1 real-device raster trace (needs the owner's phone over USB).
+
+## 2026-08-10 — v0.4.0+24: the Ember Forge (Play Billing full unlock, spec R8)
+
+- Owner directives (Viktor app chat, 2026-08-10): production access is granted
+  (per-app; Emberdelve needs no further tester gate), monetize without
+  annoying players, everything production-ready. Market research (r/roguelites,
+  r/AndroidGaming pricing threads, Slice & Dice / Dicey Dungeons comps) says:
+  free game + ONE one-time unlock under $5, no ads — the audience punishes
+  everything else. Design chosen: the **Ember Forge** — free forever: full
+  easy/normal runs, all delvers (ember-priced), Daily Delve, themes; the one
+  purchase (`ember_forge_unlock`, $4.99 tier) opens HARD + the Ascension
+  ladder + all future acts. Passes the §Ethics test: the whole game is free,
+  the endgame is the supporter's tier.
+- Implementation (all gating OUTSIDE the sealed sim — start_run params only):
+  - `lib/meta/forge.dart`: gate helpers (`canSelectDifficulty`,
+    `maxAscensionFor`, `clampRunParams`) — pure, unit-tested.
+  - `lib/meta/store_service.dart`: `StoreGateway` seam over
+    package:in_app_purchase (^3.2.0) + `StoreService` lifecycle: subscribe
+    stream FIRST, then availability/product query, silent startup restore;
+    purchased/restored ⇒ grant → acknowledge (in that order — redelivery-safe);
+    cancel is not an error; entitlement is sticky (never revoked locally).
+  - `GameController`: `grantForgeUnlock()` (idempotent, queued atomic meta
+    save), startRun clamp (defense-in-depth), setPreferredDifficulty guard,
+    boot migration (pre-Forge profile stuck on hard moves the VISIBLE
+    selector to normal — no silent switch).
+  - `MetaState.forgeUnlocked` (field-tolerant; locked profiles serialize
+    WITHOUT the key so pre-Forge saves stay byte-stable).
+  - UI: `forge_sheet.dart` (the ONLY place money is mentioned; localized Play
+    price; restore link; honest failure copy), lock icon on the HARD segment
+    (FittedBox — 320px/1.3x overflow probe stays green), Ascension panel on
+    the character screen, ONE quiet victory-only summary CTA (never a popup),
+    Settings restore row. Total UI copy passes §Ethics blacklist.
+- Contract change, deliberate: meta_ledger first-run test now pins "locked
+  profile cannot select hard" (was: hard freely selectable). Updated WITH
+  the feature per owner-approved monetization — not to make a failing test
+  pass silently; the new test is stricter (asserts the refusal too).
+- VERIFIED locally on the CI-pinned Flutter 3.32.7: analyze clean, 171/171
+  tests green (`flutter analyze` + `flutter test`, sandbox run 2026-08-10).
+- features.json: added M4-2 (passes:false — needs a real license-tester
+  purchase + restore on a Play build for device evidence).
+- Play Console side still needed (owner/Viktor, tracked outside the repo):
+  create one-time product `ember_forge_unlock` ($4.99 base, launch intro
+  $2.99 optional), add tester emails as license testers, upload the v0.4.0
+  AAB to closed testing, verify purchase+restore on-device, then M4-2 flips.
+
+## 2026-08-10 — v0.4.1+25: Play Billing Library 8 (deadline build, no gameplay change)
+
+- Why: Play Console notification, verbatim — "Your app uses a version of Google
+  Play Billing Library that will be deprecated soon. Update to a newer version
+  by 31 August 2026 to prevent your updates from being rejected." Release 24
+  ships Billing **7.1.1**; Play only counts what is uploaded, so a code fix
+  without a new versionCode would not have satisfied it.
+- No gameplay/engine/asset change vs v0.4.0+24. The delta is a dependency +
+  toolchain bump (PR #77, merged as ccb2f59) plus three analyzer call-site
+  desugarings, and this version bump.
+  - `in_app_purchase ^3.2.0 -> ^3.3.0`, which resolves
+    `in_app_purchase_android 0.4.0+5 -> 0.5.2` = **Play Billing 8.0.0**.
+  - `environment.sdk ^3.8.1 -> ^3.12.0`; CI `FLUTTER_VERSION 3.32.7 -> 3.44.9`
+    (in_app_purchase 3.3.0 requires Dart >= 3.12 / Flutter >= 3.44).
+  - The only API removed in in_app_purchase_android 0.5.x is
+    `queryPurchaseHistory`, which `lib/meta/store_service.dart` never called —
+    so **zero** billing call-site changes were needed.
+  - The newer Flutter ships vector_math 2.2.0, which deprecates
+    `Matrix4.translate`/`scale`; `flutter analyze --fatal-warnings` is fatal on
+    those. Fixed by exact desugarings in `lib/ui/screens/combat/stage.dart`
+    (`translateByDouble(d, 0.0, 0.0, 1.0)`, `scaleByDouble(x, y, x, 1.0)`),
+    NOT by relaxing the analyzer gate.
+- VERIFIED before the merge, CI run 31436779563 (sha d315b87, both jobs success):
+  analyze + tests + SFX headroom green, and the APK V2 signer cert SHA-256 is
+  still 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+  (permanent upload key).
+- VERIFIED in the artifact, not just the lockfile: unzip the AAB and run
+  `strings base/dex/classes.dex | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'`.
+  Release 24 -> `7.1.1` and a `queryPurchaseHistory` string. This tree -> `8.0.0`,
+  no `7.1.1`, no `queryPurchaseHistory`.
+- Still open: M4-2 (a real license-tester purchase + restore on a Play build).
+  Billing 8 makes that on-device check more valuable, not less — it is the one
+  thing no CI job can prove.
+
+## 2026-08-10 — v0.4.1+26: keep minSdk 21 (device-support regression caught at Play review)
+
+Uploading 0.4.1+25 to the closed alpha surfaced a hard Play error:
+
+> This release no longer supports 1,972 devices that were supported in your
+> previous release. If you proceed, your app will not be available to new users
+> on these unsupported devices, and updates will not be available to users who
+> already have your app installed on these devices.
+
+Play's device-delta table: Phone -1,556 (-11%), Tablet -415 (-6%), TV -1 (-14%).
+
+Root cause (VERIFIED from the two artifacts' proto manifests):
+- v24 AAB `base/manifest/AndroidManifest.xml`: `minSdkVersion 21` (built on Flutter 3.32.7)
+- v25 AAB: `minSdkVersion 24` (built on Flutter 3.44.9)
+
+`android/app/build.gradle.kts` used `minSdk = flutter.minSdkVersion`, so the
+Flutter 3.32.7 -> 3.44.9 bump (required by in_app_purchase 3.3.0 / Dart 3.12)
+silently raised the floor from API 21 to API 24.
+
+This was NOT required by billing. VERIFIED by downloading the AARs from
+maven.google.com and reading their manifests:
+- `com.android.billingclient:billing:8.0.0` -> `android:minSdkVersion="21"`
+- `com.android.billingclient:billing:7.1.1` -> `android:minSdkVersion="21"`
+
+Fix: pin `minSdk = 21` explicitly in `android/app/build.gradle.kts` with a
+comment recording why. Billing 8 is retained, so the 31 Aug 2026 Play deadline
+is still met, and device support returns to parity with 0.4.0 (24).
+
+versionCode 25 was already consumed by the upload to the draft release (Play
+never allows a version code to be reused), so this ships as 0.4.1+26.
+
+Gate: the release build must produce `minSdkVersion 21` AND billing `8.0.0`
+with zero `queryPurchaseHistory` strings in classes.dex, and be signed by the
+existing upload key (SHA-256 031acb42...4b7a0d). If a transitive dependency
+turns out to require API 24, CI fails at manifest merge - which is the correct
+place to find out, not Play.
+
+### Correction: minSdk 21 is not achievable on Flutter 3.44 (VERIFIED)
+
+The pin to 21 did not work. The 0.4.1+26 AAB built from commit 5952208 (which
+set `minSdk = 21`) still reports `minSdkVersion 24` in its proto manifest, and
+CI produced no warning about it.
+
+Cause, VERIFIED from upstream source: Flutter's Android embedding manifest
+(`engine/src/flutter/shell/platform/android/AndroidManifest.xml`, stable)
+declares `<uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36" />`,
+and `FlutterExtension.kt` sets `minSdkVersion = 24` as the project default.
+The manifest merger therefore raises the app floor to 24; an app-level 21 is
+silently ignored. Flutter no longer supports API 21-23 at all.
+
+So the API 21-23 drop is unavoidable while meeting the Billing 8 deadline. The
+gradle file now states `minSdk = 24` explicitly with this reasoning recorded, so
+nobody re-litigates it later. That edit is a no-op for output: the built
+artefacts are identical either way (both merge to 24), so 0.4.1+26 was NOT
+rebuilt for it.
+
+Shipped: 0.4.1 (26) submitted to the closed Alpha track, full rollout, with the
+device-support error acknowledged via Play's "Proceed anyway".
+
+## 2026-08-11 — P0: Delver's Ledger achievements (data + meta + counters)
+
+Owner picked "P0 achievements, then P2 content volume" after the retention
+assessment (`docs/improvements/retention-2026-08-11.md`).
+
+Why achievements and not the usual retention levers: spec §Ethics bans decaying
+streaks, timers and loss framing. The measured alternative is *metric*
+achievements — on Trophy's April 2026 platform data, completing a metric
+achievement on day one correlates with 33.96% D30 retention versus 20.46% for
+none, while streak achievements reach only 25.57%, and retention rises
+monotonically with achievement difficulty. So the ethics-compatible lever is
+also the stronger one. Several entries are deliberately hard for that reason.
+
+Added:
+- `lib/data/achievements.dart` — 37 defs, content-as-data, zero logic. Fixed
+  stat vocabulary of 14 real MetaState counters, so a progress bar can never
+  show a number the player did not earn. No rewards of any kind: recognition
+  only, so the ledger can never become a grind gate.
+- `lib/meta/achievements.dart` — pure evaluation (`statValue`, `progress`,
+  `isEarned`, `earnedAchievements`, `unseenAchievements`, `markSeen`,
+  `nearestAchievements`). Outside the sealed sim; reads meta only.
+- `lib/meta/meta.dart` — schema **v2 → v3** with five new banked counters
+  (`bestFloor`, `dailiesPlayed`, `winsNoRest`, `hardWins`) plus
+  `bossesBeaten` and `seenAchievements` sets. Migration is deliberately
+  conservative: `bestFloor` is recovered from the existing run history (a
+  provable number) and `dailiesPlayed` claims exactly 1 when an old save has a
+  recorded daily. Nothing unprovable is invented.
+- `lib/game/controller.dart` — `recordLedgerStats` observes `encounter_started`
+  and `rested` events only; `_bankRun` banks the counters and collects newly
+  earned ids into `pendingAchievements` for the summary screen.
+- `test/achievements_test.dart` — schema validity, targets inside real content,
+  fresh profile earns nothing and is "near" nothing, progress real/monotonic/
+  clamped, every stat wired to a live counter, toast fires once, round trip,
+  honest migration from a v2 save, and a guard that earning achievements never
+  changes any entitlement.
+
+The sim is untouched, so the golden hash is unaffected. UI comes next.
+
+### CI run 31446847919 — one honest test failure, fixed in the test
+
+`a fresh profile has earned nothing and is close to nothing` failed:
+`nearestAchievements(MetaState())` returned two defs, not none.
+
+The code was right and the test was wrong. A brand-new profile really does own
+one delver (`kindler`) and one hearth colour (`emberglow`), so `full_roster` and
+`hearth_keeper` legitimately sit at 1/4. Showing that is honest; asserting it
+away would have been the lie. The assertion is now stronger and true: nothing is
+EARNED on a fresh profile, the only non-zero bars are the two real inventory
+counts (and they must read exactly 1), every other achievement sits at exactly
+zero, and the "nearly there" list may contain nothing else.
+
+No production code was changed to make a check pass.
+
+### Ledger UI for achievements
+
+`lib/ui/ledger_screen.dart` gains an ACHIEVEMENTS panel between RECENT DELVES and
+HEARTH COLORS: `earned / total` in the section header, then earned entries in
+authoring order, then in-progress ones sorted by real progress, then untouched
+ones. A progress bar is drawn ONLY for goals actually under way — an empty bar on
+an untouched goal reads as failure rather than as an invitation. Footer states
+plainly that achievements change nothing and never expire.
+
+## 2026-08-11 — P2: content volume (enemies 17→30, events 16→28)
+
+Data-only, zero logic changes, per the retention assessment: repetition starts
+around runs 3-5 because 9 regular enemies and 16 events is a small deck.
+
+Enemies **17 → 30**: regulars 9 → 17, elites 5 → 7, bosses **3 → 6**. Every
+addition sits inside the measured v0.3.0 bands (early hp 24-36 / swings 15-23,
+late hp 34-58 / 19-28, elite hp 48-72 / 21-31, boss hp 94-112 / 21-36), so the
+200-seed autoplay gate should hold. Each new enemy has a distinct *rhythm* —
+front-loaded, never-guards, two-in-three-guarded, same-beat attack_block — since
+a new name on an old pattern is not new content.
+
+**Boss count check done BEFORE committing:** `bossForSeed` indexes the boss list
+by `seed % length`. The golden anchor seed 20260723 is congruent to 1 mod 3 *and*
+mod 6, so index 1 is still `ember_tyrant` and the v6 golden replay survives the
+3 → 6 change. Verified by parsing the file: boss order is
+`[ashen_colossus, ember_tyrant, pyre_matriarch, cinder_hierophant, the_bellows,
+ashfall_twins]`, `20260723 % 6 == 1`. **Any future change to the boss count must
+redo this arithmetic first.**
+
+Events **16 → 28**. Deck size is what keeps a run surprising, since the pick is
+uniform over events not yet seen this run: at 28 entries a 7-node path almost
+never repeats, and the second and third runs of an evening still show new rooms.
+Design rule applied to every new entry: at least one option costs something
+real. A deck of free gifts is a deck of non-decisions and quietly inflates the
+run economy.
+
+EXPECTED: the golden sim hash moves. Adding to the eligible spawn/event pools
+changes what the seeded streams draw, which is exactly what the documented
+process says will happen — re-anchor deliberately and record old → new below.
+
+### Sprites for the 13 new enemies
+
+`test/assets_test.dart` correctly refused the roster growth: every enemy needs a
+sheet plus a `sprite_meta.json` entry, and 13 were missing. The original 0x72
+source pack is not vendored here and the old `build_sprites.py` is gone, so the
+sheets were produced the way v0.4 already produced `ashen_colossus` and
+`pyre_matriarch` — a palette swap of a bundled sheet (all CC0).
+
+New tool `tool/gen_variant_sprites.py`: deterministic HSV remap of an existing
+sheet, alpha and pixel boundaries preserved, frame geometry copied verbatim so
+the meta entry stays valid. `--check` re-derives every output and fails if a
+sheet drifts from the generator, so the art is reproducible rather than a binary
+nobody can regenerate.
+
+First pass was wrong and a visual check caught it: three variants
+(`flue_crawler`, `smoke_stalker`, `the_bellows`) came out indistinguishable from
+their sources, because a hue rotation does nothing to near-grey pixels and
+nothing to a red source shifted 12 degrees. Added a `saturation_floor` that lifts
+visible near-greys before the hue applies (leaving pure black/white outlines
+alone), and moved `the_bellows` to brass so it does not read as a second
+`basalt_shell`. All 13 verified distinct on a source-vs-variant contact sheet.
+
+**Stated plainly: this is placeholder-grade art.** A recolour reads as a related
+creature — a normal roguelite convention, and why each pairing is plausible — but
+it is not an original silhouette. Recorded per-file in PROVENANCE.md.
+
+### Golden re-anchor (v0.5.0)
+
+- `goldenV6` **1842571558 → 2013675017**, measured on CI run 31447154606 with the
+  30-enemy roster and 28-event deck in place. Resolution rules are untouched;
+  only what the seeded spawn/offering streams draw has changed, which is exactly
+  the documented consequence of adding content.
+- The per-boss anchors could not be re-pinned from a guess, so
+  `goldenColossus`/`goldenMatriarch` were replaced by `bossAnchorSeeds`
+  (20260722..20260727, congruent to 0..5 mod 6, hitting each of the six bosses
+  exactly once in list order). The test now asserts the seed→boss mapping exactly
+  and asserts per-boss run determinism, and prints the measured hashes so the
+  constants get pinned from a real build in the follow-up commit.
+- `content_test`'s `bosses == 3` became `bosses == 6` plus a real guard: it now
+  asserts `bossForSeed(20260723) == 'ember_tyrant'`, i.e. the property the magic
+  number was standing in for.

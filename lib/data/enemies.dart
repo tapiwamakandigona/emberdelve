@@ -1,4 +1,4 @@
-// data/enemies.dart — Emberdelve enemy roster (M3 content: 15 enemies).
+// data/enemies.dart — Emberdelve enemy roster (v0.5.0: 30 enemies).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -50,16 +50,28 @@ class EnemyDef {
 const List<String> enemiesOrder = [
   // regulars — early band
   'cinder_wisp', 'ash_rat', 'soot_shade', 'ember_beetle',
+  // regulars — early band, v0.5.0 additions
+  'scoria_tick', 'char_sprite', 'flue_crawler', 'cinder_pup',
   // regulars — late band (layer 5+)
   'soot_hound', 'ash_wraith', 'cinder_crawler', 'ember_moth', 'slag_brute',
+  // regulars — late band, v0.5.0 additions
+  'clinker_ogre', 'smoke_stalker', 'basalt_shell', 'wick_widow',
   // elites
   'pyre_howler', 'kiln_golem', 'ash_reaper', 'forge_warden', 'molten_maw',
+  // elites — v0.5.0 additions
+  'bellows_knight', 'quench_hag',
   // bosses (exactly one per run, chosen deterministically from the run seed
   // in run_layer.dart — see bossForSeed). Ordering is deliberate: the golden
   // anchor seed (20260723 % 3 == 1) must keep mapping to the Ember Tyrant so
   // the long-lived v6 golden replay stays valid. Append new bosses at the
   // END; never reorder.
   'ashen_colossus', 'ember_tyrant', 'pyre_matriarch',
+  // v0.5.0 bosses, appended. Verified before adding: bossForSeed indexes
+  // _bossIds by `seed % length`, and the golden anchor seed 20260723 is
+  // congruent to 1 both mod 3 and mod 6, so index 1 (ember_tyrant) still wins
+  // for that seed and the v6 golden replay stays valid. Going from 6 to any
+  // other count must be re-checked the same way BEFORE it is committed.
+  'cinder_hierophant', 'the_bellows', 'ashfall_twins',
 ];
 
 const Map<String, EnemyDef> enemies = {
@@ -81,6 +93,33 @@ const Map<String, EnemyDef> enemies = {
   'ember_beetle': EnemyDef('ember_beetle', 'Ember Beetle', 36, pattern: [
     Intent('block', 20),
     Intent('attack', 23),
+  ]),
+  // v0.5.0 early additions. Same band as the four above (hp 24-36, swings
+  // 15-23) so the opening layers are more varied without getting harder.
+  // Each one has a different RHYTHM, which is the point: a new sprite with an
+  // old pattern is not new content.
+  'scoria_tick': EnemyDef('scoria_tick', 'Scoria Tick', 26, pattern: [
+    // Two small bites then a real one — punishes blocking on the wrong beat.
+    Intent('attack', 14),
+    Intent('attack', 14),
+    Intent('attack', 22),
+  ]),
+  'char_sprite': EnemyDef('char_sprite', 'Char Sprite', 30, pattern: [
+    // Guards every other beat: the shortest possible block cycle to read.
+    Intent('block', 18),
+    Intent('attack', 20),
+    Intent('block', 18),
+    Intent('attack', 16),
+  ]),
+  'flue_crawler': EnemyDef('flue_crawler', 'Flue Crawler', 33, pattern: [
+    Intent('attack_block', 16, 12),
+    Intent('attack', 19),
+  ]),
+  'cinder_pup': EnemyDef('cinder_pup', 'Cinder Pup', 24, pattern: [
+    // Front-loaded: hits hardest on the beat you meet it, then tires.
+    Intent('attack', 21),
+    Intent('attack', 15),
+    Intent('attack', 15),
   ]),
 
   // ---- regulars, late band (layer 5+) ----------------------------------------
@@ -107,6 +146,33 @@ const Map<String, EnemyDef> enemies = {
   ]),
   'slag_brute': EnemyDef('slag_brute', 'Slag Brute', 58, fromLayer: 6, pattern: [
     Intent('block', 24),
+    Intent('attack', 28),
+  ]),
+  // v0.5.0 late additions — inside the measured late band (hp 34-58, swings
+  // 19-28) so the 200-seed autoplay win rate stays in the 20-80% gate.
+  'clinker_ogre':
+      EnemyDef('clinker_ogre', 'Clinker Ogre', 55, fromLayer: 5, pattern: [
+    Intent('attack', 26),
+    Intent('block', 21),
+    Intent('attack', 22),
+  ]),
+  'smoke_stalker':
+      EnemyDef('smoke_stalker', 'Smoke Stalker', 40, fromLayer: 5, pattern: [
+    // Never guards: a pure race, the late-band answer to the Pyre Matriarch.
+    Intent('attack', 21),
+    Intent('attack', 24),
+    Intent('attack', 27),
+  ]),
+  'basalt_shell':
+      EnemyDef('basalt_shell', 'Basalt Shell', 52, fromLayer: 5, pattern: [
+    // Two guarded beats in three: the one to burst through, not chip at.
+    Intent('block', 23),
+    Intent('attack_block', 19, 18),
+    Intent('attack', 25),
+  ]),
+  'wick_widow':
+      EnemyDef('wick_widow', 'Wick Widow', 37, fromLayer: 6, pattern: [
+    Intent('attack_block', 20, 15),
     Intent('attack', 28),
   ]),
 
@@ -140,6 +206,23 @@ const Map<String, EnemyDef> enemies = {
     Intent('block', 24),
     Intent('attack', 25),
   ]),
+  // v0.5.0 elite additions — elite band (hp 48-72, swings 21-31).
+  'bellows_knight': EnemyDef('bellows_knight', 'Bellows Knight', 70,
+      elite: true, fromLayer: 5, pattern: [
+    // Alternating wall: guard, swing, guard, bigger swing. Rewards saving a
+    // big die for the open beat instead of spending every turn.
+    Intent('block', 25),
+    Intent('attack', 24),
+    Intent('block', 22),
+    Intent('attack', 30),
+  ]),
+  'quench_hag': EnemyDef('quench_hag', 'Quench Hag', 51,
+      elite: true, pattern: [
+    // Squishiest elite, hits like the hardest: an early-layer gamble.
+    Intent('attack', 29),
+    Intent('attack_block', 23, 16),
+    Intent('attack', 26),
+  ]),
 
   // ---- bosses (exactly one per run, seed-picked) ----------------------------------
   // v0.4 boss variety: three bosses with deliberately different rhythms, all
@@ -168,6 +251,37 @@ const Map<String, EnemyDef> enemies = {
     Intent('attack', 21),
     Intent('attack', 25),
     Intent('attack', 29),
+  ]),
+  // v0.5.0 bosses. Same Intent vocabulary, three more rhythms, boss band
+  // (hp 94-112, swings 21-36):
+  //   cinder_hierophant — the long teacher: a 5-beat cycle, the longest in the
+  //                       game, with two open beats. Learnable, punishing to
+  //                       anyone who does not count.
+  //   the_bellows       — the pressure plate: guards and swings on the SAME
+  //                       beat every beat, so there is never a free hit; you
+  //                       out-scale it or you lose.
+  //   ashfall_twins     — the double tap: two medium hits back to back, then a
+  //                       guard. Kills anyone hoarding block for one big swing.
+  'cinder_hierophant': EnemyDef(
+      'cinder_hierophant', 'Cinder Hierophant', 106, boss: true, pattern: [
+    Intent('attack', 24),
+    Intent('block', 27),
+    Intent('attack', 22),
+    Intent('attack_block', 25, 21),
+    Intent('attack', 31),
+  ]),
+  'the_bellows':
+      EnemyDef('the_bellows', 'The Bellows', 98, boss: true, pattern: [
+    Intent('attack_block', 24, 22),
+    Intent('attack_block', 27, 19),
+    Intent('attack_block', 22, 25),
+  ]),
+  'ashfall_twins':
+      EnemyDef('ashfall_twins', 'Ashfall Twins', 104, boss: true, pattern: [
+    Intent('attack', 26),
+    Intent('attack', 26),
+    Intent('block', 24),
+    Intent('attack', 33),
   ]),
 };
 

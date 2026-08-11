@@ -3,10 +3,10 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.3.15+20
+version: 0.4.2+27
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.12.0
 
 dependencies:
   flutter:
@@ -20,11 +20,23 @@ dependencies:
   firebase_core: ^3.8.0
   firebase_analytics: ^11.3.6
   shared_preferences: ^2.3.3
+  # Play Billing for the one-time Ember Forge unlock (spec R8). The plugin
+  # adds com.android.vending.BILLING via manifest merge — no manual entry.
+  # 3.3.0 pulls in_app_purchase_android >=0.5.0, which is Google Play Billing
+  # Library 8.0.0. Play deprecates the 7.x line and rejects updates that still
+  # ship it after 31 Aug 2026, so this floor is a store requirement, not taste.
+  in_app_purchase: ^3.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  # Frame trace on device/emulator (integration_test/frame_trace_test.dart,
+  # remaining-work §1). Both ship with the SDK: no version pins.
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
