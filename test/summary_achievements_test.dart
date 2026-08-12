@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/achievements.dart';
+import 'package:emberdelve/data/dice.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -48,6 +49,56 @@ void main() {
     expect(
         find.descendant(
             of: panel, matching: find.text(achievements['first_delve']!.name)),
+        findsOneWidget);
+
+    final pool = find.byKey(const ValueKey('pool-forged-recap'));
+    expect(pool, findsOneWidget);
+    final dice = (c.state!['player'] as Map)['dice'] as List;
+    for (final sides in [4, 6, 8, 10, 12]) {
+      final count = dice.where((id) => dieDef('$id').size == sides).length;
+      expect(
+        find.descendant(
+            of: pool, matching: find.byKey(ValueKey('pool-d$sides'))),
+        count > 0 ? findsOneWidget : findsNothing,
+      );
+      if (count > 0) {
+        expect(
+            find.descendant(
+                of: pool, matching: find.text('d$sides ×$count')),
+            findsOneWidget);
+      }
+    }
+  });
+
+  testWidgets('loss summary also recaps the exact forged pool',
+      (tester) async {
+    final c = GameController();
+    c.meta.tutorialSeen = true;
+    await tester.pumpWidget(MaterialApp(
+      theme: buildEmberTheme(),
+      home: GameRoot(c),
+    ));
+    c.startRun(character: 'kindler', seed: 3);
+    (c.state!['player'] as Map)['dice'] = <String>[
+      'd4_lucky',
+      'd6',
+      'd8_surge',
+      'd10_steady',
+      'd12_heart',
+    ];
+    c.sim!.phase = 'run_lost';
+    c.notifyListeners();
+    await pumpFor(tester, 700);
+
+    final pool = find.byKey(const ValueKey('pool-forged-recap'));
+    expect(pool, findsOneWidget);
+    for (final sides in [4, 6, 8, 10, 12]) {
+      expect(find.descendant(of: pool, matching: find.text('d$sides ×1')),
+          findsOneWidget);
+    }
+    expect(find.descendant(of: pool, matching: find.text('4 SPECIAL')),
+        findsOneWidget);
+    expect(find.descendant(of: pool, matching: find.text('HEARTFORGED')),
         findsOneWidget);
   });
 }

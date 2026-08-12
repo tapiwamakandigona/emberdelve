@@ -9,6 +9,10 @@ class SummaryScreen extends StatelessWidget {
     final st = c.state!;
     final won = st['phase'] == 'run_won';
     final run = st['run'] as Map;
+    final player = st['player'] as Map?;
+    final pool =
+        (player?['dice'] as List?)?.whereType<String>().toList() ?? const [];
+    final identity = buildIdentity(pool);
     final insight = run['insight'] as String?;
     return Stack(fit: StackFit.expand, children: [
       // The designed moment: embers rise in triumph, or sink and die.
@@ -53,6 +57,8 @@ class SummaryScreen extends StatelessWidget {
                 '${run['gold']}'),
           ]),
         ),
+        const SizedBox(height: Space.l),
+        _poolRecap(identity),
         // Delver's Ledger (v0.5.0): achievements this run earned, announced
         // in the same breath as the result. _bankRun collects them and
         // startRun clears them, so this list is exactly this run's harvest.
@@ -220,6 +226,109 @@ class SummaryScreen extends StatelessWidget {
       Expanded(child: Text(label, style: EmberText.body)),
       Text(value, style: EmberText.value.copyWith(color: color)),
     ]);
+  }
+  Widget _poolRecap(RunBuildIdentity identity) {
+    final counts = [
+      for (final sides in const [4, 6, 8, 10, 12])
+        if (identity.countFor(sides) > 0)
+          (sides: sides, count: identity.countFor(sides)),
+    ];
+    return Semantics(
+      key: const ValueKey('pool-forged-recap'),
+      container: true,
+      label:
+          'Pool forged this run. ${identity.name}. '
+          '${counts.map((e) => 'd${e.sides}: ${e.count}').join(', ')}. '
+          '${identity.specialDice} special dice.',
+      child: Panel(
+        color: EmberColors.raised,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'POOL FORGED THIS RUN',
+              style: EmberText.micro.copyWith(
+                color: EmberColors.textDim,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: Space.m),
+            Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: identity.color.withValues(alpha: 0.13),
+                    border: Border.all(
+                      color: identity.color.withValues(alpha: 0.52),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(identity.icon, color: identity.color, size: 21),
+                ),
+                const SizedBox(width: Space.m),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        identity.name.toUpperCase(),
+                        key: const ValueKey('pool-identity-name'),
+                        style: EmberText.body.copyWith(color: identity.color),
+                      ),
+                      Text(
+                        identity.description,
+                        style: EmberText.micro.copyWith(
+                          color: EmberColors.textDim,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: Space.m),
+            Wrap(
+              spacing: Space.s,
+              runSpacing: Space.s,
+              children: [
+                for (final entry in counts)
+                  _poolChip(
+                    'd${entry.sides} ×${entry.count}',
+                    ValueKey('pool-d${entry.sides}'),
+                  ),
+                if (identity.specialDice > 0)
+                  _poolChip(
+                    '${identity.specialDice} SPECIAL',
+                    const ValueKey('pool-special'),
+                    color: identity.color,
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _poolChip(String label, Key key, {Color? color}) {
+    final tint = color ?? EmberColors.textDim;
+    return Container(
+      key: key,
+      padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: 6),
+      decoration: BoxDecoration(
+        color: tint.withValues(alpha: 0.08),
+        border: Border.all(color: tint.withValues(alpha: 0.30)),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: EmberText.micro.copyWith(
+          color: color ?? EmberColors.textPrimary,
+        ),
+      ),
+    );
   }
 }
 

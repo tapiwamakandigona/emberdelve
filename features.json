@@ -184,6 +184,13 @@
       "evidence": "feat/depth-performance: dimensional_presentation_test 3/3, full flutter test 276/276, store screenshot harness 2/2, deterministic real-UI probe passed twice consecutively from clean saves (last: 4/4 runs, 827 steps, 0 violations/warnings); perf proxy title idle 3.0->3.0, combat idle 2.0->2.0, die-tap 20.1->19.9, full storm 96.2->96.6 (+0.4%); git diff has no lib/sim or sim_test change and goldenV6 remains 2013675017"
     },
     {
+      "id": "CBI-1",
+      "title": "Visible run build identity: evolving weapon + pool-forged recap",
+      "acceptance": "Derive a stable presentation-only Ember/Blade/Aegis/Heart identity from the live die pool; evolve the existing procedural weapon without adding a ticker/painter/dependency; recap both won and lost pools with exact d4/d6/d8/d10/d12 and special-die counts; support screen readers and short phones; no sim/save/golden change",
+      "passes": true,
+      "evidence": "feat/gameplay-depth: pure build_identity tests cover all paths/tie/unknown/count/order cases; weapon tests render every identity through idle/raise/swing; win+loss summary tests pin exact counts; full flutter test 282/282, overflow 25/25, store harness 2/2, visual plate 4/4 paths, deterministic real-UI probe 4/4 runs/827 steps/0 violations or warnings; perf proxy identical to accepted dimensional baseline; no lib/sim or sim_test diff and goldenV6 remains 2013675017"
+    },
+    {
       "id": "M4-2",
       "title": "Ember Forge unlock: one-time IAP, gate, restore (spec R8)",
       "acceptance": "Play Billing one-time product ember_forge_unlock purchasable in a Play-signed build; HARD + ascension>0 locked without it and open with it; purchase grants + acknowledges + persists; restore works from Settings and the Forge sheet AND silently at startup after reinstall; cancel/error never grant; entitlement never revoked locally; all gating outside the sealed sim",

@@ -283,6 +283,10 @@ void main() {
     expect(c.phase, anyOf('run_won', 'run_lost'));
     await pumpFor(tester, 2500); // outlast the terminal-hold choreography
     expect(find.text('Delve again'), findsOneWidget);
+    // The build recap makes the terminal story longer. Exercise the real
+    // scroll-to-control path instead of tapping an off-screen RenderBox.
+    await tester.ensureVisible(find.text('Delve again'));
+    await pumpFor(tester, 100);
     await tester.tap(find.text('Delve again'));
     await pumpFor(tester, 900);
     expect(c.phase, equals('boon')); // straight into the pick, no title
