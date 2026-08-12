@@ -209,6 +209,18 @@ Future<bool> tapButton(WidgetTester tester, String label,
           w is EmberButton && (w.label).startsWith(label))
       : find.widgetWithText(EmberButton, label);
   if (f.evaluate().isEmpty) return false;
+  // Summary achievements and narrow-phone wrapping can place the restart
+  // controls several screens below the current viewport. A raw tester.tap
+  // only targets the off-screen RenderBox and silently misses when
+  // warnIfMissed is false, making a completed run look "stuck". Scroll the
+  // real button into view first; this keeps the probe hit-tested without
+  // bypassing production callbacks.
+  try {
+    await tester.ensureVisible(f.first);
+    await tester.pump(const Duration(milliseconds: 100));
+  } catch (_) {
+    // Screens without a Scrollable still have a directly tappable button.
+  }
   await tester.tap(f.first, warnIfMissed: false);
   return true;
 }
@@ -223,7 +235,12 @@ void main() {
     tester.view.devicePixelRatio = pixelRatio;
     addTearDown(tester.view.reset);
 
-    final dir = Directory('$outDir/save')..createSync(recursive: true);
+    // This is a fresh deterministic session, not a resume test. Reusing the
+    // previous run's autosave makes step 1 depend on whichever phase the last
+    // invocation happened to leave behind (for example title → player_turn).
+    final dir = Directory('$outDir/save');
+    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    dir.createSync(recursive: true);
     final c = GameController(saveDirOverride: dir.path);
     await tester.binding.runAsync(() => c.boot());
 

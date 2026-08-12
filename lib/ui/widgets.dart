@@ -558,6 +558,95 @@ class DieChip extends StatefulWidget {
   State<DieChip> createState() => _DieChipState();
 }
 
+@visibleForTesting
+Matrix4 debugDiePerspectiveTransform({
+  required int sides,
+  required int value,
+  required bool selected,
+  required bool maxed,
+  required bool spent,
+  required bool flight,
+  required double flightProgress,
+}) {
+  final pose = _resolvedDiePose(
+    sides: sides,
+    value: value,
+    selected: selected,
+    maxed: maxed,
+    spent: spent,
+    flight: flight,
+    flightProgress: flightProgress,
+  );
+  return _diePerspectiveMatrix(pose);
+}
+
+@visibleForTesting
+CustomPainter debugDimensionalDiePainter({
+  required int sides,
+  required int value,
+  required bool selected,
+  required bool maxed,
+}) => _FacePainter(
+  value: value,
+  sides: sides,
+  selected: selected,
+  maxed: maxed,
+  dimensional: true,
+  ringColor: selected
+      ? EmberColors.ember
+      : maxed
+      ? EmberColors.gold
+      : null,
+);
+
+Matrix4 _diePerspectiveMatrix(
+  ({double pitch, double yaw, double lift, double squash}) pose,
+) => Matrix4.identity()
+  ..setEntry(3, 2, 0.0018)
+  ..rotateX(pose.pitch)
+  ..rotateY(pose.yaw)
+  ..scaleByDouble(1.0 + pose.squash, 1.0 - pose.squash, 1.0, 1.0);
+
+({double pitch, double yaw, double lift, double squash}) _resolvedDiePose({
+  required int sides,
+  required int value,
+  required bool selected,
+  required bool maxed,
+  required bool spent,
+  required bool flight,
+  required double flightProgress,
+}) {
+  // The non-flight rest pose intentionally stays level: dimensionality comes
+  // from its thickness, directional light and contact shadow. Flight uses a
+  // stable per-face/per-state direction so the same resolved die always has
+  // the same presentation pose.
+  if (!flight || flightProgress >= 1) {
+    return (pitch: 0, yaw: 0, lift: 0, squash: 0);
+  }
+  final dir = (sides + value + (selected ? 1 : 0) + (maxed ? 1 : 0)).isEven
+      ? 1.0
+      : -1.0;
+  const split = _DieChipState._flightSplit;
+  if (flightProgress < split) {
+    final ft = Curves.easeOutCubic.transform(flightProgress / split);
+    final travel = 1.0 - ft;
+    return (
+      pitch: -0.24 * travel + 0.06 * math.sin(ft * math.pi),
+      yaw: dir * 0.30 * travel,
+      lift: math.sin(ft * math.pi) * 30,
+      squash: 0,
+    );
+  }
+  final st = ((flightProgress - split) / (1 - split)).clamp(0.0, 1.0);
+  final spentWeight = spent ? 0.85 : 1.0;
+  return (
+    pitch: math.sin(st * math.pi * 2) * 0.065 * (1 - st) * spentWeight,
+    yaw: dir * math.sin(st * math.pi * 3) * 0.045 * (1 - st) * spentWeight,
+    lift: math.sin(st * math.pi) * 7 * (1 - st * 0.4),
+    squash: math.sin(st * math.pi) * 0.055 * (1 - st),
+  );
+}
+
 class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
   late final AnimationController _tumble = AnimationController(
     vsync: this,
@@ -651,6 +740,16 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                 : (f < 0.55 && _tumble.isAnimating)
                 ? 1 + ((f * 31).floor() * 7 + widget.tumbleDelayMs) % def.size
                 : widget.value;
+            final pose = _resolvedDiePose(
+              sides: def.size,
+              value: showValue ?? widget.value ?? 1,
+              selected: widget.selected,
+              maxed: widget.maxed,
+              spent: widget.assigned,
+              flight: widget.flight && _tumble.isAnimating,
+              flightProgress: f,
+            );
+            final face = _face(def, showValue);
             // LFP-1: physical throw — arc in from the throw origin with
             // spin, then one soft bounce as it settles into the slot. The
             // in-place hop remains for non-tray contexts (flight == false).
@@ -684,9 +783,10 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
               }
               return Transform.translate(
                 offset: offset,
-                child: Transform.rotate(
-                  angle: rot,
-                  child: _face(def, showValue),
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: _diePerspectiveMatrix(pose)..rotateZ(rot),
+                  child: face,
                 ),
               );
             }
@@ -696,9 +796,11 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
             final hop = -math.sin(f * math.pi).abs() * 14 * (1.0 - f * 0.6);
             return Transform.translate(
               offset: Offset(0, _tumble.isAnimating ? hop : 0),
-              child: Transform.rotate(
-                angle: _tumble.isAnimating ? rot : 0,
-                child: _face(def, showValue),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: _diePerspectiveMatrix(pose)
+                  ..rotateZ(_tumble.isAnimating ? rot : 0),
+                child: face,
               ),
             );
           },
@@ -722,8 +824,10 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
             filterQuality: FilterQuality.none,
           )
         : ColorFiltered(
-            colorFilter:
-                ColorFilter.mode(Color(skin.bodyArgb), BlendMode.modulate),
+            colorFilter: ColorFilter.mode(
+              Color(skin.bodyArgb),
+              BlendMode.modulate,
+            ),
             child: Image.asset(
               'assets/images/ui/dice/die_d${def.size}.png',
               filterQuality: FilterQuality.none,
@@ -734,6 +838,13 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
         : glowMaxed
         ? EmberColors.gold
         : Colors.transparent;
+    final ringColor = glowSelected
+        ? EmberColors.ember
+        : glowMaxed
+        ? EmberColors.gold
+        : def.mods.isNotEmpty && !widget.assigned
+        ? EmberColors.kindElite.withValues(alpha: 0.5)
+        : null;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 120),
       opacity: widget.assigned ? 0.35 : 1.0,
@@ -757,40 +868,20 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
             SizedBox(
               width: 64,
               height: 64,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Pixel die art at exactly 0.5x of its 128px source
-                  // (skin-tinted when a non-default skin is lit).
-                  dieArt,
-                  // Face content: rolled values as pips (numeral on the d4 —
-                  // the square pip layouts spill off the triangle), and a dim
-                  // engraved size numeral while unrolled, so a die never
-                  // renders as a blank cream shape (owner report 2026-07-24:
-                  // boon cards / pre-roll tray showed featureless squares).
-                  CustomPaint(
-                    painter: _FacePainter(
-                      value: value,
-                      sides: def.size,
-                      maxed: glowMaxed,
-                      selected: glowSelected,
-                      ink: Color(skin.inkArgb),
-                    ),
-                  ),
-                  if (glowSelected)
-                    CustomPaint(painter: _DieRingPainter(EmberColors.ember))
-                  else if (glowMaxed)
-                    CustomPaint(painter: _DieRingPainter(EmberColors.gold))
-                  // LFP-2c: modded dice (boon/forged/shop specials) carry a
-                  // quiet accent ring all the time, so "this die is special"
-                  // stops being knowledge you need the shop card for.
-                  else if (def.mods.isNotEmpty && !widget.assigned)
-                    CustomPaint(
-                      painter: _DieRingPainter(
-                        EmberColors.kindElite.withValues(alpha: 0.5),
-                      ),
-                    ),
-                ],
+              // Light, pips and ring share one painter. Keeping one
+              // RenderCustomPaint per die preserves the pre-upgrade render
+              // tree and its rapid-interaction cost.
+              child: CustomPaint(
+                foregroundPainter: _FacePainter(
+                  value: value,
+                  sides: def.size,
+                  maxed: glowMaxed,
+                  selected: glowSelected,
+                  ink: Color(skin.inkArgb),
+                  dimensional: true,
+                  ringColor: ringColor,
+                ),
+                child: dieArt,
               ),
             ),
             const SizedBox(height: 2),
@@ -824,25 +915,6 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
 }
 
 /// Selection ring drawn around the die silhouette (not a rounded-rect box).
-class _DieRingPainter extends CustomPainter {
-  final Color color;
-  _DieRingPainter(this.color);
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(
-      size.center(Offset.zero),
-      size.shortestSide * 0.52,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.4
-        ..color = color.withValues(alpha: 0.9),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _DieRingPainter old) => old.color != color;
-}
-
 /// Die face content painted over the die art.
 ///
 /// - Rolled: classic pips (dark, hot rim) per [_layouts] — except the d4,
@@ -857,6 +929,8 @@ class _FacePainter extends CustomPainter {
   final int sides;
   final bool maxed;
   final bool selected;
+  final bool dimensional;
+  final Color? ringColor;
 
   /// v0.4.3 P1: pip/numeral ink from the lit dice skin. Defaults to the
   /// original bone ink so every pre-skin call site paints unchanged.
@@ -866,6 +940,8 @@ class _FacePainter extends CustomPainter {
     required this.sides,
     this.maxed = false,
     this.selected = false,
+    this.dimensional = false,
+    this.ringColor,
     this.ink = _boneInk,
   });
 
@@ -876,6 +952,114 @@ class _FacePainter extends CustomPainter {
   Offset _faceCenter(Size size) {
     final c = size.center(Offset.zero);
     return sides == 4 ? c + Offset(0, size.height * 0.11) : c;
+  }
+
+  Path _silhouette(Size size) {
+    final w = size.width;
+    final h = size.height;
+    switch (sides) {
+      case 4:
+        return Path()
+          ..moveTo(w * 0.50, h * 0.08)
+          ..lineTo(w * 0.94, h * 0.88)
+          ..lineTo(w * 0.06, h * 0.88)
+          ..close();
+      case 8:
+        return Path()
+          ..moveTo(w * 0.50, h * 0.06)
+          ..lineTo(w * 0.86, h * 0.23)
+          ..lineTo(w * 0.86, h * 0.77)
+          ..lineTo(w * 0.50, h * 0.95)
+          ..lineTo(w * 0.14, h * 0.77)
+          ..lineTo(w * 0.14, h * 0.23)
+          ..close();
+      case 10:
+      case 12:
+        return Path()
+          ..moveTo(w * 0.50, h * 0.05)
+          ..lineTo(w * 0.89, h * 0.32)
+          ..lineTo(w * 0.80, h * 0.82)
+          ..lineTo(w * 0.50, h * 0.96)
+          ..lineTo(w * 0.20, h * 0.82)
+          ..lineTo(w * 0.11, h * 0.32)
+          ..close();
+      default:
+        return Path()..addRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(w * 0.07, h * 0.07, w * 0.86, h * 0.86),
+            Radius.circular(w * 0.09),
+          ),
+        );
+    }
+  }
+
+  void _paintDimensionalLight(Canvas canvas, Size size) {
+    if (!dimensional) return;
+    final path = _silhouette(size);
+    canvas.save();
+    canvas.clipPath(path);
+    final rect = Offset.zero & size;
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0x30100A16), Color(0x00000000), Color(0x36F08A2C)],
+          stops: [0.0, 0.48, 1.0],
+        ).createShader(rect),
+    );
+    // The d6 source is a flat rounded square. Two translucent planes painted
+    // over its lower/right edges give it thickness without a duplicate Image
+    // widget (the first prototype's duplicate cost ~1.6 paints/frame during
+    // rapid interaction).
+    if (sides == 6) {
+      final lowerPlane = Path()
+        ..moveTo(size.width * 0.09, size.height * 0.76)
+        ..lineTo(size.width * 0.91, size.height * 0.76)
+        ..lineTo(size.width * 0.84, size.height * 0.90)
+        ..lineTo(size.width * 0.16, size.height * 0.90)
+        ..close();
+      canvas.drawPath(
+        lowerPlane,
+        Paint()
+          ..shader = const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0x0C60462E), Color(0x6660462E)],
+          ).createShader(rect),
+      );
+      final rightPlane = Path()
+        ..moveTo(size.width * 0.84, size.height * 0.12)
+        ..lineTo(size.width * 0.91, size.height * 0.18)
+        ..lineTo(size.width * 0.91, size.height * 0.76)
+        ..lineTo(size.width * 0.84, size.height * 0.90)
+        ..close();
+      canvas.drawPath(rightPlane, Paint()..color = const Color(0x3860462E));
+    }
+    if (sides == 4 || sides == 6) {
+      canvas.drawLine(
+        Offset(size.width * 0.18, size.height * 0.82),
+        Offset(size.width * 0.78, size.height * 0.88),
+        Paint()
+          ..strokeWidth = maxed ? 2.0 : 1.35
+          ..color =
+              (maxed
+                      ? EmberColors.gold
+                      : selected
+                      ? EmberColors.ember
+                      : const Color(0xFFFFD98A))
+                  .withValues(alpha: maxed || selected ? 0.78 : 0.42),
+      );
+    }
+    canvas.restore();
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.9
+        ..color = const Color(0xFF3C2515).withValues(alpha: 0.55),
+    );
   }
 
   void _numeral(
@@ -1002,6 +1186,7 @@ class _FacePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    _paintDimensionalLight(canvas, size);
     final v = value;
     if (v == null) {
       // Engraved stamp — dim and low-contrast, clearly "not rolled yet",
@@ -1014,6 +1199,7 @@ class _FacePainter extends CustomPainter {
         fontSize: size.shortestSide * 0.30,
         weight: FontWeight.w700,
       );
+      _paintRing(canvas, size);
       return;
     }
     if (sides == 4) {
@@ -1027,6 +1213,7 @@ class _FacePainter extends CustomPainter {
         ),
         fontSize: size.shortestSide * 0.34,
       );
+      _paintRing(canvas, size);
       return;
     }
     final pips = _layouts[v.clamp(1, 12)]!;
@@ -1045,6 +1232,19 @@ class _FacePainter extends CustomPainter {
       canvas.drawCircle(p + const Offset(0, 0.8), radius + 0.8, rim);
       canvas.drawCircle(p, radius, pip);
     }
+    _paintRing(canvas, size);
+  }
+
+  void _paintRing(Canvas canvas, Size size) {
+    if (ringColor == null) return;
+    canvas.drawCircle(
+      size.center(Offset.zero),
+      size.shortestSide * 0.52,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.4
+        ..color = ringColor!.withValues(alpha: 0.9),
+    );
   }
 
   @override
@@ -1053,6 +1253,8 @@ class _FacePainter extends CustomPainter {
       old.sides != sides ||
       old.maxed != maxed ||
       old.selected != selected ||
+      old.dimensional != dimensional ||
+      old.ringColor != ringColor ||
       old.ink != ink;
 }
 

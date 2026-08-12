@@ -1116,6 +1116,48 @@ missed week).
 NOT released yet (v0.4.3 is still in Play review). Ship v0.4.4 after 0.4.3
 clears, via the usual signed-CI + verify + release recipe.
 
+## 2026-08-12 — competitive depth/performance pass (iteration 1)
+Owner asked whether Classic should go 3D, to benchmark competitors, outdo
+them, and keep performance strong. Primary-source research is recorded in
+docs/improvements/competitor-depth-performance-2026-08-12.md (Slice & Dice,
+Die in the Dungeon, Astrea, Dicefolk, Dicey Dungeons, Peglin, Balatro +
+Flutter renderer guidance). Decision: dimensional 2.5D inside Flutter, not a
+second/full-3D engine — competitors win on tactile causal feedback, build
+identity and readability; a runtime physics/mesh/post-FX stack would add
+package, occlusion and Android OpenGL-fallback risk without solving those.
+
+Implemented presentation-only depth: analytic perspective pitch/yaw/squash
+is composed into the existing throw/settle transform; directional warm/cool
+lighting and d6 lower/right planes are folded into the existing face painter;
+faceted dice retain their clean source planes; combat gets a static shallow
+cavern floor (perspective seams, ember pool, foreground silhouettes) behind
+combatants plus stronger contact shadows. No new assets/dependencies,
+saveLayer, blur, sim change, save change or package growth. The first
+widget-heavy prototype was REJECTED after the perf probe regressed die taps
+20.1→23.2 paints/frame and combat storm 96.2→107.7; the accepted collapsed
+version is 19.9 and 96.6 respectively, with combat idle exactly 2.0
+paints/frame. Title/map metrics unchanged. Screenshot before/after inspected;
+the d8/d10 duplicate-edge moiré found in critique was removed.
+
+New test/dimensional_presentation_test.dart proves deterministic finite pose,
+one-layer dimensional paint with no saveLayer, and static diorama paint with
+no saveLayer. VERIFIED: flutter analyze clean; full suite 276/276; dimensional
+tests 3/3; store screenshot harness 2/2; perf probe green; git diff confirms no
+lib/sim or sim_test changes (goldenV6 remains 2013675017). The four-run
+real-UI probe initially reported STUCK at a valid run_won: screenshot evidence
+showed the long achievement recap put `Delve again` off-screen and its helper
+performed a silent off-screen tap. Fixed the probe (not its oracle) to
+ensureVisible before a real hit-tested tap; the pinned session completed
+4/4 runs with 0 invariant violations and 0 UI warnings. A later repeat exposed
+a second harness leak: its persistent output/save
+directory resumed the prior invocation mid-fight, violating the declared
+fresh-session premise. The probe now deletes only its own sandbox save at
+setup before boot; two consecutive clean-start reruns both passed, the last
+at 4/4 runs / 827 steps / 0 violations / 0 warnings. Resume behavior remains
+covered by dedicated tests.
+Physical profile/memory/thermal numbers remain device-gated and are not
+claimed from debug widget proxies.
+
 ## 2026-08-11 — fix: post-encounter progression glitch (map back-and-forth)
 Owner report: after defeating an enemy or progressing, the progression
 glitches a bit back and forth. Two stacked causes, both on return-to-map:
