@@ -77,12 +77,12 @@ void main() {
     c.setPreferredDifficulty('normal');
     expect(c.meta.effectiveDifficulty, 'normal');
 
-    // v0.6.0: HARD is free (it was Forge-gated v0.4.0–v0.5.0) — any
-    // profile's explicit hard pick sticks. The Forge now gates only the
-    // Ascension ladder (see forge_unlock_test.dart).
+    // v0.6.1: HARD is Forge-gated again — a locked profile's hard pick is
+    // ignored (setPreferredDifficulty refuses, the sheet explains why), and
+    // a Forge profile's pick sticks (see forge_unlock_test.dart).
     c.setPreferredDifficulty('hard');
-    expect(c.meta.effectiveDifficulty, 'hard',
-        reason: 'hard is free as of v0.6.0');
+    expect(c.meta.effectiveDifficulty, 'normal',
+        reason: 'hard is Forge-gated as of v0.6.1');
     c.meta.forgeUnlocked = true;
     c.setPreferredDifficulty('hard');
     expect(c.meta.effectiveDifficulty, 'hard');
