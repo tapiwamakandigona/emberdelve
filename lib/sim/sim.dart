@@ -32,7 +32,14 @@ import 'run_layer.dart';
 // docs/v7-face-forge-contract.md.
 const int simVersion = 7;
 
-const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
+const List<String> simStreams = [
+  'map',
+  'combat',
+  'loot',
+  'shuffle',
+  'offer',
+  'boon',
+];
 
 typedef Handler = void Function(Sim, Map, List<Map<String, Object?>>);
 
@@ -59,7 +66,8 @@ class Sim {
   final int runSeed;
   final Map<String, Rng> rng = {};
   int turn = 0;
-  String phase = 'idle'; // idle|boon|map|player_turn|reward|rest|run_won|run_lost
+  String phase =
+      'idle'; // idle|boon|map|player_turn|reward|rest|run_won|run_lost
   Map<String, dynamic> player = {};
   Map<String, dynamic>? enemy;
   Map<String, dynamic>? map;
@@ -94,6 +102,8 @@ class Sim {
       'rolled': null,
       'rolled_max': null,
       'rolled_face': null,
+      'surge_used': <int>[],
+      'echo_pending': null,
       'assigned': <String, String>{},
     };
   }
@@ -127,8 +137,9 @@ class Sim {
   factory Sim.restore(Map<String, dynamic> snap) {
     if (snap['version'] != simVersion) {
       throw StateError(
-          'cannot restore snapshot: version ${snap['version']} is not '
-          '$simVersion (stale save; start a new run)');
+        'cannot restore snapshot: version ${snap['version']} is not '
+        '$simVersion (stale save; start a new run)',
+      );
     }
     final sim = Sim._blank(snap['run_seed'] as int);
     sim.turn = snap['turn'] as int;
@@ -140,10 +151,12 @@ class Sim {
     sim.map = snap['map'] == null
         ? null
         : (deepCopy(snap['map']) as Map).cast<String, dynamic>();
-    sim.offers =
-        snap['offers'] == null ? null : (snap['offers'] as List).cast<String>().toList();
-    sim.boons =
-        snap['boons'] == null ? null : (snap['boons'] as List).cast<String>().toList();
+    sim.offers = snap['offers'] == null
+        ? null
+        : (snap['offers'] as List).cast<String>().toList();
+    sim.boons = snap['boons'] == null
+        ? null
+        : (snap['boons'] as List).cast<String>().toList();
     sim.shop = snap['shop'] == null
         ? null
         : (deepCopy(snap['shop']) as Map).cast<String, dynamic>();
@@ -161,8 +174,9 @@ class Sim {
         : (snap['mutators'] as List).cast<String>().toSet();
     final rngSnap = snap['rng'] as Map;
     for (final name in simStreams) {
-      sim.rng[name] =
-          Rng.restore((rngSnap[name] as Map).cast<String, dynamic>());
+      sim.rng[name] = Rng.restore(
+        (rngSnap[name] as Map).cast<String, dynamic>(),
+      );
     }
     return sim;
   }
@@ -194,17 +208,17 @@ class Sim {
   }
 
   Map<String, Object?> state() => {
-        'turn': turn,
-        'phase': phase,
-        'player': player,
-        'enemy': enemy,
-        'map': map,
-        'offers': offers,
-        'boons': boons,
-        'shop': shop,
-        'event': event,
-        'run': run,
-      };
+    'turn': turn,
+    'phase': phase,
+    'player': player,
+    'enemy': enemy,
+    'map': map,
+    'offers': offers,
+    'boons': boons,
+    'shop': shop,
+    'event': event,
+    'run': run,
+  };
 
   int stateHash() {
     var h = 17;

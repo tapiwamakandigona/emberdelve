@@ -38,16 +38,16 @@ void _invalid(List<Map<String, Object?>> events, String reason) =>
 // Enemy pools built deterministically from enemiesOrder, filtered by fromLayer
 // at spawn time.
 List<String> _regularsFor(int layer) => [
-      for (final id in enemiesOrder)
-        if (!enemies[id]!.boss &&
-            !enemies[id]!.elite &&
-            enemies[id]!.fromLayer <= layer)
-          id
-    ];
+  for (final id in enemiesOrder)
+    if (!enemies[id]!.boss &&
+        !enemies[id]!.elite &&
+        enemies[id]!.fromLayer <= layer)
+      id,
+];
 List<String> _elitesFor(int layer) => [
-      for (final id in enemiesOrder)
-        if (enemies[id]!.elite && enemies[id]!.fromLayer <= layer) id
-    ];
+  for (final id in enemiesOrder)
+    if (enemies[id]!.elite && enemies[id]!.fromLayer <= layer) id,
+];
 // v0.4 boss variety: the run's boss is a PURE function of the run seed — no
 // RNG stream is consumed, so every other seeded stream (map, combat, loot,
 // boon, offer, shop) is byte-identical to the single-boss sim. Runs whose
@@ -56,7 +56,7 @@ List<String> _elitesFor(int layer) => [
 // player faces the same boss that day.
 final List<String> _bossIds = [
   for (final id in enemiesOrder)
-    if (enemies[id]!.boss) id
+    if (enemies[id]!.boss) id,
 ];
 
 String bossForSeed(int seed) => _bossIds[seed % _bossIds.length];
@@ -91,8 +91,12 @@ void _grantRelic(Sim sim, String id, List<Map<String, Object?>> events) {
   _push(events, {'type': 'relic_gained', 'relic': id});
 }
 
-void _gainGold(Sim sim, int amount, List<Map<String, Object?>> events,
-    [String? source]) {
+void _gainGold(
+  Sim sim,
+  int amount,
+  List<Map<String, Object?>> events, [
+  String? source,
+]) {
   sim.run!['gold'] = (sim.run!['gold'] as int) + amount;
   _push(events, {
     'type': 'gold_gained',
@@ -284,15 +288,23 @@ void _resolveRewardTelegraphs(Sim sim, Map<String, Object?> map) {
     if (kind != 'fight' && kind != 'elite') continue;
     final layer = node['layer'] as int;
     final ceiling = _tierCeiling(layer);
-    final pool =
-        [for (final d in diceOrder) if (dice[d]!.tier <= ceiling) d];
+    final pool = [
+      for (final d in diceOrder)
+        if (dice[d]!.tier <= ceiling) d,
+    ];
     final offers = <String>[];
     if (kind == 'elite') {
-      final rares = [for (final d in diceOrder) if (dice[d]!.tier == 3) d];
+      final rares = [
+        for (final d in diceOrder)
+          if (dice[d]!.tier == 3) d,
+      ];
       offers.add(rares[offer.range(1, rares.length) - 1]);
     }
     final n = offer.range(2, 3);
-    final rest = [for (final d in pool) if (!offers.contains(d)) d];
+    final rest = [
+      for (final d in pool)
+        if (!offers.contains(d)) d,
+    ];
     while (offers.length < n && rest.isNotEmpty) {
       offers.add(rest.removeAt(offer.range(1, rest.length) - 1));
     }
@@ -329,15 +341,23 @@ void runChooseNode(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   switch (node['kind']) {
     case 'fight':
       final pool = _regularsFor(layer);
-      combatBegin(sim, pool[sim.rng['combat']!.range(1, pool.length) - 1],
-          false, events,
-          layer: layer);
+      combatBegin(
+        sim,
+        pool[sim.rng['combat']!.range(1, pool.length) - 1],
+        false,
+        events,
+        layer: layer,
+      );
       break;
     case 'elite':
       final pool = _elitesFor(layer);
-      combatBegin(sim, pool[sim.rng['combat']!.range(1, pool.length) - 1],
-          true, events,
-          layer: layer);
+      combatBegin(
+        sim,
+        pool[sim.rng['combat']!.range(1, pool.length) - 1],
+        true,
+        events,
+        layer: layer,
+      );
       break;
     case 'boss':
       combatBegin(sim, bossForSeed(sim.runSeed), false, events);
@@ -475,7 +495,10 @@ void _openShop(Sim sim, int layer, List<Map<String, Object?>> events) {
   // duplicate stock is deliberate (buying two copies of the same die is
   // legitimate in a dice-builder), and switching to without-replacement now
   // would shift every seed's shop stream.
-  final diePool = [for (final id in diceOrder) if (dice[id]!.tier <= ceiling) id];
+  final diePool = [
+    for (final id in diceOrder)
+      if (dice[id]!.tier <= ceiling) id,
+  ];
   final dieSlots = <Map<String, Object?>>[];
   for (var k = 0; k < 3 && diePool.isNotEmpty; k++) {
     final id = diePool[loot.range(1, diePool.length) - 1];
@@ -488,14 +511,19 @@ void _openShop(Sim sim, int layer, List<Map<String, Object?>> events) {
   }
   // 2 relics not yet owned.
   final relicPool = [
-    for (final id in relicsOrder) if (!ownsRelic(sim, id)) id
+    for (final id in relicsOrder)
+      if (!ownsRelic(sim, id)) id,
   ];
   final relicSlots = <Map<String, Object?>>[];
   final relicPicks = List<String>.from(relicPool);
   for (var k = 0; k < 2 && relicPicks.isNotEmpty; k++) {
     final id = relicPicks.removeAt(loot.range(1, relicPicks.length) - 1);
-    relicSlots.add(
-        {'kind': 'relic', 'id': id, 'price': price(55), 'sold': false});
+    relicSlots.add({
+      'kind': 'relic',
+      'id': id,
+      'price': price(55),
+      'sold': false,
+    });
   }
   // 1 heal (25% max hp).
   final healSlot = {
@@ -549,8 +577,12 @@ void runBuy(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       break;
   }
   slot['sold'] = true;
-  _push(events,
-      {'type': 'bought', 'slot': s, 'kind': slot['kind'], 'id': slot['id']});
+  _push(events, {
+    'type': 'bought',
+    'slot': s,
+    'kind': slot['kind'],
+    'id': slot['id'],
+  });
 }
 
 void runLeaveShop(Sim sim, Map cmd, List<Map<String, Object?>> events) {
@@ -564,7 +596,10 @@ void runLeaveShop(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 
 void _openEvent(Sim sim, List<Map<String, Object?>> events) {
   final seen = (sim.run!['seen_events'] as List).cast<String>();
-  final unseen = [for (final id in eventsOrder) if (!seen.contains(id)) id];
+  final unseen = [
+    for (final id in eventsOrder)
+      if (!seen.contains(id)) id,
+  ];
   final pool = unseen.isNotEmpty ? unseen : List<String>.from(eventsOrder);
   final id = pool[sim.rng['shuffle']!.range(1, pool.length) - 1];
   seen.add(id);
@@ -596,7 +631,8 @@ void runEventChoose(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     return _invalid(events, 'not_enough_gold');
   }
   // lose_random_die only legal while pool > 3.
-  if (effects['lose_random_die'] == 1 && (sim.player['dice'] as List).length <= 3) {
+  if (effects['lose_random_die'] == 1 &&
+      (sim.player['dice'] as List).length <= 3) {
     return _invalid(events, 'pool_too_small');
   }
   _applyEventEffects(sim, effects, events);
@@ -606,7 +642,10 @@ void runEventChoose(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 }
 
 void _applyEventEffects(
-    Sim sim, Map<String, Object> effects, List<Map<String, Object?>> events) {
+  Sim sim,
+  Map<String, Object> effects,
+  List<Map<String, Object?>> events,
+) {
   final loot = sim.rng['loot']!;
   final shuffle = sim.rng['shuffle']!;
   // Deterministic effect order (contract §4).
@@ -616,8 +655,11 @@ void _applyEventEffects(
       _gainGold(sim, gold, events, 'event');
     } else {
       sim.run!['gold'] = (sim.run!['gold'] as int) + gold;
-      _push(events,
-          {'type': 'gold_spent', 'amount': -gold, 'total': sim.run!['gold']});
+      _push(events, {
+        'type': 'gold_spent',
+        'amount': -gold,
+        'total': sim.run!['gold'],
+      });
     }
   }
   final goldAfter = (effects['gold_after'] as int?) ?? 0;
@@ -649,8 +691,11 @@ void _applyEventEffects(
   final embers = (effects['embers'] as int?) ?? 0;
   if (embers > 0) {
     sim.run!['embers'] = (sim.run!['embers'] as int) + embers;
-    _push(events,
-        {'type': 'embers_gained', 'amount': embers, 'total': sim.run!['embers']});
+    _push(events, {
+      'type': 'embers_gained',
+      'amount': embers,
+      'total': sim.run!['embers'],
+    });
   }
   if (effects['lose_random_die'] == 1) {
     final pool = sim.player['dice'] as List;
@@ -667,20 +712,26 @@ void _applyEventEffects(
   }
   final grt = (effects['gain_random_die'] as int?) ?? 0;
   if (grt > 0) {
-    final pool = [for (final id in diceOrder) if (dice[id]!.tier <= grt) id];
+    final pool = [
+      for (final id in diceOrder)
+        if (dice[id]!.tier <= grt) id,
+    ];
     final id = pool[loot.range(1, pool.length) - 1];
     (sim.player['dice'] as List).add(id);
     _push(events, {'type': 'die_gained', 'die': id});
   }
   if (effects['gain_random_relic'] == 1) {
-    final pool = [for (final id in relicsOrder) if (!ownsRelic(sim, id)) id];
+    final pool = [
+      for (final id in relicsOrder)
+        if (!ownsRelic(sim, id)) id,
+    ];
     if (pool.isEmpty) {
       sim.run!['embers'] = (sim.run!['embers'] as int) + 15;
       _push(events, {
         'type': 'embers_gained',
         'amount': 15,
         'total': sim.run!['embers'],
-        'source': 'relic_fallback'
+        'source': 'relic_fallback',
       });
     } else {
       _grantRelic(sim, pool[loot.range(1, pool.length) - 1], events);
@@ -721,8 +772,12 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     if (hf > 0) {
       final h = _heal(sim, hf);
       if (h > 0) {
-        _push(events,
-            {'type': 'healed', 'amount': h, 'hp': sim.player['hp'], 'source': 'relic'});
+        _push(events, {
+          'type': 'healed',
+          'amount': h,
+          'hp': sim.player['hp'],
+          'source': 'relic',
+        });
       }
     }
     if (isBoss) {
@@ -741,14 +796,15 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
       var offers = (node['offers'] as List?)?.cast<String>().toList();
       if (offers == null || offers.isEmpty) {
         final ceiling = _tierCeiling(layer);
-        final poolIds =
-            [for (final id in diceOrder) if (dice[id]!.tier <= ceiling) id];
+        final poolIds = [
+          for (final id in diceOrder)
+            if (dice[id]!.tier <= ceiling) id,
+        ];
         final count = sim.rng['loot']!.range(2, 3);
         final pool = List<String>.from(poolIds);
         offers = <String>[];
         for (var k = 0; k < count && pool.isNotEmpty; k++) {
-          offers
-              .add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
+          offers.add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
         }
       }
       sim.offers = offers;
@@ -767,8 +823,11 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     final kept = (run['embers'] as int) ~/ 2;
     final floor = 5 + layer;
     run['embers'] = kept > floor ? kept : floor;
-    final bucket = insightBucket(layer, node['kind'] == 'boss',
-        bossId: bossForSeed(sim.runSeed));
+    final bucket = insightBucket(
+      layer,
+      node['kind'] == 'boss',
+      bossId: bossForSeed(sim.runSeed),
+    );
     final lines = insights[bucket]!;
     final insight = lines[sim.rng['loot']!.range(1, lines.length) - 1];
     run['insight'] = insight;

@@ -77,10 +77,13 @@ Invalid commands emit existing `invalid_command` with one of:
 
 ### Combat events
 
-- `rune_triggered { die, rune, face }`
+- `rune_triggered { die, rune, face }` — emitted on the roll for Surge, on the
+  assignment for Blade/Aegis/Echo.
 - `rune_bonus { die, action, amount }`
 - `echo_armed { die, other_action }`
-- `echo_spent { die, action, amount }`
+- `echo_spent { die, on_die, action, amount }` — `die` armed the charge,
+  `on_die` is the assignment it paid. Shipped with both so the UI never has to
+  guess which die the +1 belongs to.
 - `reroll_gained { die, amount, source:"surge_rune" }`
 
 `die_assigned.value` remains the final exact contribution shown by preview.

@@ -14,19 +14,35 @@ class AssignmentResolution {
   final String? rune;
   final int runeBonus;
 
+  /// Pending Echo charge consumed by this assignment: the die that armed it
+  /// and the amount it pays. Zero/null when no charge applies.
+  final int? echoFromDie;
+  final int echoBonus;
+
   const AssignmentResolution._({
     required this.allowed,
     required this.value,
     this.invalidReason,
     this.rune,
     this.runeBonus = 0,
+    this.echoFromDie,
+    this.echoBonus = 0,
   });
 
   const AssignmentResolution.allowed(
     int value, {
     String? rune,
     int runeBonus = 0,
-  }) : this._(allowed: true, value: value, rune: rune, runeBonus: runeBonus);
+    int? echoFromDie,
+    int echoBonus = 0,
+  }) : this._(
+         allowed: true,
+         value: value,
+         rune: rune,
+         runeBonus: runeBonus,
+         echoFromDie: echoFromDie,
+         echoBonus: echoBonus,
+       );
 
   const AssignmentResolution.invalid(String reason)
     : this._(allowed: false, value: -1, invalidReason: reason);
@@ -99,16 +115,38 @@ AssignmentResolution resolveAssignment({
       naturalFaces[die - 1] == resolvedDie.temperedFace;
   var runeBonus = 0;
   String? triggeredRune;
-  if (runeFaceMatches &&
-      ((resolvedDie.rune == 'blade' && action == 'attack') ||
-          (resolvedDie.rune == 'aegis' && action == 'block'))) {
-    triggeredRune = resolvedDie.rune;
-    runeBonus = 2;
-    value += runeBonus;
+  if (runeFaceMatches) {
+    final rune = resolvedDie.rune;
+    if (rune == 'blade' && action == 'attack') {
+      triggeredRune = rune;
+      runeBonus = 2;
+    } else if (rune == 'aegis' && action == 'block') {
+      triggeredRune = rune;
+      runeBonus = 2;
+    } else if (rune == 'echo') {
+      // Echo pays by arming the opposite verb, not by raising this value.
+      triggeredRune = rune;
+    }
   }
+  value += runeBonus;
+
+  // A pending Echo charge is the last additive term (contract §Arithmetic
+  // order). It is armed by a previous assignment, so it can never pay the
+  // assignment that armed it.
+  final pending = player['echo_pending'];
+  var echoBonus = 0;
+  int? echoFromDie;
+  if (pending is Map && pending['action'] == action) {
+    echoBonus = pending['amount'] as int? ?? 0;
+    echoFromDie = pending['die'] as int?;
+    value += echoBonus;
+  }
+
   return AssignmentResolution.allowed(
     value,
     rune: triggeredRune,
     runeBonus: runeBonus,
+    echoFromDie: echoFromDie,
+    echoBonus: echoBonus,
   );
 }

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:emberdelve/sim/run_dice.dart';
+import 'package:emberdelve/sim/assignment.dart';
 import 'package:emberdelve/sim/combat.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -256,6 +257,150 @@ void main() {
       expect(
         events.where((e) => e['type'] == 'die_assigned').single['value'],
         3,
+      );
+    });
+  });
+
+  group('v7 Surge rune', () {
+    test('the natural face hands back one charge, once per die per turn', () {
+      // Seeded search for a run whose opening roll lands the tempered face on
+      // a d6, so the grant is observed on a real roll rather than a stub.
+      Sim? found;
+      for (var seed = 1; seed <= 200 && found == null; seed++) {
+        final sim = Sim(seed)..apply({'type': 'start_run'});
+        sim.run!['custom_dice'] = {
+          'custom_1': {'base': 'd6', 'face': 4, 'rune': 'surge'},
+        };
+        sim.player['dice'] = <String>['custom_1', 'd6'];
+        combatBegin(sim, 'cinder_wisp', false, [], layer: 2);
+        final events = sim.apply({'type': 'roll'});
+        if (events.any((e) => e['type'] == 'reroll_gained')) found = sim;
+      }
+      expect(found, isNotNull, reason: 'no seed rolled the tempered face');
+      final sim = found!;
+      expect((sim.player['rolled_face'] as List)[0], 4);
+      expect(sim.player['rerolls_left'], 1);
+      expect(sim.player['surge_used'], [1]);
+
+      // A charge reroll that lands face 4 again this turn pays nothing.
+      var repaid = false;
+      for (var i = 0; i < 40; i++) {
+        final before = sim.player['rerolls_left'] as int;
+        if (before <= 0) break;
+        final evs = sim.apply({'type': 'reroll', 'die': 1});
+        if (evs.any((e) => e['type'] == 'reroll_gained')) repaid = true;
+        if ((sim.player['rolled_face'] as List)[0] == 4) {
+          expect(repaid, isFalse, reason: 'surge paid twice in one turn');
+        }
+      }
+      expect(repaid, isFalse);
+    });
+
+    test('a non-matching natural face pays nothing', () {
+      final sim = _inCombat(rune: 'surge', face: 5);
+      sim.player['rerolls_left'] = 0;
+      sim.player['surge_used'] = <int>[];
+      final events = sim.apply({'type': 'roll'});
+      final face = (sim.player['rolled_face'] as List)[0] as int;
+      if (face == 5) return; // matching roll is covered by the test above
+      expect(events.where((e) => e['type'] == 'reroll_gained'), isEmpty);
+      expect(sim.player['rerolls_left'], 0);
+    });
+  });
+
+  group('v7 Echo rune', () {
+    Sim armed() {
+      final sim = _inCombat(rune: 'echo', face: 3);
+      sim.player['dice'] = <String>['custom_1', 'd6', 'd6'];
+      sim.player['rolled'] = <int>[3, 4, 4];
+      sim.player['rolled_face'] = <int>[3, 4, 4];
+      sim.player['rolled_max'] = <bool>[false, false, false];
+      sim.player['combo_bonus'] = <int>[0, 0, 0];
+      sim.player['assigned'] = <String, String>{};
+      return sim;
+    }
+
+    test('arms the opposite verb and cannot pay its own assignment', () {
+      final sim = armed();
+      final events = sim.apply({
+        'type': 'assign',
+        'die': 1,
+        'action': 'attack',
+      });
+      // Value is the bare face: Echo pays forward, never to itself.
+      expect(
+        events.where((e) => e['type'] == 'die_assigned').single['value'],
+        3,
+      );
+      expect(events.where((e) => e['type'] == 'echo_spent'), isEmpty);
+      expect(events.where((e) => e['type'] == 'rune_bonus'), isEmpty);
+      expect(events.where((e) => e['type'] == 'echo_armed').single, {
+        'type': 'echo_armed',
+        'die': 1,
+        'other_action': 'block',
+      });
+      expect(sim.player['echo_pending'], {
+        'die': 1,
+        'action': 'block',
+        'amount': 1,
+      });
+    });
+
+    test('the next opposite-verb assignment spends exactly one charge', () {
+      final sim = armed();
+      sim.apply({'type': 'assign', 'die': 1, 'action': 'attack'});
+
+      // Same verb as the arming die: no charge, plain value.
+      final sameVerb = sim.apply({
+        'type': 'assign',
+        'die': 2,
+        'action': 'attack',
+      });
+      expect(
+        sameVerb.where((e) => e['type'] == 'die_assigned').single['value'],
+        4,
+      );
+      expect(sim.player['echo_pending'], isNotNull);
+
+      // Opposite verb: +1, charge consumed and named.
+      final spent = sim.apply({'type': 'assign', 'die': 3, 'action': 'block'});
+      expect(spent.where((e) => e['type'] == 'echo_spent').single, {
+        'type': 'echo_spent',
+        'die': 1,
+        'on_die': 3,
+        'action': 'block',
+        'amount': 1,
+      });
+      expect(
+        spent.where((e) => e['type'] == 'die_assigned').single['value'],
+        5,
+      );
+      expect(sim.player['echo_pending'], isNull);
+    });
+
+    test('the charge never survives the turn', () {
+      final sim = armed();
+      sim.apply({'type': 'assign', 'die': 1, 'action': 'attack'});
+      expect(sim.player['echo_pending'], isNotNull);
+      sim.apply({'type': 'end_turn'});
+      expect(sim.player['echo_pending'], isNull);
+      expect(sim.player['surge_used'], isEmpty);
+    });
+
+    test('preview equals the resolved value while a charge is pending', () {
+      final sim = armed();
+      sim.apply({'type': 'assign', 'die': 1, 'action': 'attack'});
+      final preview = resolveAssignment(
+        player: sim.player,
+        enemy: sim.enemy!,
+        run: sim.run,
+        die: 3,
+        action: 'block',
+      );
+      final events = sim.apply({'type': 'assign', 'die': 3, 'action': 'block'});
+      expect(
+        events.where((e) => e['type'] == 'die_assigned').single['value'],
+        preview.value,
       );
     });
   });
