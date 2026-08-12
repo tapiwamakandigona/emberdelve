@@ -303,9 +303,7 @@ class _CombatScreenState extends State<CombatScreen> {
       assignPreview(
         player,
         enemy,
-        ((widget.c.state?['run'] as Map?)?['relics'] as List?)
-                ?.cast<String>() ??
-            const [],
+        widget.c.state?['run'] as Map?,
         die,
         action,
       );

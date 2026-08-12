@@ -18,6 +18,7 @@
 
 import '../data/dice.dart';
 import '../data/enemies.dart';
+import 'assignment.dart';
 import 'combos.dart';
 import 'relic_hooks.dart';
 import 'sim.dart';
@@ -42,9 +43,6 @@ Map<String, Object?> _intentEvent(Map<String, dynamic> enemy) {
     if (intent['kind'] == 'attack_block') 'block': intent['block'],
   };
 }
-
-bool _isTough(Map<String, dynamic> enemy) =>
-    enemy['elite'] == true || enemy['boss'] == true;
 
 // Apply the per-turn-start relic block (turn_block). Called for turn 1 in
 // combatBegin and for every subsequent turn in end_turn.
@@ -453,24 +451,21 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   }
   final assigned = sim.player['assigned'] as Map;
   if (assigned['$die'] != null) return _invalid(events, 'die_already_assigned');
-  final def = dieDef((sim.player['dice'] as List)[die - 1] as String);
-  final mods = def.mods;
-  final rolledMax = (sim.player['rolled_max'] as List?)?.cast<bool>();
-  final bonus = (rolledMax != null && rolledMax[die - 1])
-      ? (mods['on_max_bonus'] as int? ?? 0)
-      : 0;
   final enemy = sim.enemy!;
   final action = cmd['action'];
+  final resolution = resolveAssignment(
+    player: sim.player,
+    enemy: enemy,
+    run: sim.run,
+    die: die,
+    action: action is String ? action : '',
+  );
+  if (!resolution.allowed) {
+    return _invalid(events, resolution.invalidReason!);
+  }
 
   if (action == 'attack') {
-    if (mods['block_only'] == true) return _invalid(events, 'die_is_block_only');
-    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
-    var value = rolled[die - 1] +
-        (mods['attack_bonus'] as int? ?? 0) +
-        bonus +
-        (combo != null ? combo[die - 1] : 0) +
-        relicSum(sim, 'attack_flat');
-    if (_isTough(enemy)) value += relicSum(sim, 'elite_damage');
+    final value = resolution.value;
     assigned['$die'] = 'attack';
     var absorbed = value;
     final enemyBlock = enemy['block'] as int;
@@ -513,15 +508,7 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       _encounterWon(sim, events);
     }
   } else if (action == 'block') {
-    if (mods['attack_only'] == true) {
-      return _invalid(events, 'die_is_attack_only');
-    }
-    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
-    final value = rolled[die - 1] +
-        (mods['block_bonus'] as int? ?? 0) +
-        bonus +
-        (combo != null ? combo[die - 1] : 0) +
-        relicSum(sim, 'block_flat');
+    final value = resolution.value;
     assigned['$die'] = 'block';
     sim.player['block'] = (sim.player['block'] as int) + value;
     _push(events,
@@ -531,8 +518,6 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       'amount': value,
       'total_block': sim.player['block'],
     });
-  } else {
-    return _invalid(events, 'unknown_action');
   }
 }
 
