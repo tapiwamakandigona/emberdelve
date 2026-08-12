@@ -69,17 +69,17 @@ bool isEarned(MetaState m, AchievementDef def) =>
 
 /// Every earned achievement id, in authoring order.
 List<String> earnedAchievements(MetaState m) => [
-      for (final id in achievementsOrder)
-        if (achievements[id] != null && isEarned(m, achievements[id]!)) id,
-    ];
+  for (final id in achievementsOrder)
+    if (achievements[id] != null && isEarned(m, achievements[id]!)) id,
+];
 
 /// Ids earned now but not yet recorded in [MetaState.seenAchievements] — i.e.
 /// the ones a toast should announce. Order is authoring order, so a run that
 /// completes several at once announces them predictably.
 List<String> unseenAchievements(MetaState m) => [
-      for (final id in earnedAchievements(m))
-        if (!m.seenAchievements.contains(id)) id,
-    ];
+  for (final id in earnedAchievements(m))
+    if (!m.seenAchievements.contains(id)) id,
+];
 
 /// Mark [ids] as announced. Caller persists the meta afterwards.
 void markSeen(MetaState m, Iterable<String> ids) {

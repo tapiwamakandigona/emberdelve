@@ -30,8 +30,10 @@ void driveToTerminal(GameController c) {
         final m = c.state!['map'] as Map;
         final e = (m['edges'] as Map).cast<String, List>();
         final p = m['position'] as int;
-        c.apply(
-            {'type': 'choose_node', 'node': (e['$p'] as List).cast<int>().first});
+        c.apply({
+          'type': 'choose_node',
+          'node': (e['$p'] as List).cast<int>().first,
+        });
         break;
       case 'player_turn':
         c.apply({'type': 'roll'});
@@ -74,20 +76,25 @@ void main() {
   testWidgets('summary shows the seed and tapping copies it', (tester) async {
     final copied = <String>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform, (call) async {
-      if (call.method == 'Clipboard.setData') {
-        copied.add((call.arguments as Map)['text'] as String);
-      }
-      return null;
-    });
-    addTearDown(() => tester.binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform, null));
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied.add((call.arguments as Map)['text'] as String);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
 
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: 424242);
     await pumpFor(tester, 700);
     driveToTerminal(c);
@@ -103,18 +110,19 @@ void main() {
     await pumpFor(tester, 400);
   });
 
-  testWidgets('Delve a seed starts a run on exactly that seed',
-      (tester) async {
+  testWidgets('Delve a seed starts a run on exactly that seed', (tester) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     await pumpFor(tester, 400);
 
     final entry = find.byKey(const ValueKey('seeded-delve'));
-    await tester.scrollUntilVisible(entry, 100,
-        scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(
+      entry,
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(entry);
     await pumpFor(tester, 400);
     await tester.enterText(find.byKey(const ValueKey('seed-field')), '424242');

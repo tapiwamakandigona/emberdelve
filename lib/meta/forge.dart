@@ -45,8 +45,7 @@ int maxAscensionFor(MetaState m) =>
   MetaState m, {
   required String difficulty,
   required int ascension,
-}) =>
-    (
-      difficulty: canSelectDifficulty(m, difficulty) ? difficulty : 'normal',
-      ascension: ascension.clamp(0, maxAscensionFor(m)),
-    );
+}) => (
+  difficulty: canSelectDifficulty(m, difficulty) ? difficulty : 'normal',
+  ascension: ascension.clamp(0, maxAscensionFor(m)),
+);

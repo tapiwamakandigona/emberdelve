@@ -88,8 +88,10 @@ void main() {
         seenAchievements: {'first_win', 'deep_six'},
       );
       final m = mergeMetaStates(local, cloud);
-      expect(m.unlockedCharacters,
-          containsAll({'kindler', 'warden', 'ember_witch'}));
+      expect(
+        m.unlockedCharacters,
+        containsAll({'kindler', 'warden', 'ember_witch'}),
+      );
       expect(m.ownedThemes, containsAll({'hearth', 'violet'}));
       expect(m.ownedDieSkins, containsAll({'bone', 'gilt'}));
       expect(m.ownedCodex, containsAll({'enemy:rat', 'relic:coal'}));
@@ -209,12 +211,12 @@ void main() {
       expect(cloud.ownedDieSkins, {'gilt'});
     });
 
-    test('merge round-trips through toJson/fromJson (cloud payload path)',
-        () {
+    test('merge round-trips through toJson/fromJson (cloud payload path)', () {
       final local = MetaState(lifetimeEmbers: 50, embers: 20, runsPlayed: 3);
       final cloud = MetaState.fromJson(
-          MetaState(lifetimeEmbers: 80, embers: 66, runsWon: 2).toJson()
-              as Map<String, dynamic>);
+        MetaState(lifetimeEmbers: 80, embers: 66, runsWon: 2).toJson()
+            as Map<String, dynamic>,
+      );
       final m = mergeMetaStates(local, cloud);
       expect(m.embers, 66);
       expect(m.runsPlayed, 3);

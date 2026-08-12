@@ -57,8 +57,10 @@ class Haptics {
     required Future<void> Function() fallback,
   }) async {
     try {
-      final handled = await channel.invokeMethod<bool>(
-          'vibrate', {'ms': ms, 'amplitude': amplitude});
+      final handled = await channel.invokeMethod<bool>('vibrate', {
+        'ms': ms,
+        'amplitude': amplitude,
+      });
       if (handled == true) return;
     } catch (_) {
       // Channel missing (iOS/web/tests) or platform error — fall through.

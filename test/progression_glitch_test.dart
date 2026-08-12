@@ -46,15 +46,15 @@ int? findSeed(String kind) {
 }
 
 void main() {
-  testWidgets(
-      'arriving screen State survives the phase transition settling '
+  testWidgets('arriving screen State survives the phase transition settling '
       '(no remount = no walk/scroll restart)', (tester) async {
     final packed = findSeed('event');
     expect(packed, isNotNull, reason: 'no seed with an adjacent event found');
     final seed = packed! ~/ 100000, node = packed % 100000;
     final c = GameController();
     await tester.pumpWidget(
-        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)));
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: seed);
     await pumpFor(tester, 800);
     if (c.phase == 'boon') {
@@ -74,14 +74,19 @@ void main() {
     final s1 = tester.state(find.byType(MapScreen));
     await pumpFor(tester, 600);
     final s2 = tester.state(find.byType(MapScreen));
-    expect(identical(s1, s2), isTrue,
-        reason: 'PhaseSwitcher remounted the arriving screen when the '
-            'transition settled — the delver walk and follow scroll restart '
-            'mid-flight (the "progression glitches back and forth" bug)');
+    expect(
+      identical(s1, s2),
+      isTrue,
+      reason:
+          'PhaseSwitcher remounted the arriving screen when the '
+          'transition settled — the delver walk and follow scroll restart '
+          'mid-flight (the "progression glitches back and forth" bug)',
+    );
   });
 
-  testWidgets('map arrival frames the delver instantly (no bottom-up sweep)',
-      (tester) async {
+  testWidgets('map arrival frames the delver instantly (no bottom-up sweep)', (
+    tester,
+  ) async {
     // Drive the greedy bot to a mid-run map (delver on layer >= 4) so the
     // follow target sits meaningfully above the bottom of the delve.
     GameController? mid;
@@ -104,22 +109,41 @@ void main() {
         c.apply(cmd);
       }
     }
-    expect(mid, isNotNull, reason: 'no bot run reached map layer 4 in 40 seeds');
-    await tester.pumpWidget(MaterialApp(
-        theme: buildEmberTheme(), home: Scaffold(body: MapScreen(mid!))));
+    expect(
+      mid,
+      isNotNull,
+      reason: 'no bot run reached map layer 4 in 40 seeds',
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildEmberTheme(),
+        home: Scaffold(body: MapScreen(mid!)),
+      ),
+    );
     // First frame schedules the follow; the post-frame callback must JUMP the
     // camera onto the delver, not start a 450ms sweep from the delve floor.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
-    final early =
-        tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels;
+    final early = tester
+        .state<ScrollableState>(find.byType(Scrollable))
+        .position
+        .pixels;
     await pumpFor(tester, 700);
-    final settled =
-        tester.state<ScrollableState>(find.byType(Scrollable)).position.pixels;
-    expect(early, greaterThan(0),
-        reason: 'mid-run arrival should already be framed above the floor');
-    expect(early, settled,
-        reason: 'camera moved after arrival — the map is still sweeping up '
-            'from the bottom of the delve on every visit');
+    final settled = tester
+        .state<ScrollableState>(find.byType(Scrollable))
+        .position
+        .pixels;
+    expect(
+      early,
+      greaterThan(0),
+      reason: 'mid-run arrival should already be framed above the floor',
+    );
+    expect(
+      early,
+      settled,
+      reason:
+          'camera moved after arrival — the map is still sweeping up '
+          'from the bottom of the delve on every visit',
+    );
   });
 }

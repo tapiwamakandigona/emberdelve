@@ -13,18 +13,41 @@ import 'package:emberdelve/sim/run_layer.dart';
 const int goldenAnchorSeed = 20260723;
 
 const legalDieMods = {
-  'attack_bonus', 'block_bonus', 'min_value', 'on_max_bonus',
-  'attack_only', 'block_only'
+  'attack_bonus',
+  'block_bonus',
+  'min_value',
+  'on_max_bonus',
+  'attack_only',
+  'block_only',
 };
 const legalRelicHooks = {
-  'max_hp', 'turn_block', 'attack_flat', 'block_flat', 'min_roll',
-  'on_max_gold', 'thorns', 'heal_after_fight', 'gold_bonus', 'ember_bonus',
-  'elite_damage', 'rest_bonus', 'rerolls', 'shop_discount'
+  'max_hp',
+  'turn_block',
+  'attack_flat',
+  'block_flat',
+  'min_roll',
+  'on_max_gold',
+  'thorns',
+  'heal_after_fight',
+  'gold_bonus',
+  'ember_bonus',
+  'elite_damage',
+  'rest_bonus',
+  'rerolls',
+  'shop_discount',
 };
 const legalBoonEffects = {'gold', 'max_hp', 'gain_die', 'embers'};
 const legalEffects = {
-  'gold', 'gold_after', 'hp', 'max_hp', 'embers', 'heal_pct', 'gain_die',
-  'gain_random_die', 'lose_random_die', 'gain_random_relic'
+  'gold',
+  'gold_after',
+  'hp',
+  'max_hp',
+  'embers',
+  'heal_pct',
+  'gain_die',
+  'gain_random_die',
+  'lose_random_die',
+  'gain_random_relic',
 };
 
 void main() {
@@ -39,7 +62,11 @@ void main() {
         expect(legalDieMods.contains(k), isTrue, reason: '$id bad mod $k');
       }
       for (final ft in d.forgeTo) {
-        expect(dice.containsKey(ft), isTrue, reason: '$id forges to unknown $ft');
+        expect(
+          dice.containsKey(ft),
+          isTrue,
+          reason: '$id forges to unknown $ft',
+        );
       }
     });
     expect(dice.containsKey('d6'), isTrue); // starter must exist
@@ -73,9 +100,13 @@ void main() {
     // a magic number — this now fails for the real reason (the golden anchor
     // seed would change boss) rather than merely because content grew.
     expect(bosses, equals(6));
-    expect(bossForSeed(goldenAnchorSeed), equals('ember_tyrant'),
-        reason: 'boss count changed under the golden anchor seed: re-anchor '
-            'the golden replays deliberately before shipping this');
+    expect(
+      bossForSeed(goldenAnchorSeed),
+      equals('ember_tyrant'),
+      reason:
+          'boss count changed under the golden anchor seed: re-anchor '
+          'the golden replays deliberately before shipping this',
+    );
   });
 
   test('relics: order matches, legal hooks, >=20 ids', () {
@@ -90,23 +121,34 @@ void main() {
     });
   });
 
-  test('events: order matches, legal effects, valid gain_die ids, >=12 ids', () {
-    expect(eventsOrder.toSet(), equals(events.keys.toSet()));
-    expect(events.length, greaterThanOrEqualTo(12));
-    events.forEach((id, e) {
-      expect(e.id, equals(id));
-      expect(e.options.isNotEmpty, isTrue);
-      for (final o in e.options) {
-        for (final k in o.effects.keys) {
-          expect(legalEffects.contains(k), isTrue, reason: '$id bad effect $k');
+  test(
+    'events: order matches, legal effects, valid gain_die ids, >=12 ids',
+    () {
+      expect(eventsOrder.toSet(), equals(events.keys.toSet()));
+      expect(events.length, greaterThanOrEqualTo(12));
+      events.forEach((id, e) {
+        expect(e.id, equals(id));
+        expect(e.options.isNotEmpty, isTrue);
+        for (final o in e.options) {
+          for (final k in o.effects.keys) {
+            expect(
+              legalEffects.contains(k),
+              isTrue,
+              reason: '$id bad effect $k',
+            );
+          }
+          final gd = o.effects['gain_die'];
+          if (gd != null) {
+            expect(
+              dice.containsKey(gd),
+              isTrue,
+              reason: '$id gain_die unknown $gd',
+            );
+          }
         }
-        final gd = o.effects['gain_die'];
-        if (gd != null) {
-          expect(dice.containsKey(gd), isTrue, reason: '$id gain_die unknown $gd');
-        }
-      }
-    });
-  });
+      });
+    },
+  );
 
   test('events: every event keeps at least one always-legal option', () {
     // Soft-lock guard: an option is refused when it costs gold the player
@@ -115,11 +157,16 @@ void main() {
     // event screen with nothing to tap. Each event must keep one option
     // that is legal in any state (no gold cost, no lose_random_die).
     events.forEach((id, e) {
-      final alwaysLegal = e.options.any((o) =>
-          ((o.effects['gold'] as int?) ?? 0) >= 0 &&
-          !o.effects.containsKey('lose_random_die'));
-      expect(alwaysLegal, isTrue,
-          reason: '$id could soft-lock a player with 0 gold and 3 dice');
+      final alwaysLegal = e.options.any(
+        (o) =>
+            ((o.effects['gold'] as int?) ?? 0) >= 0 &&
+            !o.effects.containsKey('lose_random_die'),
+      );
+      expect(
+        alwaysLegal,
+        isTrue,
+        reason: '$id could soft-lock a player with 0 gold and 3 dice',
+      );
     });
   });
 
@@ -131,11 +178,19 @@ void main() {
       expect(b.name.isNotEmpty, isTrue);
       expect(b.effects.isNotEmpty, isTrue);
       for (final k in b.effects.keys) {
-        expect(legalBoonEffects.contains(k), isTrue, reason: '$id bad effect $k');
+        expect(
+          legalBoonEffects.contains(k),
+          isTrue,
+          reason: '$id bad effect $k',
+        );
       }
       final gd = b.effects['gain_die'];
       if (gd != null) {
-        expect(dice.containsKey(gd), isTrue, reason: '$id gain_die unknown $gd');
+        expect(
+          dice.containsKey(gd),
+          isTrue,
+          reason: '$id gain_die unknown $gd',
+        );
       }
     });
   });

@@ -26,10 +26,10 @@ class Intent {
   const Intent(this.kind, this.amount, [this.block = 0]);
 
   Map<String, Object> toMap() => {
-        'kind': kind,
-        'amount': amount,
-        if (kind == 'attack_block') 'block': block,
-      };
+    'kind': kind,
+    'amount': amount,
+    if (kind == 'attack_block') 'block': block,
+  };
 }
 
 class EnemyDef {
@@ -40,11 +40,15 @@ class EnemyDef {
   final bool elite;
   final int fromLayer;
   final List<Intent> pattern;
-  const EnemyDef(this.id, this.name, this.hp,
-      {this.boss = false,
-      this.elite = false,
-      this.fromLayer = 2,
-      required this.pattern});
+  const EnemyDef(
+    this.id,
+    this.name,
+    this.hp, {
+    this.boss = false,
+    this.elite = false,
+    this.fromLayer = 2,
+    required this.pattern,
+  });
 }
 
 const List<String> enemiesOrder = [
@@ -76,153 +80,247 @@ const List<String> enemiesOrder = [
 
 const Map<String, EnemyDef> enemies = {
   // ---- regulars, early band (layer 2+) ---------------------------------------
-  'cinder_wisp': EnemyDef('cinder_wisp', 'Cinder Wisp', 29, pattern: [
-    Intent('attack', 18),
-    Intent('attack', 21),
-    Intent('attack', 15),
-  ]),
-  'ash_rat': EnemyDef('ash_rat', 'Ash Rat', 24, pattern: [
-    Intent('attack', 15),
-    Intent('attack', 15),
-    Intent('attack_block', 18, 14),
-  ]),
-  'soot_shade': EnemyDef('soot_shade', 'Soot Shade', 31, pattern: [
-    Intent('attack_block', 15, 14),
-    Intent('attack', 21),
-  ]),
-  'ember_beetle': EnemyDef('ember_beetle', 'Ember Beetle', 36, pattern: [
-    Intent('block', 20),
-    Intent('attack', 23),
-  ]),
+  'cinder_wisp': EnemyDef(
+    'cinder_wisp',
+    'Cinder Wisp',
+    29,
+    pattern: [Intent('attack', 18), Intent('attack', 21), Intent('attack', 15)],
+  ),
+  'ash_rat': EnemyDef(
+    'ash_rat',
+    'Ash Rat',
+    24,
+    pattern: [
+      Intent('attack', 15),
+      Intent('attack', 15),
+      Intent('attack_block', 18, 14),
+    ],
+  ),
+  'soot_shade': EnemyDef(
+    'soot_shade',
+    'Soot Shade',
+    31,
+    pattern: [Intent('attack_block', 15, 14), Intent('attack', 21)],
+  ),
+  'ember_beetle': EnemyDef(
+    'ember_beetle',
+    'Ember Beetle',
+    36,
+    pattern: [Intent('block', 20), Intent('attack', 23)],
+  ),
   // v0.5.0 early additions. Same band as the four above (hp 24-36, swings
   // 15-23) so the opening layers are more varied without getting harder.
   // Each one has a different RHYTHM, which is the point: a new sprite with an
   // old pattern is not new content.
-  'scoria_tick': EnemyDef('scoria_tick', 'Scoria Tick', 26, pattern: [
-    // Two small bites then a real one — punishes blocking on the wrong beat.
-    Intent('attack', 14),
-    Intent('attack', 14),
-    Intent('attack', 22),
-  ]),
-  'char_sprite': EnemyDef('char_sprite', 'Char Sprite', 30, pattern: [
-    // Guards every other beat: the shortest possible block cycle to read.
-    Intent('block', 18),
-    Intent('attack', 20),
-    Intent('block', 18),
-    Intent('attack', 16),
-  ]),
-  'flue_crawler': EnemyDef('flue_crawler', 'Flue Crawler', 33, pattern: [
-    Intent('attack_block', 16, 12),
-    Intent('attack', 19),
-  ]),
-  'cinder_pup': EnemyDef('cinder_pup', 'Cinder Pup', 24, pattern: [
-    // Front-loaded: hits hardest on the beat you meet it, then tires.
-    Intent('attack', 21),
-    Intent('attack', 15),
-    Intent('attack', 15),
-  ]),
+  'scoria_tick': EnemyDef(
+    'scoria_tick',
+    'Scoria Tick',
+    26,
+    pattern: [
+      // Two small bites then a real one — punishes blocking on the wrong beat.
+      Intent('attack', 14),
+      Intent('attack', 14),
+      Intent('attack', 22),
+    ],
+  ),
+  'char_sprite': EnemyDef(
+    'char_sprite',
+    'Char Sprite',
+    30,
+    pattern: [
+      // Guards every other beat: the shortest possible block cycle to read.
+      Intent('block', 18),
+      Intent('attack', 20),
+      Intent('block', 18),
+      Intent('attack', 16),
+    ],
+  ),
+  'flue_crawler': EnemyDef(
+    'flue_crawler',
+    'Flue Crawler',
+    33,
+    pattern: [Intent('attack_block', 16, 12), Intent('attack', 19)],
+  ),
+  'cinder_pup': EnemyDef(
+    'cinder_pup',
+    'Cinder Pup',
+    24,
+    pattern: [
+      // Front-loaded: hits hardest on the beat you meet it, then tires.
+      Intent('attack', 21),
+      Intent('attack', 15),
+      Intent('attack', 15),
+    ],
+  ),
 
   // ---- regulars, late band (layer 5+) ----------------------------------------
-  'soot_hound': EnemyDef('soot_hound', 'Soot Hound', 43, fromLayer: 5, pattern: [
-    Intent('attack', 20),
-    Intent('attack', 20),
-    Intent('attack_block', 17, 16),
-  ]),
-  'ash_wraith': EnemyDef('ash_wraith', 'Ash Wraith', 38, fromLayer: 5, pattern: [
-    Intent('block', 22),
-    Intent('attack', 25),
-    Intent('attack', 19),
-  ]),
-  'cinder_crawler':
-      EnemyDef('cinder_crawler', 'Cinder Crawler', 48, fromLayer: 5, pattern: [
-    Intent('attack_block', 18, 17),
-    Intent('attack_block', 18, 17),
-    Intent('attack', 24),
-  ]),
-  'ember_moth': EnemyDef('ember_moth', 'Ember Moth', 34, fromLayer: 5, pattern: [
-    Intent('attack', 23),
-    Intent('block', 18),
-    Intent('attack', 25),
-  ]),
-  'slag_brute': EnemyDef('slag_brute', 'Slag Brute', 58, fromLayer: 6, pattern: [
-    Intent('block', 24),
-    Intent('attack', 28),
-  ]),
+  'soot_hound': EnemyDef(
+    'soot_hound',
+    'Soot Hound',
+    43,
+    fromLayer: 5,
+    pattern: [
+      Intent('attack', 20),
+      Intent('attack', 20),
+      Intent('attack_block', 17, 16),
+    ],
+  ),
+  'ash_wraith': EnemyDef(
+    'ash_wraith',
+    'Ash Wraith',
+    38,
+    fromLayer: 5,
+    pattern: [Intent('block', 22), Intent('attack', 25), Intent('attack', 19)],
+  ),
+  'cinder_crawler': EnemyDef(
+    'cinder_crawler',
+    'Cinder Crawler',
+    48,
+    fromLayer: 5,
+    pattern: [
+      Intent('attack_block', 18, 17),
+      Intent('attack_block', 18, 17),
+      Intent('attack', 24),
+    ],
+  ),
+  'ember_moth': EnemyDef(
+    'ember_moth',
+    'Ember Moth',
+    34,
+    fromLayer: 5,
+    pattern: [Intent('attack', 23), Intent('block', 18), Intent('attack', 25)],
+  ),
+  'slag_brute': EnemyDef(
+    'slag_brute',
+    'Slag Brute',
+    58,
+    fromLayer: 6,
+    pattern: [Intent('block', 24), Intent('attack', 28)],
+  ),
   // v0.5.0 late additions — inside the measured late band (hp 34-58, swings
   // 19-28) so the 200-seed autoplay win rate stays in the 20-80% gate.
-  'clinker_ogre':
-      EnemyDef('clinker_ogre', 'Clinker Ogre', 55, fromLayer: 5, pattern: [
-    Intent('attack', 26),
-    Intent('block', 21),
-    Intent('attack', 22),
-  ]),
-  'smoke_stalker':
-      EnemyDef('smoke_stalker', 'Smoke Stalker', 40, fromLayer: 5, pattern: [
-    // Never guards: a pure race, the late-band answer to the Pyre Matriarch.
-    Intent('attack', 21),
-    Intent('attack', 24),
-    Intent('attack', 27),
-  ]),
-  'basalt_shell':
-      EnemyDef('basalt_shell', 'Basalt Shell', 52, fromLayer: 5, pattern: [
-    // Two guarded beats in three: the one to burst through, not chip at.
-    Intent('block', 23),
-    Intent('attack_block', 19, 18),
-    Intent('attack', 25),
-  ]),
-  'wick_widow':
-      EnemyDef('wick_widow', 'Wick Widow', 37, fromLayer: 6, pattern: [
-    Intent('attack_block', 20, 15),
-    Intent('attack', 28),
-  ]),
+  'clinker_ogre': EnemyDef(
+    'clinker_ogre',
+    'Clinker Ogre',
+    55,
+    fromLayer: 5,
+    pattern: [Intent('attack', 26), Intent('block', 21), Intent('attack', 22)],
+  ),
+  'smoke_stalker': EnemyDef(
+    'smoke_stalker',
+    'Smoke Stalker',
+    40,
+    fromLayer: 5,
+    pattern: [
+      // Never guards: a pure race, the late-band answer to the Pyre Matriarch.
+      Intent('attack', 21),
+      Intent('attack', 24),
+      Intent('attack', 27),
+    ],
+  ),
+  'basalt_shell': EnemyDef(
+    'basalt_shell',
+    'Basalt Shell',
+    52,
+    fromLayer: 5,
+    pattern: [
+      // Two guarded beats in three: the one to burst through, not chip at.
+      Intent('block', 23),
+      Intent('attack_block', 19, 18),
+      Intent('attack', 25),
+    ],
+  ),
+  'wick_widow': EnemyDef(
+    'wick_widow',
+    'Wick Widow',
+    37,
+    fromLayer: 6,
+    pattern: [Intent('attack_block', 20, 15), Intent('attack', 28)],
+  ),
 
   // ---- elites ------------------------------------------------------------------
-  'pyre_howler':
-      EnemyDef('pyre_howler', 'Pyre Howler', 48, elite: true, pattern: [
-    Intent('attack', 23),
-    Intent('attack_block', 21, 17),
-    Intent('attack', 26),
-  ]),
-  'kiln_golem': EnemyDef('kiln_golem', 'Kiln Golem', 58, elite: true, pattern: [
-    Intent('block', 22),
-    Intent('attack', 26),
-    Intent('attack_block', 21, 20),
-  ]),
-  'ash_reaper':
-      EnemyDef('ash_reaper', 'Ash Reaper', 62, elite: true, fromLayer: 5, pattern: [
-    Intent('attack', 27),
-    Intent('attack', 21),
-    Intent('attack_block', 24, 19),
-  ]),
-  'forge_warden': EnemyDef('forge_warden', 'Forge Warden', 72,
-      elite: true, fromLayer: 5, pattern: [
-    Intent('block', 26),
-    Intent('attack_block', 22, 21),
-    Intent('attack', 29),
-  ]),
-  'molten_maw':
-      EnemyDef('molten_maw', 'Molten Maw', 67, elite: true, fromLayer: 6, pattern: [
-    Intent('attack', 31),
-    Intent('block', 24),
-    Intent('attack', 25),
-  ]),
+  'pyre_howler': EnemyDef(
+    'pyre_howler',
+    'Pyre Howler',
+    48,
+    elite: true,
+    pattern: [
+      Intent('attack', 23),
+      Intent('attack_block', 21, 17),
+      Intent('attack', 26),
+    ],
+  ),
+  'kiln_golem': EnemyDef(
+    'kiln_golem',
+    'Kiln Golem',
+    58,
+    elite: true,
+    pattern: [
+      Intent('block', 22),
+      Intent('attack', 26),
+      Intent('attack_block', 21, 20),
+    ],
+  ),
+  'ash_reaper': EnemyDef(
+    'ash_reaper',
+    'Ash Reaper',
+    62,
+    elite: true,
+    fromLayer: 5,
+    pattern: [
+      Intent('attack', 27),
+      Intent('attack', 21),
+      Intent('attack_block', 24, 19),
+    ],
+  ),
+  'forge_warden': EnemyDef(
+    'forge_warden',
+    'Forge Warden',
+    72,
+    elite: true,
+    fromLayer: 5,
+    pattern: [
+      Intent('block', 26),
+      Intent('attack_block', 22, 21),
+      Intent('attack', 29),
+    ],
+  ),
+  'molten_maw': EnemyDef(
+    'molten_maw',
+    'Molten Maw',
+    67,
+    elite: true,
+    fromLayer: 6,
+    pattern: [Intent('attack', 31), Intent('block', 24), Intent('attack', 25)],
+  ),
   // v0.5.0 elite additions — elite band (hp 48-72, swings 21-31).
-  'bellows_knight': EnemyDef('bellows_knight', 'Bellows Knight', 70,
-      elite: true, fromLayer: 5, pattern: [
-    // Alternating wall: guard, swing, guard, bigger swing. Rewards saving a
-    // big die for the open beat instead of spending every turn.
-    Intent('block', 25),
-    Intent('attack', 24),
-    Intent('block', 22),
-    Intent('attack', 30),
-  ]),
-  'quench_hag': EnemyDef('quench_hag', 'Quench Hag', 51,
-      elite: true, pattern: [
-    // Squishiest elite, hits like the hardest: an early-layer gamble.
-    Intent('attack', 29),
-    Intent('attack_block', 23, 16),
-    Intent('attack', 26),
-  ]),
+  'bellows_knight': EnemyDef(
+    'bellows_knight',
+    'Bellows Knight',
+    70,
+    elite: true,
+    fromLayer: 5,
+    pattern: [
+      // Alternating wall: guard, swing, guard, bigger swing. Rewards saving a
+      // big die for the open beat instead of spending every turn.
+      Intent('block', 25),
+      Intent('attack', 24),
+      Intent('block', 22),
+      Intent('attack', 30),
+    ],
+  ),
+  'quench_hag': EnemyDef(
+    'quench_hag',
+    'Quench Hag',
+    51,
+    elite: true,
+    pattern: [
+      // Squishiest elite, hits like the hardest: an early-layer gamble.
+      Intent('attack', 29),
+      Intent('attack_block', 23, 16),
+      Intent('attack', 26),
+    ],
+  ),
 
   // ---- bosses (exactly one per run, seed-picked) ----------------------------------
   // v0.4 boss variety: three bosses with deliberately different rhythms, all
@@ -233,25 +331,36 @@ const Map<String, EnemyDef> enemies = {
   //                    the swing. Tankiest, slowest.
   //   pyre_matriarch — the race: never guards, escalating 3-beat burn; every
   //                    player turn lands full but so does hers. Least HP.
-  'ember_tyrant':
-      EnemyDef('ember_tyrant', 'Ember Tyrant', 101, boss: true, pattern: [
-    Intent('attack', 23),
-    Intent('block', 28),
-    Intent('attack_block', 26, 20),
-    Intent('attack', 32),
-  ]),
-  'ashen_colossus':
-      EnemyDef('ashen_colossus', 'Ashen Colossus', 112, boss: true, pattern: [
-    Intent('block', 26),
-    Intent('attack_block', 23, 22),
-    Intent('attack', 36),
-  ]),
-  'pyre_matriarch':
-      EnemyDef('pyre_matriarch', 'Pyre Matriarch', 94, boss: true, pattern: [
-    Intent('attack', 21),
-    Intent('attack', 25),
-    Intent('attack', 29),
-  ]),
+  'ember_tyrant': EnemyDef(
+    'ember_tyrant',
+    'Ember Tyrant',
+    101,
+    boss: true,
+    pattern: [
+      Intent('attack', 23),
+      Intent('block', 28),
+      Intent('attack_block', 26, 20),
+      Intent('attack', 32),
+    ],
+  ),
+  'ashen_colossus': EnemyDef(
+    'ashen_colossus',
+    'Ashen Colossus',
+    112,
+    boss: true,
+    pattern: [
+      Intent('block', 26),
+      Intent('attack_block', 23, 22),
+      Intent('attack', 36),
+    ],
+  ),
+  'pyre_matriarch': EnemyDef(
+    'pyre_matriarch',
+    'Pyre Matriarch',
+    94,
+    boss: true,
+    pattern: [Intent('attack', 21), Intent('attack', 25), Intent('attack', 29)],
+  ),
   // v0.5.0 bosses. Same Intent vocabulary, three more rhythms, boss band
   // (hp 94-112, swings 21-36):
   //   cinder_hierophant — the long teacher: a 5-beat cycle, the longest in the
@@ -263,26 +372,41 @@ const Map<String, EnemyDef> enemies = {
   //   ashfall_twins     — the double tap: two medium hits back to back, then a
   //                       guard. Kills anyone hoarding block for one big swing.
   'cinder_hierophant': EnemyDef(
-      'cinder_hierophant', 'Cinder Hierophant', 106, boss: true, pattern: [
-    Intent('attack', 24),
-    Intent('block', 27),
-    Intent('attack', 22),
-    Intent('attack_block', 25, 21),
-    Intent('attack', 31),
-  ]),
-  'the_bellows':
-      EnemyDef('the_bellows', 'The Bellows', 98, boss: true, pattern: [
-    Intent('attack_block', 24, 22),
-    Intent('attack_block', 27, 19),
-    Intent('attack_block', 22, 25),
-  ]),
-  'ashfall_twins':
-      EnemyDef('ashfall_twins', 'Ashfall Twins', 104, boss: true, pattern: [
-    Intent('attack', 26),
-    Intent('attack', 26),
-    Intent('block', 24),
-    Intent('attack', 33),
-  ]),
+    'cinder_hierophant',
+    'Cinder Hierophant',
+    106,
+    boss: true,
+    pattern: [
+      Intent('attack', 24),
+      Intent('block', 27),
+      Intent('attack', 22),
+      Intent('attack_block', 25, 21),
+      Intent('attack', 31),
+    ],
+  ),
+  'the_bellows': EnemyDef(
+    'the_bellows',
+    'The Bellows',
+    98,
+    boss: true,
+    pattern: [
+      Intent('attack_block', 24, 22),
+      Intent('attack_block', 27, 19),
+      Intent('attack_block', 22, 25),
+    ],
+  ),
+  'ashfall_twins': EnemyDef(
+    'ashfall_twins',
+    'Ashfall Twins',
+    104,
+    boss: true,
+    pattern: [
+      Intent('attack', 26),
+      Intent('attack', 26),
+      Intent('block', 24),
+      Intent('attack', 33),
+    ],
+  ),
 };
 
 EnemyDef enemyDef(String id) {

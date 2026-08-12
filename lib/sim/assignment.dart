@@ -5,6 +5,7 @@
 // only after an allowed result is returned.
 
 import '../data/relics.dart';
+import 'keystones.dart';
 import 'run_dice.dart';
 
 class AssignmentResolution {
@@ -19,6 +20,11 @@ class AssignmentResolution {
   final int? echoFromDie;
   final int echoBonus;
 
+  /// Keystone hits, each `{keystone, amount}`, in catalog order. Combat emits
+  /// one flat event per entry; the preview only needs their sum, already in
+  /// [value].
+  final List<Map<String, Object?>> keystoneHits;
+
   const AssignmentResolution._({
     required this.allowed,
     required this.value,
@@ -27,6 +33,7 @@ class AssignmentResolution {
     this.runeBonus = 0,
     this.echoFromDie,
     this.echoBonus = 0,
+    this.keystoneHits = const [],
   });
 
   const AssignmentResolution.allowed(
@@ -35,6 +42,7 @@ class AssignmentResolution {
     int runeBonus = 0,
     int? echoFromDie,
     int echoBonus = 0,
+    List<Map<String, Object?>> keystoneHits = const [],
   }) : this._(
          allowed: true,
          value: value,
@@ -42,6 +50,7 @@ class AssignmentResolution {
          runeBonus: runeBonus,
          echoFromDie: echoFromDie,
          echoBonus: echoBonus,
+         keystoneHits: keystoneHits,
        );
 
   const AssignmentResolution.invalid(String reason)
@@ -130,6 +139,53 @@ AssignmentResolution resolveAssignment({
   }
   value += runeBonus;
 
+  // Keystones sit between the rune bonus and the Echo charge. Each hit is
+  // reported so combat can emit one flat `keystone_triggered` per keystone
+  // while the preview shows the identical total.
+  final hits = <Map<String, Object?>>[];
+  final assigned = (player['assigned'] as Map?) ?? const {};
+
+  if (hasKeystone(run, 'ashen_edge') &&
+      action == 'attack' &&
+      player['ashen_used'] != true) {
+    // "Every OTHER die still unspent": the die being assigned never counts
+    // itself, so a lone final die pays nothing.
+    var unspent = 0;
+    for (var i = 1; i <= rolled.length; i++) {
+      if (i != die && assigned['$i'] == null) unspent++;
+    }
+    if (unspent > 0) {
+      value += unspent;
+      hits.add({'keystone': 'ashen_edge', 'amount': unspent});
+    }
+  }
+
+  if (hasKeystone(run, 'crown_of_twelve')) {
+    final pool = (player['dice'] as List).cast<String>();
+    final sizes = <int>{};
+    for (var i = 1; i <= pool.length; i++) {
+      if (assigned['$i'] != null) {
+        sizes.add(resolveRunDie(run, pool[i - 1]).def.size);
+      }
+    }
+    sizes.add(def.size);
+    final bonus = sizes.length - 1;
+    if (bonus > 0) {
+      value += bonus;
+      hits.add({'keystone': 'crown_of_twelve', 'amount': bonus});
+    }
+  }
+
+  if (hasKeystone(run, 'twin_bellows')) {
+    final last = player['bellows_action'] as String?;
+    if (last != null && last != action) {
+      final streak = (player['bellows_streak'] as int? ?? 0) + 1;
+      final bonus = streak > 3 ? 3 : streak;
+      value += bonus;
+      hits.add({'keystone': 'twin_bellows', 'amount': bonus});
+    }
+  }
+
   // A pending Echo charge is the last additive term (contract §Arithmetic
   // order). It is armed by a previous assignment, so it can never pay the
   // assignment that armed it.
@@ -148,5 +204,6 @@ AssignmentResolution resolveAssignment({
     runeBonus: runeBonus,
     echoFromDie: echoFromDie,
     echoBonus: echoBonus,
+    keystoneHits: hits,
   );
 }

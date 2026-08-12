@@ -300,13 +300,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// [assignPreview] so the drift guard in test/feel_pregate_test.dart can
   /// pin the shared function against the sim's own die_assigned values.
   int _assignPreview(Map player, Map enemy, int die, String action) =>
-      assignPreview(
-        player,
-        enemy,
-        widget.c.state?['run'] as Map?,
-        die,
-        action,
-      );
+      assignPreview(player, enemy, widget.c.state?['run'] as Map?, die, action);
 
   /// Weapon choreography rides the existing squash/lunge flags: pull back in
   /// anticipation, whip through the smear arc during the lunge.

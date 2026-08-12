@@ -18,8 +18,7 @@ import 'package:emberdelve/ui/haptics.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final messenger =
-      TestWidgetsFlutterBinding.instance.defaultBinaryMessenger;
+  final messenger = TestWidgetsFlutterBinding.instance.defaultBinaryMessenger;
 
   final channelCalls = <MethodCall>[];
   final systemCalls = <MethodCall>[];
@@ -55,8 +54,7 @@ void main() {
   // MissingPluginException -> fallback send) fully drain.
   Future<void> settle() => pumpEventQueue();
 
-  test('beats reach the vibrator channel with per-beat ms/amplitude',
-      () async {
+  test('beats reach the vibrator channel with per-beat ms/amplitude', () async {
     mockChannel(reply: true);
 
     Haptics.light();
@@ -72,10 +70,8 @@ void main() {
     // Escalating strength: light < medium < heavy on both axes.
     expect((light['ms'] as int) < (medium['ms'] as int), isTrue);
     expect((medium['ms'] as int) < (heavy['ms'] as int), isTrue);
-    expect(
-        (light['amplitude'] as int) < (medium['amplitude'] as int), isTrue);
-    expect(
-        (medium['amplitude'] as int) < (heavy['amplitude'] as int), isTrue);
+    expect((light['amplitude'] as int) < (medium['amplitude'] as int), isTrue);
+    expect((medium['amplitude'] as int) < (heavy['amplitude'] as int), isTrue);
     // Vibrator handled it — no HapticFeedback fallback.
     expect(systemCalls, isEmpty);
   });
@@ -103,8 +99,7 @@ void main() {
     expect(channelCalls, isEmpty);
   });
 
-  test('channel reporting no vibrator falls back to HapticFeedback',
-      () async {
+  test('channel reporting no vibrator falls back to HapticFeedback', () async {
     mockChannel(reply: false);
 
     Haptics.heavy();
@@ -115,15 +110,17 @@ void main() {
     expect(systemCalls.single.method, 'HapticFeedback.vibrate');
   });
 
-  test('missing channel (no platform impl) falls back without throwing',
-      () async {
-    // No mockChannel: invokeMethod throws MissingPluginException.
-    Haptics.medium();
-    await settle();
+  test(
+    'missing channel (no platform impl) falls back without throwing',
+    () async {
+      // No mockChannel: invokeMethod throws MissingPluginException.
+      Haptics.medium();
+      await settle();
 
-    expect(systemCalls, hasLength(1));
-    expect(systemCalls.single.method, 'HapticFeedback.vibrate');
-  });
+      expect(systemCalls, hasLength(1));
+      expect(systemCalls.single.method, 'HapticFeedback.vibrate');
+    },
+  );
 
   test('preview buzzes even before settings are consulted', () async {
     mockChannel(reply: true);

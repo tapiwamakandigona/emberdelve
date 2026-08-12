@@ -159,13 +159,7 @@ void main() {
                 if (assigned['$d'] != null) continue;
                 // Alternate actions so both formulas stay covered.
                 final action = d.isEven ? 'block' : 'attack';
-                final expected = assignPreview(
-                  player,
-                  enemy,
-                  run,
-                  d,
-                  action,
-                );
+                final expected = assignPreview(player, enemy, run, d, action);
                 final events = sim.apply({
                   'type': 'assign',
                   'die': d,

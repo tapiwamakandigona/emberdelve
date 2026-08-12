@@ -38,8 +38,9 @@ void main() {
   // the widget directly: building ShopScreen against a state with no 'shop'
   // (exactly what the cross-fade shows right after leave_shop) must render
   // nothing instead of throwing a _TypeError.
-  testWidgets('ShopScreen tolerates a state without shop data (stale frame)',
-      (tester) async {
+  testWidgets('ShopScreen tolerates a state without shop data (stale frame)', (
+    tester,
+  ) async {
     final c = GameController();
     c.startRun(character: 'kindler', seed: 1);
     // Skip the boon offer so state is a plain map phase without 'shop'.
@@ -49,19 +50,22 @@ void main() {
     if (c.phase == 'boon') c.apply({'type': 'choose_boon', 'index': 0});
     expect(c.state!['shop'], isNull);
     await tester.pumpWidget(
-        MaterialApp(theme: buildEmberTheme(), home: ShopScreen(c)));
+      MaterialApp(theme: buildEmberTheme(), home: ShopScreen(c)),
+    );
     await pumpFor(tester, 300);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('resolving an event during the phase transition does not crash',
-      (tester) async {
+  testWidgets('resolving an event during the phase transition does not crash', (
+    tester,
+  ) async {
     final packed = findSeed('event');
     expect(packed, isNotNull, reason: 'no seed with an adjacent event found');
     final seed = packed! ~/ 100000, node = packed % 100000;
     final c = GameController();
     await tester.pumpWidget(
-        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)));
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: seed);
     await pumpFor(tester, 800);
     c.apply({'type': 'choose_node', 'node': node});

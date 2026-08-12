@@ -19,7 +19,9 @@ void main() {
       }
     }
     if (failures.isNotEmpty) {
-      fail('${failures.length}/${files.length} failed:\n${failures.take(10).join('\n')}');
+      fail(
+        '${failures.length}/${files.length} failed:\n${failures.take(10).join('\n')}',
+      );
     }
   });
 }

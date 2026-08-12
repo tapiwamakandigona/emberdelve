@@ -23,10 +23,18 @@ const sizes = <Size>[Size(320, 568), Size(360, 640), Size(412, 915)];
 const pools = <int>[6, 9, 12, 16];
 
 List<String> poolOf(int n) => [
-      for (var i = 0; i < n; i++)
-        ['d6', 'd8_keen', 'd4_guard', 'd10_blade', 'd12_titan', 'd6_ember',
-            'd8_aegis', 'd4_lucky'][i % 8]
-    ];
+  for (var i = 0; i < n; i++)
+    [
+      'd6',
+      'd8_keen',
+      'd4_guard',
+      'd10_blade',
+      'd12_titan',
+      'd6_ember',
+      'd8_aegis',
+      'd4_lucky',
+    ][i % 8],
+];
 
 Future<void> loadRealFonts() async {
   Future<ByteData> asset(String path) => rootBundle.load(path);
@@ -39,7 +47,8 @@ Future<void> loadRealFonts() async {
   final flutterRoot = Platform.environment['FLUTTER_ROOT'];
   if (flutterRoot != null) {
     final f = File(
-        '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
+      '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    );
     if (f.existsSync()) {
       final bytes = f.readAsBytesSync();
       final icons = FontLoader('MaterialIcons')
@@ -55,8 +64,9 @@ void installHook() {
     final s = details.toString();
     final src =
         RegExp(r'(lib/[\w/]+\.dart:\d+)').firstMatch(s)?.group(1) ?? '?';
-    problems
-        .add('$ctx: ${details.exceptionAsString().split('\n').first} @$src');
+    problems.add(
+      '$ctx: ${details.exceptionAsString().split('\n').first} @$src',
+    );
     original(details);
   };
 }
@@ -70,16 +80,18 @@ void drain(WidgetTester tester) {
 /// Decode every bundled PNG before screenshots (async decode otherwise leaves
 /// blank art in the first shot of each screen — see play_session_test).
 Future<void> precacheAllImages(WidgetTester tester) async {
-  final manifest = await tester.binding
-      .runAsync(() => AssetManifest.loadFromAssetBundle(rootBundle));
-  final keys =
-      manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final manifest = await tester.binding.runAsync(
+    () => AssetManifest.loadFromAssetBundle(rootBundle),
+  );
+  final keys = manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
   final context = tester.element(find.byType(MaterialApp));
   await tester.binding.runAsync(() async {
     for (final k in keys) {
       try {
         await precacheImage(AssetImage(k), context);
-      } catch (_) {/* ignore */}
+      } catch (_) {
+        /* ignore */
+      }
     }
   });
   await tester.pump();
@@ -96,10 +108,12 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 Future<void> shot(WidgetTester tester, String name) async {
   final boundary =
       rootKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  final image = await tester.binding
-      .runAsync(() => boundary.toImage(pixelRatio: 2.0));
-  final bytes = await tester.binding
-      .runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
+  final image = await tester.binding.runAsync(
+    () => boundary.toImage(pixelRatio: 2.0),
+  );
+  final bytes = await tester.binding.runAsync(
+    () => image!.toByteData(format: ui.ImageByteFormat.png),
+  );
   File('$outDir/$name.png')
     ..createSync(recursive: true)
     ..writeAsBytesSync(bytes!.buffer.asUint8List());
@@ -145,13 +159,16 @@ void main() {
       for (final n in pools) {
         final c = GameController();
         c.meta.tutorialSeen = true;
-        await tester.pumpWidget(RepaintBoundary(
-          key: rootKey,
-          child: MaterialApp(
+        await tester.pumpWidget(
+          RepaintBoundary(
+            key: rootKey,
+            child: MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: buildEmberTheme(),
-              home: GameRoot(c)),
-        ));
+              home: GameRoot(c),
+            ),
+          ),
+        );
         await precacheAllImages(tester);
         c.startRun(character: 'kindler', seed: 7);
         c.sim!.player['dice'] = poolOf(n);
