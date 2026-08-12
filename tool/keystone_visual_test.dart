@@ -50,12 +50,19 @@ void main() {
       await tester.pumpWidget(
         RepaintBoundary(
           key: key,
-          child: MediaQuery(
-            data: MediaQueryData(textScaler: TextScaler.linear(scale)),
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: buildEmberTheme(),
-              home: GameRoot(c),
+          // copyWith, never a bare MediaQueryData: a fresh one has size
+          // zero, which silently collapses any widget that measures the
+          // screen (it hid the temper sheet's controls entirely).
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: buildEmberTheme(),
+            home: Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.linear(scale)),
+                child: GameRoot(c),
+              ),
             ),
           ),
         ),

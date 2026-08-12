@@ -56,3 +56,22 @@ void removeOrphanCustomDie(Map? run, String id) {
   final custom = run?['custom_dice'];
   if (custom is Map) custom.remove(id);
 }
+
+/// Display name for a rune id. Presentation-only; the sim never reads it.
+String runeName(String? rune) => switch (rune) {
+  'blade' => 'Blade',
+  'aegis' => 'Aegis',
+  'surge' => 'Surge',
+  'echo' => 'Echo',
+  _ => 'Rune',
+};
+
+/// One-line rule text for a rune, shown wherever a temper is offered or a
+/// tempered die is inspected.
+String runeBlurb(String rune) => switch (rune) {
+  'blade' => 'On that face, attacks hit for +2.',
+  'aegis' => 'On that face, blocks hold +2.',
+  'surge' => 'On that face, you get a reroll back. Once per die each turn.',
+  'echo' => 'On that face, your next opposite action gains +1.',
+  _ => '',
+};

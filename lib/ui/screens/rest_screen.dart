@@ -7,13 +7,17 @@ class RestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final player = c.state!['player'] as Map;
+    final run = c.state!['run'] as Map?;
     final dice0 = (player['dice'] as List).cast<String>();
     final forgeable = <int>[];
     for (var i = 0; i < dice0.length; i++) {
-      if (dieDef(dice0[i]).forgeTo.isNotEmpty) forgeable.add(i);
+      if (resolveRunDie(run, dice0[i]).def.forgeTo.isNotEmpty) forgeable.add(i);
     }
     // v0.3.1 F9: never offer a heal that heals nothing.
     final fullHp = (player['hp'] as int) >= (player['max_hp'] as int);
+    // v7: one temper per run. Once spent, the option disappears rather than
+    // sitting there greyed out asking to be re-read every rest.
+    final canTemper = (run?['tempers_used'] as int? ?? 0) < 1;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -24,10 +28,17 @@ class RestScreen extends StatelessWidget {
             const SizedBox(height: Space.xl),
             Text('A warm hollow', style: EmberText.h1),
             const SizedBox(height: Space.xs),
-            Text(
-              'Rest to heal, or forge a die into something stronger. One only.',
-              style: EmberText.bodyDim,
-              textAlign: TextAlign.center,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.l),
+              child: Text(
+                canTemper
+                    ? 'Rest to heal, forge a die into something stronger, or '
+                          'temper one face. One only.'
+                    : 'Rest to heal, or forge a die into something stronger. '
+                          'One only.',
+                style: EmberText.bodyDim,
+                textAlign: TextAlign.center,
+              ),
             ),
             const Spacer(),
             Padding(
@@ -48,6 +59,20 @@ class RestScreen extends StatelessWidget {
                 ),
               ),
             ),
+            if (canTemper)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: EmberButton(
+                    'Temper a face — once per delve',
+                    key: const ValueKey('rest-temper'),
+                    icon: Icons.auto_awesome,
+                    onTap: () => showTemperSheet(context, c),
+                  ),
+                ),
+              ),
+            if (canTemper) const SizedBox(height: Space.m),
             if (forgeable.isNotEmpty)
               Expanded(
                 child: ListView(
@@ -58,7 +83,7 @@ class RestScreen extends StatelessWidget {
                     for (final i in forgeable)
                       Padding(
                         padding: const EdgeInsets.only(bottom: Space.s),
-                        child: _forgeRow(dice0[i], i + 1),
+                        child: _forgeRow(run, dice0[i], i + 1),
                       ),
                   ],
                 ),
@@ -71,8 +96,8 @@ class RestScreen extends StatelessWidget {
     );
   }
 
-  Widget _forgeRow(String id, int index) {
-    final def = dieDef(id);
+  Widget _forgeRow(Map? run, String id, int index) {
+    final def = resolveRunDie(run, id).def;
     final into = def.forgeTo.first;
     // Compact chips + dense button: the full-size row overflowed 320dp
     // phones by ~9px (many-dice layout sweep 2026-07-24).
@@ -82,13 +107,13 @@ class RestScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              _chip(id),
+              _chip(id, run),
               const Icon(
                 Icons.arrow_forward,
                 size: 16,
                 color: EmberColors.ember,
               ),
-              _chip(into),
+              _chip(into, null),
               const Spacer(),
               EmberButton(
                 'Forge',
@@ -112,12 +137,12 @@ class RestScreen extends StatelessWidget {
     );
   }
 
-  Widget _chip(String id) => SizedBox(
+  Widget _chip(String id, Map? run) => SizedBox(
     width: 48,
     height: 60,
     child: FittedBox(
       fit: BoxFit.contain,
-      child: DieChip(id, skin: c.meta.activeDieSkin),
+      child: DieChip(id, run: run, skin: c.meta.activeDieSkin),
     ),
   );
 }

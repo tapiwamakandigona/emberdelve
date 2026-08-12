@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../data/dice.dart';
 import '../data/skins.dart';
+import '../sim/run_dice.dart';
 import 'theme.dart';
 
 // ---------------------------------------------------------------------------
@@ -538,6 +539,11 @@ class DieChip extends StatefulWidget {
   /// falls back to the default bone skin, which renders exactly as before
   /// skins existed. Paint only — never touches values, faces, or semantics.
   final String? skin;
+
+  /// v7: the run ledger, needed to resolve a run-local `custom_N` id to its
+  /// catalog base plus tempered face/rune. Null everywhere a catalog id is
+  /// shown outside a run (menus, skin previews, shop stock).
+  final Map? run;
   const DieChip(
     this.dieId, {
     super.key,
@@ -552,6 +558,7 @@ class DieChip extends StatefulWidget {
     this.flight = false,
     this.onSettle,
     this.skin,
+    this.run,
   });
 
   @override
@@ -706,10 +713,17 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final def = dieDef(widget.dieId);
+    final runDie = resolveRunDie(widget.run, widget.dieId);
+    final def = runDie.def;
     // Spoken description for TalkBack: die size, face, and state. The painted
-    // pips/rings below carry no semantics of their own.
+    // pips/rings below carry no semantics of their own. A tempered die speaks
+    // its rune and face, since the mark painted below is decoration only.
     final a11y = StringBuffer('${def.name}, d${def.size} die');
+    if (runDie.custom) {
+      a11y.write(
+        ', tempered ${runeName(runDie.rune)} on ${runDie.temperedFace}',
+      );
+    }
     if (widget.value != null) a11y.write(', rolled ${widget.value}');
     if (widget.maxed && !widget.assigned) a11y.write(', max roll');
     if (widget.assigned) {
@@ -749,7 +763,7 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
               flight: widget.flight && _tumble.isAnimating,
               flightProgress: f,
             );
-            final face = _face(def, showValue);
+            final face = _face(def, showValue, runDie);
             // LFP-1: physical throw — arc in from the throw origin with
             // spin, then one soft bounce as it settles into the slot. The
             // in-place hop remains for non-tray contexts (flight == false).
@@ -809,7 +823,7 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _face(DieDef def, int? value) {
+  Widget _face(DieDef def, int? value, RunDie runDie) {
     // v0.3.1 F1: a spent (assigned) die must read as spent — never keep the
     // gold MAX halo or the selection ring on a die whose taps do nothing.
     final glowSelected = widget.selected && !widget.assigned;
@@ -871,17 +885,36 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
               // Light, pips and ring share one painter. Keeping one
               // RenderCustomPaint per die preserves the pre-upgrade render
               // tree and its rapid-interaction cost.
-              child: CustomPaint(
-                foregroundPainter: _FacePainter(
-                  value: value,
-                  sides: def.size,
-                  maxed: glowMaxed,
-                  selected: glowSelected,
-                  ink: Color(skin.inkArgb),
-                  dimensional: true,
-                  ringColor: ringColor,
-                ),
-                child: dieArt,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      foregroundPainter: _FacePainter(
+                        value: value,
+                        sides: def.size,
+                        maxed: glowMaxed,
+                        selected: glowSelected,
+                        ink: Color(skin.inkArgb),
+                        dimensional: true,
+                        ringColor: ringColor,
+                      ),
+                      child: dieArt,
+                    ),
+                  ),
+                  // v7: a tempered die wears its rune in the corner, lit when
+                  // the roll actually landed on the tempered face so the
+                  // trigger is readable at a glance.
+                  if (runDie.custom)
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: _RuneMark(
+                        rune: runDie.rune!,
+                        face: runDie.temperedFace!,
+                        live: value != null && value == runDie.temperedFace,
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 2),
@@ -1342,4 +1375,48 @@ void showFlash(BuildContext context, String msg) {
       duration: const Duration(milliseconds: 1400),
     ),
   );
+}
+
+
+/// The corner mark on a tempered die: rune initial over its face number.
+/// Decoration only — DieChip's Semantics label already speaks both.
+class _RuneMark extends StatelessWidget {
+  final String rune;
+  final int face;
+  final bool live;
+  const _RuneMark({
+    required this.rune,
+    required this.face,
+    required this.live,
+  });
+
+  static const Map<String, Color> _colors = {
+    'blade': EmberColors.hp,
+    'aegis': EmberColors.block,
+    'surge': EmberColors.gold,
+    'echo': EmberColors.ember,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _colors[rune] ?? EmberColors.ember;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+      decoration: BoxDecoration(
+        color: live
+            ? color.withValues(alpha: 0.92)
+            : const Color(0xFF17110A).withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color, width: 1),
+      ),
+      child: Text(
+        '${runeName(rune)[0]}$face',
+        style: EmberText.micro.copyWith(
+          fontSize: 8,
+          height: 1.1,
+          color: live ? const Color(0xFF17110A) : color,
+        ),
+      ),
+    );
+  }
 }

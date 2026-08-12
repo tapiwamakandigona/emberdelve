@@ -20,6 +20,8 @@ import '../meta/meta.dart';
 import '../meta/play_games_service.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
+import '../sim/keystones.dart';
+import '../sim/run_dice.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
 import 'weekly.dart';
@@ -542,6 +544,26 @@ class GameController extends ChangeNotifier {
           break;
         case 'forged':
           flash = 'Forged into a stronger die';
+          break;
+        case 'face_tempered':
+          flash = '${runeName(e['rune'] as String?)} tempered onto ${e['face']}';
+          break;
+        // v7 feedback rule: only announce what the numbers on screen do NOT
+        // already say. Blade/Aegis and the assignment keystones are visible in
+        // the die's own "+N SPENT"; these three are not.
+        case 'reroll_gained':
+          flash = 'Surge — a reroll returned';
+          break;
+        case 'echo_armed':
+          flash = 'Echo armed — next ${e['other_action']} +1';
+          break;
+        case 'keystone_triggered':
+          if (e['keystone'] == 'living_bastion') {
+            flash = 'Living Bastion — ${e['amount']} block carried';
+          }
+          break;
+        case 'keystone_taken':
+          flash = '${keystoneDef(e['keystone'] as String).name} set';
           break;
         case 'relic_gained':
           flash = 'Relic acquired';

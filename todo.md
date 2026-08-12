@@ -40,7 +40,10 @@
 - [x] Four keystones live in the sim with a real acquisition point (chooser
       screen, one pick per run after the first won fight) and a deliberate
       golden re-anchor recorded old -> new.
-- [ ] Rest-node temper UI, rune marks on dice, and combat rune feedback.
+- [x] Rest-node temper sheet, rune marks on dice, and combat feedback for the
+      effects a die's own number cannot show.
+- [ ] Seeded balance sweep across difficulties, v6-autosave migration test,
+      perf probes, signed build-size measurement, then PR.
 - [x] Replace duplicated UI/sim assignment arithmetic with one pure resolver;
       v6 golden and seeded preview parity remain green.
 - [ ] Implement four first keystones with named events and exact previews.
