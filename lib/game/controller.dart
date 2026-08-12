@@ -177,9 +177,13 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
-    // v0.6.0: HARD is free (was Forge-gated v0.4.0–v0.5.0). The old boot
-    // clamp that forced a non-Forge hard preference back to normal is gone;
-    // clampRunParams in startRun still guarantees only entitled params run.
+    // v0.6.1: HARD is Forge-gated again (free only during v0.6.0). A locked
+    // profile whose sticky preference says 'hard' (set while 0.6.0 was live)
+    // is moved back to 'normal' HERE, on the visible selector — the player
+    // sees what they'll get; startRun's clamp stays as the guarantee.
+    if (!meta.forgeUnlocked && meta.preferredDifficulty == 'hard') {
+      meta.preferredDifficulty = 'normal';
+    }
     // First-run on-ramp (v0.3.3): steer a brand-new profile toward easy by
     // moving the VISIBLE selector — what's highlighted is what they get, so
     // there is never a silent difficulty switch. One tap ends the steering.
