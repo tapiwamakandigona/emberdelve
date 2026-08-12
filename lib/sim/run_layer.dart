@@ -26,6 +26,7 @@ import '../data/relics.dart';
 import 'combat.dart';
 import 'map_gen.dart';
 import 'relic_hooks.dart';
+import 'run_dice.dart';
 import 'sim.dart';
 
 void _push(List<Map<String, Object?>> events, Map<String, Object?> ev) =>
@@ -139,6 +140,10 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'ascension': ascension,
     'character': ch.id,
     'difficulty': difficulty,
+    'custom_dice': <String, dynamic>{},
+    'next_custom_die': 1,
+    'tempers_used': 0,
+    'keystones': <String>[],
   };
   sim.turnsTotal = 0;
   if (ch.startRelic != null) {
@@ -390,12 +395,71 @@ void runForge(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     return _invalid(events, 'no_such_die');
   }
   final from = pool[idx - 1] as String;
+  final resolved = resolveRunDie(sim.run, from);
   final into = cmd['into'];
-  if (into is! String || !dieDef(from).forgeTo.contains(into)) {
+  if (into is! String || !resolved.def.forgeTo.contains(into)) {
     return _invalid(events, 'illegal_forge');
   }
-  pool[idx - 1] = into;
-  _push(events, {'type': 'forged', 'from': from, 'into': into});
+  if (resolved.custom && resolved.temperedFace! <= dieDef(into).size) {
+    (sim.run!['custom_dice'] as Map)[from] = {
+      'base': into,
+      'face': resolved.temperedFace,
+      'rune': resolved.rune,
+    };
+  } else {
+    pool[idx - 1] = into;
+    removeOrphanCustomDie(sim.run, from);
+  }
+  _push(events, {
+    'type': 'forged',
+    'from': resolved.baseId,
+    'into': into,
+    if (resolved.custom) 'custom': from,
+  });
+  sim.phase = 'map';
+}
+
+/// cmd: `{ type:"temper_face", die:1-based, face:natural face,
+///          rune:"blade"|"aegis"|"surge"|"echo" }`
+void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
+  if (sim.phase != 'rest') return _invalid(events, 'not_rest_phase');
+  final pool = sim.player['dice'] as List;
+  final idx = cmd['die'];
+  if (idx is! int || idx < 1 || idx > pool.length) {
+    return _invalid(events, 'no_such_die');
+  }
+  if ((sim.run!['tempers_used'] as int? ?? 0) >= 1) {
+    return _invalid(events, 'temper_used');
+  }
+  final rune = cmd['rune'];
+  if (rune is! String || !faceRunes.contains(rune)) {
+    return _invalid(events, 'unknown_rune');
+  }
+  final current = pool[idx - 1] as String;
+  final resolved = resolveRunDie(sim.run, current);
+  final face = cmd['face'];
+  if (face is! int || face < 1 || face > resolved.def.size) {
+    return _invalid(events, 'no_such_face');
+  }
+  final next = sim.run!['next_custom_die'] as int? ?? 1;
+  final customId = 'custom_$next';
+  (sim.run!['custom_dice'] as Map)[customId] = {
+    'base': resolved.baseId,
+    'face': face,
+    'rune': rune,
+  };
+  pool[idx - 1] = customId;
+  removeOrphanCustomDie(sim.run, current);
+  sim.run!['next_custom_die'] = next + 1;
+  sim.run!['tempers_used'] = (sim.run!['tempers_used'] as int? ?? 0) + 1;
+  _push(events, {
+    'type': 'face_tempered',
+    'die': idx,
+    'custom': customId,
+    'base': resolved.baseId,
+    'face': face,
+    'rune': rune,
+  });
   sim.phase = 'map';
 }
 
@@ -592,7 +656,9 @@ void _applyEventEffects(
     final pool = sim.player['dice'] as List;
     final idx = shuffle.range(1, pool.length);
     final lost = pool.removeAt(idx - 1);
-    _push(events, {'type': 'die_lost', 'die': lost});
+    final base = resolveRunDie(sim.run, lost as String).baseId;
+    removeOrphanCustomDie(sim.run, lost);
+    _push(events, {'type': 'die_lost', 'die': base});
   }
   final gainDie = effects['gain_die'] as String?;
   if (gainDie != null) {

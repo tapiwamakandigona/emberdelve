@@ -16,11 +16,11 @@
 //   * the shown intent resolves EXACTLY as shown — never rerolled by the game
 //   * randomness decides what you roll, never how a stated action resolves
 
-import '../data/dice.dart';
 import '../data/enemies.dart';
 import 'assignment.dart';
 import 'combos.dart';
 import 'relic_hooks.dart';
+import 'run_dice.dart';
 import 'sim.dart';
 
 // Exact-kill / overkill tuning (docs/m4-sim-contract.md §4).
@@ -175,6 +175,7 @@ void combatBegin(
   sim.player['block'] = 0;
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
+  sim.player['rolled_face'] = null;
   sim.player['assigned'] = <String, String>{};
   sim.player['rerolls_left'] = relicSum(sim, 'rerolls');
   sim.player['combo_bonus'] = null;
@@ -281,9 +282,9 @@ void _encounterLost(Sim sim, List<Map<String, Object?>> events) {
 
 // Roll one die id, applying its own min_value and the relic min_roll floor,
 // and (for on_max_gold) crediting gold when the natural face is the max.
-int _rollOne(Sim sim, String id, List<bool> maxedOut,
+int _rollOne(Sim sim, String id, List<bool> maxedOut, List<int> naturalFaces,
     List<Map<String, Object?>> events) {
-  final def = dieDef(id);
+  final def = resolveRunDie(sim.run, id).def;
   // P3 'all_d4' (Flint Week): every die rolls on 4 faces. Smaller dice are
   // already <= 4, so only d6+ shrink. The die keeps its mods (attack_bonus,
   // min_value, ...) — only its face count changes. Off the Weekly Delve
@@ -291,6 +292,7 @@ int _rollOne(Sim sim, String id, List<bool> maxedOut,
   final faces =
       sim.hasMutator('all_d4') && def.size > 4 ? 4 : def.size;
   final raw = sim.rng['combat']!.die(faces);
+  naturalFaces.add(raw);
   final isMax = raw == faces;
   maxedOut.add(isMax);
   if (isMax) {
@@ -328,11 +330,13 @@ void combatRoll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final poolIds = (sim.player['dice'] as List).cast<String>();
   final values = <int>[];
   final maxed = <bool>[];
+  final naturalFaces = <int>[];
   for (final id in poolIds) {
-    values.add(_rollOne(sim, id, maxed, events));
+    values.add(_rollOne(sim, id, maxed, naturalFaces, events));
   }
   sim.player['rolled'] = values;
   sim.player['rolled_max'] = maxed;
+  sim.player['rolled_face'] = naturalFaces;
   sim.player['assigned'] = <String, String>{};
   final ev = <String, Object?>{'type': 'dice_rolled', 'count': values.length};
   for (var i = 0; i < values.length; i++) {
@@ -375,6 +379,7 @@ void combatRerollRisky(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final free = sim.player['free_reroll'] == true;
   final penalty = free ? 0 : 1;
   final maxed = (sim.player['rolled_max'] as List).cast<bool>();
+  final naturalFaces = (sim.player['rolled_face'] as List).cast<int>();
   final ev = <String, Object?>{
     'type': 'risky_reroll',
     'count': picks.length,
@@ -384,12 +389,18 @@ void combatRerollRisky(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   for (var k = 0; k < picks.length; k++) {
     final die = picks[k];
     final tmp = <bool>[];
+    final tmpFace = <int>[];
     var v = _rollOne(
-        sim, (sim.player['dice'] as List)[die - 1] as String, tmp, events);
+        sim,
+        (sim.player['dice'] as List)[die - 1] as String,
+        tmp,
+        tmpFace,
+        events);
     v -= penalty;
     if (v < 1) v = 1;
     rolled[die - 1] = v;
     maxed[die - 1] = tmp.first && penalty == 0;
+    naturalFaces[die - 1] = tmpFace.first;
     ev['r${k + 1}'] = die;
     ev['v${k + 1}'] = v;
   }
@@ -418,10 +429,12 @@ void combatReroll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (left <= 0) return _invalid(events, 'no_rerolls_left');
   final maxed = (sim.player['rolled_max'] as List).cast<bool>();
   final tmp = <bool>[];
+  final tmpFace = <int>[];
   final newVal = _rollOne(sim, (sim.player['dice'] as List)[die - 1] as String,
-      tmp, events);
+      tmp, tmpFace, events);
   rolled[die - 1] = newVal;
   maxed[die - 1] = tmp.first;
+  (sim.player['rolled_face'] as List)[die - 1] = tmpFace.first;
   sim.player['rerolls_left'] = left - 1;
   _push(events, {
     'type': 'reroll_used',
@@ -462,6 +475,24 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   );
   if (!resolution.allowed) {
     return _invalid(events, resolution.invalidReason!);
+  }
+  final resolvedDie = resolveRunDie(
+      sim.run, (sim.player['dice'] as List)[die - 1] as String);
+  if (resolution.rune != null) {
+    _push(events, {
+      'type': 'rune_triggered',
+      'die': die,
+      'rune': resolution.rune,
+      'face': resolvedDie.temperedFace,
+    });
+    if (resolution.runeBonus > 0) {
+      _push(events, {
+        'type': 'rune_bonus',
+        'die': die,
+        'action': action,
+        'amount': resolution.runeBonus,
+      });
+    }
   }
 
   if (action == 'attack') {
@@ -606,6 +637,7 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   sim.player['block'] = 0;
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
+  sim.player['rolled_face'] = null;
   sim.player['assigned'] = <String, String>{};
   sim.player['combo_bonus'] = null;
   sim.player['risky_used'] = false;

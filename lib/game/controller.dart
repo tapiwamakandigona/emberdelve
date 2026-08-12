@@ -69,6 +69,7 @@ class GameController extends ChangeNotifier {
     'dice',
     'rolled',
     'rolled_max',
+    'rolled_face',
     'assigned',
     'rerolls_left',
     'risky_used',
