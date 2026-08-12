@@ -80,6 +80,23 @@ extension _CombatStageBand on _CombatScreenState {
           return Stack(
             clipBehavior: Clip.none,
             children: [
+              // Dimensional stage v1: one static painter turns the empty
+              // middle band into a shallow cavern diorama — far arch,
+              // floor plane, fissures and foreground rock. No ticker, blur,
+              // saveLayer or binary asset: idle combat keeps its two tiny
+              // sprite-painter repaints/frame.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: _CombatDioramaPainter(
+                        boss: enemy['boss'] == true,
+                        elite: enemy['elite'] == true,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 left: 0,
                 right: 0,
@@ -356,13 +373,19 @@ extension _CombatStageBand on _CombatScreenState {
             duration: _CombatScreenState._deathTime,
             opacity: dying ? 0.0 : 1.0,
             child: Container(
-              width: spriteHeight * 0.7,
-              height: spriteHeight * 0.14,
+              width: spriteHeight * 0.82,
+              height: spriteHeight * 0.16,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.elliptical(spriteHeight, 20),
                 ),
-                color: Colors.black.withValues(alpha: 0.38),
+                // Crisp concentric ellipses fake a soft
+                // contact shadow without MaskFilter.blur.
+                border: Border.all(
+                  color: const Color(0xFFEF7B23).withValues(alpha: 0.12),
+                  width: 1.0,
+                ),
+                color: Colors.black.withValues(alpha: 0.46),
               ),
             ),
           ),
@@ -377,7 +400,12 @@ extension _CombatStageBand on _CombatScreenState {
             ),
           ),
         if (dying)
-          Positioned.fill(child: EmberBurst(duration: _CombatScreenState._deathTime, count: 30)),
+          Positioned.fill(
+            child: EmberBurst(
+              duration: _CombatScreenState._deathTime,
+              count: 30,
+            ),
+          ),
       ],
     );
     // Hit-flash: paint the sprite solid white for a beat.
@@ -424,7 +452,9 @@ extension _CombatStageBand on _CombatScreenState {
       alignment: Alignment.bottomCenter,
       scale: depthScale,
       child: AnimatedContainer(
-        duration: windup && squash ? _CombatScreenState._enemyWindupTime : _CombatScreenState._squashTime,
+        duration: windup && squash
+            ? _CombatScreenState._enemyWindupTime
+            : _CombatScreenState._squashTime,
         curve: Curves.easeOut,
         transformAlignment: Alignment.bottomCenter,
         transform: squash
@@ -440,8 +470,7 @@ extension _CombatStageBand on _CombatScreenState {
                         lungeToward * -0.07,
                       ) // top tips away from target
                       ..scaleByDouble(1.06, 0.90, 1.06, 1.0))
-                  : (Matrix4.identity()
-                      ..scaleByDouble(1.08, 0.86, 1.08, 1.0)))
+                  : (Matrix4.identity()..scaleByDouble(1.08, 0.86, 1.08, 1.0)))
             : Matrix4.identity(),
         child: w,
       ),
@@ -454,9 +483,115 @@ extension _CombatStageBand on _CombatScreenState {
         : 0.0;
     return AnimatedSlide(
       offset: Offset(dx, 0),
-      duration: lunge ? _CombatScreenState._contact : _CombatScreenState._knockTime,
+      duration: lunge
+          ? _CombatScreenState._contact
+          : _CombatScreenState._knockTime,
       curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
       child: w,
     );
   }
 }
+
+/// Static, allocation-light combat depth. The background PNG supplies distant
+/// texture; this painter adds a readable horizon and floor so combatants no
+/// longer float in a flat void. All geometry is normalized and cached by the
+/// retained CustomPaint display list behind a RepaintBoundary.
+class _CombatDioramaPainter extends CustomPainter {
+  final bool boss;
+  final bool elite;
+  const _CombatDioramaPainter({required this.boss, required this.elite});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final horizon = h * 0.58;
+    final floor = Path()
+      ..moveTo(0, horizon)
+      ..lineTo(w, horizon)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(
+      floor,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF211727).withValues(alpha: 0.10),
+            const Color(0xFF0B0710).withValues(alpha: 0.66),
+          ],
+        ).createShader(Rect.fromLTWH(0, horizon, w, h - horizon)),
+    );
+
+    // Receding floor seams converge on the central vanishing point.
+    final seam = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8
+      ..color = const Color(0xFFB95B25).withValues(alpha: 0.13);
+    for (final x in [0.08, 0.27, 0.73, 0.92]) {
+      canvas.drawLine(Offset(w * 0.50, horizon), Offset(w * x, h), seam);
+    }
+    for (final y in [0.66, 0.78, 0.90]) {
+      final t = (y - 0.58) / 0.42;
+      final inset = (1 - t) * w * 0.28;
+      canvas.drawLine(Offset(inset, h * y), Offset(w - inset, h * y), seam);
+    }
+
+    // A low ember pool anchors the duel. RadialGradient is direct paint (no
+    // offscreen layer); alpha is deliberately restrained for text contrast.
+    final emberPool = Rect.fromCenter(
+      center: Offset(w * 0.5, h * 0.91),
+      width: w * (boss ? 0.82 : 0.68),
+      height: h * 0.18,
+    );
+    canvas.drawOval(
+      emberPool,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            Color(
+              boss
+                  ? 0xFFDA3D24
+                  : elite
+                  ? 0xFFC95B28
+                  : 0xFFF08A2C,
+            ).withValues(alpha: boss ? 0.19 : 0.13),
+            const Color(0x00F08A2C),
+          ],
+        ).createShader(emberPool),
+    );
+
+    // Foreground silhouettes create a camera plane without consuming sprite
+    // or texture memory.
+    final rock = Paint()
+      ..color = const Color(0xFF09070C).withValues(alpha: 0.82);
+    final left = Path()
+      ..moveTo(0, h)
+      ..lineTo(0, h * 0.83)
+      ..lineTo(w * 0.05, h * 0.78)
+      ..lineTo(w * 0.11, h * 0.88)
+      ..lineTo(w * 0.18, h)
+      ..close();
+    final right = Path()
+      ..moveTo(w, h)
+      ..lineTo(w, h * 0.80)
+      ..lineTo(w * 0.95, h * 0.77)
+      ..lineTo(w * 0.88, h * 0.89)
+      ..lineTo(w * 0.82, h)
+      ..close();
+    canvas.drawPath(left, rock);
+    canvas.drawPath(right, rock);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CombatDioramaPainter old) =>
+      old.boss != boss || old.elite != elite;
+}
+
+@visibleForTesting
+CustomPainter debugCombatDioramaPainter({
+  bool boss = false,
+  bool elite = false,
+}) => _CombatDioramaPainter(boss: boss, elite: elite);
