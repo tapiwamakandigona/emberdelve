@@ -20,3 +20,12 @@
       (terminal `run_won` was falsely classified as stuck), then rerun its
       deterministic four-run session without weakening invariant checks.
 - [x] Update progress/state docs with verified evidence and next loop.
+
+## Gauntlet — visible build identity (iteration 2)
+
+- [x] Define a deterministic presentation-only build identity from the live
+      dice pool; no sim/save/golden change.
+- [x] Add pure identity derivation + weapon evolution.
+- [x] Add “Pool forged this run” terminal recap with exact pool counts.
+- [x] Test every identity/path, short-phone layout, screenshot and perf budget.
+- [~] Full verification complete; commit, PR, CI and merge pending.

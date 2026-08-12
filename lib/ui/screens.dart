@@ -22,6 +22,7 @@ import '../meta/forge.dart';
 import '../meta/play_games_service.dart';
 import 'forge_sheet.dart';
 import 'art.dart';
+import 'build_identity.dart';
 import 'fx.dart';
 import 'haptics.dart';
 import 'ledger_screen.dart';
@@ -31,7 +32,6 @@ import 'sprites.dart';
 import 'theme.dart';
 import 'weapons.dart';
 import 'widgets.dart';
-
 
 part 'screens/game_root.dart';
 part 'screens/title_screen.dart';
