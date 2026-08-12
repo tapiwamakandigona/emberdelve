@@ -27,7 +27,10 @@ import 'run_layer.dart';
 // 6: starting-boon pool grew 8 -> 15 — the seeded boon draw reshuffles for
 // every seed (offering stream only; resolution rules untouched), so
 // mid-flight v5 saves are cleanly discarded at boot.
-const int simVersion = 6;
+// 7: run-local tempered dice add one face rune and explicit natural-face
+// state. v6 saves are cleanly discarded at boot; see
+// docs/v7-face-forge-contract.md.
+const int simVersion = 7;
 
 const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
 
@@ -44,6 +47,7 @@ final Map<String, Handler> _handlers = {
   'choose_reward': runChooseReward,
   'rest': runRest,
   'forge': runForge,
+  'temper_face': runTemperFace,
   'buy': runBuy,
   'leave_shop': runLeaveShop,
   'event_choose': runEventChoose,
@@ -89,6 +93,7 @@ class Sim {
       'dice': <String>['d6', 'd6', 'd6'],
       'rolled': null,
       'rolled_max': null,
+      'rolled_face': null,
       'assigned': <String, String>{},
     };
   }

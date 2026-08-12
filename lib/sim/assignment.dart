@@ -4,25 +4,32 @@
 // It must stay side-effect free: callers perform mutations and emit events
 // only after an allowed result is returned.
 
-import '../data/dice.dart';
 import '../data/relics.dart';
+import 'run_dice.dart';
 
 class AssignmentResolution {
   final bool allowed;
   final int value;
   final String? invalidReason;
+  final String? rune;
+  final int runeBonus;
 
   const AssignmentResolution._({
     required this.allowed,
     required this.value,
     this.invalidReason,
+    this.rune,
+    this.runeBonus = 0,
   });
 
-  const AssignmentResolution.allowed(int value)
-      : this._(allowed: true, value: value);
+  const AssignmentResolution.allowed(
+    int value, {
+    String? rune,
+    int runeBonus = 0,
+  }) : this._(allowed: true, value: value, rune: rune, runeBonus: runeBonus);
 
   const AssignmentResolution.invalid(String reason)
-      : this._(allowed: false, value: -1, invalidReason: reason);
+    : this._(allowed: false, value: -1, invalidReason: reason);
 }
 
 int _ownedRelicSum(Map? run, String hook) {
@@ -53,7 +60,11 @@ AssignmentResolution resolveAssignment({
     return const AssignmentResolution.invalid('unknown_action');
   }
 
-  final def = dieDef((player['dice'] as List).cast<String>()[die - 1]);
+  final resolvedDie = resolveRunDie(
+    run,
+    (player['dice'] as List).cast<String>()[die - 1],
+  );
+  final def = resolvedDie.def;
   final mods = def.mods;
   if (action == 'attack' && mods['block_only'] == true) {
     return const AssignmentResolution.invalid('die_is_block_only');
@@ -69,11 +80,11 @@ AssignmentResolution resolveAssignment({
       : 0;
   final combo = (player['combo_bonus'] as List?)?.cast<int>();
 
-  var value =
-      rolled[die - 1] + onMax + (combo != null ? combo[die - 1] : 0);
+  var value = rolled[die - 1] + onMax + (combo != null ? combo[die - 1] : 0);
   if (action == 'attack') {
     value +=
-        (mods['attack_bonus'] as int? ?? 0) + _ownedRelicSum(run, 'attack_flat');
+        (mods['attack_bonus'] as int? ?? 0) +
+        _ownedRelicSum(run, 'attack_flat');
     if (enemy['boss'] == true || enemy['elite'] == true) {
       value += _ownedRelicSum(run, 'elite_damage');
     }
@@ -81,5 +92,23 @@ AssignmentResolution resolveAssignment({
     value +=
         (mods['block_bonus'] as int? ?? 0) + _ownedRelicSum(run, 'block_flat');
   }
-  return AssignmentResolution.allowed(value);
+  final naturalFaces = (player['rolled_face'] as List?)?.cast<int>();
+  final runeFaceMatches =
+      resolvedDie.custom &&
+      naturalFaces != null &&
+      naturalFaces[die - 1] == resolvedDie.temperedFace;
+  var runeBonus = 0;
+  String? triggeredRune;
+  if (runeFaceMatches &&
+      ((resolvedDie.rune == 'blade' && action == 'attack') ||
+          (resolvedDie.rune == 'aegis' && action == 'block'))) {
+    triggeredRune = resolvedDie.rune;
+    runeBonus = 2;
+    value += runeBonus;
+  }
+  return AssignmentResolution.allowed(
+    value,
+    rune: triggeredRune,
+    runeBonus: runeBonus,
+  );
 }

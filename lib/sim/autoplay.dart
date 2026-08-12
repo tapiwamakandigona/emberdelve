@@ -5,6 +5,7 @@
 import '../data/boons.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
+import 'run_dice.dart';
 import 'sim.dart';
 
 /// A pure function of sim.state() -> next command (or null at terminal). The
@@ -81,8 +82,10 @@ Map<String, Object?>? botCmd(Sim sim,
       }
       final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
       int attackValue(int i) {
-        final mods =
-            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        final mods = resolveRunDie(
+                sim.run, (sim.player['dice'] as List)[i - 1] as String)
+            .def
+            .mods;
         return rolled[i - 1] +
             (mods['attack_bonus'] as int? ?? 0) +
             (combo != null ? combo[i - 1] : 0);
@@ -93,8 +96,10 @@ Map<String, Object?>? botCmd(Sim sim,
       final lethal = (enemy['hp'] as int) + (enemy['block'] as int);
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] != null) continue;
-        final mods =
-            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        final mods = resolveRunDie(
+                sim.run, (sim.player['dice'] as List)[i - 1] as String)
+            .def
+            .mods;
         if (mods['block_only'] == true) continue;
         if (attackValue(i) == lethal) {
           return {'type': 'assign', 'die': i, 'action': 'attack'};
@@ -102,7 +107,10 @@ Map<String, Object?>? botCmd(Sim sim,
       }
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] == null) {
-          final mods = dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+          final mods = resolveRunDie(
+                  sim.run, (sim.player['dice'] as List)[i - 1] as String)
+              .def
+              .mods;
           final intent = sim.enemy!['intent'] as Map;
           var incoming = 0;
           if (intent['kind'] == 'attack' || intent['kind'] == 'attack_block') {
@@ -140,7 +148,7 @@ Map<String, Object?>? botCmd(Sim sim,
         // healthy enough: forge the first die that can upgrade
         final pool = (sim.player['dice'] as List).cast<String>();
         for (var i = 0; i < pool.length; i++) {
-          final ft = dieDef(pool[i]).forgeTo;
+          final ft = resolveRunDie(sim.run, pool[i]).def.forgeTo;
           if (ft.isNotEmpty) {
             return {'type': 'forge', 'die': i + 1, 'into': ft.first};
           }
