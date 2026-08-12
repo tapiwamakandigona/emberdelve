@@ -177,6 +177,13 @@
       "evidence": "PR #52 commit c8a3d62 + tests (recommendedIndex determinism, single RECOMMENDED chip render); sim untouched"
     },
     {
+      "id": "CDP-1",
+      "title": "Performance-first dimensional dice and combat diorama",
+      "acceptance": "Existing deterministic dice throw gains analytic perspective, directional light and d6 thickness; combat gains a static shallow floor plane and grounded combatants; no sim/save/dependency/binary-asset change, blur or saveLayer; idle repaint-proxy floors do not regress and full-interaction proxy stays within 1% of baseline",
+      "passes": true,
+      "evidence": "feat/depth-performance: dimensional_presentation_test 3/3, full flutter test 276/276, store screenshot harness 2/2, deterministic real-UI probe passed twice consecutively from clean saves (last: 4/4 runs, 827 steps, 0 violations/warnings); perf proxy title idle 3.0->3.0, combat idle 2.0->2.0, die-tap 20.1->19.9, full storm 96.2->96.6 (+0.4%); git diff has no lib/sim or sim_test change and goldenV6 remains 2013675017"
+    },
+    {
       "id": "M4-2",
       "title": "Ember Forge unlock: one-time IAP, gate, restore (spec R8)",
       "acceptance": "Play Billing one-time product ember_forge_unlock purchasable in a Play-signed build; HARD + ascension>0 locked without it and open with it; purchase grants + acknowledges + persists; restore works from Settings and the Forge sheet AND silently at startup after reinstall; cancel/error never grant; entitlement never revoked locally; all gating outside the sealed sim",
