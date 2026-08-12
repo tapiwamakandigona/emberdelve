@@ -63,6 +63,14 @@ const Map<int, String> bossAnchorSeeds = {
 //   the_bellows        1746127677 -> 2005745586
 //   ashfall_twins      1800621184 -> 642212611
 //
+// Second, NARROWER re-anchor (2026-08-12, player-HP floor): a killing blow used
+// to publish a negative 'player_hp' in enemy_attacked, which the HUD printed
+// verbatim ("-17") and TalkBack read aloud. HP is now floored at zero, so ONLY
+// runs that end in a death change hash. Exactly one anchor seed loses:
+//   ashfall_twins       642212611 -> 183009563   (run_lost, final hp 0)
+// Measured twice per seed; the other five bosses and goldenV6 are unchanged,
+// which is itself the evidence that the fix touched nothing but death.
+//
 // Per-boss goldens, pinned 2026-08-11 from measured builds, not guesses:
 // identical values printed by CI runs 31447535252 and 31459628277 and by a
 // local Flutter 3.44.9 run. ember_tyrant equals goldenV6 by construction
@@ -75,7 +83,7 @@ const Map<String, int> bossGoldens = {
   'pyre_matriarch': 625118910,
   'cinder_hierophant': 1042046624,
   'the_bellows': 2005745586,
-  'ashfall_twins': 642212611,
+  'ashfall_twins': 183009563,
 };
 
 void main() {

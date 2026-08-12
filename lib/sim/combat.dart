@@ -688,7 +688,14 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     if (blocked > playerBlock) blocked = playerBlock;
     final dmg = incoming - blocked;
     blockSpent = blocked;
-    sim.player['hp'] = (sim.player['hp'] as int) - dmg;
+    // Floored at zero. Overkill on the DELVER is meaningless — only enemy
+    // overkill carries (splash), and a negative value is a lie the HUD prints
+    // verbatim: the killing blow used to flash "-17" and TalkBack read
+    // "hp: -17 of 40". Found by the v7 command fuzz (tool/v7_sweep_probe).
+    // 'damage' still reports the full unblocked hit, so the number that lands
+    // on screen stays honest.
+    final hpAfterHit = (sim.player['hp'] as int) - dmg;
+    sim.player['hp'] = hpAfterHit < 0 ? 0 : hpAfterHit;
     final ev = <String, Object?>{
       'type': 'enemy_attacked',
       'amount': incoming,

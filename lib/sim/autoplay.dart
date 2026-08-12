@@ -16,6 +16,7 @@ import 'sim.dart';
 Map<String, Object?>? botCmd(
   Sim sim, {
   bool keystones = true,
+  bool tempers = false,
   String? character,
   int ascension = 0,
   bool boons = true,
@@ -166,6 +167,30 @@ Map<String, Object?>? botCmd(
     case 'rest':
       // Forge the first forgeable duplicate-ish die if cheap value, else heal.
       final hp = sim.player['hp'] as int, maxHp = sim.player['max_hp'] as int;
+      // v7 temper policy, OFF by default so the long-lived golden replays keep
+      // their meaning: a bot that suddenly tempers is a different bot. The
+      // balance probes turn it on to measure what the power is worth. Policy:
+      // Blade on the top face of the biggest die — the simplest read of
+      // "more damage", and a floor for what a thinking player gets.
+      if (tempers && (sim.run!['tempers_used'] as int? ?? 0) == 0) {
+        final pool = (sim.player['dice'] as List).cast<String>();
+        var bestIdx = 0, bestSize = 0;
+        for (var i = 0; i < pool.length; i++) {
+          final sides = resolveRunDie(sim.run, pool[i]).def.size;
+          if (sides > bestSize) {
+            bestSize = sides;
+            bestIdx = i;
+          }
+        }
+        if (bestSize > 0) {
+          return {
+            'type': 'temper_face',
+            'die': bestIdx + 1,
+            'face': bestSize,
+            'rune': 'blade',
+          };
+        }
+      }
       if (hp * 4 >= maxHp * 3) {
         // healthy enough: forge the first die that can upgrade
         final pool = (sim.player['dice'] as List).cast<String>();
@@ -229,6 +254,7 @@ RunResult playRun(
   int? snapAt,
   int maxCmds = 4000,
   bool keystones = true,
+  bool tempers = false,
 }) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
@@ -236,6 +262,7 @@ RunResult playRun(
     final cmd = botCmd(
       sim,
       keystones: keystones,
+      tempers: tempers,
       character: character,
       ascension: ascension,
       boons: boons,
