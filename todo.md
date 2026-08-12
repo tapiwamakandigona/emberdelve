@@ -32,8 +32,12 @@
 
 ## Gauntlet — face forge + keystones (iteration 3)
 
-- [~] Write the v7 simulation contract and migration/golden plan.
+- [x] Write the v7 simulation contract and migration/golden plan.
+- [ ] Independent contract/UX/balance review (multi-agent fan-out attempted;
+      workspace returned out-of-credits, so parent review continues directly).
 - [ ] Implement run-local custom die IDs and one-rune Temper command.
+- [x] Replace duplicated UI/sim assignment arithmetic with one pure resolver;
+      v6 golden and seeded preview parity remain green.
 - [ ] Implement four first keystones with named events and exact previews.
 - [ ] Add rest forge UX, rune visuals, keystone pick/inspection UX.
 - [ ] Rebalance with seeded autoplay; replay/restore/migration/fuzz gates.

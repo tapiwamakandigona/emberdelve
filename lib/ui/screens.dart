@@ -20,6 +20,7 @@ import '../game/seed_input.dart';
 import '../game/weekly.dart';
 import '../meta/forge.dart';
 import '../meta/play_games_service.dart';
+import '../sim/assignment.dart';
 import 'forge_sheet.dart';
 import 'art.dart';
 import 'build_identity.dart';
