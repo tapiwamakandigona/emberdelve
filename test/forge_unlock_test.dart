@@ -10,7 +10,9 @@
 //   4. Startup restore: init() subscribes before querying, restores silently
 //      when not owned, and degrades honestly when the store is missing.
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/meta/forge.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/meta/store_service.dart';
@@ -106,11 +108,11 @@ void main() {
   });
 
   group('R8 gating', () {
-    test('easy/normal/hard are all free (v0.6.0: hard left the Forge)', () {
+    test('easy/normal free; hard is Forge-gated again (v0.6.1)', () {
       final locked = MetaState();
       expect(canSelectDifficulty(locked, 'easy'), isTrue);
       expect(canSelectDifficulty(locked, 'normal'), isTrue);
-      expect(canSelectDifficulty(locked, 'hard'), isTrue);
+      expect(canSelectDifficulty(locked, 'hard'), isFalse);
       final open = MetaState(forgeUnlocked: true);
       expect(canSelectDifficulty(open, 'hard'), isTrue);
     });
@@ -124,12 +126,37 @@ void main() {
       expect(maxAscensionFor(MetaState(forgeUnlocked: true)), 0);
     });
 
-    test('clampRunParams keeps hard but forces rung 0 for locked profiles',
-        () {
+    test('boot moves a locked profile\'s 0.6.0-era hard pref to normal '
+        'visibly (v0.6.1 regression)', () async {
+      // A profile that picked hard while v0.6.0 was live must come back to
+      // a VISIBLE 'normal' — never a silent downgrade at run start.
+      final dir = await Directory.systemTemp.createTemp('relock');
+      MetaStore.dirOverride = dir.path;
+      try {
+        final m = MetaState(runsPlayed: 3)..preferredDifficulty = 'hard';
+        await MetaStore.save(m);
+        final c = GameController();
+        await c.boot();
+        expect(c.meta.forgeUnlocked, isFalse);
+        expect(c.meta.preferredDifficulty, 'normal');
+        // And a Forge owner's hard pref survives boot untouched.
+        final owner = MetaState(runsPlayed: 3, forgeUnlocked: true)
+          ..preferredDifficulty = 'hard';
+        await MetaStore.save(owner);
+        final c2 = GameController();
+        await c2.boot();
+        expect(c2.meta.preferredDifficulty, 'hard');
+      } finally {
+        MetaStore.dirOverride = null;
+        await dir.delete(recursive: true);
+      }
+    });
+
+    test('clampRunParams forces normal + rung 0 for locked profiles', () {
       final locked = MetaState(bestAscension: 5);
       final p = clampRunParams(locked, difficulty: 'hard', ascension: 5);
-      expect(p.difficulty, 'hard'); // v0.6.0: hard is free
-      expect(p.ascension, 0); // the ladder is still the Forge's tier
+      expect(p.difficulty, 'normal'); // v0.6.1: hard is the Forge's again
+      expect(p.ascension, 0); // and so is the ladder
       // And passes entitled requests through untouched.
       final open = MetaState(bestAscension: 5, forgeUnlocked: true);
       final q = clampRunParams(open, difficulty: 'hard', ascension: 5);
