@@ -33,19 +33,24 @@ void main() {
     expect(weaponFor('someone_new').id, weaponFor('kindler').id);
   });
 
-  testWidgets('WeaponView renders each weapon and survives phase choreography',
-      (tester) async {
+  testWidgets('WeaponView renders each weapon and survives phase choreography', (
+    tester,
+  ) async {
     for (final id in charactersOrder) {
       var phase = WeaponPhase.idle;
       late StateSetter setPhase;
-      await tester.pumpWidget(MaterialApp(
-        home: Center(
-          child: StatefulBuilder(builder: (context, setState) {
-            setPhase = setState;
-            return WeaponView(id, height: 96, phase: phase);
-          }),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                setPhase = setState;
+                return WeaponView(id, height: 96, phase: phase);
+              },
+            ),
+          ),
         ),
-      ));
+      );
       await pumpFor(tester, 200);
       expect(find.byType(WeaponView), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -61,23 +66,31 @@ void main() {
     }
   });
 
-  testWidgets('WeaponView renders charged (die pips heat the blade)',
-      (tester) async {
+  testWidgets('WeaponView renders charged (die pips heat the blade)', (
+    tester,
+  ) async {
     for (final id in charactersOrder) {
-      await tester.pumpWidget(MaterialApp(
-        home: Center(
-          child: WeaponView(id,
-              key: ValueKey('charged-$id'), height: 96, charge: 1.0),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: WeaponView(
+              id,
+              key: ValueKey('charged-$id'),
+              height: 96,
+              charge: 1.0,
+            ),
+          ),
         ),
-      ));
+      );
       // Cover the charge tween plus a stretch of spark animation.
       await pumpFor(tester, 500);
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('every pool identity survives idle, raise and swing',
-      (tester) async {
+  testWidgets('every pool identity survives idle, raise and swing', (
+    tester,
+  ) async {
     final pools = {
       BuildPath.ember: const ['d6', 'd8'],
       BuildPath.blade: const ['d8_blade'],
@@ -89,18 +102,24 @@ void main() {
       late StateSetter update;
       final identity = buildIdentity(entry.value);
       expect(identity.path, entry.key);
-      await tester.pumpWidget(MaterialApp(
-        home: Center(
-          child: StatefulBuilder(builder: (context, setState) {
-            update = setState;
-            return WeaponView('kindler',
-                key: ValueKey(entry.key),
-                height: 96,
-                phase: phase,
-                identity: identity);
-          }),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                update = setState;
+                return WeaponView(
+                  'kindler',
+                  key: ValueKey(entry.key),
+                  height: 96,
+                  phase: phase,
+                  identity: identity,
+                );
+              },
+            ),
+          ),
         ),
-      ));
+      );
       await pumpFor(tester, 100);
       update(() => phase = WeaponPhase.raise);
       await pumpFor(tester, 120);
@@ -110,40 +129,48 @@ void main() {
     }
   });
 
-  testWidgets('ImpactSlash (smear and claws) plays once and reports done',
-      (tester) async {
+  testWidgets('ImpactSlash (smear and claws) plays once and reports done', (
+    tester,
+  ) async {
     for (final claws in [false, true]) {
       var done = false;
-      await tester.pumpWidget(MaterialApp(
-        home: SizedBox(
-          width: 120,
-          height: 120,
-          child: ImpactSlash(
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SizedBox(
+            width: 120,
+            height: 120,
+            child: ImpactSlash(
               key: ValueKey('slash-$claws'), // fresh State per variant
               claws: claws,
-              onDone: () => done = true),
+              onDone: () => done = true,
+            ),
+          ),
         ),
-      ));
+      );
       await pumpFor(tester, 500);
       expect(done, isTrue, reason: 'claws=$claws should complete');
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('GuardFlash plays once for both facings and reports done',
-      (tester) async {
+  testWidgets('GuardFlash plays once for both facings and reports done', (
+    tester,
+  ) async {
     for (final facing in [1, -1]) {
       var done = false;
-      await tester.pumpWidget(MaterialApp(
-        home: SizedBox(
-          width: 120,
-          height: 120,
-          child: GuardFlash(
+      await tester.pumpWidget(
+        MaterialApp(
+          home: SizedBox(
+            width: 120,
+            height: 120,
+            child: GuardFlash(
               key: ValueKey('guard-$facing'), // fresh State per variant
               facing: facing,
-              onDone: () => done = true),
+              onDone: () => done = true,
+            ),
+          ),
         ),
-      ));
+      );
       await pumpFor(tester, 650);
       expect(done, isTrue, reason: 'facing=$facing should complete');
       expect(tester.takeException(), isNull);

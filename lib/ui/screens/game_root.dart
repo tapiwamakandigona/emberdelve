@@ -61,6 +61,9 @@ class _GameRootState extends State<GameRoot> {
             // this builder (see [_scoped]).
             screen = _scoped('player_turn', () => CombatScreen(c));
             break;
+          case 'keystone':
+            screen = _whole(() => KeystoneScreen(c));
+            break;
           case 'reward':
             screen = _whole(() => RewardScreen(c));
             break;

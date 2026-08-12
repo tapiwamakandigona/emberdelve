@@ -72,12 +72,17 @@ void main() {
         final plain = playRun(seed);
         final flint = playRun(seed, mutators: ['all_d4']);
         // The modifier must actually change the run.
-        expect(flint.sim.eventHash, isNot(equals(plain.sim.eventHash)),
-            reason: 'all_d4 seed $seed did not change the run');
+        expect(
+          flint.sim.eventHash,
+          isNot(equals(plain.sim.eventHash)),
+          reason: 'all_d4 seed $seed did not change the run',
+        );
         expect(flint.invalids, equals(0));
         // The run is still fully deterministic under the mutator.
-        expect(playRun(seed, mutators: ['all_d4']).sim.eventHash,
-            equals(flint.sim.eventHash));
+        expect(
+          playRun(seed, mutators: ['all_d4']).sim.eventHash,
+          equals(flint.sim.eventHash),
+        );
       }
     });
 
@@ -98,8 +103,11 @@ void main() {
       for (final seed in [11, 250, 20260810]) {
         final sim = _startedRun(seed, mutators: ['elites_only']);
         final kinds = _mapKinds(sim);
-        expect(kinds.values.where((k) => k == 'fight'), isEmpty,
-            reason: 'elites_only left a plain fight on seed $seed');
+        expect(
+          kinds.values.where((k) => k == 'fight'),
+          isEmpty,
+          reason: 'elites_only left a plain fight on seed $seed',
+        );
         // Start and boss are never converted.
         final start = sim.map!['start'].toString();
         final boss = sim.map!['boss'].toString();
@@ -113,8 +121,10 @@ void main() {
     test('the run is playable and deterministic under elites_only', () {
       final r = playRun(20260810, mutators: ['elites_only']);
       expect(r.invalids, equals(0));
-      expect(playRun(20260810, mutators: ['elites_only']).sim.eventHash,
-          equals(r.sim.eventHash));
+      expect(
+        playRun(20260810, mutators: ['elites_only']).sim.eventHash,
+        equals(r.sim.eventHash),
+      );
     });
   });
 
@@ -123,11 +133,17 @@ void main() {
       for (final seed in [11, 250, 20260810]) {
         final plain = _mapKinds(_startedRun(seed));
         final noShop = _mapKinds(_startedRun(seed, mutators: ['no_shops']));
-        expect(noShop.values.where((k) => k == 'shop'), isEmpty,
-            reason: 'no_shops left a shop on seed $seed');
+        expect(
+          noShop.values.where((k) => k == 'shop'),
+          isEmpty,
+          reason: 'no_shops left a shop on seed $seed',
+        );
         // The generator guarantees >=1 shop, so removing them is observable.
-        expect(plain.values.where((k) => k == 'shop'), isNotEmpty,
-            reason: 'test seed $seed had no shop to begin with');
+        expect(
+          plain.values.where((k) => k == 'shop'),
+          isNotEmpty,
+          reason: 'test seed $seed had no shop to begin with',
+        );
       }
     });
   });
@@ -203,8 +219,11 @@ void main() {
       // 2026-08-10 is a Monday; 2026-08-16 is the Sunday of the same week.
       final monday = weekIndex(2026, 8, 10);
       for (var d = 10; d <= 16; d++) {
-        expect(weekIndex(2026, 8, d), equals(monday),
-            reason: '2026-08-$d should be in the week of the 10th');
+        expect(
+          weekIndex(2026, 8, d),
+          equals(monday),
+          reason: '2026-08-$d should be in the week of the 10th',
+        );
       }
       // The next Monday rolls over to the next index.
       expect(weekIndex(2026, 8, 17), equals(monday + 1));
@@ -240,7 +259,9 @@ void main() {
         expect(weeklyMutatorFor(idx), equals(id));
       }
       // The rotation cycles through the whole catalog.
-      final seen = {for (var i = 0; i < mutatorsOrder.length; i++) weeklyMutatorFor(i)};
+      final seen = {
+        for (var i = 0; i < mutatorsOrder.length; i++) weeklyMutatorFor(i),
+      };
       expect(seen, equals(mutatorsOrder.toSet()));
     });
 
@@ -248,11 +269,12 @@ void main() {
       final recap = weeklyRecapLine(won: false, floor: 4, floors: 9);
       expect(recap, contains('floor 4 of 9'));
       final share = weeklyShareText(
-          index: weekIndex(2026, 8, 10),
-          mutatorId: 'all_d4',
-          won: true,
-          floor: 9,
-          floors: 9);
+        index: weekIndex(2026, 8, 10),
+        mutatorId: 'all_d4',
+        won: true,
+        floor: 9,
+        floors: 9,
+      );
       expect(share, contains('Flint Week'));
       expect(share, contains('Week of 2026-08-10'));
       for (final banned in ['streak', 'expire', 'don\'t miss', 'hurry']) {

@@ -27,8 +27,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 typedef ReminderPermissionRequest = Future<bool> Function();
 
 /// Schedules a one-off notification [id] at [when] with [title]/[body].
-typedef ReminderScheduleAt = Future<void> Function(
-    int id, DateTime when, String title, String body);
+typedef ReminderScheduleAt =
+    Future<void> Function(int id, DateTime when, String title, String body);
 
 /// Cancels every notification this app has scheduled.
 typedef ReminderCancelAll = Future<void> Function();
@@ -126,18 +126,26 @@ class ReminderService {
       final slots = nextReminderTimes(now);
       for (var i = 0; i < slots.length; i++) {
         await scheduleBackend?.call(
-            baseId + i, slots[i], notificationTitle, notificationBody);
+          baseId + i,
+          slots[i],
+          notificationTitle,
+          notificationBody,
+        );
       }
-    } catch (_) {/* best-effort — a failed schedule must never crash */}
+    } catch (_) {
+      /* best-effort — a failed schedule must never crash */
+    }
   }
 }
 
 /// The next [count] daily reminder slots at [hour]:00 strictly after [now].
 /// Pure and deterministic — the scheduling contract lives here, tested
 /// headless without any notification plugin.
-List<DateTime> nextReminderTimes(DateTime now,
-    {int count = ReminderService.horizonDays,
-    int hour = ReminderService.reminderHour}) {
+List<DateTime> nextReminderTimes(
+  DateTime now, {
+  int count = ReminderService.horizonDays,
+  int hour = ReminderService.reminderHour,
+}) {
   var first = DateTime(now.year, now.month, now.day, hour);
   if (!first.isAfter(now)) first = first.add(const Duration(days: 1));
   // Build successive civil days via the date constructor (not Duration

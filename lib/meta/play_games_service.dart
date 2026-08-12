@@ -153,8 +153,9 @@ class PlayGamesService {
       final raw = await loadGameBackend?.call(savedGameName);
       if (raw != null && raw.isNotEmpty) {
         try {
-          final cloud =
-              MetaState.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+          final cloud = MetaState.fromJson(
+            jsonDecode(raw) as Map<String, dynamic>,
+          );
           merged = mergeMetaStates(local, cloud);
         } catch (_) {
           // Unreadable cloud payload: keep local, overwrite cloud below.
@@ -162,7 +163,9 @@ class PlayGamesService {
       }
       await adoptMerged(merged);
       await saveGameBackend?.call(jsonEncode(merged.toJson()), savedGameName);
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 
   /// Push the current meta snapshot to the cloud (no pull). Called after a
@@ -171,25 +174,30 @@ class PlayGamesService {
     if (!connected) return;
     try {
       await saveGameBackend?.call(jsonEncode(state.toJson()), savedGameName);
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 
   /// Submit a finished Daily/Weekly Delve to its leaderboard. No-op for
   /// normal runs (both ids null) or while not connected.
-  Future<void> submitRunScore(
-      {required bool isDaily,
-      required bool isWeekly,
-      required int embersBanked}) async {
+  Future<void> submitRunScore({
+    required bool isDaily,
+    required bool isWeekly,
+    required int embersBanked,
+  }) async {
     if (!connected) return;
     final id = isDaily
         ? dailyLeaderboardId
         : isWeekly
-            ? weeklyLeaderboardId
-            : null;
+        ? weeklyLeaderboardId
+        : null;
     if (id == null) return;
     try {
       await submitScoreBackend?.call(id, embersBanked);
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 
   /// Open the platform leaderboards UI.
@@ -197,7 +205,8 @@ class PlayGamesService {
     if (!connected) return;
     try {
       await showLeaderboardsBackend?.call(leaderboardId);
-    } catch (_) {/* best-effort */}
+    } catch (_) {
+      /* best-effort */
+    }
   }
 }
-

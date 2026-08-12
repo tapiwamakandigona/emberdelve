@@ -20,6 +20,8 @@ import '../meta/meta.dart';
 import '../meta/play_games_service.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
+import '../sim/keystones.dart';
+import '../sim/run_dice.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
 import 'weekly.dart';
@@ -69,6 +71,9 @@ class GameController extends ChangeNotifier {
     'dice',
     'rolled',
     'rolled_max',
+    'rolled_face',
+    'surge_used',
+    'echo_pending',
     'assigned',
     'rerolls_left',
     'risky_used',
@@ -143,6 +148,7 @@ class GameController extends ChangeNotifier {
   // a win is by definition the boss that just fell.
   String? _lastEnemyId;
   bool _restedThisRun = false;
+
   /// Achievements earned by the run that just ended and not yet announced.
   /// The summary screen renders it in the same breath as the run result;
   /// [startRun] clears it. Nothing else may write it.
@@ -311,7 +317,8 @@ class GameController extends ChangeNotifier {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
     // harness pins it via [debugNextRunSeed] (one-shot override).
-    final s = seed ??
+    final s =
+        seed ??
         debugNextRunSeed ??
         DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
     debugNextRunSeed = null;
@@ -334,10 +341,12 @@ class GameController extends ChangeNotifier {
     // (v0.4.0, spec R8): UI locks are the polite layer; this clamp is the
     // guarantee. Shared runs are pinned to normal above.
     final shared = daily != null || mutators.isNotEmpty;
-    final wanted =
-        shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
-    final allowed =
-        clampRunParams(meta, difficulty: wanted, ascension: ascension);
+    final wanted = shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
+    final allowed = clampRunParams(
+      meta,
+      difficulty: wanted,
+      ascension: ascension,
+    );
     final diff = allowed.difficulty;
     apply({
       'type': 'start_run',
@@ -535,6 +544,26 @@ class GameController extends ChangeNotifier {
           break;
         case 'forged':
           flash = 'Forged into a stronger die';
+          break;
+        case 'face_tempered':
+          flash = '${runeName(e['rune'] as String?)} tempered onto ${e['face']}';
+          break;
+        // v7 feedback rule: only announce what the numbers on screen do NOT
+        // already say. Blade/Aegis and the assignment keystones are visible in
+        // the die's own "+N SPENT"; these three are not.
+        case 'reroll_gained':
+          flash = 'Surge — a reroll returned';
+          break;
+        case 'echo_armed':
+          flash = 'Echo armed — next ${e['other_action']} +1';
+          break;
+        case 'keystone_triggered':
+          if (e['keystone'] == 'living_bastion') {
+            flash = 'Living Bastion — ${e['amount']} block carried';
+          }
+          break;
+        case 'keystone_taken':
+          flash = '${keystoneDef(e['keystone'] as String).name} set';
           break;
         case 'relic_gained':
           flash = 'Relic acquired';
@@ -793,11 +822,13 @@ class GameController extends ChangeNotifier {
     // silent no-ops unless the player connected Play Games in Settings
     // (opt-in, §Ethics) — and never block or fail the bank itself.
     unawaited(PlayGamesService.instance.pushSnapshot(meta));
-    unawaited(PlayGamesService.instance.submitRunScore(
-      isDaily: dailyDate != null,
-      isWeekly: weeklyIndex != null,
-      embersBanked: banked,
-    ));
+    unawaited(
+      PlayGamesService.instance.submitRunScore(
+        isDaily: dailyDate != null,
+        isWeekly: weeklyIndex != null,
+        embersBanked: banked,
+      ),
+    );
     _clearSave();
   }
 

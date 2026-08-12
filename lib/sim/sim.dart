@@ -27,9 +27,19 @@ import 'run_layer.dart';
 // 6: starting-boon pool grew 8 -> 15 — the seeded boon draw reshuffles for
 // every seed (offering stream only; resolution rules untouched), so
 // mid-flight v5 saves are cleanly discarded at boot.
-const int simVersion = 6;
+// 7: run-local tempered dice add one face rune and explicit natural-face
+// state. v6 saves are cleanly discarded at boot; see
+// docs/v7-face-forge-contract.md.
+const int simVersion = 7;
 
-const List<String> simStreams = ['map', 'combat', 'loot', 'shuffle', 'offer', 'boon'];
+const List<String> simStreams = [
+  'map',
+  'combat',
+  'loot',
+  'shuffle',
+  'offer',
+  'boon',
+];
 
 typedef Handler = void Function(Sim, Map, List<Map<String, Object?>>);
 
@@ -44,10 +54,12 @@ final Map<String, Handler> _handlers = {
   'choose_reward': runChooseReward,
   'rest': runRest,
   'forge': runForge,
+  'temper_face': runTemperFace,
   'buy': runBuy,
   'leave_shop': runLeaveShop,
   'event_choose': runEventChoose,
   'choose_boon': runChooseBoon,
+  'choose_keystone': runChooseKeystone,
 };
 
 class Sim {
@@ -55,11 +67,13 @@ class Sim {
   final int runSeed;
   final Map<String, Rng> rng = {};
   int turn = 0;
-  String phase = 'idle'; // idle|boon|map|player_turn|reward|rest|run_won|run_lost
+  String phase =
+      'idle'; // idle|boon|map|player_turn|keystone|reward|rest|run_won|run_lost
   Map<String, dynamic> player = {};
   Map<String, dynamic>? enemy;
   Map<String, dynamic>? map;
   List<String>? offers; // die ids while phase == "reward"
+  List<String>? keystoneOffers; // keystone ids while phase == "keystone"
   List<String>? boons; // boon ids while phase == "boon"
   Map<String, dynamic>? shop; // stock map while phase == "shop"
   String? event; // current event id while phase == "event"
@@ -89,6 +103,9 @@ class Sim {
       'dice': <String>['d6', 'd6', 'd6'],
       'rolled': null,
       'rolled_max': null,
+      'rolled_face': null,
+      'surge_used': <int>[],
+      'echo_pending': null,
       'assigned': <String, String>{},
     };
   }
@@ -103,6 +120,7 @@ class Sim {
       'enemy': deepCopy(enemy),
       'map': deepCopy(map),
       'offers': deepCopy(offers),
+      'keystone_offers': deepCopy(keystoneOffers),
       'boons': deepCopy(boons),
       'shop': deepCopy(shop),
       'event': event,
@@ -122,8 +140,9 @@ class Sim {
   factory Sim.restore(Map<String, dynamic> snap) {
     if (snap['version'] != simVersion) {
       throw StateError(
-          'cannot restore snapshot: version ${snap['version']} is not '
-          '$simVersion (stale save; start a new run)');
+        'cannot restore snapshot: version ${snap['version']} is not '
+        '$simVersion (stale save; start a new run)',
+      );
     }
     final sim = Sim._blank(snap['run_seed'] as int);
     sim.turn = snap['turn'] as int;
@@ -135,10 +154,15 @@ class Sim {
     sim.map = snap['map'] == null
         ? null
         : (deepCopy(snap['map']) as Map).cast<String, dynamic>();
-    sim.offers =
-        snap['offers'] == null ? null : (snap['offers'] as List).cast<String>().toList();
-    sim.boons =
-        snap['boons'] == null ? null : (snap['boons'] as List).cast<String>().toList();
+    sim.offers = snap['offers'] == null
+        ? null
+        : (snap['offers'] as List).cast<String>().toList();
+    sim.keystoneOffers = snap['keystone_offers'] == null
+        ? null
+        : (snap['keystone_offers'] as List).cast<String>().toList();
+    sim.boons = snap['boons'] == null
+        ? null
+        : (snap['boons'] as List).cast<String>().toList();
     sim.shop = snap['shop'] == null
         ? null
         : (deepCopy(snap['shop']) as Map).cast<String, dynamic>();
@@ -156,8 +180,9 @@ class Sim {
         : (snap['mutators'] as List).cast<String>().toSet();
     final rngSnap = snap['rng'] as Map;
     for (final name in simStreams) {
-      sim.rng[name] =
-          Rng.restore((rngSnap[name] as Map).cast<String, dynamic>());
+      sim.rng[name] = Rng.restore(
+        (rngSnap[name] as Map).cast<String, dynamic>(),
+      );
     }
     return sim;
   }
@@ -189,17 +214,18 @@ class Sim {
   }
 
   Map<String, Object?> state() => {
-        'turn': turn,
-        'phase': phase,
-        'player': player,
-        'enemy': enemy,
-        'map': map,
-        'offers': offers,
-        'boons': boons,
-        'shop': shop,
-        'event': event,
-        'run': run,
-      };
+    'turn': turn,
+    'phase': phase,
+    'player': player,
+    'enemy': enemy,
+    'map': map,
+    'offers': offers,
+    'keystone_offers': keystoneOffers,
+    'boons': boons,
+    'shop': shop,
+    'event': event,
+    'run': run,
+  };
 
   int stateHash() {
     var h = 17;
@@ -209,6 +235,7 @@ class Sim {
     h = hashValue(h, enemy ?? 'none');
     h = hashValue(h, map ?? 'none');
     h = hashValue(h, offers ?? 'none');
+    h = hashValue(h, keystoneOffers ?? 'none');
     h = hashValue(h, boons ?? 'none');
     h = hashValue(h, shop ?? 'none');
     h = hashValue(h, event ?? 'none');

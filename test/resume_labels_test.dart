@@ -54,81 +54,110 @@ void main() {
     }
   });
 
-  test('the Weekly Delve is seed-pinned to the week (shared delve for all)',
-      () async {
-    // Bug-hunt 2026-08-11: weeklySeed existed and was unit-tested but was
-    // never wired into startWeeklyRun, so every player got a random clock
-    // seed — the "one shared delve, same seed for everyone" promise (UI blurb
-    // and share text) was false. Two controllers starting the weekly must
-    // land on the identical run seed, and it must be the week's canonical one.
-    final c1 = GameController(saveDirOverride: dir.path);
-    await c1.boot();
-    c1.startWeeklyRun();
-    final expected = weeklySeed(c1.weeklyIndex!);
-    expect(c1.sim!.runSeed, expected,
-        reason: 'weekly run must use weeklySeed(weekIndex), not the clock');
+  test(
+    'the Weekly Delve is seed-pinned to the week (shared delve for all)',
+    () async {
+      // Bug-hunt 2026-08-11: weeklySeed existed and was unit-tested but was
+      // never wired into startWeeklyRun, so every player got a random clock
+      // seed — the "one shared delve, same seed for everyone" promise (UI blurb
+      // and share text) was false. Two controllers starting the weekly must
+      // land on the identical run seed, and it must be the week's canonical one.
+      final c1 = GameController(saveDirOverride: dir.path);
+      await c1.boot();
+      c1.startWeeklyRun();
+      final expected = weeklySeed(c1.weeklyIndex!);
+      expect(
+        c1.sim!.runSeed,
+        expected,
+        reason: 'weekly run must use weeklySeed(weekIndex), not the clock',
+      );
 
-    final c2 = GameController(saveDirOverride: dir.path);
-    await c2.boot();
-    c2.startWeeklyRun();
-    expect(c2.sim!.runSeed, expected,
-        reason: 'two players starting the weekly must get the same delve');
-    await c1.flushSaves();
-    await c2.flushSaves();
-  });
+      final c2 = GameController(saveDirOverride: dir.path);
+      await c2.boot();
+      c2.startWeeklyRun();
+      expect(
+        c2.sim!.runSeed,
+        expected,
+        reason: 'two players starting the weekly must get the same delve',
+      );
+      await c1.flushSaves();
+      await c2.flushSaves();
+    },
+  );
 
-  test('a resumed Weekly Delve keeps its identity and banks its record',
-      () async {
-    final c1 = GameController(saveDirOverride: dir.path);
-    await c1.boot();
-    c1.startWeeklyRun();
-    expect(c1.weeklyIndex, isNotNull);
-    expect(c1.weeklyMutator, isNotNull);
-    final index = c1.weeklyIndex!;
-    final mutator = c1.weeklyMutator!;
-    // Take one step so the autosave definitely ran, then "kill the app".
-    if (c1.phase == 'boon') c1.apply({'type': 'choose_boon', 'index': 1});
-    await c1.flushSaves();
+  test(
+    'a resumed Weekly Delve keeps its identity and banks its record',
+    () async {
+      final c1 = GameController(saveDirOverride: dir.path);
+      await c1.boot();
+      c1.startWeeklyRun();
+      expect(c1.weeklyIndex, isNotNull);
+      expect(c1.weeklyMutator, isNotNull);
+      final index = c1.weeklyIndex!;
+      final mutator = c1.weeklyMutator!;
+      // Take one step so the autosave definitely ran, then "kill the app".
+      if (c1.phase == 'boon') c1.apply({'type': 'choose_boon', 'index': 1});
+      await c1.flushSaves();
 
-    final c2 = GameController(saveDirOverride: dir.path);
-    await c2.boot();
-    expect(c2.phase, isNotNull, reason: 'saved run should resume');
-    expect(c2.weeklyIndex, index,
-        reason: 'resumed weekly lost its week index — its record will '
-            'silently not bank when the run ends');
-    expect(c2.weeklyMutator, mutator);
+      final c2 = GameController(saveDirOverride: dir.path);
+      await c2.boot();
+      expect(c2.phase, isNotNull, reason: 'saved run should resume');
+      expect(
+        c2.weeklyIndex,
+        index,
+        reason:
+            'resumed weekly lost its week index — its record will '
+            'silently not bank when the run ends',
+      );
+      expect(c2.weeklyMutator, mutator);
 
-    driveToTerminal(c2);
-    expect(c2.meta.lastWeeklyKey, weeklyKey(index),
-        reason: 'finished resumed weekly must bank the weekly record');
-    expect(c2.meta.weekliesPlayed, 1);
-    expect(c2.weeklyResultShareText, isNotNull,
-        reason: 'summary must still offer the weekly share text');
-    await c2.flushSaves();
-  });
+      driveToTerminal(c2);
+      expect(
+        c2.meta.lastWeeklyKey,
+        weeklyKey(index),
+        reason: 'finished resumed weekly must bank the weekly record',
+      );
+      expect(c2.meta.weekliesPlayed, 1);
+      expect(
+        c2.weeklyResultShareText,
+        isNotNull,
+        reason: 'summary must still offer the weekly share text',
+      );
+      await c2.flushSaves();
+    },
+  );
 
-  test('a resumed Daily Delve keeps its identity and banks its record',
-      () async {
-    final c1 = GameController(saveDirOverride: dir.path);
-    await c1.boot();
-    c1.startDailyRun();
-    final label = c1.dailyDate;
-    expect(label, isNotNull);
-    if (c1.phase == 'boon') c1.apply({'type': 'choose_boon', 'index': 1});
-    await c1.flushSaves();
+  test(
+    'a resumed Daily Delve keeps its identity and banks its record',
+    () async {
+      final c1 = GameController(saveDirOverride: dir.path);
+      await c1.boot();
+      c1.startDailyRun();
+      final label = c1.dailyDate;
+      expect(label, isNotNull);
+      if (c1.phase == 'boon') c1.apply({'type': 'choose_boon', 'index': 1});
+      await c1.flushSaves();
 
-    final c2 = GameController(saveDirOverride: dir.path);
-    await c2.boot();
-    expect(c2.dailyDate, label,
-        reason: 'resumed daily lost its date label — its record will '
-            'silently not bank when the run ends');
+      final c2 = GameController(saveDirOverride: dir.path);
+      await c2.boot();
+      expect(
+        c2.dailyDate,
+        label,
+        reason:
+            'resumed daily lost its date label — its record will '
+            'silently not bank when the run ends',
+      );
 
-    driveToTerminal(c2);
-    expect(c2.meta.lastDailyDate, label,
-        reason: 'finished resumed daily must bank the daily record');
-    expect(c2.dailyResultShareText, isNotNull);
-    await c2.flushSaves();
-  });
+      driveToTerminal(c2);
+      expect(
+        c2.meta.lastDailyDate,
+        label,
+        reason: 'finished resumed daily must bank the daily record',
+      );
+      expect(c2.dailyResultShareText, isNotNull);
+      await c2.flushSaves();
+    },
+  );
 
   test('normal runs write no labels and resume without any', () async {
     final c1 = GameController(saveDirOverride: dir.path);
@@ -136,10 +165,12 @@ void main() {
     c1.startRun(seed: 42);
     if (c1.phase == 'boon') c1.apply({'type': 'choose_boon', 'index': 1});
     await c1.flushSaves();
-    final raw =
-        await File('${dir.path}/emberdelve_run.json').readAsString();
-    expect(raw.contains('run_labels'), isFalse,
-        reason: 'normal-run save blobs must stay byte-identical to pre-fix');
+    final raw = await File('${dir.path}/emberdelve_run.json').readAsString();
+    expect(
+      raw.contains('run_labels'),
+      isFalse,
+      reason: 'normal-run save blobs must stay byte-identical to pre-fix',
+    );
 
     final c2 = GameController(saveDirOverride: dir.path);
     await c2.boot();

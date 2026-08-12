@@ -16,10 +16,12 @@
 //   * the shown intent resolves EXACTLY as shown — never rerolled by the game
 //   * randomness decides what you roll, never how a stated action resolves
 
-import '../data/dice.dart';
 import '../data/enemies.dart';
+import 'assignment.dart';
 import 'combos.dart';
+import 'keystones.dart';
 import 'relic_hooks.dart';
+import 'run_dice.dart';
 import 'sim.dart';
 
 // Exact-kill / overkill tuning (docs/m4-sim-contract.md §4).
@@ -42,9 +44,6 @@ Map<String, Object?> _intentEvent(Map<String, dynamic> enemy) {
     if (intent['kind'] == 'attack_block') 'block': intent['block'],
   };
 }
-
-bool _isTough(Map<String, dynamic> enemy) =>
-    enemy['elite'] == true || enemy['boss'] == true;
 
 // Apply the per-turn-start relic block (turn_block). Called for turn 1 in
 // combatBegin and for every subsequent turn in end_turn.
@@ -81,7 +80,8 @@ int earlyMercyHpCap(int layer) => layer <= 2 ? 28 : 1 << 30;
 int hardAttackBonus(int layer) => layer <= 3 ? 1 : (layer <= 6 ? 2 : 3);
 
 /// Hard-mode enemy HP scalar by layer: x1.10 early, x1.25 mid, x1.40 late.
-double hardHpScalar(int layer) => layer <= 3 ? 1.10 : (layer <= 6 ? 1.25 : 1.40);
+double hardHpScalar(int layer) =>
+    layer <= 3 ? 1.10 : (layer <= 6 ? 1.25 : 1.40);
 
 /// Easy-mode layer ramp (v0.3.10): mirrors hard's staircase in the other
 /// direction. The old flat -2 left easy's first REGULAR fight nearly as
@@ -102,8 +102,12 @@ int easyAttackShave(int layer) => layer <= 3 ? 5 : (layer <= 6 ? 3 : 2);
 double easyHpScalar(int layer) => layer <= 3 ? 0.68 : 0.80;
 
 void combatBegin(
-    Sim sim, String enemyId, bool elite, List<Map<String, Object?>> events,
-    {int layer = 99}) {
+  Sim sim,
+  String enemyId,
+  bool elite,
+  List<Map<String, Object?>> events, {
+  int layer = 99,
+}) {
   final def = enemyDef(enemyId);
   final ascAmount = (sim.run?['ascension'] as int? ?? 0);
   // Difficulty (v0.3.2): deterministic flat/scalar adjustments, no RNG, so
@@ -124,8 +128,8 @@ void combatBegin(
   final diffAmount = difficulty == 'easy'
       ? -easyAttackShave(layer)
       : difficulty == 'hard'
-          ? hardAttackBonus(layer)
-          : 0;
+      ? hardAttackBonus(layer)
+      : 0;
   final mercy = (!elite && !def.boss) ? earlyMercyAttackShave(layer) : 0;
   final hpCap = (!elite && !def.boss) ? earlyMercyHpCap(layer) : (1 << 30);
   var hp = def.hp > hpCap ? hpCap : def.hp;
@@ -156,7 +160,7 @@ void combatBegin(
           'block': (it.block + ascAmount + diffAmount) < 0
               ? 0
               : it.block + ascAmount + diffAmount,
-      }
+      },
   ];
   final enemy = <String, dynamic>{
     'id': def.id,
@@ -177,6 +181,7 @@ void combatBegin(
   sim.player['block'] = 0;
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
+  sim.player['rolled_face'] = null;
   sim.player['assigned'] = <String, String>{};
   sim.player['rerolls_left'] = relicSum(sim, 'rerolls');
   sim.player['combo_bonus'] = null;
@@ -184,6 +189,11 @@ void combatBegin(
   sim.player['free_reroll'] = false;
   sim.player['free_reroll_next'] = false;
   sim.player['ignited'] = false;
+  sim.player['surge_used'] = <int>[];
+  sim.player['echo_pending'] = null;
+  sim.player['ashen_used'] = false;
+  sim.player['bellows_action'] = null;
+  sim.player['bellows_streak'] = 0;
   enemy['burn'] = 0;
   _push(events, {
     'type': 'encounter_started',
@@ -281,18 +291,57 @@ void _encounterLost(Sim sim, List<Map<String, Object?>> events) {
   _push(events, {'type': 'encounter_lost', 'turns': sim.turn});
 }
 
+// Surge rune: a tempered die whose NATURAL face comes up hands back one
+// reroll charge, at most once per die per turn (a later reroll landing the
+// same face in the same turn pays nothing). Called from every path that
+// writes a natural face: the opening roll, the risky reroll, and the charge
+// reroll.
+void _grantSurge(
+  Sim sim,
+  int die,
+  int naturalFace,
+  List<Map<String, Object?>> events,
+) {
+  final id = (sim.player['dice'] as List)[die - 1] as String;
+  final rd = resolveRunDie(sim.run, id);
+  if (rd.rune != 'surge' || rd.temperedFace != naturalFace) return;
+  final used = ((sim.player['surge_used'] as List?)?.cast<int>() ?? <int>[])
+      .toList();
+  if (used.contains(die)) return;
+  used.add(die);
+  sim.player['surge_used'] = used;
+  sim.player['rerolls_left'] = (sim.player['rerolls_left'] as int? ?? 0) + 1;
+  _push(events, {
+    'type': 'rune_triggered',
+    'die': die,
+    'rune': 'surge',
+    'face': naturalFace,
+  });
+  _push(events, {
+    'type': 'reroll_gained',
+    'die': die,
+    'amount': 1,
+    'source': 'surge_rune',
+  });
+}
+
 // Roll one die id, applying its own min_value and the relic min_roll floor,
 // and (for on_max_gold) crediting gold when the natural face is the max.
-int _rollOne(Sim sim, String id, List<bool> maxedOut,
-    List<Map<String, Object?>> events) {
-  final def = dieDef(id);
+int _rollOne(
+  Sim sim,
+  String id,
+  List<bool> maxedOut,
+  List<int> naturalFaces,
+  List<Map<String, Object?>> events,
+) {
+  final def = resolveRunDie(sim.run, id).def;
   // P3 'all_d4' (Flint Week): every die rolls on 4 faces. Smaller dice are
   // already <= 4, so only d6+ shrink. The die keeps its mods (attack_bonus,
   // min_value, ...) — only its face count changes. Off the Weekly Delve
   // hasMutator is always false, so this is exactly def.size (no drift).
-  final faces =
-      sim.hasMutator('all_d4') && def.size > 4 ? 4 : def.size;
+  final faces = sim.hasMutator('all_d4') && def.size > 4 ? 4 : def.size;
   final raw = sim.rng['combat']!.die(faces);
+  naturalFaces.add(raw);
   final isMax = raw == faces;
   maxedOut.add(isMax);
   if (isMax) {
@@ -330,17 +379,22 @@ void combatRoll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final poolIds = (sim.player['dice'] as List).cast<String>();
   final values = <int>[];
   final maxed = <bool>[];
+  final naturalFaces = <int>[];
   for (final id in poolIds) {
-    values.add(_rollOne(sim, id, maxed, events));
+    values.add(_rollOne(sim, id, maxed, naturalFaces, events));
   }
   sim.player['rolled'] = values;
   sim.player['rolled_max'] = maxed;
+  sim.player['rolled_face'] = naturalFaces;
   sim.player['assigned'] = <String, String>{};
   final ev = <String, Object?>{'type': 'dice_rolled', 'count': values.length};
   for (var i = 0; i < values.length; i++) {
     ev['d${i + 1}'] = values[i];
   }
   _push(events, ev);
+  for (var i = 0; i < naturalFaces.length; i++) {
+    _grantSurge(sim, i + 1, naturalFaces[i], events);
+  }
   _detectAndApplyCombos(sim, events);
 }
 
@@ -377,6 +431,7 @@ void combatRerollRisky(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   final free = sim.player['free_reroll'] == true;
   final penalty = free ? 0 : 1;
   final maxed = (sim.player['rolled_max'] as List).cast<bool>();
+  final naturalFaces = (sim.player['rolled_face'] as List).cast<int>();
   final ev = <String, Object?>{
     'type': 'risky_reroll',
     'count': picks.length,
@@ -386,18 +441,28 @@ void combatRerollRisky(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   for (var k = 0; k < picks.length; k++) {
     final die = picks[k];
     final tmp = <bool>[];
+    final tmpFace = <int>[];
     var v = _rollOne(
-        sim, (sim.player['dice'] as List)[die - 1] as String, tmp, events);
+      sim,
+      (sim.player['dice'] as List)[die - 1] as String,
+      tmp,
+      tmpFace,
+      events,
+    );
     v -= penalty;
     if (v < 1) v = 1;
     rolled[die - 1] = v;
     maxed[die - 1] = tmp.first && penalty == 0;
+    naturalFaces[die - 1] = tmpFace.first;
     ev['r${k + 1}'] = die;
     ev['v${k + 1}'] = v;
   }
   sim.player['risky_used'] = true;
   sim.player['free_reroll'] = false;
   _push(events, ev);
+  for (final die in picks) {
+    _grantSurge(sim, die, naturalFaces[die - 1], events);
+  }
   _detectAndApplyCombos(sim, events);
 }
 
@@ -420,10 +485,17 @@ void combatReroll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (left <= 0) return _invalid(events, 'no_rerolls_left');
   final maxed = (sim.player['rolled_max'] as List).cast<bool>();
   final tmp = <bool>[];
-  final newVal = _rollOne(sim, (sim.player['dice'] as List)[die - 1] as String,
-      tmp, events);
+  final tmpFace = <int>[];
+  final newVal = _rollOne(
+    sim,
+    (sim.player['dice'] as List)[die - 1] as String,
+    tmp,
+    tmpFace,
+    events,
+  );
   rolled[die - 1] = newVal;
   maxed[die - 1] = tmp.first;
+  (sim.player['rolled_face'] as List)[die - 1] = tmpFace.first;
   sim.player['rerolls_left'] = left - 1;
   _push(events, {
     'type': 'reroll_used',
@@ -431,6 +503,7 @@ void combatReroll(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'value': newVal,
     'left': sim.player['rerolls_left'],
   });
+  _grantSurge(sim, die, tmpFace.first, events);
   // Combos are a pure function of the CURRENT pool (m4 §3) — re-detect after
   // a charge reroll too, or `combo_bonus` goes stale: a broken pair kept
   // paying +1 on both dice and a newly rolled pair/triple/straight paid
@@ -453,32 +526,86 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   }
   final assigned = sim.player['assigned'] as Map;
   if (assigned['$die'] != null) return _invalid(events, 'die_already_assigned');
-  final def = dieDef((sim.player['dice'] as List)[die - 1] as String);
-  final mods = def.mods;
-  final rolledMax = (sim.player['rolled_max'] as List?)?.cast<bool>();
-  final bonus = (rolledMax != null && rolledMax[die - 1])
-      ? (mods['on_max_bonus'] as int? ?? 0)
-      : 0;
   final enemy = sim.enemy!;
   final action = cmd['action'];
+  final resolution = resolveAssignment(
+    player: sim.player,
+    enemy: enemy,
+    run: sim.run,
+    die: die,
+    action: action is String ? action : '',
+  );
+  if (!resolution.allowed) {
+    return _invalid(events, resolution.invalidReason!);
+  }
+  final resolvedDie = resolveRunDie(
+    sim.run,
+    (sim.player['dice'] as List)[die - 1] as String,
+  );
+  if (resolution.rune != null) {
+    _push(events, {
+      'type': 'rune_triggered',
+      'die': die,
+      'rune': resolution.rune,
+      'face': resolvedDie.temperedFace,
+    });
+    if (resolution.runeBonus > 0) {
+      _push(events, {
+        'type': 'rune_bonus',
+        'die': die,
+        'action': action,
+        'amount': resolution.runeBonus,
+      });
+    }
+  }
+  for (final hit in resolution.keystoneHits) {
+    _push(events, {
+      'type': 'keystone_triggered',
+      'keystone': hit['keystone'],
+      'amount': hit['amount'],
+      'die': die,
+    });
+  }
+  // Ashen Edge burns on the FIRST attack of the turn whether or not other
+  // dice were left to pay it; Twin Bellows advances or breaks its chain on
+  // every assignment.
+  if (action == 'attack') sim.player['ashen_used'] = true;
+  final lastVerb = sim.player['bellows_action'] as String?;
+  if (lastVerb != null && lastVerb != action) {
+    final next = (sim.player['bellows_streak'] as int? ?? 0) + 1;
+    sim.player['bellows_streak'] = next > 3 ? 3 : next;
+  } else {
+    sim.player['bellows_streak'] = 0;
+  }
+  sim.player['bellows_action'] = action;
+  // A pending Echo charge is spent by this assignment (its value is already
+  // inside resolution.value). `die` names the die that armed the charge,
+  // `on_die` the assignment being paid.
+  if (resolution.echoBonus > 0) {
+    _push(events, {
+      'type': 'echo_spent',
+      'die': resolution.echoFromDie,
+      'on_die': die,
+      'action': action,
+      'amount': resolution.echoBonus,
+    });
+    sim.player['echo_pending'] = null;
+  }
 
   if (action == 'attack') {
-    if (mods['block_only'] == true) return _invalid(events, 'die_is_block_only');
-    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
-    var value = rolled[die - 1] +
-        (mods['attack_bonus'] as int? ?? 0) +
-        bonus +
-        (combo != null ? combo[die - 1] : 0) +
-        relicSum(sim, 'attack_flat');
-    if (_isTough(enemy)) value += relicSum(sim, 'elite_damage');
+    final value = resolution.value;
     assigned['$die'] = 'attack';
     var absorbed = value;
     final enemyBlock = enemy['block'] as int;
     if (absorbed > enemyBlock) absorbed = enemyBlock;
     enemy['block'] = enemyBlock - absorbed;
     enemy['hp'] = (enemy['hp'] as int) - (value - absorbed);
-    _push(events,
-        {'type': 'die_assigned', 'die': die, 'action': 'attack', 'value': value});
+    _push(events, {
+      'type': 'die_assigned',
+      'die': die,
+      'action': 'attack',
+      'value': value,
+    });
     _push(events, {
       'type': 'damage_dealt',
       'target': enemy['id'],
@@ -513,26 +640,32 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       _encounterWon(sim, events);
     }
   } else if (action == 'block') {
-    if (mods['attack_only'] == true) {
-      return _invalid(events, 'die_is_attack_only');
-    }
-    final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
-    final value = rolled[die - 1] +
-        (mods['block_bonus'] as int? ?? 0) +
-        bonus +
-        (combo != null ? combo[die - 1] : 0) +
-        relicSum(sim, 'block_flat');
+    final value = resolution.value;
     assigned['$die'] = 'block';
     sim.player['block'] = (sim.player['block'] as int) + value;
-    _push(events,
-        {'type': 'die_assigned', 'die': die, 'action': 'block', 'value': value});
+    _push(events, {
+      'type': 'die_assigned',
+      'die': die,
+      'action': 'block',
+      'value': value,
+    });
     _push(events, {
       'type': 'block_gained',
       'amount': value,
       'total_block': sim.player['block'],
     });
-  } else {
-    return _invalid(events, 'unknown_action');
+  }
+  // Echo arms AFTER this assignment resolves, so it can never pay itself, and
+  // it holds at most one charge for the opposite verb until that verb is used
+  // or the turn ends.
+  if (resolution.rune == 'echo' && sim.combatOver == null) {
+    final other = action == 'attack' ? 'block' : 'attack';
+    sim.player['echo_pending'] = <String, Object?>{
+      'die': die,
+      'action': other,
+      'amount': 1,
+    };
+    _push(events, {'type': 'echo_armed', 'die': die, 'other_action': other});
   }
 }
 
@@ -545,13 +678,24 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   enemy['block'] = 0;
   final intent = enemy['intent'] as Map;
   final kind = intent['kind'];
+  // Block actually consumed by the shown intent — Living Bastion carries half
+  // of what the delver did NOT need.
+  var blockSpent = 0;
   if (kind == 'attack' || kind == 'attack_block') {
     final incoming = intent['amount'] as int;
     var blocked = incoming;
     final playerBlock = sim.player['block'] as int;
     if (blocked > playerBlock) blocked = playerBlock;
     final dmg = incoming - blocked;
-    sim.player['hp'] = (sim.player['hp'] as int) - dmg;
+    blockSpent = blocked;
+    // Floored at zero. Overkill on the DELVER is meaningless — only enemy
+    // overkill carries (splash), and a negative value is a lie the HUD prints
+    // verbatim: the killing blow used to flash "-17" and TalkBack read
+    // "hp: -17 of 40". Found by the v7 command fuzz (tool/v7_sweep_probe).
+    // 'damage' still reports the full unblocked hit, so the number that lands
+    // on screen stays honest.
+    final hpAfterHit = (sim.player['hp'] as int) - dmg;
+    sim.player['hp'] = hpAfterHit < 0 ? 0 : hpAfterHit;
     final ev = <String, Object?>{
       'type': 'enemy_attacked',
       'amount': incoming,
@@ -618,19 +762,42 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     return;
   }
   sim.turn += 1;
-  sim.player['block'] = 0;
+  var carriedBlock = 0;
+  if (hasKeystone(sim.run, 'living_bastion')) {
+    final unused = (sim.player['block'] as int) - blockSpent;
+    if (unused > 0) {
+      carriedBlock = unused ~/ 2;
+      if (carriedBlock > 8) carriedBlock = 8;
+    }
+  }
+  sim.player['block'] = carriedBlock;
+  if (carriedBlock > 0) {
+    _push(events, {
+      'type': 'keystone_triggered',
+      'keystone': 'living_bastion',
+      'amount': carriedBlock,
+    });
+  }
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
+  sim.player['rolled_face'] = null;
   sim.player['assigned'] = <String, String>{};
   sim.player['combo_bonus'] = null;
   sim.player['risky_used'] = false;
   sim.player['ignited'] = false;
+  sim.player['surge_used'] = <int>[];
+  sim.player['echo_pending'] = null;
+  sim.player['ashen_used'] = false;
+  sim.player['bellows_action'] = null;
+  sim.player['bellows_streak'] = 0;
   sim.player['free_reroll'] = sim.player['free_reroll_next'] == true;
   sim.player['free_reroll_next'] = false;
   final pattern = enemy['pattern'] as List;
-  enemy['pattern_index'] = ((enemy['pattern_index'] as int) % pattern.length) + 1;
-  enemy['intent'] =
-      Map<String, Object?>.from(pattern[(enemy['pattern_index'] as int) - 1] as Map);
+  enemy['pattern_index'] =
+      ((enemy['pattern_index'] as int) % pattern.length) + 1;
+  enemy['intent'] = Map<String, Object?>.from(
+    pattern[(enemy['pattern_index'] as int) - 1] as Map,
+  );
   _push(events, {'type': 'turn_started', 'turn': sim.turn});
   if (sim.player['free_reroll'] == true) {
     _push(events, {'type': 'free_reroll_granted'});

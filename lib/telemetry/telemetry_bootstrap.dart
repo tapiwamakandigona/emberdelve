@@ -26,10 +26,10 @@ Future<void> initTelemetry() async {
   }
 
   final analytics = FirebaseAnalytics.instance;
-  t.analyticsBackend =
-      (name, params) => analytics.logEvent(name: name, parameters: params);
-  t.analyticsCollectionToggle =
-      (on) => analytics.setAnalyticsCollectionEnabled(on);
+  t.analyticsBackend = (name, params) =>
+      analytics.logEvent(name: name, parameters: params);
+  t.analyticsCollectionToggle = (on) =>
+      analytics.setAnalyticsCollectionEnabled(on);
 
   // Apply the persisted choice. Analytics collection is OFF in the manifest
   // (firebase_analytics_collection_enabled=false) so nothing is buffered or

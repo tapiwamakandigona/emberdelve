@@ -76,29 +76,34 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     bestAscension: local.bestAscension > cloud.bestAscension
         ? local.bestAscension
         : cloud.bestAscension,
-    runsPlayed:
-        local.runsPlayed > cloud.runsPlayed ? local.runsPlayed : cloud.runsPlayed,
+    runsPlayed: local.runsPlayed > cloud.runsPlayed
+        ? local.runsPlayed
+        : cloud.runsPlayed,
     runsWon: local.runsWon > cloud.runsWon ? local.runsWon : cloud.runsWon,
     lifetimeEmbers: local.lifetimeEmbers > cloud.lifetimeEmbers
         ? local.lifetimeEmbers
         : cloud.lifetimeEmbers,
-    exactKills:
-        local.exactKills > cloud.exactKills ? local.exactKills : cloud.exactKills,
+    exactKills: local.exactKills > cloud.exactKills
+        ? local.exactKills
+        : cloud.exactKills,
     // exactStreak is "current consecutive" — a device-local, in-the-moment
     // value; the fresher side's streak is the live one.
     exactStreak: fresh.exactStreak,
     bestExactStreak: local.bestExactStreak > cloud.bestExactStreak
         ? local.bestExactStreak
         : cloud.bestExactStreak,
-    bestFloor: local.bestFloor > cloud.bestFloor ? local.bestFloor : cloud.bestFloor,
+    bestFloor: local.bestFloor > cloud.bestFloor
+        ? local.bestFloor
+        : cloud.bestFloor,
     dailiesPlayed: local.dailiesPlayed > cloud.dailiesPlayed
         ? local.dailiesPlayed
         : cloud.dailiesPlayed,
     weekliesPlayed: local.weekliesPlayed > cloud.weekliesPlayed
         ? local.weekliesPlayed
         : cloud.weekliesPlayed,
-    winsNoRest:
-        local.winsNoRest > cloud.winsNoRest ? local.winsNoRest : cloud.winsNoRest,
+    winsNoRest: local.winsNoRest > cloud.winsNoRest
+        ? local.winsNoRest
+        : cloud.winsNoRest,
     hardWins: local.hardWins > cloud.hardWins ? local.hardWins : cloud.hardWins,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),

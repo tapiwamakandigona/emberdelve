@@ -11,8 +11,11 @@ void main() {
     var invalids = 0;
     for (var seed = 1; seed <= 200; seed++) {
       final r = playRun(seed);
-      expect(['run_won', 'run_lost'].contains(r.sim.phase), isTrue,
-          reason: 'seed $seed non-terminal (${r.sim.phase})');
+      expect(
+        ['run_won', 'run_lost'].contains(r.sim.phase),
+        isTrue,
+        reason: 'seed $seed non-terminal (${r.sim.phase})',
+      );
       invalids += r.invalids;
     }
     expect(invalids, equals(0));
@@ -35,6 +38,7 @@ void main() {
       }
       return w;
     }
+
     final a0 = winsAt(0);
     final a6 = winsAt(6);
     expect(a6, lessThan(a0), reason: 'asc6 ($a6) not harder than asc0 ($a0)');

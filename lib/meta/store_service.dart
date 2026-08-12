@@ -92,22 +92,23 @@ class PlayStoreGateway implements StoreGateway {
   Future<void> restore() => _iap.restorePurchases();
 
   @override
-  Stream<List<StorePurchaseEvent>> get purchases =>
-      _iap.purchaseStream.map((batch) => [
-            for (final p in batch)
-              StorePurchaseEvent(
-                productId: p.productID,
-                status: switch (p.status) {
-                  PurchaseStatus.pending => StorePurchaseStatus.pending,
-                  PurchaseStatus.purchased => StorePurchaseStatus.purchased,
-                  PurchaseStatus.restored => StorePurchaseStatus.restored,
-                  PurchaseStatus.error => StorePurchaseStatus.error,
-                  PurchaseStatus.canceled => StorePurchaseStatus.canceled,
-                },
-                needsCompletion: p.pendingCompletePurchase,
-                raw: p,
-              ),
-          ]);
+  Stream<List<StorePurchaseEvent>> get purchases => _iap.purchaseStream.map(
+    (batch) => [
+      for (final p in batch)
+        StorePurchaseEvent(
+          productId: p.productID,
+          status: switch (p.status) {
+            PurchaseStatus.pending => StorePurchaseStatus.pending,
+            PurchaseStatus.purchased => StorePurchaseStatus.purchased,
+            PurchaseStatus.restored => StorePurchaseStatus.restored,
+            PurchaseStatus.error => StorePurchaseStatus.error,
+            PurchaseStatus.canceled => StorePurchaseStatus.canceled,
+          },
+          needsCompletion: p.pendingCompletePurchase,
+          raw: p,
+        ),
+    ],
+  );
 
   @override
   Future<void> complete(StorePurchaseEvent event) {
@@ -164,8 +165,7 @@ class StoreService {
     required this.alreadyOwned,
   });
 
-  ForgeStoreState get state =>
-      alreadyOwned() ? ForgeStoreState.owned : _state;
+  ForgeStoreState get state => alreadyOwned() ? ForgeStoreState.owned : _state;
   String? get price => _price;
   String? get lastError => _lastError;
 
@@ -179,12 +179,15 @@ class StoreService {
   /// (call unawaited from main).
   Future<void> init() async {
     // Contract 1: listen before anything else can produce an event.
-    _sub = gateway.purchases.listen(_onPurchases, onError: (Object e) {
-      // Stream errors are transient platform hiccups; keep the last good
-      // state but surface the message for the sheet's small print.
-      _lastError = '$e';
-      tick.value++;
-    });
+    _sub = gateway.purchases.listen(
+      _onPurchases,
+      onError: (Object e) {
+        // Stream errors are transient platform hiccups; keep the last good
+        // state but surface the message for the sheet's small print.
+        _lastError = '$e';
+        tick.value++;
+      },
+    );
     try {
       if (!await gateway.isAvailable()) {
         _set(ForgeStoreState.unavailable);
@@ -192,8 +195,10 @@ class StoreService {
       }
       final product = await gateway.queryProduct(forgeProductId);
       if (product == null) {
-        _set(ForgeStoreState.unavailable,
-            error: 'Product not found on this store');
+        _set(
+          ForgeStoreState.unavailable,
+          error: 'Product not found on this store',
+        );
         return;
       }
       _price = product.price;
@@ -225,9 +230,11 @@ class StoreService {
         case StorePurchaseStatus.canceled:
           // Not an error: the player changed their mind. Back to ready.
           if (event.needsCompletion) await gateway.complete(event);
-          _set(_price != null
-              ? ForgeStoreState.ready
-              : ForgeStoreState.unavailable);
+          _set(
+            _price != null
+                ? ForgeStoreState.ready
+                : ForgeStoreState.unavailable,
+          );
         case StorePurchaseStatus.error:
           if (event.needsCompletion) await gateway.complete(event);
           _set(
