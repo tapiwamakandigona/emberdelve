@@ -61,7 +61,8 @@
 - [x] Download artifacts, verify signer cert SHA-256 against the pinned upload
       key, record byte sizes and hashes.
 - [x] GitHub release v0.7.0 published with APK + AAB attached.
-- [ ] Play Console: create 0.7.0 (33) on Early Access, 100% rollout, submit.
-      BLOCKED on Google 2-Step Verification (session expired; phone-push
-      unreachable, SMS path needs the owner's number + code).
+- [x] Play Console: 0.7.0 (33) created on Early Access, full rollout, submitted
+      2026-08-12 ~15:15 GMT ("Changes in review"; quick checks ~13 min, then
+      auto-send; managed publishing OFF so it publishes when review passes).
+      Delivery size 25.7 MB (+33.5 KB vs 0.6.1). 2FA was cleared via SMS.
 - [ ] Verify publication (console track + public listing) after review clears.
