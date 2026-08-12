@@ -12,7 +12,7 @@ class SummaryScreen extends StatelessWidget {
     final player = st['player'] as Map?;
     final pool =
         (player?['dice'] as List?)?.whereType<String>().toList() ?? const [];
-    final identity = buildIdentity(pool);
+    final identity = buildIdentity(pool, run: run);
     final insight = run['insight'] as String?;
     return Stack(
       fit: StackFit.expand,
