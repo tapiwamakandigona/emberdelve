@@ -28,4 +28,15 @@
 - [x] Add pure identity derivation + weapon evolution.
 - [x] Add “Pool forged this run” terminal recap with exact pool counts.
 - [x] Test every identity/path, short-phone layout, screenshot and perf budget.
-- [~] Full verification complete; commit, PR, CI and merge pending.
+- [x] Full verification, commit, PR, CI and merge.
+
+## Gauntlet — face forge + keystones (iteration 3)
+
+- [~] Write the v7 simulation contract and migration/golden plan.
+- [ ] Implement run-local custom die IDs and one-rune Temper command.
+- [ ] Implement four first keystones with named events and exact previews.
+- [ ] Add rest forge UX, rune visuals, keystone pick/inspection UX.
+- [ ] Rebalance with seeded autoplay; replay/restore/migration/fuzz gates.
+- [ ] Full presentation/performance/accessibility verification.
+- [ ] Commit, PR, CI, signed build-size measurement; do not release until the
+      mechanics and migration gates are all green.
