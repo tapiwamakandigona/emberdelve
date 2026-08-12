@@ -20,6 +20,7 @@ extension _CombatStageBand on _CombatScreenState {
         enemy,
         intent,
         compact: compact,
+        identity: buildIdentity(h.dice0),
         // Evaluated inside the preview's own ValueListenableBuilder so
         // selecting a die repaints the badge, not the whole stage.
         preview: () {
@@ -57,6 +58,7 @@ extension _CombatStageBand on _CombatScreenState {
     Map enemy,
     Map intent, {
     bool compact = false,
+    required RunBuildIdentity identity,
     required String? Function() preview,
   }) {
     final enemyId = enemy['id'] as String? ?? '';
@@ -132,13 +134,19 @@ extension _CombatStageBand on _CombatScreenState {
                             // with the lunge.
                             weapon: WeaponView(
                               _characterId,
-                              key: ValueKey('weapon-$_characterId'),
+                              // Keep state across pool evolution; changing the
+                              // build should morph the existing weapon, not
+                              // restart its choreography controller.
+                              key: const ValueKey('combat-weapon'),
                               height: heroH,
                               phase: _weaponPhase,
                               // Die -> weapon causality made visible: the
                               // selected die's pips heat the blade before the
                               // swing.
                               charge: _weaponCharge,
+                              // The weapon's edge/profile now reflects the
+                              // pool forged so far (presentation only).
+                              identity: identity,
                             ),
                           ),
                         ),

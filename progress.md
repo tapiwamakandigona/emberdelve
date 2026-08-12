@@ -1269,3 +1269,22 @@ notifications only, Data safety form unchanged.
 Sim untouched — save blobs and goldens byte-identical.
 VERIFIED: analyze clean; 272/272 tests green (was 259; +13 new in
 reminder_service_test; 2 forge/ledger tests updated to the new contract).
+
+## 2026-08-12 — pool-forged build identity (presentation-only)
+Competitive-depth iteration after the dimensional 2.5D pass. Added a pure
+RunBuildIdentity projection over the live die IDs: Ember/Blade/Aegis/Heart,
+stable tie order, dominant size/tier, exact size counts and special count.
+Combat's existing procedural signature weapon now uses that identity for its
+edge/smear colour, tier-scaled reach and one path-specific silhouette mark.
+The terminal screen (win AND loss) gains POOL FORGED THIS RUN with the honest
+dominant-trait name and exact pool breakdown; the panel has one combined
+screen-reader label.
+No sim/save/golden/dependency/binary-asset change. Screenshot critique caught
+and fixed two issues before the gate: some weapon internals retained the
+character accent instead of the build accent, and the first summary test's
+restart control moved below the fold (test now scrolls to the real button).
+VERIFIED: analyze clean; full suite 282/282; overflow 25/25 across 320x568–
+412x915 and 1.3x text; visual plate covers all four identities; store harness
+2/2; perf proxy unchanged from the accepted dimensional baseline (combat idle
+2.0 paints/frame, die tap 19.9, full storm 96.6); deterministic real-UI probe
+4/4 runs, 827 steps, 0 violations/warnings. goldenV6 remains 2013675017.

@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/characters.dart';
+import 'package:emberdelve/ui/build_identity.dart';
 import 'package:emberdelve/ui/weapons.dart';
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
@@ -72,6 +73,40 @@ void main() {
       // Cover the charge tween plus a stretch of spark animation.
       await pumpFor(tester, 500);
       expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('every pool identity survives idle, raise and swing',
+      (tester) async {
+    final pools = {
+      BuildPath.ember: const ['d6', 'd8'],
+      BuildPath.blade: const ['d8_blade'],
+      BuildPath.aegis: const ['d8_aegis'],
+      BuildPath.heart: const ['d8_surge'],
+    };
+    for (final entry in pools.entries) {
+      var phase = WeaponPhase.idle;
+      late StateSetter update;
+      final identity = buildIdentity(entry.value);
+      expect(identity.path, entry.key);
+      await tester.pumpWidget(MaterialApp(
+        home: Center(
+          child: StatefulBuilder(builder: (context, setState) {
+            update = setState;
+            return WeaponView('kindler',
+                key: ValueKey(entry.key),
+                height: 96,
+                phase: phase,
+                identity: identity);
+          }),
+        ),
+      ));
+      await pumpFor(tester, 100);
+      update(() => phase = WeaponPhase.raise);
+      await pumpFor(tester, 120);
+      update(() => phase = WeaponPhase.swing);
+      await pumpFor(tester, 300);
+      expect(tester.takeException(), isNull, reason: '${entry.key}');
     }
   });
 
