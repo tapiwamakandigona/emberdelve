@@ -24,37 +24,48 @@ void main() {
     }
   }
 
-  test('sprite_meta.json parses and every referenced sheet asset exists',
-      () async {
-    final meta = SpriteMeta.parse(
-        await rootBundle.loadString('assets/images/sprite_meta.json'));
+  test(
+    'sprite_meta.json parses and every referenced sheet asset exists',
+    () async {
+      final meta = SpriteMeta.parse(
+        await rootBundle.loadString('assets/images/sprite_meta.json'),
+      );
 
-    // Every game enemy and character has a sheet; no orphan meta entries.
-    for (final id in enemiesOrder) {
-      expect(meta.enemies.containsKey(id), isTrue,
-          reason: 'enemy $id has no sprite_meta entry');
-    }
-    for (final id in charactersOrder) {
-      expect(meta.characters.containsKey(id), isTrue,
-          reason: 'character $id has no sprite_meta entry');
-    }
-
-    for (final def in [...meta.enemies.values, ...meta.characters.values]) {
-      expect(def.frameW, greaterThan(0));
-      expect(def.frameH, greaterThan(0));
-      expect(def.fps, greaterThan(0));
-      expect(def.rows.containsKey('idle'), isTrue,
-          reason: '${def.id} has no idle row');
-      for (final row in def.rows.values) {
-        expect(row.frames, greaterThanOrEqualTo(1));
-        expect(row.row, greaterThanOrEqualTo(0));
+      // Every game enemy and character has a sheet; no orphan meta entries.
+      for (final id in enemiesOrder) {
+        expect(
+          meta.enemies.containsKey(id),
+          isTrue,
+          reason: 'enemy $id has no sprite_meta entry',
+        );
       }
-      await expectAsset(def.assetPath);
-    }
-  });
+      for (final id in charactersOrder) {
+        expect(
+          meta.characters.containsKey(id),
+          isTrue,
+          reason: 'character $id has no sprite_meta entry',
+        );
+      }
 
-  test('every SFX and music id the audio service references exists',
-      () async {
+      for (final def in [...meta.enemies.values, ...meta.characters.values]) {
+        expect(def.frameW, greaterThan(0));
+        expect(def.frameH, greaterThan(0));
+        expect(def.fps, greaterThan(0));
+        expect(
+          def.rows.containsKey('idle'),
+          isTrue,
+          reason: '${def.id} has no idle row',
+        );
+        for (final row in def.rows.values) {
+          expect(row.frames, greaterThanOrEqualTo(1));
+          expect(row.row, greaterThanOrEqualTo(0));
+        }
+        await expectAsset(def.assetPath);
+      }
+    },
+  );
+
+  test('every SFX and music id the audio service references exists', () async {
     for (final path in AudioService.sfxPaths.values) {
       await expectAsset('assets/$path');
     }
@@ -63,8 +74,11 @@ void main() {
     }
     // Event-mapped SFX ids must all be real SFX ids.
     for (final id in AudioService.eventSfx.values) {
-      expect(AudioService.sfxPaths.containsKey(id), isTrue,
-          reason: 'eventSfx maps to unknown sfx id $id');
+      expect(
+        AudioService.sfxPaths.containsKey(id),
+        isTrue,
+        reason: 'eventSfx maps to unknown sfx id $id',
+      );
     }
   });
 

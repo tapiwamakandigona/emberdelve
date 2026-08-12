@@ -27,7 +27,10 @@ void main() {
       // None of these may throw even though nothing is wired.
       await pgs.pushSnapshot(MetaState());
       await pgs.submitRunScore(
-          isDaily: true, isWeekly: false, embersBanked: 10);
+        isDaily: true,
+        isWeekly: false,
+        embersBanked: 10,
+      );
       await pgs.showLeaderboards();
     });
 
@@ -61,8 +64,9 @@ void main() {
       expect(signIns, 1);
       expect(pgs.connected, isTrue);
       // The sync pushed the local snapshot to the named saved game.
-      final cloud = jsonDecode(saved[PlayGamesService.savedGameName]!)
-          as Map<String, dynamic>;
+      final cloud =
+          jsonDecode(saved[PlayGamesService.savedGameName]!)
+              as Map<String, dynamic>;
       expect(cloud['embers'], 42);
       // Choice persisted for the next launch.
       final prefs = await SharedPreferences.getInstance();
@@ -104,24 +108,26 @@ void main() {
       expect(prefs.getBool('pgs_connected'), isFalse);
     });
 
-    test('resumeIfWanted resumes silently after a remembered connect',
-        () async {
-      SharedPreferences.setMockInitialValues({'pgs_connected': true});
-      var signIns = 0;
-      final pgs = fresh()
-        ..signInBackend = (() async {
-          signIns++;
-          return true;
-        })
-        ..saveGameBackend = ((data, name) async {})
-        ..loadGameBackend = ((name) async => null)
-        ..loadLocalHook = (() async => MetaState())
-        ..adoptMergedHook = ((m) async {});
-      await pgs.load();
-      await pgs.resumeIfWanted();
-      expect(signIns, 1);
-      expect(pgs.connected, isTrue);
-    });
+    test(
+      'resumeIfWanted resumes silently after a remembered connect',
+      () async {
+        SharedPreferences.setMockInitialValues({'pgs_connected': true});
+        var signIns = 0;
+        final pgs = fresh()
+          ..signInBackend = (() async {
+            signIns++;
+            return true;
+          })
+          ..saveGameBackend = ((data, name) async {})
+          ..loadGameBackend = ((name) async => null)
+          ..loadLocalHook = (() async => MetaState())
+          ..adoptMergedHook = ((m) async {});
+        await pgs.load();
+        await pgs.resumeIfWanted();
+        expect(signIns, 1);
+        expect(pgs.connected, isTrue);
+      },
+    );
   });
 
   group('cloud sync (pull-merge-push)', () {
@@ -138,11 +144,8 @@ void main() {
         ..signInBackend = (() async => true)
         ..saveGameBackend = ((data, name) async => saved[name] = data)
         ..loadGameBackend = ((name) async => jsonEncode(cloudState.toJson()))
-        ..loadLocalHook = (() async => MetaState(
-              lifetimeEmbers: 100,
-              embers: 10,
-              runsPlayed: 3,
-            ))
+        ..loadLocalHook = (() async =>
+            MetaState(lifetimeEmbers: 100, embers: 10, runsPlayed: 3))
         ..adoptMergedHook = ((m) async => adopted = m);
       await pgs.load();
       await pgs.connect();
@@ -151,13 +154,13 @@ void main() {
       expect(adopted!.runsPlayed, 3); // local counter kept (max)
       expect(adopted!.forgeUnlocked, isTrue);
       // Merged result was pushed back up.
-      final pushed = jsonDecode(saved[PlayGamesService.savedGameName]!)
-          as Map<String, dynamic>;
+      final pushed =
+          jsonDecode(saved[PlayGamesService.savedGameName]!)
+              as Map<String, dynamic>;
       expect(pushed['embers'], 300);
     });
 
-    test('unreadable cloud payload: local wins and overwrites cloud',
-        () async {
+    test('unreadable cloud payload: local wins and overwrites cloud', () async {
       MetaState? adopted;
       final saved = <String, String>{};
       final pgs = fresh()
@@ -169,8 +172,9 @@ void main() {
       await pgs.load();
       await pgs.connect();
       expect(adopted!.embers, 77);
-      final pushed = jsonDecode(saved[PlayGamesService.savedGameName]!)
-          as Map<String, dynamic>;
+      final pushed =
+          jsonDecode(saved[PlayGamesService.savedGameName]!)
+              as Map<String, dynamic>;
       expect(pushed['embers'], 77);
     });
   });
@@ -193,7 +197,10 @@ void main() {
       final submits = <(String, int)>[];
       final pgs = await connected(submits);
       await pgs.submitRunScore(
-          isDaily: true, isWeekly: false, embersBanked: 88);
+        isDaily: true,
+        isWeekly: false,
+        embersBanked: 88,
+      );
       expect(submits, [(PlayGamesService.dailyLeaderboardId, 88)]);
     });
 
@@ -201,7 +208,10 @@ void main() {
       final submits = <(String, int)>[];
       final pgs = await connected(submits);
       await pgs.submitRunScore(
-          isDaily: false, isWeekly: true, embersBanked: 41);
+        isDaily: false,
+        isWeekly: true,
+        embersBanked: 41,
+      );
       expect(submits, [(PlayGamesService.weeklyLeaderboardId, 41)]);
     });
 
@@ -209,7 +219,10 @@ void main() {
       final submits = <(String, int)>[];
       final pgs = await connected(submits);
       await pgs.submitRunScore(
-          isDaily: false, isWeekly: false, embersBanked: 999);
+        isDaily: false,
+        isWeekly: false,
+        embersBanked: 999,
+      );
       expect(submits, isEmpty);
     });
 
@@ -220,7 +233,10 @@ void main() {
         ..submitScoreBackend = ((id, v) async => submits.add((id, v)));
       await pgs.load();
       await pgs.submitRunScore(
-          isDaily: true, isWeekly: false, embersBanked: 10);
+        isDaily: true,
+        isWeekly: false,
+        embersBanked: 10,
+      );
       expect(submits, isEmpty);
     });
   });

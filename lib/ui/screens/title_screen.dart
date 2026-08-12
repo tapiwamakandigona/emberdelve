@@ -412,8 +412,11 @@ class _DifficultySelector extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (!canSelectDifficulty(c.meta, id)) ...[
-                              const Icon(Icons.lock,
-                                  size: 11, color: EmberColors.textDim),
+                              const Icon(
+                                Icons.lock,
+                                size: 11,
+                                color: EmberColors.textDim,
+                              ),
                               const SizedBox(width: 3),
                             ],
                             Text(

@@ -53,11 +53,14 @@ Future<void> showTelemetryConsentDialog(BuildContext context) async {
       },
       child: AlertDialog(
         backgroundColor: const Color(0xFF1E1E2E),
-        title: const Text('Help improve Emberdelve',
-            style: TextStyle(
-                fontFamily: 'Cinzel',
-                color: Color(0xFFE8A33D),
-                fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Help improve Emberdelve',
+          style: TextStyle(
+            fontFamily: 'Cinzel',
+            color: Color(0xFFE8A33D),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: const SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,13 +87,16 @@ Future<void> showTelemetryConsentDialog(BuildContext context) async {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Not now',
-                style: TextStyle(color: Colors.white54)),
+            child: const Text(
+              'Not now',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFE8A33D),
-                foregroundColor: Colors.black),
+              backgroundColor: const Color(0xFFE8A33D),
+              foregroundColor: Colors.black,
+            ),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: const Text('Allow'),
           ),

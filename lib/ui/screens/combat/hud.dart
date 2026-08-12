@@ -9,13 +9,7 @@ part of '../../screens.dart';
 /// public sim state. Returns -1 when the die can't take the action
 /// (attack_only/block_only). This is a thin UI adapter over the sim's pure
 /// assignment resolver, not a second copy of the arithmetic.
-int assignPreview(
-  Map player,
-  Map enemy,
-  Map? run,
-  int die,
-  String action,
-) {
+int assignPreview(Map player, Map enemy, Map? run, int die, String action) {
   final resolved = resolveAssignment(
     player: player,
     enemy: enemy,

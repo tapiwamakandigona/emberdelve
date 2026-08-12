@@ -39,7 +39,8 @@ Future<void> loadRealFonts() async {
   final flutterRoot = Platform.environment['FLUTTER_ROOT'];
   if (flutterRoot != null) {
     final f = File(
-        '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
+      '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    );
     if (f.existsSync()) {
       final bytes = f.readAsBytesSync();
       final icons = FontLoader('MaterialIcons')
@@ -50,13 +51,13 @@ Future<void> loadRealFonts() async {
 }
 
 Widget app(Widget home) => RepaintBoundary(
-      key: rootKey,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: buildEmberTheme(),
-        home: home,
-      ),
-    );
+  key: rootKey,
+  child: MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: buildEmberTheme(),
+    home: home,
+  ),
+);
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
@@ -64,7 +65,8 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
     // Let real async work (rootBundle sprite loads, asset image decode)
     // actually complete between frames — plain pump() never runs it.
     await tester.binding.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
     await tester.pump(const Duration(milliseconds: step));
     tester.takeException(); // keep walking; screenshots, not a gate
   }
@@ -74,8 +76,13 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 Future<void> precacheArt(WidgetTester tester) async {
   final context = tester.element(find.byType(MaterialApp));
   final assets = <String>[
-    Art.bgTitle, Art.bgMap, Art.bgCombat, Art.bgBoss,
-    Art.currencyCoin, Art.currencyEmber, Art.currencyInsight,
+    Art.bgTitle,
+    Art.bgMap,
+    Art.bgCombat,
+    Art.bgBoss,
+    Art.currencyCoin,
+    Art.currencyEmber,
+    Art.currencyInsight,
     ...Art.nodeIcons.values,
   ];
   await tester.binding.runAsync(() async {
@@ -88,14 +95,19 @@ Future<void> precacheArt(WidgetTester tester) async {
   await tester.pump();
 }
 
-Future<void> snap(WidgetTester tester, String name,
-    {double ratio = pixelRatio}) async {
+Future<void> snap(
+  WidgetTester tester,
+  String name, {
+  double ratio = pixelRatio,
+}) async {
   final boundary =
       rootKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  final image = await tester.binding
-      .runAsync(() => boundary.toImage(pixelRatio: ratio));
-  final bytes = await tester.binding
-      .runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
+  final image = await tester.binding.runAsync(
+    () => boundary.toImage(pixelRatio: ratio),
+  );
+  final bytes = await tester.binding.runAsync(
+    () => image!.toByteData(format: ui.ImageByteFormat.png),
+  );
   final file = File('$outDir/$name.png')..createSync(recursive: true);
   file.writeAsBytesSync(bytes!.buffer.asUint8List());
   // ignore: avoid_print
@@ -165,7 +177,11 @@ void main() {
 
     // A mid-run pool: more interesting combat tray than 3 starter d6s.
     (c.state!['player'] as Map)['dice'] = <String>[
-      'd6', 'd6', 'd8_aegis', 'd10_blade', 'd4_lucky',
+      'd6',
+      'd6',
+      'd8_aegis',
+      'd10_blade',
+      'd4_lucky',
     ];
 
     // 4/5 — walk to the first fight; shoot rolled dice, then the enemy
@@ -177,8 +193,7 @@ void main() {
       if (phase == 'map') {
         final map = c.state!['map'] as Map;
         final position = map['position'] as int;
-        final edges =
-            ((map['edges'] as Map)['$position'] as List).cast<int>();
+        final edges = ((map['edges'] as Map)['$position'] as List).cast<int>();
         final nodes = (map['nodes'] as Map).cast<String, Map>();
         int pick = edges.first;
         for (final e in edges) {
@@ -251,55 +266,64 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(RepaintBoundary(
-      key: rootKey,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: buildEmberTheme(),
-        home: Scaffold(
-          body: Stack(fit: StackFit.expand, children: [
-            Image.asset(Art.bgBoss, fit: BoxFit.cover),
-            // Legibility scrim + ember glow from the bottom.
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xAA14101E), Color(0x5514101E)],
-                ),
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: rootKey,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: buildEmberTheme(),
+          home: Scaffold(
+            body: Stack(
+              fit: StackFit.expand,
               children: [
-                const EmberLogotype('EMBERDELVE', fontSize: 52),
-                const SizedBox(height: 6),
-                Text('Fair dice. Real choices. Delve in.',
-                    style: EmberText.body
-                        .copyWith(fontSize: 15, letterSpacing: 1.1)),
-                const SizedBox(height: 18),
-                Row(
+                Image.asset(Art.bgBoss, fit: BoxFit.cover),
+                // Legibility scrim + ember glow from the bottom.
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xAA14101E), Color(0x5514101E)],
+                    ),
+                  ),
+                ),
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    SizedBox(
-                        width: 56,
-                        child: DieChip('d6', value: 6)),
-                    SizedBox(width: 14),
-                    SizedBox(
-                        width: 56,
-                        child: DieChip('d8_aegis', value: 7)),
-                    SizedBox(width: 14),
-                    SizedBox(
-                        width: 56,
-                        child: DieChip('d10_blade', value: 10, maxed: true)),
+                  children: [
+                    const EmberLogotype('EMBERDELVE', fontSize: 52),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Fair dice. Real choices. Delve in.',
+                      style: EmberText.body.copyWith(
+                        fontSize: 15,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        SizedBox(width: 56, child: DieChip('d6', value: 6)),
+                        SizedBox(width: 14),
+                        SizedBox(
+                          width: 56,
+                          child: DieChip('d8_aegis', value: 7),
+                        ),
+                        SizedBox(width: 14),
+                        SizedBox(
+                          width: 56,
+                          child: DieChip('d10_blade', value: 10, maxed: true),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
             ),
-          ]),
+          ),
         ),
       ),
-    ));
+    );
     await precacheArt(tester);
     await pumpFor(tester, 1200);
     await snap(tester, 'feature-graphic-1024x500', ratio: 2.0);

@@ -37,6 +37,9 @@
       workspace returned out-of-credits, so parent review continues directly).
 - [x] Run-local custom die IDs, v7 state, one-use Temper command, natural-face
       tracking, and all four runes (Blade, Aegis, Surge, Echo) in the sim.
+- [x] Four keystones live in the sim with a real acquisition point (chooser
+      screen, one pick per run after the first won fight) and a deliberate
+      golden re-anchor recorded old -> new.
 - [ ] Rest-node temper UI, rune marks on dice, and combat rune feedback.
 - [x] Replace duplicated UI/sim assignment arithmetic with one pure resolver;
       v6 golden and seeded preview parity remain green.

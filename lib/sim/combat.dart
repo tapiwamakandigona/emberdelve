@@ -19,6 +19,7 @@
 import '../data/enemies.dart';
 import 'assignment.dart';
 import 'combos.dart';
+import 'keystones.dart';
 import 'relic_hooks.dart';
 import 'run_dice.dart';
 import 'sim.dart';
@@ -190,6 +191,9 @@ void combatBegin(
   sim.player['ignited'] = false;
   sim.player['surge_used'] = <int>[];
   sim.player['echo_pending'] = null;
+  sim.player['ashen_used'] = false;
+  sim.player['bellows_action'] = null;
+  sim.player['bellows_streak'] = 0;
   enemy['burn'] = 0;
   _push(events, {
     'type': 'encounter_started',
@@ -554,6 +558,26 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       });
     }
   }
+  for (final hit in resolution.keystoneHits) {
+    _push(events, {
+      'type': 'keystone_triggered',
+      'keystone': hit['keystone'],
+      'amount': hit['amount'],
+      'die': die,
+    });
+  }
+  // Ashen Edge burns on the FIRST attack of the turn whether or not other
+  // dice were left to pay it; Twin Bellows advances or breaks its chain on
+  // every assignment.
+  if (action == 'attack') sim.player['ashen_used'] = true;
+  final lastVerb = sim.player['bellows_action'] as String?;
+  if (lastVerb != null && lastVerb != action) {
+    final next = (sim.player['bellows_streak'] as int? ?? 0) + 1;
+    sim.player['bellows_streak'] = next > 3 ? 3 : next;
+  } else {
+    sim.player['bellows_streak'] = 0;
+  }
+  sim.player['bellows_action'] = action;
   // A pending Echo charge is spent by this assignment (its value is already
   // inside resolution.value). `die` names the die that armed the charge,
   // `on_die` the assignment being paid.
@@ -654,12 +678,16 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   enemy['block'] = 0;
   final intent = enemy['intent'] as Map;
   final kind = intent['kind'];
+  // Block actually consumed by the shown intent — Living Bastion carries half
+  // of what the delver did NOT need.
+  var blockSpent = 0;
   if (kind == 'attack' || kind == 'attack_block') {
     final incoming = intent['amount'] as int;
     var blocked = incoming;
     final playerBlock = sim.player['block'] as int;
     if (blocked > playerBlock) blocked = playerBlock;
     final dmg = incoming - blocked;
+    blockSpent = blocked;
     sim.player['hp'] = (sim.player['hp'] as int) - dmg;
     final ev = <String, Object?>{
       'type': 'enemy_attacked',
@@ -727,7 +755,22 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     return;
   }
   sim.turn += 1;
-  sim.player['block'] = 0;
+  var carriedBlock = 0;
+  if (hasKeystone(sim.run, 'living_bastion')) {
+    final unused = (sim.player['block'] as int) - blockSpent;
+    if (unused > 0) {
+      carriedBlock = unused ~/ 2;
+      if (carriedBlock > 8) carriedBlock = 8;
+    }
+  }
+  sim.player['block'] = carriedBlock;
+  if (carriedBlock > 0) {
+    _push(events, {
+      'type': 'keystone_triggered',
+      'keystone': 'living_bastion',
+      'amount': carriedBlock,
+    });
+  }
   sim.player['rolled'] = null;
   sim.player['rolled_max'] = null;
   sim.player['rolled_face'] = null;
@@ -737,6 +780,9 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   sim.player['ignited'] = false;
   sim.player['surge_used'] = <int>[];
   sim.player['echo_pending'] = null;
+  sim.player['ashen_used'] = false;
+  sim.player['bellows_action'] = null;
+  sim.player['bellows_streak'] = 0;
   sim.player['free_reroll'] = sim.player['free_reroll_next'] == true;
   sim.player['free_reroll_next'] = false;
   final pattern = enemy['pattern'] as List;

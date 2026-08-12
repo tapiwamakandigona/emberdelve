@@ -80,10 +80,9 @@ String weeklyRecapLine({
   required bool won,
   required int floor,
   required int floors,
-}) =>
-    won
-        ? '✓ Cleared this week — the Ember claimed'
-        : '✓ Played this week — fell on floor $floor of $floors';
+}) => won
+    ? '✓ Cleared this week — the Ember claimed'
+    : '✓ Played this week — fell on floor $floor of $floors';
 
 /// Copyable result for the summary screen: states the shared-seed fact and
 /// the declared modifier, then stops. No call to action, no pressure.

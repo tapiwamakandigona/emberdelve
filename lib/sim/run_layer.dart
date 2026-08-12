@@ -24,6 +24,7 @@ import '../data/events.dart';
 import '../data/insights.dart';
 import '../data/relics.dart';
 import 'combat.dart';
+import 'keystones.dart';
 import 'map_gen.dart';
 import 'relic_hooks.dart';
 import 'run_dice.dart';
@@ -790,31 +791,30 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
         'gold': run['gold'],
       });
     } else {
-      // Reward offers were pre-resolved at start_run from the `offer` stream
-      // and telegraphed on the map node (m4 §5) — serve them verbatim so the
-      // preview is honest. Fallback (never expected) keeps old behavior.
-      var offers = (node['offers'] as List?)?.cast<String>().toList();
-      if (offers == null || offers.isEmpty) {
-        final ceiling = _tierCeiling(layer);
-        final poolIds = [
-          for (final id in diceOrder)
-            if (dice[id]!.tier <= ceiling) id,
-        ];
-        final count = sim.rng['loot']!.range(2, 3);
-        final pool = List<String>.from(poolIds);
-        offers = <String>[];
-        for (var k = 0; k < count && pool.isNotEmpty; k++) {
-          offers.add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
+      // v7 keystone offering: the delver picks ONE run-long rule after their
+      // first won fight, before that fight's reward. Early on purpose —
+      // keystones reward a PATTERN of play, so knowing yours shapes every
+      // later pick. Drawn from the `offer` stream, whose only other consumer
+      // is start_run, so no other stream shifts.
+      final owned = (run['keystones'] as List?)?.cast<String>() ?? const [];
+      if (owned.isEmpty && run['keystone_offered'] != true) {
+        run['keystone_offered'] = true;
+        final pool = List<String>.from(keystonesOrder);
+        final picks = <String>[];
+        for (var k = 0; k < 3 && pool.isNotEmpty; k++) {
+          picks.add(pool.removeAt(sim.rng['offer']!.range(1, pool.length) - 1));
         }
+        sim.keystoneOffers = picks;
+        sim.phase = 'keystone';
+        _push(events, {
+          'type': 'keystone_offered',
+          'k1': picks[0],
+          'k2': picks.length > 1 ? picks[1] : null,
+          'k3': picks.length > 2 ? picks[2] : null,
+        });
+        return;
       }
-      sim.offers = offers;
-      sim.phase = 'reward';
-      _push(events, {
-        'type': 'reward_offered',
-        'o1': offers[0],
-        'o2': offers.length > 1 ? offers[1] : null,
-        if (offers.length > 2) 'o3': offers[2],
-      });
+      _offerReward(sim, node, layer, events);
     }
   } else {
     // "lost": death ledger keeps half the embers + a fair-death insight.
@@ -841,4 +841,71 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
       'insight': insight,
     });
   }
+}
+
+/// cmd: { type:"choose_keystone", index:<1..3, or 0 to decline> } — the one
+/// keystone pick of the run. Declining is a real option (§Ethics: no forced
+/// choice), and either way the fight's reward follows immediately.
+void runChooseKeystone(Sim sim, Map cmd, List<Map<String, Object?>> events) {
+  if (sim.phase != 'keystone' || sim.keystoneOffers == null) {
+    return _invalid(events, 'not_keystone_phase');
+  }
+  final index = cmd['index'];
+  final picks = sim.keystoneOffers!;
+  if (index is! int || index < 0 || index > picks.length) {
+    return _invalid(events, 'no_such_keystone');
+  }
+  final run = sim.run!;
+  if (index == 0) {
+    _push(events, {'type': 'keystone_declined'});
+  } else {
+    final id = picks[index - 1];
+    final owned = ((run['keystones'] as List?)?.cast<String>() ?? const [])
+        .toList();
+    if (owned.length >= keystoneCap) {
+      return _invalid(events, 'keystone_cap_reached');
+    }
+    owned.add(id);
+    run['keystones'] = owned;
+    _push(events, {'type': 'keystone_taken', 'keystone': id});
+  }
+  sim.keystoneOffers = null;
+  final map = sim.map!;
+  final node = (map['nodes'] as Map)['${map['position']}'] as Map;
+  _offerReward(sim, node, node['layer'] as int, events);
+}
+
+/// The post-fight die reward, shared by the direct path and the path that
+/// resumes after a keystone pick.
+void _offerReward(
+  Sim sim,
+  Map node,
+  int layer,
+  List<Map<String, Object?>> events,
+) {
+  // Reward offers were pre-resolved at start_run from the `offer` stream
+  // and telegraphed on the map node (m4 §5) — serve them verbatim so the
+  // preview is honest. Fallback (never expected) keeps old behavior.
+  var offers = (node['offers'] as List?)?.cast<String>().toList();
+  if (offers == null || offers.isEmpty) {
+    final ceiling = _tierCeiling(layer);
+    final poolIds = [
+      for (final id in diceOrder)
+        if (dice[id]!.tier <= ceiling) id,
+    ];
+    final count = sim.rng['loot']!.range(2, 3);
+    final pool = List<String>.from(poolIds);
+    offers = <String>[];
+    for (var k = 0; k < count && pool.isNotEmpty; k++) {
+      offers.add(pool.removeAt(sim.rng['loot']!.range(1, pool.length) - 1));
+    }
+  }
+  sim.offers = offers;
+  sim.phase = 'reward';
+  _push(events, {
+    'type': 'reward_offered',
+    'o1': offers[0],
+    'o2': offers.length > 1 ? offers[1] : null,
+    if (offers.length > 2) 'o3': offers[2],
+  });
 }

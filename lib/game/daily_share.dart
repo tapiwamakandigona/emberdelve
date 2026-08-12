@@ -8,7 +8,8 @@
 /// Local calendar key for a date, e.g. '2026-07-24'. The single formatting
 /// authority for daily keys — GameController and the title screen both use
 /// it, so the recap can never miss because of a format drift.
-String dailyKey(DateTime d) => '${d.year}-'
+String dailyKey(DateTime d) =>
+    '${d.year}-'
     '${d.month.toString().padLeft(2, '0')}-'
     '${d.day.toString().padLeft(2, '0')}';
 
@@ -18,10 +19,9 @@ String dailyRecapLine({
   required bool won,
   required int floor,
   required int floors,
-}) =>
-    won
-        ? '✓ Played today — the Ember claimed'
-        : '✓ Played today — fell on floor $floor of $floors';
+}) => won
+    ? '✓ Played today — the Ember claimed'
+    : '✓ Played today — fell on floor $floor of $floors';
 
 /// Copyable result for the summary screen (review note #3): Wordle-style,
 /// deliberately plain text so it pastes anywhere. States the shared-seed

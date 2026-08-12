@@ -50,11 +50,13 @@ class FakeGateway implements StoreGateway {
   }
 
   @override
-  Future<void> complete(StorePurchaseEvent event) async =>
-      completed.add(event);
+  Future<void> complete(StorePurchaseEvent event) async => completed.add(event);
 
-  void emit(StorePurchaseStatus status,
-      {String? productId, bool needsCompletion = true}) {
+  void emit(
+    StorePurchaseStatus status, {
+    String? productId,
+    bool needsCompletion = true,
+  }) {
     controller.add([
       StorePurchaseEvent(
         productId: productId ?? forgeProductId,
@@ -66,7 +68,7 @@ class FakeGateway implements StoreGateway {
 }
 
 ({StoreService service, FakeGateway gateway, MetaState meta, List<int> grants})
-    _rig({bool available = true, bool withProduct = true, bool owned = false}) {
+_rig({bool available = true, bool withProduct = true, bool owned = false}) {
   final meta = MetaState(forgeUnlocked: owned);
   final gateway = FakeGateway(
     available: available,
@@ -97,8 +99,7 @@ void main() {
 
     test('round-trips true through toJson/fromJson', () {
       final m = MetaState(forgeUnlocked: true);
-      final back = MetaState.fromJson(
-          Map<String, dynamic>.from(m.toJson()));
+      final back = MetaState.fromJson(Map<String, dynamic>.from(m.toJson()));
       expect(back.forgeUnlocked, isTrue);
     });
 
@@ -166,8 +167,7 @@ void main() {
   });
 
   group('purchase lifecycle', () {
-    test('purchased event grants once, acknowledges, lands on owned',
-        () async {
+    test('purchased event grants once, acknowledges, lands on owned', () async {
       final rig = _rig();
       await rig.service.init();
       expect(rig.service.state, ForgeStoreState.ready);
@@ -181,8 +181,11 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(rig.meta.forgeUnlocked, isTrue);
       expect(rig.grants.length, 1);
-      expect(rig.gateway.completed.length, 1,
-          reason: 'unacknowledged purchases are refunded after 3 days');
+      expect(
+        rig.gateway.completed.length,
+        1,
+        reason: 'unacknowledged purchases are refunded after 3 days',
+      );
       expect(rig.service.state, ForgeStoreState.owned);
 
       // Redelivery (app died between grant and ack): grant stays idempotent.
@@ -201,21 +204,26 @@ void main() {
       expect(rig.service.state, ForgeStoreState.owned);
     });
 
-    test('pending shows pending; cancel returns to ready with NO grant',
-        () async {
-      final rig = _rig();
-      await rig.service.init();
-      rig.gateway.emit(StorePurchaseStatus.pending, needsCompletion: false);
-      await Future<void>.delayed(Duration.zero);
-      expect(rig.service.state, ForgeStoreState.pending);
+    test(
+      'pending shows pending; cancel returns to ready with NO grant',
+      () async {
+        final rig = _rig();
+        await rig.service.init();
+        rig.gateway.emit(StorePurchaseStatus.pending, needsCompletion: false);
+        await Future<void>.delayed(Duration.zero);
+        expect(rig.service.state, ForgeStoreState.pending);
 
-      rig.gateway.emit(StorePurchaseStatus.canceled, needsCompletion: false);
-      await Future<void>.delayed(Duration.zero);
-      expect(rig.service.state, ForgeStoreState.ready);
-      expect(rig.meta.forgeUnlocked, isFalse);
-      expect(rig.service.lastError, isNull,
-          reason: 'changing your mind is not an error');
-    });
+        rig.gateway.emit(StorePurchaseStatus.canceled, needsCompletion: false);
+        await Future<void>.delayed(Duration.zero);
+        expect(rig.service.state, ForgeStoreState.ready);
+        expect(rig.meta.forgeUnlocked, isFalse);
+        expect(
+          rig.service.lastError,
+          isNull,
+          reason: 'changing your mind is not an error',
+        );
+      },
+    );
 
     test('error surfaces the no-charge message and never grants', () async {
       final rig = _rig();
@@ -227,28 +235,34 @@ void main() {
       expect(rig.service.lastError, contains('nothing was charged'));
     });
 
-    test('events for other products are acknowledged but never grant',
-        () async {
-      final rig = _rig();
-      await rig.service.init();
-      rig.gateway
-          .emit(StorePurchaseStatus.purchased, productId: 'someone_else');
-      await Future<void>.delayed(Duration.zero);
-      expect(rig.meta.forgeUnlocked, isFalse);
-      expect(rig.gateway.completed.length, 1);
-    });
+    test(
+      'events for other products are acknowledged but never grant',
+      () async {
+        final rig = _rig();
+        await rig.service.init();
+        rig.gateway.emit(
+          StorePurchaseStatus.purchased,
+          productId: 'someone_else',
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(rig.meta.forgeUnlocked, isFalse);
+        expect(rig.gateway.completed.length, 1);
+      },
+    );
   });
 
   group('startup', () {
     test('subscribes to the stream BEFORE querying the store', () async {
       final rig = _rig();
       await rig.service.init();
-      expect(rig.gateway.calls.first, 'subscribe',
-          reason: 'a purchase event must never be missable');
+      expect(
+        rig.gateway.calls.first,
+        'subscribe',
+        reason: 'a purchase event must never be missable',
+      );
     });
 
-    test('runs a silent restore when not owned, skips it when owned',
-        () async {
+    test('runs a silent restore when not owned, skips it when owned', () async {
       final rig = _rig();
       await rig.service.init();
       expect(rig.gateway.calls, contains('restore'));
@@ -277,8 +291,11 @@ void main() {
     test('an owned profile is owned even if Play is unreachable', () async {
       final rig = _rig(available: false, owned: true);
       await rig.service.init();
-      expect(rig.service.state, ForgeStoreState.owned,
-          reason: 'entitlement is sticky — offline never takes it away');
+      expect(
+        rig.service.state,
+        ForgeStoreState.owned,
+        reason: 'entitlement is sticky — offline never takes it away',
+      );
     });
   });
 }

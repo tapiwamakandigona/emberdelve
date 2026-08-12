@@ -133,57 +133,57 @@ class MetaState {
     this.dailiesPlayed = 0,
     this.winsNoRest = 0,
     this.hardWins = 0,
-  })  : runHistory = runHistory ?? [],
-        bossesBeaten = bossesBeaten ?? {},
-        seenAchievements = seenAchievements ?? {},
-        unlockedCharacters = unlocked ?? {defaultCharacter},
-        charRuns = charRuns ?? {},
-        charWins = charWins ?? {},
-        ownedThemes = ownedThemes ?? {defaultTheme},
-        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
-        ownedCodex = ownedCodex ?? {};
+  }) : runHistory = runHistory ?? [],
+       bossesBeaten = bossesBeaten ?? {},
+       seenAchievements = seenAchievements ?? {},
+       unlockedCharacters = unlocked ?? {defaultCharacter},
+       charRuns = charRuns ?? {},
+       charWins = charWins ?? {},
+       ownedThemes = ownedThemes ?? {defaultTheme},
+       ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
+       ownedCodex = ownedCodex ?? {};
 
   Map<String, Object?> toJson() => {
-        'schema': metaSchemaVersion,
-        'embers': embers,
-        'unlocked': unlockedCharacters.toList(),
-        'bestAscension': bestAscension,
-        'runsPlayed': runsPlayed,
-        'runsWon': runsWon,
-        'tutorialSeen': tutorialSeen,
-        'preferredDifficulty': preferredDifficulty,
-        'difficultyChosen': difficultyChosen,
-        'charRuns': charRuns,
-        'charWins': charWins,
-        'lifetimeEmbers': lifetimeEmbers,
-        'exactKills': exactKills,
-        'exactStreak': exactStreak,
-        'bestExactStreak': bestExactStreak,
-        'ownedThemes': ownedThemes.toList(),
-        'activeTheme': activeTheme,
-        'ownedDieSkins': ownedDieSkins.toList(),
-        'activeDieSkin': activeDieSkin,
-        if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
-        if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
-        if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
-        if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
-        if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
-        if (lastWeeklyKey != null) 'lastWeeklyKey': lastWeeklyKey,
-        if (lastWeeklyKey != null) 'lastWeeklyWon': lastWeeklyWon,
-        if (lastWeeklyKey != null) 'lastWeeklyFloor': lastWeeklyFloor,
-        if (lastWeeklyKey != null) 'lastWeeklyFloors': lastWeeklyFloors,
-        if (lastWeeklyKey != null) 'lastWeeklyMutator': lastWeeklyMutator,
-        if (weekliesPlayed > 0) 'weekliesPlayed': weekliesPlayed,
-        if (runHistory.isNotEmpty) 'runHistory': runHistory,
-        if (forgeUnlocked) 'forgeUnlocked': true,
-        if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
-        if (seenAchievements.isNotEmpty)
-          'seenAchievements': seenAchievements.toList(),
-        if (bestFloor > 0) 'bestFloor': bestFloor,
-        if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
-        if (winsNoRest > 0) 'winsNoRest': winsNoRest,
-        if (hardWins > 0) 'hardWins': hardWins,
-      };
+    'schema': metaSchemaVersion,
+    'embers': embers,
+    'unlocked': unlockedCharacters.toList(),
+    'bestAscension': bestAscension,
+    'runsPlayed': runsPlayed,
+    'runsWon': runsWon,
+    'tutorialSeen': tutorialSeen,
+    'preferredDifficulty': preferredDifficulty,
+    'difficultyChosen': difficultyChosen,
+    'charRuns': charRuns,
+    'charWins': charWins,
+    'lifetimeEmbers': lifetimeEmbers,
+    'exactKills': exactKills,
+    'exactStreak': exactStreak,
+    'bestExactStreak': bestExactStreak,
+    'ownedThemes': ownedThemes.toList(),
+    'activeTheme': activeTheme,
+    'ownedDieSkins': ownedDieSkins.toList(),
+    'activeDieSkin': activeDieSkin,
+    if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
+    if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
+    if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
+    if (lastDailyDate != null) 'lastDailyFloor': lastDailyFloor,
+    if (lastDailyDate != null) 'lastDailyFloors': lastDailyFloors,
+    if (lastWeeklyKey != null) 'lastWeeklyKey': lastWeeklyKey,
+    if (lastWeeklyKey != null) 'lastWeeklyWon': lastWeeklyWon,
+    if (lastWeeklyKey != null) 'lastWeeklyFloor': lastWeeklyFloor,
+    if (lastWeeklyKey != null) 'lastWeeklyFloors': lastWeeklyFloors,
+    if (lastWeeklyKey != null) 'lastWeeklyMutator': lastWeeklyMutator,
+    if (weekliesPlayed > 0) 'weekliesPlayed': weekliesPlayed,
+    if (runHistory.isNotEmpty) 'runHistory': runHistory,
+    if (forgeUnlocked) 'forgeUnlocked': true,
+    if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
+    if (seenAchievements.isNotEmpty)
+      'seenAchievements': seenAchievements.toList(),
+    if (bestFloor > 0) 'bestFloor': bestFloor,
+    if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
+    if (winsNoRest > 0) 'winsNoRest': winsNoRest,
+    if (hardWins > 0) 'hardWins': hardWins,
+  };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
   void addRunRecord(Map<String, Object?> record) {
@@ -197,72 +197,75 @@ class MetaState {
       (v as Map?)?.map((k, n) => MapEntry('$k', (n as num).toInt())) ?? {};
 
   factory MetaState.fromJson(Map<String, dynamic> j) => MetaState(
-        embers: j['embers'] as int? ?? 0,
-        unlocked: ((j['unlocked'] as List?)?.cast<String>().toSet()) ??
-            {defaultCharacter},
-        bestAscension: j['bestAscension'] as int? ?? 0,
-        runsPlayed: j['runsPlayed'] as int? ?? 0,
-        runsWon: j['runsWon'] as int? ?? 0,
-        tutorialSeen: j['tutorialSeen'] as bool? ?? false,
-        preferredDifficulty: const {'easy', 'normal', 'hard'}
-                .contains(j['preferredDifficulty'])
-            ? j['preferredDifficulty'] as String
-            : 'normal',
-        // Pre-v0.3.3 saves lack the flag; a veteran profile (runs played)
-        // must never be steered, so treat it as already chosen.
-        difficultyChosen: j['difficultyChosen'] as bool? ??
-            ((j['runsPlayed'] as int? ?? 0) > 0),
-        charRuns: _intMap(j['charRuns']),
-        charWins: _intMap(j['charWins']),
-        lifetimeEmbers: j['lifetimeEmbers'] as int? ?? 0,
-        exactKills: j['exactKills'] as int? ?? 0,
-        exactStreak: j['exactStreak'] as int? ?? 0,
-        bestExactStreak: j['bestExactStreak'] as int? ?? 0,
-        ownedThemes: ((j['ownedThemes'] as List?)?.cast<String>().toSet()
-              ?..add(defaultTheme)) ??
-            {defaultTheme},
-        activeTheme: hearthThemes.containsKey(j['activeTheme'])
-            ? j['activeTheme'] as String
-            : defaultTheme,
-        ownedDieSkins: ((j['ownedDieSkins'] as List?)?.cast<String>().toSet()
-              ?..add(defaultDieSkin)) ??
-            {defaultDieSkin},
-        activeDieSkin: dieSkins.containsKey(j['activeDieSkin'])
-            ? j['activeDieSkin'] as String
-            : defaultDieSkin,
-        ownedCodex:
-            ((j['ownedCodex'] as List?)?.cast<String>().toSet()) ?? {},
-        lastDailyDate: j['lastDailyDate'] as String?,
-        lastDailyWon: j['lastDailyWon'] as bool? ?? false,
-        lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
-        lastDailyFloors: j['lastDailyFloors'] as int? ?? 0,
-        lastWeeklyKey: j['lastWeeklyKey'] as String?,
-        lastWeeklyWon: j['lastWeeklyWon'] as bool? ?? false,
-        lastWeeklyFloor: j['lastWeeklyFloor'] as int? ?? 0,
-        lastWeeklyFloors: j['lastWeeklyFloors'] as int? ?? 0,
-        lastWeeklyMutator: j['lastWeeklyMutator'] as String? ?? '',
-        weekliesPlayed: j['weekliesPlayed'] as int? ?? 0,
-        runHistory: ((j['runHistory'] as List?) ?? const [])
-            .whereType<Map>()
-            .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))
-            .toList(),
-        forgeUnlocked: j['forgeUnlocked'] as bool? ?? false,
-        bossesBeaten:
-            ((j['bossesBeaten'] as List?)?.cast<String>().toSet()) ?? {},
-        seenAchievements:
-            ((j['seenAchievements'] as List?)?.cast<String>().toSet()) ?? {},
-        // Pre-v0.5.0 saves have no bestFloor. Seeding it from the run history
-        // (the deepest floor we can actually prove) is honest; inventing a
-        // number from runsPlayed would not be.
-        bestFloor: j['bestFloor'] as int? ??
-            _deepestFloorIn((j['runHistory'] as List?) ?? const []),
-        dailiesPlayed: j['dailiesPlayed'] as int? ??
-            // A pre-v0.5.0 profile with a recorded daily has provably finished
-            // at least one; anything beyond that is unknowable, so claim one.
-            ((j['lastDailyDate'] is String) ? 1 : 0),
-        winsNoRest: j['winsNoRest'] as int? ?? 0,
-        hardWins: j['hardWins'] as int? ?? 0,
-      );
+    embers: j['embers'] as int? ?? 0,
+    unlocked:
+        ((j['unlocked'] as List?)?.cast<String>().toSet()) ??
+        {defaultCharacter},
+    bestAscension: j['bestAscension'] as int? ?? 0,
+    runsPlayed: j['runsPlayed'] as int? ?? 0,
+    runsWon: j['runsWon'] as int? ?? 0,
+    tutorialSeen: j['tutorialSeen'] as bool? ?? false,
+    preferredDifficulty:
+        const {'easy', 'normal', 'hard'}.contains(j['preferredDifficulty'])
+        ? j['preferredDifficulty'] as String
+        : 'normal',
+    // Pre-v0.3.3 saves lack the flag; a veteran profile (runs played)
+    // must never be steered, so treat it as already chosen.
+    difficultyChosen:
+        j['difficultyChosen'] as bool? ?? ((j['runsPlayed'] as int? ?? 0) > 0),
+    charRuns: _intMap(j['charRuns']),
+    charWins: _intMap(j['charWins']),
+    lifetimeEmbers: j['lifetimeEmbers'] as int? ?? 0,
+    exactKills: j['exactKills'] as int? ?? 0,
+    exactStreak: j['exactStreak'] as int? ?? 0,
+    bestExactStreak: j['bestExactStreak'] as int? ?? 0,
+    ownedThemes:
+        ((j['ownedThemes'] as List?)?.cast<String>().toSet()
+          ?..add(defaultTheme)) ??
+        {defaultTheme},
+    activeTheme: hearthThemes.containsKey(j['activeTheme'])
+        ? j['activeTheme'] as String
+        : defaultTheme,
+    ownedDieSkins:
+        ((j['ownedDieSkins'] as List?)?.cast<String>().toSet()
+          ?..add(defaultDieSkin)) ??
+        {defaultDieSkin},
+    activeDieSkin: dieSkins.containsKey(j['activeDieSkin'])
+        ? j['activeDieSkin'] as String
+        : defaultDieSkin,
+    ownedCodex: ((j['ownedCodex'] as List?)?.cast<String>().toSet()) ?? {},
+    lastDailyDate: j['lastDailyDate'] as String?,
+    lastDailyWon: j['lastDailyWon'] as bool? ?? false,
+    lastDailyFloor: j['lastDailyFloor'] as int? ?? 0,
+    lastDailyFloors: j['lastDailyFloors'] as int? ?? 0,
+    lastWeeklyKey: j['lastWeeklyKey'] as String?,
+    lastWeeklyWon: j['lastWeeklyWon'] as bool? ?? false,
+    lastWeeklyFloor: j['lastWeeklyFloor'] as int? ?? 0,
+    lastWeeklyFloors: j['lastWeeklyFloors'] as int? ?? 0,
+    lastWeeklyMutator: j['lastWeeklyMutator'] as String? ?? '',
+    weekliesPlayed: j['weekliesPlayed'] as int? ?? 0,
+    runHistory: ((j['runHistory'] as List?) ?? const [])
+        .whereType<Map>()
+        .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))
+        .toList(),
+    forgeUnlocked: j['forgeUnlocked'] as bool? ?? false,
+    bossesBeaten: ((j['bossesBeaten'] as List?)?.cast<String>().toSet()) ?? {},
+    seenAchievements:
+        ((j['seenAchievements'] as List?)?.cast<String>().toSet()) ?? {},
+    // Pre-v0.5.0 saves have no bestFloor. Seeding it from the run history
+    // (the deepest floor we can actually prove) is honest; inventing a
+    // number from runsPlayed would not be.
+    bestFloor:
+        j['bestFloor'] as int? ??
+        _deepestFloorIn((j['runHistory'] as List?) ?? const []),
+    dailiesPlayed:
+        j['dailiesPlayed'] as int? ??
+        // A pre-v0.5.0 profile with a recorded daily has provably finished
+        // at least one; anything beyond that is unknowable, so claim one.
+        ((j['lastDailyDate'] is String) ? 1 : 0),
+    winsNoRest: j['winsNoRest'] as int? ?? 0,
+    hardWins: j['hardWins'] as int? ?? 0,
+  );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only
   /// to migrate pre-v0.5.0 saves (see [fromJson]).
@@ -280,8 +283,7 @@ class MetaState {
   /// the selector is steered toward easy — visibly, on the selector itself,
   /// with an honest "recommended" caption. One explicit tap ends it forever.
   bool get steerToEasy => !difficultyChosen && runsPlayed == 0;
-  String get effectiveDifficulty =>
-      steerToEasy ? 'easy' : preferredDifficulty;
+  String get effectiveDifficulty => steerToEasy ? 'easy' : preferredDifficulty;
 
   /// Try to buy a hearth theme with embers; returns true on success.
   bool tryBuyTheme(String id) {
@@ -382,7 +384,9 @@ class MetaStore {
         await _healMain(jsonEncode(fromBak.toJson()));
         return fromBak;
       }
-    } catch (_) {/* fall through to a fresh profile */}
+    } catch (_) {
+      /* fall through to a fresh profile */
+    }
     return MetaState();
   }
 
@@ -405,7 +409,9 @@ class MetaStore {
         final tmp = File('${f.path}.tmp');
         await tmp.writeAsString(snap, flush: true);
         await tmp.rename(f.path);
-      } catch (_) {/* best-effort */}
+      } catch (_) {
+        /* best-effort */
+      }
     });
     return _writeQueue;
   }
@@ -424,7 +430,9 @@ class MetaStore {
         //   crash after promote -> main = new,   bak = previous good
         if (await f.exists()) await f.rename('${f.path}.bak');
         await tmp.rename(f.path);
-      } catch (_) {/* best-effort; never crash the game on save failure */}
+      } catch (_) {
+        /* best-effort; never crash the game on save failure */
+      }
     });
     return _writeQueue;
   }

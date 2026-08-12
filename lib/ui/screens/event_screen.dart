@@ -11,31 +11,47 @@ class EventScreen extends StatelessWidget {
     final eventId = c.state?['event'] as String?;
     if (eventId == null) return const SizedBox.shrink();
     final def = eventDef(eventId);
-    return Column(children: [
-      _TopBar(c),
-      const SizedBox(height: Space.xl),
-      // Long event prose scrolls on short screens; the choice buttons stay
-      // pinned in the thumb zone below.
-      Expanded(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: Space.l),
-          child: Column(children: [
-            Image.asset(Art.eventIcon(def.id),
-                width: 96, height: 96, filterQuality: FilterQuality.medium),
-            const SizedBox(height: Space.l),
-            Text(def.name, style: EmberText.h1, textAlign: TextAlign.center),
-            const SizedBox(height: Space.m),
-            Text(def.text, style: EmberText.body, textAlign: TextAlign.center),
-          ]),
+    return Column(
+      children: [
+        _TopBar(c),
+        const SizedBox(height: Space.xl),
+        // Long event prose scrolls on short screens; the choice buttons stay
+        // pinned in the thumb zone below.
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            child: Column(
+              children: [
+                Image.asset(
+                  Art.eventIcon(def.id),
+                  width: 96,
+                  height: 96,
+                  filterQuality: FilterQuality.medium,
+                ),
+                const SizedBox(height: Space.l),
+                Text(
+                  def.name,
+                  style: EmberText.h1,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: Space.m),
+                Text(
+                  def.text,
+                  style: EmberText.body,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-      const SizedBox(height: Space.m),
-      for (var i = 0; i < def.options.length; i++)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
-          child: SizedBox(
-            width: double.infinity,
-            child: EmberButton(def.options[i].label,
+        const SizedBox(height: Space.m),
+        for (var i = 0; i < def.options.length; i++)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
+            child: SizedBox(
+              width: double.infinity,
+              child: EmberButton(
+                def.options[i].label,
                 // Options the sim would reject render DISABLED instead of
                 // inviting a tap that only spawns a "Not enough gold" toast
                 // (2026-07-24: a 0-gold peddler showed a glowing primary
@@ -45,13 +61,14 @@ class EventScreen extends StatelessWidget {
                 // (wordiness pass 2026-07-24).
                 icon: _optionIcon(def.options[i].effects),
                 onTap: _legal(def.options[i].effects)
-                    ? () =>
-                        c.apply({'type': 'event_choose', 'option': i + 1})
-                    : null),
+                    ? () => c.apply({'type': 'event_choose', 'option': i + 1})
+                    : null,
+              ),
+            ),
           ),
-        ),
-      const SizedBox(height: Space.s),
-    ]);
+        const SizedBox(height: Space.s),
+      ],
+    );
   }
 
   /// Same legality rules as the sim's runEventChoose: gold cost must be

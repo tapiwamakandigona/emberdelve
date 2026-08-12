@@ -29,8 +29,11 @@ Map<String, Object?> _firstEncounterEnemy(String difficulty) {
     }
     sim.apply({'type': 'choose_node', 'node': fight ?? edges.first});
   }
-  expect(sim.phase, 'player_turn',
-      reason: 'walk should land in a fight for seed 42');
+  expect(
+    sim.phase,
+    'player_turn',
+    reason: 'walk should land in a fight for seed 42',
+  );
   return Map<String, Object?>.from(sim.enemy!);
 }
 
@@ -41,19 +44,24 @@ void main() {
     final hard = Sim(7)..apply({'type': 'start_run', 'difficulty': 'hard'});
     expect(hard.run!['difficulty'], 'hard');
     // Unknown values fall back to normal instead of corrupting the run.
-    final junk = Sim(7)..apply({'type': 'start_run', 'difficulty': 'nightmare'});
+    final junk = Sim(7)
+      ..apply({'type': 'start_run', 'difficulty': 'nightmare'});
     expect(junk.run!['difficulty'], 'normal');
   });
 
   test('run_started stamps difficulty only when off-normal', () {
     final normal = Sim(7).apply({'type': 'start_run'});
-    final started =
-        normal.firstWhere((e) => e['type'] == 'run_started');
-    expect(started.containsKey('difficulty'), isFalse,
-        reason: 'normal must keep pre-difficulty event shape (golden)');
+    final started = normal.firstWhere((e) => e['type'] == 'run_started');
+    expect(
+      started.containsKey('difficulty'),
+      isFalse,
+      reason: 'normal must keep pre-difficulty event shape (golden)',
+    );
     final easy = Sim(7).apply({'type': 'start_run', 'difficulty': 'easy'});
-    expect(easy.firstWhere((e) => e['type'] == 'run_started')['difficulty'],
-        'easy');
+    expect(
+      easy.firstWhere((e) => e['type'] == 'run_started')['difficulty'],
+      'easy',
+    );
   });
 
   test('easy shrinks enemy HP and attacks; hard swells them (early ramp)', () {
@@ -87,102 +95,134 @@ void main() {
     expect(firstAttack(hard), na + 1);
   });
 
-  test('easy ramp is a staircase: -5/x0.68 early, -3/x0.80 mid, -2/x0.80 late',
-      () {
-    // The ramp is a pure function of layer — pin the brackets directly.
-    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) easyAttackShave(l)],
-        [5, 5, 3, 3, 2, 2, 2]);
-    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) easyHpScalar(l)],
-        [0.68, 0.68, 0.80, 0.80, 0.80, 0.80, 0.80]);
+  test(
+    'easy ramp is a staircase: -5/x0.68 early, -3/x0.80 mid, -2/x0.80 late',
+    () {
+      // The ramp is a pure function of layer — pin the brackets directly.
+      expect(
+        [
+          for (final l in [2, 3, 4, 6, 7, 9, 99]) easyAttackShave(l),
+        ],
+        [5, 5, 3, 3, 2, 2, 2],
+      );
+      expect(
+        [
+          for (final l in [2, 3, 4, 6, 7, 9, 99]) easyHpScalar(l),
+        ],
+        [0.68, 0.68, 0.80, 0.80, 0.80, 0.80, 0.80],
+      );
 
-    // And through combatBegin itself (elite=true skips early mercy).
-    Map<String, Object?> enemyAt(int layer) {
-      final sim = Sim(42)..apply({'type': 'start_run', 'difficulty': 'easy'});
-      combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
-      return Map<String, Object?>.from(sim.enemy!);
-    }
-
-    final base = enemyDef('cinder_wisp');
-    expect(enemyAt(2)['max_hp'], (base.hp * 0.68).round());
-    expect(enemyAt(5)['max_hp'], (base.hp * 0.80).round());
-
-    int firstAttack(Map e) {
-      for (final it in (e['pattern'] as List).cast<Map>()) {
-        if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
-          return it['amount'] as int;
-        }
+      // And through combatBegin itself (elite=true skips early mercy).
+      Map<String, Object?> enemyAt(int layer) {
+        final sim = Sim(42)..apply({'type': 'start_run', 'difficulty': 'easy'});
+        combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
+        return Map<String, Object?>.from(sim.enemy!);
       }
-      return -1;
-    }
 
-    // Same enemy, elite (no mercy): early shaves 5, mid shaves 3.
-    expect(firstAttack(enemyAt(2)), firstAttack(enemyAt(5)) - 2);
-  });
+      final base = enemyDef('cinder_wisp');
+      expect(enemyAt(2)['max_hp'], (base.hp * 0.68).round());
+      expect(enemyAt(5)['max_hp'], (base.hp * 0.80).round());
 
-  test('hard ramp is a staircase: +1/x1.10 early, +2/x1.25 mid, +3/x1.40 late',
-      () {
-    // The ramp is a pure function of layer — pin the brackets directly.
-    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) hardAttackBonus(l)],
-        [1, 1, 2, 2, 3, 3, 3]);
-    expect([for (final l in [2, 3, 4, 6, 7, 9, 99]) hardHpScalar(l)],
-        [1.10, 1.10, 1.25, 1.25, 1.40, 1.40, 1.40]);
-
-    // And through combatBegin itself: the same enemy on a mid and a late
-    // layer gets the bracketed adjustments (elite=true skips early mercy).
-    Map<String, Object?> enemyAt(int layer) {
-      final sim = Sim(42)
-        ..apply({'type': 'start_run', 'difficulty': 'hard'});
-      combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
-      return Map<String, Object?>.from(sim.enemy!);
-    }
-
-    final mid = enemyAt(5);
-    final late = enemyAt(8);
-    final base = enemyDef('cinder_wisp');
-    expect(mid['max_hp'], (base.hp * 1.25).round());
-    expect(late['max_hp'], (base.hp * 1.40).round());
-
-    int firstAttack(Map e) {
-      for (final it in (e['pattern'] as List).cast<Map>()) {
-        if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
-          return it['amount'] as int;
+      int firstAttack(Map e) {
+        for (final it in (e['pattern'] as List).cast<Map>()) {
+          if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
+            return it['amount'] as int;
+          }
         }
+        return -1;
       }
-      return -1;
-    }
 
-    final baseAttack = firstAttack(enemyAt(2)) - 1; // layer 2 => +1
-    expect(firstAttack(mid), baseAttack + 2);
-    expect(firstAttack(late), baseAttack + 3);
-  });
+      // Same enemy, elite (no mercy): early shaves 5, mid shaves 3.
+      expect(firstAttack(enemyAt(2)), firstAttack(enemyAt(5)) - 2);
+    },
+  );
+
+  test(
+    'hard ramp is a staircase: +1/x1.10 early, +2/x1.25 mid, +3/x1.40 late',
+    () {
+      // The ramp is a pure function of layer — pin the brackets directly.
+      expect(
+        [
+          for (final l in [2, 3, 4, 6, 7, 9, 99]) hardAttackBonus(l),
+        ],
+        [1, 1, 2, 2, 3, 3, 3],
+      );
+      expect(
+        [
+          for (final l in [2, 3, 4, 6, 7, 9, 99]) hardHpScalar(l),
+        ],
+        [1.10, 1.10, 1.25, 1.25, 1.40, 1.40, 1.40],
+      );
+
+      // And through combatBegin itself: the same enemy on a mid and a late
+      // layer gets the bracketed adjustments (elite=true skips early mercy).
+      Map<String, Object?> enemyAt(int layer) {
+        final sim = Sim(42)..apply({'type': 'start_run', 'difficulty': 'hard'});
+        combatBegin(sim, 'cinder_wisp', true, [], layer: layer);
+        return Map<String, Object?>.from(sim.enemy!);
+      }
+
+      final mid = enemyAt(5);
+      final late = enemyAt(8);
+      final base = enemyDef('cinder_wisp');
+      expect(mid['max_hp'], (base.hp * 1.25).round());
+      expect(late['max_hp'], (base.hp * 1.40).round());
+
+      int firstAttack(Map e) {
+        for (final it in (e['pattern'] as List).cast<Map>()) {
+          if (it['kind'] == 'attack' || it['kind'] == 'attack_block') {
+            return it['amount'] as int;
+          }
+        }
+        return -1;
+      }
+
+      final baseAttack = firstAttack(enemyAt(2)) - 1; // layer 2 => +1
+      expect(firstAttack(mid), baseAttack + 2);
+      expect(firstAttack(late), baseAttack + 3);
+    },
+  );
 
   test('normal replay of a difficulty-less command is unchanged', () {
     // A normal-difficulty start emits the exact same events as an old-style
     // start with no difficulty key at all.
     final a = Sim(20260723).apply({'type': 'start_run'});
-    final b = Sim(20260723)
-        .apply({'type': 'start_run', 'difficulty': 'normal'});
+    final b = Sim(
+      20260723,
+    ).apply({'type': 'start_run', 'difficulty': 'normal'});
     expect(b, a);
   });
 
-  test('bot win rates order: easy >= normal >= hard (120 seeds)', () {
-    int wins(String d) {
-      var w = 0;
-      for (var seed = 1; seed <= 120; seed++) {
-        if (playRun(seed, difficulty: d).sim.phase == 'run_won') w++;
+  test(
+    'bot win rates order: easy >= normal >= hard (120 seeds)',
+    () {
+      int wins(String d) {
+        var w = 0;
+        for (var seed = 1; seed <= 120; seed++) {
+          if (playRun(seed, difficulty: d).sim.phase == 'run_won') w++;
+        }
+        return w;
       }
-      return w;
-    }
 
-    final e = wins('easy'), n = wins('normal'), h = wins('hard');
-    // Printed so balance sweeps in CI logs stay observable.
-    // ignore: avoid_print
-    print('difficulty win rates over 120 seeds: '
-        'easy=${e / 1.2}% normal=${n / 1.2}% hard=${h / 1.2}%');
-    expect(e, greaterThanOrEqualTo(n),
-        reason: 'easy must not be harder than normal');
-    expect(n, greaterThanOrEqualTo(h),
-        reason: 'hard must not be easier than normal');
-    expect(e, greaterThan(h), reason: 'the switch must actually matter');
-  }, timeout: const Timeout(Duration(minutes: 3)));
+      final e = wins('easy'), n = wins('normal'), h = wins('hard');
+      // Printed so balance sweeps in CI logs stay observable.
+      // ignore: avoid_print
+      print(
+        'difficulty win rates over 120 seeds: '
+        'easy=${e / 1.2}% normal=${n / 1.2}% hard=${h / 1.2}%',
+      );
+      expect(
+        e,
+        greaterThanOrEqualTo(n),
+        reason: 'easy must not be harder than normal',
+      );
+      expect(
+        n,
+        greaterThanOrEqualTo(h),
+        reason: 'hard must not be easier than normal',
+      );
+      expect(e, greaterThan(h), reason: 'the switch must actually matter');
+    },
+    timeout: const Timeout(Duration(minutes: 3)),
+  );
 }

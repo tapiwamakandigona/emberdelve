@@ -44,7 +44,7 @@ String ctx = 'start';
 /// Base seed for the session; run N (0-based) plays seed [baseSeed] + N.
 final int baseSeed =
     int.tryParse(Platform.environment['EMBER_SESSION_SEED'] ?? '') ??
-        1842571558; // the long-lived golden-anchor seed
+    1842571558; // the long-lived golden-anchor seed
 
 /// Legal sim phase-transition graph (self-loops always allowed). Anchors:
 /// start_run → boon|map (run_layer.dart 166/174), boon → map (221),
@@ -128,7 +128,8 @@ Future<void> loadRealFonts() async {
   final flutterRoot = Platform.environment['FLUTTER_ROOT'];
   if (flutterRoot != null) {
     final f = File(
-        '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');
+      '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    );
     if (f.existsSync()) {
       final bytes = f.readAsBytesSync();
       final icons = FontLoader('MaterialIcons')
@@ -144,7 +145,9 @@ void installHook() {
     final s = details.toString();
     final src =
         RegExp(r'(lib/[\w/]+\.dart:\d+)').firstMatch(s)?.group(1) ?? '?';
-    problems.add('$ctx: ${details.exceptionAsString().split('\n').first} @$src');
+    problems.add(
+      '$ctx: ${details.exceptionAsString().split('\n').first} @$src',
+    );
     original(details);
   };
 }
@@ -160,16 +163,18 @@ void drain(WidgetTester tester) {
 /// shows blank art (2026-07-24: boon-card die art was invisible in the
 /// evidence shots shipped to the owner).
 Future<void> precacheAllImages(WidgetTester tester) async {
-  final manifest = await tester.binding
-      .runAsync(() => AssetManifest.loadFromAssetBundle(rootBundle));
-  final keys =
-      manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final manifest = await tester.binding.runAsync(
+    () => AssetManifest.loadFromAssetBundle(rootBundle),
+  );
+  final keys = manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
   final context = tester.element(find.byType(MaterialApp));
   await tester.binding.runAsync(() async {
     for (final k in keys) {
       try {
         await precacheImage(AssetImage(k), context);
-      } catch (_) {/* non-image or corrupt asset: ignore */}
+      } catch (_) {
+        /* non-image or corrupt asset: ignore */
+      }
     }
   });
   await tester.pump();
@@ -185,16 +190,17 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 
 int _shotN = 0;
 final Set<String> _shotTags = {};
-Future<void> shot(WidgetTester tester, String tag,
-    {bool once = true}) async {
+Future<void> shot(WidgetTester tester, String tag, {bool once = true}) async {
   if (once && _shotTags.contains(tag)) return;
   _shotTags.add(tag);
   final boundary =
       rootKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-  final image =
-      await tester.binding.runAsync(() => boundary.toImage(pixelRatio: pixelRatio));
-  final bytes = await tester.binding
-      .runAsync(() => image!.toByteData(format: ui.ImageByteFormat.png));
+  final image = await tester.binding.runAsync(
+    () => boundary.toImage(pixelRatio: pixelRatio),
+  );
+  final bytes = await tester.binding.runAsync(
+    () => image!.toByteData(format: ui.ImageByteFormat.png),
+  );
   final name = '${(_shotN++).toString().padLeft(3, '0')}_$tag';
   File('$outDir/$name.png')
     ..createSync(recursive: true)
@@ -202,11 +208,15 @@ Future<void> shot(WidgetTester tester, String tag,
   log.add('shot: $name (phase=$ctx)');
 }
 
-Future<bool> tapButton(WidgetTester tester, String label,
-    {bool startsWith = false}) async {
+Future<bool> tapButton(
+  WidgetTester tester,
+  String label, {
+  bool startsWith = false,
+}) async {
   final f = startsWith
-      ? find.byWidgetPredicate((w) =>
-          w is EmberButton && (w.label).startsWith(label))
+      ? find.byWidgetPredicate(
+          (w) => w is EmberButton && (w.label).startsWith(label),
+        )
       : find.widgetWithText(EmberButton, label);
   if (f.evaluate().isEmpty) return false;
   // Summary achievements and narrow-phone wrapping can place the restart
@@ -244,14 +254,16 @@ void main() {
     final c = GameController(saveDirOverride: dir.path);
     await tester.binding.runAsync(() => c.boot());
 
-    await tester.pumpWidget(RepaintBoundary(
-      key: rootKey,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: buildEmberTheme(),
-        home: GameRoot(c),
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: rootKey,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: buildEmberTheme(),
+          home: GameRoot(c),
+        ),
       ),
-    ));
+    );
     await precacheAllImages(tester);
     await pumpFor(tester, 600);
     ctx = 'title';
@@ -276,7 +288,8 @@ void main() {
           violations.add('INVARIANT step $steps: unknown phase $lastPhaseName');
         } else if (!allowed.contains(phase)) {
           violations.add(
-              'INVARIANT step $steps: illegal transition $lastPhaseName → $phase');
+            'INVARIANT step $steps: illegal transition $lastPhaseName → $phase',
+          );
         }
         final seed = c.sim?.runSeed;
         if (lastPhaseName == 'title' ||
@@ -302,8 +315,9 @@ void main() {
       }
       lastPhase = stKey;
       if (stuck > 40) {
-        violations
-            .add('STUCK: $stKey after 40 identical steps (run $runsFinished)');
+        violations.add(
+          'STUCK: $stKey after 40 identical steps (run $runsFinished)',
+        );
         await shot(tester, 'STUCK_$phase', once: false);
         break;
       }
@@ -367,8 +381,9 @@ void main() {
           if (rng.nextInt(4) == 0) {
             await tapButton(tester, 'Skip', startsWith: true);
           } else {
-            final cards = find.byWidgetPredicate((w) =>
-                w is GestureDetector && w.onTap != null);
+            final cards = find.byWidgetPredicate(
+              (w) => w is GestureDetector && w.onTap != null,
+            );
             // Boon screen cards; tap the first non-button detector
             if (cards.evaluate().isNotEmpty) {
               await tester.tap(cards.first, warnIfMissed: false);
@@ -391,7 +406,8 @@ void main() {
           }
           // Follow the sim bot's macro choice when it has one.
           final cmd = botCmd(c.sim!);
-          final targetId = (cmd?['type'] == 'choose_node' &&
+          final targetId =
+              (cmd?['type'] == 'choose_node' &&
                   reach.contains(cmd!['node'] as int))
               ? cmd['node'] as int
               : reach[rng.nextInt(reach.length)];
@@ -414,7 +430,8 @@ void main() {
         case 'player_turn':
           final cmd = botCmd(c.sim!);
           Finder chips() => find.byWidgetPredicate(
-              (w) => w.runtimeType.toString() == 'DieChip');
+            (w) => w.runtimeType.toString() == 'DieChip',
+          );
           Future<void> tapChip(int i) async {
             final f = chips();
             if (f.evaluate().length >= i) {
@@ -431,8 +448,10 @@ void main() {
               break;
             case 'assign':
               await tapChip(cmd!['die'] as int);
-              await tapButton(tester,
-                  cmd['action'] == 'block' ? 'Block' : 'Attack');
+              await tapButton(
+                tester,
+                cmd['action'] == 'block' ? 'Block' : 'Attack',
+              );
               await pumpFor(tester, 700);
               break;
             case 'reroll':
@@ -468,8 +487,9 @@ void main() {
             await tapButton(tester, 'Skip', startsWith: true);
           } else {
             await tester.tap(
-                find.byKey(ValueKey('reward-${offers[idx - 1]}-${idx - 1}')),
-                warnIfMissed: false);
+              find.byKey(ValueKey('reward-${offers[idx - 1]}-${idx - 1}')),
+              warnIfMissed: false,
+            );
           }
           await pumpFor(tester, 800);
           break;
@@ -481,7 +501,9 @@ void main() {
               if (!await tapButton(tester, 'Continue', startsWith: true) &&
                   !await tapButton(tester, 'Move on', startsWith: true) &&
                   !await tapButton(tester, 'Leave', startsWith: true)) {
-                problems.add('rest: no actionable button (fullHp, no forgeable?)');
+                problems.add(
+                  'rest: no actionable button (fullHp, no forgeable?)',
+                );
                 c.apply({'type': 'leave_rest'});
               }
             }
@@ -490,10 +512,12 @@ void main() {
           break;
         case 'shop':
           // try one purchase then leave
-          final buy = find.byWidgetPredicate((w) =>
-              w is EmberButton &&
-              int.tryParse(w.label) != null &&
-              w.onTap != null);
+          final buy = find.byWidgetPredicate(
+            (w) =>
+                w is EmberButton &&
+                int.tryParse(w.label) != null &&
+                w.onTap != null,
+          );
           if (buy.evaluate().isNotEmpty && rng.nextBool()) {
             await tester.tap(buy.first, warnIfMissed: false);
             await pumpFor(tester, 500);
@@ -503,7 +527,8 @@ void main() {
           break;
         case 'event':
           final opts = find.byWidgetPredicate(
-              (w) => w is EmberButton && w.onTap != null);
+            (w) => w is EmberButton && w.onTap != null,
+          );
           final n = opts.evaluate().length;
           if (n > 0) {
             await tester.tap(opts.at(rng.nextInt(n)), warnIfMissed: false);
@@ -539,7 +564,10 @@ void main() {
 
     if (steps >= 2500) violations.add('play loop hit step budget (2500)');
     log.add('runs finished: $runsFinished, steps: $steps');
-    await pumpFor(tester, 3200); // drain animations (covers the 2s call-outs, v0.3.10)
+    await pumpFor(
+      tester,
+      3200,
+    ); // drain animations (covers the 2s call-outs, v0.3.10)
 
     final report = StringBuffer()
       ..writeln('== PLAY SESSION REPORT ==')
@@ -551,13 +579,19 @@ void main() {
     File('$outDir/report.txt').writeAsStringSync(report.toString());
     // UI-probing misses (problems) stay report-only; sim-invariant breaks,
     // stuck loops and budget overruns are real failures with a repro line.
-    expect(violations, isEmpty,
-        reason: 'Invariant violations — reproduce with:\n'
-            '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart\n'
-            '${violations.join('\n')}');
+    expect(
+      violations,
+      isEmpty,
+      reason:
+          'Invariant violations — reproduce with:\n'
+          '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart\n'
+          '${violations.join('\n')}',
+    );
     if (runsFinished < 4) {
-      fail('only $runsFinished/4 runs finished — reproduce with:\n'
-          '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart');
+      fail(
+        'only $runsFinished/4 runs finished — reproduce with:\n'
+        '  EMBER_SESSION_SEED=$baseSeed flutter test tool/play_session_test.dart',
+      );
     }
   }, timeout: const Timeout(Duration(minutes: 15)));
 }

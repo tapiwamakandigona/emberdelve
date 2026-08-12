@@ -20,8 +20,13 @@ class CodexEntryDef {
   final String refId; // key into enemies / relics
   final String text; // the lore, unlocked on purchase
   final int costEmbers;
-  const CodexEntryDef(this.id, this.kind, this.refId, this.text,
-      {required this.costEmbers});
+  const CodexEntryDef(
+    this.id,
+    this.kind,
+    this.refId,
+    this.text, {
+    required this.costEmbers,
+  });
 }
 
 CodexEntryDef _enemy(String refId, String text, {int cost = 15}) =>
@@ -32,180 +37,284 @@ CodexEntryDef _relic(String refId, String text) =>
 /// Authoring order — enemies shallow-to-deep, then relics by shop grouping.
 final List<CodexEntryDef> codexEntries = [
   // enemies — common -----------------------------------------------------
-  _enemy('cinder_wisp',
-      'The first thing a delver meets and the last thing most forget. Wisps '
-      'are hearth-sparks that wandered too deep and learned to want.'),
-  _enemy('ash_rat',
-      'They nest in cold flues and eat the grey. An ash rat has never won a '
-      'fight it did not start with three of its cousins.'),
-  _enemy('soot_shade',
-      'Where a delver burned quick, a shade keeps the shape. It remembers '
-      'how to flinch, which is more than some delvers manage.'),
-  _enemy('ember_beetle',
-      'Its shell is a dead coal and its belly is a live one. Kiln-keepers '
-      'once bred them as foot-warmers, then stopped, for good reasons.'),
-  _enemy('scoria_tick',
-      'Small, patient, and full of somebody else\'s heat. The old rule: if '
-      'your ember pouch feels lighter, check your boots.'),
-  _enemy('char_sprite',
-      'A sprite dances because burning is the only thing it knows how to '
-      'love. Do not applaud; they take it as an invitation.'),
-  _enemy('flue_crawler',
-      'It climbed a chimney once, in some warmer age, and has been looking '
-      'for the way back up ever since. Delvers are just rungs to it.'),
-  _enemy('cinder_pup',
-      'Every delve has strays. Pups will follow a warm hand for miles — '
-      'and follow a wounded one further.'),
-  _enemy('soot_hound',
-      'What a cinder pup grows into when nobody whistles it home. The pack '
-      'howls in smoke, not sound; you smell it before you hear it.'),
-  _enemy('ash_wraith',
-      'A wraith is what a fire owes and never paid. It drifts toward the '
-      'living the way a draft finds a keyhole.'),
-  _enemy('cinder_crawler',
-      'Many legs, one grudge. Crawlers strip a corridor of heat and leave a '
-      'frost of grey behind — the delve\'s way of sweeping up.'),
-  _enemy('ember_moth',
-      'Moths circle a delver\'s lantern until the lantern circles them. '
-      'Their wings shed sparks that dreams are said to catch from.'),
-  _enemy('slag_brute',
-      'Foundry waste that stood up. A brute swings slow enough to count '
-      'along with — the counting is the hard part.'),
-  _enemy('clinker_ogre',
-      'When a furnace is raked out badly, the clinker keeps a temper. Ogres '
-      'hoard the fused lumps of everything the fire refused to take.'),
-  _enemy('smoke_stalker',
-      'You will not see it; that is the arrangement. Stalkers hunt the gap '
-      'between a lantern\'s edge and a delver\'s nerve.'),
-  _enemy('basalt_shell',
-      'Old lava with an opinion. A shell cannot be talked around, only '
-      'worn down — patience against patience, and it has more.'),
-  _enemy('wick_widow',
-      'She spins in tallow, not silk. Whole camps have been found perfectly '
-      'preserved, upright, and slightly translucent.'),
+  _enemy(
+    'cinder_wisp',
+    'The first thing a delver meets and the last thing most forget. Wisps '
+        'are hearth-sparks that wandered too deep and learned to want.',
+  ),
+  _enemy(
+    'ash_rat',
+    'They nest in cold flues and eat the grey. An ash rat has never won a '
+        'fight it did not start with three of its cousins.',
+  ),
+  _enemy(
+    'soot_shade',
+    'Where a delver burned quick, a shade keeps the shape. It remembers '
+        'how to flinch, which is more than some delvers manage.',
+  ),
+  _enemy(
+    'ember_beetle',
+    'Its shell is a dead coal and its belly is a live one. Kiln-keepers '
+        'once bred them as foot-warmers, then stopped, for good reasons.',
+  ),
+  _enemy(
+    'scoria_tick',
+    'Small, patient, and full of somebody else\'s heat. The old rule: if '
+        'your ember pouch feels lighter, check your boots.',
+  ),
+  _enemy(
+    'char_sprite',
+    'A sprite dances because burning is the only thing it knows how to '
+        'love. Do not applaud; they take it as an invitation.',
+  ),
+  _enemy(
+    'flue_crawler',
+    'It climbed a chimney once, in some warmer age, and has been looking '
+        'for the way back up ever since. Delvers are just rungs to it.',
+  ),
+  _enemy(
+    'cinder_pup',
+    'Every delve has strays. Pups will follow a warm hand for miles — '
+        'and follow a wounded one further.',
+  ),
+  _enemy(
+    'soot_hound',
+    'What a cinder pup grows into when nobody whistles it home. The pack '
+        'howls in smoke, not sound; you smell it before you hear it.',
+  ),
+  _enemy(
+    'ash_wraith',
+    'A wraith is what a fire owes and never paid. It drifts toward the '
+        'living the way a draft finds a keyhole.',
+  ),
+  _enemy(
+    'cinder_crawler',
+    'Many legs, one grudge. Crawlers strip a corridor of heat and leave a '
+        'frost of grey behind — the delve\'s way of sweeping up.',
+  ),
+  _enemy(
+    'ember_moth',
+    'Moths circle a delver\'s lantern until the lantern circles them. '
+        'Their wings shed sparks that dreams are said to catch from.',
+  ),
+  _enemy(
+    'slag_brute',
+    'Foundry waste that stood up. A brute swings slow enough to count '
+        'along with — the counting is the hard part.',
+  ),
+  _enemy(
+    'clinker_ogre',
+    'When a furnace is raked out badly, the clinker keeps a temper. Ogres '
+        'hoard the fused lumps of everything the fire refused to take.',
+  ),
+  _enemy(
+    'smoke_stalker',
+    'You will not see it; that is the arrangement. Stalkers hunt the gap '
+        'between a lantern\'s edge and a delver\'s nerve.',
+  ),
+  _enemy(
+    'basalt_shell',
+    'Old lava with an opinion. A shell cannot be talked around, only '
+        'worn down — patience against patience, and it has more.',
+  ),
+  _enemy(
+    'wick_widow',
+    'She spins in tallow, not silk. Whole camps have been found perfectly '
+        'preserved, upright, and slightly translucent.',
+  ),
   // enemies — elite --------------------------------------------------------
-  _enemy('pyre_howler',
-      'The howl is the weapon; the teeth are punctuation. Pyre howlers sing '
-      'a fire higher, and delvers are mostly kindling that walks.',
-      cost: 20),
-  _enemy('kiln_golem',
-      'Built to tend a kiln that burned out an age ago. It still tends. '
-      'Anything that enters the firing chamber is, by definition, pottery.',
-      cost: 20),
-  _enemy('ash_reaper',
-      'It does not swing its hook in anger. Ash must be gathered, the deep '
-      'delve must be swept, and you are standing in the pile.',
-      cost: 20),
-  _enemy('forge_warden',
-      'The last shift never ended for the warden. It checks the doors, '
-      'banks the coals, and removes anything flammable. You are flammable.',
-      cost: 20),
-  _enemy('molten_maw',
-      'A mouth that outlived its animal. The maw eats heat, metal, and '
-      'argument, in that order.',
-      cost: 20),
-  _enemy('bellows_knight',
-      'Armor with wind for marrow. Each breath it draws makes the delve\'s '
-      'fires lean toward it, like courtiers.',
-      cost: 20),
-  _enemy('quench_hag',
-      'She hates fire the way only something made of it can. A hag\'s bucket '
-      'has drowned more hearths than any flood.',
-      cost: 20),
+  _enemy(
+    'pyre_howler',
+    'The howl is the weapon; the teeth are punctuation. Pyre howlers sing '
+        'a fire higher, and delvers are mostly kindling that walks.',
+    cost: 20,
+  ),
+  _enemy(
+    'kiln_golem',
+    'Built to tend a kiln that burned out an age ago. It still tends. '
+        'Anything that enters the firing chamber is, by definition, pottery.',
+    cost: 20,
+  ),
+  _enemy(
+    'ash_reaper',
+    'It does not swing its hook in anger. Ash must be gathered, the deep '
+        'delve must be swept, and you are standing in the pile.',
+    cost: 20,
+  ),
+  _enemy(
+    'forge_warden',
+    'The last shift never ended for the warden. It checks the doors, '
+        'banks the coals, and removes anything flammable. You are flammable.',
+    cost: 20,
+  ),
+  _enemy(
+    'molten_maw',
+    'A mouth that outlived its animal. The maw eats heat, metal, and '
+        'argument, in that order.',
+    cost: 20,
+  ),
+  _enemy(
+    'bellows_knight',
+    'Armor with wind for marrow. Each breath it draws makes the delve\'s '
+        'fires lean toward it, like courtiers.',
+    cost: 20,
+  ),
+  _enemy(
+    'quench_hag',
+    'She hates fire the way only something made of it can. A hag\'s bucket '
+        'has drowned more hearths than any flood.',
+    cost: 20,
+  ),
   // enemies — bosses --------------------------------------------------------
-  _enemy('ember_tyrant',
-      'The Tyrant ruled the first hearth and never abdicated. Every ember '
-      'you bank is, by its reckoning, taxes owed.',
-      cost: 30),
-  _enemy('ashen_colossus',
-      'They built it to carry the mountain\'s fire down safely. It carried. '
-      'Nobody remembered to tell it where to stop.',
-      cost: 30),
-  _enemy('pyre_matriarch',
-      'Every wick widow in the delve spun from her line. The Matriarch '
-      'tends her brood the way a fire tends a forest.',
-      cost: 30),
-  _enemy('cinder_hierophant',
-      'It preaches to the coals and the coals believe. The Hierophant\'s '
-      'liturgy has one commandment: burn brighter, whatever it costs the '
-      'unburnt.',
-      cost: 30),
-  _enemy('the_bellows',
-      'Not a creature — an office. Something must breathe for the deep '
-      'delve, and whatever holds the post is called The Bellows until it '
-      'bursts.',
-      cost: 30),
-  _enemy('ashfall_twins',
-      'One fell into the fire; one was pulled out. They have argued about '
-      'which was luckier ever since, and delvers make convenient juries.',
-      cost: 30),
+  _enemy(
+    'ember_tyrant',
+    'The Tyrant ruled the first hearth and never abdicated. Every ember '
+        'you bank is, by its reckoning, taxes owed.',
+    cost: 30,
+  ),
+  _enemy(
+    'ashen_colossus',
+    'They built it to carry the mountain\'s fire down safely. It carried. '
+        'Nobody remembered to tell it where to stop.',
+    cost: 30,
+  ),
+  _enemy(
+    'pyre_matriarch',
+    'Every wick widow in the delve spun from her line. The Matriarch '
+        'tends her brood the way a fire tends a forest.',
+    cost: 30,
+  ),
+  _enemy(
+    'cinder_hierophant',
+    'It preaches to the coals and the coals believe. The Hierophant\'s '
+        'liturgy has one commandment: burn brighter, whatever it costs the '
+        'unburnt.',
+    cost: 30,
+  ),
+  _enemy(
+    'the_bellows',
+    'Not a creature — an office. Something must breathe for the deep '
+        'delve, and whatever holds the post is called The Bellows until it '
+        'bursts.',
+    cost: 30,
+  ),
+  _enemy(
+    'ashfall_twins',
+    'One fell into the fire; one was pulled out. They have argued about '
+        'which was luckier ever since, and delvers make convenient juries.',
+    cost: 30,
+  ),
   // relics -------------------------------------------------------------------
-  _relic('ember_ring',
-      'A wedding band from a marriage of coin and coal. It warms when gold '
-      'changes hands, which in the delve is constantly.'),
-  _relic('kiln_key',
-      'It opens no kiln anyone has found. The keepers paid well to keep it '
-      'that way, and the paying never quite stopped.'),
-  _relic('ashen_idol',
-      'A little god of what remains. It asks no worship — only that you '
-      'keep winning, which it considers the same thing.'),
-  _relic('midas_die',
-      'Cast from a king\'s last meal. It loves a perfect throw the way its '
-      'first owner loved his daughter: profitably, and too late.'),
-  _relic('lucky_coin',
-      'Two faces, both winners. Somewhere there is a coin with two losing '
-      'faces, and the delve keeps them apart.'),
-  _relic('iron_scale',
-      'One scale from the thing that sleeps below the forges. It shrugs '
-      'off blows out of habit; the rest of the animal never noticed any.'),
-  _relic('bulwark_sigil',
-      'Chalked on shield-walls by soldiers who went down singing. The delve '
-      'kept the chalk; the song is in there somewhere too.'),
-  _relic('whetstone',
-      'It has sharpened blades, wits, and one very specific grudge. Only '
-      'the blades ever thanked it.'),
-  _relic('war_drum',
-      'The hide remembers the charge; the delver\'s pulse keeps the count. '
-      'Armies fell before anyone thought to ask what the drum wanted.'),
-  _relic('kite_charm',
-      'A child\'s toy from the last town above that saw the sky. It pulls '
-      'gently upward on everything around it, including spirits.'),
-  _relic('loaded_pips',
-      'Honest dice weighted by a dishonest saint. He swore the low faces '
-      'were where the devil sat, and filed them off accordingly.'),
-  _relic('gamblers_eye',
-      'A glass eye that watched one bluff too many. Wear it and the delve '
-      'occasionally lets you take a throw back — once, and it counts.'),
-  _relic('twin_eye',
-      'The pair to the Gambler\'s Eye, lost in a different bet. Together '
-      'they see the roll you meant instead of the roll you made.'),
-  _relic('fire_salve',
-      'Rendered from ember-moth wings and forgiveness. It closes wounds '
-      'with a warmth that stays exactly long enough.'),
-  _relic('phoenix_feather',
-      'The bird is a story, but something molts down there. The feather '
-      'does not grant rebirth — just a stubborn refusal to finish dying.'),
-  _relic('thorn_band',
-      'A crown for the kind of ruler who is only touched once. The delve '
-      'has never lacked for volunteers to test it.'),
-  _relic('slayers_mark',
-      'A brand taken willingly by hunters of the delve\'s champions. The '
-      'big ones see the mark and know that this time it is personal.'),
-  _relic('tyrant_bane',
-      'Forged from the crown of the last delver who nearly won. It '
-      'remembers the throne room, and it swings heavier there.'),
-  _relic('bedroll',
-      'Wool, straw, and the smell of a house that no longer stands. The '
-      'delve grants deeper sleep to those who carry their home with them.'),
-  _relic('haggler_tongue',
-      'Preserved from the delve\'s greatest merchant, who talked a dragon '
-      'down to cost. Shopkeepers can tell you carry it, and sigh.'),
-  _relic('blood_ruby',
-      'It beats. Faintly, but it beats, and while you carry it your own '
-      'heart takes advice from something older.'),
-  _relic('ember_heartstone',
-      'The heart of a hearth that burned a hundred years unbanked. What it '
-      'sheltered then, it shelters still — currently, you.'),
+  _relic(
+    'ember_ring',
+    'A wedding band from a marriage of coin and coal. It warms when gold '
+        'changes hands, which in the delve is constantly.',
+  ),
+  _relic(
+    'kiln_key',
+    'It opens no kiln anyone has found. The keepers paid well to keep it '
+        'that way, and the paying never quite stopped.',
+  ),
+  _relic(
+    'ashen_idol',
+    'A little god of what remains. It asks no worship — only that you '
+        'keep winning, which it considers the same thing.',
+  ),
+  _relic(
+    'midas_die',
+    'Cast from a king\'s last meal. It loves a perfect throw the way its '
+        'first owner loved his daughter: profitably, and too late.',
+  ),
+  _relic(
+    'lucky_coin',
+    'Two faces, both winners. Somewhere there is a coin with two losing '
+        'faces, and the delve keeps them apart.',
+  ),
+  _relic(
+    'iron_scale',
+    'One scale from the thing that sleeps below the forges. It shrugs '
+        'off blows out of habit; the rest of the animal never noticed any.',
+  ),
+  _relic(
+    'bulwark_sigil',
+    'Chalked on shield-walls by soldiers who went down singing. The delve '
+        'kept the chalk; the song is in there somewhere too.',
+  ),
+  _relic(
+    'whetstone',
+    'It has sharpened blades, wits, and one very specific grudge. Only '
+        'the blades ever thanked it.',
+  ),
+  _relic(
+    'war_drum',
+    'The hide remembers the charge; the delver\'s pulse keeps the count. '
+        'Armies fell before anyone thought to ask what the drum wanted.',
+  ),
+  _relic(
+    'kite_charm',
+    'A child\'s toy from the last town above that saw the sky. It pulls '
+        'gently upward on everything around it, including spirits.',
+  ),
+  _relic(
+    'loaded_pips',
+    'Honest dice weighted by a dishonest saint. He swore the low faces '
+        'were where the devil sat, and filed them off accordingly.',
+  ),
+  _relic(
+    'gamblers_eye',
+    'A glass eye that watched one bluff too many. Wear it and the delve '
+        'occasionally lets you take a throw back — once, and it counts.',
+  ),
+  _relic(
+    'twin_eye',
+    'The pair to the Gambler\'s Eye, lost in a different bet. Together '
+        'they see the roll you meant instead of the roll you made.',
+  ),
+  _relic(
+    'fire_salve',
+    'Rendered from ember-moth wings and forgiveness. It closes wounds '
+        'with a warmth that stays exactly long enough.',
+  ),
+  _relic(
+    'phoenix_feather',
+    'The bird is a story, but something molts down there. The feather '
+        'does not grant rebirth — just a stubborn refusal to finish dying.',
+  ),
+  _relic(
+    'thorn_band',
+    'A crown for the kind of ruler who is only touched once. The delve '
+        'has never lacked for volunteers to test it.',
+  ),
+  _relic(
+    'slayers_mark',
+    'A brand taken willingly by hunters of the delve\'s champions. The '
+        'big ones see the mark and know that this time it is personal.',
+  ),
+  _relic(
+    'tyrant_bane',
+    'Forged from the crown of the last delver who nearly won. It '
+        'remembers the throne room, and it swings heavier there.',
+  ),
+  _relic(
+    'bedroll',
+    'Wool, straw, and the smell of a house that no longer stands. The '
+        'delve grants deeper sleep to those who carry their home with them.',
+  ),
+  _relic(
+    'haggler_tongue',
+    'Preserved from the delve\'s greatest merchant, who talked a dragon '
+        'down to cost. Shopkeepers can tell you carry it, and sigh.',
+  ),
+  _relic(
+    'blood_ruby',
+    'It beats. Faintly, but it beats, and while you carry it your own '
+        'heart takes advice from something older.',
+  ),
+  _relic(
+    'ember_heartstone',
+    'The heart of a hearth that burned a hundred years unbanked. What it '
+        'sheltered then, it shelters still — currently, you.',
+  ),
 ];
 
 /// Lookup by namespaced id ('enemy:cinder_wisp' / 'relic:ember_ring').

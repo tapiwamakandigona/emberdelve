@@ -22,8 +22,10 @@ void driveToTerminal(GameController c) {
         final m = c.state!['map'] as Map;
         final e = (m['edges'] as Map).cast<String, List>();
         final p = m['position'] as int;
-        c.apply(
-            {'type': 'choose_node', 'node': (e['$p'] as List).cast<int>().first});
+        c.apply({
+          'type': 'choose_node',
+          'node': (e['$p'] as List).cast<int>().first,
+        });
         break;
       case 'player_turn':
         c.apply({'type': 'roll'});
@@ -81,8 +83,11 @@ void main() {
       m.addRunRecord({'seed': i});
     }
     expect(m.runHistory, hasLength(MetaState.runHistoryCap));
-    expect(m.runHistory.first['seed'], MetaState.runHistoryCap + 9,
-        reason: 'newest kept, oldest trimmed');
+    expect(
+      m.runHistory.first['seed'],
+      MetaState.runHistoryCap + 9,
+      reason: 'newest kept, oldest trimmed',
+    );
   });
 
   test('runHistory round-trips through meta JSON', () {
@@ -100,7 +105,8 @@ void main() {
       'daily': true,
     });
     final back = MetaState.fromJson(
-        Map<String, dynamic>.from(m.toJson().map((k, v) => MapEntry(k, v))));
+      Map<String, dynamic>.from(m.toJson().map((k, v) => MapEntry(k, v))),
+    );
     expect(back.runHistory, hasLength(1));
     expect(back.runHistory.first['seed'], 777);
     expect(back.runHistory.first['result'], 'lost');
@@ -120,24 +126,24 @@ void main() {
       'seed': 777,
       'embers': 12,
     });
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: LedgerScreen(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
+    );
     await tester.pump(const Duration(milliseconds: 200));
     // The ledger ListView builds lazily; scroll the section into view.
     await tester.scrollUntilVisible(
-        find.byKey(const ValueKey('recent-delves')), 200,
-        scrollable: find.byType(Scrollable).first);
+      find.byKey(const ValueKey('recent-delves')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.byKey(const ValueKey('recent-delves')), findsOneWidget);
     expect(find.textContaining('fell on floor 5 of 9'), findsOneWidget);
 
     // Empty history: the section stays hidden entirely.
     final c2 = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: LedgerScreen(c2),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c2)),
+    );
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('recent-delves')), findsNothing);
   });

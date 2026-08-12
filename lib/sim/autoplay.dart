@@ -15,6 +15,7 @@ import 'sim.dart';
 /// exact kills when attacking (docs/m4-sim-contract.md).
 Map<String, Object?>? botCmd(
   Sim sim, {
+  bool keystones = true,
   String? character,
   int ascension = 0,
   bool boons = true,
@@ -131,6 +132,25 @@ Map<String, Object?>? botCmd(
         }
       }
       return {'type': 'end_turn'};
+    case 'keystone':
+      // Deterministic preference: the bot plays attack-first, so it ranks the
+      // keystones by how much its own greedy policy can actually use.
+      const ksPrefs = <String>[
+        'ashen_edge',
+        'twin_bellows',
+        'crown_of_twelve',
+        'living_bastion',
+      ];
+      final ks = sim.keystoneOffers!;
+      var ksIdx = 1, ksRank = 1 << 20;
+      for (var i = 0; i < ks.length; i++) {
+        final rank = ksPrefs.indexOf(ks[i]);
+        if (rank >= 0 && rank < ksRank) {
+          ksRank = rank;
+          ksIdx = i + 1;
+        }
+      }
+      return {'type': 'choose_keystone', 'index': keystones ? ksIdx : 0};
     case 'reward':
       // Take the largest-size offer (greedy pool upgrade); index 1..n.
       final offers = sim.offers!;
@@ -208,12 +228,14 @@ RunResult playRun(
   List<String> mutators = const [],
   int? snapAt,
   int maxCmds = 4000,
+  bool keystones = true,
 }) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
   while (applied < maxCmds) {
     final cmd = botCmd(
       sim,
+      keystones: keystones,
       character: character,
       ascension: ascension,
       boons: boons,

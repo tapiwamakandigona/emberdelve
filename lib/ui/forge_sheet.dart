@@ -38,13 +38,11 @@ class ForgeSheet extends StatelessWidget {
     final store = StoreService.instance;
     // Rebuild on store state changes (price load, pending, owned).
     return AnimatedBuilder(
-      animation: Listenable.merge([
-        if (store != null) store.tick,
-        c,
-      ]),
+      animation: Listenable.merge([if (store != null) store.tick, c]),
       builder: (context, _) {
         final owned = c.meta.forgeUnlocked;
-        final state = store?.state ??
+        final state =
+            store?.state ??
             (owned ? ForgeStoreState.owned : ForgeStoreState.unavailable);
         return SafeArea(
           child: Padding(
@@ -60,15 +58,17 @@ class ForgeSheet extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.local_fire_department,
-                        color: EmberColors.ember, size: 28),
+                    const Icon(
+                      Icons.local_fire_department,
+                      color: EmberColors.ember,
+                      size: 28,
+                    ),
                     const SizedBox(width: Space.m),
                     Text('THE EMBER FORGE', style: EmberText.h2),
                     const Spacer(),
                     IconButton(
                       key: const ValueKey('forge-close'),
-                      icon: const Icon(Icons.close,
-                          color: EmberColors.textDim),
+                      icon: const Icon(Icons.close, color: EmberColors.textDim),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -94,18 +94,28 @@ class ForgeSheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('ONE PURCHASE OPENS THE ENDGAME',
-                            style: EmberText.micro),
+                        Text(
+                          'ONE PURCHASE OPENS THE ENDGAME',
+                          style: EmberText.micro,
+                        ),
                         const SizedBox(height: Space.m),
-                        _perk(Icons.whatshot,
-                            'HARD difficulty — brutal foes, embers ×1.25'),
-                        _perk(Icons.stairs,
-                            'The Ascension ladder — 20 rungs of stacked '
-                            'challenge, earned one win at a time'),
-                        _perk(Icons.update,
-                            'Every future act and delver, included'),
-                        _perk(Icons.favorite,
-                            'And a solo developer\'s honest gratitude'),
+                        _perk(
+                          Icons.whatshot,
+                          'HARD difficulty — brutal foes, embers ×1.25',
+                        ),
+                        _perk(
+                          Icons.stairs,
+                          'The Ascension ladder — 20 rungs of stacked '
+                          'challenge, earned one win at a time',
+                        ),
+                        _perk(
+                          Icons.update,
+                          'Every future act and delver, included',
+                        ),
+                        _perk(
+                          Icons.favorite,
+                          'And a solo developer\'s honest gratitude',
+                        ),
                       ],
                     ),
                   ),
@@ -118,9 +128,12 @@ class ForgeSheet extends StatelessWidget {
                       onPressed: state == ForgeStoreState.pending
                           ? null
                           : () => store?.restore(),
-                      child: Text('Already bought it? Restore purchase',
-                          style: EmberText.micro
-                              .copyWith(color: EmberColors.textDim)),
+                      child: Text(
+                        'Already bought it? Restore purchase',
+                        style: EmberText.micro.copyWith(
+                          color: EmberColors.textDim,
+                        ),
+                      ),
                     ),
                   ),
                   if (store?.lastError != null) ...[
@@ -128,8 +141,9 @@ class ForgeSheet extends StatelessWidget {
                     Text(
                       store!.lastError!,
                       key: const ValueKey('forge-error'),
-                      style: EmberText.micro
-                          .copyWith(color: EmberColors.textDim),
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -158,8 +172,11 @@ class ForgeSheet extends StatelessWidget {
               child: CircularProgressIndicator(color: EmberColors.ember),
             ),
           ),
-          Text('Waiting on Google Play…',
-              style: EmberText.micro, textAlign: TextAlign.center),
+          Text(
+            'Waiting on Google Play…',
+            style: EmberText.micro,
+            textAlign: TextAlign.center,
+          ),
         ];
       case ForgeStoreState.ready:
         return [
@@ -179,7 +196,7 @@ class ForgeSheet extends StatelessWidget {
               state == ForgeStoreState.unknown
                   ? 'Reaching Google Play…'
                   : 'Google Play isn\'t reachable right now. The Forge '
-                      'will be here when it is — nothing is lost.',
+                        'will be here when it is — nothing is lost.',
               style: EmberText.bodyDim,
               textAlign: TextAlign.center,
             ),
@@ -189,14 +206,14 @@ class ForgeSheet extends StatelessWidget {
   }
 
   Widget _perk(IconData icon, String text) => Padding(
-        padding: const EdgeInsets.only(bottom: Space.s),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: EmberColors.ember, size: 18),
-            const SizedBox(width: Space.m),
-            Expanded(child: Text(text, style: EmberText.body)),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: Space.s),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: EmberColors.ember, size: 18),
+        const SizedBox(width: Space.m),
+        Expanded(child: Text(text, style: EmberText.body)),
+      ],
+    ),
+  );
 }

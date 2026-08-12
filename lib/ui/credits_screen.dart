@@ -15,10 +15,12 @@ class CreditsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Credits & Licenses', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
-        leading: BackButton(onPressed: () {
-          AudioService.instance?.playSfx('ui_back');
-          Navigator.of(context).pop();
-        }),
+        leading: BackButton(
+          onPressed: () {
+            AudioService.instance?.playSfx('ui_back');
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: SafeArea(
         child: FutureBuilder<String>(
@@ -26,7 +28,8 @@ class CreditsScreen extends StatelessWidget {
           builder: (context, snap) {
             if (!snap.hasData) {
               return const Center(
-                  child: CircularProgressIndicator(color: EmberColors.ember));
+                child: CircularProgressIndicator(color: EmberColors.ember),
+              );
             }
             return ListView(
               padding: const EdgeInsets.all(Space.l),
@@ -58,13 +61,13 @@ class CreditsScreen extends StatelessWidget {
       style = EmberText.h1;
     } else {
       style = EmberText.bodyDim.copyWith(fontSize: 14);
-      text = line
-          .replaceAll('**', '')
-          .replaceAll(RegExp(r'^\s*-\s'), '• ');
+      text = line.replaceAll('**', '').replaceAll(RegExp(r'^\s*-\s'), '• ');
     }
     return Padding(
       padding: EdgeInsets.only(
-          top: line.startsWith('#') ? Space.m : 2, bottom: 2),
+        top: line.startsWith('#') ? Space.m : 2,
+        bottom: 2,
+      ),
       child: Text(text, style: style),
     );
   }

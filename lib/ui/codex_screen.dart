@@ -23,59 +23,71 @@ class CodexScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('The Codex', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
-        leading: BackButton(onPressed: () {
-          AudioService.instance?.playSfx('ui_back');
-          Navigator.of(context).pop();
-        }),
+        leading: BackButton(
+          onPressed: () {
+            AudioService.instance?.playSfx('ui_back');
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: c,
           builder: (context, _) {
             final m = c.meta;
-            final enemyEntries =
-                codexEntries.where((e) => e.kind == 'enemy').toList();
-            final relicEntries =
-                codexEntries.where((e) => e.kind == 'relic').toList();
+            final enemyEntries = codexEntries
+                .where((e) => e.kind == 'enemy')
+                .toList();
+            final relicEntries = codexEntries
+                .where((e) => e.kind == 'relic')
+                .toList();
             return ListView(
-                padding: const EdgeInsets.all(Space.l),
-                children: [
-                  Row(children: [
+              padding: const EdgeInsets.all(Space.l),
+              children: [
+                Row(
+                  children: [
                     Expanded(
                       child: Text(
-                          '${m.ownedCodex.length} of ${codexEntries.length} '
-                          'UNSEALED',
-                          style: EmberText.micro),
+                        '${m.ownedCodex.length} of ${codexEntries.length} '
+                        'UNSEALED',
+                        style: EmberText.micro,
+                      ),
                     ),
-                    const Icon(Icons.local_fire_department,
-                        color: EmberColors.ember, size: 14),
+                    const Icon(
+                      Icons.local_fire_department,
+                      color: EmberColors.ember,
+                      size: 14,
+                    ),
                     const SizedBox(width: 4),
-                    Text('${m.embers}',
-                        style:
-                            EmberText.label.copyWith(color: EmberColors.ember)),
-                  ]),
-                  const SizedBox(height: Space.s),
-                  Text(
-                      'Lore of the delve, unsealed with embers. Flavor only '
-                      '— enemy intents and relic effects stay readable in '
-                      'play, free, forever.',
-                      style: EmberText.micro
-                          .copyWith(color: EmberColors.textDim)),
-                  const SizedBox(height: Space.xl),
-                  Text('ENEMIES', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  for (final e in enemyEntries) ...[
-                    _entryCard(context, e),
-                    const SizedBox(height: Space.m),
+                    Text(
+                      '${m.embers}',
+                      style: EmberText.label.copyWith(color: EmberColors.ember),
+                    ),
                   ],
-                  const SizedBox(height: Space.l),
-                  Text('RELICS', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  for (final e in relicEntries) ...[
-                    _entryCard(context, e),
-                    const SizedBox(height: Space.m),
-                  ],
-                ]);
+                ),
+                const SizedBox(height: Space.s),
+                Text(
+                  'Lore of the delve, unsealed with embers. Flavor only '
+                  '— enemy intents and relic effects stay readable in '
+                  'play, free, forever.',
+                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                ),
+                const SizedBox(height: Space.xl),
+                Text('ENEMIES', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                for (final e in enemyEntries) ...[
+                  _entryCard(context, e),
+                  const SizedBox(height: Space.m),
+                ],
+                const SizedBox(height: Space.l),
+                Text('RELICS', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                for (final e in relicEntries) ...[
+                  _entryCard(context, e),
+                  const SizedBox(height: Space.m),
+                ],
+              ],
+            );
           },
         ),
       ),
@@ -93,8 +105,8 @@ class CodexScreen extends StatelessWidget {
     return def.boss
         ? 'boss'
         : def.elite
-            ? 'elite'
-            : 'enemy';
+        ? 'elite'
+        : 'enemy';
   }
 
   Widget _entryCard(BuildContext context, CodexEntryDef e) {
@@ -112,40 +124,56 @@ class CodexScreen extends StatelessWidget {
       child: Panel(
         color: owned ? EmberColors.raised : EmberColors.surface,
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
                 Expanded(child: Text(_entryName(e), style: EmberText.body)),
                 const SizedBox(width: Space.s),
                 if (owned)
-                  Text(_entryTag(e).toUpperCase(),
-                      style: EmberText.micro
-                          .copyWith(color: EmberColors.textDim))
+                  Text(
+                    _entryTag(e).toUpperCase(),
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  )
                 else
-                  Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(Icons.local_fire_department,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.local_fire_department,
                         size: 14,
                         color: affordable
                             ? EmberColors.ember
-                            : EmberColors.textDisabled),
-                    const SizedBox(width: 2),
-                    Text('${e.costEmbers}',
+                            : EmberColors.textDisabled,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '${e.costEmbers}',
                         style: EmberText.label.copyWith(
-                            color: affordable
-                                ? EmberColors.ember
-                                : EmberColors.textDisabled)),
-                  ]),
-              ]),
-              const SizedBox(height: 4),
-              if (owned)
-                Text(e.text,
-                    style:
-                        EmberText.micro.copyWith(color: EmberColors.textDim))
-              else
-                Text('Sealed — tap to unseal.',
-                    style: EmberText.micro
-                        .copyWith(color: EmberColors.textDisabled)),
-            ]),
+                          color: affordable
+                              ? EmberColors.ember
+                              : EmberColors.textDisabled,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            if (owned)
+              Text(
+                e.text,
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              )
+            else
+              Text(
+                'Sealed — tap to unseal.',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.textDisabled,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

@@ -59,6 +59,7 @@ final Map<String, Handler> _handlers = {
   'leave_shop': runLeaveShop,
   'event_choose': runEventChoose,
   'choose_boon': runChooseBoon,
+  'choose_keystone': runChooseKeystone,
 };
 
 class Sim {
@@ -67,11 +68,12 @@ class Sim {
   final Map<String, Rng> rng = {};
   int turn = 0;
   String phase =
-      'idle'; // idle|boon|map|player_turn|reward|rest|run_won|run_lost
+      'idle'; // idle|boon|map|player_turn|keystone|reward|rest|run_won|run_lost
   Map<String, dynamic> player = {};
   Map<String, dynamic>? enemy;
   Map<String, dynamic>? map;
   List<String>? offers; // die ids while phase == "reward"
+  List<String>? keystoneOffers; // keystone ids while phase == "keystone"
   List<String>? boons; // boon ids while phase == "boon"
   Map<String, dynamic>? shop; // stock map while phase == "shop"
   String? event; // current event id while phase == "event"
@@ -118,6 +120,7 @@ class Sim {
       'enemy': deepCopy(enemy),
       'map': deepCopy(map),
       'offers': deepCopy(offers),
+      'keystone_offers': deepCopy(keystoneOffers),
       'boons': deepCopy(boons),
       'shop': deepCopy(shop),
       'event': event,
@@ -154,6 +157,9 @@ class Sim {
     sim.offers = snap['offers'] == null
         ? null
         : (snap['offers'] as List).cast<String>().toList();
+    sim.keystoneOffers = snap['keystone_offers'] == null
+        ? null
+        : (snap['keystone_offers'] as List).cast<String>().toList();
     sim.boons = snap['boons'] == null
         ? null
         : (snap['boons'] as List).cast<String>().toList();
@@ -214,6 +220,7 @@ class Sim {
     'enemy': enemy,
     'map': map,
     'offers': offers,
+    'keystone_offers': keystoneOffers,
     'boons': boons,
     'shop': shop,
     'event': event,
@@ -228,6 +235,7 @@ class Sim {
     h = hashValue(h, enemy ?? 'none');
     h = hashValue(h, map ?? 'none');
     h = hashValue(h, offers ?? 'none');
+    h = hashValue(h, keystoneOffers ?? 'none');
     h = hashValue(h, boons ?? 'none');
     h = hashValue(h, shop ?? 'none');
     h = hashValue(h, event ?? 'none');

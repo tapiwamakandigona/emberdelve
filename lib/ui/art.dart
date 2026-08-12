@@ -105,15 +105,22 @@ class ScreenBackground extends StatelessWidget {
   final String asset;
   final Widget child;
   final double scrim;
-  const ScreenBackground(
-      {super.key, required this.asset, required this.child, this.scrim = 0.45});
+  const ScreenBackground({
+    super.key,
+    required this.asset,
+    required this.child,
+    this.scrim = 0.45,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(fit: StackFit.expand, children: [
-      Image.asset(asset, fit: BoxFit.cover, gaplessPlayback: true),
-      Container(color: EmberColors.bg.withValues(alpha: scrim)),
-      child,
-    ]);
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.asset(asset, fit: BoxFit.cover, gaplessPlayback: true),
+        Container(color: EmberColors.bg.withValues(alpha: scrim)),
+        child,
+      ],
+    );
   }
 }

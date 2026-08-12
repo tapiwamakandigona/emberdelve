@@ -35,8 +35,10 @@ void driveToTerminal(GameController c) {
         final m = c.state!['map'] as Map;
         final e = (m['edges'] as Map).cast<String, List>();
         final p = m['position'] as int;
-        c.apply(
-            {'type': 'choose_node', 'node': (e['$p'] as List).cast<int>().first});
+        c.apply({
+          'type': 'choose_node',
+          'node': (e['$p'] as List).cast<int>().first,
+        });
         break;
       case 'player_turn':
         c.apply({'type': 'roll'});
@@ -70,8 +72,12 @@ void main() {
     final won = dailyRecapLine(won: true, floor: 9, floors: 9);
     expect(won, contains('Ember'));
 
-    final share =
-        dailyShareText(date: '2026-07-24', won: false, floor: 5, floors: 9);
+    final share = dailyShareText(
+      date: '2026-07-24',
+      won: false,
+      floor: 5,
+      floors: 9,
+    );
     expect(share, contains('Emberdelve Daily 2026-07-24'));
     expect(share, contains('floor 5 of 9'));
     for (final s in [lost, won, share]) {
@@ -91,8 +97,7 @@ void main() {
     expect(c.meta.lastDailyWon, c.phase == 'run_won');
     expect(c.meta.lastDailyFloor, greaterThan(0));
     expect(c.meta.lastDailyFloors, greaterThanOrEqualTo(3));
-    expect(c.meta.lastDailyFloor,
-        lessThanOrEqualTo(c.meta.lastDailyFloors));
+    expect(c.meta.lastDailyFloor, lessThanOrEqualTo(c.meta.lastDailyFloors));
 
     final share = c.dailyResultShareText;
     expect(share, isNotNull);
@@ -103,8 +108,11 @@ void main() {
     expect(c.dailyResultShareText, isNull, reason: 'mid-run: no share');
     driveToTerminal(c);
     expect(c.meta.lastDailyDate, today, reason: 'normal run left it alone');
-    expect(c.dailyResultShareText, isNull,
-        reason: 'normal runs never offer a daily share');
+    expect(
+      c.dailyResultShareText,
+      isNull,
+      reason: 'normal runs never offer a daily share',
+    );
   });
 
   test('abandoning a daily records nothing', () {
@@ -112,21 +120,24 @@ void main() {
     c.startDailyRun(character: 'kindler');
     c.apply({'type': 'choose_boon', 'index': 0});
     c.abandonRun();
-    expect(c.meta.lastDailyDate, isNull,
-        reason: 'walking away is not a result');
+    expect(
+      c.meta.lastDailyDate,
+      isNull,
+      reason: 'walking away is not a result',
+    );
   });
 
-  testWidgets('title shows the daily recap only on the played day',
-      (tester) async {
+  testWidgets('title shows the daily recap only on the played day', (
+    tester,
+  ) async {
     final c = GameController();
     c.meta.lastDailyDate = dailyKey(DateTime.now());
     c.meta.lastDailyWon = false;
     c.meta.lastDailyFloor = 5;
     c.meta.lastDailyFloors = 9;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     await pumpFor(tester, 400);
     expect(find.byKey(const ValueKey('daily-recap')), findsOneWidget);
     expect(find.textContaining('floor 5 of 9'), findsOneWidget);
@@ -139,25 +150,31 @@ void main() {
     await pumpFor(tester, 400);
   });
 
-  testWidgets('summary offers Copy daily result for dailies only',
-      (tester) async {
+  testWidgets('summary offers Copy daily result for dailies only', (
+    tester,
+  ) async {
     // Capture what lands on the platform clipboard channel.
     final copied = <String>[];
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform, (call) async {
-      if (call.method == 'Clipboard.setData') {
-        copied.add((call.arguments as Map)['text'] as String);
-      }
-      return null;
-    });
-    addTearDown(() => tester.binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform, null));
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied.add((call.arguments as Map)['text'] as String);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
 
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startDailyRun(character: 'kindler');
     await pumpFor(tester, 700);
     driveToTerminal(c);

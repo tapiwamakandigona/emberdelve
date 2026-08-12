@@ -51,9 +51,7 @@ extension _CombatEnemyPanelBand on _CombatScreenState {
                       button: true,
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: _busy || _tutStep >= 0
-                            ? null
-                            : _restartTutorial,
+                        onTap: _busy || _tutStep >= 0 ? null : _restartTutorial,
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: Space.s,

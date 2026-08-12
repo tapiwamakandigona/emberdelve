@@ -11,16 +11,25 @@ import 'package:emberdelve/meta/meta.dart';
 void main() {
   test('achievements: order matches map, ids self-consistent, legal stats', () {
     expect(achievementsOrder.toSet(), equals(achievements.keys.toSet()));
-    expect(achievementsOrder.length, equals(achievements.length),
-        reason: 'authoring order must not contain duplicates');
+    expect(
+      achievementsOrder.length,
+      equals(achievements.length),
+      reason: 'authoring order must not contain duplicates',
+    );
     achievements.forEach((id, a) {
       expect(a.id, equals(id));
       expect(a.name.trim(), isNotEmpty);
       expect(a.text.trim(), isNotEmpty);
-      expect(achievementStats.contains(a.stat), isTrue,
-          reason: '$id uses unknown stat ${a.stat}');
-      expect(a.target, greaterThanOrEqualTo(1),
-          reason: '$id must require real progress');
+      expect(
+        achievementStats.contains(a.stat),
+        isTrue,
+        reason: '$id uses unknown stat ${a.stat}',
+      );
+      expect(
+        a.target,
+        greaterThanOrEqualTo(1),
+        reason: '$id must require real progress',
+      );
     });
   });
 
@@ -29,8 +38,11 @@ void main() {
     achievements.forEach((id, a) {
       if (a.stat == 'char_wins') {
         expect(a.param, isNotNull, reason: '$id needs a character param');
-        expect(characters.containsKey(a.param), isTrue,
-            reason: '$id targets unknown character ${a.param}');
+        expect(
+          characters.containsKey(a.param),
+          isTrue,
+          reason: '$id targets unknown character ${a.param}',
+        );
       } else {
         expect(a.param, isNull, reason: '$id must not carry a param');
       }
@@ -42,55 +54,82 @@ void main() {
     for (final a in achievements.values) {
       switch (a.stat) {
         case 'chars_unlocked':
-          expect(a.target, lessThanOrEqualTo(characters.length),
-              reason: '${a.id} asks for more delvers than exist');
+          expect(
+            a.target,
+            lessThanOrEqualTo(characters.length),
+            reason: '${a.id} asks for more delvers than exist',
+          );
           break;
         case 'themes_owned':
-          expect(a.target, lessThanOrEqualTo(hearthThemes.length),
-              reason: '${a.id} asks for more hearth colours than exist');
+          expect(
+            a.target,
+            lessThanOrEqualTo(hearthThemes.length),
+            reason: '${a.id} asks for more hearth colours than exist',
+          );
           break;
         case 'bosses_beaten':
-          expect(a.target, lessThanOrEqualTo(bossCount),
-              reason: '${a.id} asks for more bosses than exist');
+          expect(
+            a.target,
+            lessThanOrEqualTo(bossCount),
+            reason: '${a.id} asks for more bosses than exist',
+          );
           break;
         case 'best_ascension':
-          expect(a.target, lessThanOrEqualTo(20),
-              reason: '${a.id} exceeds the top rung');
+          expect(
+            a.target,
+            lessThanOrEqualTo(20),
+            reason: '${a.id} exceeds the top rung',
+          );
           break;
         case 'delvers_cleared':
-          expect(a.target, lessThanOrEqualTo(characters.length),
-              reason: '${a.id} asks for wins with more delvers than exist');
+          expect(
+            a.target,
+            lessThanOrEqualTo(characters.length),
+            reason: '${a.id} asks for wins with more delvers than exist',
+          );
           break;
       }
     }
   });
 
-  test('a fresh profile has earned nothing, and any starting progress is real',
-      () {
-    final m = MetaState();
-    expect(earnedAchievements(m), isEmpty);
-    expect(earnedCount(m), equals(0));
-    expect(unseenAchievements(m), isEmpty);
-    // A brand-new profile genuinely owns one delver and one hearth colour, so
-    // 1-of-4 progress on those two is the truth, not a head start. Every OTHER
-    // achievement must sit at exactly zero: no teaser bars (section Ethics).
-    const inventoryStats = {'chars_unlocked', 'themes_owned'};
-    for (final a in achievements.values) {
-      if (inventoryStats.contains(a.stat)) {
-        expect(statValue(m, a.stat, a.param), equals(1),
-            reason: '${a.id} must read the real starting inventory');
-        expect(progress(m, a), closeTo(1 / a.target, 1e-9));
-      } else {
-        expect(progress(m, a), equals(0.0), reason: '${a.id} starts at a lie');
+  test(
+    'a fresh profile has earned nothing, and any starting progress is real',
+    () {
+      final m = MetaState();
+      expect(earnedAchievements(m), isEmpty);
+      expect(earnedCount(m), equals(0));
+      expect(unseenAchievements(m), isEmpty);
+      // A brand-new profile genuinely owns one delver and one hearth colour, so
+      // 1-of-4 progress on those two is the truth, not a head start. Every OTHER
+      // achievement must sit at exactly zero: no teaser bars (section Ethics).
+      const inventoryStats = {'chars_unlocked', 'themes_owned'};
+      for (final a in achievements.values) {
+        if (inventoryStats.contains(a.stat)) {
+          expect(
+            statValue(m, a.stat, a.param),
+            equals(1),
+            reason: '${a.id} must read the real starting inventory',
+          );
+          expect(progress(m, a), closeTo(1 / a.target, 1e-9));
+        } else {
+          expect(
+            progress(m, a),
+            equals(0.0),
+            reason: '${a.id} starts at a lie',
+          );
+        }
       }
-    }
-    // Consequently the "nearly there" list may only ever contain those two,
-    // never a goal the player has not touched.
-    for (final def in nearestAchievements(m)) {
-      expect(inventoryStats.contains(def.stat), isTrue,
-          reason: '${def.id} is not something the player has started');
-    }
-  });
+      // Consequently the "nearly there" list may only ever contain those two,
+      // never a goal the player has not touched.
+      for (final def in nearestAchievements(m)) {
+        expect(
+          inventoryStats.contains(def.stat),
+          isTrue,
+          reason: '${def.id} is not something the player has started',
+        );
+      }
+    },
+  );
 
   test('progress is real, monotonic and clamped', () {
     final def = achievements['ten_delves']!;
@@ -109,26 +148,30 @@ void main() {
   test('every stat is wired to a real counter', () {
     // Guards against a stat that exists in the vocabulary but returns 0 for
     // every profile — which would strand any achievement using it forever.
-    final m = MetaState(
-      unlocked: characters.keys.toSet(),
-      ownedThemes: hearthThemes.keys.toSet(),
-    )
-      ..runsPlayed = 3
-      ..runsWon = 2
-      ..exactKills = 4
-      ..bestExactStreak = 5
-      ..lifetimeEmbers = 600
-      ..bestAscension = 7
-      ..bestFloor = 8
-      ..dailiesPlayed = 9
-      ..winsNoRest = 2
-      ..hardWins = 3;
+    final m =
+        MetaState(
+            unlocked: characters.keys.toSet(),
+            ownedThemes: hearthThemes.keys.toSet(),
+          )
+          ..runsPlayed = 3
+          ..runsWon = 2
+          ..exactKills = 4
+          ..bestExactStreak = 5
+          ..lifetimeEmbers = 600
+          ..bestAscension = 7
+          ..bestFloor = 8
+          ..dailiesPlayed = 9
+          ..winsNoRest = 2
+          ..hardWins = 3;
     m.charWins['kindler'] = 6;
     m.bossesBeaten.add('ember_tyrant');
     for (final stat in achievementStats) {
       final param = stat == 'char_wins' ? 'kindler' : null;
-      expect(statValue(m, stat, param), greaterThan(0),
-          reason: '$stat reads 0 on a fully populated profile');
+      expect(
+        statValue(m, stat, param),
+        greaterThan(0),
+        reason: '$stat reads 0 on a fully populated profile',
+      );
     }
     expect(statValue(m, 'not_a_stat'), equals(0));
   });
@@ -165,19 +208,29 @@ void main() {
 
   test('nearest list is ordered, deterministic and excludes earned', () {
     final m = MetaState()
-      ..runsPlayed = 9 // 90% of ten_delves
-      ..exactKills = 1 // first_blood earned, exact_ten at 10%
+      ..runsPlayed =
+          9 // 90% of ten_delves
+      ..exactKills =
+          1 // first_blood earned, exact_ten at 10%
       ..lifetimeEmbers = 50; // 50% of kindled
     final near = nearestAchievements(m, limit: 3);
-    expect(near.map((a) => a.id), isNot(contains('first_blood')),
-        reason: 'earned achievements are not "near"');
+    expect(
+      near.map((a) => a.id),
+      isNot(contains('first_blood')),
+      reason: 'earned achievements are not "near"',
+    );
     expect(near.first.id, equals('ten_delves'));
     for (var i = 1; i < near.length; i++) {
-      expect(progress(m, near[i - 1]),
-          greaterThanOrEqualTo(progress(m, near[i])));
+      expect(
+        progress(m, near[i - 1]),
+        greaterThanOrEqualTo(progress(m, near[i])),
+      );
     }
-    expect(nearestAchievements(m, limit: 3).map((a) => a.id).toList(),
-        equals(near.map((a) => a.id).toList()), reason: 'must be stable');
+    expect(
+      nearestAchievements(m, limit: 3).map((a) => a.id).toList(),
+      equals(near.map((a) => a.id).toList()),
+      reason: 'must be stable',
+    );
   });
 
   test('ledger counters survive a save/load round trip', () {

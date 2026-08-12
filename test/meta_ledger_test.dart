@@ -34,7 +34,8 @@ void main() {
       activeTheme: 'frostfire',
     );
     final back = MetaState.fromJson(
-        jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>);
+      jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>,
+    );
     expect(back.toJson(), m.toJson());
   });
 
@@ -46,8 +47,11 @@ void main() {
       'runsWon': 4,
       'preferredDifficulty': 'normal',
     });
-    expect(veteran.difficultyChosen, isTrue,
-        reason: 'veterans must never be steered to easy');
+    expect(
+      veteran.difficultyChosen,
+      isTrue,
+      reason: 'veterans must never be steered to easy',
+    );
     expect(veteran.steerToEasy, isFalse);
     expect(veteran.lifetimeEmbers, 0);
     expect(veteran.charRuns, isEmpty);
@@ -58,35 +62,43 @@ void main() {
     expect(junk.activeTheme, defaultTheme);
   });
 
-  test('first-run on-ramp: new profile steers to easy, one tap ends it',
-      () async {
-    final c = GameController();
-    await c.boot(); // fresh profile: runsPlayed == 0, never chosen
-    expect(c.meta.steerToEasy, isTrue);
-    expect(c.meta.preferredDifficulty, 'easy',
-        reason: 'the VISIBLE selector moves — never a silent switch');
-    expect(c.meta.effectiveDifficulty, 'easy');
+  test(
+    'first-run on-ramp: new profile steers to easy, one tap ends it',
+    () async {
+      final c = GameController();
+      await c.boot(); // fresh profile: runsPlayed == 0, never chosen
+      expect(c.meta.steerToEasy, isTrue);
+      expect(
+        c.meta.preferredDifficulty,
+        'easy',
+        reason: 'the VISIBLE selector moves — never a silent switch',
+      );
+      expect(c.meta.effectiveDifficulty, 'easy');
 
-    // Tapping the already-highlighted EASY still counts as an explicit
-    // choice — the recommendation caption must not survive a decision.
-    c.setPreferredDifficulty('easy');
-    expect(c.meta.difficultyChosen, isTrue);
-    expect(c.meta.steerToEasy, isFalse);
+      // Tapping the already-highlighted EASY still counts as an explicit
+      // choice — the recommendation caption must not survive a decision.
+      c.setPreferredDifficulty('easy');
+      expect(c.meta.difficultyChosen, isTrue);
+      expect(c.meta.steerToEasy, isFalse);
 
-    // And an explicit different pick sticks — within the free tier.
-    c.setPreferredDifficulty('normal');
-    expect(c.meta.effectiveDifficulty, 'normal');
+      // And an explicit different pick sticks — within the free tier.
+      c.setPreferredDifficulty('normal');
+      expect(c.meta.effectiveDifficulty, 'normal');
 
-    // v0.6.1: HARD is Forge-gated again — a locked profile's hard pick is
-    // ignored (setPreferredDifficulty refuses, the sheet explains why), and
-    // a Forge profile's pick sticks (see forge_unlock_test.dart).
-    c.setPreferredDifficulty('hard');
-    expect(c.meta.effectiveDifficulty, 'normal',
-        reason: 'hard is Forge-gated as of v0.6.1');
-    c.meta.forgeUnlocked = true;
-    c.setPreferredDifficulty('hard');
-    expect(c.meta.effectiveDifficulty, 'hard');
-  });
+      // v0.6.1: HARD is Forge-gated again — a locked profile's hard pick is
+      // ignored (setPreferredDifficulty refuses, the sheet explains why), and
+      // a Forge profile's pick sticks (see forge_unlock_test.dart).
+      c.setPreferredDifficulty('hard');
+      expect(
+        c.meta.effectiveDifficulty,
+        'normal',
+        reason: 'hard is Forge-gated as of v0.6.1',
+      );
+      c.meta.forgeUnlocked = true;
+      c.setPreferredDifficulty('hard');
+      expect(c.meta.effectiveDifficulty, 'hard');
+    },
+  );
 
   test('steered first run actually starts on easy', () async {
     final c = GameController();
@@ -98,9 +110,9 @@ void main() {
   test('exact-kill count and streak follow sim events', () {
     final c = GameController();
     void fight({required bool exact}) => c.recordCombatStats([
-          if (exact) {'type': 'exact_kill', 'embers': 5},
-          {'type': 'encounter_won', 'turns': 3},
-        ]);
+      if (exact) {'type': 'exact_kill', 'embers': 5},
+      {'type': 'encounter_won', 'turns': 3},
+    ]);
 
     fight(exact: true);
     fight(exact: true);
@@ -114,7 +126,9 @@ void main() {
     expect(c.meta.bestExactStreak, 2, reason: 'best is a high-water mark');
     // An exact kill without encounter_won (multi-event edge) still counts
     // the kill but leaves the streak to the fight's outcome event.
-    c.recordCombatStats([{'type': 'exact_kill', 'embers': 5}]);
+    c.recordCombatStats([
+      {'type': 'exact_kill', 'embers': 5},
+    ]);
     expect(c.meta.exactKills, 4);
     expect(c.meta.exactStreak, 1);
   });
@@ -125,9 +139,9 @@ void main() {
     // not 3 (streak_three would otherwise be earnable dishonestly).
     final c = GameController();
     void win() => c.recordCombatStats([
-          {'type': 'exact_kill', 'embers': 5},
-          {'type': 'encounter_won', 'turns': 3},
-        ]);
+      {'type': 'exact_kill', 'embers': 5},
+      {'type': 'encounter_won', 'turns': 3},
+    ]);
 
     win();
     win();
@@ -138,8 +152,11 @@ void main() {
     expect(c.meta.exactStreak, 0, reason: 'a death breaks the row');
     expect(c.meta.bestExactStreak, 2, reason: 'the high-water mark survives');
     win();
-    expect(c.meta.exactStreak, 1,
-        reason: 'post-death exacts start a new row, not resume the old one');
+    expect(
+      c.meta.exactStreak,
+      1,
+      reason: 'post-death exacts start a new row, not resume the old one',
+    );
     expect(c.meta.bestExactStreak, 2);
   });
 
@@ -148,15 +165,16 @@ void main() {
     c.startRun(character: 'kindler', seed: 11, boons: true);
     // Drive the run to a terminal phase with the shared greedy bot.
     var guard = 0;
-    while (guard++ < 400 &&
-        c.phase != 'run_won' &&
-        c.phase != 'run_lost') {
+    while (guard++ < 400 && c.phase != 'run_won' && c.phase != 'run_lost') {
       final cmd = botCmd(c.sim!);
       if (cmd == null) break;
       c.apply(cmd);
     }
-    expect({'run_won', 'run_lost'}.contains(c.phase), isTrue,
-        reason: 'bot must reach a terminal phase (guard=$guard)');
+    expect(
+      {'run_won', 'run_lost'}.contains(c.phase),
+      isTrue,
+      reason: 'bot must reach a terminal phase (guard=$guard)',
+    );
     expect(c.meta.charRuns['kindler'], 1);
     expect(c.meta.runsPlayed, 1);
     final banked = c.sim!.run!['embers'] as int;
@@ -169,37 +187,54 @@ void main() {
     }
   });
 
-  test('run end collects fresh achievements; the next startRun clears them',
-      () {
-    final c = GameController();
-    c.startRun(character: 'kindler', seed: 11, boons: true);
-    var guard = 0;
-    while (guard++ < 400 && c.phase != 'run_won' && c.phase != 'run_lost') {
-      final cmd = botCmd(c.sim!);
-      if (cmd == null) break;
-      c.apply(cmd);
-    }
-    expect({'run_won', 'run_lost'}.contains(c.phase), isTrue,
-        reason: 'bot must reach a terminal phase (guard=$guard)');
-    // Any first run ends with runsPlayed 1, so first_delve is always fresh
-    // here. The summary reads this list; nothing may have consumed it early.
-    expect(c.pendingAchievements, contains('first_delve'));
-    expect(c.meta.seenAchievements.containsAll(c.pendingAchievements), isTrue,
-        reason: 'announced achievements are marked seen in the same bank');
-    c.startRun(character: 'kindler', seed: 12);
-    expect(c.pendingAchievements, isEmpty,
-        reason: 'a new run must never resurface the last run\'s toasts');
-  });
+  test(
+    'run end collects fresh achievements; the next startRun clears them',
+    () {
+      final c = GameController();
+      c.startRun(character: 'kindler', seed: 11, boons: true);
+      var guard = 0;
+      while (guard++ < 400 && c.phase != 'run_won' && c.phase != 'run_lost') {
+        final cmd = botCmd(c.sim!);
+        if (cmd == null) break;
+        c.apply(cmd);
+      }
+      expect(
+        {'run_won', 'run_lost'}.contains(c.phase),
+        isTrue,
+        reason: 'bot must reach a terminal phase (guard=$guard)',
+      );
+      // Any first run ends with runsPlayed 1, so first_delve is always fresh
+      // here. The summary reads this list; nothing may have consumed it early.
+      expect(c.pendingAchievements, contains('first_delve'));
+      expect(
+        c.meta.seenAchievements.containsAll(c.pendingAchievements),
+        isTrue,
+        reason: 'announced achievements are marked seen in the same bank',
+      );
+      c.startRun(character: 'kindler', seed: 12);
+      expect(
+        c.pendingAchievements,
+        isEmpty,
+        reason: 'a new run must never resurface the last run\'s toasts',
+      );
+    },
+  );
 
   test('hearth colors: buy deducts embers, refuses when broke or owned', () {
     final m = MetaState(embers: 70);
     expect(m.tryBuyTheme('frostfire'), isTrue); // costs 60
     expect(m.embers, 10);
     expect(m.ownedThemes, contains('frostfire'));
-    expect(m.tryBuyTheme('frostfire'), isFalse,
-        reason: 'owned themes are never sold twice');
-    expect(m.tryBuyTheme('goldvein'), isFalse,
-        reason: '10 embers cannot buy a 100-ember theme');
+    expect(
+      m.tryBuyTheme('frostfire'),
+      isFalse,
+      reason: 'owned themes are never sold twice',
+    );
+    expect(
+      m.tryBuyTheme('goldvein'),
+      isFalse,
+      reason: '10 embers cannot buy a 100-ember theme',
+    );
     expect(m.embers, 10, reason: 'failed buys must not touch the purse');
     expect(m.tryBuyTheme('plasma'), isFalse, reason: 'unknown id');
 
@@ -222,43 +257,52 @@ void main() {
     }
   });
 
-  test('meta save is atomic and serialized (queue, temp+rename, snapshot)',
-      () async {
-    final dir = await Directory.systemTemp.createTemp('emberdelve_meta');
-    MetaStore.dirOverride = dir.path;
-    try {
-      // Rapid-fire saves (bank + unlock + theme buy in one frame): the
-      // snapshot is captured at call time, so mutating the state AFTER the
-      // un-awaited save must not leak into that write, and the last save
-      // must win.
-      final m = MetaState(embers: 10);
-      final first = MetaStore.save(m); // not awaited: queued
-      m.embers = 20;
-      MetaStore.save(m);
-      m.embers = 30;
-      await MetaStore.save(m); // queue drains in order
-      await first;
-      final loaded = await MetaStore.load();
-      expect(loaded.embers, 30, reason: 'last queued save must win');
+  test(
+    'meta save is atomic and serialized (queue, temp+rename, snapshot)',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('emberdelve_meta');
+      MetaStore.dirOverride = dir.path;
+      try {
+        // Rapid-fire saves (bank + unlock + theme buy in one frame): the
+        // snapshot is captured at call time, so mutating the state AFTER the
+        // un-awaited save must not leak into that write, and the last save
+        // must win.
+        final m = MetaState(embers: 10);
+        final first = MetaStore.save(m); // not awaited: queued
+        m.embers = 20;
+        MetaStore.save(m);
+        m.embers = 30;
+        await MetaStore.save(m); // queue drains in order
+        await first;
+        final loaded = await MetaStore.load();
+        expect(loaded.embers, 30, reason: 'last queued save must win');
 
-      // No temp file left behind: the write landed via rename.
-      expect(
-          await File('${dir.path}/emberdelve_meta.json.tmp').exists(), isFalse,
-          reason: 'temp file must be renamed into place');
+        // No temp file left behind: the write landed via rename.
+        expect(
+          await File('${dir.path}/emberdelve_meta.json.tmp').exists(),
+          isFalse,
+          reason: 'temp file must be renamed into place',
+        );
 
-      // A truncated/corrupt file (crash mid-write of a NON-atomic writer)
-      // must never crash load. Since v0.3.4 the previous good save is kept
-      // as .bak, so this now RECOVERS the last state instead of resetting
-      // (full backup semantics covered in meta_backup_test.dart).
-      await File('${dir.path}/emberdelve_meta.json')
-          .writeAsString('{"embers": 5, "unlo');
-      final recovered = await MetaStore.load();
-      expect(recovered.embers, 20,
-          reason: '.bak holds the PREVIOUS generation (30 was the corrupted '
-              'main); recovering 20 beats resetting to 0');
-    } finally {
-      MetaStore.dirOverride = null;
-      await dir.delete(recursive: true);
-    }
-  });
+        // A truncated/corrupt file (crash mid-write of a NON-atomic writer)
+        // must never crash load. Since v0.3.4 the previous good save is kept
+        // as .bak, so this now RECOVERS the last state instead of resetting
+        // (full backup semantics covered in meta_backup_test.dart).
+        await File(
+          '${dir.path}/emberdelve_meta.json',
+        ).writeAsString('{"embers": 5, "unlo');
+        final recovered = await MetaStore.load();
+        expect(
+          recovered.embers,
+          20,
+          reason:
+              '.bak holds the PREVIOUS generation (30 was the corrupted '
+              'main); recovering 20 beats resetting to 0',
+        );
+      } finally {
+        MetaStore.dirOverride = null;
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 }

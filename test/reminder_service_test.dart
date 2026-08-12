@@ -41,12 +41,15 @@ void main() {
       expect(slots.length, ReminderService.horizonDays);
     });
 
-    test('at or after the hour: first slot is tomorrow (strictly future)',
-        () {
-      expect(nextReminderTimes(DateTime(2026, 8, 11, 10)).first,
-          DateTime(2026, 8, 12, 10));
-      expect(nextReminderTimes(DateTime(2026, 8, 11, 23, 59)).first,
-          DateTime(2026, 8, 12, 10));
+    test('at or after the hour: first slot is tomorrow (strictly future)', () {
+      expect(
+        nextReminderTimes(DateTime(2026, 8, 11, 10)).first,
+        DateTime(2026, 8, 12, 10),
+      );
+      expect(
+        nextReminderTimes(DateTime(2026, 8, 11, 23, 59)).first,
+        DateTime(2026, 8, 12, 10),
+      );
     });
 
     test('one slot per civil day, all at the reminder hour', () {
@@ -68,15 +71,17 @@ void main() {
   });
 
   group('service gate', () {
-    test('unavailable without backends; every call is a silent no-op',
-        () async {
-      final svc = ReminderService();
-      expect(svc.available, isFalse);
-      expect(await svc.enable(), isFalse);
-      await svc.disable();
-      await svc.rescheduleIfEnabled(); // must not throw
-      expect(svc.enabled, isFalse);
-    });
+    test(
+      'unavailable without backends; every call is a silent no-op',
+      () async {
+        final svc = ReminderService();
+        expect(svc.available, isFalse);
+        expect(await svc.enable(), isFalse);
+        await svc.disable();
+        await svc.rescheduleIfEnabled(); // must not throw
+        expect(svc.enabled, isFalse);
+      },
+    );
 
     test('OFF by default after load()', () async {
       final r = _rig();
@@ -87,72 +92,87 @@ void main() {
       expect(r.log, isEmpty);
     });
 
-    test('enable asks permission, schedules the full window, persists',
-        () async {
-      final r = _rig();
-      await r.svc.load();
-      expect(await r.svc.enable(), isTrue);
-      expect(r.svc.enabled, isTrue);
-      expect(r.log.first, 'perm');
-      expect(r.log.where((e) => e.startsWith('sched:')).length,
-          ReminderService.horizonDays);
-      // Persisted: a fresh instance over the same prefs remembers ON.
-      final again = ReminderService();
-      await again.load();
-      expect(again.enabled, isTrue);
-    });
+    test(
+      'enable asks permission, schedules the full window, persists',
+      () async {
+        final r = _rig();
+        await r.svc.load();
+        expect(await r.svc.enable(), isTrue);
+        expect(r.svc.enabled, isTrue);
+        expect(r.log.first, 'perm');
+        expect(
+          r.log.where((e) => e.startsWith('sched:')).length,
+          ReminderService.horizonDays,
+        );
+        // Persisted: a fresh instance over the same prefs remembers ON.
+        final again = ReminderService();
+        await again.load();
+        expect(again.enabled, isTrue);
+      },
+    );
 
-    test('denied permission leaves the reminder off and schedules nothing',
-        () async {
-      final r = _rig(grant: false);
-      await r.svc.load();
-      expect(await r.svc.enable(), isFalse);
-      expect(r.svc.enabled, isFalse);
-      expect(r.log, ['perm']); // asked, denied, stopped
-    });
+    test(
+      'denied permission leaves the reminder off and schedules nothing',
+      () async {
+        final r = _rig(grant: false);
+        await r.svc.load();
+        expect(await r.svc.enable(), isFalse);
+        expect(r.svc.enabled, isFalse);
+        expect(r.log, ['perm']); // asked, denied, stopped
+      },
+    );
 
-    test('a throwing permission backend reads as denied, never crashes',
-        () async {
-      final svc = ReminderService();
-      svc.permissionBackend = () async => throw StateError('boom');
-      svc.scheduleBackend = (id, when, t, b) async {};
-      svc.cancelAllBackend = () async {};
-      await svc.load();
-      expect(await svc.enable(), isFalse);
-      expect(svc.enabled, isFalse);
-    });
+    test(
+      'a throwing permission backend reads as denied, never crashes',
+      () async {
+        final svc = ReminderService();
+        svc.permissionBackend = () async => throw StateError('boom');
+        svc.scheduleBackend = (id, when, t, b) async {};
+        svc.cancelAllBackend = () async {};
+        await svc.load();
+        expect(await svc.enable(), isFalse);
+        expect(svc.enabled, isFalse);
+      },
+    );
   });
 
   group('scheduling window', () {
-    test('every window starts with cancelAll — no stacked duplicates',
-        () async {
-      final r = _rig();
-      await r.svc.load();
-      await r.svc.enable();
-      r.log.clear();
-      await r.svc.rescheduleIfEnabled(DateTime(2026, 8, 11, 7));
-      expect(r.log.first, 'cancelAll');
-      expect(r.log.where((e) => e.startsWith('sched:')).length,
-          ReminderService.horizonDays);
-    });
+    test(
+      'every window starts with cancelAll — no stacked duplicates',
+      () async {
+        final r = _rig();
+        await r.svc.load();
+        await r.svc.enable();
+        r.log.clear();
+        await r.svc.rescheduleIfEnabled(DateTime(2026, 8, 11, 7));
+        expect(r.log.first, 'cancelAll');
+        expect(
+          r.log.where((e) => e.startsWith('sched:')).length,
+          ReminderService.horizonDays,
+        );
+      },
+    );
 
-    test('slots use sequential ids from baseId and the pure slot times',
-        () async {
-      final r = _rig();
-      await r.svc.load();
-      await r.svc.enable();
-      r.log.clear();
-      final now = DateTime(2026, 8, 11, 7);
-      await r.svc.rescheduleIfEnabled(now);
-      final expected = nextReminderTimes(now);
-      final scheds =
-          r.log.where((e) => e.startsWith('sched:')).toList();
-      for (var i = 0; i < expected.length; i++) {
-        expect(scheds[i],
+    test(
+      'slots use sequential ids from baseId and the pure slot times',
+      () async {
+        final r = _rig();
+        await r.svc.load();
+        await r.svc.enable();
+        r.log.clear();
+        final now = DateTime(2026, 8, 11, 7);
+        await r.svc.rescheduleIfEnabled(now);
+        final expected = nextReminderTimes(now);
+        final scheds = r.log.where((e) => e.startsWith('sched:')).toList();
+        for (var i = 0; i < expected.length; i++) {
+          expect(
+            scheds[i],
             'sched:${ReminderService.baseId + i}:'
-            '${expected[i].toIso8601String()}');
-      }
-    });
+            '${expected[i].toIso8601String()}',
+          );
+        }
+      },
+    );
 
     test('disable cancels everything and persists OFF', () async {
       final r = _rig();
@@ -172,13 +192,23 @@ void main() {
     });
 
     test('copy is a neutral fact — no loss-frame words (§Ethics)', () {
-      final all = (ReminderService.notificationTitle +
-              ReminderService.notificationBody)
-          .toLowerCase();
-      for (final banned in ['miss', 'lose', 'losing', 'streak', 'last chance',
-          'don\'t forget', 'expire']) {
-        expect(all.contains(banned), isFalse,
-            reason: 'reminder copy must never use "$banned"');
+      final all =
+          (ReminderService.notificationTitle + ReminderService.notificationBody)
+              .toLowerCase();
+      for (final banned in [
+        'miss',
+        'lose',
+        'losing',
+        'streak',
+        'last chance',
+        'don\'t forget',
+        'expire',
+      ]) {
+        expect(
+          all.contains(banned),
+          isFalse,
+          reason: 'reminder copy must never use "$banned"',
+        );
       }
     });
   });

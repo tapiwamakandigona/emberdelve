@@ -30,32 +30,42 @@ void main() {
 
   test('save keeps the previous generation as .bak', () async {
     await MetaStore.save(MetaState(embers: 10));
-    expect(await File(bakPath()).exists(), isFalse,
-        reason: 'first save has no previous generation to demote');
+    expect(
+      await File(bakPath()).exists(),
+      isFalse,
+      reason: 'first save has no previous generation to demote',
+    );
 
     await MetaStore.save(MetaState(embers: 20));
     expect(await File(bakPath()).exists(), isTrue);
     final bak =
-        jsonDecode(await File(bakPath()).readAsString()) as Map<String, dynamic>;
+        jsonDecode(await File(bakPath()).readAsString())
+            as Map<String, dynamic>;
     expect(bak['embers'], 10, reason: '.bak must hold the PREVIOUS save');
-    final main = jsonDecode(await File(mainPath()).readAsString())
-        as Map<String, dynamic>;
+    final main =
+        jsonDecode(await File(mainPath()).readAsString())
+            as Map<String, dynamic>;
     expect(main['embers'], 20);
   });
 
-  test('corrupt main file recovers from .bak (no silent progress wipe)',
-      () async {
-    await MetaStore.save(MetaState(embers: 111, runsPlayed: 9, runsWon: 4));
-    await MetaStore.save(MetaState(embers: 222, runsPlayed: 10, runsWon: 5));
-    // Simulate a crash-corrupted main file (e.g. filesystem truncation).
-    await File(mainPath()).writeAsString('{"embers": 999, "runsP');
+  test(
+    'corrupt main file recovers from .bak (no silent progress wipe)',
+    () async {
+      await MetaStore.save(MetaState(embers: 111, runsPlayed: 9, runsWon: 4));
+      await MetaStore.save(MetaState(embers: 222, runsPlayed: 10, runsWon: 5));
+      // Simulate a crash-corrupted main file (e.g. filesystem truncation).
+      await File(mainPath()).writeAsString('{"embers": 999, "runsP');
 
-    final recovered = await MetaStore.load();
-    expect(recovered.embers, 111,
-        reason: 'must restore the last good generation, not reset');
-    expect(recovered.runsPlayed, 9);
-    expect(recovered.runsWon, 4);
-  });
+      final recovered = await MetaStore.load();
+      expect(
+        recovered.embers,
+        111,
+        reason: 'must restore the last good generation, not reset',
+      );
+      expect(recovered.runsPlayed, 9);
+      expect(recovered.runsWon, 4);
+    },
+  );
 
   test('missing main file recovers from .bak', () async {
     await MetaStore.save(MetaState(embers: 50));
@@ -77,11 +87,13 @@ void main() {
     expect(recovered.embers, 77);
     // load() awaits the healing write, so the main file is already whole —
     // and the .bak generation must NOT have been demoted over by the heal.
-    final healed = jsonDecode(await File(mainPath()).readAsString())
-        as Map<String, dynamic>;
+    final healed =
+        jsonDecode(await File(mainPath()).readAsString())
+            as Map<String, dynamic>;
     expect(healed['embers'], 77);
     final bak =
-        jsonDecode(await File(bakPath()).readAsString()) as Map<String, dynamic>;
+        jsonDecode(await File(bakPath()).readAsString())
+            as Map<String, dynamic>;
     expect(bak['embers'], 77, reason: '.bak untouched by the heal');
   });
 
@@ -93,24 +105,29 @@ void main() {
     expect(fresh.runsPlayed, 0);
   });
 
-  test('schema version is stamped and old unversioned files still load',
-      () async {
-    await MetaStore.save(MetaState(embers: 5));
-    final written = jsonDecode(await File(mainPath()).readAsString())
-        as Map<String, dynamic>;
-    expect(written['schema'], metaSchemaVersion);
+  test(
+    'schema version is stamped and old unversioned files still load',
+    () async {
+      await MetaStore.save(MetaState(embers: 5));
+      final written =
+          jsonDecode(await File(mainPath()).readAsString())
+              as Map<String, dynamic>;
+      expect(written['schema'], metaSchemaVersion);
 
-    // A pre-v0.3.4 file (no schema field) must load unchanged.
-    await File(mainPath())
-        .writeAsString(jsonEncode({'embers': 42, 'runsPlayed': 3}));
-    final legacy = await MetaStore.load();
-    expect(legacy.embers, 42);
-    expect(legacy.runsPlayed, 3);
+      // A pre-v0.3.4 file (no schema field) must load unchanged.
+      await File(
+        mainPath(),
+      ).writeAsString(jsonEncode({'embers': 42, 'runsPlayed': 3}));
+      final legacy = await MetaStore.load();
+      expect(legacy.embers, 42);
+      expect(legacy.runsPlayed, 3);
 
-    // A FUTURE schema must still parse field-tolerantly (fields it knows).
-    await File(mainPath()).writeAsString(
-        jsonEncode({'schema': 99, 'embers': 7, 'someFutureField': true}));
-    final future = await MetaStore.load();
-    expect(future.embers, 7);
-  });
+      // A FUTURE schema must still parse field-tolerantly (fields it knows).
+      await File(mainPath()).writeAsString(
+        jsonEncode({'schema': 99, 'embers': 7, 'someFutureField': true}),
+      );
+      final future = await MetaStore.load();
+      expect(future.embers, 7);
+    },
+  );
 }
