@@ -58,11 +58,12 @@ Future<void> main() async {
       await GameAuth.signIn();
       return await GameAuth.isSignedIn;
     };
-    pgs.saveGameBackend =
-        (data, name) async => SaveGame.saveGame(data: data, name: name);
+    pgs.saveGameBackend = (data, name) async =>
+        SaveGame.saveGame(data: data, name: name);
     pgs.loadGameBackend = (name) => SaveGame.loadGame(name: name);
     pgs.submitScoreBackend = (id, value) async => Leaderboards.submitScore(
-        score: Score(androidLeaderboardID: id, value: value));
+      score: Score(androidLeaderboardID: id, value: value),
+    );
     pgs.showLeaderboardsBackend = (id) async =>
         Leaderboards.showLeaderboards(androidLeaderboardID: id ?? '');
   }
@@ -98,15 +99,17 @@ Future<void> _wireReminderBackends(ReminderService reminder) async {
     );
     tzdata.initializeTimeZones();
     try {
-      tz.setLocalLocation(tz.getLocation(
-          (await FlutterTimezone.getLocalTimezone()).identifier));
+      tz.setLocalLocation(
+        tz.getLocation((await FlutterTimezone.getLocalTimezone()).identifier),
+      );
     } catch (_) {
       // Unknown zone name => keep the timezone package default; a shifted
       // reminder hour is acceptable, a crash is not.
     }
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
-        'daily_delve', 'Daily Delve reminder',
+        'daily_delve',
+        'Daily Delve reminder',
         channelDescription:
             'One optional notification when a new Daily Delve seed is live.',
         importance: Importance.defaultImportance,
@@ -116,17 +119,18 @@ Future<void> _wireReminderBackends(ReminderService reminder) async {
     reminder.permissionBackend = () async =>
         await plugin
             .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin
+            >()
             ?.requestNotificationsPermission() ??
         false;
     reminder.scheduleBackend = (id, when, title, body) => plugin.zonedSchedule(
-          id: id,
-          title: title,
-          body: body,
-          scheduledDate: tz.TZDateTime.from(when, tz.local),
-          notificationDetails: details,
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        );
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(when, tz.local),
+      notificationDetails: details,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    );
     reminder.cancelAllBackend = () => plugin.cancelAll();
     await reminder.rescheduleIfEnabled();
   } catch (_) {

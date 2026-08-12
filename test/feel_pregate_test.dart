@@ -153,22 +153,13 @@ void main() {
               }
               final rolled = (player['rolled'] as List).cast<int>();
               final assigned = (player['assigned'] as Map);
-              final relics =
-                  ((sim.state()['run'] as Map?)?['relics'] as List?)
-                      ?.cast<String>() ??
-                  const [];
+              final run = sim.state()['run'] as Map?;
               var acted = false;
               for (var d = 1; d <= rolled.length; d++) {
                 if (assigned['$d'] != null) continue;
                 // Alternate actions so both formulas stay covered.
                 final action = d.isEven ? 'block' : 'attack';
-                final expected = assignPreview(
-                  player,
-                  enemy,
-                  relics,
-                  d,
-                  action,
-                );
+                final expected = assignPreview(player, enemy, run, d, action);
                 final events = sim.apply({
                   'type': 'assign',
                   'die': d,

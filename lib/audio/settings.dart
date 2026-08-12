@@ -22,25 +22,26 @@ class AudioSettings {
   double get effectiveSfx => sfxMuted ? 0.0 : sfxVolume;
 
   Map<String, Object?> toJson() => {
-        'musicVolume': musicVolume,
-        'sfxVolume': sfxVolume,
-        'musicMuted': musicMuted,
-        'sfxMuted': sfxMuted,
-        'haptics': haptics,
-      };
+    'musicVolume': musicVolume,
+    'sfxVolume': sfxVolume,
+    'musicMuted': musicMuted,
+    'sfxMuted': sfxMuted,
+    'haptics': haptics,
+  };
 
   // Volumes clamped on load: an out-of-range value in a hand-edited or
   // corrupt settings file would otherwise crash the Settings sliders
   // (Slider asserts value ∈ [min, max]).
   factory AudioSettings.fromJson(Map<String, dynamic> j) => AudioSettings(
-        musicVolume:
-            ((j['musicVolume'] as num?)?.toDouble() ?? 0.7).clamp(0.0, 1.0),
-        sfxVolume:
-            ((j['sfxVolume'] as num?)?.toDouble() ?? 0.9).clamp(0.0, 1.0),
-        musicMuted: j['musicMuted'] as bool? ?? false,
-        sfxMuted: j['sfxMuted'] as bool? ?? false,
-        haptics: j['haptics'] as bool? ?? true,
-      );
+    musicVolume: ((j['musicVolume'] as num?)?.toDouble() ?? 0.7).clamp(
+      0.0,
+      1.0,
+    ),
+    sfxVolume: ((j['sfxVolume'] as num?)?.toDouble() ?? 0.9).clamp(0.0, 1.0),
+    musicMuted: j['musicMuted'] as bool? ?? false,
+    sfxMuted: j['sfxMuted'] as bool? ?? false,
+    haptics: j['haptics'] as bool? ?? true,
+  );
 }
 
 class SettingsStore {
@@ -56,7 +57,8 @@ class SettingsStore {
       final f = await _file();
       if (!await f.exists()) return AudioSettings();
       return AudioSettings.fromJson(
-          jsonDecode(await f.readAsString()) as Map<String, dynamic>);
+        jsonDecode(await f.readAsString()) as Map<String, dynamic>,
+      );
     } catch (_) {
       return AudioSettings();
     }
@@ -77,7 +79,9 @@ class SettingsStore {
         final tmp = File('${f.path}.tmp');
         await tmp.writeAsString(snap, flush: true);
         await tmp.rename(f.path);
-      } catch (_) {/* best-effort; never crash the game on save failure */}
+      } catch (_) {
+        /* best-effort; never crash the game on save failure */
+      }
     });
     return _writeQueue;
   }

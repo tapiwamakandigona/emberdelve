@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/dice.dart';
+import '../sim/run_dice.dart';
 
 enum BuildPath { ember, blade, aegis, heart }
 
@@ -57,7 +58,10 @@ class RunBuildIdentity {
   int countFor(int sides) => sizeCounts[sides] ?? 0;
 }
 
-RunBuildIdentity buildIdentity(Iterable<String> dieIds) {
+/// [run] is the run ledger, needed to resolve v7 run-local `custom_N` ids. A
+/// tempered die counts as its catalog base: the rune changes what a face pays,
+/// never what kind of die it is.
+RunBuildIdentity buildIdentity(Iterable<String> dieIds, {Map? run}) {
   final scores = <BuildPath, int>{for (final path in BuildPath.values) path: 0};
   final sizeCounts = <int, int>{};
   var special = 0;
@@ -65,7 +69,16 @@ RunBuildIdentity buildIdentity(Iterable<String> dieIds) {
   var dominantTier = 1;
 
   for (final id in dieIds) {
-    final def = dice[id];
+    DieDef? def;
+    if (id.startsWith('custom_')) {
+      try {
+        def = resolveRunDie(run, id).def;
+      } catch (_) {
+        def = null; // custom data missing (corrupt save): skip, never crash
+      }
+    } else {
+      def = dice[id];
+    }
     if (def == null) continue; // forward-compatible corrupt/unknown save
     final mods = def.mods;
     sizeCounts[def.size] = (sizeCounts[def.size] ?? 0) + 1;

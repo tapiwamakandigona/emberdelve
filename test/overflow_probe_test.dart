@@ -168,6 +168,13 @@ Future<void> probeAllPhases(
         await pumpFor(tester, 900);
       }
       await pumpFor(tester, 1600);
+    } else if (phase == 'keystone') {
+      // v7 keystone pick — probed at every size/text scale like any other
+      // full screen, then taken so the walk continues into the reward.
+      ctx('keystone@$size');
+      await pumpFor(tester, 400);
+      c.apply({'type': 'choose_keystone', 'index': 1});
+      await pumpFor(tester, 300);
     } else if (phase == 'reward') {
       ctx('reward@$size');
       await pumpFor(tester, 400);

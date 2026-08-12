@@ -6,47 +6,18 @@
 part of '../../screens.dart';
 
 /// LFP-2a: what assigning [die] to [action] will resolve for, computed from
-/// public sim state + content data (dieDef mods, combo_bonus, relic hooks) —
-/// the same inputs sim/combat.dart reads. Returns -1 when the die can't take
-/// the action (attack_only/block_only). PRESENTATION-ONLY twin of the sim's
-/// assign math: test/feel_pregate_test.dart replays a scripted run and
-/// asserts this against every die_assigned event the sim emits, so the two
-/// cannot drift silently.
-int assignPreview(
-  Map player,
-  Map enemy,
-  List<String> relics,
-  int die,
-  String action,
-) {
-  final rolled = (player['rolled'] as List).cast<int>();
-  final def = dieDef((player['dice'] as List).cast<String>()[die - 1]);
-  final mods = def.mods;
-  if (action == 'attack' && mods['block_only'] == true) return -1;
-  if (action == 'block' && mods['attack_only'] == true) return -1;
-  final maxed = (player['rolled_max'] as List?)?.cast<bool>();
-  final onMax = (maxed != null && maxed[die - 1])
-      ? (mods['on_max_bonus'] as int? ?? 0)
-      : 0;
-  final combo = (player['combo_bonus'] as List?)?.cast<int>();
-  int hook(String h) {
-    var t = 0;
-    for (final id in relics) {
-      t += relicDef(id).hooks[h] ?? 0;
-    }
-    return t;
-  }
-
-  var v = rolled[die - 1] + onMax + (combo != null ? combo[die - 1] : 0);
-  if (action == 'attack') {
-    v += (mods['attack_bonus'] as int? ?? 0) + hook('attack_flat');
-    if (enemy['boss'] == true || enemy['elite'] == true) {
-      v += hook('elite_damage');
-    }
-  } else {
-    v += (mods['block_bonus'] as int? ?? 0) + hook('block_flat');
-  }
-  return v;
+/// public sim state. Returns -1 when the die can't take the action
+/// (attack_only/block_only). This is a thin UI adapter over the sim's pure
+/// assignment resolver, not a second copy of the arithmetic.
+int assignPreview(Map player, Map enemy, Map? run, int die, String action) {
+  final resolved = resolveAssignment(
+    player: player,
+    enemy: enemy,
+    run: run,
+    die: die,
+    action: action,
+  );
+  return resolved.allowed ? resolved.value : -1;
 }
 
 /// Immutable snapshot of everything the combat HUD reads, derived per scoped

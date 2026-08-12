@@ -34,8 +34,11 @@ void main() {
     await t.setAnalyticsConsent(false);
     t.logEvent('level_started');
     expect(sent, isEmpty);
-    expect(t.needsConsentDialog, isFalse,
-        reason: 'never re-nag after a choice');
+    expect(
+      t.needsConsentDialog,
+      isFalse,
+      reason: 'never re-nag after a choice',
+    );
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool('telemetry_analytics_consent'), isFalse);
   });
@@ -74,8 +77,11 @@ void main() {
     await t.setAnalyticsConsent(false);
     t.logEvent('level_ended');
     expect(sent, isEmpty);
-    expect(collectionOn, isFalse,
-        reason: 'revoking must flip the SDK collection flag off');
+    expect(
+      collectionOn,
+      isFalse,
+      reason: 'revoking must flip the SDK collection flag off',
+    );
   });
 
   test('backend errors never propagate to gameplay', () async {

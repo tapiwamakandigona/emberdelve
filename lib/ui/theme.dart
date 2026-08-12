@@ -65,56 +65,64 @@ class Space {
 // Type scale (docs/design-system.md §2). Weights carry hierarchy before size.
 class EmberText {
   static const display = TextStyle(
-      fontFamily: 'Cinzel',
-      fontSize: 34,
-      height: 1.15,
-      fontWeight: FontWeight.w700,
-      color: EmberColors.textPrimary,
-      letterSpacing: 0.5);
+    fontFamily: 'Cinzel',
+    fontSize: 34,
+    height: 1.15,
+    fontWeight: FontWeight.w700,
+    color: EmberColors.textPrimary,
+    letterSpacing: 0.5,
+  );
   static const h1 = TextStyle(
-      fontFamily: 'Cinzel',
-      fontSize: 26,
-      height: 1.18,
-      fontWeight: FontWeight.w700,
-      color: EmberColors.textPrimary);
+    fontFamily: 'Cinzel',
+    fontSize: 26,
+    height: 1.18,
+    fontWeight: FontWeight.w700,
+    color: EmberColors.textPrimary,
+  );
   static const h2 = TextStyle(
-      fontFamily: 'Cinzel',
-      fontSize: 20,
-      height: 1.2,
-      fontWeight: FontWeight.w600,
-      color: EmberColors.textPrimary);
+    fontFamily: 'Cinzel',
+    fontSize: 20,
+    height: 1.2,
+    fontWeight: FontWeight.w600,
+    color: EmberColors.textPrimary,
+  );
   static const body = TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 16,
-      height: 1.5,
-      color: EmberColors.textPrimary);
+    fontFamily: 'Inter',
+    fontSize: 16,
+    height: 1.5,
+    color: EmberColors.textPrimary,
+  );
   static const bodyDim = TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 16,
-      height: 1.5,
-      color: EmberColors.textDim);
+    fontFamily: 'Inter',
+    fontSize: 16,
+    height: 1.5,
+    color: EmberColors.textDim,
+  );
   // Big bright values (UXPeak: values over labels).
   static const value = TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 26,
-      height: 1.1,
-      fontWeight: FontWeight.w700,
-      color: EmberColors.textPrimary,
-      fontFeatures: [FontFeature.tabularFigures()]);
+    fontFamily: 'Inter',
+    fontSize: 26,
+    height: 1.1,
+    fontWeight: FontWeight.w700,
+    color: EmberColors.textPrimary,
+    fontFeatures: [FontFeature.tabularFigures()],
+  );
   static const label = TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 13,
-      height: 1.3,
-      fontWeight: FontWeight.w600,
-      color: EmberColors.textDim);
+    fontFamily: 'Inter',
+    fontSize: 13,
+    height: 1.3,
+    fontWeight: FontWeight.w600,
+    color: EmberColors.textDim,
+  );
   // Small UPPERCASE meta labels.
   static const micro = TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 11,
-      height: 1.3,
-      fontWeight: FontWeight.w600,
-      color: EmberColors.textDim,
-      letterSpacing: 1.2);
+    fontFamily: 'Inter',
+    fontSize: 11,
+    height: 1.3,
+    fontWeight: FontWeight.w600,
+    color: EmberColors.textDim,
+    letterSpacing: 1.2,
+  );
 }
 
 /// Fade-through-black route transition — the stock Material slide is one of
@@ -123,14 +131,16 @@ class _FadeThroughBlackBuilder extends PageTransitionsBuilder {
   const _FadeThroughBlackBuilder();
   @override
   Widget buildTransitions<T>(
-      PageRoute<T> route,
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final fade = CurvedAnimation(
-        parent: animation,
-        curve: const Interval(0.4, 1.0, curve: Curves.easeOut));
+      parent: animation,
+      curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+    );
     return ColoredBox(
       color: Colors.black,
       child: FadeTransition(opacity: fade, child: child),
@@ -156,12 +166,14 @@ ThemeData buildEmberTheme() {
     hoverColor: Colors.transparent,
     focusColor: EmberColors.ember.withValues(alpha: 0.12),
     dividerColor: EmberColors.line,
-    pageTransitionsTheme: const PageTransitionsTheme(builders: {
-      TargetPlatform.android: _FadeThroughBlackBuilder(),
-      TargetPlatform.iOS: _FadeThroughBlackBuilder(),
-      TargetPlatform.linux: _FadeThroughBlackBuilder(),
-      TargetPlatform.macOS: _FadeThroughBlackBuilder(),
-      TargetPlatform.windows: _FadeThroughBlackBuilder(),
-    }),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: _FadeThroughBlackBuilder(),
+        TargetPlatform.iOS: _FadeThroughBlackBuilder(),
+        TargetPlatform.linux: _FadeThroughBlackBuilder(),
+        TargetPlatform.macOS: _FadeThroughBlackBuilder(),
+        TargetPlatform.windows: _FadeThroughBlackBuilder(),
+      },
+    ),
   );
 }

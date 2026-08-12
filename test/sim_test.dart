@@ -28,7 +28,15 @@ import 'package:emberdelve/sim/autoplay.dart';
 // 16 -> 28, which changes what the seeded spawn/offering streams draw. Content
 // growth moves these hashes by design; resolution rules are untouched. Old v6
 // value: 1842571558 (see progress.md for the v0.5.0 old -> new record).
-const int goldenV6 = 2013675017;
+//
+// v7 re-anchor (2026-08-12): the keystone offering after the first won fight
+// adds `keystone_offered` + `keystone_taken` to EVERY normal run and draws
+// three cards from the `offer` stream, so every event hash moved by design.
+// Rules for existing mechanics are untouched. Old v6 value: 2013675017; new
+// value below, measured twice per seed and identical (tool/
+// keystone_balance_probe.dart). Autoplay win rate 64.0% declining vs 66.0%
+// taking over 200 seeds, so the fair-balance band is unaffected.
+const int goldenV6 = 1507173787;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -47,6 +55,22 @@ const Map<int, String> bossAnchorSeeds = {
   20260727: 'ashfall_twins',
 };
 
+// v7 re-anchor (2026-08-12), old -> new, same cause as goldenV6 above:
+//   ashen_colossus     1729684958 -> 201437516
+//   ember_tyrant       2013675017 -> 1507173787
+//   pyre_matriarch      537528265 -> 625118910
+//   cinder_hierophant  1258842264 -> 1042046624
+//   the_bellows        1746127677 -> 2005745586
+//   ashfall_twins      1800621184 -> 642212611
+//
+// Second, NARROWER re-anchor (2026-08-12, player-HP floor): a killing blow used
+// to publish a negative 'player_hp' in enemy_attacked, which the HUD printed
+// verbatim ("-17") and TalkBack read aloud. HP is now floored at zero, so ONLY
+// runs that end in a death change hash. Exactly one anchor seed loses:
+//   ashfall_twins       642212611 -> 183009563   (run_lost, final hp 0)
+// Measured twice per seed; the other five bosses and goldenV6 are unchanged,
+// which is itself the evidence that the fix touched nothing but death.
+//
 // Per-boss goldens, pinned 2026-08-11 from measured builds, not guesses:
 // identical values printed by CI runs 31447535252 and 31459628277 and by a
 // local Flutter 3.44.9 run. ember_tyrant equals goldenV6 by construction
@@ -54,12 +78,12 @@ const Map<int, String> bossAnchorSeeds = {
 // pools, re-anchor ALL of these from a real build and record old -> new in
 // progress.md — never by editing a single one to green.
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 1729684958,
-  'ember_tyrant': 2013675017,
-  'pyre_matriarch': 537528265,
-  'cinder_hierophant': 1258842264,
-  'the_bellows': 1746127677,
-  'ashfall_twins': 1800621184,
+  'ashen_colossus': 201437516,
+  'ember_tyrant': 1507173787,
+  'pyre_matriarch': 625118910,
+  'cinder_hierophant': 1042046624,
+  'the_bellows': 2005745586,
+  'ashfall_twins': 183009563,
 };
 
 void main() {
@@ -113,10 +137,16 @@ void main() {
       for (var seed = 1; seed <= 15; seed++) {
         final plain = playRun(seed).sim;
         final resumed = playRun(seed, snapAt: 30).sim;
-        expect(resumed.eventHash, equals(plain.eventHash),
-            reason: 'seed $seed event hash');
-        expect(resumed.stateHash(), equals(plain.stateHash()),
-            reason: 'seed $seed state hash');
+        expect(
+          resumed.eventHash,
+          equals(plain.eventHash),
+          reason: 'seed $seed event hash',
+        );
+        expect(
+          resumed.stateHash(),
+          equals(plain.stateHash()),
+          reason: 'seed $seed state hash',
+        );
       }
     });
 
@@ -135,28 +165,38 @@ void main() {
       expect(sim.eventHash, equals(goldenV6));
     });
 
-    test('boss variety: every boss is reachable and its run is deterministic',
-        () {
-      // Mapping is pure arithmetic on the seed, so it is asserted exactly.
-      bossAnchorSeeds.forEach((seed, boss) {
-        expect(bossForSeed(seed), equals(boss),
-            reason: 'seed $seed no longer maps to $boss');
-      });
-      // Every boss must actually be reachable: no boss may be unreachable
-      // because of a modulus accident.
-      expect(bossAnchorSeeds.values.toSet().length,
-          equals(bossAnchorSeeds.length));
-      // Each boss run must be reproducible run-to-run AND match its pinned
-      // golden (bossGoldens above), so a drift in any single boss fight is
-      // caught even when the shared v6 anchor happens to survive.
-      bossAnchorSeeds.forEach((seed, boss) {
-        final a = playRun(seed).sim.eventHash;
-        final b = playRun(seed).sim.eventHash;
-        expect(b, equals(a), reason: '$boss run is not reproducible');
-        expect(a, equals(bossGoldens[boss]),
-            reason: '$boss run drifted from its pinned golden');
-      });
-    });
+    test(
+      'boss variety: every boss is reachable and its run is deterministic',
+      () {
+        // Mapping is pure arithmetic on the seed, so it is asserted exactly.
+        bossAnchorSeeds.forEach((seed, boss) {
+          expect(
+            bossForSeed(seed),
+            equals(boss),
+            reason: 'seed $seed no longer maps to $boss',
+          );
+        });
+        // Every boss must actually be reachable: no boss may be unreachable
+        // because of a modulus accident.
+        expect(
+          bossAnchorSeeds.values.toSet().length,
+          equals(bossAnchorSeeds.length),
+        );
+        // Each boss run must be reproducible run-to-run AND match its pinned
+        // golden (bossGoldens above), so a drift in any single boss fight is
+        // caught even when the shared v6 anchor happens to survive.
+        bossAnchorSeeds.forEach((seed, boss) {
+          final a = playRun(seed).sim.eventHash;
+          final b = playRun(seed).sim.eventHash;
+          expect(b, equals(a), reason: '$boss run is not reproducible');
+          expect(
+            a,
+            equals(bossGoldens[boss]),
+            reason: '$boss run drifted from its pinned golden',
+          );
+        });
+      },
+    );
   });
 
   group('rules', () {
@@ -184,8 +224,8 @@ void main() {
         final sim = Sim(seed);
         sim.apply({'type': 'start_run'});
         final start = sim.map!['position'] as int;
-        final edges =
-            ((sim.map!['edges'] as Map)['$start'] as List).cast<int>();
+        final edges = ((sim.map!['edges'] as Map)['$start'] as List)
+            .cast<int>();
         int? fight;
         for (final e in edges) {
           if ((sim.map!['nodes'] as Map)['$e']!['kind'] == 'fight') {
@@ -215,8 +255,11 @@ void main() {
     test('full run reaches a terminal phase with a consistent ledger', () {
       for (var seed = 1; seed <= 30; seed++) {
         final r = playRun(seed);
-        expect(['run_won', 'run_lost'].contains(r.sim.phase), isTrue,
-            reason: 'seed $seed ended at ${r.sim.phase}');
+        expect(
+          ['run_won', 'run_lost'].contains(r.sim.phase),
+          isTrue,
+          reason: 'seed $seed ended at ${r.sim.phase}',
+        );
         expect(r.invalids, equals(0), reason: 'seed $seed invalids');
         expect(r.sim.run!['embers'] >= 0, isTrue);
         expect(r.sim.run!['gold'] >= 0, isTrue);
@@ -285,9 +328,13 @@ void main() {
       sim.apply({'type': 'reroll', 'die': 1});
       final rolled = (sim.player['rolled'] as List).cast<int>();
       final expected = detectCombos(rolled).bonus;
-      expect(sim.player['combo_bonus'], equals(expected),
-          reason: 'combo_bonus must match the CURRENT pool after a charge '
-              'reroll (pool now $rolled)');
+      expect(
+        sim.player['combo_bonus'],
+        equals(expected),
+        reason:
+            'combo_bonus must match the CURRENT pool after a charge '
+            'reroll (pool now $rolled)',
+      );
     });
   });
 
@@ -308,35 +355,62 @@ void main() {
 
     test('max once per turn; consumes the seeded combat stream', () {
       final sim = intoRolledTurn(1);
-      final ev1 = sim.apply({'type': 'reroll_risky', 'dice': [1]});
+      final ev1 = sim.apply({
+        'type': 'reroll_risky',
+        'dice': [1],
+      });
       expect(ev1.any((e) => e['type'] == 'risky_reroll'), isTrue);
-      final ev2 = sim.apply({'type': 'reroll_risky', 'dice': [2]});
+      final ev2 = sim.apply({
+        'type': 'reroll_risky',
+        'dice': [2],
+      });
       expect(ev2.first['type'], equals('invalid_command'));
       expect(ev2.first['reason'], equals('risky_reroll_used'));
     });
 
-    test('rejects assigned dice, bad indices, empty and duplicate subsets',
-        () {
+    test('rejects assigned dice, bad indices, empty and duplicate subsets', () {
       final sim = intoRolledTurn(1);
       sim.apply({'type': 'assign', 'die': 1, 'action': 'block'});
-      expect(sim.apply({'type': 'reroll_risky', 'dice': [1]}).first['reason'],
-          equals('die_already_assigned'));
-      expect(sim.apply({'type': 'reroll_risky', 'dice': [99]}).first['reason'],
-          equals('no_such_die'));
-      expect(sim.apply({'type': 'reroll_risky', 'dice': []}).first['reason'],
-          equals('no_dice_chosen'));
       expect(
-          sim.apply({'type': 'reroll_risky', 'dice': [2, 2]}).first['reason'],
-          equals('duplicate_die'));
+        sim.apply({
+          'type': 'reroll_risky',
+          'dice': [1],
+        }).first['reason'],
+        equals('die_already_assigned'),
+      );
+      expect(
+        sim.apply({
+          'type': 'reroll_risky',
+          'dice': [99],
+        }).first['reason'],
+        equals('no_such_die'),
+      );
+      expect(
+        sim.apply({'type': 'reroll_risky', 'dice': []}).first['reason'],
+        equals('no_dice_chosen'),
+      );
+      expect(
+        sim.apply({
+          'type': 'reroll_risky',
+          'dice': [2, 2],
+        }).first['reason'],
+        equals('duplicate_die'),
+      );
     });
 
     test('replays are deterministic given the same commands', () {
       List<int> play(int seed) {
         final sim = intoRolledTurn(seed);
-        sim.apply({'type': 'reroll_risky', 'dice': [1, 2]});
-        return [(sim.player['rolled'] as List).cast<int>().fold(0, (a, b) => a + b),
-                sim.eventHash];
+        sim.apply({
+          'type': 'reroll_risky',
+          'dice': [1, 2],
+        });
+        return [
+          (sim.player['rolled'] as List).cast<int>().fold(0, (a, b) => a + b),
+          sim.eventHash,
+        ];
       }
+
       expect(play(7), equals(play(7)));
     });
   });
@@ -355,16 +429,28 @@ void main() {
             return;
           }
           final offers = (node['offers'] as List).cast<String>();
-          expect(offers.length, inInclusiveRange(2, 3),
-              reason: 'seed $seed node $id offer count');
+          expect(
+            offers.length,
+            inInclusiveRange(2, 3),
+            reason: 'seed $seed node $id offer count',
+          );
           final preview = node['reward_preview'] as String;
-          expect(offers.contains(preview), isTrue,
-              reason: 'seed $seed node $id preview not among offers');
+          expect(
+            offers.contains(preview),
+            isTrue,
+            reason: 'seed $seed node $id preview not among offers',
+          );
           if (kind == 'elite') {
-            expect(offers.any((d) => dice[d]!.tier == 3), isTrue,
-                reason: 'seed $seed elite $id lacks a rare die');
-            expect(dice[preview]!.tier, equals(3),
-                reason: 'seed $seed elite $id preview not rare');
+            expect(
+              offers.any((d) => dice[d]!.tier == 3),
+              isTrue,
+              reason: 'seed $seed elite $id lacks a rare die',
+            );
+            expect(
+              dice[preview]!.tier,
+              equals(3),
+              reason: 'seed $seed elite $id preview not rare',
+            );
           }
         });
       }
@@ -383,8 +469,11 @@ void main() {
               final pos = sim.map!['position'];
               final node = (sim.map!['nodes'] as Map)['$pos'] as Map;
               final offers = (node['offers'] as List).cast<String>();
-              expect(sim.offers, equals(offers),
-                  reason: 'seed $seed node $pos telegraph mismatch');
+              expect(
+                sim.offers,
+                equals(offers),
+                reason: 'seed $seed node $pos telegraph mismatch',
+              );
               checked++;
             }
           }
@@ -469,9 +558,18 @@ void main() {
         }
       }
       for (final t in [
-        'combo_pair', 'combo_triple', 'combo_straight', 'burn_applied',
-        'burn_tick', 'free_reroll_earned', 'risky_reroll', 'exact_kill',
-        'overkill', 'splash_damage', 'boon_offered', 'boon_chosen',
+        'combo_pair',
+        'combo_triple',
+        'combo_straight',
+        'burn_applied',
+        'burn_tick',
+        'free_reroll_earned',
+        'risky_reroll',
+        'exact_kill',
+        'overkill',
+        'splash_damage',
+        'boon_offered',
+        'boon_chosen',
       ]) {
         expect(seen.contains(t), isTrue, reason: 'event $t never observed');
       }
@@ -513,8 +611,8 @@ void main() {
         final sim = Sim(seed);
         sim.apply({'type': 'start_run'});
         final start = sim.map!['position'] as int;
-        final edges =
-            ((sim.map!['edges'] as Map)['$start'] as List).cast<int>();
+        final edges = ((sim.map!['edges'] as Map)['$start'] as List)
+            .cast<int>();
         int? fight;
         for (final e in edges) {
           if ((sim.map!['nodes'] as Map)['$e']!['kind'] == 'fight') {
@@ -528,13 +626,19 @@ void main() {
         final def = enemies[enemy['id']]!;
         // Layer-2 regulars: HP capped at 28, every intent amount shaved by 2
         // (min 1) relative to the roster definition.
-        expect(enemy['max_hp'] as int, lessThanOrEqualTo(28),
-            reason: 'seed $seed ${enemy['id']}');
+        expect(
+          enemy['max_hp'] as int,
+          lessThanOrEqualTo(28),
+          reason: 'seed $seed ${enemy['id']}',
+        );
         final pattern = (enemy['pattern'] as List).cast<Map>();
         for (var i = 0; i < def.pattern.length; i++) {
           final want = def.pattern[i].amount - 2;
-          expect(pattern[i]['amount'], equals(want < 1 ? 1 : want),
-              reason: 'seed $seed ${enemy['id']} intent $i');
+          expect(
+            pattern[i]['amount'],
+            equals(want < 1 ? 1 : want),
+            reason: 'seed $seed ${enemy['id']} intent $i',
+          );
         }
         return;
       }
@@ -548,8 +652,10 @@ void main() {
       combatBegin(sim, 'pyre_howler', true, events, layer: 2);
       final def = enemies['pyre_howler']!;
       expect(sim.enemy!['max_hp'], equals(def.hp));
-      expect((sim.enemy!['pattern'] as List).cast<Map>()[0]['amount'],
-          equals(def.pattern[0].amount));
+      expect(
+        (sim.enemy!['pattern'] as List).cast<Map>()[0]['amount'],
+        equals(def.pattern[0].amount),
+      );
     });
 
     test('ember floor: every death banks at least 5 + layer reached', () {
@@ -559,8 +665,11 @@ void main() {
         if (r.sim.phase != 'run_lost') continue;
         checked++;
         final run = r.sim.run!;
-        expect(run['embers'] as int, greaterThanOrEqualTo(5 + 2),
-            reason: 'seed $seed banked ${run['embers']}');
+        expect(
+          run['embers'] as int,
+          greaterThanOrEqualTo(5 + 2),
+          reason: 'seed $seed banked ${run['embers']}',
+        );
       }
       expect(checked, greaterThan(0), reason: 'no losses in 60 seeds?');
     });
@@ -575,15 +684,21 @@ void main() {
       sim.apply({'type': 'start_run'});
       while (sim.phase == 'map') {
         final map = sim.map!;
-        final out =
-            ((map['edges'] as Map)['${map['position']}'] as List).cast<int>();
-        final fight = out.where((n) =>
-            ((map['nodes'] as Map)['$n'] as Map)['kind'] == 'fight');
-        sim.apply(
-            {'type': 'choose_node', 'node': fight.isNotEmpty ? fight.first : out.first});
+        final out = ((map['edges'] as Map)['${map['position']}'] as List)
+            .cast<int>();
+        final fight = out.where(
+          (n) => ((map['nodes'] as Map)['$n'] as Map)['kind'] == 'fight',
+        );
+        sim.apply({
+          'type': 'choose_node',
+          'node': fight.isNotEmpty ? fight.first : out.first,
+        });
       }
-      expect(sim.phase, equals('player_turn'),
-          reason: 'seed $seed did not reach a fight directly');
+      expect(
+        sim.phase,
+        equals('player_turn'),
+        reason: 'seed $seed did not reach a fight directly',
+      );
       return sim;
     }
 
@@ -597,8 +712,11 @@ void main() {
       final events = sim.apply({'type': 'end_turn'});
       expect(events.any((e) => e['type'] == 'encounter_lost'), isTrue);
       expect(events.any((e) => e['type'] == 'encounter_won'), isFalse);
-      expect(events.any((e) => e['type'] == 'burn_tick'), isFalse,
-          reason: 'a dead delver has no burn tick');
+      expect(
+        events.any((e) => e['type'] == 'burn_tick'),
+        isFalse,
+        reason: 'a dead delver has no burn tick',
+      );
       expect(sim.phase, equals('run_lost'));
     });
 
@@ -615,13 +733,15 @@ void main() {
       final events = sim.apply({'type': 'end_turn'});
       expect(events.any((e) => e['type'] == 'encounter_lost'), isTrue);
       expect(events.any((e) => e['type'] == 'encounter_won'), isFalse);
-      expect(events.any((e) => e['type'] == 'thorns_dealt'), isFalse,
-          reason: 'a dead delver deals no thorns');
+      expect(
+        events.any((e) => e['type'] == 'thorns_dealt'),
+        isFalse,
+        reason: 'a dead delver deals no thorns',
+      );
       expect(sim.phase, equals('run_lost'));
     });
 
-    test('non-lethal attack still lets burn finish the enemy (win intact)',
-        () {
+    test('non-lethal attack still lets burn finish the enemy (win intact)', () {
       final sim = simInFight(42);
       sim.player['hp'] = 10;
       sim.player['block'] = 0;
@@ -631,6 +751,10 @@ void main() {
       final events = sim.apply({'type': 'end_turn'});
       expect(events.any((e) => e['type'] == 'burn_tick'), isTrue);
       expect(events.any((e) => e['type'] == 'encounter_won'), isTrue);
+      // v7: a first won fight offers the run's keystone before its die
+      // reward. The win is intact either way — declining lands on reward.
+      expect(sim.phase, equals('keystone'));
+      sim.apply({'type': 'choose_keystone', 'index': 0});
       expect(sim.phase, equals('reward'));
     });
 
@@ -653,13 +777,17 @@ void main() {
       // ...so this turn's attack is absorbed before hp is touched.
       sim.apply({'type': 'roll'});
       final hpBefore = sim.enemy!['hp'] as int;
-      final events = sim.apply({'type': 'assign', 'die': 1, 'action': 'attack'});
+      final events = sim.apply({
+        'type': 'assign',
+        'die': 1,
+        'action': 'attack',
+      });
       final dmg = events.firstWhere((e) => e['type'] == 'damage_dealt');
       expect(dmg['blocked'], greaterThan(0));
       expect(
-          (sim.enemy!['hp'] as int),
-          equals(hpBefore -
-              ((dmg['amount'] as int) - (dmg['blocked'] as int))));
+        (sim.enemy!['hp'] as int),
+        equals(hpBefore - ((dmg['amount'] as int) - (dmg['blocked'] as int))),
+      );
     });
   });
 }

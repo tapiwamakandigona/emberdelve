@@ -422,6 +422,9 @@ void main() {
         c.apply({'type': 'rest'});
       } else if (phase == 'shop') {
         c.apply({'type': 'leave_shop'});
+      } else if (phase == 'keystone') {
+        // v7: the first won fight offers a keystone before its die reward.
+        c.apply({'type': 'choose_keystone', 'index': 1});
       } else {
         break; // run_lost or something unexpected: fail below
       }

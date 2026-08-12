@@ -27,35 +27,53 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('hearth theme catalog is coherent and honestly priced', () {
-    expect(hearthThemesOrder.toSet(), hearthThemes.keys.toSet(),
-        reason: 'order list and map must cover the same ids');
-    expect(hearthThemesOrder.length, hearthThemesOrder.toSet().length,
-        reason: 'no duplicate ids in the order list');
-    expect(hearthThemes.length, greaterThanOrEqualTo(12),
-        reason: 'P1 ember sink ships at least 12 hearth colors');
+    expect(
+      hearthThemesOrder.toSet(),
+      hearthThemes.keys.toSet(),
+      reason: 'order list and map must cover the same ids',
+    );
+    expect(
+      hearthThemesOrder.length,
+      hearthThemesOrder.toSet().length,
+      reason: 'no duplicate ids in the order list',
+    );
+    expect(
+      hearthThemes.length,
+      greaterThanOrEqualTo(12),
+      reason: 'P1 ember sink ships at least 12 hearth colors',
+    );
     for (final t in hearthThemes.values) {
       expect(t.name.trim(), isNotEmpty);
       expect(t.text.trim(), isNotEmpty);
       if (t.id == defaultTheme) {
         expect(t.costEmbers, 0, reason: 'the default color is free');
       } else {
-        expect(t.costEmbers, greaterThan(0),
-            reason: '${t.id}: a locked color must have a real price');
+        expect(
+          t.costEmbers,
+          greaterThan(0),
+          reason: '${t.id}: a locked color must have a real price',
+        );
       }
     }
   });
 
-  test('dice skin catalog is coherent; default skin is the identity paint',
-      () {
+  test('dice skin catalog is coherent; default skin is the identity paint', () {
     expect(dieSkinsOrder.toSet(), dieSkins.keys.toSet());
     expect(dieSkinsOrder.length, dieSkinsOrder.toSet().length);
     final bone = dieSkins[defaultDieSkin]!;
     expect(bone.costEmbers, 0);
-    expect(bone.bodyArgb, 0xFFFFFFFF,
-        reason: 'default body tint must be the multiply identity — an '
-            'unskinned profile renders pixel-identical to pre-skin builds');
-    expect(bone.inkArgb, 0xFF241407,
-        reason: 'default ink must equal the original _FacePainter ink');
+    expect(
+      bone.bodyArgb,
+      0xFFFFFFFF,
+      reason:
+          'default body tint must be the multiply identity — an '
+          'unskinned profile renders pixel-identical to pre-skin builds',
+    );
+    expect(
+      bone.inkArgb,
+      0xFF241407,
+      reason: 'default ink must equal the original _FacePainter ink',
+    );
     for (final s in dieSkins.values) {
       expect(s.name.trim(), isNotEmpty);
       expect(s.text.trim(), isNotEmpty);
@@ -63,8 +81,11 @@ void main() {
         expect(s.costEmbers, greaterThan(0), reason: s.id);
       }
     }
-    expect(dieSkinDef('nope').id, defaultDieSkin,
-        reason: 'unknown ids fall back to the default skin');
+    expect(
+      dieSkinDef('nope').id,
+      defaultDieSkin,
+      reason: 'unknown ids fall back to the default skin',
+    );
     expect(dieSkinDef(null).id, defaultDieSkin);
   });
 
@@ -77,17 +98,29 @@ void main() {
         .where((e) => e.kind == 'relic')
         .map((e) => e.refId)
         .toList();
-    expect(enemyRefs.toSet(), enemies.keys.toSet(),
-        reason: 'every enemy needs lore; no orphan entries allowed');
-    expect(relicRefs.toSet(), relics.keys.toSet(),
-        reason: 'every relic needs lore; no orphan entries allowed');
+    expect(
+      enemyRefs.toSet(),
+      enemies.keys.toSet(),
+      reason: 'every enemy needs lore; no orphan entries allowed',
+    );
+    expect(
+      relicRefs.toSet(),
+      relics.keys.toSet(),
+      reason: 'every relic needs lore; no orphan entries allowed',
+    );
     expect(enemyRefs.length, enemyRefs.toSet().length);
     expect(relicRefs.length, relicRefs.toSet().length);
     for (final e in codexEntries) {
-      expect(e.id, '${e.kind}:${e.refId}',
-          reason: 'entry ids are namespaced kind:refId');
-      expect(e.text.trim().length, greaterThan(40),
-          reason: '${e.id}: lore must be real writing, not a stub');
+      expect(
+        e.id,
+        '${e.kind}:${e.refId}',
+        reason: 'entry ids are namespaced kind:refId',
+      );
+      expect(
+        e.text.trim().length,
+        greaterThan(40),
+        reason: '${e.id}: lore must be real writing, not a stub',
+      );
       expect(e.costEmbers, greaterThan(0), reason: e.id);
     }
     expect(codexById.length, codexEntries.length);
@@ -98,10 +131,16 @@ void main() {
     expect(m.tryBuyDieSkin('embertide'), isTrue); // costs 150
     expect(m.embers, 10);
     expect(m.ownedDieSkins, containsAll({defaultDieSkin, 'embertide'}));
-    expect(m.tryBuyDieSkin('embertide'), isFalse,
-        reason: 'owned skins are never sold twice');
-    expect(m.tryBuyDieSkin('obsidian'), isFalse,
-        reason: '10 embers cannot buy a 400-ember skin');
+    expect(
+      m.tryBuyDieSkin('embertide'),
+      isFalse,
+      reason: 'owned skins are never sold twice',
+    );
+    expect(
+      m.tryBuyDieSkin('obsidian'),
+      isFalse,
+      reason: '10 embers cannot buy a 400-ember skin',
+    );
     expect(m.embers, 10, reason: 'failed buys must not touch the purse');
     expect(m.tryBuyDieSkin('chrome'), isFalse, reason: 'unknown id');
 
@@ -119,10 +158,16 @@ void main() {
     final m = MetaState(embers: 20);
     expect(m.tryBuyCodex('enemy:cinder_wisp'), isTrue); // costs 15
     expect(m.embers, 5);
-    expect(m.tryBuyCodex('enemy:cinder_wisp'), isFalse,
-        reason: 'unsealed entries are never sold twice');
-    expect(m.tryBuyCodex('relic:ember_ring'), isFalse,
-        reason: '5 embers cannot buy a 20-ember entry');
+    expect(
+      m.tryBuyCodex('enemy:cinder_wisp'),
+      isFalse,
+      reason: 'unsealed entries are never sold twice',
+    );
+    expect(
+      m.tryBuyCodex('relic:ember_ring'),
+      isFalse,
+      reason: '5 embers cannot buy a 20-ember entry',
+    );
     expect(m.embers, 5);
     expect(m.tryBuyCodex('enemy:not_a_thing'), isFalse, reason: 'unknown id');
 
@@ -141,7 +186,8 @@ void main() {
       ownedCodex: {'enemy:cinder_wisp', 'relic:bedroll'},
     );
     final back = MetaState.fromJson(
-        jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>);
+      jsonDecode(jsonEncode(m.toJson())) as Map<String, dynamic>,
+    );
     expect(back.toJson(), m.toJson());
     expect(back.ownedDieSkins, m.ownedDieSkins);
     expect(back.activeDieSkin, 'obsidian');
@@ -177,19 +223,31 @@ void main() {
     // before asserting (offstage lookups can't see unbuilt children).
     for (final id in dieSkinsOrder) {
       await tester.scrollUntilVisible(
-          find.byKey(ValueKey('skin-$id')), 200,
-          scrollable: find.byType(Scrollable).first);
-      expect(find.byKey(ValueKey('skin-$id')), findsOneWidget,
-          reason: 'skin card $id missing from the Ledger');
+        find.byKey(ValueKey('skin-$id')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(
+        find.byKey(ValueKey('skin-$id')),
+        findsOneWidget,
+        reason: 'skin card $id missing from the Ledger',
+      );
     }
-    await tester.scrollUntilVisible(find.text('The Codex'), 200,
-        scrollable: find.byType(Scrollable).first);
-    expect(find.text('The Codex'), findsOneWidget,
-        reason: 'the Codex entry point lives on the Ledger');
+    await tester.scrollUntilVisible(
+      find.text('The Codex'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(
+      find.text('The Codex'),
+      findsOneWidget,
+      reason: 'the Codex entry point lives on the Ledger',
+    );
   });
 
-  testWidgets('codex screen sells a locked entry and reveals its lore',
-      (tester) async {
+  testWidgets('codex screen sells a locked entry and reveals its lore', (
+    tester,
+  ) async {
     tester.view.physicalSize =
         const Size(412, 915) * tester.view.devicePixelRatio;
     addTearDown(tester.view.resetPhysicalSize);
@@ -206,8 +264,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(c.meta.ownedCodex, contains(entry.id));
     expect(c.meta.embers, 0);
-    expect(find.text(entry.text, skipOffstage: false), findsOneWidget,
-        reason: 'paid lore must be readable immediately');
+    expect(
+      find.text(entry.text, skipOffstage: false),
+      findsOneWidget,
+      reason: 'paid lore must be readable immediately',
+    );
     // Broke now: a second locked entry refuses without touching the purse.
     await tester.tap(find.byKey(const ValueKey('codex-enemy:ash_rat')));
     await tester.pump(const Duration(milliseconds: 400));

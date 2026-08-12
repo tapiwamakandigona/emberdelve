@@ -15,8 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Sends one analytics event. Wired to FirebaseAnalytics.logEvent in
 /// telemetry_bootstrap.dart.
-typedef AnalyticsEventSink = Future<void> Function(
-    String name, Map<String, Object>? params);
+typedef AnalyticsEventSink =
+    Future<void> Function(String name, Map<String, Object>? params);
 
 /// Enables/disables the analytics collection backend.
 typedef CollectionToggle = Future<void> Function(bool enabled);

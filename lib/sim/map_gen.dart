@@ -68,8 +68,7 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
   final nodes = <String, Map<String, Object?>>{};
   var nextId = 1;
   for (var l = 1; l <= layers; l++) {
-    final count =
-        (l == 1 || l == layers) ? 1 : rng.range(minNodes, maxNodes);
+    final count = (l == 1 || l == layers) ? 1 : rng.range(minNodes, maxNodes);
     final row = <int>[];
     for (var i = 1; i <= count; i++) {
       final id = nextId;

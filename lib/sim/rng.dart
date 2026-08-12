@@ -49,9 +49,15 @@ class Rng {
   int die(int sides) => range(1, sides);
 
   /// Plain-map snapshot (JSON-safe, for save/restore).
-  Map<String, Object> snapshot() =>
-      {'seed': seed, 'domain': domain, 'calls': calls};
+  Map<String, Object> snapshot() => {
+    'seed': seed,
+    'domain': domain,
+    'calls': calls,
+  };
 
   factory Rng.restore(Map<String, dynamic> snap) => Rng._(
-      snap['seed'] as int, snap['domain'] as String, snap['calls'] as int);
+    snap['seed'] as int,
+    snap['domain'] as String,
+    snap['calls'] as int,
+  );
 }

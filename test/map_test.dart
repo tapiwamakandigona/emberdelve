@@ -23,11 +23,18 @@ void main() {
           final layer = entry.value['layer'] as int;
           final out = edges['$id']!.cast<int>();
           if (id != boss) {
-            expect(out.isNotEmpty, isTrue, reason: 'seed $seed node $id no edge');
+            expect(
+              out.isNotEmpty,
+              isTrue,
+              reason: 'seed $seed node $id no edge',
+            );
           }
           for (final t in out) {
-            expect(nodes['$t']!['layer'], equals(layer + 1),
-                reason: 'seed $seed edge crosses >1 layer');
+            expect(
+              nodes['$t']!['layer'],
+              equals(layer + 1),
+              reason: 'seed $seed edge crosses >1 layer',
+            );
           }
         }
 
@@ -40,10 +47,16 @@ void main() {
             if (reached.add(t)) queue.add(t);
           }
         }
-        expect(reached.contains(boss), isTrue,
-            reason: 'seed $seed boss unreachable');
-        expect(reached.length, equals(nodes.length),
-            reason: 'seed $seed unreachable nodes');
+        expect(
+          reached.contains(boss),
+          isTrue,
+          reason: 'seed $seed boss unreachable',
+        );
+        expect(
+          reached.length,
+          equals(nodes.length),
+          reason: 'seed $seed unreachable nodes',
+        );
 
         // boss reachable from EVERY node (reverse BFS)
         final parents = <int, List<int>>{};
@@ -63,8 +76,11 @@ void main() {
             if (canReachBoss.add(p)) q2.add(p);
           }
         }
-        expect(canReachBoss.length, equals(nodes.length),
-            reason: 'seed $seed dead end exists');
+        expect(
+          canReachBoss.length,
+          equals(nodes.length),
+          reason: 'seed $seed dead end exists',
+        );
 
         // guarantees: >=1 elite, >=1 rest (late), >=1 shop; no adjacent rests
         var elites = 0, lateRests = 0, shops = 0;
@@ -83,8 +99,11 @@ void main() {
         edges.forEach((k, v) {
           if (nodes[k]!['kind'] == 'rest') {
             for (final t in v.cast<int>()) {
-              expect(nodes['$t']!['kind'], isNot(equals('rest')),
-                  reason: 'seed $seed adjacent rests');
+              expect(
+                nodes['$t']!['kind'],
+                isNot(equals('rest')),
+                reason: 'seed $seed adjacent rests',
+              );
             }
           }
         });

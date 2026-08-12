@@ -23,13 +23,13 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 }
 
 void main() {
-  testWidgets('summary announces the achievements the run earned',
-      (tester) async {
+  testWidgets('summary announces the achievements the run earned', (
+    tester,
+  ) async {
     final c = GameController();
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: 11, boons: true);
     await pumpFor(tester, 400);
     var guard = 0;
@@ -38,18 +38,28 @@ void main() {
       if (cmd == null) break;
       c.apply(cmd);
     }
-    expect({'run_won', 'run_lost'}.contains(c.phase), isTrue,
-        reason: 'bot must reach a terminal phase (guard=$guard)');
+    expect(
+      {'run_won', 'run_lost'}.contains(c.phase),
+      isTrue,
+      reason: 'bot must reach a terminal phase (guard=$guard)',
+    );
     await pumpFor(tester, 2500); // outlast the terminal-hold choreography
 
     final panel = find.byKey(const ValueKey('achievements-earned'));
-    expect(panel, findsOneWidget,
-        reason: 'a first run always earns first_delve, so the summary '
-            'must announce it');
     expect(
-        find.descendant(
-            of: panel, matching: find.text(achievements['first_delve']!.name)),
-        findsOneWidget);
+      panel,
+      findsOneWidget,
+      reason:
+          'a first run always earns first_delve, so the summary '
+          'must announce it',
+    );
+    expect(
+      find.descendant(
+        of: panel,
+        matching: find.text(achievements['first_delve']!.name),
+      ),
+      findsOneWidget,
+    );
 
     final pool = find.byKey(const ValueKey('pool-forged-recap'));
     expect(pool, findsOneWidget);
@@ -58,26 +68,26 @@ void main() {
       final count = dice.where((id) => dieDef('$id').size == sides).length;
       expect(
         find.descendant(
-            of: pool, matching: find.byKey(ValueKey('pool-d$sides'))),
+          of: pool,
+          matching: find.byKey(ValueKey('pool-d$sides')),
+        ),
         count > 0 ? findsOneWidget : findsNothing,
       );
       if (count > 0) {
         expect(
-            find.descendant(
-                of: pool, matching: find.text('d$sides ×$count')),
-            findsOneWidget);
+          find.descendant(of: pool, matching: find.text('d$sides ×$count')),
+          findsOneWidget,
+        );
       }
     }
   });
 
-  testWidgets('loss summary also recaps the exact forged pool',
-      (tester) async {
+  testWidgets('loss summary also recaps the exact forged pool', (tester) async {
     final c = GameController();
     c.meta.tutorialSeen = true;
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: GameRoot(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
     c.startRun(character: 'kindler', seed: 3);
     (c.state!['player'] as Map)['dice'] = <String>[
       'd4_lucky',
@@ -93,12 +103,18 @@ void main() {
     final pool = find.byKey(const ValueKey('pool-forged-recap'));
     expect(pool, findsOneWidget);
     for (final sides in [4, 6, 8, 10, 12]) {
-      expect(find.descendant(of: pool, matching: find.text('d$sides ×1')),
-          findsOneWidget);
+      expect(
+        find.descendant(of: pool, matching: find.text('d$sides ×1')),
+        findsOneWidget,
+      );
     }
-    expect(find.descendant(of: pool, matching: find.text('4 SPECIAL')),
-        findsOneWidget);
-    expect(find.descendant(of: pool, matching: find.text('HEARTFORGED')),
-        findsOneWidget);
+    expect(
+      find.descendant(of: pool, matching: find.text('4 SPECIAL')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: pool, matching: find.text('HEARTFORGED')),
+      findsOneWidget,
+    );
   });
 }

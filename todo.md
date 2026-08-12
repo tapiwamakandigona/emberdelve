@@ -28,4 +28,27 @@
 - [x] Add pure identity derivation + weapon evolution.
 - [x] Add “Pool forged this run” terminal recap with exact pool counts.
 - [x] Test every identity/path, short-phone layout, screenshot and perf budget.
-- [~] Full verification complete; commit, PR, CI and merge pending.
+- [x] Full verification, commit, PR, CI and merge.
+
+## Gauntlet — face forge + keystones (iteration 3)
+
+- [x] Write the v7 simulation contract and migration/golden plan.
+- [ ] Independent contract/UX/balance review (multi-agent fan-out attempted;
+      workspace returned out-of-credits, so parent review continues directly).
+- [x] Run-local custom die IDs, v7 state, one-use Temper command, natural-face
+      tracking, and all four runes (Blade, Aegis, Surge, Echo) in the sim.
+- [x] Four keystones live in the sim with a real acquisition point (chooser
+      screen, one pick per run after the first won fight) and a deliberate
+      golden re-anchor recorded old -> new.
+- [x] Rest-node temper sheet, rune marks on dice, and combat feedback for the
+      effects a die's own number cannot show.
+- [ ] Seeded balance sweep across difficulties, v6-autosave migration test,
+      perf probes, signed build-size measurement, then PR.
+- [x] Replace duplicated UI/sim assignment arithmetic with one pure resolver;
+      v6 golden and seeded preview parity remain green.
+- [ ] Implement four first keystones with named events and exact previews.
+- [ ] Add rest forge UX, rune visuals, keystone pick/inspection UX.
+- [ ] Rebalance with seeded autoplay; replay/restore/migration/fuzz gates.
+- [ ] Full presentation/performance/accessibility verification.
+- [ ] Commit, PR, CI, signed build-size measurement; do not release until the
+      mechanics and migration gates are all green.

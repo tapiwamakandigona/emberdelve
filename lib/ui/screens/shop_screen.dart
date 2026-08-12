@@ -12,34 +12,39 @@ class ShopScreen extends StatelessWidget {
     if (shop == null) return const SizedBox.shrink();
     final slots = (shop['slots'] as List).cast<Map>();
     final gold = (c.state!['run'] as Map)['gold'] as int;
-    return Column(children: [
-      _TopBar(c),
-      const SizedBox(height: Space.l),
-      Text('The Ashmonger', style: EmberText.h1),
-      const SizedBox(height: Space.xs),
-      Text('Spend your gold before the descent.', style: EmberText.bodyDim),
-      const SizedBox(height: Space.l),
-      Expanded(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: Space.l),
-          children: [
-            for (var i = 0; i < slots.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: Space.m),
-                child: _slot(slots[i], i + 1, gold),
-              ),
-          ],
+    return Column(
+      children: [
+        _TopBar(c),
+        const SizedBox(height: Space.l),
+        Text('The Ashmonger', style: EmberText.h1),
+        const SizedBox(height: Space.xs),
+        Text('Spend your gold before the descent.', style: EmberText.bodyDim),
+        const SizedBox(height: Space.l),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            children: [
+              for (var i = 0; i < slots.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Space.m),
+                  child: _slot(slots[i], i + 1, gold),
+                ),
+            ],
+          ),
         ),
-      ),
-      Padding(
-        padding: const EdgeInsets.all(Space.l),
-        child: SizedBox(
-          width: double.infinity,
-          child: EmberButton('Leave shop',
-              primary: true, onTap: () => c.apply({'type': 'leave_shop'})),
+        Padding(
+          padding: const EdgeInsets.all(Space.l),
+          child: SizedBox(
+            width: double.infinity,
+            child: EmberButton(
+              'Leave shop',
+              primary: true,
+              onTap: () => c.apply({'type': 'leave_shop'}),
+            ),
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Widget _slot(Map slot, int index, int gold) {
@@ -57,8 +62,12 @@ class ShopScreen extends StatelessWidget {
     } else if (kind == 'relic') {
       title = relicDef(id).name;
       desc = relicDef(id).text;
-      lead = Image.asset(Art.relicIcon(id),
-          width: 44, height: 44, filterQuality: FilterQuality.medium);
+      lead = Image.asset(
+        Art.relicIcon(id),
+        width: 44,
+        height: 44,
+        filterQuality: FilterQuality.medium,
+      );
     } else {
       title = 'Field Rations';
       desc = 'Heal ${slot['amount']} HP';
@@ -67,26 +76,33 @@ class ShopScreen extends StatelessWidget {
     return Opacity(
       opacity: sold ? 0.4 : 1,
       child: Panel(
-        child: Row(children: [
-          SizedBox(width: 64, child: Center(child: lead)),
-          const SizedBox(width: Space.m),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: EmberText.h2),
-              const SizedBox(height: Space.xs),
-              Text(desc, style: EmberText.bodyDim),
-            ]),
-          ),
-          const SizedBox(width: Space.s),
-          sold
-              ? Text('SOLD', style: EmberText.micro)
-              : EmberButton('$price',
-                  // A coin, not an abstract dot (wordiness pass 2026-07-24).
-                  icon: Icons.paid,
-                  onTap: afford
-                      ? () => c.apply({'type': 'buy', 'slot': index})
-                      : null),
-        ]),
+        child: Row(
+          children: [
+            SizedBox(width: 64, child: Center(child: lead)),
+            const SizedBox(width: Space.m),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: EmberText.h2),
+                  const SizedBox(height: Space.xs),
+                  Text(desc, style: EmberText.bodyDim),
+                ],
+              ),
+            ),
+            const SizedBox(width: Space.s),
+            sold
+                ? Text('SOLD', style: EmberText.micro)
+                : EmberButton(
+                    '$price',
+                    // A coin, not an abstract dot (wordiness pass 2026-07-24).
+                    icon: Icons.paid,
+                    onTap: afford
+                        ? () => c.apply({'type': 'buy', 'slot': index})
+                        : null,
+                  ),
+          ],
+        ),
       ),
     );
   }

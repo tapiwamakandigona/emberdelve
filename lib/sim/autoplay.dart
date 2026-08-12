@@ -5,6 +5,7 @@
 import '../data/boons.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
+import 'run_dice.dart';
 import 'sim.dart';
 
 /// A pure function of sim.state() -> next command (or null at terminal). The
@@ -12,12 +13,16 @@ import 'sim.dart';
 /// events, and plays fights greedily (block vs the shown intent, else attack).
 /// v4: it also takes a starting boon, risky-rerolls dead dice (1s), and hunts
 /// exact kills when attacking (docs/m4-sim-contract.md).
-Map<String, Object?>? botCmd(Sim sim,
-    {String? character,
-    int ascension = 0,
-    bool boons = true,
-    String difficulty = 'normal',
-    List<String> mutators = const []}) {
+Map<String, Object?>? botCmd(
+  Sim sim, {
+  bool keystones = true,
+  bool tempers = false,
+  String? character,
+  int ascension = 0,
+  bool boons = true,
+  String difficulty = 'normal',
+  List<String> mutators = const [],
+}) {
   final phase = sim.phase;
   switch (phase) {
     case 'idle':
@@ -75,14 +80,16 @@ Map<String, Object?>? botCmd(Sim sim,
         final threshold = free ? 2 : 1;
         final picks = <int>[
           for (var i = 1; i <= rolled.length; i++)
-            if (rolled[i - 1] <= threshold) i
+            if (rolled[i - 1] <= threshold) i,
         ];
         if (picks.isNotEmpty) return {'type': 'reroll_risky', 'dice': picks};
       }
       final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
       int attackValue(int i) {
-        final mods =
-            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        final mods = resolveRunDie(
+          sim.run,
+          (sim.player['dice'] as List)[i - 1] as String,
+        ).def.mods;
         return rolled[i - 1] +
             (mods['attack_bonus'] as int? ?? 0) +
             (combo != null ? combo[i - 1] : 0);
@@ -93,8 +100,10 @@ Map<String, Object?>? botCmd(Sim sim,
       final lethal = (enemy['hp'] as int) + (enemy['block'] as int);
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] != null) continue;
-        final mods =
-            dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+        final mods = resolveRunDie(
+          sim.run,
+          (sim.player['dice'] as List)[i - 1] as String,
+        ).def.mods;
         if (mods['block_only'] == true) continue;
         if (attackValue(i) == lethal) {
           return {'type': 'assign', 'die': i, 'action': 'attack'};
@@ -102,7 +111,10 @@ Map<String, Object?>? botCmd(Sim sim,
       }
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] == null) {
-          final mods = dieDef((sim.player['dice'] as List)[i - 1] as String).mods;
+          final mods = resolveRunDie(
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
           final intent = sim.enemy!['intent'] as Map;
           var incoming = 0;
           if (intent['kind'] == 'attack' || intent['kind'] == 'attack_block') {
@@ -121,6 +133,25 @@ Map<String, Object?>? botCmd(Sim sim,
         }
       }
       return {'type': 'end_turn'};
+    case 'keystone':
+      // Deterministic preference: the bot plays attack-first, so it ranks the
+      // keystones by how much its own greedy policy can actually use.
+      const ksPrefs = <String>[
+        'ashen_edge',
+        'twin_bellows',
+        'crown_of_twelve',
+        'living_bastion',
+      ];
+      final ks = sim.keystoneOffers!;
+      var ksIdx = 1, ksRank = 1 << 20;
+      for (var i = 0; i < ks.length; i++) {
+        final rank = ksPrefs.indexOf(ks[i]);
+        if (rank >= 0 && rank < ksRank) {
+          ksRank = rank;
+          ksIdx = i + 1;
+        }
+      }
+      return {'type': 'choose_keystone', 'index': keystones ? ksIdx : 0};
     case 'reward':
       // Take the largest-size offer (greedy pool upgrade); index 1..n.
       final offers = sim.offers!;
@@ -136,11 +167,35 @@ Map<String, Object?>? botCmd(Sim sim,
     case 'rest':
       // Forge the first forgeable duplicate-ish die if cheap value, else heal.
       final hp = sim.player['hp'] as int, maxHp = sim.player['max_hp'] as int;
+      // v7 temper policy, OFF by default so the long-lived golden replays keep
+      // their meaning: a bot that suddenly tempers is a different bot. The
+      // balance probes turn it on to measure what the power is worth. Policy:
+      // Blade on the top face of the biggest die — the simplest read of
+      // "more damage", and a floor for what a thinking player gets.
+      if (tempers && (sim.run!['tempers_used'] as int? ?? 0) == 0) {
+        final pool = (sim.player['dice'] as List).cast<String>();
+        var bestIdx = 0, bestSize = 0;
+        for (var i = 0; i < pool.length; i++) {
+          final sides = resolveRunDie(sim.run, pool[i]).def.size;
+          if (sides > bestSize) {
+            bestSize = sides;
+            bestIdx = i;
+          }
+        }
+        if (bestSize > 0) {
+          return {
+            'type': 'temper_face',
+            'die': bestIdx + 1,
+            'face': bestSize,
+            'rune': 'blade',
+          };
+        }
+      }
       if (hp * 4 >= maxHp * 3) {
         // healthy enough: forge the first die that can upgrade
         final pool = (sim.player['dice'] as List).cast<String>();
         for (var i = 0; i < pool.length; i++) {
-          final ft = dieDef(pool[i]).forgeTo;
+          final ft = resolveRunDie(sim.run, pool[i]).def.forgeTo;
           if (ft.isNotEmpty) {
             return {'type': 'forge', 'die': i + 1, 'into': ft.first};
           }
@@ -189,23 +244,31 @@ class RunResult {
   RunResult(this.sim, this.applied, this.invalids);
 }
 
-RunResult playRun(int seed,
-    {String? character,
-    int ascension = 0,
-    bool boons = true,
-    String difficulty = 'normal',
-    List<String> mutators = const [],
-    int? snapAt,
-    int maxCmds = 4000}) {
+RunResult playRun(
+  int seed, {
+  String? character,
+  int ascension = 0,
+  bool boons = true,
+  String difficulty = 'normal',
+  List<String> mutators = const [],
+  int? snapAt,
+  int maxCmds = 4000,
+  bool keystones = true,
+  bool tempers = false,
+}) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
   while (applied < maxCmds) {
-    final cmd = botCmd(sim,
-        character: character,
-        ascension: ascension,
-        boons: boons,
-        difficulty: difficulty,
-        mutators: mutators);
+    final cmd = botCmd(
+      sim,
+      keystones: keystones,
+      tempers: tempers,
+      character: character,
+      ascension: ascension,
+      boons: boons,
+      difficulty: difficulty,
+      mutators: mutators,
+    );
     if (cmd == null) break;
     final evs = sim.apply(cmd);
     applied += 1;
