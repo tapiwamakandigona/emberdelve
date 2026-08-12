@@ -70,6 +70,8 @@ class GameController extends ChangeNotifier {
     'rolled',
     'rolled_max',
     'rolled_face',
+    'surge_used',
+    'echo_pending',
     'assigned',
     'rerolls_left',
     'risky_used',
@@ -144,6 +146,7 @@ class GameController extends ChangeNotifier {
   // a win is by definition the boss that just fell.
   String? _lastEnemyId;
   bool _restedThisRun = false;
+
   /// Achievements earned by the run that just ended and not yet announced.
   /// The summary screen renders it in the same breath as the run result;
   /// [startRun] clears it. Nothing else may write it.
@@ -312,7 +315,8 @@ class GameController extends ChangeNotifier {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
     // harness pins it via [debugNextRunSeed] (one-shot override).
-    final s = seed ??
+    final s =
+        seed ??
         debugNextRunSeed ??
         DateTime.now().millisecondsSinceEpoch & 0x7fffffff;
     debugNextRunSeed = null;
@@ -335,10 +339,12 @@ class GameController extends ChangeNotifier {
     // (v0.4.0, spec R8): UI locks are the polite layer; this clamp is the
     // guarantee. Shared runs are pinned to normal above.
     final shared = daily != null || mutators.isNotEmpty;
-    final wanted =
-        shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
-    final allowed =
-        clampRunParams(meta, difficulty: wanted, ascension: ascension);
+    final wanted = shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
+    final allowed = clampRunParams(
+      meta,
+      difficulty: wanted,
+      ascension: ascension,
+    );
     final diff = allowed.difficulty;
     apply({
       'type': 'start_run',
@@ -794,11 +800,13 @@ class GameController extends ChangeNotifier {
     // silent no-ops unless the player connected Play Games in Settings
     // (opt-in, §Ethics) — and never block or fail the bank itself.
     unawaited(PlayGamesService.instance.pushSnapshot(meta));
-    unawaited(PlayGamesService.instance.submitRunScore(
-      isDaily: dailyDate != null,
-      isWeekly: weeklyIndex != null,
-      embersBanked: banked,
-    ));
+    unawaited(
+      PlayGamesService.instance.submitRunScore(
+        isDaily: dailyDate != null,
+        isWeekly: weeklyIndex != null,
+        embersBanked: banked,
+      ),
+    );
     _clearSave();
   }
 

@@ -13,12 +13,14 @@ import 'sim.dart';
 /// events, and plays fights greedily (block vs the shown intent, else attack).
 /// v4: it also takes a starting boon, risky-rerolls dead dice (1s), and hunts
 /// exact kills when attacking (docs/m4-sim-contract.md).
-Map<String, Object?>? botCmd(Sim sim,
-    {String? character,
-    int ascension = 0,
-    bool boons = true,
-    String difficulty = 'normal',
-    List<String> mutators = const []}) {
+Map<String, Object?>? botCmd(
+  Sim sim, {
+  String? character,
+  int ascension = 0,
+  bool boons = true,
+  String difficulty = 'normal',
+  List<String> mutators = const [],
+}) {
   final phase = sim.phase;
   switch (phase) {
     case 'idle':
@@ -76,16 +78,16 @@ Map<String, Object?>? botCmd(Sim sim,
         final threshold = free ? 2 : 1;
         final picks = <int>[
           for (var i = 1; i <= rolled.length; i++)
-            if (rolled[i - 1] <= threshold) i
+            if (rolled[i - 1] <= threshold) i,
         ];
         if (picks.isNotEmpty) return {'type': 'reroll_risky', 'dice': picks};
       }
       final combo = (sim.player['combo_bonus'] as List?)?.cast<int>();
       int attackValue(int i) {
         final mods = resolveRunDie(
-                sim.run, (sim.player['dice'] as List)[i - 1] as String)
-            .def
-            .mods;
+          sim.run,
+          (sim.player['dice'] as List)[i - 1] as String,
+        ).def.mods;
         return rolled[i - 1] +
             (mods['attack_bonus'] as int? ?? 0) +
             (combo != null ? combo[i - 1] : 0);
@@ -97,9 +99,9 @@ Map<String, Object?>? botCmd(Sim sim,
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] != null) continue;
         final mods = resolveRunDie(
-                sim.run, (sim.player['dice'] as List)[i - 1] as String)
-            .def
-            .mods;
+          sim.run,
+          (sim.player['dice'] as List)[i - 1] as String,
+        ).def.mods;
         if (mods['block_only'] == true) continue;
         if (attackValue(i) == lethal) {
           return {'type': 'assign', 'die': i, 'action': 'attack'};
@@ -108,9 +110,9 @@ Map<String, Object?>? botCmd(Sim sim,
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] == null) {
           final mods = resolveRunDie(
-                  sim.run, (sim.player['dice'] as List)[i - 1] as String)
-              .def
-              .mods;
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
           final intent = sim.enemy!['intent'] as Map;
           var incoming = 0;
           if (intent['kind'] == 'attack' || intent['kind'] == 'attack_block') {
@@ -197,23 +199,27 @@ class RunResult {
   RunResult(this.sim, this.applied, this.invalids);
 }
 
-RunResult playRun(int seed,
-    {String? character,
-    int ascension = 0,
-    bool boons = true,
-    String difficulty = 'normal',
-    List<String> mutators = const [],
-    int? snapAt,
-    int maxCmds = 4000}) {
+RunResult playRun(
+  int seed, {
+  String? character,
+  int ascension = 0,
+  bool boons = true,
+  String difficulty = 'normal',
+  List<String> mutators = const [],
+  int? snapAt,
+  int maxCmds = 4000,
+}) {
   var sim = Sim(seed);
   var applied = 0, invalids = 0;
   while (applied < maxCmds) {
-    final cmd = botCmd(sim,
-        character: character,
-        ascension: ascension,
-        boons: boons,
-        difficulty: difficulty,
-        mutators: mutators);
+    final cmd = botCmd(
+      sim,
+      character: character,
+      ascension: ascension,
+      boons: boons,
+      difficulty: difficulty,
+      mutators: mutators,
+    );
     if (cmd == null) break;
     final evs = sim.apply(cmd);
     applied += 1;
