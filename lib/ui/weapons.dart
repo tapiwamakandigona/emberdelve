@@ -19,6 +19,7 @@
 // (same trick as fx.dart) so nothing allocates per frame.
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'build_identity.dart';
 import 'theme.dart';
 
 /// Choreography phase for the held weapon. Drive it straight from the combat
@@ -101,12 +102,17 @@ class WeaponView extends StatefulWidget {
   /// accent edge brightens, a heat halo grows, and sparks rise off the
   /// blade, making the die -> weapon causality visible before the swing.
   final double charge;
+
+  /// The current pool's dominant build language. Pure presentation: this is
+  /// derived from die IDs and never enters the simulation or save.
+  final RunBuildIdentity? identity;
   const WeaponView(
     this.characterId, {
     super.key,
     required this.height,
     this.phase = WeaponPhase.idle,
     this.charge = 0.0,
+    this.identity,
   });
 
   @override
@@ -233,6 +239,7 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
               smearing: () => _smearing && _move.isAnimating,
               smearFromOf: () => _from,
               charge: charge,
+              identity: widget.identity,
               repaint: _paintClock,
             ),
           ),
@@ -251,6 +258,7 @@ class _WeaponPainter extends CustomPainter {
   final bool Function() smearing;
   final double Function() smearFromOf;
   final double charge; // 0..1 heat from the selected die's pips
+  final RunBuildIdentity? identity;
 
   /// Live values, read at paint time (see [_paintClock]).
   double get angle => angleOf() + math.sin(sway.value * math.pi * 2) * swayAmp;
@@ -270,6 +278,7 @@ class _WeaponPainter extends CustomPainter {
     required this.smearing,
     required this.smearFromOf,
     this.charge = 0.0,
+    this.identity,
     required super.repaint,
   });
 
@@ -278,10 +287,14 @@ class _WeaponPainter extends CustomPainter {
     return v - v.floorToDouble();
   }
 
+  Color get _accent => identity?.color ?? def.accent;
+
   @override
   void paint(Canvas canvas, Size size) {
     final grip = Offset(size.width * 0.5, size.height * 0.66);
-    final reach = size.height * def.reach;
+    final tier = identity?.dominantTier ?? 1;
+    final reach = size.height * def.reach * (1.0 + (tier - 1) * 0.035);
+    final accent = _accent;
 
     // Smear trail: a fading arc sector swept behind the blade (GDQuest's
     // "smear" — makes the attack read faster than it is).
@@ -298,8 +311,8 @@ class _WeaponPainter extends CustomPainter {
           endAngle: math.pi * 2,
           transform: GradientRotation(from - math.pi / 2),
           colors: [
-            def.accent.withValues(alpha: 0.0),
-            def.accent.withValues(alpha: 0.55),
+            accent.withValues(alpha: 0.0),
+            accent.withValues(alpha: 0.55),
           ],
           stops: const [0.0, 1.0],
         ).createShader(rect);
@@ -342,9 +355,9 @@ class _WeaponPainter extends CustomPainter {
           BlurStyle.normal,
           reach * (0.16 + 0.10 * charge),
         );
-      _p.color = def.accent.withValues(alpha: 0.05 + 0.11 * charge);
+      _p.color = accent.withValues(alpha: 0.05 + 0.11 * charge);
       canvas.drawCircle(tip, reach * (0.16 + 0.18 * charge), _p);
-      _p.color = def.accent.withValues(alpha: 0.05 + 0.10 * charge);
+      _p.color = accent.withValues(alpha: 0.05 + 0.10 * charge);
       canvas.drawCircle(tip, reach * (0.08 + 0.10 * charge), _p);
       _p.maskFilter = null;
       final sparkCount = (2 + charge * 5).round();
@@ -353,7 +366,7 @@ class _WeaponPainter extends CustomPainter {
         final x = (_h(i, 3) - 0.5) * reach * 0.30;
         final y = -reach * (0.45 + _h(i, 4) * 0.5) - f * reach * 0.22;
         _p.color = Color.lerp(
-          def.accent,
+          accent,
           Colors.white,
           _h(i, 5) * 0.5,
         )!.withValues(alpha: (1.0 - f) * (0.35 + 0.5 * charge));
@@ -374,7 +387,72 @@ class _WeaponPainter extends CustomPainter {
       default:
         _sword(canvas, reach);
     }
+    _buildMark(canvas, reach, accent);
     canvas.restore();
+  }
+
+  /// One extra silhouette/detail per pool path. This is intentionally small:
+  /// the signature weapon remains recognisable while the run's build becomes
+  /// visible at a glance.
+  void _buildMark(Canvas canvas, double reach, Color accent) {
+    final path = identity?.path ?? BuildPath.ember;
+    final tier = identity?.dominantTier ?? 1;
+    _p
+      ..shader = null
+      ..maskFilter = null
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = reach * (0.022 + tier * 0.006)
+      ..color = accent.withValues(alpha: 0.74 + tier * 0.07);
+    switch (path) {
+      case BuildPath.ember:
+        // Forked lick of flame along the upper third.
+        final flame = Path()
+          ..moveTo(0, -reach * 0.52)
+          ..quadraticBezierTo(reach * 0.10, -reach * 0.66, 0, -reach * 0.80)
+          ..quadraticBezierTo(
+            -reach * 0.08,
+            -reach * 0.70,
+            -reach * 0.03,
+            -reach * 0.61,
+          );
+        canvas.drawPath(flame, _p);
+        break;
+      case BuildPath.blade:
+        // A hooked second edge makes the profile visibly more aggressive.
+        final hook = Path()
+          ..moveTo(0, -reach * 0.46)
+          ..lineTo(reach * 0.18, -reach * 0.68)
+          ..lineTo(reach * 0.07, -reach * 0.88);
+        canvas.drawPath(hook, _p);
+        break;
+      case BuildPath.aegis:
+        // Compact guard plate around the grip.
+        _p.style = PaintingStyle.fill;
+        final plate = Path()
+          ..moveTo(-reach * 0.17, -reach * 0.08)
+          ..lineTo(0, -reach * 0.18)
+          ..lineTo(reach * 0.17, -reach * 0.08)
+          ..lineTo(reach * 0.11, reach * 0.06)
+          ..lineTo(0, reach * 0.12)
+          ..lineTo(-reach * 0.11, reach * 0.06)
+          ..close();
+        _p.color = accent.withValues(alpha: 0.58);
+        canvas.drawPath(plate, _p);
+        break;
+      case BuildPath.heart:
+        // Three steady forge-runes along the spine.
+        _p.style = PaintingStyle.fill;
+        for (final y in [0.38, 0.56, 0.74]) {
+          canvas.drawCircle(
+            Offset(0, -reach * y),
+            reach * (0.018 + tier * 0.003),
+            _p,
+          );
+        }
+        break;
+    }
+    _p.style = PaintingStyle.fill;
   }
 
   void _sword(Canvas canvas, double reach) {
@@ -428,7 +506,7 @@ class _WeaponPainter extends CustomPainter {
       ..strokeWidth = w * 0.34
       ..strokeCap = StrokeCap.round
       ..color = Color.lerp(
-        def.accent,
+        _accent,
         Colors.white,
         charge * 0.6,
       )!.withValues(alpha: 0.85 + 0.15 * charge);
@@ -501,7 +579,7 @@ class _WeaponPainter extends CustomPainter {
       ),
       _p,
     );
-    _p.color = def.accent.withValues(alpha: 0.9);
+    _p.color = _accent.withValues(alpha: 0.9);
     canvas.drawCircle(Offset(-w * 1.6, -reach * 0.82), w * 0.3, _p);
     canvas.drawCircle(Offset(w * 1.6, -reach * 0.82), w * 0.3, _p);
   }
@@ -559,7 +637,7 @@ class _WeaponPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = w * 0.3
       ..strokeCap = StrokeCap.round
-      ..color = def.accent.withValues(alpha: 0.9);
+      ..color = _accent.withValues(alpha: 0.9);
     final glint = Path()
       ..moveTo(w * 0.05, -w * 1.2)
       ..quadraticBezierTo(w * 1.35, -reach * 0.5, w * 0.32, -reach * 0.94);
@@ -599,12 +677,12 @@ class _WeaponPainter extends CustomPainter {
     );
     // White-hot brand head: glowing ring + core.
     final tip = Offset(0, -reach * 0.94);
-    _p.color = def.accent.withValues(alpha: 0.35 + 0.3 * charge);
+    _p.color = _accent.withValues(alpha: 0.35 + 0.3 * charge);
     canvas.drawCircle(tip, w * 3.1, _p);
     _p
       ..style = PaintingStyle.stroke
       ..strokeWidth = w * 0.9
-      ..color = def.accent;
+      ..color = _accent;
     canvas.drawCircle(tip, w * 1.9, _p);
     _p
       ..style = PaintingStyle.fill
@@ -618,6 +696,9 @@ class _WeaponPainter extends CustomPainter {
       // inputs are compared here.
       old.def != def ||
       old.charge != charge ||
+      old.identity?.path != identity?.path ||
+      old.identity?.dominantTier != identity?.dominantTier ||
+      old._accent != _accent ||
       old.swayAmp != swayAmp ||
       old.sway != sway ||
       old.move != move;
