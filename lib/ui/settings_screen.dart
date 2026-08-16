@@ -114,6 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(width: Space.m),
                       Expanded(child: Text('Haptics', style: EmberText.body)),
                       _EmberToggle(
+                        semanticLabel: 'Haptics',
                         value: _s.haptics,
                         onChanged: (v) {
                           _s.haptics = v;
@@ -230,6 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Text('Gameplay analytics', style: EmberText.body),
                   ),
                   _EmberToggle(
+                    semanticLabel: 'Gameplay analytics',
                     value: TelemetryService.instance.analyticsConsented,
                     onChanged: (v) {
                       TelemetryService.instance.logEvent('settings_changed', {
@@ -272,6 +274,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         _EmberToggle(
+                          semanticLabel: 'Daily Delve reminder',
                           key: const ValueKey('daily-reminder'),
                           value: rem.enabled,
                           onChanged: (v) async {
@@ -508,7 +511,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icon(icon, size: 20, color: EmberColors.textDim),
             const SizedBox(width: Space.m),
             Expanded(child: Text(label, style: EmberText.body)),
-            _EmberToggle(value: !muted, onChanged: onMute),
+            _EmberToggle(
+              semanticLabel: label,
+              value: !muted,
+              onChanged: onMute,
+            ),
           ],
         ),
         SliderTheme(
@@ -591,45 +598,60 @@ class _EmberThumb extends SliderComponentShape {
 class _EmberToggle extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
-  const _EmberToggle({required this.value, required this.onChanged, super.key});
+
+  /// What TalkBack speaks for this coal. The drawn toggle has no text of its
+  /// own, so without this a screen reader announces a bare "double tap to
+  /// activate" (caught by test/semantics_probe_test.dart, v0.19.0).
+  final String semanticLabel;
+  const _EmberToggle({
+    required this.value,
+    required this.onChanged,
+    required this.semanticLabel,
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        width: 46,
-        height: 26,
-        padding: const EdgeInsets.all(3),
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: const Color(0xFF171021),
-          borderRadius: BorderRadius.circular(13),
-          border: Border.all(
-            color: value ? EmberColors.ember : EmberColors.line,
-            width: 1.4,
-          ),
-        ),
+    return Semantics(
+      label: semanticLabel,
+      toggled: value,
+      container: true,
+      child: GestureDetector(
+        onTap: () => onChanged(!value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          width: 18,
-          height: 18,
+          width: 46,
+          height: 26,
+          padding: const EdgeInsets.all(3),
+          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                value ? const Color(0xFFFFD98A) : EmberColors.textDisabled,
-                value ? EmberColors.ember : const Color(0xFF3A3148),
-              ],
+            color: const Color(0xFF171021),
+            borderRadius: BorderRadius.circular(13),
+            border: Border.all(
+              color: value ? EmberColors.ember : EmberColors.line,
+              width: 1.4,
             ),
-            boxShadow: value
-                ? [
-                    BoxShadow(
-                      color: EmberColors.ember.withValues(alpha: 0.6),
-                      blurRadius: 8,
-                    ),
-                  ]
-                : null,
+          ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  value ? const Color(0xFFFFD98A) : EmberColors.textDisabled,
+                  value ? EmberColors.ember : const Color(0xFF3A3148),
+                ],
+              ),
+              boxShadow: value
+                  ? [
+                      BoxShadow(
+                        color: EmberColors.ember.withValues(alpha: 0.6),
+                        blurRadius: 8,
+                      ),
+                    ]
+                  : null,
+            ),
           ),
         ),
       ),

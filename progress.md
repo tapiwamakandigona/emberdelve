@@ -1496,3 +1496,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Measured re-encodes: q3 11.0 MB / q2 9.4 MB / q1 7.9 MB. Plan: q2 re-encode (saves ~4.8 MB),
   add --split-debug-info to CI builds, evaluate Inter subsetting (856K). sfx_headroom.py only
   gates sfx/, music re-encode out of its scope. Spectrogram A/B in /work/temp/v0180/ pending.
+
+## 2026-08-16 — v0.18.0 "The Trimmed Wick" PUBLISHED (GitHub-only mode)
+
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.18.0
+- Payload diet: music Vorbis q2 re-encode (loop seams duration_ts sample-exact;
+  spectrogram A/B verified, lowpass ~16.5 kHz disclosed in notes) +
+  --split-debug-info on all CI builds (symbols kept as 90-day CI artifact).
+- arm64 34.9→30.8 MB; universal 68.8→64.4; AAB 67.7→63.3. Codes 44/1044/2044/4044,
+  all signer pins verified per-APK (non-vacuous: 4 lines printed) + AAB pkcs7 pin.
+- Rejected & documented: Inter subsetting (free-text seed field → tofu risk),
+  --obfuscate, q1 audio. Design: docs/improvements/v0.18.0-trimmed-wick-design.md.
+- v0.19.0 "The Spoken Flame" (TalkBack pass) STARTED: new gate
+  test/semantics_probe_test.dart (tappable ⇒ spoken label, with vacuity guard —
+  guard immediately caught a vacuous first draft reading the wrong semantics
+  owner). Fixed: map medallions now speak kind+floor+reachability; _EmberToggle
+  speaks its row label + toggled state. Probe + overflow suite green.
