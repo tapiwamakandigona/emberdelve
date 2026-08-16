@@ -1419,3 +1419,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Controller: pendingRankUp (before/after rankFor around _bankRun counters), cleared in startRun. Ledger header panel key 'rank-line'; summary one-line key 'rank-up-line' (withArticle fixes 'a Emberwright').
 - Tests: rank_test.dart 8 (boundaries via wins*3+met%3 composition; merge monotonicity = the derived-state assert), rank_ui_test.dart 3 (seed 11 = deterministic autoplay WIN). Suite 392/392; analyze clean; overflow probe green; plates tool/rank_visual_test.dart reviewed (320x568@1.3x wraps cleanly).
 - Version 0.13.0+39; notes docs/releases/v0.13.0.md. No sim contact, no goldens moved.
+
+## 2026-08-16 ~12:50 GMT — v0.13.0 "The Delver's Rank" PUBLISHED
+- CI run 31944441008 completed success on tag v0.13.0.
+- Signer pin verified on BOTH artifacts: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d; versionName 0.13.0, versionCode 39.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.13.0
+  - emberdelve-v0.13.0.apk sha256 b358c29bf695888b2ff243e6bdc5e4c88bd91df2c2ae55492e3fb7cd59a93a5a
+  - emberdelve-v0.13.0.aab sha256 1dc3a2add752d4001d52c521d7d30a4092955b3dc7413ceacb52607981494ef0
+- Checksums appended to docs/releases/v0.13.0.md; v0.14.0 "Lighter Lantern" design doc committed.
+- Next: v0.14.0 per docs/improvements/v0.14.0-lighter-lantern-design.md (CI split-per-abi; zero app-code change).
