@@ -80,13 +80,13 @@ jobs:
             printf 'storeFile=%s\n'     "$KS_FILE"
           } > android/key.properties
       - name: Build release APK (universal fallback)
-        run: flutter build apk --release
+        run: flutter build apk --release --split-debug-info=build/symbols
       - name: Build release APKs (split per ABI)
         # A phone uses exactly one ABI; the universal APK carries three.
         # Per-ABI APKs are the recommended sideload downloads (~25 MB vs ~72 MB).
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
       - name: Build release AAB
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --split-debug-info=build/symbols
       - name: Verify APK signing certificates (must be the permanent upload key)
         run: |
           set -euo pipefail
@@ -137,3 +137,10 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 30
+      - name: Upload debug symbols (for crash symbolication; not shipped)
+        uses: actions/upload-artifact@v4
+        with:
+          name: emberdelve-debug-symbols
+          path: build/symbols
+          if-no-files-found: error
+          retention-days: 90

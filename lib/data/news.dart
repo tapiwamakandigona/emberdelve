@@ -23,10 +23,23 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.17.0';
+const String currentAppVersion = '0.18.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.18.0',
+    title: 'The Trimmed Wick',
+    lines: [
+      'The download just lost weight: the arm64 install is about 5 MB '
+          'smaller, with not one thing removed from the game.',
+      'We re-encoded the four music loops at a leaner quality tuned for '
+          'phones — loop points are sample-exact, so nothing skips.',
+      'The engine also stopped packing debug symbols it never needed. '
+          'Same game, same saves, lighter lantern to carry.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.17.0',
     title: 'The Even Scales',
