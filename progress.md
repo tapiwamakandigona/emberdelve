@@ -1428,3 +1428,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   - emberdelve-v0.13.0.aab sha256 1dc3a2add752d4001d52c521d7d30a4092955b3dc7413ceacb52607981494ef0
 - Checksums appended to docs/releases/v0.13.0.md; v0.14.0 "Lighter Lantern" design doc committed.
 - Next: v0.14.0 per docs/improvements/v0.14.0-lighter-lantern-design.md (CI split-per-abi; zero app-code change).
+
+## 2026-08-16 ~13:40 GMT — v0.14.0 "The Lighter Lantern" PUBLISHED
+- CI run 31945111172 completed success on tag v0.14.0.
+- Signer pin verified on ALL FIVE artifacts (4 APKs via androguard loop + AAB via pkcs7): 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d.
+- Split versionCodes confirmed ABI-offset (Flutter scheme): armeabi-v7a 1040, arm64-v8a 2040, x86_64 4040; universal APK + AAB keep plain 40.
+- Measured sizes: arm64 34.9 MB / v7a 32.5 MB / x86_64 36.3 MB vs universal 68.8 MB (arm64 = 49% smaller; remaining weight is shared assets, not native code).
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.14.0 (5 assets: 3 split APKs, universal APK, AAB). Full sha256 table appended to docs/releases/v0.14.0.md.
+- LESSON: design-doc estimate said "~25 MB" per split — actual 33-37 MB because v0.12.0's per-ABI numbers measured NATIVE LIB payload only, not full APK. Notes ship measured numbers, never estimates.
+- Next: v0.15.0 "The Hearthside Post" per docs/improvements/v0.15.0-hearthside-post-design.md (implementation already in progress during CI wait).
