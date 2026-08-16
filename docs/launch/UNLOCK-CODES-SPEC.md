@@ -1,6 +1,18 @@
 # Offline signed unlock codes — spec (proposal, v1)
 
-Status: PROPOSED. Tapiwa decides; build agent implements the app side.
+Status: PROPOSED — but ops side is READY. Keypair generated 2026-08-16; the
+signing script + private key live outside any repo on the marketing side.
+Tapiwa decides; build agent implements the app side.
+
+**Production public key (hex, Ed25519 raw, embed exactly this):**
+`38f5e51148855c5690fd5824080e66cac2ac70b6c8ebf1382e26f38f25929aad`
+
+App-side acceptance test: the code below must verify against that key, and
+any single-byte change to payload or signature must fail.
+`EMBR1.eyJkIjoiMjAyNi0wOC0xNiIsIm4iOiJiZDFiNWVlYSIsInAiOiJlbWJlcl9mb3JnZV91bmxvY2sifQ.1__y7C4NuXeHfsKEe6uw7H6tE9WfkbNmpE71W-hZ5n1FsAfT2rl0VY1Lhy64TcfOyLYoyB75-brplfRXK2uiAg`
+(This test code is public and should also be added to a redeemed-nonce
+blocklist at build time — `n: bd1b5eea` — so it can't be used as a free
+unlock.)
 Solves the flagged gap in MARKETING-SYNC.md: GitHub/sideload users have no
 way to buy the Ember Forge ($3.99 is Play-billing-only).
 
@@ -41,7 +53,7 @@ way to buy the Ember Forge ($3.99 is Play-billing-only).
 2. On payment, run `sign_unlock_code.py` (reference below) → email the code.
 3. Log sale (date, nonce, email) in a private ledger — never in a repo.
 
-## Reference implementation (ops side, Python + PyNaCl)
+## Reference implementation (ops side — already built, shown for review)
 
 ```python
 # keygen (run ONCE; store private key in a 600-perm file OUTSIDE any repo)
