@@ -187,6 +187,21 @@ class SummaryScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: Space.s),
                         ],
+                        // Today's Trial chip (v0.9.0): shown ONLY when a
+                        // goal-day daily met its objective — the bonus is a
+                        // banked fact by the time this screen exists. A
+                        // missed goal renders nothing at all (§Ethics).
+                        if (c.dailyTrialBonus > 0) ...[
+                          Text(
+                            'Trial met ✦ +${c.dailyTrialBonus} embers',
+                            key: const ValueKey('trial-met-chip'),
+                            textAlign: TextAlign.center,
+                            style: EmberText.micro.copyWith(
+                              color: EmberColors.gold,
+                            ),
+                          ),
+                          const SizedBox(height: Space.s),
+                        ],
                         // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
                         // into 'Delve a seed' on the title to replay this exact delve.
                         GestureDetector(

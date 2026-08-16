@@ -1,0 +1,125 @@
+// data/trials.dart — Today's Trials catalog (v0.9.0). CONTENT AS DATA.
+//
+// A trial is the ONE declared rule a calendar date carries on top of the
+// Daily Delve seed (game/trials.dart picks it deterministically from the
+// date). Two kinds, and every entry is exactly one of them:
+//
+//  - MUTATOR DAY: `mutators` is non-empty and names existing, sim-known
+//    mutator ids (data/mutators.dart) applied to the daily run via the
+//    existing cmd['mutators'] seam. No goal, no bonus.
+//  - GOAL DAY: vanilla rules plus a declared bonus objective (`goalId` +
+//    `goalParam`, judged by game/trials.dart as a pure function over the
+//    final run snapshot and the RunTrace). Met, it pays `emberBonus`
+//    embers through the normal banking path. Missed, it costs nothing and
+//    says nothing.
+//
+// Ethics (spec §Ethics, same charter as the Daily and Weekly Delves): a
+// trial is a shared rule, NOT a streak treadmill. Nothing expires, nothing
+// is punished, a missed goal is silent. Blurbs state the rule and stop —
+// the banned-words sweep in test/trials_test.dart holds them to it.
+//
+// SEALED-SIM CONTRACT: the sim never learns about trials. Mutator days
+// reuse ids the sim already knows; goal days are pure observation.
+
+class TrialDef {
+  final String id;
+  final String name;
+  final String blurb;
+
+  /// Mutator ids applied to the daily run (mutator days). Empty on goal days.
+  final List<String> mutators;
+
+  /// Goal predicate id judged by game/trials.dart (goal days). '' on
+  /// mutator days. Unknown ids evaluate as "no goal" (forward-compatible:
+  /// an old build handed a future trial simply pays nothing).
+  final String goalId;
+  final int goalParam;
+
+  /// Embers paid when the goal is met (goal days only).
+  final int emberBonus;
+
+  const TrialDef(
+    this.id,
+    this.name,
+    this.blurb, {
+    this.mutators = const [],
+    this.goalId = '',
+    this.goalParam = 0,
+    this.emberBonus = 0,
+  });
+}
+
+/// Deterministic authoring order — the date picker indexes into this, so a
+/// reorder reshuffles which date gets which trial. Append, don't reorder.
+/// Seven entries against three weekly mutators keeps the two rotations from
+/// locking into step.
+const List<String> trialsOrder = [
+  'flint_day',
+  'full_purse',
+  'elite_day',
+  'warpath',
+  'lean_day',
+  'light_step',
+  'ember_hoard',
+];
+
+const Map<String, TrialDef> trials = {
+  // Mutator days — the daily plays under one declared modifier.
+  'flint_day': TrialDef(
+    'flint_day',
+    'Flint Day',
+    'Every die rolls as a d4 in the shared delve.',
+    mutators: ['all_d4'],
+  ),
+  'elite_day': TrialDef(
+    'elite_day',
+    'Elite Day',
+    'Every regular fight is an elite. Harder road, richer loot.',
+    mutators: ['elites_only'],
+  ),
+  'lean_day': TrialDef(
+    'lean_day',
+    'Lean Day',
+    'No shops on the map. What you find is all you get.',
+    mutators: ['no_shops'],
+  ),
+  // Goal days — vanilla rules plus one declared bonus objective.
+  'full_purse': TrialDef(
+    'full_purse',
+    'Full Purse',
+    'End the delve holding 40 gold or more.',
+    goalId: 'gold_at_least',
+    goalParam: 40,
+    emberBonus: 15,
+  ),
+  'warpath': TrialDef(
+    'warpath',
+    'Warpath',
+    'Win four or more fights.',
+    goalId: 'fights_at_least',
+    goalParam: 4,
+    emberBonus: 15,
+  ),
+  'light_step': TrialDef(
+    'light_step',
+    'Light Step',
+    'Walk three or more floors without losing a point of health.',
+    goalId: 'clean_floors_at_least',
+    goalParam: 3,
+    emberBonus: 20,
+  ),
+  'ember_hoard': TrialDef(
+    'ember_hoard',
+    'Ember Hoard',
+    'Gather 60 or more embers in the delve.',
+    goalId: 'embers_at_least',
+    goalParam: 60,
+    emberBonus: 15,
+  ),
+};
+
+TrialDef trialDef(String id) {
+  final def = trials[id];
+  if (def == null) throw ArgumentError('unknown trial id: $id');
+  return def;
+}
