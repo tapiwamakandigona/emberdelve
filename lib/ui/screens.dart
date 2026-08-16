@@ -26,6 +26,7 @@ import '../game/trials.dart';
 import '../game/weekly.dart';
 import '../meta/forge.dart';
 import '../meta/play_games_service.dart';
+import '../meta/update_service.dart';
 import '../sim/assignment.dart';
 import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
