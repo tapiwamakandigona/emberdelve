@@ -37,8 +37,8 @@ class _CharacterScreenState extends State<CharacterScreen> {
             Text('ASCENSION', style: EmberText.micro),
             const SizedBox(height: Space.s),
             Text(
-              'Higher rungs make every enemy hit harder. Unlock the next by '
-              'winning at the current one.',
+              'Every rung makes enemies tougher; higher tiers hit harder too. '
+              'Unlock the next rung by winning at the current one.',
               style: EmberText.bodyDim,
             ),
             const SizedBox(height: Space.s),

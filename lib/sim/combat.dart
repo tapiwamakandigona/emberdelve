@@ -83,6 +83,30 @@ int hardAttackBonus(int layer) => layer <= 3 ? 1 : (layer <= 6 ? 2 : 3);
 double hardHpScalar(int layer) =>
     layer <= 3 ? 1.10 : (layer <= 6 ? 1.25 : 1.40);
 
+/// Ascension layer ramp (v0.20.0 "The Living Ladder"): replaces the flat
+/// +rung attack bonus, which made the ladder a bouncer that dead-ends —
+/// measured 0.0% bot win at A12+ for ALL characters with median loss floor
+/// 3 at every rung (tool/ascension_sweep_probe.dart, 100 seeds x char x
+/// rung, hard). Rung N+1 unlocks only by WINNING rung N, so a 0% band
+/// makes "Reach ascension 20" a promise the math can't keep.
+/// Same shape as hard's v0.3.3 staircase: small early, real bite late.
+///   layers <= 3: ceil(rung/7)   (A20 => +3 at the door)
+///   layers 4-6:  ceil(rung/4)   (A20 => +5 mid)
+///   layers 7+/boss: ceil(rung/3) (A20 => +7 late)
+/// Deterministic pure function of (rung, layer); rung 0 is zero everywhere,
+/// so normal/A0 stays byte-identical (golden anchor untouched).
+int ascensionAttackBonus(int rung, int layer) {
+  if (rung <= 0) return 0;
+  final d = layer <= 3 ? 7 : (layer <= 6 ? 4 : 3);
+  return (rung + d - 1) ~/ d;
+}
+
+/// Ascension enemy-HP scalar: +1% per rung (A20 => x1.20), all layers.
+/// The attack ramp above only steps at divisor boundaries; this term makes
+/// EVERY rung change the fight, keeping the ladder's "stacked challenge"
+/// promise literal. Rung 0 => x1.0 (golden anchor untouched).
+double ascensionHpScalar(int rung) => rung <= 0 ? 1.0 : 1.0 + 0.01 * rung;
+
 /// Easy-mode layer ramp (v0.3.10): mirrors hard's staircase in the other
 /// direction. The old flat -2 left easy's first REGULAR fight nearly as
 /// lethal as normal's whenever the route skipped layer 2 (rest/shop/event
@@ -109,7 +133,11 @@ void combatBegin(
   int layer = 99,
 }) {
   final def = enemyDef(enemyId);
-  final ascAmount = (sim.run?['ascension'] as int? ?? 0);
+  // v0.20.0: layer-scaled ramp, not the flat +rung (see ascensionAttackBonus).
+  final ascAmount = ascensionAttackBonus(
+    sim.run?['ascension'] as int? ?? 0,
+    layer,
+  );
   // Difficulty (v0.3.2): deterministic flat/scalar adjustments, no RNG, so
   // determinism and replays are untouched. 'normal' is byte-identical to the
   // pre-difficulty sim (golden anchor). Tuned by measurement (bin/autoplay):
@@ -135,6 +163,10 @@ void combatBegin(
   var hp = def.hp > hpCap ? hpCap : def.hp;
   if (difficulty == 'easy') hp = (hp * easyHpScalar(layer)).round();
   if (difficulty == 'hard') hp = (hp * hardHpScalar(layer)).round();
+  // v0.20.0: ascension HP term applies after the difficulty scalar so every
+  // rung changes the fight (the attack ramp only steps at tier boundaries).
+  final ascRung = sim.run?['ascension'] as int? ?? 0;
+  if (ascRung > 0) hp = (hp * ascensionHpScalar(ascRung)).round();
   if (hp < 1) hp = 1;
   int shaved(int amount) {
     final v = amount - mercy;

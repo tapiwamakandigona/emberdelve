@@ -23,10 +23,26 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.19.0';
+const String currentAppVersion = '0.20.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.20.0',
+    title: 'The Living Ladder',
+    lines: [
+      'The Ascension ladder has been rebuilt. The old math quietly made '
+          'the top rungs unwinnable - we measured it, and no build could '
+          'climb past rung 12. That broke a promise, so we fixed the math.',
+      'Rungs now ramp the way HARD does: the first floors stay a fair '
+          'door at every rung, and the real bite waits deep in the delve. '
+          'Every rung also toughens enemies a touch, so each step up is '
+          'a real step.',
+      'All twenty rungs are now provably winnable - our test suite '
+          'refuses to build the game if the ladder ever goes dead again.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.19.0',
     title: 'The Spoken Flame',
