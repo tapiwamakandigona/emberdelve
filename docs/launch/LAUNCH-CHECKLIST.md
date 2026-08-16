@@ -49,7 +49,7 @@ rating that outlives the fix. The download bump (22→34) is encouraging but is 
 | # | Gate | Green threshold | Where to read it | Status (2026-08-16, VERIFIED) |
 |---|---|---|---|---|
 | G1 | **Crash-free rate** | ≥ 98% sessions (ANR < 0.47%) | Monitor & improve → Android vitals | ⛔ *"Data unavailable" — no vitals yet (few sessions + opt-in telemetry). Won't self-resolve without more players → G2 is the only path to stability evidence.* |
-| G2 | **Pre-launch report** | 0 crashes on robo test across device set | Test & release → Pre-launch report | ⛔ *never generated. Fix: enable pre-launch report in Settings; it auto-runs on the next bundle upload. Cheapest de-risking step available.* |
+| G2 | **Pre-launch report** | 0 crashes on robo test across device set | Test & release → Pre-launch report | ⛔ *never generated even though 0.7.0 was uploaded to Early Access. Likely cause: the robo crawler can't drive a Flutter/Flame render canvas, so it yields nothing without a **Firebase Test Lab "game loop"** integration (`com.google.intent.action.TEST_LOOP` handler + `android.game_loop` metadata — a dev-side change, the Emberwood/dice agent's domain). Settings page (test creds / deep links / robo script) is ready if a game-loop target is added.* |
 | G3 | **Progression cliff closed** | P0 achievements **and** P1 ember sink shipped | `features.json` + build | 🟡 *game advanced to v0.7.0 with keystones since the v0.4.x retention doc — RE-CHECK whether P0/P1 shipped before assuming ⛔* |
 | G4 | **D1 retention** | ≥ 20% (market median 22%) | Statistics → Retention | ⛔ *not measurable: base too small (32) and split across 3 tracks; only 9% on newest build* |
 | G5 | **Public rating** | ≥ 4.0★ **or** 0 ratings | Ratings and reviews | ✅ *0 ratings / 0 reviews — clean slate, nothing bad locked in* |
@@ -60,9 +60,14 @@ rating that outlives the fix. The download bump (22→34) is encouraging but is 
 
 As of 2026-08-16 the honest verdict is **NO-GO for a confident full 1.0 launch** — the
 blocker is not the platform (production access is granted) but **zero stability evidence**
-(G1/G2). The single cheapest fix is to **enable + generate a pre-launch report** on the
-0.7.0 bundle; it's the only way to get device-level crash data without first shipping to
-strangers. See the lighter options below.
+(G1/G2). Because a robo pre-launch report doesn't work out-of-the-box for a Flutter/Flame
+render canvas (see G2), the realistic paths to real crash data are, cheapest first:
+1. **Get the 32 testers onto 0.7.0 and read live crash-free** — only 9% have updated; nudge
+   the rest, then vitals populate from real sessions. Zero code, just tester comms.
+2. **Add a Firebase Test Lab game-loop** (dev-side, the game agent) so pre-launch reports
+   and automated device-matrix crash tests actually run.
+3. Only after ≥98% crash-free is shown → full 1.0 launch push.
+See the lighter options below.
 
 ---
 
