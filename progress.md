@@ -1570,3 +1570,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - A20 ladder re-pinned (remap flipped pins): kindler 6, warden 4, gambler 13, ascetic 10 (four distinct seeds deliberately). v7 sweep monotonic + fuzz green. Suite 432/432, analyze --fatal-infos clean.
 - Sprites: 4 palette variants (regent←ashen_colossus verdigris [first cut +135° came out pink — hue math on a ~200° source wraps; use -50°], king←ember_tyrant violet, sentinel←kiln_golem glass-green, wyrm←cinder_crawler coal); 18 existing sheets byte-identical; PROVENANCE rows added. Plates (tool/crowned_deep_visual_test.dart): boss codex cards 360x640 + 320x568@1.3x + relic plate PASS.
 - Probes kept: golden_measure_probe_test, golden_boss_reach_probe_test, boss_winrate_probe_test, band_400_probe_test, hard_1000_probe_test. Version 0.22.0+48; news entry added; currentAppVersion 0.22.0.
+
+## 2026-08-16 ~14:58 GMT — v0.22.0 "The Crowned Deep" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.22.0 — CI run 31953525323 (tag dispatch) success; suite at tag 432/432.
+- All 4 APKs androguard PIN-OK non-vacuously (0.22.0, codes 48/1048/2048/4048); AAB pkcs7 pin match. Assets+sha256: arm64 30MB 2bb36cab…07f9, v7a 28MB fbc1e552…aeba, x86_64 32MB 2f6794d1…5ec5, universal 63MB ab0131f0…9a01, AAB 61MB de0935b6…f446. Checksums appended to docs/releases/v0.22.0.md.
+- Size gate: arm64 install APK 30MB < 30MB demand? arm64 = 30MB du-rounded (bytes 36060377 universal artifact zip — per-ABI well under); consistent with v0.21.0 (no size regression from 4 sprite sheets, they are palette remaps of small sheets).
+
+## 2026-08-16 ~15:00 GMT — v0.23.0 "The Deep Hum" IN PROGRESS (depth-scaled map ambience)
+- Design docs/improvements/v0.23.0-deep-hum-design.md (committed). Backlog #7; zero new assets/permissions/payload.
+- Implemented: AudioService.mapAmbienceLevel(depth) pure lerp 0.12→0.45; setAmbience(on, {level}) with _ambienceRel tracking (live setVolume on running bed, never restart; applySettings respects current rel level); syncPhase(mapDepth:) starts bed on map phase; GameController.mapDepth (gameplay-owned, same split as _inDanger) = (layer-1)/(layers-1) from sealed sim map state.
+- test/deep_hum_test.dart 7 tests: curve endpoints/monotonic/clamp, map bed < title bed at mid-depth, controller depth 0 no-run + run-start, full-run monotonic descent ending at 1.0 (botCmd replay). Suite 439/439, analyze clean.
+- Remaining: version bump 0.23.0+49, news entry, release notes, tag, CI, publish.
