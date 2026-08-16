@@ -30,65 +30,70 @@ class CodexScreen extends StatelessWidget {
           },
         ),
       ),
-      body: SafeArea(
-        child: AnimatedBuilder(
-          animation: c,
-          builder: (context, _) {
-            final m = c.meta;
-            final enemyEntries = codexEntries
-                .where((e) => e.kind == 'enemy')
-                .toList();
-            final relicEntries = codexEntries
-                .where((e) => e.kind == 'relic')
-                .toList();
-            return ListView(
-              padding: const EdgeInsets.all(Space.l),
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${m.ownedCodex.length} of ${codexEntries.length} '
-                        'UNSEALED',
-                        style: EmberText.micro,
+      // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
+      body: ContentClamp(
+        child: SafeArea(
+          child: AnimatedBuilder(
+            animation: c,
+            builder: (context, _) {
+              final m = c.meta;
+              final enemyEntries = codexEntries
+                  .where((e) => e.kind == 'enemy')
+                  .toList();
+              final relicEntries = codexEntries
+                  .where((e) => e.kind == 'relic')
+                  .toList();
+              return ListView(
+                padding: const EdgeInsets.all(Space.l),
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${m.ownedCodex.length} of ${codexEntries.length} '
+                          'UNSEALED',
+                          style: EmberText.micro,
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.local_fire_department,
-                      color: EmberColors.ember,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${m.embers}',
-                      style: EmberText.label.copyWith(color: EmberColors.ember),
-                    ),
+                      const Icon(
+                        Icons.local_fire_department,
+                        color: EmberColors.ember,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${m.embers}',
+                        style: EmberText.label.copyWith(
+                          color: EmberColors.ember,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.s),
+                  Text(
+                    'Lore of the delve, unsealed with embers. Flavor only '
+                    '— enemy intents and relic effects stay readable in '
+                    'play, free, forever.',
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                  const SizedBox(height: Space.xl),
+                  Text('ENEMIES', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in enemyEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
                   ],
-                ),
-                const SizedBox(height: Space.s),
-                Text(
-                  'Lore of the delve, unsealed with embers. Flavor only '
-                  '— enemy intents and relic effects stay readable in '
-                  'play, free, forever.',
-                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                ),
-                const SizedBox(height: Space.xl),
-                Text('ENEMIES', style: EmberText.micro),
-                const SizedBox(height: Space.s),
-                for (final e in enemyEntries) ...[
-                  _entryCard(context, e),
-                  const SizedBox(height: Space.m),
+                  const SizedBox(height: Space.l),
+                  Text('RELICS', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in relicEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
                 ],
-                const SizedBox(height: Space.l),
-                Text('RELICS', style: EmberText.micro),
-                const SizedBox(height: Space.s),
-                for (final e in relicEntries) ...[
-                  _entryCard(context, e),
-                  const SizedBox(height: Space.m),
-                ],
-              ],
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

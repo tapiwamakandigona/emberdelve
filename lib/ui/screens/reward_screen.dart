@@ -34,63 +34,76 @@ class _RewardScreenState extends State<RewardScreen> {
     return Column(
       children: [
         _TopBar(c),
-        const SizedBox(height: Space.l),
-        Text('Choose a die', style: EmberText.h1),
-        const SizedBox(height: Space.xs),
-        Text(
-          'It joins your pool for the rest of the run.',
-          style: EmberText.bodyDim,
-        ),
-        // The cards: sized by the available box so 2–3 offers fit any phone
-        // (overflow probes run down to 320×568 at 1.3x text).
+        // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
         Expanded(
-          child: Center(
-            child: LayoutBuilder(
-              builder: (context, box) {
-                final n = offers.length;
-                final cardW =
-                    ((box.maxWidth - Space.l * 2) - Space.m * (n - 1)).clamp(
-                      0.0,
-                      double.infinity,
-                    ) /
-                    n;
-                final w = cardW.clamp(88.0, 150.0);
-                final h = (w * 1.5).clamp(120.0, box.maxHeight - Space.m * 2);
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < n; i++) ...[
-                      if (i > 0) const SizedBox(width: Space.m),
-                      _FlipCard(
-                        key: ValueKey('reward-${offers[i]}-$i'),
-                        dieId: offers[i],
-                        skin: c.meta.activeDieSkin,
-                        recommended: i == recIdx,
-                        width: w,
-                        height: h,
-                        // Staggered reveal reads left-to-right.
-                        flipDelayMs: 220 + i * 240,
-                        onFlip: () {
-                          c.audio?.playSfx('event_page', volume: 0.6);
-                          Haptics.light();
-                        },
-                        onPick: () =>
-                            c.apply({'type': 'choose_reward', 'index': i + 1}),
-                      ),
-                    ],
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(Space.l),
-          child: SizedBox(
-            width: double.infinity,
-            child: EmberButton(
-              'Skip',
-              onTap: () => c.apply({'type': 'choose_reward', 'index': 0}),
+          child: ContentClamp(
+            child: Column(
+              children: [
+                const SizedBox(height: Space.l),
+                Text('Choose a die', style: EmberText.h1),
+                const SizedBox(height: Space.xs),
+                Text(
+                  'It joins your pool for the rest of the run.',
+                  style: EmberText.bodyDim,
+                ),
+                // The cards: sized by the available box so 2–3 offers fit any phone
+                // (overflow probes run down to 320×568 at 1.3x text).
+                Expanded(
+                  child: Center(
+                    child: LayoutBuilder(
+                      builder: (context, box) {
+                        final n = offers.length;
+                        final cardW =
+                            ((box.maxWidth - Space.l * 2) - Space.m * (n - 1))
+                                .clamp(0.0, double.infinity) /
+                            n;
+                        final w = cardW.clamp(88.0, 150.0);
+                        final h = (w * 1.5).clamp(
+                          120.0,
+                          box.maxHeight - Space.m * 2,
+                        );
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            for (var i = 0; i < n; i++) ...[
+                              if (i > 0) const SizedBox(width: Space.m),
+                              _FlipCard(
+                                key: ValueKey('reward-${offers[i]}-$i'),
+                                dieId: offers[i],
+                                skin: c.meta.activeDieSkin,
+                                recommended: i == recIdx,
+                                width: w,
+                                height: h,
+                                // Staggered reveal reads left-to-right.
+                                flipDelayMs: 220 + i * 240,
+                                onFlip: () {
+                                  c.audio?.playSfx('event_page', volume: 0.6);
+                                  Haptics.light();
+                                },
+                                onPick: () => c.apply({
+                                  'type': 'choose_reward',
+                                  'index': i + 1,
+                                }),
+                              ),
+                            ],
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(Space.l),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: EmberButton(
+                      'Skip',
+                      onTap: () =>
+                          c.apply({'type': 'choose_reward', 'index': 0}),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

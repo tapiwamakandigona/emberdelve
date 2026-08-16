@@ -27,69 +27,72 @@ class _CharacterScreenState extends State<CharacterScreen> {
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(Space.l),
-          children: [
-            _nextUnlockBar(m),
-            const SizedBox(height: Space.l),
-            for (final id in charactersOrder) _charCard(context, id),
-            const SizedBox(height: Space.l),
-            Text('ASCENSION', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Text(
-              'Every rung makes enemies tougher; higher tiers hit harder too. '
-              'Unlock the next rung by winning at the current one.',
-              style: EmberText.bodyDim,
-            ),
-            const SizedBox(height: Space.s),
-            // Ember Forge (v0.4.0): the ladder is the Forge's endgame tier.
-            if (!m.forgeUnlocked) ...[
-              Panel(
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.lock,
-                      color: EmberColors.textDim,
-                      size: 18,
-                    ),
-                    const SizedBox(width: Space.m),
-                    Expanded(
-                      child: Text(
-                        'The Ascension ladder is part of the '
-                        'Ember Forge.',
-                        style: EmberText.bodyDim,
-                      ),
-                    ),
-                    EmberButton(
-                      'Open',
-                      dense: true,
-                      onTap: () => showForgeSheet(context, widget.c),
-                    ),
-                  ],
-                ),
+        // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
+        child: ContentClamp(
+          child: ListView(
+            padding: const EdgeInsets.all(Space.l),
+            children: [
+              _nextUnlockBar(m),
+              const SizedBox(height: Space.l),
+              for (final id in charactersOrder) _charCard(context, id),
+              const SizedBox(height: Space.l),
+              Text('ASCENSION', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              Text(
+                'Every rung makes enemies tougher; higher tiers hit harder too. '
+                'Unlock the next rung by winning at the current one.',
+                style: EmberText.bodyDim,
               ),
               const SizedBox(height: Space.s),
-            ],
-            Row(
-              children: [
-                IconButton(
-                  onPressed: ascension > 0
-                      ? () => setState(() => ascension--)
-                      : null,
-                  icon: const Icon(Icons.remove_circle_outline),
+              // Ember Forge (v0.4.0): the ladder is the Forge's endgame tier.
+              if (!m.forgeUnlocked) ...[
+                Panel(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.lock,
+                        color: EmberColors.textDim,
+                        size: 18,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Text(
+                          'The Ascension ladder is part of the '
+                          'Ember Forge.',
+                          style: EmberText.bodyDim,
+                        ),
+                      ),
+                      EmberButton(
+                        'Open',
+                        dense: true,
+                        onTap: () => showForgeSheet(context, widget.c),
+                      ),
+                    ],
+                  ),
                 ),
-                Text('$ascension', style: EmberText.value),
-                IconButton(
-                  onPressed: ascension < maxAsc
-                      ? () => setState(() => ascension++)
-                      : null,
-                  icon: const Icon(Icons.add_circle_outline),
-                ),
-                const SizedBox(width: Space.s),
-                Text('max unlocked: $maxAsc', style: EmberText.bodyDim),
+                const SizedBox(height: Space.s),
               ],
-            ),
-          ],
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: ascension > 0
+                        ? () => setState(() => ascension--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  Text('$ascension', style: EmberText.value),
+                  IconButton(
+                    onPressed: ascension < maxAsc
+                        ? () => setState(() => ascension++)
+                        : null,
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                  const SizedBox(width: Space.s),
+                  Text('max unlocked: $maxAsc', style: EmberText.bodyDim),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

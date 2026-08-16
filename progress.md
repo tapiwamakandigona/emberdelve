@@ -1626,3 +1626,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI run 31956560492 succeeded. Downloaded apk/splits/aab artifacts; verified 4/4 APK signer pins (codes 51/1051/2051/4051, versionName 0.25.0) and AAB pkcs7 cert against pin 031acb42...d44b7a0d.
 - Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.25.0 with 5 signed assets; sha256+size table appended to docs/releases/v0.25.0.md.
 - Next: v0.26.0 tablet-portrait quality pass (before-plates capturing at time of publish).
+
+## 2026-08-16 ~16:15 GMT — SESSION END (user: "okay time to wrap up")
+- v0.26.0 "The Widened Hearth" tablet-portrait pass IMPLEMENTED, not yet tagged:
+  - ContentClamp (kMaxContentWidth=560, lib/ui/widgets.dart) applied to title, character, boon, keystone, event, rest, reward, shop, summary + settings/ledger/codex/news/credits. _TopBar HUD + Vignette/EmberDrift/parallax stay full-bleed. Combat/map untouched.
+  - Overflow sweep extended with 800x1280 and 1600x2560: 35/35 PASSED. analyze --fatal-infos clean.
+  - After-plates VERIFIED by eye (title/shop/event/settings at 800x1280): clamp correct, no letterbox look. Plate tool tool/tablet_visual_test.dart kept (non-CI; shop-first order + 25min timeout after first run hit default 10min hunting shop).
+  - Note: before-plate title_800x1280 was missing parallax/sprite; after-plate identical symptom is a capture-timing artifact (600x960 plate renders them; asset decode async in test harness) — NOT a regression.
+- REMAINING for v0.26.0 release (next session): version bump 0.26.0+52 in pubspec, news entry + currentAppVersion '0.26.0', full suite (452 tests), tag, CI dispatch, verify pins (expect codes 52/1052/2052/4052), publish with docs/releases/v0.26.0.md (already drafted; checksums pending).
+- v0.25.0 "The Unquiet Deep" PUBLISHED this session (see entry above).

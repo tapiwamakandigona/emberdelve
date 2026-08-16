@@ -25,71 +25,84 @@ class RestScreen extends StatelessWidget {
         Column(
           children: [
             _TopBar(c),
-            const SizedBox(height: Space.xl),
-            Text('A warm hollow', style: EmberText.h1),
-            const SizedBox(height: Space.xs),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.l),
-              child: Text(
-                canTemper
-                    ? 'Rest to heal, forge a die into something stronger, or '
-                          'temper one face. One only.'
-                    : 'Rest to heal, or forge a die into something stronger. '
-                          'One only.',
-                style: EmberText.bodyDim,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: SizedBox(
-                width: double.infinity,
-                child: EmberButton(
-                  // At full HP this is the ONLY exit when nothing is forgeable —
-                  // a disabled button here soft-locked the run (found in play
-                  // session 2026-07-24). The sim's `rest` command is safe at full
-                  // HP: it heals 0 and moves to the map.
-                  fullHp ? 'Move on — fully rested' : 'Rest — heal 30%',
-                  primary: !fullHp,
-                  icon: fullHp
-                      ? Icons.arrow_forward
-                      : Icons.local_fire_department,
-                  onTap: () => c.apply({'type': 'rest'}),
-                ),
-              ),
-            ),
-            if (canTemper)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: EmberButton(
-                    'Temper a face — once per delve',
-                    key: const ValueKey('rest-temper'),
-                    icon: Icons.auto_awesome,
-                    onTap: () => showTemperSheet(context, c),
-                  ),
-                ),
-              ),
-            if (canTemper) const SizedBox(height: Space.m),
-            if (forgeable.isNotEmpty)
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
+            Expanded(
+              child: ContentClamp(
+                child: Column(
                   children: [
-                    Text('FORGE', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final i in forgeable)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: Space.s),
-                        child: _forgeRow(run, dice0[i], i + 1),
+                    const SizedBox(height: Space.xl),
+                    Text('A warm hollow', style: EmberText.h1),
+                    const SizedBox(height: Space.xs),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                      child: Text(
+                        canTemper
+                            ? 'Rest to heal, forge a die into something stronger, or '
+                                  'temper one face. One only.'
+                            : 'Rest to heal, or forge a die into something stronger. '
+                                  'One only.',
+                        style: EmberText.bodyDim,
+                        textAlign: TextAlign.center,
                       ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.all(Space.l),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: EmberButton(
+                          // At full HP this is the ONLY exit when nothing is forgeable —
+                          // a disabled button here soft-locked the run (found in play
+                          // session 2026-07-24). The sim's `rest` command is safe at full
+                          // HP: it heals 0 and moves to the map.
+                          fullHp ? 'Move on — fully rested' : 'Rest — heal 30%',
+                          primary: !fullHp,
+                          icon: fullHp
+                              ? Icons.arrow_forward
+                              : Icons.local_fire_department,
+                          onTap: () => c.apply({'type': 'rest'}),
+                        ),
+                      ),
+                    ),
+                    if (canTemper)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Space.l,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: EmberButton(
+                            'Temper a face — once per delve',
+                            key: const ValueKey('rest-temper'),
+                            icon: Icons.auto_awesome,
+                            onTap: () => showTemperSheet(context, c),
+                          ),
+                        ),
+                      ),
+                    if (canTemper) const SizedBox(height: Space.m),
+                    if (forgeable.isNotEmpty)
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Space.l,
+                          ),
+                          children: [
+                            Text('FORGE', style: EmberText.micro),
+                            const SizedBox(height: Space.s),
+                            for (final i in forgeable)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: Space.s),
+                                child: _forgeRow(run, dice0[i], i + 1),
+                              ),
+                          ],
+                        ),
+                      )
+                    else
+                      const Spacer(),
                   ],
                 ),
-              )
-            else
-              const Spacer(),
+              ),
+            ),
           ],
         ),
       ],

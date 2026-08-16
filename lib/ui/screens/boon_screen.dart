@@ -43,43 +43,55 @@ class BoonScreen extends StatelessWidget {
         Column(
           children: [
             _TopBar(c),
-            const SizedBox(height: Space.xl),
-            Text('Choose a boon', style: EmberText.h1),
-            const SizedBox(height: Space.xs),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-              child: Text(
-                'A blessing for this delve — or walk in unaided.',
-                style: EmberText.bodyDim,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: Space.l),
+            // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                children: [
-                  for (var i = 0; i < boonIds.length; i++)
+              child: ContentClamp(
+                child: Column(
+                  children: [
+                    const SizedBox(height: Space.xl),
+                    Text('Choose a boon', style: EmberText.h1),
+                    const SizedBox(height: Space.xs),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: Space.m),
-                      child: _boonCard(
-                        context,
-                        boonIds[i],
-                        i + 1,
-                        recommended: i == recIdx,
+                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+                      child: Text(
+                        'A blessing for this delve — or walk in unaided.',
+                        style: EmberText.bodyDim,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: SizedBox(
-                width: double.infinity,
-                child: EmberButton(
-                  'Skip — delve unaided',
-                  key: const ValueKey('boon-skip'),
-                  onTap: () => c.apply({'type': 'choose_boon', 'index': 0}),
+                    const SizedBox(height: Space.l),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Space.l,
+                        ),
+                        children: [
+                          for (var i = 0; i < boonIds.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: Space.m),
+                              child: _boonCard(
+                                context,
+                                boonIds[i],
+                                i + 1,
+                                recommended: i == recIdx,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(Space.l),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: EmberButton(
+                          'Skip — delve unaided',
+                          key: const ValueKey('boon-skip'),
+                          onTap: () =>
+                              c.apply({'type': 'choose_boon', 'index': 0}),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

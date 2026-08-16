@@ -11,6 +11,27 @@ import '../sim/run_dice.dart';
 import 'theme.dart';
 
 // ---------------------------------------------------------------------------
+// Tablet-portrait clamp (v0.26.0). Menu-family and in-run column screens cap
+// their content at [kMaxContentWidth] and center it, so an 800dp-wide tablet
+// doesn't stretch buttons and cards edge to edge. Full-bleed layers
+// (Vignette, EmberDrift, parallax, the in-run _TopBar HUD) stay OUTSIDE the
+// clamp. Combat and the map are untouched — they scale by design.
+// ---------------------------------------------------------------------------
+const double kMaxContentWidth = 560;
+
+class ContentClamp extends StatelessWidget {
+  final Widget child;
+  const ContentClamp({required this.child, super.key});
+  @override
+  Widget build(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: kMaxContentWidth),
+      child: child,
+    ),
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Buttons — three painted tiers: primary ember / secondary charcoal / ghost.
 // ---------------------------------------------------------------------------
 class EmberButton extends StatefulWidget {

@@ -14,59 +14,77 @@ class EventScreen extends StatelessWidget {
     return Column(
       children: [
         _TopBar(c),
-        const SizedBox(height: Space.xl),
-        // Long event prose scrolls on short screens; the choice buttons stay
-        // pinned in the thumb zone below.
+        // Tablet clamp (v0.26.0): HUD stays full-width, content columns cap
+        // at kMaxContentWidth so 800dp tablets don't stretch the buttons.
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+          child: ContentClamp(
             child: Column(
               children: [
-                Image.asset(
-                  Art.eventIcon(def.id),
-                  width: 96,
-                  height: 96,
-                  filterQuality: FilterQuality.medium,
-                ),
-                const SizedBox(height: Space.l),
-                Text(
-                  def.name,
-                  style: EmberText.h1,
-                  textAlign: TextAlign.center,
+                const SizedBox(height: Space.xl),
+                // Long event prose scrolls on short screens; the choice buttons stay
+                // pinned in the thumb zone below.
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          Art.eventIcon(def.id),
+                          width: 96,
+                          height: 96,
+                          filterQuality: FilterQuality.medium,
+                        ),
+                        const SizedBox(height: Space.l),
+                        Text(
+                          def.name,
+                          style: EmberText.h1,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: Space.m),
+                        Text(
+                          def.text,
+                          style: EmberText.body,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: Space.m),
-                Text(
-                  def.text,
-                  style: EmberText.body,
-                  textAlign: TextAlign.center,
-                ),
+                for (var i = 0; i < def.options.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      Space.l,
+                      0,
+                      Space.l,
+                      Space.m,
+                    ),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: EmberButton(
+                        def.options[i].label,
+                        // Options the sim would reject render DISABLED instead of
+                        // inviting a tap that only spawns a "Not enough gold" toast
+                        // (2026-07-24: a 0-gold peddler showed a glowing primary
+                        // "Buy (35 gold)" CTA). Mirrors runEventChoose's validation.
+                        primary: i == 0 && _legal(def.options[i].effects),
+                        // Icon telegraphs the option's payoff/risk at a glance
+                        // (wordiness pass 2026-07-24).
+                        icon: _optionIcon(def.options[i].effects),
+                        onTap: _legal(def.options[i].effects)
+                            ? () => c.apply({
+                                'type': 'event_choose',
+                                'option': i + 1,
+                              })
+                            : null,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: Space.s),
               ],
             ),
           ),
         ),
-        const SizedBox(height: Space.m),
-        for (var i = 0; i < def.options.length; i++)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.m),
-            child: SizedBox(
-              width: double.infinity,
-              child: EmberButton(
-                def.options[i].label,
-                // Options the sim would reject render DISABLED instead of
-                // inviting a tap that only spawns a "Not enough gold" toast
-                // (2026-07-24: a 0-gold peddler showed a glowing primary
-                // "Buy (35 gold)" CTA). Mirrors runEventChoose's validation.
-                primary: i == 0 && _legal(def.options[i].effects),
-                // Icon telegraphs the option's payoff/risk at a glance
-                // (wordiness pass 2026-07-24).
-                icon: _optionIcon(def.options[i].effects),
-                onTap: _legal(def.options[i].effects)
-                    ? () => c.apply({'type': 'event_choose', 'option': i + 1})
-                    : null,
-              ),
-            ),
-          ),
-        const SizedBox(height: Space.s),
       ],
     );
   }

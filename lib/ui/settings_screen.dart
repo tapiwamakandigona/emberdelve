@@ -68,643 +68,645 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
         ),
       ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(Space.l),
-          children: [
-            Text('AUDIO', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Panel(
-              child: Column(
-                children: [
-                  _volumeRow(
-                    icon: Icons.music_note,
-                    label: 'Music',
-                    value: _s.musicVolume,
-                    muted: _s.musicMuted,
-                    // Live volume preview while dragging; persist once on release.
-                    onVolume: (v) {
-                      _s.musicVolume = v;
-                      _changed(persist: false);
-                    },
-                    onVolumeEnd: (v) {
-                      _s.musicVolume = v;
-                      _changed();
-                    },
-                    onMute: (m) {
-                      _s.musicMuted = !m;
-                      _changed();
-                    },
-                  ),
-                  const Divider(color: EmberColors.line, height: Space.xl),
-                  _volumeRow(
-                    icon: Icons.graphic_eq,
-                    label: 'Sound effects',
-                    value: _s.sfxVolume,
-                    muted: _s.sfxMuted,
-                    // No SFX per drag tick; single confirm tap + save on release.
-                    onVolume: (v) {
-                      _s.sfxVolume = v;
-                      _changed(persist: false);
-                    },
-                    onVolumeEnd: (v) {
-                      _s.sfxVolume = v;
-                      _changed(preview: true);
-                    },
-                    onMute: (m) {
-                      _s.sfxMuted = !m;
-                      _changed(preview: true);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: Space.xl),
-            // COMFORT (v0.16.0, was FEEDBACK): body-facing settings —
-            // vibration and motion. Renamed when reduce-motion joined.
-            Text('COMFORT', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Panel(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.vibration,
-                        color: EmberColors.textDim,
-                        size: 20,
-                      ),
-                      const SizedBox(width: Space.m),
-                      Expanded(child: Text('Haptics', style: EmberText.body)),
-                      _EmberToggle(
-                        semanticLabel: 'Haptics',
-                        value: _s.haptics,
-                        onChanged: (v) {
-                          _s.haptics = v;
-                          _changed(preview: true);
-                          // Answer "ON" with a buzz you can feel — instant
-                          // on-device confirmation that haptics actually work.
-                          if (v) Haptics.preview();
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.l),
-                  // Reduce motion (v0.16.0 The Still Flame): no screen
-                  // shake, no drifting embers, damage numbers hold still.
-                  // 'System' follows the OS accessibility setting.
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.waves,
-                        color: EmberColors.textDim,
-                        size: 20,
-                      ),
-                      const SizedBox(width: Space.m),
-                      Expanded(
-                        child: Text('Reduce motion', style: EmberText.body),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.s),
-                  Container(
-                    key: const ValueKey('reduce-motion'),
-                    decoration: BoxDecoration(
-                      color: EmberColors.bg,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: EmberColors.line),
-                    ),
-                    padding: const EdgeInsets.all(3),
-                    child: Row(
-                      children: [
-                        for (final (id, label) in const [
-                          ('system', 'SYSTEM'),
-                          ('on', 'REDUCED'),
-                          ('off', 'FULL'),
-                        ])
-                          Expanded(
-                            child: GestureDetector(
-                              key: ValueKey('reduce-motion-$id'),
-                              onTap: () {
-                                _s.reduceMotion = id;
-                                Motion.instance.update(setting: id);
-                                _changed(preview: true);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 150),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: Space.s,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: id == _s.reduceMotion
-                                      ? EmberColors.raised
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: id == _s.reduceMotion
-                                        ? EmberColors.ember
-                                        : Colors.transparent,
-                                  ),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    label,
-                                    textAlign: TextAlign.center,
-                                    style: EmberText.micro.copyWith(
-                                      color: id == _s.reduceMotion
-                                          ? EmberColors.textPrimary
-                                          : EmberColors.textDim,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: Space.xs),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Steadies the screen: no shake, no drifting embers.',
-                      style: EmberText.micro.copyWith(
-                        color: EmberColors.textDim,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: Space.xl),
-            Text('PRIVACY', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Panel(
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.insights,
-                    color: EmberColors.textDim,
-                    size: 20,
-                  ),
-                  const SizedBox(width: Space.m),
-                  Expanded(
-                    child: Text('Gameplay analytics', style: EmberText.body),
-                  ),
-                  _EmberToggle(
-                    semanticLabel: 'Gameplay analytics',
-                    value: TelemetryService.instance.analyticsConsented,
-                    onChanged: (v) {
-                      TelemetryService.instance.logEvent('settings_changed', {
-                        'setting': 'analytics_consent',
-                        'value': '$v',
-                      });
-                      TelemetryService.instance.setAnalyticsConsent(v);
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // Daily Delve reminder (v0.6.0): opt-in, neutral-fact copy, one
-            // notification a day at most, quietly stops after a week away.
-            // Hidden entirely on builds without the platform backends.
-            if (ReminderService.instance.available) ...[
-              const SizedBox(height: Space.xl),
-              Text('NOTIFICATIONS', style: EmberText.micro),
+      // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
+      body: ContentClamp(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(Space.l),
+            children: [
+              Text('AUDIO', style: EmberText.micro),
               const SizedBox(height: Space.s),
-              AnimatedBuilder(
-                animation: ReminderService.instance.tick,
-                builder: (context, _) {
-                  final rem = ReminderService.instance;
-                  return Panel(
-                    child: Row(
+              Panel(
+                child: Column(
+                  children: [
+                    _volumeRow(
+                      icon: Icons.music_note,
+                      label: 'Music',
+                      value: _s.musicVolume,
+                      muted: _s.musicMuted,
+                      // Live volume preview while dragging; persist once on release.
+                      onVolume: (v) {
+                        _s.musicVolume = v;
+                        _changed(persist: false);
+                      },
+                      onVolumeEnd: (v) {
+                        _s.musicVolume = v;
+                        _changed();
+                      },
+                      onMute: (m) {
+                        _s.musicMuted = !m;
+                        _changed();
+                      },
+                    ),
+                    const Divider(color: EmberColors.line, height: Space.xl),
+                    _volumeRow(
+                      icon: Icons.graphic_eq,
+                      label: 'Sound effects',
+                      value: _s.sfxVolume,
+                      muted: _s.sfxMuted,
+                      // No SFX per drag tick; single confirm tap + save on release.
+                      onVolume: (v) {
+                        _s.sfxVolume = v;
+                        _changed(persist: false);
+                      },
+                      onVolumeEnd: (v) {
+                        _s.sfxVolume = v;
+                        _changed(preview: true);
+                      },
+                      onMute: (m) {
+                        _s.sfxMuted = !m;
+                        _changed(preview: true);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: Space.xl),
+              // COMFORT (v0.16.0, was FEEDBACK): body-facing settings —
+              // vibration and motion. Renamed when reduce-motion joined.
+              Text('COMFORT', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              Panel(
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        Icon(
-                          Icons.notifications_none,
-                          color: rem.enabled
-                              ? EmberColors.ember
-                              : EmberColors.textDim,
+                        const Icon(
+                          Icons.vibration,
+                          color: EmberColors.textDim,
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(
-                          child: Text(
-                            'Daily Delve reminder',
-                            style: EmberText.body,
-                          ),
-                        ),
+                        Expanded(child: Text('Haptics', style: EmberText.body)),
                         _EmberToggle(
-                          semanticLabel: 'Daily Delve reminder',
-                          key: const ValueKey('daily-reminder'),
-                          value: rem.enabled,
-                          onChanged: (v) async {
-                            AudioService.instance?.playSfx('ui_tap');
-                            if (v) {
-                              await rem.enable();
-                            } else {
-                              await rem.disable();
-                            }
-                            if (mounted) setState(() {});
+                          semanticLabel: 'Haptics',
+                          value: _s.haptics,
+                          onChanged: (v) {
+                            _s.haptics = v;
+                            _changed(preview: true);
+                            // Answer "ON" with a buzz you can feel — instant
+                            // on-device confirmation that haptics actually work.
+                            if (v) Haptics.preview();
                           },
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
-            ],
-            // The Watchtower (v0.21.0): update awareness for GitHub-only
-            // builds. Manual check + opt-in launch check; §Ethics: neutral
-            // facts, never a nag, nothing auto-downloads. Hidden entirely
-            // when no fetcher is wired (tests, non-Android).
-            if (UpdateService.instance.available) ...[
-              const SizedBox(height: Space.xl),
-              Text('UPDATES', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              AnimatedBuilder(
-                animation: UpdateService.instance.tick,
-                builder: (context, _) {
-                  final up = UpdateService.instance;
-                  final newer = up.status == UpdateStatus.newer;
-                  return Column(
-                    children: [
-                      Panel(
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.new_releases_outlined,
-                                  color: newer
-                                      ? EmberColors.ember
-                                      : EmberColors.textDim,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: Space.m),
-                                Expanded(
-                                  child: Text(
-                                    _updateLine(up),
-                                    style: EmberText.body,
+                    const SizedBox(height: Space.l),
+                    // Reduce motion (v0.16.0 The Still Flame): no screen
+                    // shake, no drifting embers, damage numbers hold still.
+                    // 'System' follows the OS accessibility setting.
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.waves,
+                          color: EmberColors.textDim,
+                          size: 20,
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: Text('Reduce motion', style: EmberText.body),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: Space.s),
+                    Container(
+                      key: const ValueKey('reduce-motion'),
+                      decoration: BoxDecoration(
+                        color: EmberColors.bg,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: EmberColors.line),
+                      ),
+                      padding: const EdgeInsets.all(3),
+                      child: Row(
+                        children: [
+                          for (final (id, label) in const [
+                            ('system', 'SYSTEM'),
+                            ('on', 'REDUCED'),
+                            ('off', 'FULL'),
+                          ])
+                            Expanded(
+                              child: GestureDetector(
+                                key: ValueKey('reduce-motion-$id'),
+                                onTap: () {
+                                  _s.reduceMotion = id;
+                                  Motion.instance.update(setting: id);
+                                  _changed(preview: true);
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: Space.s,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: id == _s.reduceMotion
+                                        ? EmberColors.raised
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: id == _s.reduceMotion
+                                          ? EmberColors.ember
+                                          : Colors.transparent,
+                                    ),
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      label,
+                                      textAlign: TextAlign.center,
+                                      style: EmberText.micro.copyWith(
+                                        color: id == _s.reduceMotion
+                                            ? EmberColors.textPrimary
+                                            : EmberColors.textDim,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                EmberButton(
-                                  'Check',
-                                  key: const ValueKey('update-check-now'),
-                                  dense: true,
-                                  onTap: up.status == UpdateStatus.checking
-                                      ? null
-                                      : () async {
-                                          await up.check();
-                                          if (mounted) setState(() {});
-                                        },
-                                ),
-                              ],
+                              ),
                             ),
-                            if (newer) ...[
-                              const SizedBox(height: Space.s),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: Space.xs),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Steadies the screen: no shake, no drifting embers.',
+                        style: EmberText.micro.copyWith(
+                          color: EmberColors.textDim,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: Space.xl),
+              Text('PRIVACY', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              Panel(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.insights,
+                      color: EmberColors.textDim,
+                      size: 20,
+                    ),
+                    const SizedBox(width: Space.m),
+                    Expanded(
+                      child: Text('Gameplay analytics', style: EmberText.body),
+                    ),
+                    _EmberToggle(
+                      semanticLabel: 'Gameplay analytics',
+                      value: TelemetryService.instance.analyticsConsented,
+                      onChanged: (v) {
+                        TelemetryService.instance.logEvent('settings_changed', {
+                          'setting': 'analytics_consent',
+                          'value': '$v',
+                        });
+                        TelemetryService.instance.setAnalyticsConsent(v);
+                        setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              // Daily Delve reminder (v0.6.0): opt-in, neutral-fact copy, one
+              // notification a day at most, quietly stops after a week away.
+              // Hidden entirely on builds without the platform backends.
+              if (ReminderService.instance.available) ...[
+                const SizedBox(height: Space.xl),
+                Text('NOTIFICATIONS', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                AnimatedBuilder(
+                  animation: ReminderService.instance.tick,
+                  builder: (context, _) {
+                    final rem = ReminderService.instance;
+                    return Panel(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.notifications_none,
+                            color: rem.enabled
+                                ? EmberColors.ember
+                                : EmberColors.textDim,
+                            size: 20,
+                          ),
+                          const SizedBox(width: Space.m),
+                          Expanded(
+                            child: Text(
+                              'Daily Delve reminder',
+                              style: EmberText.body,
+                            ),
+                          ),
+                          _EmberToggle(
+                            semanticLabel: 'Daily Delve reminder',
+                            key: const ValueKey('daily-reminder'),
+                            value: rem.enabled,
+                            onChanged: (v) async {
+                              AudioService.instance?.playSfx('ui_tap');
+                              if (v) {
+                                await rem.enable();
+                              } else {
+                                await rem.disable();
+                              }
+                              if (mounted) setState(() {});
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+              // The Watchtower (v0.21.0): update awareness for GitHub-only
+              // builds. Manual check + opt-in launch check; §Ethics: neutral
+              // facts, never a nag, nothing auto-downloads. Hidden entirely
+              // when no fetcher is wired (tests, non-Android).
+              if (UpdateService.instance.available) ...[
+                const SizedBox(height: Space.xl),
+                Text('UPDATES', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                AnimatedBuilder(
+                  animation: UpdateService.instance.tick,
+                  builder: (context, _) {
+                    final up = UpdateService.instance;
+                    final newer = up.status == UpdateStatus.newer;
+                    return Column(
+                      children: [
+                        Panel(
+                          child: Column(
+                            children: [
                               Row(
                                 children: [
+                                  Icon(
+                                    Icons.new_releases_outlined,
+                                    color: newer
+                                        ? EmberColors.ember
+                                        : EmberColors.textDim,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: Space.m),
                                   Expanded(
                                     child: Text(
-                                      'New releases live on the GitHub '
-                                      'releases page.',
-                                      style: EmberText.bodyDim,
+                                      _updateLine(up),
+                                      style: EmberText.body,
                                     ),
                                   ),
                                   EmberButton(
-                                    _linkCopied ? 'Copied' : 'Copy link',
-                                    key: const ValueKey('update-copy-link'),
+                                    'Check',
+                                    key: const ValueKey('update-check-now'),
                                     dense: true,
-                                    onTap: () async {
-                                      await Clipboard.setData(
-                                        const ClipboardData(
-                                          text:
-                                              UpdateService.releasesPageUrl,
-                                        ),
-                                      );
-                                      if (mounted) {
-                                        setState(() => _linkCopied = true);
-                                      }
-                                    },
+                                    onTap: up.status == UpdateStatus.checking
+                                        ? null
+                                        : () async {
+                                            await up.check();
+                                            if (mounted) setState(() {});
+                                          },
                                   ),
                                 ],
                               ),
+                              if (newer) ...[
+                                const SizedBox(height: Space.s),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'New releases live on the GitHub '
+                                        'releases page.',
+                                        style: EmberText.bodyDim,
+                                      ),
+                                    ),
+                                    EmberButton(
+                                      _linkCopied ? 'Copied' : 'Copy link',
+                                      key: const ValueKey('update-copy-link'),
+                                      dense: true,
+                                      onTap: () async {
+                                        await Clipboard.setData(
+                                          const ClipboardData(
+                                            text: UpdateService.releasesPageUrl,
+                                          ),
+                                        );
+                                        if (mounted) {
+                                          setState(() => _linkCopied = true);
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: Space.s),
-                      Panel(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.update,
-                              color: up.enabled
-                                  ? EmberColors.ember
-                                  : EmberColors.textDim,
-                              size: 20,
-                            ),
-                            const SizedBox(width: Space.m),
-                            Expanded(
-                              child: Text(
-                                'Check once at launch',
-                                style: EmberText.body,
-                              ),
-                            ),
-                            _EmberToggle(
-                              semanticLabel: 'Check for updates at launch',
-                              key: const ValueKey('update-launch-check'),
-                              value: up.enabled,
-                              onChanged: (v) async {
-                                AudioService.instance?.playSfx('ui_tap');
-                                await up.setEnabled(v);
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-            // Play Games (v0.5.0, P4+P5): opt-in connect. Hidden entirely on
-            // builds without the platform backends (tests, web, desktop).
-            if (PlayGamesService.instance.available) ...[
-              const SizedBox(height: Space.xl),
-              Text('PLAY GAMES', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              AnimatedBuilder(
-                animation: PlayGamesService.instance.tick,
-                builder: (context, _) {
-                  final pgs = PlayGamesService.instance;
-                  final on = pgs.connected;
-                  return Column(
-                    children: [
-                      Panel(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.cloud_done,
-                              color: on
-                                  ? EmberColors.ember
-                                  : EmberColors.textDim,
-                              size: 20,
-                            ),
-                            const SizedBox(width: Space.m),
-                            Expanded(
-                              child: Text(
-                                on
-                                    ? 'Connected — progress backed up, '
-                                          'Delve leaderboards on.'
-                                    : 'Back up progress and join the '
-                                          'Delve leaderboards.',
-                                style: EmberText.body,
-                              ),
-                            ),
-                            EmberButton(
-                              on ? 'Disconnect' : 'Connect',
-                              key: const ValueKey('pgs-connect'),
-                              dense: true,
-                              onTap: () async {
-                                AudioService.instance?.playSfx('ui_tap');
-                                if (on) {
-                                  await pgs.disconnect();
-                                } else {
-                                  await pgs.connect();
-                                }
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (on) ...[
                         const SizedBox(height: Space.s),
                         Panel(
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.leaderboard,
-                                color: EmberColors.textDim,
+                              Icon(
+                                Icons.update,
+                                color: up.enabled
+                                    ? EmberColors.ember
+                                    : EmberColors.textDim,
                                 size: 20,
                               ),
                               const SizedBox(width: Space.m),
                               Expanded(
                                 child: Text(
-                                  'Daily & Weekly Delve boards',
+                                  'Check once at launch',
                                   style: EmberText.body,
                                 ),
                               ),
-                              EmberButton(
-                                'View',
-                                key: const ValueKey('pgs-leaderboards'),
-                                dense: true,
-                                onTap: () {
+                              _EmberToggle(
+                                semanticLabel: 'Check for updates at launch',
+                                key: const ValueKey('update-launch-check'),
+                                value: up.enabled,
+                                onChanged: (v) async {
                                   AudioService.instance?.playSfx('ui_tap');
-                                  pgs.showLeaderboards();
+                                  await up.setEnabled(v);
+                                  if (mounted) setState(() {});
                                 },
                               ),
                             ],
                           ),
                         ),
                       ],
-                    ],
-                  );
-                },
-              ),
-            ],
-            const SizedBox(height: Space.xl),
-            // The Carried Ember (v0.24.0): sideloaded installs have no
-            // guaranteed cloud save — the whole ledger travels as one
-            // pasteable code instead. Import merges (never replaces); the
-            // Forge purchase deliberately does not ride in the code.
-            Text('CARRY YOUR EMBER', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Panel(
-              key: const ValueKey('carry-ember-panel'),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.outbox,
-                        color: EmberColors.textDim,
-                        size: 20,
-                      ),
-                      const SizedBox(width: Space.m),
-                      Expanded(
-                        child: Text(
-                          'Copy a save code that holds your progress.',
-                          style: EmberText.body,
-                        ),
-                      ),
-                      EmberButton(
-                        'Copy',
-                        key: const ValueKey('copy-save-code'),
-                        dense: true,
-                        onTap: _copySaveCode,
-                      ),
-                    ],
-                  ),
-                  const Divider(color: EmberColors.line, height: Space.xl),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.move_to_inbox,
-                        color: EmberColors.textDim,
-                        size: 20,
-                      ),
-                      const SizedBox(width: Space.m),
-                      Expanded(
-                        child: Text(
-                          'Paste a code from another device to merge '
-                          'it here.',
-                          style: EmberText.body,
-                        ),
-                      ),
-                      EmberButton(
-                        'Paste',
-                        key: const ValueKey('paste-save-code'),
-                        dense: true,
-                        onTap: _pasteSaveCode,
-                      ),
-                    ],
-                  ),
-                  if (_transferLine != null) ...[
-                    const SizedBox(height: Space.m),
-                    Text(
-                      _transferLine!,
-                      key: const ValueKey('transfer-line'),
-                      style: EmberText.micro.copyWith(
-                        color: EmberColors.textDim,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: Space.s),
-            Text(
-              'The Ember Forge purchase moves with your Play account, '
-              'not with the code.',
-              style: EmberText.micro.copyWith(color: EmberColors.textDim),
-            ),
-            const SizedBox(height: Space.xl),
-            // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
-            // a player on a new device must never have to hunt for it.
-            Text('THE EMBER FORGE', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            if (StoreService.instance != null)
-              AnimatedBuilder(
-                animation: StoreService.instance!.tick,
-                builder: (context, _) {
-                  final store = StoreService.instance!;
-                  final owned = store.state == ForgeStoreState.owned;
-                  return Panel(
-                    child: Row(
+                    );
+                  },
+                ),
+              ],
+              // Play Games (v0.5.0, P4+P5): opt-in connect. Hidden entirely on
+              // builds without the platform backends (tests, web, desktop).
+              if (PlayGamesService.instance.available) ...[
+                const SizedBox(height: Space.xl),
+                Text('PLAY GAMES', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                AnimatedBuilder(
+                  animation: PlayGamesService.instance.tick,
+                  builder: (context, _) {
+                    final pgs = PlayGamesService.instance;
+                    final on = pgs.connected;
+                    return Column(
                       children: [
-                        Icon(
-                          Icons.local_fire_department,
-                          color: owned
-                              ? EmberColors.ember
-                              : EmberColors.textDim,
+                        Panel(
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.cloud_done,
+                                color: on
+                                    ? EmberColors.ember
+                                    : EmberColors.textDim,
+                                size: 20,
+                              ),
+                              const SizedBox(width: Space.m),
+                              Expanded(
+                                child: Text(
+                                  on
+                                      ? 'Connected — progress backed up, '
+                                            'Delve leaderboards on.'
+                                      : 'Back up progress and join the '
+                                            'Delve leaderboards.',
+                                  style: EmberText.body,
+                                ),
+                              ),
+                              EmberButton(
+                                on ? 'Disconnect' : 'Connect',
+                                key: const ValueKey('pgs-connect'),
+                                dense: true,
+                                onTap: () async {
+                                  AudioService.instance?.playSfx('ui_tap');
+                                  if (on) {
+                                    await pgs.disconnect();
+                                  } else {
+                                    await pgs.connect();
+                                  }
+                                  if (mounted) setState(() {});
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (on) ...[
+                          const SizedBox(height: Space.s),
+                          Panel(
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.leaderboard,
+                                  color: EmberColors.textDim,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: Space.m),
+                                Expanded(
+                                  child: Text(
+                                    'Daily & Weekly Delve boards',
+                                    style: EmberText.body,
+                                  ),
+                                ),
+                                EmberButton(
+                                  'View',
+                                  key: const ValueKey('pgs-leaderboards'),
+                                  dense: true,
+                                  onTap: () {
+                                    AudioService.instance?.playSfx('ui_tap');
+                                    pgs.showLeaderboards();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+              ],
+              const SizedBox(height: Space.xl),
+              // The Carried Ember (v0.24.0): sideloaded installs have no
+              // guaranteed cloud save — the whole ledger travels as one
+              // pasteable code instead. Import merges (never replaces); the
+              // Forge purchase deliberately does not ride in the code.
+              Text('CARRY YOUR EMBER', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              Panel(
+                key: const ValueKey('carry-ember-panel'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.outbox,
+                          color: EmberColors.textDim,
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
                         Expanded(
                           child: Text(
-                            owned
-                                ? 'The Forge is open on this profile.'
-                                : 'Bought the Forge before? Bring it here.',
+                            'Copy a save code that holds your progress.',
                             style: EmberText.body,
                           ),
                         ),
-                        if (!owned)
-                          EmberButton(
-                            'Restore',
-                            key: const ValueKey('settings-restore'),
-                            dense: true,
-                            onTap: () {
-                              AudioService.instance?.playSfx('ui_tap');
-                              store.restore();
-                            },
-                          ),
+                        EmberButton(
+                          'Copy',
+                          key: const ValueKey('copy-save-code'),
+                          dense: true,
+                          onTap: _copySaveCode,
+                        ),
                       ],
                     ),
-                  );
-                },
-              )
-            else
-              Panel(
-                child: Text(
-                  'Purchases are unavailable in this build.',
-                  style: EmberText.bodyDim,
+                    const Divider(color: EmberColors.line, height: Space.xl),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.move_to_inbox,
+                          color: EmberColors.textDim,
+                          size: 20,
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: Text(
+                            'Paste a code from another device to merge '
+                            'it here.',
+                            style: EmberText.body,
+                          ),
+                        ),
+                        EmberButton(
+                          'Paste',
+                          key: const ValueKey('paste-save-code'),
+                          dense: true,
+                          onTap: _pasteSaveCode,
+                        ),
+                      ],
+                    ),
+                    if (_transferLine != null) ...[
+                      const SizedBox(height: Space.m),
+                      Text(
+                        _transferLine!,
+                        key: const ValueKey('transfer-line'),
+                        style: EmberText.micro.copyWith(
+                          color: EmberColors.textDim,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-            const SizedBox(height: Space.xl),
-            Text('ABOUT', style: EmberText.micro),
-            const SizedBox(height: Space.s),
-            Panel(
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.menu_book,
-                    color: EmberColors.textDim,
-                    size: 20,
-                  ),
-                  const SizedBox(width: Space.m),
-                  Expanded(
-                    child: Text('Credits & Licenses', style: EmberText.body),
-                  ),
-                  EmberButton(
-                    'View',
-                    onTap: () {
-                      AudioService.instance?.playSfx('ui_tap');
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const CreditsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              const SizedBox(height: Space.s),
+              Text(
+                'The Ember Forge purchase moves with your Play account, '
+                'not with the code.',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
-            ),
-            const SizedBox(height: Space.s),
-            // Past posts (v0.15.0): the Hearthside Post archive — every
-            // release note, re-readable forever. No unread state (§Ethics).
-            Panel(
-              key: const ValueKey('past-posts-tile'),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.history_edu,
-                    color: EmberColors.textDim,
-                    size: 20,
+              const SizedBox(height: Space.xl),
+              // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
+              // a player on a new device must never have to hunt for it.
+              Text('THE EMBER FORGE', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              if (StoreService.instance != null)
+                AnimatedBuilder(
+                  animation: StoreService.instance!.tick,
+                  builder: (context, _) {
+                    final store = StoreService.instance!;
+                    final owned = store.state == ForgeStoreState.owned;
+                    return Panel(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.local_fire_department,
+                            color: owned
+                                ? EmberColors.ember
+                                : EmberColors.textDim,
+                            size: 20,
+                          ),
+                          const SizedBox(width: Space.m),
+                          Expanded(
+                            child: Text(
+                              owned
+                                  ? 'The Forge is open on this profile.'
+                                  : 'Bought the Forge before? Bring it here.',
+                              style: EmberText.body,
+                            ),
+                          ),
+                          if (!owned)
+                            EmberButton(
+                              'Restore',
+                              key: const ValueKey('settings-restore'),
+                              dense: true,
+                              onTap: () {
+                                AudioService.instance?.playSfx('ui_tap');
+                                store.restore();
+                              },
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              else
+                Panel(
+                  child: Text(
+                    'Purchases are unavailable in this build.',
+                    style: EmberText.bodyDim,
                   ),
-                  const SizedBox(width: Space.m),
-                  Expanded(child: Text('Past posts', style: EmberText.body)),
-                  EmberButton(
-                    'Read',
-                    onTap: () {
-                      AudioService.instance?.playSfx('ui_tap');
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const NewsArchiveScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                ),
+              const SizedBox(height: Space.xl),
+              Text('ABOUT', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              Panel(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.menu_book,
+                      color: EmberColors.textDim,
+                      size: 20,
+                    ),
+                    const SizedBox(width: Space.m),
+                    Expanded(
+                      child: Text('Credits & Licenses', style: EmberText.body),
+                    ),
+                    EmberButton(
+                      'View',
+                      onTap: () {
+                        AudioService.instance?.playSfx('ui_tap');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const CreditsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: Space.s),
+              // Past posts (v0.15.0): the Hearthside Post archive — every
+              // release note, re-readable forever. No unread state (§Ethics).
+              Panel(
+                key: const ValueKey('past-posts-tile'),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.history_edu,
+                      color: EmberColors.textDim,
+                      size: 20,
+                    ),
+                    const SizedBox(width: Space.m),
+                    Expanded(child: Text('Past posts', style: EmberText.body)),
+                    EmberButton(
+                      'Read',
+                      onTap: () {
+                        AudioService.instance?.playSfx('ui_tap');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const NewsArchiveScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -718,8 +720,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Clipboard.setData(ClipboardData(text: code));
     if (mounted) {
       setState(
-        () => _transferLine =
-            'Save code copied — paste it on your other device.',
+        () =>
+            _transferLine = 'Save code copied — paste it on your other device.',
       );
     }
   }
