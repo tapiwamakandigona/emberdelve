@@ -48,10 +48,17 @@ void main() {
     // bot is a lower bound on humans: if it can win A20, the climb exists.
     // A balance change that kills these seeds must re-hunt and re-pin —
     // and prove the new curve still clears tool/ascension_sweep_probe.dart.
+    // Re-pinned for v0.22.0: the 8-boss remap (bossForSeed = seed % 8)
+    // changes which boss every seed draws, which flipped the old pins
+    // (kindler 10, warden 4, gambler 10, ascetic 10). Re-hunted after the
+    // remap AND the fairness tunes (kindler won 6/10/13, warden 4/6/13,
+    // gambler 6/13/39, ascetic 6/10/39); four DISTINCT seeds pinned
+    // deliberately so the four proofs ride four different maps/bosses, not
+    // one lucky layout.
     const seeds = {
-      'kindler': 10,
+      'kindler': 6,
       'warden': 4,
-      'gambler': 10,
+      'gambler': 13,
       'ascetic': 10,
     };
     seeds.forEach((ch, seed) {

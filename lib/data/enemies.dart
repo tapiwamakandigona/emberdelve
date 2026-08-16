@@ -1,4 +1,4 @@
-// data/enemies.dart — Emberdelve enemy roster (v0.12.0: 35 enemies).
+// data/enemies.dart — Emberdelve enemy roster (v0.22.0: 39 enemies).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -65,6 +65,8 @@ const List<String> enemiesOrder = [
   'clinker_ogre', 'smoke_stalker', 'basalt_shell', 'wick_widow',
   // regulars — late band, v0.12.0 additions (appended at band END)
   'vent_serpent', 'pumice_hulk',
+  // regulars — late band, v0.22.0 additions (appended at band END)
+  'ashglass_sentinel', 'coal_seam_wyrm',
   // elites
   'pyre_howler', 'kiln_golem', 'ash_reaper', 'forge_warden', 'molten_maw',
   // elites — v0.5.0 additions
@@ -83,6 +85,13 @@ const List<String> enemiesOrder = [
   // for that seed and the v6 golden replay stays valid. Going from 6 to any
   // other count must be re-checked the same way BEFORE it is committed.
   'cinder_hierophant', 'the_bellows', 'ashfall_twins',
+  // v0.22.0 bosses, appended (6 -> 8). This one DOES remap bossForSeed:
+  // 20260723 % 8 == 3, so the golden anchor seed now draws the Cinder
+  // Hierophant instead of the Ember Tyrant. That is a DELIBERATE third
+  // golden re-anchor, recorded in docs/improvements/
+  // v0.22.0-crowned-deep-design.md and progress.md; content_test pins the
+  // new mapping so the next boss-count change trips the same tripwire.
+  'slag_regent', 'hearthless_king',
 ];
 
 const Map<String, EnemyDef> enemies = {
@@ -300,6 +309,36 @@ const Map<String, EnemyDef> enemies = {
       Intent('block', 22),
     ],
   ),
+  // v0.22.0 late additions — inside the late band (hp 34-58, swings 19-28).
+  // Each foreshadows a v0.22.0 boss rhythm at regular scale, the same trick
+  // vent_serpent (hierophant) and pumice_hulk (twins) already play:
+  'ashglass_sentinel': EnemyDef(
+    'ashglass_sentinel',
+    'Ashglass Sentinel',
+    48,
+    fromLayer: 6,
+    pattern: [
+      // The drawbridge, small: two silent guard beats, then the spike. The
+      // Slag Regent's shape, met first where losing to it is cheap.
+      // (First cut was hp 52 / 22-18-28: a measured -3.75-point hit to the
+      // hard-mode 400-seed band, so it was softened — see progress.md.)
+      Intent('block', 20),
+      Intent('block', 16),
+      Intent('attack', 27),
+    ],
+  ),
+  'coal_seam_wyrm': EnemyDef(
+    'coal_seam_wyrm',
+    'Coal-Seam Wyrm',
+    42,
+    fromLayer: 5,
+    pattern: [
+      // The pendulum, small: a strict 2-beat metronome, every other beat
+      // free — the Hearthless King's rhythm at regular scale.
+      Intent('attack', 23),
+      Intent('block', 20),
+    ],
+  ),
 
   // ---- elites ------------------------------------------------------------------
   'pyre_howler': EnemyDef(
@@ -485,6 +524,37 @@ const Map<String, EnemyDef> enemies = {
       Intent('block', 24),
       Intent('attack', 33),
     ],
+  ),
+  // v0.22.0 bosses — boss band (hp 94-112, swings 21-36), two rhythms the
+  // roster did not have:
+  //   slag_regent     — the drawbridge: the only boss whose guard beats are
+  //                     completely silent (no chip anywhere until the swing),
+  //                     then a band-max hit. Count, bank burst, spend it on
+  //                     beat three.
+  //   hearthless_king — the pendulum: the only strict 2-beat boss. Every
+  //                     other beat is free, but the hits are the largest
+  //                     regular-cadence swings shipped. Simple to read,
+  //                     brutal to out-tempo.
+  'slag_regent': EnemyDef(
+    'slag_regent',
+    'Slag Regent',
+    108,
+    boss: true,
+    pattern: [
+      Intent('block', 32),
+      Intent('block', 27),
+      Intent('attack', 36),
+    ],
+  ),
+  'hearthless_king': EnemyDef(
+    'hearthless_king',
+    'Hearthless King',
+    98,
+    boss: true,
+    // First cut was hp 100 / attack 34: measured 26/100 on hard vs the
+    // incumbent floor of 30 (ember_tyrant) — the pendulum compounds with
+    // hard-mode scaling, so it was eased to land inside the roster's spread.
+    pattern: [Intent('attack', 32), Intent('block', 31)],
   ),
 };
 

@@ -23,10 +23,28 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.21.0';
+const String currentAppVersion = '0.22.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.22.0',
+    title: 'The Crowned Deep',
+    lines: [
+      'Two new bosses hold the deep: the Slag Regent, who guards in '
+          'perfect silence twice and then ends the audience, and the '
+          'Hearthless King, who keeps the only time left to him - strike, '
+          'guard, strike, guard.',
+      'The road down changes too: the Ashglass Sentinel and the Coal-Seam '
+          'Wyrm rehearse the kings\' rhythms at a survivable scale, two '
+          'new events pay court on the causeway, and two new relics - the '
+          'Siege Hook and the King\'s Ransom - join the pool.',
+      'Eight bosses now share the throne-rota, so the daily trial can '
+          'crown a king. Every addition sits inside the fairness bands we '
+          'measure - nothing got quietly harder.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.21.0',
     title: 'The Watchtower',

@@ -99,10 +99,16 @@ void main() {
     // different boss and invalidates the golden replays. Assert THAT instead of
     // a magic number — this now fails for the real reason (the golden anchor
     // seed would change boss) rather than merely because content grew.
-    expect(bosses, equals(6));
+    // v0.22.0: 6 -> 8 bosses. 20260723 % 8 == 3, so the anchor seed now
+    // draws the Cinder Hierophant — a DELIBERATE re-anchor (the third),
+    // recorded in docs/improvements/v0.22.0-crowned-deep-design.md with all
+    // goldens re-measured twice from real runs. The pin below keeps doing
+    // its real job: the NEXT boss-count change must trip here and be
+    // re-anchored just as deliberately.
+    expect(bosses, equals(8));
     expect(
       bossForSeed(goldenAnchorSeed),
-      equals('ember_tyrant'),
+      equals('cinder_hierophant'),
       reason:
           'boss count changed under the golden anchor seed: re-anchor '
           'the golden replays deliberately before shipping this',

@@ -143,6 +143,17 @@ final List<CodexEntryDef> codexEntries = [
     'Light as bread, hard as grudges. It swings twice because the first '
         'one is for asking and the second is the answer.',
   ),
+  // v0.22.0 late regulars
+  _enemy(
+    'ashglass_sentinel',
+    'Vitrified where it stood when the first hearth failed. It guards in '
+        'perfect silence — twice — and then remembers what it was posted for.',
+  ),
+  _enemy(
+    'coal_seam_wyrm',
+    'It swims the black seams and surfaces on the beat. Miners set their '
+        'shifts by wyrm-knock: one to strike, one to hide, forever.',
+  ),
   // enemies — elite --------------------------------------------------------
   _enemy(
     'pyre_howler',
@@ -230,6 +241,20 @@ final List<CodexEntryDef> codexEntries = [
     'ashfall_twins',
     'One fell into the fire; one was pulled out. They have argued about '
         'which was luckier ever since, and delvers make convenient juries.',
+    cost: 30,
+  ),
+  // v0.22.0 bosses
+  _enemy(
+    'slag_regent',
+    'The Regent holds the causeway for a crown that never came back for '
+        'it. It raises its guard the way courts raise drawbridges: twice, '
+        'in silence, and then the audience ends.',
+    cost: 30,
+  ),
+  _enemy(
+    'hearthless_king',
+    'A king who banked his own hearth to outlast his rivals, and did. Now '
+        'he keeps the only time left to him: strike, guard, strike, guard.',
     cost: 30,
   ),
   // relics -------------------------------------------------------------------
@@ -363,6 +388,19 @@ final List<CodexEntryDef> codexEntries = [
     'hearth_kettle',
     'Every camp had one; this is the one that survived them. Water boiled '
         'in it tastes faintly of iron and strongly of getting to rest.',
+  ),
+  // v0.22.0 relics
+  _relic(
+    'siege_hook',
+    'Forged to open gates that preferred to stay shut. It has no opinion '
+        'on doors, walls, or guards — only on the difference between '
+        'outside and inside.',
+  ),
+  _relic(
+    'kings_ransom',
+    'The toll bowl of the Hearthless King, worn smooth by paying hands. '
+        'Whatever you win while carrying it, it quietly takes its cut — '
+        'and adds it to yours.',
   ),
 ];
 

@@ -46,7 +46,18 @@ import 'package:emberdelve/sim/autoplay.dart';
 // to the Ember Tyrant. Old v6 value: 1507173787. New values below measured
 // twice per seed (identical) on local Flutter 3.44.9; old -> new for all six
 // bosses recorded in progress.md.
-const int goldenV6 = 1285794096;
+//
+// v0.22.0 re-anchor (2026-08-16, "The Crowned Deep" content drop): bosses
+// 6 -> 8, which remaps `bossForSeed = seed % count` for EVERY seed — the
+// re-anchor the enemies.dart ordering comment has warned about since v0.5.0,
+// taken deliberately (docs/improvements/v0.22.0-crowned-deep-design.md). The
+// anchor seed 20260723 ≡ 3 (mod 8) now draws the CINDER HIEROPHANT, not the
+// Ember Tyrant; the pools also grew (enemies 35 -> 39, events 31 -> 33), so
+// even same-boss runs re-hash. Old value: 1285794096. Measured twice per
+// seed in-process AND across two separate processes
+// (tool/golden_measure_probe_test.dart, tool/golden_boss_reach_probe_test.dart);
+// old -> new for all bosses recorded in progress.md.
+const int goldenV6 = 210389070;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -54,15 +65,24 @@ const int goldenV6 = 1285794096;
 // for the record: Colossus 578589309 @ seed 20260725, Matriarch 1077392826
 // @ seed 20260724.
 //
-// Consecutive seeds 20260722..20260727 are congruent to 0..5 mod 6, so they hit
-// each boss exactly once in boss-list order.
+// v0.22.0 (8 bosses): seeds congruent to 0..7 mod 8 hit each boss exactly
+// once in boss-list order. The base run 20260720..20260727 was screened with
+// tool/golden_boss_reach_probe_test.dart and four of those runs DIE BEFORE
+// MEETING THEIR BOSS — a per-boss golden that never reaches its boss pins
+// nothing about that boss fight. For those, the next seed in the same
+// residue class (+8k) whose bot run provably emits the boss's
+// `encounter_started` is used instead. Every seed below was verified to
+// fight its boss; this is a stronger anchor scheme than the pre-v0.22.0
+// consecutive-seed one, which never checked reach.
 const Map<int, String> bossAnchorSeeds = {
-  20260722: 'ashen_colossus',
-  20260723: 'ember_tyrant',
-  20260724: 'pyre_matriarch',
-  20260725: 'cinder_hierophant',
-  20260726: 'the_bellows',
-  20260727: 'ashfall_twins',
+  20260728: 'ashen_colossus', // 20260720 dies early (run_lost, no boss)
+  20260729: 'ember_tyrant', // 20260721 dies early
+  20260722: 'pyre_matriarch',
+  20260723: 'cinder_hierophant',
+  20260724: 'the_bellows',
+  20260725: 'ashfall_twins',
+  20260734: 'slag_regent', // 20260726 dies early
+  20260743: 'hearthless_king', // 20260727 and 20260735 die early
 };
 
 // v7 re-anchor (2026-08-12), old -> new, same cause as goldenV6 above:
@@ -83,8 +103,10 @@ const Map<int, String> bossAnchorSeeds = {
 //
 // Per-boss goldens, pinned 2026-08-11 from measured builds, not guesses:
 // identical values printed by CI runs 31447535252 and 31459628277 and by a
-// local Flutter 3.44.9 run. ember_tyrant equals goldenV6 by construction
-// (same seed 20260723). If content is deliberately added to the spawn/event
+// local Flutter 3.44.9 run. (Historical: ember_tyrant equalled goldenV6 by
+// construction while seed 20260723 drew it; since the v0.22.0 8-boss remap
+// that construction belongs to cinder_hierophant — see the v0.22.0 block
+// below.) If content is deliberately added to the spawn/event
 // pools, re-anchor ALL of these from a real build and record old -> new in
 // progress.md — never by editing a single one to green.
 // v0.12.0 re-anchor (2026-08-16), old -> new, cause: bestiary 30 -> 35 and
@@ -95,13 +117,29 @@ const Map<int, String> bossAnchorSeeds = {
 //   cinder_hierophant  1042046624 -> 1003403945
 //   the_bellows        2005745586 -> 753684676
 //   ashfall_twins       183009563 -> 1171602943
+// v0.22.0 re-anchor (2026-08-16), old -> new (boss mapping AND anchor seeds
+// changed together — see bossAnchorSeeds above; old seed in parentheses):
+//   ashen_colossus     (20260722)  240246681 -> 1741421590 @ 20260728
+//   ember_tyrant       (20260723) 1285794096 -> 1337987690 @ 20260729
+//   pyre_matriarch     (20260724) 1072189078 ->  144677281 @ 20260722
+//   cinder_hierophant  (20260725) 1003403945 ->  210389070 @ 20260723
+//   the_bellows        (20260726)  753684676 -> 1476213392 @ 20260724
+//   ashfall_twins      (20260727) 1171602943 -> 1206986981 @ 20260725
+//   slag_regent        (new)                    789589633 @ 20260734
+//   hearthless_king    (new)                    537232144 @ 20260743
+// (hearthless_king was re-measured after its fairness tune, hp 100->98 and
+// swing 34->32: 1087925192 -> 537232144; the other seven anchors were
+// byte-identical across the tune, proving it touched only king fights.)
+// cinder_hierophant equals goldenV6 by construction (same seed 20260723).
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 240246681,
-  'ember_tyrant': 1285794096,
-  'pyre_matriarch': 1072189078,
-  'cinder_hierophant': 1003403945,
-  'the_bellows': 753684676,
-  'ashfall_twins': 1171602943,
+  'ashen_colossus': 1741421590,
+  'ember_tyrant': 1337987690,
+  'pyre_matriarch': 144677281,
+  'cinder_hierophant': 210389070,
+  'the_bellows': 1476213392,
+  'ashfall_twins': 1206986981,
+  'slag_regent': 789589633,
+  'hearthless_king': 537232144,
 };
 
 void main() {
@@ -175,10 +213,11 @@ void main() {
     });
 
     test('golden determinism anchor (regression guard)', () {
-      // Seed 20260723 % 3 == 1 maps to the Ember Tyrant (boss ordering in
-      // enemiesOrder is deliberate), so this anchor survived the v0.4
-      // boss-variety change byte-for-byte: boss choice is a pure function of
-      // the seed and consumes no RNG stream.
+      // Seed 20260723: mapped to the Ember Tyrant while the roster was 3 or
+      // 6 bosses (20260723 ≡ 1 mod both); since v0.22.0's 8-boss roster it
+      // maps to the Cinder Hierophant (≡ 3 mod 8) — a deliberate re-anchor,
+      // see the goldenV6 comment. Boss choice remains a pure function of the
+      // seed and consumes no RNG stream.
       final sim = playRun(20260723).sim;
       expect(sim.eventHash, equals(goldenV6));
     });
