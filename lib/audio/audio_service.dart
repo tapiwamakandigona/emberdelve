@@ -98,6 +98,20 @@ class AudioService {
   static const _ambienceLevel = 0.35; // relative to music volume
   static const _dangerLevel = 0.5; // relative to music volume
 
+  /// v0.23.0 "The Deep Hum": on the delve map the ember bed deepens with
+  /// descent. [depth] is 0.0 at the first layer and 1.0 at the boss layer;
+  /// shallow floors whisper under the map music, the last approach hums.
+  /// Pure so the curve is pinned by tests without a platform player.
+  static double mapAmbienceLevel(double depth) {
+    final d = depth.clamp(0.0, 1.0);
+    return 0.12 + (0.45 - 0.12) * d;
+  }
+
+  /// Relative level the ambience bed is currently running at (null when the
+  /// bed is off). Kept so applySettings and live depth changes re-apply the
+  /// right level instead of snapping map ambience back to the title level.
+  double? _ambienceRel;
+
   AudioPlayer? _music;
   String? _musicKey;
   AudioPlayer? _ambience;
@@ -183,9 +197,21 @@ class AudioService {
       phase == null || phase == 'idle' || phase == 'rest';
 
   /// Crossfade to the track for [phase]; manage the ambience bed too.
-  Future<void> syncPhase(String? phase, {bool bossFight = false}) async {
+  ///
+  /// [mapDepth] (0..1, first layer -> boss layer) only matters on the map
+  /// phase, where the ember bed runs at a depth-scaled level instead of the
+  /// fixed title level (v0.23.0 "The Deep Hum").
+  Future<void> syncPhase(
+    String? phase, {
+    bool bossFight = false,
+    double mapDepth = 0,
+  }) async {
     final key = musicKeyForPhase(phase, bossFight: bossFight);
-    setAmbience(_ambientPhase(phase));
+    if (phase == 'map') {
+      setAmbience(true, level: mapAmbienceLevel(mapDepth));
+    } else {
+      setAmbience(_ambientPhase(phase));
+    }
     if (key == _musicKey) return;
     final sting = key == 'victory' || key == 'defeat';
     await playMusic(key!, loop: !sting);
@@ -240,27 +266,45 @@ class AudioService {
     });
   }
 
-  /// Quiet ember-crackle bed under title/rest.
-  void setAmbience(bool on) {
+  /// Quiet ember-crackle bed under title/rest — and, depth-scaled, under the
+  /// delve map (v0.23.0). [level] is relative to the music volume and
+  /// defaults to the fixed title/rest level. A live level change on a
+  /// running bed is a setVolume, never a restart: the loop must not hiccup
+  /// as the player steps a node deeper.
+  void setAmbience(bool on, {double? level}) {
+    final rel = level ?? _ambienceLevel;
     if (on) {
-      if (_ambience != null) return;
+      if (_ambience != null) {
+        if (_ambienceRel != rel) {
+          _ambienceRel = rel;
+          try {
+            _ambience?.setVolume(settings.effectiveMusic * rel);
+          } catch (_) {}
+        }
+        return;
+      }
       AudioPlayer? p;
       try {
         p = AudioPlayer();
         _ambience = p;
+        _ambienceRel = rel;
         p.setReleaseMode(ReleaseMode.loop);
         p.play(
           AssetSource(sfxPaths['ember_ambience_loop']!),
-          volume: settings.effectiveMusic * _ambienceLevel,
+          volume: settings.effectiveMusic * rel,
         );
       } catch (_) {
         // Same retry rule as playMusic: a failed start must not occupy the
         // slot, or ambience stays silent until the next off/on phase swing.
-        if (_ambience == p) _ambience = null;
+        if (_ambience == p) {
+          _ambience = null;
+          _ambienceRel = null;
+        }
       }
     } else {
       final p = _ambience;
       _ambience = null;
+      _ambienceRel = null;
       if (p != null) {
         try {
           p.stop();
@@ -444,7 +488,9 @@ class AudioService {
   void applySettings() {
     try {
       _music?.setVolume(settings.effectiveMusic);
-      _ambience?.setVolume(settings.effectiveMusic * _ambienceLevel);
+      _ambience?.setVolume(
+        settings.effectiveMusic * (_ambienceRel ?? _ambienceLevel),
+      );
     } catch (_) {}
   }
 }
