@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/themes.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 
@@ -22,6 +23,9 @@ void main() {
       runsPlayed: 12,
       runsWon: 5,
       tutorialSeen: true,
+      // v0.10.0: fromJson's veteran migration seeds tipsSeen from
+      // tutorialSeen, so the round-trip source must carry it too.
+      tipsSeen: ContextTips.all.toSet(),
       preferredDifficulty: 'hard',
       difficultyChosen: true,
       charRuns: {'kindler': 8, 'warden': 4},

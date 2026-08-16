@@ -13,6 +13,7 @@ import 'package:emberdelve/ui/logo.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/game/tips.dart';
 
 /// Pump frames for roughly [ms] of animation time without waiting to settle.
 Future<void> pumpFor(WidgetTester tester, int ms) async {
@@ -55,6 +56,7 @@ void main() {
     // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
+    c.meta.tipsSeen.addAll(ContextTips.all);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
@@ -139,6 +141,7 @@ void main() {
     // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
+    c.meta.tipsSeen.addAll(ContextTips.all);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
@@ -386,6 +389,7 @@ void main() {
   ) async {
     final c = GameController();
     c.meta.tutorialSeen = true;
+    c.meta.tipsSeen.addAll(ContextTips.all);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
@@ -462,6 +466,7 @@ void main() {
     // soft-locked run. The button must stay tappable and lead to the map.
     final c = GameController();
     c.meta.tutorialSeen = true;
+    c.meta.tipsSeen.addAll(ContextTips.all);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
@@ -523,6 +528,7 @@ void main() {
       addTearDown(tester.view.reset);
       final c = GameController();
       c.meta.tutorialSeen = true;
+      c.meta.tipsSeen.addAll(ContextTips.all);
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
       );

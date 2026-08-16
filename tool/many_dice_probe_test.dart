@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/game/tips.dart';
 
 const outDir = 'build/many_dice_probe';
 final rootKey = GlobalKey();
@@ -159,6 +160,7 @@ void main() {
       for (final n in pools) {
         final c = GameController();
         c.meta.tutorialSeen = true;
+        c.meta.tipsSeen.addAll(ContextTips.all);
         await tester.pumpWidget(
           RepaintBoundary(
             key: rootKey,

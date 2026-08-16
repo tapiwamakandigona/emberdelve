@@ -1337,3 +1337,25 @@ VERIFIED: analyze clean; full suite 357/357 (+15 trials tests: catalog
 integrity, 2026–2028 determinism/uniformity sweep, non-degenerate rotation,
 predicate fixtures, banned-words over trial copy, controller e2e mutator
 apply + idempotent bonus bank + share header). Version 0.9.0+35.
+
+## 2026-08-16 — v0.10.0 "The First Delve" (build 36)
+
+- Killed the up-front 4-card tutorial wall. New `lib/game/tips.dart` TipDirector:
+  staged contextual tips at first contact — roll_spend (first fight start),
+  intent_fair (first enemy action), combos_pay (first combo event), block_fades
+  (first telegraphed attack ≥ 4). One at a time, once ever; suppressed triggers
+  recur naturally, no queue. Manual ? replay of the full deck unchanged.
+- MetaState.tipsSeen (union cloud merge; veteran migration: tutorialSeen without
+  tipsSeen key seeds all four). Controller.dismissTip sets legacy tutorialSeen
+  when the last tip dies, so older builds sharing a cloud save never replay.
+- _ContextTip card: light 0.35 scrim, anchored at its subject, tap-anywhere
+  dismiss. CAUGHT by new sweep test: overflow at 320×568 @1.3x (69px) — fixed
+  with short-screen anchor padding (72/96 vs 120/210) + SingleChildScrollView.
+  Test gotcha: combat screen is _scoped-cached; direct director pokes need a
+  MediaQuery jiggle (1px height) to force rebuild in tests.
+- meta_ledger round-trip test updated (migration adds tipsSeen key — construct
+  the source with it). All wall-suppressing tests/tools now seed tipsSeen too.
+- Suite 372/372 (log /work/temp/ed_full_suite_v0100c.log). Sim untouched.
+- Releases published earlier this session: v0.8.0 (6189058, run 31938009795)
+  and v0.9.0 (1c0fd78, run 31938359549) — both signer-pin verified
+  (031acb42…), sha256s in release notes, GitHub-only per owner directive.

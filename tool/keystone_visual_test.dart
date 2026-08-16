@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,6 +47,7 @@ void main() {
 
       final c = GameController();
       c.meta.tutorialSeen = true;
+      c.meta.tipsSeen.addAll(ContextTips.all);
       final key = GlobalKey();
       await tester.pumpWidget(
         RepaintBoundary(
