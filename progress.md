@@ -1382,3 +1382,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates: tool/ledger_visual_test.dart → codex 360x640 + 320x568@1.3x +
   summary firsts 360x640; critiqued, no overflow, lists coherent.
 - Suite 381/381 (log /work/temp/ed_full_suite_v11.log). Version 0.11.0+37.
+
+## 2026-08-16 ~10:55 GMT — v0.11.0 PUBLISHED
+- CI run 31942389734 success. Signer pin 031acb42…44b7a0d verified on APK (androguard v2) and AAB (jar META-INF). versionName 0.11.0, code 37.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.11.0
+- apk 224c183a73a62b3392314210fc22ea5f86629b07d12ecdc7dee272e5df9c6d1b, aab 552c8deca8c92ab1667be8a3e2aac90dc2b013609f9802ef2a3cde57603ad6f9. Checksums appended to docs/releases/v0.11.0.md.
+- Next: v0.12.0 "New Embers" per docs/improvements/v0.12.0-return-moment-design.md (design doc committed with this entry).
