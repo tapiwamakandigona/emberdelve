@@ -92,12 +92,18 @@ String weeklyShareText({
   required bool won,
   required int floor,
   required int floors,
+  String grid = '',
 }) {
   final name = isKnownMutator(mutatorId) ? mutatorDef(mutatorId).name : 'Delve';
   final line = won
       ? '🔥 Claimed the Ember — floor $floors of $floors'
       : '🕯️ Fell on floor $floor of $floors';
-  return 'Emberdelve Weekly — ${weeklyKey(index)}\n'
-      '$name · $line\n'
-      'One shared delve — same seed and modifier for everyone.';
+  return [
+    'Emberdelve Weekly — ${weeklyKey(index)}',
+    // v0.8.0: spoiler-free floor trace (run_trace.dart), same charter as the
+    // daily's — states how it went, never what the shared map holds.
+    if (grid.isNotEmpty) grid,
+    '$name · $line',
+    'One shared delve — same seed and modifier for everyone.',
+  ].join('\n');
 }

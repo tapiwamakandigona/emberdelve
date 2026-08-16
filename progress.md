@@ -1288,3 +1288,28 @@ VERIFIED: analyze clean; full suite 282/282; overflow 25/25 across 320x568–
 2/2; perf proxy unchanged from the accepted dimensional baseline (combat idle
 2.0 paints/frame, die tap 19.9, full storm 96.6); deterministic real-UI probe
 4/4 runs, 827 steps, 0 violations/warnings. goldenV6 remains 2013675017.
+
+## 2026-08-16 — v0.8.0 "Tell the Tale" — the share artifact (GitHub-only release mode begins)
+Owner directive 2026-08-16: no Play submissions until told otherwise; every
+improvement ships as its own GitHub release with notes. DEMAND.md written at
+repo root (pillars, gates, release mode); studio-priorities research doc and
+v0.9.0 Today's Trials design doc added under docs/improvements/.
+The improvement: a pure RunTrace observer (lib/game/run_trace.dart) fed by
+the same sim event stream as the ledger — emoji floor trace in rows of 5
+(🟩 clean / 🟨 hurt / 🟥 death floor / 🔥 Ember claimed), semantic label,
+seed-challenge text. Trace rides the autosave beside the snapshot
+(run_trace key) and restores on boot. Daily/weekly share texts gain a grid
+line (no-grid output byte-identical to old); new seedChallengeShareText for
+finished non-daily/non-weekly runs; summary screen shows the grid above the
+seed line plus a "Copy seed challenge" button. Sim untouched — simVersion 7,
+all goldens unchanged. Banned-words sweep over every share surface stays in
+tests.
+Screenshot critique caught two harness bugs before the gate: plates rendered
+without a Scaffold ancestor (yellow double-underline artifact; in-app
+GameRoot already wraps in Scaffold, product unaffected) and the trace grid
+sat below the fold in all plates — fixed with Scaffold wrap + scrollToKey
+plates. Re-render verified: grid rows, button order, and 1.3x wrap all clean;
+tofu emoji in plates is the documented sandbox font limitation only.
+VERIFIED: analyze clean; full suite 342/342 (was 325; +17 run_trace tests
+incl. 3 controller e2e); share texts byte-verified (LOST seed 111 grid 🟥,
+WON seed 503 grid 🟨🟨🟩🟩🟨/🟩🟩🔥). Version 0.8.0+34.
