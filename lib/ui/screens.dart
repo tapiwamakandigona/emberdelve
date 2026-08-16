@@ -18,6 +18,7 @@ import '../game/controller.dart';
 import '../game/daily_share.dart';
 import '../game/run_trace.dart';
 import '../game/seed_input.dart';
+import '../game/trials.dart';
 import '../game/weekly.dart';
 import '../meta/forge.dart';
 import '../meta/play_games_service.dart';

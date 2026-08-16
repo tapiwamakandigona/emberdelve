@@ -24,6 +24,7 @@ import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
+import 'trials.dart';
 import 'run_trace.dart';
 import 'weekly.dart';
 
@@ -457,14 +458,20 @@ class GameController extends ChangeNotifier {
   /// Daily Delve: everyone starts from the same seed for the device's local
   /// calendar date (same map, same offers, same boon offering). No streaks,
   /// no expiry — just a shared delve (spec §Ethics).
-  void startDailyRun({String? character}) {
-    final now = DateTime.now();
+  /// [clock] pins the date in tests; production always plays today.
+  void startDailyRun({String? character, DateTime? clock}) {
+    final now = clock ?? DateTime.now();
     final label = dailyKey(now);
+    // v0.9.0 Today's Trials: the date deterministically declares ONE trial.
+    // A mutator day rides the existing cmd['mutators'] seam (sim-known ids
+    // only); a goal day changes nothing here — it is judged at bank time.
+    final trial = trialForDate(now.year, now.month, now.day);
     startRun(
       character: character,
       seed: dailySeed(now.year, now.month, now.day),
       boons: true,
       daily: label,
+      mutators: trial.mutators,
     );
   }
 
@@ -784,6 +791,17 @@ class GameController extends ChangeNotifier {
       meta.lastDailyWon = sim!.phase == 'run_won';
       meta.lastDailyFloor = floorReached;
       meta.lastDailyFloors = (sim!.map?['layers'] as int?) ?? 0;
+      // v0.9.0 Today's Trials: a goal day's bonus banks here, once, through
+      // the same guarded path as everything else (idempotent on resume — a
+      // trial is a pure function of the date label, nothing new persists).
+      // Missing the goal costs nothing and says nothing (§Ethics).
+      final trial = trialForDailyKey(dailyDate!);
+      if (trial != null &&
+          trial.goalId.isNotEmpty &&
+          trialGoalMet(trial, run, runTrace)) {
+        meta.embers += trial.emberBonus;
+        meta.lifetimeEmbers += trial.emberBonus;
+      }
     }
     // Weekly Delve record (P3): same charter as the daily — only a FINISHED
     // weekly records anything, and it's one record with no history/streaks.
@@ -879,6 +897,25 @@ class GameController extends ChangeNotifier {
     return node?['layer'] as int? ?? 0;
   }
 
+  /// The trial declared for this run's daily date; null for non-daily runs
+  /// (v0.9.0). Re-derived from the persisted date label, so a resumed daily
+  /// keeps its trial for free.
+  TrialDef? get dailyTrial =>
+      dailyDate == null ? null : trialForDailyKey(dailyDate!);
+
+  /// Embers this finished daily earned from its trial goal; 0 mid-run, on
+  /// mutator days, and when the goal was missed. Pure recomputation of the
+  /// exact judgement _bankRun made, so the summary chip can never disagree
+  /// with what was actually banked.
+  int get dailyTrialBonus {
+    final trial = dailyTrial;
+    if (trial == null || trial.goalId.isEmpty) return 0;
+    if (!_terminal.contains(sim?.phase) || sim?.phase == 'idle') return 0;
+    final run = sim?.run;
+    if (run == null) return 0;
+    return trialGoalMet(trial, run, runTrace) ? trial.emberBonus : 0;
+  }
+
   /// Share text for a just-finished Daily Delve; null for normal runs or
   /// mid-run. Built from the banked meta record so it matches what the
   /// title recap will show.
@@ -891,6 +928,7 @@ class GameController extends ChangeNotifier {
       floor: meta.lastDailyFloor,
       floors: meta.lastDailyFloors,
       grid: traceGrid(runTrace),
+      trial: dailyTrial?.name ?? '',
     );
   }
 

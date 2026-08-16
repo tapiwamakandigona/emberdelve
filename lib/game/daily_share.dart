@@ -32,12 +32,15 @@ String dailyShareText({
   required int floor,
   required int floors,
   String grid = '',
+  String trial = '',
 }) {
   final line = won
       ? '🔥 Claimed the Ember — floor $floors of $floors'
       : '🕯️ Fell on floor $floor of $floors';
   return [
-    'Emberdelve Daily $date',
+    // v0.9.0: the header carries the day's declared trial name, so a shared
+    // result also shares the rule it was played under. No trial, old header.
+    trial.isEmpty ? 'Emberdelve Daily $date' : 'Emberdelve Daily $date · $trial',
     // v0.8.0: spoiler-free floor trace (run_trace.dart) — recognizable at a
     // glance, says how it went without revealing what the shared map holds.
     if (grid.isNotEmpty) grid,

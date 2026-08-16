@@ -1313,3 +1313,27 @@ tofu emoji in plates is the documented sandbox font limitation only.
 VERIFIED: analyze clean; full suite 342/342 (was 325; +17 run_trace tests
 incl. 3 controller e2e); share texts byte-verified (LOST seed 111 grid 🟥,
 WON seed 503 grid 🟨🟨🟩🟩🟨/🟩🟩🔥). Version 0.8.0+34.
+
+## 2026-08-16 — v0.9.0 "Today's Trials" — the daily's rule now rotates
+Backlog item 2 (studio-priorities §2): a return-moment from rule VARIETY,
+not streak pressure. Each date deterministically declares one trial atop
+the Daily Delve seed via hashDomainString('emberdelve-trial:YYYY-MM-DD')
+into append-only trialsOrder (7 entries): three mutator days riding the
+existing cmd['mutators'] seam (all_d4 / elites_only / no_shops) and four
+goal days judged by a pure function over the final run snapshot + RunTrace
+(gold 40+ / fights 4+ / clean floors 3+ / embers 60+, small ember bonus
+banked once through the guarded _bankRun path). Nothing new persists — the
+trial re-derives from the saved daily date label, so resumes are free and
+old saves untouched. Sim untouched, simVersion 7, goldens unchanged.
+UI: daily-trial-line under the Daily button (rule spelled out before you
+commit, goal days state their bonus as a fact); trial-met-chip on the
+summary ONLY when met — a missed goal renders nothing (§Ethics). Daily
+share header gains "· <trial name>"; no-trial output byte-identical.
+Also fixed: two tool-only lints from the v0.8.0 commit broke CI's
+fatal-on-warnings analyze gate (hotfix committed separately as the v0.8.0
+release SHA); e2e first read mutators from run['mutators'] — they live in
+sim.mutators, the run_started event only carries a display string.
+VERIFIED: analyze clean; full suite 357/357 (+15 trials tests: catalog
+integrity, 2026–2028 determinism/uniformity sweep, non-degenerate rotation,
+predicate fixtures, banned-words over trial copy, controller e2e mutator
+apply + idempotent bonus bank + share header). Version 0.9.0+35.

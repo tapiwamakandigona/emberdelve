@@ -151,6 +151,19 @@ class TitleScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            const SizedBox(height: Space.xs),
+                            // Today's Trial (v0.9.0): the ONE declared rule
+                            // this date carries, spelled out before you
+                            // commit — same charter as the weekly modifier
+                            // line. A goal day states its bonus as a fact.
+                            Text(
+                              _dailyTrialLine(),
+                              key: const ValueKey('daily-trial-line'),
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                             // Daily recap (v0.3.4): a small honest checkmark on the day it was
                             // played. Replaying stays allowed — no lockout, no streaks.
                             if (m.lastDailyDate ==
@@ -335,6 +348,16 @@ class TitleScreen extends StatelessWidget {
   /// One-line description of this week's modifier, shown under the button.
   static String _weeklyModifierBlurb() =>
       mutatorDef(weeklyMutatorFor(_thisWeek())).blurb;
+
+  /// Today's Trial line under the Daily Delve button (v0.9.0): the trial
+  /// name, its rule, and — on a goal day — the ember bonus, stated as a
+  /// fact. No countdowns, no pressure (§Ethics).
+  static String _dailyTrialLine() {
+    final now = DateTime.now();
+    final t = trialForDate(now.year, now.month, now.day);
+    final bonus = t.emberBonus > 0 ? ' Met, it pays +${t.emberBonus} embers.' : '';
+    return '${t.name} — ${t.blurb}$bonus';
+  }
 }
 
 /// Three-segment easy/normal/hard switch (v0.3.2). Sticky via MetaState and
