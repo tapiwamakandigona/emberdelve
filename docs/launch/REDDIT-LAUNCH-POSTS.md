@@ -40,7 +40,7 @@ It's free. There's a small one-time unlock for hard mode + ascension if you want
 
 I know I'm at maybe a tenth of the content of something like Slice & Dice — that's the honest state of a solo three-week-old game, and content volume is exactly what I'm working on next. What I most want to know from this crowd: **does the core turn feel fair and interesting, or does it get samey too fast?** That's the thing I can't judge from the inside.
 
-[Play Store link]
+https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
 Happy to answer anything about the design or the determinism model in the comments.
 
@@ -65,7 +65,7 @@ The systems, honestly laid out because I know this crowd reads the numbers:
 
 It's free (small one-time unlock for hard mode + ascension). I'd genuinely value this sub's take on the meta-progression pacing — does the unlock cadence pull you back, or does it flatten too early?
 
-[Play Store link]
+https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
 ---
 
@@ -87,7 +87,7 @@ Solo dev here. Emberdelve is my turn-based dice-builder roguelite for Android. T
 
 Free, with a single one-time unlock for the harder end if you want it. Would love feedback from Android players specifically — device performance and first-fight clarity are what I'm watching. I reply to everything.
 
-[Play Store link]
+https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
 ---
 

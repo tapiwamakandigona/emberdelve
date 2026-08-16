@@ -53,7 +53,7 @@ Not asking for anything — just marking the milestone, and genuinely curious wh
 
 ## First-comment text (both drafts)
 
-Here it is if you want to try it — free, offline, no ads: [Play Store link]. Feedback from anyone who plays it is worth more to me than a download. 🎲
+Here it is if you want to try it — free, offline, no ads: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve. Feedback from anyone who plays it is worth more to me than a download. 🎲
 
 ## Notes
 - Reply to every comment for the first few hours — engagement in the first hour drives reach.
