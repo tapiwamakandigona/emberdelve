@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.18.0';
+const String currentAppVersion = '0.19.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.19.0',
+    title: 'The Spoken Flame',
+    lines: [
+      'Emberdelve now speaks. With TalkBack on, every button, die, toggle '
+          'and map medallion announces itself — kind, floor, and whether '
+          'you can reach it.',
+      'Phase changes are called out ("The delve map", "Combat: Ash Thrall '
+          'with 14 HP"), and every toast — heals, forges, surges — is '
+          'spoken the moment it appears.',
+      'A new automated gate walks the whole game and fails our build if '
+          'any control ever goes silent again.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.18.0',
     title: 'The Trimmed Wick',

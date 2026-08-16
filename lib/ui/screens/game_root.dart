@@ -12,6 +12,39 @@ class GameRoot extends StatefulWidget {
 class _GameRootState extends State<GameRoot> {
   GameController get c => widget.c;
 
+  // TalkBack (v0.19.0): speak phase changes ("Map", "Combat: Ash Thrall")
+  // so a screen-reader player always knows where the delve took them.
+  // Announced at most once per phase transition; silent for sighted play.
+  String? _spokenPhase;
+
+  void _speakPhase(BuildContext context, String? phase) {
+    if (phase == _spokenPhase) return;
+    _spokenPhase = phase;
+    final enemy = c.state?['enemy'] as Map?;
+    final spoken = switch (phase) {
+      'boon' => 'Choose a boon',
+      'map' => 'The delve map',
+      'player_turn' =>
+        'Combat: ${(enemy?['name'] as String?) ?? 'an enemy'} '
+            'with ${enemy?['hp'] ?? '?'} HP',
+      'keystone' => 'Choose a keystone',
+      'reward' => 'Choose a reward',
+      'rest' => 'A rest site',
+      'shop' => 'A shop',
+      'event' => 'An event',
+      'run_won' => 'Victory. The run is won',
+      'run_lost' => 'The run is lost',
+      _ => null,
+    };
+    if (spoken != null) {
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        spoken,
+        TextDirection.ltr,
+      );
+    }
+  }
+
   // Screens that scope their own rebuilds (combat) keep ONE widget instance
   // across controller notifications. Handing the framework the identical child
   // widget makes Element.updateChild short-circuit, so a sim command no longer
@@ -48,6 +81,7 @@ class _GameRootState extends State<GameRoot> {
           });
         }
         final phase = c.phase;
+        _speakPhase(context, phase);
         Widget screen;
         switch (phase) {
           case 'boon':
