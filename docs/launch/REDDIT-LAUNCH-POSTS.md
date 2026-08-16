@@ -110,3 +110,48 @@ https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 - If someone reports a bug: thank them, ask device + Android version, log it, say when you'll patch. A visible fast fix is worth more than any pitch.
 - If someone likes it: ask them to leave a rating — but only after they say something positive, never cold.
 - Never argue. Never mention build speed as a selling point in player communities (they read it as "unfinished"). Never post the same copy across subs verbatim — reword.
+
+---
+
+## FRESH 0.7.0 "since launch" update post (use THIS, not a re-announce)
+
+Since you already posted the launch to r/roguelites (`1vkygos`) and r/Zimbabwe
+(`1vkye51`) on Aug 10/11, a *progress update* is the honest, non-duplicate follow-up.
+Update/dev-log posts are welcome in r/roguelites. Post from your phone; reply to every
+comment in the first 3 hours; reword before crossposting.
+
+### For r/roguelites
+
+**Title:** Two weeks after launching my fair dice roguelite, here's what your feedback made me build
+
+**Body:**
+
+A couple of weeks ago I shared Emberdelve here — a dice-builder roguelite with one rule: every death is fair (enemies telegraph, dice follow learnable rules, runs are seeded). The feedback was blunt and useful: the core turn was solid, but it got samey too fast and there was nothing to chase once you'd seen the enemies.
+
+So that's what I spent the last two weeks on. What's new since then:
+- **Keystones** — a run-shaping power you pick after your first win (reward early strikes, carry unused block, pay for die variety…), so every run has a plan instead of being a pile of dice.
+- **The Ledger** — a proper achievements screen tracking real feats (exact-kill streaks, boss clears, wins per delver), not busywork.
+- **A Codex** — lore for every enemy and relic, plus more hearth colours and dice skins to spend embers on, so the meta doesn't run dry at run 10.
+- A weekly seeded delve with one declared modifier, on top of the daily.
+
+Still free, still no ads, still fully offline. The one-time hard-mode/ascension unlock is the only paid thing.
+
+What I'd love this crowd's read on: **does the keystone-on-first-win change actually give a run direction, or is it just more stuff?** That's the design bet I'm least sure about.
+
+https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
+
+### For r/Zimbabwe (your best venue — flair: Discussion)
+
+**Title:** Update on the game I've been building solo in Kwekwe — two weeks of player feedback later
+
+**Body:**
+
+A couple of weeks back I shared Emberdelve, the little dice roguelite I've been building on my own here. Wanted to post an honest update because a few of you tried it and told me what was weak.
+
+The main thing people said: fun to play, but it ran out of things to do too quickly. So I added a proper achievements ledger, run-shaping "keystone" powers, a lore codex, and a weekly challenge — basically reasons to keep coming back. Still free, no ads, works offline (I know data isn't cheap).
+
+I start Electrical & Electronic Engineering at UZ next week, so this was my last big push before classes. If any of you play it, I genuinely want the criticism — what makes you stop playing?
+
+https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
+
+*(Reminder: real context, never a bare link; reply to comments; do not paste the same body in both subs.)*
