@@ -24,6 +24,7 @@ import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
+import 'run_trace.dart';
 import 'weekly.dart';
 
 class GameController extends ChangeNotifier {
@@ -149,6 +150,11 @@ class GameController extends ChangeNotifier {
   String? _lastEnemyId;
   bool _restedThisRun = false;
 
+  /// v0.8.0 spoiler-free floor trace for share text. Per-run scratch like
+  /// the ledger fields above: reset in [startRun], fed from sim events in
+  /// [apply], persisted beside the snapshot ('run_trace') like run_labels.
+  RunTrace runTrace = RunTrace();
+
   /// Achievements earned by the run that just ended and not yet announced.
   /// The summary screen renders it in the same breath as the run result;
   /// [startRun] clears it. Nothing else may write it.
@@ -213,6 +219,9 @@ class GameController extends ChangeNotifier {
             weeklyIndex = (labels['weekly_index'] as num?)?.toInt();
             weeklyMutator = labels['weekly_mutator'] as String?;
           }
+          // v0.8.0: the floor trace rides the same side channel — a resumed
+          // run keeps its earlier floors, or starts clean on pre-fix saves.
+          runTrace = RunTrace.fromJson(snap['run_trace']);
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -282,6 +291,10 @@ class GameController extends ChangeNotifier {
         if (weeklyMutator != null) 'weekly_mutator': weeklyMutator,
       };
     }
+    // v0.8.0: floor trace rides the same side channel (invisible to the
+    // sim). Only stamped once a floor exists, so a fresh run's first save
+    // blob stays identical to pre-0.8.0 bytes.
+    if (!runTrace.isEmpty) snapMap['run_trace'] = runTrace.toJson();
     final snap = jsonEncode(snapMap);
     _saveQueue = _saveQueue.then((_) async {
       try {
@@ -326,6 +339,9 @@ class GameController extends ChangeNotifier {
     _bankedThisRun = false;
     _lastEnemyId = null;
     _restedThisRun = false;
+    // v0.8.0: every fresh run traces from floor zero — a stale trace must
+    // never leak a previous run's floors into this run's share text.
+    runTrace = RunTrace();
     // The last run's announcements are done with; a stale list must never
     // resurface on the next summary.
     pendingAchievements = const [];
@@ -501,6 +517,9 @@ class GameController extends ChangeNotifier {
     final events = sim!.apply(cmd);
     _handleFlash(events);
     recordCombatStats(events);
+    // v0.8.0 share trace: observed BEFORE _bankRun/_autosave so a terminal
+    // command banks with its final floor mark and the save carries it.
+    runTrace.observe(events);
     if (_terminal.contains(sim!.phase)) _bankRun();
     _autosave();
     audio?.handleEvents(events);
@@ -871,6 +890,7 @@ class GameController extends ChangeNotifier {
       won: meta.lastDailyWon,
       floor: meta.lastDailyFloor,
       floors: meta.lastDailyFloors,
+      grid: traceGrid(runTrace),
     );
   }
 
@@ -888,6 +908,29 @@ class GameController extends ChangeNotifier {
       won: meta.lastWeeklyWon,
       floor: meta.lastWeeklyFloor,
       floors: meta.lastWeeklyFloors,
+      grid: traceGrid(runTrace),
+    );
+  }
+
+  /// Copyable seed challenge for a finished NORMAL/seeded run (v0.8.0).
+  /// Daily/Weekly runs keep their own share text (their seed is implicit in
+  /// the date/week); everything else gets "here is the exact delve I played".
+  /// Null mid-run and on the title screen.
+  String? get seedChallengeShareText {
+    if (dailyDate != null || weeklyIndex != null) return null;
+    final s = sim;
+    if (s == null || !_terminal.contains(s.phase) || s.phase == 'idle') {
+      return null;
+    }
+    final run = s.run;
+    return seedChallengeText(
+      seed: s.runSeed,
+      difficulty: run?['difficulty'] as String? ?? 'normal',
+      ascension: run?['ascension'] as int? ?? 0,
+      won: s.phase == 'run_won',
+      floor: floorReached,
+      floors: s.map?['layers'] as int? ?? 0,
+      grid: traceGrid(runTrace),
     );
   }
 

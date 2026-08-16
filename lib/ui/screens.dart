@@ -16,6 +16,7 @@ import '../data/relics.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
 import '../game/daily_share.dart';
+import '../game/run_trace.dart';
 import '../game/seed_input.dart';
 import '../game/weekly.dart';
 import '../meta/forge.dart';

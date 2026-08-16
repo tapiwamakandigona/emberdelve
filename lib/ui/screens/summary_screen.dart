@@ -166,6 +166,27 @@ class SummaryScreen extends StatelessWidget {
                           ),
                         ],
                         const SizedBox(height: Space.m),
+                        // v0.8.0: the floor trace, shown exactly as it will
+                        // paste — the share artifact IS the display (Wordle
+                        // lesson, studio-priorities doc §7). One combined
+                        // screen-reader label; the emoji stay decorative.
+                        if (c.runTrace.marks.isNotEmpty) ...[
+                          Semantics(
+                            label: traceSemanticLabel(c.runTrace),
+                            child: ExcludeSemantics(
+                              child: Text(
+                                traceGrid(c.runTrace),
+                                key: const ValueKey('trace-grid'),
+                                textAlign: TextAlign.center,
+                                style: EmberText.body.copyWith(
+                                  height: 1.25,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: Space.s),
+                        ],
                         // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
                         // into 'Delve a seed' on the title to replay this exact delve.
                         GestureDetector(
@@ -268,6 +289,30 @@ class SummaryScreen extends StatelessWidget {
                                   ClipboardData(text: text),
                                 );
                                 c.announce('Result copied');
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: Space.m),
+                        ],
+                        // v0.8.0: seed challenge for every OTHER finished
+                        // run — the daily/weekly keep their own text above.
+                        // A seed plus a claim is a complete invitation
+                        // (Balatro lesson); the copy states facts and stops.
+                        if (c.seedChallengeShareText != null) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            child: EmberButton(
+                              'Copy seed challenge',
+                              key: const ValueKey('copy-seed-challenge'),
+                              ghost: true,
+                              icon: Icons.copy,
+                              onTap: () async {
+                                final text = c.seedChallengeShareText;
+                                if (text == null) return;
+                                await Clipboard.setData(
+                                  ClipboardData(text: text),
+                                );
+                                c.announce('Challenge copied');
                               },
                             ),
                           ),

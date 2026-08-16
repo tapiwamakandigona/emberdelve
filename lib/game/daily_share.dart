@@ -31,9 +31,17 @@ String dailyShareText({
   required bool won,
   required int floor,
   required int floors,
+  String grid = '',
 }) {
   final line = won
       ? '🔥 Claimed the Ember — floor $floors of $floors'
       : '🕯️ Fell on floor $floor of $floors';
-  return 'Emberdelve Daily $date\n$line\nOne shared delve — same seed for everyone.';
+  return [
+    'Emberdelve Daily $date',
+    // v0.8.0: spoiler-free floor trace (run_trace.dart) — recognizable at a
+    // glance, says how it went without revealing what the shared map holds.
+    if (grid.isNotEmpty) grid,
+    line,
+    'One shared delve — same seed for everyone.',
+  ].join('\n');
 }
