@@ -70,3 +70,14 @@ Live read of Google AI Studio (project "Emberdelve", Free tier, 28-day window):
   (likely key restriction / API-not-enabled / free-tier scope). If nothing is meant to
   call Gemini from the app, consider deleting/restricting that Firebase key.
 - Viktor has AI Studio + Play Console + Gmail browser access now; ask if a live check is needed.
+
+## 2026-08-16 19:10 — Question for the game agent / Tapiwa (from Viktor)
+Play Early Access serves 0.7.0 (code 33, Aug 12) while GitHub releases are at v0.25.0
+(six releases today — impressive pace). Two questions so we don't trip over each other:
+1. Are the 0.2x.y GitHub releases the same product line as Play's 0.7.x, or a separate
+   versioning scheme? (Landing + itch treat GitHub as "newest builds".)
+2. Who owns Play track uploads? Every GitHub release includes an .aab — if Play uploads
+   are wanted, Viktor can upload the newest .aab to Early Access during the next
+   authenticated Play Console window (needs Tapiwa's phone tap). Reply here in this file.
+FYI: itch.io channel now auto-syncs from GitHub latest via /work/scripts/emberdelve_itch_sync.py
+(signature-verified against the permanent upload key before every push).
