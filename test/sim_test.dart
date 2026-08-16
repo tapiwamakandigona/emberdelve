@@ -36,7 +36,17 @@ import 'package:emberdelve/sim/autoplay.dart';
 // value below, measured twice per seed and identical (tool/
 // keystone_balance_probe.dart). Autoplay win rate 64.0% declining vs 66.0%
 // taking over 200 seeds, so the fair-balance band is unaffected.
-const int goldenV6 = 1507173787;
+//
+// v0.12.0 re-anchor (2026-08-16, "New Embers" content drop): the bestiary
+// grew 30 -> 35 (4 regulars + 1 elite appended at their band ENDS) and the
+// event deck 28 -> 31, so `_regularsFor/_elitesFor` pool lengths and the
+// unseen-event pick change what every seeded spawn/offer stream draws.
+// Content growth moves these hashes by design (v0.5.0 precedent); resolution
+// rules are untouched and boss count stays 6, so the anchor seed still maps
+// to the Ember Tyrant. Old v6 value: 1507173787. New values below measured
+// twice per seed (identical) on local Flutter 3.44.9; old -> new for all six
+// bosses recorded in progress.md.
+const int goldenV6 = 1285794096;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -77,13 +87,21 @@ const Map<int, String> bossAnchorSeeds = {
 // (same seed 20260723). If content is deliberately added to the spawn/event
 // pools, re-anchor ALL of these from a real build and record old -> new in
 // progress.md — never by editing a single one to green.
+// v0.12.0 re-anchor (2026-08-16), old -> new, cause: bestiary 30 -> 35 and
+// event deck 28 -> 31 (see goldenV6 note above):
+//   ashen_colossus      201437516 -> 240246681
+//   ember_tyrant       1507173787 -> 1285794096
+//   pyre_matriarch      625118910 -> 1072189078
+//   cinder_hierophant  1042046624 -> 1003403945
+//   the_bellows        2005745586 -> 753684676
+//   ashfall_twins       183009563 -> 1171602943
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 201437516,
-  'ember_tyrant': 1507173787,
-  'pyre_matriarch': 625118910,
-  'cinder_hierophant': 1042046624,
-  'the_bellows': 2005745586,
-  'ashfall_twins': 183009563,
+  'ashen_colossus': 240246681,
+  'ember_tyrant': 1285794096,
+  'pyre_matriarch': 1072189078,
+  'cinder_hierophant': 1003403945,
+  'the_bellows': 753684676,
+  'ashfall_twins': 1171602943,
 };
 
 void main() {

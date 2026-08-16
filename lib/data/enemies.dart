@@ -1,4 +1,4 @@
-// data/enemies.dart — Emberdelve enemy roster (v0.5.0: 30 enemies).
+// data/enemies.dart — Emberdelve enemy roster (v0.12.0: 35 enemies).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -56,14 +56,21 @@ const List<String> enemiesOrder = [
   'cinder_wisp', 'ash_rat', 'soot_shade', 'ember_beetle',
   // regulars — early band, v0.5.0 additions
   'scoria_tick', 'char_sprite', 'flue_crawler', 'cinder_pup',
+  // regulars — early band, v0.12.0 additions (appended at band END — pool
+  // growth re-anchors the goldens by design; never reorder existing ids)
+  'tinder_mote', 'slag_snail',
   // regulars — late band (layer 5+)
   'soot_hound', 'ash_wraith', 'cinder_crawler', 'ember_moth', 'slag_brute',
   // regulars — late band, v0.5.0 additions
   'clinker_ogre', 'smoke_stalker', 'basalt_shell', 'wick_widow',
+  // regulars — late band, v0.12.0 additions (appended at band END)
+  'vent_serpent', 'pumice_hulk',
   // elites
   'pyre_howler', 'kiln_golem', 'ash_reaper', 'forge_warden', 'molten_maw',
   // elites — v0.5.0 additions
   'bellows_knight', 'quench_hag',
+  // elites — v0.12.0 addition (appended at band END)
+  'cinder_marshal',
   // bosses (exactly one per run, chosen deterministically from the run seed
   // in run_layer.dart — see bossForSeed). Ordering is deliberate: the golden
   // anchor seed (20260723 % 3 == 1) must keep mapping to the Ember Tyrant so
@@ -153,6 +160,31 @@ const Map<String, EnemyDef> enemies = {
     ],
   ),
 
+  // v0.12.0 early additions. Same band (hp 24-36, swings 12-23); both are
+  // RHYTHM previews of boss patterns the player will meet later, learnable
+  // when the stakes are low:
+  'tinder_mote': EnemyDef(
+    'tinder_mote',
+    'Tinder Mote',
+    27,
+    pattern: [
+      // The metronome: the exact same hit every beat, the only perfectly
+      // even enemy in the game. Teaches counting damage-per-turn honestly.
+      Intent('attack', 17),
+    ],
+  ),
+  'slag_snail': EnemyDef(
+    'slag_snail',
+    'Slag Snail',
+    34,
+    pattern: [
+      // Guards and swings on the SAME beat, every beat — the early, gentle
+      // preview of The Bellows. There is never a free hit; out-pace it.
+      Intent('attack_block', 12, 11),
+      Intent('attack_block', 14, 13),
+    ],
+  ),
+
   // ---- regulars, late band (layer 5+) ----------------------------------------
   'soot_hound': EnemyDef(
     'soot_hound',
@@ -238,6 +270,37 @@ const Map<String, EnemyDef> enemies = {
     pattern: [Intent('attack_block', 20, 15), Intent('attack', 28)],
   ),
 
+  // v0.12.0 late additions — inside the late band (hp 34-58, swings 19-28):
+  'vent_serpent': EnemyDef(
+    'vent_serpent',
+    'Vent Serpent',
+    46,
+    fromLayer: 5,
+    pattern: [
+      // The long count: a 5-beat cycle, the only regular with one — the
+      // Cinder Hierophant's rhythm at regular scale. Two open beats reward
+      // anyone actually counting.
+      Intent('attack', 22),
+      Intent('block', 20),
+      Intent('attack_block', 19, 16),
+      Intent('attack', 24),
+      Intent('attack', 27),
+    ],
+  ),
+  'pumice_hulk': EnemyDef(
+    'pumice_hulk',
+    'Pumice Hulk',
+    54,
+    fromLayer: 6,
+    pattern: [
+      // The double tap: two medium hits back to back, then a guard — the
+      // Ashfall Twins' shape before the twins. Punishes hoarding block.
+      Intent('attack', 24),
+      Intent('attack', 24),
+      Intent('block', 22),
+    ],
+  ),
+
   // ---- elites ------------------------------------------------------------------
   'pyre_howler': EnemyDef(
     'pyre_howler',
@@ -319,6 +382,22 @@ const Map<String, EnemyDef> enemies = {
       Intent('attack', 29),
       Intent('attack_block', 23, 16),
       Intent('attack', 26),
+    ],
+  ),
+
+  // v0.12.0 elite addition — elite band (hp 48-72, swings 21-31):
+  'cinder_marshal': EnemyDef(
+    'cinder_marshal',
+    'Cinder Marshal',
+    66,
+    elite: true,
+    fromLayer: 5,
+    pattern: [
+      // Pressure with one open beat: two guarded swings, then the finisher
+      // lands unguarded. The whole fight is about holding burst for beat 3.
+      Intent('attack_block', 25, 18),
+      Intent('attack_block', 22, 20),
+      Intent('attack', 30),
     ],
   ),
 

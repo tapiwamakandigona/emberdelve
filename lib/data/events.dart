@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.5.0: 28 events).
+// data/events.dart — Emberdelve event deck (v0.12.0: 31 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -50,6 +50,9 @@ const List<String> eventsOrder = [
   'slag_pool', 'the_tally_stone', 'quenching_trough', 'hollow_bellows',
   'ash_pilgrim', 'coin_in_the_coals', 'the_long_stair', 'ember_wardens_rest',
   'cracked_crucible', 'the_debtor', 'soot_market', 'last_delvers_pack',
+  // v0.12.0 additions (appended at END; never reorder), themed with the
+  // New Embers bestiary drop.
+  'serpents_molt', 'the_snail_road', 'marshals_muster',
 ];
 
 const Map<String, EventDef> events = {
@@ -380,6 +383,46 @@ const Map<String, EventDef> events = {
         'max_hp': -4,
       }),
       OptionDef('Carry it out for him (+14 embers)', {'embers': 14}),
+    ],
+  ),
+
+  // v0.12.0 additions -------------------------------------------------------
+  'serpents_molt': EventDef(
+    'serpents_molt',
+    "Serpent's Molt",
+    'A vent serpent\'s shed skin, still warm, coiled around something bright.',
+    [
+      OptionDef('Search the coils (-5 hp, +35 gold)', {'hp': -5, 'gold': 35}),
+      OptionDef('Take a scale (+12 embers)', {'embers': 12}),
+      OptionDef('Leave it be', {}),
+    ],
+  ),
+  'the_snail_road': EventDef(
+    'the_snail_road',
+    'The Snail Road',
+    'A trail of cooled slag, smooth as glass. The long way down — but level.',
+    [
+      OptionDef('Follow it (heal 20%)', {'heal_pct': 20}),
+      OptionDef('Pry up a slag pearl (-3 hp, +20 gold)', {
+        'hp': -3,
+        'gold': 20,
+      }),
+    ],
+  ),
+  'marshals_muster': EventDef(
+    'marshals_muster',
+    "Marshal's Muster",
+    'An old muster post. A rack of drill weapons stands unburnt, waiting.',
+    [
+      OptionDef('Drill until it hurts (-6 hp, +5 max hp)', {
+        'hp': -6,
+        'max_hp': 5,
+      }),
+      OptionDef('Take a drill die (-30 gold, gain a random die)', {
+        'gold': -30,
+        'gain_random_die': 2,
+      }),
+      OptionDef('Stand at ease', {}),
     ],
   ),
 };

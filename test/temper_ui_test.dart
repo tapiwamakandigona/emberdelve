@@ -1,6 +1,7 @@
 // test/temper_ui_test.dart — the v7 Face Forge reaches the player: the rest
 // screen offers a temper, the sheet commits exactly one, and every screen
 // that renders the pool survives a run-local custom die.
+import 'package:emberdelve/data/events.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/temper_sheet.dart';
@@ -97,7 +98,14 @@ void main() {
       } else if (c.phase == 'shop') {
         c.apply({'type': 'leave_shop'});
       } else if (c.phase == 'event') {
-        c.apply({'type': 'event_choose', 'option': 1});
+        // Option 1 can be a gold-costing choice the run cannot afford (the
+        // v0.12.0 deck growth surfaced this latent fragility: an invalid
+        // command leaves the phase stuck at 'event'). Walk the options from
+        // the last (conventionally the free decline) until one resolves.
+        final n = eventDef(c.state!['event'] as String).options.length;
+        for (var o = n; o >= 1 && c.phase == 'event'; o--) {
+          c.apply({'type': 'event_choose', 'option': o});
+        }
       } else {
         break;
       }

@@ -68,6 +68,14 @@ VARIANTS: dict[str, tuple[str, float, float, float, float]] = {
     # as the same creature.
     "the_bellows": ("kiln_golem", 42.0, 1.25, 1.02, 0.30),
     "ashfall_twins": ("ember_tyrant", 190.0, 0.45, 1.05, 0.22),        # pale ash
+    # --- v0.12.0 "New Embers" ----------------------------------------------
+    # Same rules as above: each source is paired with a plausible relative,
+    # and no two variants of one source share a hue neighbourhood.
+    "tinder_mote": ("cinder_wisp", 38.0, 1.15, 1.12, 0.30),      # tinder gold
+    "slag_snail": ("ember_beetle", 215.0, 0.70, 0.80, 0.25),     # cooled iron
+    "vent_serpent": ("cinder_crawler", 150.0, 0.90, 0.95, 0.30), # vent-gas teal
+    "pumice_hulk": ("slag_brute", 40.0, 0.35, 1.15, 0.12),       # pale pumice
+    "cinder_marshal": ("pyre_howler", -12.0, 1.15, 0.90, 0.20),  # drill crimson
 }
 
 
@@ -110,7 +118,7 @@ def meta_entry(meta: dict, source_id: str, new_id: str) -> dict:
         if e["id"] == source_id:
             entry = json.loads(json.dumps(e))
             entry["id"] = new_id
-            entry["source_base"] = f"{source_id} (v0.5.0 palette variant)"
+            entry["source_base"] = f"{source_id} (palette variant)"  # noqa: v0.5.0/v0.12.0 labels set at gen time
             return entry
     raise SystemExit(f"source {source_id} missing from sprite_meta.json")
 
