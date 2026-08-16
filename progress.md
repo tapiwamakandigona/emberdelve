@@ -1595,3 +1595,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Codec lib/meta/save_transfer.dart (pure, no plugin imports): EMBER1.<base64url(gzip(json))>.<fnv1a64 hex>; forgeUnlocked STRIPPED on encode AND decode (paid unlock travels only via Play Billing restore; import merge ORs so it's never revoked). Import = mergeMetaStates (non-destructive). LESSON: Dart ints are signed 64 — render FNV hash via (hash >>> 32) + masked low half, never toRadixString on the raw hash.
 - test/save_transfer_test.dart 8/8 green: round-trip field-equal minus forge, deterministic, whitespace-tolerant paste, tamper/truncate/garbage → null, hand-built code claiming forgeUnlocked cannot grant, merge non-destruction, <4KB full-fat, summary facts. analyze --fatal-infos clean.
 - Remaining: Settings "Carry your ember" panel (copy/paste buttons + confirm dialog), overflow sweep, news entry, version 0.24.0+50, notes, tag, CI, publish.
+
+## 2026-08-16 ~15:20 GMT — v0.24.0 "The Carried Ember" packaged, tagged, CI dispatched
+- Settings "Carry Your Ember" panel (copy/paste save code, honest confirm dialog stating code contents, neutral-fact status lines); SaveTransfer hooks wired in main.dart beside PGS hooks. Overflow sweep green at both sizes with the new panel.
+- Version 0.24.0+50 (expected codes 50/1050/2050/4050); news entry "The Carried Ember" + currentAppVersion 0.24.0; release notes docs/releases/v0.24.0.md (checksums pending CI).
+- Tests: save_transfer_test 8 + save_transfer_ui_test 5 (copy→decodable, paste→confirm→merge best-of-both incl. forge never revoked, decline untouched, garbage=neutral fact, banned-word sweep over settings copy). Suite 452/452; analyze --fatal-infos clean; news_test ethics sweep green. Sim untouched — anchors byte-identical.

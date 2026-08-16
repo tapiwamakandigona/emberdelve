@@ -7,6 +7,9 @@ import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import '../meta/play_games_service.dart';
 import '../meta/reminder_service.dart';
+import '../meta/cloud_merge.dart';
+import '../meta/meta.dart';
+import '../meta/save_transfer.dart';
 import '../meta/store_service.dart';
 import '../meta/update_service.dart';
 import '../telemetry/telemetry_service.dart';
@@ -29,6 +32,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// "Copy link" feedback for the Watchtower row (resets when leaving).
   bool _linkCopied = false;
+
+  /// Neutral-fact status line for the Carried Ember panel (v0.24.0):
+  /// states what just happened, nothing more.
+  String? _transferLine;
 
   /// Neutral-fact status line for the update panel (§Ethics: no pressure,
   /// no loss frame — a newer release is stated like a weather report).
@@ -512,6 +519,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
             const SizedBox(height: Space.xl),
+            // The Carried Ember (v0.24.0): sideloaded installs have no
+            // guaranteed cloud save — the whole ledger travels as one
+            // pasteable code instead. Import merges (never replaces); the
+            // Forge purchase deliberately does not ride in the code.
+            Text('CARRY YOUR EMBER', style: EmberText.micro),
+            const SizedBox(height: Space.s),
+            Panel(
+              key: const ValueKey('carry-ember-panel'),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.outbox,
+                        color: EmberColors.textDim,
+                        size: 20,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Text(
+                          'Copy a save code — one line of text that '
+                          'holds your progress.',
+                          style: EmberText.body,
+                        ),
+                      ),
+                      EmberButton(
+                        'Copy',
+                        key: const ValueKey('copy-save-code'),
+                        dense: true,
+                        onTap: _copySaveCode,
+                      ),
+                    ],
+                  ),
+                  const Divider(color: EmberColors.line, height: Space.xl),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.move_to_inbox,
+                        color: EmberColors.textDim,
+                        size: 20,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Text(
+                          'Paste a code from another device to merge '
+                          'its progress here.',
+                          style: EmberText.body,
+                        ),
+                      ),
+                      EmberButton(
+                        'Paste',
+                        key: const ValueKey('paste-save-code'),
+                        dense: true,
+                        onTap: _pasteSaveCode,
+                      ),
+                    ],
+                  ),
+                  if (_transferLine != null) ...[
+                    const SizedBox(height: Space.m),
+                    Text(
+                      _transferLine!,
+                      key: const ValueKey('transfer-line'),
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: Space.s),
+            Text(
+              'The Ember Forge purchase moves with your Play account, '
+              'not with the code.',
+              style: EmberText.micro.copyWith(color: EmberColors.textDim),
+            ),
+            const SizedBox(height: Space.xl),
             // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
             // a player on a new device must never have to hunt for it.
             Text('THE EMBER FORGE', style: EmberText.micro),
@@ -621,6 +706,99 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _copySaveCode() async {
+    AudioService.instance?.playSfx('ui_tap');
+    final load = SaveTransfer.loadLocalHook;
+    if (load == null) return;
+    final code = encodeSaveCode(await load());
+    await Clipboard.setData(ClipboardData(text: code));
+    if (mounted) {
+      setState(
+        () => _transferLine =
+            'Save code copied — paste it on your other device.',
+      );
+    }
+  }
+
+  Future<void> _pasteSaveCode() async {
+    AudioService.instance?.playSfx('ui_tap');
+    final load = SaveTransfer.loadLocalHook;
+    final adopt = SaveTransfer.adoptMergedHook;
+    if (load == null || adopt == null) return;
+    final clip = await Clipboard.getData('text/plain');
+    final decoded = decodeSaveCode(clip?.text ?? '');
+    if (!mounted) return;
+    if (decoded == null) {
+      // Neutral fact, no blame — garbage on the clipboard is normal.
+      setState(
+        () => _transferLine = 'The clipboard does not hold a save code.',
+      );
+      return;
+    }
+    final merge = await _confirmCarry(decoded);
+    if (merge != true) return;
+    final merged = mergeMetaStates(await load(), decoded);
+    await adopt(merged);
+    if (mounted) {
+      setState(() => _transferLine = 'Ember carried — progress merged.');
+    }
+  }
+
+  /// States what the code holds and what merging does, then asks. Facts
+  /// only (§Ethics): merging keeps the best of both sides.
+  Future<bool?> _confirmCarry(MetaState decoded) {
+    return showDialog<bool>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.72),
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Panel(
+          padding: const EdgeInsets.all(Space.l),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('CARRY THE EMBER', style: EmberText.h2),
+              const SizedBox(height: Space.m),
+              Text(
+                'This code holds ${saveCodeSummary(decoded)}.',
+                key: const ValueKey('carry-summary'),
+                textAlign: TextAlign.center,
+                style: EmberText.body,
+              ),
+              const SizedBox(height: Space.s),
+              Text(
+                'Merging keeps the best of both — nothing on this '
+                'device is lost.',
+                textAlign: TextAlign.center,
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              ),
+              const SizedBox(height: Space.l),
+              SizedBox(
+                width: double.infinity,
+                child: EmberButton(
+                  'Merge progress',
+                  key: const ValueKey('carry-merge'),
+                  primary: true,
+                  icon: Icons.merge,
+                  onTap: () => Navigator.of(ctx).pop(true),
+                ),
+              ),
+              const SizedBox(height: Space.m),
+              SizedBox(
+                width: double.infinity,
+                child: EmberButton(
+                  'Keep as is',
+                  ghost: true,
+                  onTap: () => Navigator.of(ctx).pop(false),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

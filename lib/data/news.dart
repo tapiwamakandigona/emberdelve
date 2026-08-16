@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.23.0';
+const String currentAppVersion = '0.24.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.24.0',
+    title: 'The Carried Ember',
+    lines: [
+      'Your progress now travels as one line of text. Settings has a new '
+          'panel: Carry Your Ember. Copy a save code on this device, paste '
+          'it on another, and the two ledgers merge - counters keep the '
+          'higher mark, everything earned anywhere stays earned.',
+      'Merging never takes anything away. Pasting an old code after weeks '
+          'of play loses nothing; the code simply adds what the other '
+          'device knew.',
+      'The Ember Forge purchase moves with your Play account rather than '
+          'the code, so a shared code shares progress, never the purchase.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.23.0',
     title: 'The Deep Hum',

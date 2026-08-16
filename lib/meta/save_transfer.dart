@@ -77,3 +77,11 @@ String saveCodeSummary(MetaState m) {
       '${m.unlockedCharacters.length} '
       '${m.unlockedCharacters.length == 1 ? 'delver' : 'delvers'}';
 }
+
+/// Wiring point for the Settings panel (set in main.dart, next to the Play
+/// Games hooks): how to read the live MetaState and how to adopt a merged
+/// one. Kept as hooks so this file stays pure and headless-testable.
+class SaveTransfer {
+  static Future<MetaState> Function()? loadLocalHook;
+  static Future<void> Function(MetaState merged)? adoptMergedHook;
+}
