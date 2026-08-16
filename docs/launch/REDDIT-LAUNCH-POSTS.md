@@ -9,9 +9,22 @@ Roguelike/incremental subs have a fine-tuned bullshit detector. Lead with *what 
 it different*, not "please download." Every sub below allows self-promo only in the
 right format — read each rule note.
 
-**Timing:** space them out. r/roguelikes first (most on-target), then r/incremental_games
-a day later, then r/AndroidGaming. Never blast all three in one hour. Reply to every
-comment in the first 3 hours.
+**⚠ VENUE INTEL — reconciled with `everything/MARKETING.md` (hard-won, do not relearn):**
+- **You ALREADY posted Emberdelve to r/Zimbabwe (`1vkye51`) and r/roguelites (`1vkygos`) on
+  2026-08-10/11.** Do NOT duplicate-post the same game to the same subs — write a *fresh
+  angle* (e.g. the new 0.7.0 content: keystones, achievements, Codex) or engage the existing
+  threads instead. r/Zimbabwe is your BEST venue (a prior post scored 68); flair `Discussion`,
+  always real context, never a bare link.
+- **r/AndroidGaming is NOT eligible for you** — needs `[DEV]` prefix + 1-month account age +
+  50 in-sub karma. Skip until you meet it. (The old draft below wrongly listed it.)
+- **r/incremental_games:** 1 self-post per 30 days, playable link required, and a **MANDATORY
+  AI-disclosure section** — add one if you post there.
+- Your `u/Ok-Whole-8802` has had posts mod-removed in r/solana, r/microsaas, r/IndieDev — pick
+  venues by rules, not size, and never simultaneous multi-sub posting.
+
+**Best next move:** a *fresh* r/roguelites or r/Zimbabwe post about the 0.7.0 update (new depth),
+not a re-announcement. Reply to every comment in the first 3 hours. The bodies below are a
+starting point — reword so they don't repeat your Aug 10/11 posts.
 
 ---
 
