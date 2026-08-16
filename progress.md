@@ -1584,3 +1584,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 
 ## 2026-08-16 ~15:12 GMT — v0.23.0 "The Deep Hum" packaged, tagged, CI dispatched
 - Version 0.23.0+49; news entry "The Deep Hum" + currentAppVersion 0.23.0; release notes docs/releases/v0.23.0.md (checksums pending CI). Ethics sweep (news_test) + deep_hum tests green; suite 439/439; analyze clean. Sim untouched — anchors byte-identical is the determinism claim in the notes.
+
+## 2026-08-16 ~15:15 GMT — v0.23.0 "The Deep Hum" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.23.0 — CI run 31954289067 (tag dispatch) success; suite at tag 439/439.
+- All 4 APKs androguard PIN-OK non-vacuously (0.23.0, codes 49/1049/2049/4049); AAB pkcs7 pin match. Assets+sha256 in docs/releases/v0.23.0.md (arm64 30MB 8fea07f7…ab0b, v7a 28MB 567270ca…52a9, x86_64 32MB 785cec05…8ee5, universal 63MB 3420822f…89ce, AAB 61MB b1259ce6…89fb). Zero payload delta by design (bed reuses shipped ember loop).
+- Combat-feel backlog CLOSED: audits found #5 run-power recap already shipped (PR #89 _poolRecap) and #8 weapon evolution already shipped (v7 Face Forge #90 dominantTier scaling). Doc updated.
+
+## 2026-08-16 ~15:15 GMT — v0.24.0 "The Carried Ember" IN PROGRESS (save transfer codes)
+- Design docs/improvements/v0.24.0-carried-ember-design.md. Trust lesson §4 applied to GitHub-sideload reality: no Play Games guarantee → device migration loses everything today.
+- Codec lib/meta/save_transfer.dart (pure, no plugin imports): EMBER1.<base64url(gzip(json))>.<fnv1a64 hex>; forgeUnlocked STRIPPED on encode AND decode (paid unlock travels only via Play Billing restore; import merge ORs so it's never revoked). Import = mergeMetaStates (non-destructive). LESSON: Dart ints are signed 64 — render FNV hash via (hash >>> 32) + masked low half, never toRadixString on the raw hash.
+- test/save_transfer_test.dart 8/8 green: round-trip field-equal minus forge, deterministic, whitespace-tolerant paste, tamper/truncate/garbage → null, hand-built code claiming forgeUnlocked cannot grant, merge non-destruction, <4KB full-fat, summary facts. analyze --fatal-infos clean.
+- Remaining: Settings "Carry your ember" panel (copy/paste buttons + confirm dialog), overflow sweep, news entry, version 0.24.0+50, notes, tag, CI, publish.
