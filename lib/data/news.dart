@@ -23,10 +23,26 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.22.0';
+const String currentAppVersion = '0.23.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.23.0',
+    title: 'The Deep Hum',
+    lines: [
+      'The delve has found its voice. The ember bed that crackles under '
+          'the title screen now follows you onto the map - a whisper on '
+          'the first floors, a low hum by the time the boss door is in '
+          'sight.',
+      'It never restarts or hiccups as you step deeper; the loop simply '
+          'swells. Your music volume slider governs it, and silence still '
+          'means silence.',
+      'Nothing else changed: no new files, no new permissions, and the '
+          'download is exactly the size it was.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.22.0',
     title: 'The Crowned Deep',
