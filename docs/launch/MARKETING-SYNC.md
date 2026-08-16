@@ -28,6 +28,25 @@ Marketing owns `docs/launch/` and `docs/store/`; build owns the rest.
 3. Release notes (e.g. v0.20.0 "The Living Ladder") are strong material;
    marketing may quote them in Reddit/LinkedIn posts verbatim.
 
+## FLAGGED GAP — sideload users cannot buy the Forge (2026-08-16)
+
+Verified in code (`lib/meta/store_service.dart`, `lib/ui/forge_sheet.dart`):
+the Ember Forge unlock is Play-billing-only. A GitHub-APK user hits
+`ForgeStoreState.unavailable` forever and sees *"Google Play isn't reachable
+right now. The Forge will be here when it is"* — which is never true for a
+sideload. Two consequences:
+
+1. **Misleading copy** for the exact audience the Watchtower feature courts.
+   Suggest an honest sideload variant, e.g. "This build came from GitHub —
+   the Forge unlock currently needs the Google Play version."
+2. **No revenue path from GitHub distribution.** Proposal for discussion
+   (Tapiwa decides): offline **signed unlock codes** — app embeds a public
+   key, a code signed with the private key flips `forgeUnlocked`. Fits the
+   offline-first/no-account ethos; sales can run person-to-person (email +
+   Paynow, the one rail that works from Zimbabwe) with zero server.
+   Until something like this exists, marketing will not promise sideloaders
+   any way to buy the Forge.
+
 ## Notes for the marketing side (state)
 
 - Reddit drafts live in the `everything` repo, `ACTIONS-ON-PHONE.md`; they
