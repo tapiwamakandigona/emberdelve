@@ -1512,3 +1512,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   guard immediately caught a vacuous first draft reading the wrong semantics
   owner). Fixed: map medallions now speak kind+floor+reachability; _EmberToggle
   speaks its row label + toggled state. Probe + overflow suite green.
+
+## 2026-08-16 — v0.19.0 "The Spoken Flame" PUBLISHED; README storefront; ascension sweep
+
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.19.0 — TalkBack pass.
+  Codes 45/1045/2045/4045, all 4 APK pins verified non-vacuously (4 lines printed),
+  AAB pkcs7 pin match. arm64 30 MB. Checksums in docs/releases/v0.19.0.md.
+  Shipped: map medallions speak kind+floor+reachability, _EmberToggle labels,
+  toast live regions, per-phase sendAnnouncement; gate test/semantics_probe_test.dart
+  (vacuity-guarded) keeps it true. Suite was 411/411 pre-tag.
+- README rewritten as storefront (GitHub-only mode): framed screenshots, latest-release
+  download table by device, player-facing fairness pitch (claims all verified).
+- Localization considered for v0.20.0, REJECTED for now: ~3,000 user-facing string
+  literals incl. flavor text; machine translation fails the honesty bar, and it can't
+  be "one improvement per release" sized. Revisit only with a native-speaker channel.
+- Ascension sweep (tool/ascension_sweep_probe.dart, 100 seeds x char x rung, hard):
+  A1 23-46% -> A5 3-10% -> A8 <=2% -> A12+ 0.0% for ALL characters; median loss
+  floor 3 at every rung >=3. The flat +rung attack bonus is a door bouncer, not a
+  climb (same failure v0.3.3 fixed for hard). v0.20.0 candidate: ascension rebalance
+  to a layer/rung-scaled ramp so the ladder is steep but alive to A20. [probe, 2026-08-16]
