@@ -286,8 +286,23 @@ class GameController extends ChangeNotifier {
   }
 
   void _syncAudio() {
-    audio?.syncPhase(phase, bossFight: _bossFight);
+    audio?.syncPhase(phase, bossFight: _bossFight, mapDepth: mapDepth);
     audio?.setDanger(_inDanger);
+  }
+
+  /// Descent depth for the Deep Hum ambience (v0.23.0): 0.0 on the first
+  /// layer, 1.0 on the boss layer. Computed here (not in the audio layer) so
+  /// the rule stays gameplay-owned and testable without audio — same split
+  /// as [_inDanger].
+  double get mapDepth {
+    final st = sim?.state();
+    final map = st?['map'] as Map?;
+    if (map == null) return 0;
+    final layers = map['layers'] as int? ?? 0;
+    if (layers <= 1) return 0;
+    final node = (map['nodes'] as Map?)?['${map['position']}'] as Map?;
+    final layer = node?['layer'] as int? ?? 1;
+    return (layer - 1) / (layers - 1);
   }
 
   /// Low-HP danger bed condition: mid-combat with HP at or under 30% of max.
@@ -633,7 +648,8 @@ class GameController extends ChangeNotifier {
           flash = 'Forged into a stronger die';
           break;
         case 'face_tempered':
-          flash = '${runeName(e['rune'] as String?)} tempered onto ${e['face']}';
+          flash =
+              '${runeName(e['rune'] as String?)} tempered onto ${e['face']}';
           break;
         // v7 feedback rule: only announce what the numbers on screen do NOT
         // already say. Blade/Aegis and the assignment keystones are visible in
