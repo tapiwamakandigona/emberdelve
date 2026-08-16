@@ -31,6 +31,7 @@
 // the player gets the skin "for free" relative to B's ledger. Accepted: the
 // alternative (dropping owned cosmetics) punishes, and embers are a soft
 // currency with no real-money value.
+import '../data/news.dart' show compareVersions;
 import 'meta.dart';
 
 /// True when [a] is the fresher snapshot (see file header for the contract).
@@ -122,5 +123,12 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     forgeUnlocked: local.forgeUnlocked || cloud.forgeUnlocked,
     tutorialSeen: local.tutorialSeen || cloud.tutorialSeen,
     difficultyChosen: local.difficultyChosen || cloud.difficultyChosen,
+    // Max VERSION (v0.15.0 Hearthside Post): the news is "seen" once seen
+    // anywhere — a merge must never re-surface an already-dismissed post.
+    lastSeenNewsVersion:
+        compareVersions(local.lastSeenNewsVersion, cloud.lastSeenNewsVersion) >=
+            0
+        ? local.lastSeenNewsVersion
+        : cloud.lastSeenNewsVersion,
   );
 }

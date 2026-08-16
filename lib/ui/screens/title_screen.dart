@@ -245,6 +245,15 @@ class TitleScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            // The Hearthside Post (v0.15.0): shown ONCE per
+                            // release after an update, dismissed forever with
+                            // one tap, re-readable from Settings. Fresh
+                            // installs never see it (stamped at boot).
+                            if (m.lastSeenNewsVersion != currentAppVersion &&
+                                newsFor(currentAppVersion) != null) ...[
+                              const SizedBox(height: Space.m),
+                              _HearthsidePost(c),
+                            ],
                           ],
                         ),
                       ),
@@ -475,3 +484,52 @@ class _DifficultySelector extends StatelessWidget {
 // Boon pick — 1-of-3 starting blessing, always skippable (spec §Ethics: no
 // timer, no decay; the offer is exactly what the sim telegraphed).
 // ---------------------------------------------------------------------------
+
+/// The Hearthside Post (v0.15.0): a small thank-you note after an update —
+/// the release's name and 2–4 lines, with a single "Noted" button. Never a
+/// badge, never a nag, never a link to spend money (§Ethics). Content lives
+/// in data/news.dart; dismissal persists via GameController.dismissNews.
+class _HearthsidePost extends StatelessWidget {
+  final GameController c;
+  const _HearthsidePost(this.c);
+  @override
+  Widget build(BuildContext context) {
+    final entry = newsFor(currentAppVersion);
+    if (entry == null) return const SizedBox.shrink();
+    return Panel(
+      key: const ValueKey('news-panel'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'THE HEARTHSIDE POST — v${entry.version}',
+            style: EmberText.micro,
+          ),
+          const SizedBox(height: Space.xs),
+          // This release's note is named after the panel itself — skip the
+          // duplicate line rather than print the same words twice.
+          if (entry.title.toLowerCase() != 'the hearthside post') ...[
+            Text(entry.title, style: EmberText.body),
+            const SizedBox(height: Space.s),
+          ],
+          for (final line in entry.lines)
+            Padding(
+              padding: const EdgeInsets.only(bottom: Space.xs),
+              child: Text(line, style: EmberText.bodyDim),
+            ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              key: const ValueKey('news-dismiss'),
+              onPressed: c.dismissNews,
+              child: Text(
+                'Noted',
+                style: EmberText.body.copyWith(color: EmberColors.ember),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

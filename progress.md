@@ -1437,3 +1437,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.14.0 (5 assets: 3 split APKs, universal APK, AAB). Full sha256 table appended to docs/releases/v0.14.0.md.
 - LESSON: design-doc estimate said "~25 MB" per split — actual 33-37 MB because v0.12.0's per-ABI numbers measured NATIVE LIB payload only, not full APK. Notes ship measured numbers, never estimates.
 - Next: v0.15.0 "The Hearthside Post" per docs/improvements/v0.15.0-hearthside-post-design.md (implementation already in progress during CI wait).
+
+## 2026-08-16 ~14:05 GMT — v0.15.0 "The Hearthside Post" built
+- data/news.dart: NewsEntryDef content-as-data, newest-first, backfilled v0.13/v0.14; currentAppVersion const pinned to pubspec by test; compareVersions ('' sorts first).
+- meta: lastSeenNewsVersion ('' = never; absent key omitted from JSON); cloud merge keeps LARGER version (never re-shows read news). Boot stamps fresh profiles (runsPlayed==0 && '') silently; veterans keep '' and see the note once.
+- UI: title panel key 'news-panel' under the menu, single 'Noted' (key 'news-dismiss') -> controller.dismissNews (save+notify). Settings tile 'past-posts-tile' -> NewsArchiveScreen (lib/ui/news_screen.dart), per-entry keys 'news-archive-<version>'.
+- CRITIQUE CAUGHT: v0.15.0's own entry title equals the panel eyebrow -> read as a duplicate-line bug on plates. Fixed: version moved into the eyebrow, title line skipped when it matches the panel name.
+- Tests: news_test.dart 7 (incl. §Ethics banned-word sweep over ALL news copy) + news_ui_test.dart 3. Suite 402/402; analyze clean; plates tool/news_visual_test.dart reviewed (412x915 + 320x568@1.3x + archive). Version 0.15.0+41; notes docs/releases/v0.15.0.md. No sim contact.
