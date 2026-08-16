@@ -627,10 +627,11 @@ class GameController extends ChangeNotifier {
     // out what the ghost took mid-fight. Summarize the concrete effects.
     if (events.any((e) => e['type'] == 'event_resolved')) {
       final summary = _eventSummary(events);
-      if (summary != null) {
-        flash = summary;
-        return;
-      }
+      // v0.25.0: an outcome that changed nothing (a full-HP heal, a walk-away
+      // option) used to resolve silently — the F5 promise is a CONCRETE
+      // outcome for every choice, so state the neutral fact instead.
+      flash = summary ?? 'Nothing changed';
+      return;
     }
     for (final e in events) {
       switch (e['type']) {

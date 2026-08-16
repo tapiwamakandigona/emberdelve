@@ -23,10 +23,27 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.24.0';
+const String currentAppVersion = '0.25.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.25.0',
+    title: 'The Unquiet Deep',
+    lines: [
+      'The deep is unsettled after the fall of the Hearthless King. Six new '
+          'rooms wait on the paths between fights - a toppled throne, a '
+          'soot choir, a hermit who trades in dice, and more. The event '
+          'deck grows from 33 to 39, so an evening of runs repeats itself '
+          'even less.',
+      'Four new relics join the pool: the Drowned Bell, the Ashglass '
+          'Prism, the Wyrmscale Cloak, and the Choir Censer. Each one '
+          'combines two familiar effects, and each has its story in the '
+          'Codex.',
+      'Event outcomes that change nothing now say so - a bathe at full '
+          'health tells you plainly that nothing changed.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.24.0',
     title: 'The Carried Ember',

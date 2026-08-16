@@ -402,6 +402,29 @@ final List<CodexEntryDef> codexEntries = [
         'Whatever you win while carrying it, it quietly takes its cut — '
         'and adds it to yours.',
   ),
+  // v0.25.0 relics
+  _relic(
+    'drowned_bell',
+    'It rang the old garrison to sleep and to arms in the same voice. '
+        'Sunk in a quenching pool the night the King fell, it still keeps '
+        'both appointments.',
+  ),
+  _relic(
+    'ashglass_prism',
+    'Slag cools into glass where the fire burned proudest. Held to a '
+        'lantern it splits light into colors the deep otherwise keeps '
+        'for itself.',
+  ),
+  _relic(
+    'wyrmscale_cloak',
+    'Shed scales of a coal-seam wyrm, stitched with wire. It turns a '
+        'blade the way the wyrm turned pickaxes: with visible contempt.',
+  ),
+  _relic(
+    'choir_censer',
+    'The soot choir circles it when it swings. What they are paid in is '
+        'unclear; what you are paid in is not.',
+  ),
 ];
 
 /// Lookup by namespaced id ('enemy:cinder_wisp' / 'relic:ember_ring').
