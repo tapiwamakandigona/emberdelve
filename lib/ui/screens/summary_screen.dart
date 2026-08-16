@@ -146,6 +146,21 @@ class SummaryScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                        // v0.13.0 Delver's Rank: one quiet line when this
+                        // run's banking crossed a tier. No badge rain, no
+                        // reward talk — the Ledger holds the detail.
+                        if (c.pendingRankUp != null) ...[
+                          const SizedBox(height: Space.l),
+                          Text(
+                            'You delve as '
+                            '${c.pendingRankUp!.withArticle} now.',
+                            key: const ValueKey('rank-up-line'),
+                            textAlign: TextAlign.center,
+                            style: EmberText.body.copyWith(
+                              color: EmberColors.gold,
+                            ),
+                          ),
+                        ],
                         if (insight != null) ...[
                           const SizedBox(height: Space.l),
                           Panel(
