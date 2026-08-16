@@ -1621,3 +1621,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - A20 ladder re-pinned (re-hunted): kindler 6→39, warden 4, gambler 13→40, ascetic 10→106 (four distinct seeds kept; hunt results kindler 39/40/90, warden 4/20/24, gambler 40/69/90, ascetic 39/40/106).
 - Sweeps IN BAND: BAND400 easy 89.0% (80–90), normal 64.25% (55–70), hard 37.5%; HARD1000 41.3% vs 43.2% pre-drop same-probe baseline (Δ within noise, SE ~2.2).
 - Version 0.25.0+51; news entry "The Unquiet Deep"; docs/releases/v0.25.0.md (checksums pending CI). Full suite 452/452 clean run; analyze --fatal-infos clean. LESSON (repeat offender): never edit lib/ while a full suite is running — the mid-run compile races produce phantom failures.
+
+## 2026-08-16 ~16:05 GMT — v0.25.0 "The Unquiet Deep" PUBLISHED
+- CI run 31956560492 succeeded. Downloaded apk/splits/aab artifacts; verified 4/4 APK signer pins (codes 51/1051/2051/4051, versionName 0.25.0) and AAB pkcs7 cert against pin 031acb42...d44b7a0d.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.25.0 with 5 signed assets; sha256+size table appended to docs/releases/v0.25.0.md.
+- Next: v0.26.0 tablet-portrait quality pass (before-plates capturing at time of publish).
