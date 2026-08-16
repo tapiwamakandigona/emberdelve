@@ -1451,3 +1451,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Settings: FEEDBACK section renamed COMFORT; three-way selector keys 'reduce-motion'/'reduce-motion-<id>' styled like the title difficulty selector; caption honest.
 - Tests: motion_test.dart 3 + motion_ui_test.dart 4. Suite 409/409, analyze clean, overflow probe green, plates tool/motion_visual_test.dart reviewed (360x640 + 320x568@1.3x — selector highlights, no overflow).
 - Version 0.16.0+42; currentAppVersion bumped; news.dart entry added (Hearthside Post announces its first real update); notes docs/releases/v0.16.0.md.
+
+## 2026-08-16 ~15:15 GMT — v0.15.0 "The Hearthside Post" PUBLISHED
+- CI run 31945916947 completed success on tag v0.15.0.
+- Signer pin verified on ALL FIVE artifacts; versionName 0.15.0; codes 41 / 1041 / 2041 / 4041.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.15.0 (3 split APKs + universal + AAB; sha256 table in docs/releases/v0.15.0.md).
+- Next: tag + CI for v0.16.0 "The Still Flame" (already committed, suite 409/409).
