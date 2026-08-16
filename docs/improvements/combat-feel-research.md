@@ -76,9 +76,10 @@ Weapon/arsenal visibility is mastery visibility.
    staggered left-to-right; all flip — no peek-gamble — then tap to pick).
 5. **Run-power recap on victory screen**: "your pool, forged this run" strip
    (IKEA effect, design-system §1) — show the arsenal they built.
-6. **Plain reroll retumble**: single-die reroll doesn't retumble the die
-   (only risky reroll bumps `_rollGen`); per-die tumble tokens would fix it.
-7. **Map ambience audio bed** per layer depth (hotter = lower rumble).
+6. ~~Plain reroll retumble~~ — SHIPPED with LFP-1c (per-die `_reflyGen`
+   tokens; the plain/charge reroll path bumps the picked die's token, and
+   tray + both reroll paths agree on 1-based die keys — verified 2026-08-16).
+7. ~~Map ambience audio bed~~ — SHIPPED in v0.23.0 "The Deep Hum" (depth-scaled ember bed, 12%→45% of music volume).
 8. **Weapon evolution**: weapon visuals could grow with forge upgrades
    (bigger/hotter as the pool tiers up) — strongest remaining mastery-
    visibility lever.
