@@ -6,6 +6,7 @@
 // RepaintBoundary so it never invalidates the scene around it.
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 // ---------------------------------------------------------------------------
@@ -37,16 +38,39 @@ class _EmberDriftState extends State<EmberDrift>
   late final AnimationController _t = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 14),
-  )..repeat();
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    // Reduce motion (v0.16.0): drifting particles are pure motion, so under
+    // reduce they vanish entirely (absence is calmer than a freeze-frame)
+    // and the ticker stops — no repaints for an invisible layer.
+    Motion.instance.addListener(_onMotion);
+    if (!Motion.instance.reduced) _t.repeat();
+  }
+
+  void _onMotion() {
+    if (!mounted) return;
+    setState(() {
+      if (Motion.instance.reduced) {
+        _t.stop();
+      } else if (!_t.isAnimating) {
+        _t.repeat();
+      }
+    });
+  }
 
   @override
   void dispose() {
+    Motion.instance.removeListener(_onMotion);
     _t.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (Motion.instance.reduced) return const SizedBox.shrink();
     return IgnorePointer(
       child: RepaintBoundary(
         child: CustomPaint(
@@ -223,6 +247,9 @@ class ShakeBoxState extends State<ShakeBox>
   /// magnitude 0..1 scales displacement 0..10 px (design-system: shake on
   /// hits, bigger hits shake harder).
   void shake(double magnitude) {
+    // Reduce motion (v0.16.0): displacement is exactly what vestibular
+    // players need gone. The hit still lands its flash/sfx/haptic beats.
+    if (Motion.instance.reduced) return;
     _mag = magnitude.clamp(0.0, 1.0);
     _t.forward(from: 0);
   }
@@ -295,6 +322,32 @@ class _DamagePopState extends State<DamagePop>
       animation: _t,
       builder: (context, _) {
         final f = _t.value;
+        // Reduce motion (v0.16.0): the number is information and stays; the
+        // overshoot-pop and arc are motion and go. Appears in place, holds,
+        // fades on the same clock.
+        if (Motion.instance.reduced) {
+          final alpha = f < 0.6 ? 1.0 : 1.0 - (f - 0.6) / 0.4;
+          return Opacity(
+            opacity: alpha.clamp(0.0, 1.0),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: widget.blocked ? 14 : 26,
+                fontWeight: FontWeight.w800,
+                color: color,
+                shadows: const [
+                  Shadow(color: Colors.black, blurRadius: 4),
+                  Shadow(
+                    color: Colors.black,
+                    offset: Offset(0, 2),
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
         // Pop in (overshoot), arc up-and-away, fade in the last 40%.
         final scale = f < 0.18
             ? 0.4 +

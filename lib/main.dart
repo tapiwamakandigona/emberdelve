@@ -17,6 +17,7 @@ import 'meta/store_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
 import 'telemetry/telemetry_service.dart';
+import 'ui/motion.dart';
 import 'ui/screens.dart';
 import 'ui/theme.dart';
 
@@ -30,6 +31,9 @@ Future<void> main() async {
   await AudioService.initPlatformAudio();
   final audio = AudioService(await SettingsStore.load());
   AudioService.instance = audio;
+  // Reduce motion (v0.16.0): seed the resolver with the persisted choice;
+  // the MaterialApp builder below keeps the OS flag side current.
+  Motion.instance.update(setting: audio.settings.reduceMotion);
   final controller = GameController()..audio = audio;
   await controller.boot();
   // Ember Forge billing (v0.4.0, spec R8). Wired after boot so the
@@ -185,6 +189,14 @@ class _EmberdelveAppState extends State<EmberdelveApp>
       title: 'Emberdelve',
       debugShowCheckedModeBanner: false,
       theme: buildEmberTheme(),
+      builder: (context, child) {
+        // Feed the OS accessibility flag into the reduce-motion resolver;
+        // this builder re-runs whenever the system setting changes.
+        Motion.instance.update(
+          systemFlag: MediaQuery.of(context).disableAnimations,
+        );
+        return child!;
+      },
       home: TelemetryConsentGate(child: GameRoot(widget.controller)),
     );
   }

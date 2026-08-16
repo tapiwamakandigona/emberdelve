@@ -10,12 +10,16 @@ class AudioSettings {
   bool musicMuted;
   bool sfxMuted;
   bool haptics; // v0.3.1 F12: vibration on key beats (roll/assign/hit/death)
+  // v0.16.0 The Still Flame: 'system' (follow OS accessibility flag) /
+  // 'on' / 'off'. Resolved app-wide by lib/ui/motion.dart.
+  String reduceMotion;
   AudioSettings({
     this.musicVolume = 0.7,
     this.sfxVolume = 0.9,
     this.musicMuted = false,
     this.sfxMuted = false,
     this.haptics = true,
+    this.reduceMotion = 'system',
   });
 
   double get effectiveMusic => musicMuted ? 0.0 : musicVolume;
@@ -27,6 +31,7 @@ class AudioSettings {
     'musicMuted': musicMuted,
     'sfxMuted': sfxMuted,
     'haptics': haptics,
+    'reduceMotion': reduceMotion,
   };
 
   // Volumes clamped on load: an out-of-range value in a hand-edited or
@@ -41,6 +46,10 @@ class AudioSettings {
     musicMuted: j['musicMuted'] as bool? ?? false,
     sfxMuted: j['sfxMuted'] as bool? ?? false,
     haptics: j['haptics'] as bool? ?? true,
+    reduceMotion:
+        const {'system', 'on', 'off'}.contains(j['reduceMotion'])
+        ? j['reduceMotion'] as String
+        : 'system',
   );
 }
 

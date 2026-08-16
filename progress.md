@@ -1444,3 +1444,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - UI: title panel key 'news-panel' under the menu, single 'Noted' (key 'news-dismiss') -> controller.dismissNews (save+notify). Settings tile 'past-posts-tile' -> NewsArchiveScreen (lib/ui/news_screen.dart), per-entry keys 'news-archive-<version>'.
 - CRITIQUE CAUGHT: v0.15.0's own entry title equals the panel eyebrow -> read as a duplicate-line bug on plates. Fixed: version moved into the eyebrow, title line skipped when it matches the panel name.
 - Tests: news_test.dart 7 (incl. §Ethics banned-word sweep over ALL news copy) + news_ui_test.dart 3. Suite 402/402; analyze clean; plates tool/news_visual_test.dart reviewed (412x915 + 320x568@1.3x + archive). Version 0.15.0+41; notes docs/releases/v0.15.0.md. No sim contact.
+
+## 2026-08-16 ~14:45 GMT — v0.16.0 "The Still Flame" built (tag held until v0.15.0 publishes)
+- Reduce-motion comfort setting: AudioSettings.reduceMotion 'system'/'on'/'off' (absent/garbage -> 'system'); resolver lib/ui/motion.dart (ChangeNotifier singleton; notifies ONLY on answer flip; defers notify past build via SchedulerPhase check — MaterialApp builder feeds MediaQuery.disableAnimations).
+- Gates: ShakeBoxState.shake() no-op; EmberDrift renders nothing + STOPS ticker (listens to Motion, returns live on toggle-off); DamagePop static render (number+fade kept, transforms dropped, onDone same clock). Sub-100ms flashes/vignette deliberately NOT gated (information, not displacement).
+- Settings: FEEDBACK section renamed COMFORT; three-way selector keys 'reduce-motion'/'reduce-motion-<id>' styled like the title difficulty selector; caption honest.
+- Tests: motion_test.dart 3 + motion_ui_test.dart 4. Suite 409/409, analyze clean, overflow probe green, plates tool/motion_visual_test.dart reviewed (360x640 + 320x568@1.3x — selector highlights, no overflow).
+- Version 0.16.0+42; currentAppVersion bumped; news.dart entry added (Hearthside Post announces its first real update); notes docs/releases/v0.16.0.md.

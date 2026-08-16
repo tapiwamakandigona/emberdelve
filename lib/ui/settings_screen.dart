@@ -11,6 +11,7 @@ import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'news_screen.dart';
 import 'haptics.dart';
+import 'motion.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -96,27 +97,119 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: Space.xl),
-            Text('FEEDBACK', style: EmberText.micro),
+            // COMFORT (v0.16.0, was FEEDBACK): body-facing settings —
+            // vibration and motion. Renamed when reduce-motion joined.
+            Text('COMFORT', style: EmberText.micro),
             const SizedBox(height: Space.s),
             Panel(
-              child: Row(
+              child: Column(
                 children: [
-                  const Icon(
-                    Icons.vibration,
-                    color: EmberColors.textDim,
-                    size: 20,
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.vibration,
+                        color: EmberColors.textDim,
+                        size: 20,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(child: Text('Haptics', style: EmberText.body)),
+                      _EmberToggle(
+                        value: _s.haptics,
+                        onChanged: (v) {
+                          _s.haptics = v;
+                          _changed(preview: true);
+                          // Answer "ON" with a buzz you can feel — instant
+                          // on-device confirmation that haptics actually work.
+                          if (v) Haptics.preview();
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: Space.m),
-                  Expanded(child: Text('Haptics', style: EmberText.body)),
-                  _EmberToggle(
-                    value: _s.haptics,
-                    onChanged: (v) {
-                      _s.haptics = v;
-                      _changed(preview: true);
-                      // Answer "ON" with a buzz you can feel — instant
-                      // on-device confirmation that haptics actually work.
-                      if (v) Haptics.preview();
-                    },
+                  const SizedBox(height: Space.l),
+                  // Reduce motion (v0.16.0 The Still Flame): no screen
+                  // shake, no drifting embers, damage numbers hold still.
+                  // 'System' follows the OS accessibility setting.
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.waves,
+                        color: EmberColors.textDim,
+                        size: 20,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Text('Reduce motion', style: EmberText.body),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.s),
+                  Container(
+                    key: const ValueKey('reduce-motion'),
+                    decoration: BoxDecoration(
+                      color: EmberColors.bg,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: EmberColors.line),
+                    ),
+                    padding: const EdgeInsets.all(3),
+                    child: Row(
+                      children: [
+                        for (final (id, label) in const [
+                          ('system', 'SYSTEM'),
+                          ('on', 'REDUCED'),
+                          ('off', 'FULL'),
+                        ])
+                          Expanded(
+                            child: GestureDetector(
+                              key: ValueKey('reduce-motion-$id'),
+                              onTap: () {
+                                _s.reduceMotion = id;
+                                Motion.instance.update(setting: id);
+                                _changed(preview: true);
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Space.s,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: id == _s.reduceMotion
+                                      ? EmberColors.raised
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: id == _s.reduceMotion
+                                        ? EmberColors.ember
+                                        : Colors.transparent,
+                                  ),
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    label,
+                                    textAlign: TextAlign.center,
+                                    style: EmberText.micro.copyWith(
+                                      color: id == _s.reduceMotion
+                                          ? EmberColors.textPrimary
+                                          : EmberColors.textDim,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Steadies the screen: no shake, no drifting embers.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
                   ),
                 ],
               ),
