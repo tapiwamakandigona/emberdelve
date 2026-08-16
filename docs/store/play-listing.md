@@ -1,5 +1,12 @@
 # Emberdelve — Google Play listing draft
 
+> **0.7.0 REFRESH (2026-08-16, ready to paste):** the copy below was updated to match the
+> build actually live on Play (0.7.0+33 "The Face Forge"). Features verified present in that
+> build's code (`git grep` at commit `3a199e5`): Face Forge tempering, Keystones, the Ledger
+> (achievements), the Codex, daily + weekly seeded delves. Do NOT mention 0.8–0.12 features
+> (floor trace shares, rotating daily trials, self-teaching tutorial, per-enemy records, New
+> Embers content) — those are GitHub-only builds not on Play yet.
+
 Draft copy for the Play Console listing (owner to review before submitting).
 Screenshots + feature graphic: first pass committed under
 `docs/store/screenshots/` (1080×1920 PNGs + 1024×500 graphic, rendered from
@@ -15,7 +22,10 @@ Emberdelve: Dice Roguelite
 
 Fair dice, real choices. A pocket dice roguelite with zero ads, played offline.
 
-## Full description (4000 chars max)
+*(78 chars. Live console currently shows "Fair dice roguelite. Build your pool, delve deep.
+No ads, no timers, no gacha." — either is fine; the line above leads with the promise.)*
+
+## Full description (4000 chars max) — 0.7.0 refresh
 
 Descend into the delve, one roll at a time.
 
@@ -29,6 +39,16 @@ Draft, forge, and upgrade a pool of dice — keen edges, warding irons, lucky
 charms. Chase pairs, triples, and straights: combos turn a spare d4 into the
 best die on the table.
 
+TEMPER A FACE
+Once per delve, mark one face of one die at a rest — Blade, Aegis, Surge, or
+Echo. A tempered die wears its mark in the tray, and it lights up when the
+roll lands. Your pool becomes YOUR pool.
+
+CHOOSE A KEYSTONE
+After your first won fight, pick a run-shaping power (or decline): reward
+early strikes, carry unused block, pay for die variety. Every run gets a
+plan, not just a pile of dice.
+
 PUSH YOUR LUCK
 One risky reroll per turn. Exact kills pay out bonus embers; overkill splashes
 to the next foe. Assigning a 4 instead of a 6 is a real decision, every turn.
@@ -38,16 +58,21 @@ Branching maps with honest reward previews — see what an elite guards before
 you commit. Shops, forges, strange events, and a boss waiting at the bottom.
 
 DIE FORWARD
-Death banks embers. Spend them on new dice, characters, and ascension tiers.
-Pick a starting boon and delve again in seconds — 15 boons keep restarts
-fresh.
+Death banks embers. Spend them on new dice, delvers, hearth colours, and dice
+skins. Pick a starting boon and delve again in seconds — 15 boons keep
+restarts fresh.
+
+KEEP THE RECORD
+The Ledger tracks real feats — exact-kill streaks, boss clears, wins per
+delver. The Codex holds the lore of every enemy and relic you've met. A daily
+seeded delve shared by everyone, and a weekly delve with one declared
+modifier, give the long game a heartbeat.
 
 FAIR BY DESIGN
 • Zero ads, plays fully offline — analytics only if you switch it on
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
-• A daily seeded delve, shared by everyone
-• Free forever: full runs, every delver, the daily
+• Free forever: full runs, every delver, the daily and weekly
 • One honest one-time unlock (the Ember Forge) opens HARD and the
   Ascension ladder — no subscriptions, no consumables, ever
 
