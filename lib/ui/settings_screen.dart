@@ -540,8 +540,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(width: Space.m),
                       Expanded(
                         child: Text(
-                          'Copy a save code — one line of text that '
-                          'holds your progress.',
+                          'Copy a save code that holds your progress.',
                           style: EmberText.body,
                         ),
                       ),
@@ -565,7 +564,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Expanded(
                         child: Text(
                           'Paste a code from another device to merge '
-                          'its progress here.',
+                          'it here.',
                           style: EmberText.body,
                         ),
                       ),
