@@ -155,3 +155,42 @@ I start Electrical & Electronic Engineering at UZ next week, so this was my last
 https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
 *(Reminder: real context, never a bare link; reply to comments; do not paste the same body in both subs.)*
+
+---
+
+## 4. r/SoloDevelopment — the journey post (added 2026-08-16, venue live-verified)
+
+> **Rule note (checked live 2026-08-16):** ~139k subs. Be respectful; genuinely solo
+> only (you qualify — no human team); ≤2 posts/week; **no AI ban**. Audience is
+> DEVELOPERS — tooling talk is craft here, not "slop". A plain "I released my first
+> game this week and it feels amazing" post hit 352 score this same week: the honest
+> journey post is this sub's native genre. Do NOT post the same night as the
+> r/Zimbabwe update; Monday evening or midweek is the slot. Flair if offered: Game.
+
+**Title options (pick one, don't A/B in public):**
+1. Shipped my first game to Google Play in 18 days, solo, from Kwekwe, Zimbabwe — through load-shedding. Tomorrow I start engineering school.
+2. Solo dev from Zimbabwe: my dice roguelite went from nothing to Google Play in 18 days. Here's what that actually looked like.
+
+**Body:**
+
+Three weeks ago this game didn't exist. Last night I shipped the third update of the weekend.
+
+I'm 20, in Kwekwe, Zimbabwe. I built Emberdelve — a dice-builder roguelite for Android — solo, in 18 days to Play review, working around load-shedding (power cuts are a scheduling constraint here the same way a day job is for most of this sub).
+
+Honest tooling disclosure, because this community deserves it straight: I lean hard on AI tools — code generation, iteration, even an agent that helps me ship updates. Every design decision, every balance call, every "is this actually fun" judgment is mine, and there were hundreds of hours of them. I've seen player subs read "AI" and stop listening. I figure fellow devs would rather hear how the sausage is actually made in 2026.
+
+Where it stands, real numbers: ~34 downloads. 32 testers. $0 revenue. One guy from my own town found it on Reddit and wants to meet up — honestly the highlight so far.
+
+What I'd genuinely like from this crowd:
+- If you've shipped a mobile game as a solo: what moved the needle on your first 1,000 downloads — and what was a waste of a month?
+- Design promise I built around: every death is fair (telegraphed enemies, seeded runs, no hidden modifiers). Is that a real hook, or does every dev think their fairness model is special?
+
+Free, offline, no ads, no timers. One optional one-time unlock. It's on Play and there's a direct APK for the curious: https://tapiwa.me/emberdelve/
+
+(And yes — in the morning I start Electrical & Electronic Engineering at the University of Zimbabwe. The plan is lectures by day, patch notes by night. We'll see how long that survives the timetable.)
+
+> **Timing note:** the last line is honest only if posted Sunday night before
+> orientation (Aug 17). Posting Monday evening instead? Change to "this morning I
+> started..." — never post a time claim that's gone stale.
+> **First 3 hours:** reply to every comment; the playbook in
+> `everything/ACTIONS-ON-PHONE.md` §1b applies here verbatim.
