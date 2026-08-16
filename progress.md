@@ -1531,3 +1531,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   floor 3 at every rung >=3. The flat +rung attack bonus is a door bouncer, not a
   climb (same failure v0.3.3 fixed for hard). v0.20.0 candidate: ascension rebalance
   to a layer/rung-scaled ramp so the ladder is steep but alive to A20. [probe, 2026-08-16]
+
+## 2026-08-16 — v0.20.0 "The Living Ladder" PUBLISHED; v0.21.0 Watchtower started
+
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.20.0 — ascension
+  rebalance. Codes 46/1046/2046/4046, all 4 APK pins verified non-vacuously (4 lines
+  printed), AAB pkcs7 pin match (CI run 31950678249). arm64 30 MB. Checksums in
+  docs/releases/v0.20.0.md. Shipped: ascensionAttackBonus(rung, layer) layer-scaled
+  ramp (A20 => +3/+5/+7), ascensionHpScalar 1%/rung, honest character-screen copy,
+  gate test/ascension_ladder_test.dart pins A20 bot wins for all four characters.
+  Suite was 415/415 pre-tag. A20 bot win rates: kindler 5 / warden 13 / gambler 8 /
+  ascetic 3%. [sweep, 2026-08-16]
+- v0.21.0 "The Watchtower" STARTED (design: docs/improvements/v0.21.0-watchtower-design.md):
+  update awareness for GitHub-only mode. lib/meta/update_service.dart written —
+  plugin-free, injectable fetcher, §Ethics-clean. Two design deviations from first
+  draft, both deliberate: (1) consent lives in device-local prefs NOT MetaState
+  (cloud-merging a network-consent toggle would enable network calls on other
+  devices); (2) "Open releases page" is "Copy link" via Clipboard (repo has zero
+  URL-launcher dep; summary-screen copy precedent).
