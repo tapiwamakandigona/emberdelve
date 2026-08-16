@@ -1549,3 +1549,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (cloud-merging a network-consent toggle would enable network calls on other
   devices); (2) "Open releases page" is "Copy link" via Clipboard (repo has zero
   URL-launcher dep; summary-screen copy precedent).
+
+## 2026-08-16 ~14:22 GMT — v0.21.0 "The Watchtower" PUBLISHED
+- CI run 31951731571 completed success on tag v0.21.0 (test job green incl. 17 new update_service tests; suite 432/432 pre-tag).
+- Signer pin 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d verified NON-VACUOUSLY on all 4 APKs (androguard, per-APK lines printed: versionName 0.21.0, codes 47/1047/2047/4047) and on the AAB (pkcs7 cert sha256 match).
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.21.0
+  - arm64-v8a 30 MB a5c6e24b642db66e0f34c9247a7cb98f0dddb53b009ce02ce0fbaeb0b5f26c08
+  - armeabi-v7a 28 MB f341be6018dd9b7e4544d070a87817fe32c8a137a6ca1c25c9047150e0c8dc96
+  - x86_64 32 MB 258a306521b944fee327bbce803d81b05621a3b03e2d1fcae59cc6f4461f464b
+  - universal 63 MB 297fd8b1d4ba5c1dc38af2287bf2792cac4f0a4d804fe6044abc8441252c75fb
+  - AAB 61 MB 2fdf9dc791b0bae18f35917191e7a0c39100b81f010ddd61ffc90e376f79c1c0
+- Checksums appended to docs/releases/v0.21.0.md. Update awareness now live: opted-in players get a one-line title notice when a newer GitHub release exists.
+- CVD audit closed during the CI wait (docs/improvements/cvd-audit-2026-08-16.md): no colorblind release needed — all meaning dual-coded; only cosmetic ledger green/gold merge under protan/deutan. Plates tool kept at tool/cvd_plates_test.dart (not in CI).
+- Next: v0.22.0 "The Crowned Deep" per docs/improvements/v0.22.0-crowned-deep-design.md — second content drop, boss-focused (6 → 8 bosses, deliberate third golden re-anchor; mod-8 anchor seed scheme 20260720..27).
