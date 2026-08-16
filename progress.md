@@ -1412,3 +1412,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   - emberdelve-v0.12.0.aab sha256 144666127e6171f33f292cd08a67a850c7954f6faf71216bb1036684f143c5a1
 - Checksums appended to docs/releases/v0.12.0.md. Studio-priorities backlog items 1-5 now all shipped.
 - Next: v0.13.0 "The Delver's Rank" per docs/improvements/v0.13.0-delvers-rank-design.md.
+
+## 2026-08-16 ~12:20 GMT — v0.13.0 "The Delver's Rank" built
+- data/ranks.dart: 9 tiers Ashfoot(0)..Deepfire Sovereign(1100); withArticle helper; names dodge the 4 character names.
+- meta/rank.dart: rankMarks = 3*runsWon + 5*bosses + 2*felledDistinct + metDistinct + ownedCodex + 2*(dailies+weeklies); rankFor/nextRank pure; monotone under cloud merge (union/max) — pinned in test.
+- Controller: pendingRankUp (before/after rankFor around _bankRun counters), cleared in startRun. Ledger header panel key 'rank-line'; summary one-line key 'rank-up-line' (withArticle fixes 'a Emberwright').
+- Tests: rank_test.dart 8 (boundaries via wins*3+met%3 composition; merge monotonicity = the derived-state assert), rank_ui_test.dart 3 (seed 11 = deterministic autoplay WIN). Suite 392/392; analyze clean; overflow probe green; plates tool/rank_visual_test.dart reviewed (320x568@1.3x wraps cleanly).
+- Version 0.13.0+39; notes docs/releases/v0.13.0.md. No sim contact, no goldens moved.

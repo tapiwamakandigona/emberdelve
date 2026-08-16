@@ -19,6 +19,7 @@ import '../meta/achievements.dart';
 import '../meta/forge.dart';
 import '../meta/meta.dart';
 import '../meta/play_games_service.dart';
+import '../meta/rank.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
 import '../sim/keystones.dart';
@@ -172,6 +173,12 @@ class GameController extends ChangeNotifier {
   /// The summary screen renders it in the same breath as the run result;
   /// [startRun] clears it. Nothing else may write it.
   List<String> pendingAchievements = const [];
+
+  /// The Delver's Rank tier this run's banking crossed INTO, if any
+  /// (v0.13.0). Rank is derived (meta/rank.dart), so this is just a
+  /// before/after comparison made inside [_bankRun]; the summary shows one
+  /// quiet line and [startRun] clears it. Nothing else may write it.
+  RankTier? pendingRankUp;
 
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
@@ -379,6 +386,7 @@ class GameController extends ChangeNotifier {
     // The last run's announcements are done with; a stale list must never
     // resurface on the next summary.
     pendingAchievements = const [];
+    pendingRankUp = null;
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -833,6 +841,9 @@ class GameController extends ChangeNotifier {
     if (run == null) return;
     final banked = run['embers'] as int? ?? 0;
     final char = run['character'] as String? ?? defaultCharacter;
+    // v0.13.0 Delver's Rank: rank is derived, so a rank-up is just the tier
+    // before banking vs after. Snapshot BEFORE any counter moves.
+    final rankBefore = rankFor(meta);
     meta.embers += banked;
     meta.lifetimeEmbers += banked;
     meta.runsPlayed += 1;
@@ -917,6 +928,10 @@ class GameController extends ChangeNotifier {
       pendingAchievements = fresh;
       markSeen(meta, fresh);
     }
+    // v0.13.0 Delver's Rank: announce a crossed tier once, in the same
+    // breath as the result. Derived state — nothing persists for this.
+    final rankAfter = rankFor(meta);
+    if (rankAfter.marks > rankBefore.marks) pendingRankUp = rankAfter;
     MetaStore.save(meta);
     // P4/P5 (v0.5.0): mirror the fresh snapshot to the Play Games cloud save
     // and submit a finished Daily/Weekly Delve to its leaderboard. Both are

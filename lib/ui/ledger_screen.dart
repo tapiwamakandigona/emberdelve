@@ -18,6 +18,7 @@ import '../data/themes.dart';
 import '../game/controller.dart';
 import '../meta/achievements.dart' as ach;
 import '../meta/meta.dart';
+import '../meta/rank.dart';
 import 'codex_screen.dart';
 import 'fx.dart';
 import 'theme.dart';
@@ -45,9 +46,61 @@ class LedgerScreen extends StatelessWidget {
           animation: c,
           builder: (context, _) {
             final m = c.meta;
+            final rank = rankFor(m);
+            final next = nextRank(m);
             return ListView(
               padding: const EdgeInsets.all(Space.l),
               children: [
+                // v0.13.0 Delver's Rank: derived from the counters below —
+                // every mark is real banked history (§Ethics honesty), and
+                // the next-tier line shows REAL earned progress, never a
+                // teaser that resets or expires.
+                Panel(
+                  key: const ValueKey('rank-line'),
+                  color: EmberColors.raised,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.workspace_premium,
+                        color: EmberColors.gold,
+                        size: 28,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'You delve as ${rank.withArticle}',
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              rank.flavor,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              next == null
+                                  ? '${rankMarks(m)} marks — the ladder '
+                                        'ends here'
+                                  : '${rankMarks(m)} marks · '
+                                        '${next.name} at ${next.marks}',
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: Space.l),
                 Text('LIFETIME', style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
