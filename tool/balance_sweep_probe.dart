@@ -20,7 +20,7 @@ void main() {
           if (r.sim.phase == 'run_won') {
             wins++;
           } else {
-            final f = (r.sim.state['map'] as Map?)?['floor'];
+            final f = (r.sim.state()['map'] as Map?)?['floor'];
             lossFloors.add(f is int ? f : -1);
           }
         }
