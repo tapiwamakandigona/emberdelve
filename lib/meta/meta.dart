@@ -99,6 +99,12 @@ class MetaState {
   int dailiesPlayed; // Daily Delves FINISHED (abandoning counts for nothing)
   int winsNoRest; // runs won without visiting a single rest node
   int hardWins; // runs won on hard
+  // v0.11.0 Delver's Ledger — per-enemy record, keyed by enemy id. All
+  // event-derived in GameController.recordCombatStats, never estimated.
+  // Cloud merge: per-key MAX (same convention as charRuns/charWins).
+  Map<String, int> enemyMet; // encounters started against this enemy
+  Map<String, int> enemyFelled; // fights won against it
+  Map<String, int> enemyFellTo; // fights it won against you
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -138,6 +144,9 @@ class MetaState {
     this.dailiesPlayed = 0,
     this.winsNoRest = 0,
     this.hardWins = 0,
+    Map<String, int>? enemyMet,
+    Map<String, int>? enemyFelled,
+    Map<String, int>? enemyFellTo,
   }) : runHistory = runHistory ?? [],
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
@@ -147,7 +156,10 @@ class MetaState {
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedCodex = ownedCodex ?? {},
-       tipsSeen = tipsSeen ?? {};
+       tipsSeen = tipsSeen ?? {},
+       enemyMet = enemyMet ?? {},
+       enemyFelled = enemyFelled ?? {},
+       enemyFellTo = enemyFellTo ?? {};
 
   Map<String, Object?> toJson() => {
     'schema': metaSchemaVersion,
@@ -190,6 +202,9 @@ class MetaState {
     if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
     if (winsNoRest > 0) 'winsNoRest': winsNoRest,
     if (hardWins > 0) 'hardWins': hardWins,
+    if (enemyMet.isNotEmpty) 'enemyMet': enemyMet,
+    if (enemyFelled.isNotEmpty) 'enemyFelled': enemyFelled,
+    if (enemyFellTo.isNotEmpty) 'enemyFellTo': enemyFellTo,
   };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -279,6 +294,9 @@ class MetaState {
         ((j['lastDailyDate'] is String) ? 1 : 0),
     winsNoRest: j['winsNoRest'] as int? ?? 0,
     hardWins: j['hardWins'] as int? ?? 0,
+    enemyMet: _intMap(j['enemyMet']),
+    enemyFelled: _intMap(j['enemyFelled']),
+    enemyFellTo: _intMap(j['enemyFellTo']),
   );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only
