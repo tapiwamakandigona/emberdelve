@@ -14,6 +14,7 @@ import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
 import 'meta/play_games_service.dart';
+import 'meta/save_transfer.dart';
 import 'meta/reminder_service.dart';
 import 'meta/store_service.dart';
 import 'meta/update_service.dart';
@@ -76,6 +77,10 @@ Future<void> main() async {
   }
   pgs.loadLocalHook = () async => controller.meta;
   pgs.adoptMergedHook = controller.adoptMeta;
+  // The Carried Ember (v0.24.0): the Settings save-code panel reads and
+  // adopts meta through the same two doors as the cloud path.
+  SaveTransfer.loadLocalHook = () async => controller.meta;
+  SaveTransfer.adoptMergedHook = controller.adoptMeta;
   unawaited(pgs.resumeIfWanted());
   // Daily Delve reminder (v0.6.0): OFF by default, enabled only by an
   // explicit Settings tap. Backends wired on Android only; the service is a
