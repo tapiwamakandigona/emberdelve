@@ -1369,7 +1369,13 @@ void showFlash(BuildContext context, String msg) {
   messenger.clearSnackBars();
   messenger.showSnackBar(
     SnackBar(
-      content: Text(msg, style: EmberText.body),
+      // TalkBack (v0.19.0): a live region speaks the toast the moment it
+      // appears — heals, forges, surge rerolls, invalid-move reasons all
+      // reach screen-reader players without stealing focus.
+      content: Semantics(
+        liveRegion: true,
+        child: Text(msg, style: EmberText.body),
+      ),
       backgroundColor: EmberColors.raised,
       behavior: SnackBarBehavior.floating,
       duration: const Duration(milliseconds: 1400),
@@ -1377,18 +1383,13 @@ void showFlash(BuildContext context, String msg) {
   );
 }
 
-
 /// The corner mark on a tempered die: rune initial over its face number.
 /// Decoration only — DieChip's Semantics label already speaks both.
 class _RuneMark extends StatelessWidget {
   final String rune;
   final int face;
   final bool live;
-  const _RuneMark({
-    required this.rune,
-    required this.face,
-    required this.live,
-  });
+  const _RuneMark({required this.rune, required this.face, required this.live});
 
   static const Map<String, Color> _colors = {
     'blade': EmberColors.hp,

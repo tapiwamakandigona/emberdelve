@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show SemanticsService;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
