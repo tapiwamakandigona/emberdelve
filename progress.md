@@ -1600,3 +1600,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Settings "Carry Your Ember" panel (copy/paste save code, honest confirm dialog stating code contents, neutral-fact status lines); SaveTransfer hooks wired in main.dart beside PGS hooks. Overflow sweep green at both sizes with the new panel.
 - Version 0.24.0+50 (expected codes 50/1050/2050/4050); news entry "The Carried Ember" + currentAppVersion 0.24.0; release notes docs/releases/v0.24.0.md (checksums pending CI).
 - Tests: save_transfer_test 8 + save_transfer_ui_test 5 (copy→decodable, paste→confirm→merge best-of-both incl. forge never revoked, decline untouched, garbage=neutral fact, banned-word sweep over settings copy). Suite 452/452; analyze --fatal-infos clean; news_test ethics sweep green. Sim untouched — anchors byte-identical.
+
+## 2026-08-16 ~15:28 GMT — v0.24.0 visual critique pass; tag MOVED before publish
+- Plates (tool/carried_ember_visual_test.dart): confirm dialog verified excellent (facts-first summary, primary Merge/ghost Keep-as-is); 320x568@1.3x showed over-wrapped row copy → tightened both row strings. LESSON: plate tools must pumpAndSettle + expect() the dialog exists before shooting, or the plate silently captures the base screen.
+- Copy polish landed AFTER the first v0.24.0 tag → old CI run 31955353938 cancelled, tag force-moved to include polish (nothing was published from the old tag), CI re-dispatched → tag run 31955524853. Rule kept: a tag may only move while its release is unpublished.
+- Suite re-verified after polish: analyze clean, save_transfer_ui + overflow 30/30 green.
