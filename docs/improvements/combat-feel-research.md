@@ -74,15 +74,18 @@ Weapon/arsenal visibility is mastery visibility.
    hold for boss kills only).
 4. ~~Reward flip~~ — SHIPPED in feel-v2 (offers auto-flip as 3D cards,
    staggered left-to-right; all flip — no peek-gamble — then tap to pick).
-5. **Run-power recap on victory screen**: "your pool, forged this run" strip
-   (IKEA effect, design-system §1) — show the arsenal they built.
+5. ~~Run-power recap on victory screen~~ — SHIPPED in PR #89 (summary
+   `_poolRecap`: "POOL FORGED THIS RUN" identity panel + die-count chips;
+   verified present 2026-08-16).
 6. ~~Plain reroll retumble~~ — SHIPPED with LFP-1c (per-die `_reflyGen`
    tokens; the plain/charge reroll path bumps the picked die's token, and
    tray + both reroll paths agree on 1-based die keys — verified 2026-08-16).
 7. ~~Map ambience audio bed~~ — SHIPPED in v0.23.0 "The Deep Hum" (depth-scaled ember bed, 12%→45% of music volume).
-8. **Weapon evolution**: weapon visuals could grow with forge upgrades
-   (bigger/hotter as the pool tiers up) — strongest remaining mastery-
-   visibility lever.
+8. ~~Weapon evolution~~ — SHIPPED in v7 Face Forge (#90): weapon reach,
+   spine runes, edge stroke and accent all scale with `identity.dominantTier`
+   (lib/ui/weapons.dart); verified present 2026-08-16.
+
+All eight items shipped — this backlog is CLOSED as of 2026-08-16.
 
 ## Cited sources
 - gdkeys.com/keys-to-combat-design-1-anatomy-of-an-attack
