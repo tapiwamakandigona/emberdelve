@@ -107,6 +107,9 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     hardWins: local.hardWins > cloud.hardWins ? local.hardWins : cloud.hardWins,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),
+    enemyMet: _maxMap(local.enemyMet, cloud.enemyMet),
+    enemyFelled: _maxMap(local.enemyFelled, cloud.enemyFelled),
+    enemyFellTo: _maxMap(local.enemyFellTo, cloud.enemyFellTo),
     // Union: earned anywhere stays earned.
     unlocked: {...local.unlockedCharacters, ...cloud.unlockedCharacters},
     ownedThemes: {...local.ownedThemes, ...cloud.ownedThemes},

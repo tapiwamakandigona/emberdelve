@@ -154,6 +154,13 @@ class GameController extends ChangeNotifier {
   // touched. _lastEnemyId is the enemy of the encounter in progress, which on
   // a win is by definition the boss that just fell.
   String? _lastEnemyId;
+
+  // v0.11.0 Delver's Ledger: enemy ids whose lifetime met/felled record went
+  // 0 -> 1 during THIS run ("First sighting" / "First felling" on the
+  // summary). Run-scoped; persisted beside the snapshot ('run_firsts') so a
+  // killed-and-resumed run keeps its firsts honest.
+  final Set<String> runFirstMet = {};
+  final Set<String> runFirstFelled = {};
   bool _restedThisRun = false;
 
   /// v0.8.0 spoiler-free floor trace for share text. Per-run scratch like
@@ -229,6 +236,18 @@ class GameController extends ChangeNotifier {
           // v0.8.0: the floor trace rides the same side channel — a resumed
           // run keeps its earlier floors, or starts clean on pre-fix saves.
           runTrace = RunTrace.fromJson(snap['run_trace']);
+          // v0.11.0: this run's first-sighting/first-felling record.
+          runFirstMet.clear();
+          runFirstFelled.clear();
+          final firsts = snap['run_firsts'];
+          if (firsts is Map) {
+            runFirstMet.addAll(
+              ((firsts['met'] as List?) ?? const []).whereType<String>(),
+            );
+            runFirstFelled.addAll(
+              ((firsts['felled'] as List?) ?? const []).whereType<String>(),
+            );
+          }
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -291,6 +310,12 @@ class GameController extends ChangeNotifier {
     // the share button and the played-counters silently vanished (bug-hunt
     // 2026-08-11). Only stamped when set, so normal-run save blobs stay
     // byte-identical.
+    if (runFirstMet.isNotEmpty || runFirstFelled.isNotEmpty) {
+      snapMap['run_firsts'] = {
+        'met': runFirstMet.toList()..sort(),
+        'felled': runFirstFelled.toList()..sort(),
+      };
+    }
     if (dailyDate != null || weeklyIndex != null) {
       snapMap['run_labels'] = {
         if (dailyDate != null) 'daily': dailyDate,
@@ -346,6 +371,8 @@ class GameController extends ChangeNotifier {
     _bankedThisRun = false;
     _lastEnemyId = null;
     _restedThisRun = false;
+    runFirstMet.clear();
+    runFirstFelled.clear();
     // v0.8.0: every fresh run traces from floor zero — a stale trace must
     // never leak a previous run's floors into this run's share text.
     runTrace = RunTrace();
@@ -701,6 +728,8 @@ class GameController extends ChangeNotifier {
     _bankedThisRun = false;
     _lastEnemyId = null;
     _restedThisRun = false;
+    runFirstMet.clear();
+    runFirstFelled.clear();
     notifyListeners();
     _syncAudio();
   }
@@ -739,7 +768,13 @@ class GameController extends ChangeNotifier {
       switch (e['type']) {
         case 'encounter_started':
           final id = e['enemy'];
-          if (id is String) _lastEnemyId = id;
+          if (id is String) {
+            _lastEnemyId = id;
+            // v0.11.0: per-enemy record — met. A lifetime 0 -> 1 is this
+            // run's "first sighting".
+            if ((meta.enemyMet[id] ?? 0) == 0) runFirstMet.add(id);
+            meta.enemyMet[id] = (meta.enemyMet[id] ?? 0) + 1;
+          }
           break;
         case 'rested':
           // Any visit to a rest node counts, even a 0 HP "move on" — the
@@ -767,8 +802,23 @@ class GameController extends ChangeNotifier {
     // follows every terminal phase.
     if (events.any((e) => e['type'] == 'encounter_lost')) {
       meta.exactStreak = 0;
+      // v0.11.0: per-enemy record — it felled you. (A resumed mid-fight run
+      // has no _lastEnemyId; same known gap as the boss ledger.)
+      final id = _lastEnemyId;
+      if (id != null) {
+        meta.enemyFellTo[id] = (meta.enemyFellTo[id] ?? 0) + 1;
+      }
     }
     if (!fightWon) return;
+    // v0.11.0: per-enemy record — felled. A lifetime 0 -> 1 is this run's
+    // "first felling".
+    final felledId = _lastEnemyId;
+    if (felledId != null) {
+      if ((meta.enemyFelled[felledId] ?? 0) == 0) {
+        runFirstFelled.add(felledId);
+      }
+      meta.enemyFelled[felledId] = (meta.enemyFelled[felledId] ?? 0) + 1;
+    }
     meta.exactStreak = exact ? meta.exactStreak + 1 : 0;
     if (meta.exactStreak > meta.bestExactStreak) {
       meta.bestExactStreak = meta.exactStreak;

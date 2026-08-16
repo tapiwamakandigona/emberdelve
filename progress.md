@@ -1359,3 +1359,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Releases published earlier this session: v0.8.0 (6189058, run 31938009795)
   and v0.9.0 (1c0fd78, run 31938359549) — both signer-pin verified
   (031acb42…), sha256s in release notes, GitHub-only per owner directive.
+
+## 2026-08-16 — v0.11.0 "The Delver's Ledger" (build 37)
+
+- Per-enemy record: MetaState enemyMet/enemyFelled/enemyFellTo (toJson omits
+  empty; cloud merge = per-key max). Banked event-driven in recordCombatStats
+  via _lastEnemyId (encounter_started/won/lost). Sim untouched (simVersion 7).
+- Run firsts: controller runFirstMet/runFirstFelled (lifetime 0→1 only),
+  persisted in autosave as run_firsts beside run_labels, restored in boot.
+  Summary shows 'First sighting/felling: <names>' (key firsts-line); Codex
+  record line is FREE above the seal — never paywalled (codex-record-<id>).
+- HARD-WON test knowledge (cost ~3 hung 10-min runs): with a real
+  saveDirOverride, any apply() inside a testWidgets body initiates real file
+  I/O in the FakeAsync zone; its completions queue behind fake microtasks and
+  NEVER resolve — a later runAsync(flushSaves) cannot rescue it. Cure: run the
+  whole drive (startRun → bot loop → flushSaves) inside ONE tester.runAsync.
+  Corollary: never await a controller's _saveQueue when it never saved — the
+  constructor's Future.value() was BORN in the fake zone and awaiting it
+  resolves through the creation zone's microtasks (deadlock even in runAsync).
+  summary_achievements_test only survived because plain GameController() saves
+  fail silently through path_provider's MissingPluginException.
+- Plates: tool/ledger_visual_test.dart → codex 360x640 + 320x568@1.3x +
+  summary firsts 360x640; critiqued, no overflow, lists coherent.
+- Suite 381/381 (log /work/temp/ed_full_suite_v11.log). Version 0.11.0+37.

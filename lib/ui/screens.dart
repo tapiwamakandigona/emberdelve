@@ -9,6 +9,7 @@ import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
+import '../data/enemies.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
 import '../data/mutators.dart';

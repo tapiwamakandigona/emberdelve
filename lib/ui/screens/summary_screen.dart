@@ -187,6 +187,21 @@ class SummaryScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: Space.s),
                         ],
+                        // v0.11.0 Delver's Ledger: the firsts this run
+                        // produced — quiet, factual, absent when there are
+                        // none. Names resolve through enemies.dart so a
+                        // rename can never leave this line lying.
+                        if (_firstsLine(c) != null) ...[
+                          Text(
+                            _firstsLine(c)!,
+                            key: const ValueKey('firsts-line'),
+                            textAlign: TextAlign.center,
+                            style: EmberText.micro.copyWith(
+                              color: EmberColors.textDim,
+                            ),
+                          ),
+                          const SizedBox(height: Space.s),
+                        ],
                         // Today's Trial chip (v0.9.0): shown ONLY when a
                         // goal-day daily met its objective — the bonus is a
                         // banked fact by the time this screen exists. A
@@ -497,3 +512,18 @@ class SummaryScreen extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Top bar — run resources (values bright, labels micro)
 // ---------------------------------------------------------------------------
+
+/// v0.11.0 Delver's Ledger: the firsts THIS run produced, or null when it
+/// produced none. First sightings are enemies whose lifetime met-count went
+/// 0 -> 1 this run; first fellings the same for wins. Sorted for stable
+/// copy; names resolve live from enemies.dart.
+String? _firstsLine(GameController c) {
+  String names(Set<String> ids) =>
+      (ids.toList()..sort()).map((id) => enemies[id]?.name ?? id).join(' · ');
+  final parts = <String>[
+    if (c.runFirstMet.isNotEmpty) 'First sighting: ${names(c.runFirstMet)}',
+    if (c.runFirstFelled.isNotEmpty)
+      'First felling: ${names(c.runFirstFelled)}',
+  ];
+  return parts.isEmpty ? null : parts.join('\n');
+}

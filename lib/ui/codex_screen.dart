@@ -109,6 +109,22 @@ class CodexScreen extends StatelessWidget {
         : 'enemy';
   }
 
+  /// v0.11.0 Delver's Ledger: the honest per-enemy record, FREE for every
+  /// entry (§Ethics: mechanical/record knowledge is never paywalled — only
+  /// the lore text is priced). Enemies only; relics have no fight record.
+  String? _recordLine(CodexEntryDef e) {
+    if (e.kind != 'enemy') return null;
+    final m = c.meta;
+    final met = m.enemyMet[e.refId] ?? 0;
+    if (met == 0) return 'Not yet met.';
+    final felled = m.enemyFelled[e.refId] ?? 0;
+    final deaths = m.enemyFellTo[e.refId] ?? 0;
+    final parts = ['Met $met'];
+    if (felled > 0) parts.add('Felled $felled');
+    if (deaths > 0) parts.add('Deaths $deaths');
+    return parts.join(' · ');
+  }
+
   Widget _entryCard(BuildContext context, CodexEntryDef e) {
     final m = c.meta;
     final owned = m.ownedCodex.contains(e.id);
@@ -160,6 +176,14 @@ class CodexScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
+            if (_recordLine(e) != null) ...[
+              Text(
+                _recordLine(e)!,
+                key: ValueKey('codex-record-${e.refId}'),
+                style: EmberText.micro.copyWith(color: EmberColors.gold),
+              ),
+              const SizedBox(height: 4),
+            ],
             if (owned)
               Text(
                 e.text,
