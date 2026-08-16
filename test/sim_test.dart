@@ -57,7 +57,15 @@ import 'package:emberdelve/sim/autoplay.dart';
 // seed in-process AND across two separate processes
 // (tool/golden_measure_probe_test.dart, tool/golden_boss_reach_probe_test.dart);
 // old -> new for all bosses recorded in progress.md.
-const int goldenV6 = 210389070;
+//
+// v0.25.0 re-anchor (2026-08-16, "The Unquiet Deep" content drop): events
+// 33 -> 39 and relics 28 -> 32 (all appended at END; content-as-data, zero
+// logic). Deck growth changes the unseen-event pick and relic growth changes
+// every gain_random_relic draw, so all seeded runs re-hash (v0.12.0/v0.22.0
+// precedent). Boss mapping is untouched (still 8). Old value: 210389070.
+// Reach re-proven for every anchor seed with
+// tool/golden_boss_reach_probe_test.dart; old -> new in progress.md.
+const int goldenV6 = 1607954204;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -74,9 +82,12 @@ const int goldenV6 = 210389070;
 // `encounter_started` is used instead. Every seed below was verified to
 // fight its boss; this is a stronger anchor scheme than the pre-v0.22.0
 // consecutive-seed one, which never checked reach.
+// v0.25.0 re-screen: the deck/roster growth changed which base seeds
+// survive to their boss. 20260721 (ember_tyrant) now provably reaches its
+// boss again, so the +8 substitute 20260729 is retired.
 const Map<int, String> bossAnchorSeeds = {
   20260728: 'ashen_colossus', // 20260720 dies early (run_lost, no boss)
-  20260729: 'ember_tyrant', // 20260721 dies early
+  20260721: 'ember_tyrant',
   20260722: 'pyre_matriarch',
   20260723: 'cinder_hierophant',
   20260724: 'the_bellows',
@@ -132,14 +143,14 @@ const Map<int, String> bossAnchorSeeds = {
 // byte-identical across the tune, proving it touched only king fights.)
 // cinder_hierophant equals goldenV6 by construction (same seed 20260723).
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 1741421590,
-  'ember_tyrant': 1337987690,
-  'pyre_matriarch': 144677281,
-  'cinder_hierophant': 210389070,
-  'the_bellows': 1476213392,
-  'ashfall_twins': 1206986981,
-  'slag_regent': 789589633,
-  'hearthless_king': 537232144,
+  'ashen_colossus': 1626301198,
+  'ember_tyrant': 1459254341,
+  'pyre_matriarch': 445696919,
+  'cinder_hierophant': 1607954204,
+  'the_bellows': 565723793,
+  'ashfall_twins': 1991211581,
+  'slag_regent': 1258221119,
+  'hearthless_king': 510459434,
 };
 
 void main() {

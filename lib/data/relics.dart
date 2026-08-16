@@ -1,4 +1,4 @@
-// data/relics.dart — Emberdelve relic roster (v0.22.0: 28 relics).
+// data/relics.dart — Emberdelve relic roster (v0.25.0: 32 relics).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -61,6 +61,11 @@ const List<String> relicsOrder = [
   // v0.22.0 additions (appended at END; never reorder)
   'siege_hook',
   'kings_ransom',
+  // v0.25.0 additions (appended at END; never reorder)
+  'drowned_bell',
+  'ashglass_prism',
+  'wyrmscale_cloak',
+  'choir_censer',
 ];
 
 const Map<String, RelicDef> relics = {
@@ -228,6 +233,35 @@ const Map<String, RelicDef> relics = {
     "King's Ransom",
     'Won fights pay +6 gold and +2 embers.',
     {'gold_bonus': 6, 'ember_bonus': 2},
+  ),
+
+  // v0.25.0 additions ---------------------------------------------------------
+  // All multi-hook combos of existing lines (cinder_lantern/siege_hook
+  // precedent). Deliberately no min_roll or rerolls combos — those compound
+  // too hard with loaded_pips / twin_eye.
+  'drowned_bell': RelicDef(
+    'drowned_bell',
+    'Drowned Bell',
+    'Every combat turn starts with +1 block, and rests heal +3.',
+    {'turn_block': 1, 'rest_bonus': 3},
+  ),
+  'ashglass_prism': RelicDef(
+    'ashglass_prism',
+    'Ashglass Prism',
+    'Max rolls pay +2 gold, and won fights pay +2 embers.',
+    {'on_max_gold': 2, 'ember_bonus': 2},
+  ),
+  'wyrmscale_cloak': RelicDef(
+    'wyrmscale_cloak',
+    'Wyrmscale Cloak',
+    'Blocks gain +1, and attackers take 2 damage back.',
+    {'block_flat': 1, 'thorns': 2},
+  ),
+  'choir_censer': RelicDef(
+    'choir_censer',
+    'Choir Censer',
+    'Won fights heal 2 and pay +3 gold.',
+    {'heal_after_fight': 2, 'gold_bonus': 3},
   ),
 };
 

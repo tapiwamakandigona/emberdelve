@@ -55,11 +55,15 @@ void main() {
     // gambler 6/13/39, ascetic 6/10/39); four DISTINCT seeds pinned
     // deliberately so the four proofs ride four different maps/bosses, not
     // one lucky layout.
+    // Re-pinned for v0.25.0 ("The Unquiet Deep" content drop): deck/relic
+    // growth re-rolls every seeded run, which killed the old kindler/gambler/
+    // ascetic pins. Re-hunted (kindler won 39/40/90, warden 4/20/24,
+    // gambler 40/69/90, ascetic 39/40/106); four DISTINCT seeds kept.
     const seeds = {
-      'kindler': 6,
+      'kindler': 39,
       'warden': 4,
-      'gambler': 13,
-      'ascetic': 10,
+      'gambler': 40,
+      'ascetic': 106,
     };
     seeds.forEach((ch, seed) {
       final r = playRun(seed, character: ch, difficulty: 'hard', ascension: 20);

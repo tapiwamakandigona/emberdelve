@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.22.0: 33 events).
+// data/events.dart — Emberdelve event deck (v0.25.0: 39 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -55,6 +55,10 @@ const List<String> eventsOrder = [
   'serpents_molt', 'the_snail_road', 'marshals_muster',
   // v0.22.0 additions (appended at deck END)
   'regents_causeway', 'the_kings_toll',
+  // v0.25.0 additions (appended at deck END) — the Unquiet Deep, aftermath
+  // of the Hearthless King.
+  'the_toppled_crown', 'soot_choir', 'the_bridge_keeper',
+  'cinder_hermit', 'glowworm_hollow', 'the_pale_lode',
 ];
 
 const Map<String, EventDef> events = {
@@ -453,6 +457,96 @@ const Map<String, EventDef> events = {
       }),
       OptionDef('Take from the bowl (-6 hp, +26 gold)', {'hp': -6, 'gold': 26}),
       OptionDef('Pass without touching it', {}),
+    ],
+  ),
+
+  // v0.25.0 additions -------------------------------------------------------
+  'the_toppled_crown': EventDef(
+    'the_toppled_crown',
+    'The Toppled Crown',
+    'A throne of slag lies on its side, crown still wedged beneath it. '
+        'Nobody has dared to right it.',
+    [
+      OptionDef('Pry a jewel loose (-8 hp, +45 gold)', {'hp': -8, 'gold': 45}),
+      OptionDef('Take the crown shard (gain a random die)', {
+        'gain_random_die': 3,
+      }),
+      OptionDef('Bow and move on', {}),
+    ],
+  ),
+  'soot_choir': EventDef(
+    'soot_choir',
+    'Soot Choir',
+    'Wisps circle a dead chimney, humming in rounds. The tune knows you.',
+    [
+      OptionDef('Hum along (heal 20%)', {'heal_pct': 20}),
+      OptionDef('Ask a blessing (-15 gold, +14 embers)', {
+        'gold': -15,
+        'embers': 14,
+      }),
+      OptionDef('Move on', {}),
+    ],
+  ),
+  'the_bridge_keeper': EventDef(
+    'the_bridge_keeper',
+    'The Bridge Keeper',
+    'A rope bridge over a char pit, and a keeper who remembers every '
+        'crossing. Both look older than the deep.',
+    [
+      OptionDef('Pay 15 gold for the true path (+12 embers)', {
+        'gold': -15,
+        'embers': 12,
+      }),
+      OptionDef('Force the crossing (-7 hp, +25 gold)', {
+        'hp': -7,
+        'gold': 25,
+      }),
+      OptionDef('Turn back quietly', {}),
+    ],
+  ),
+  'cinder_hermit': EventDef(
+    'cinder_hermit',
+    'Cinder Hermit',
+    'He has lived down here since before the King fell. He trades in dice, '
+        'and he is not lonely, thank you.',
+    [
+      OptionDef('Trade a die for his charm (lose a die, gain a relic)', {
+        'lose_random_die': 1,
+        'gain_random_relic': 1,
+      }),
+      OptionDef('Share your rations (-10 gold, heal 25%)', {
+        'gold': -10,
+        'heal_pct': 25,
+      }),
+      OptionDef('Leave him be', {}),
+    ],
+  ),
+  'glowworm_hollow': EventDef(
+    'glowworm_hollow',
+    'Glowworm Hollow',
+    'A ceiling of pale green stars. The light is cool, and it is the first '
+        'thing down here that asks nothing of you.',
+    [
+      OptionDef('Bottle the glow (-20 gold, +4 max hp)', {
+        'gold': -20,
+        'max_hp': 4,
+      }),
+      OptionDef('Rest in the light (heal 30%)', {'heal_pct': 30}),
+      OptionDef('Press on', {}),
+    ],
+  ),
+  'the_pale_lode': EventDef(
+    'the_pale_lode',
+    'The Pale Lode',
+    'A fresh crack in the wall shows a vein of bone-white ore. The King\'s '
+        'fall shook loose more than thrones.',
+    [
+      OptionDef('Mine it (-6 hp, gain a random die)', {
+        'hp': -6,
+        'gain_random_die': 3,
+      }),
+      OptionDef('Chip a nugget (+20 gold)', {'gold': 20}),
+      OptionDef('Mark it and move on (+5 embers)', {'embers': 5}),
     ],
   ),
 };
