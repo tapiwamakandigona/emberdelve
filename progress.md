@@ -1581,3 +1581,6 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Implemented: AudioService.mapAmbienceLevel(depth) pure lerp 0.12→0.45; setAmbience(on, {level}) with _ambienceRel tracking (live setVolume on running bed, never restart; applySettings respects current rel level); syncPhase(mapDepth:) starts bed on map phase; GameController.mapDepth (gameplay-owned, same split as _inDanger) = (layer-1)/(layers-1) from sealed sim map state.
 - test/deep_hum_test.dart 7 tests: curve endpoints/monotonic/clamp, map bed < title bed at mid-depth, controller depth 0 no-run + run-start, full-run monotonic descent ending at 1.0 (botCmd replay). Suite 439/439, analyze clean.
 - Remaining: version bump 0.23.0+49, news entry, release notes, tag, CI, publish.
+
+## 2026-08-16 ~15:12 GMT — v0.23.0 "The Deep Hum" packaged, tagged, CI dispatched
+- Version 0.23.0+49; news entry "The Deep Hum" + currentAppVersion 0.23.0; release notes docs/releases/v0.23.0.md (checksums pending CI). Ethics sweep (news_test) + deep_hum tests green; suite 439/439; analyze clean. Sim untouched — anchors byte-identical is the determinism claim in the notes.
