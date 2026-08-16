@@ -23,10 +23,23 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.16.0';
+const String currentAppVersion = '0.17.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.17.0',
+    title: 'The Even Scales',
+    lines: [
+      'A balance pass, measured, not guessed: we ran every character '
+          'through hundreds of scripted delves and evened the odds.',
+      'The Warden was quietly winning far too often — she now starts '
+          'with a Slate Chip (forge it into her old Ward Iron) and 32 HP.',
+      'The Gambler and the Ascetic each breathe a little easier: +1 and '
+          '+4 max HP. Old saves are untouched — this only changes new runs.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.16.0',
     title: 'The Still Flame',
