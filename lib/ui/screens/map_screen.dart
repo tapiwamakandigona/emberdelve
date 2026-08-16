@@ -299,43 +299,59 @@ class _MapScreenState extends State<MapScreen>
     final center = _center(node, w);
     final isReachable = reachable.contains(id);
     final isHere = id == position;
+    final layer = node['layer'] as int;
     return Positioned(
       left: center.dx - _nodeSize / 2,
       bottom: center.dy - _nodeSize / 2,
-      child: GestureDetector(
-        // Stable hook for tests/tools (same pattern as the reward screen's
-        // ValueKey('reward-...')): the play harness taps nodes by id. The
-        // old structural finder (GestureDetector wrapping AnimatedBuilder)
-        // silently broke when the 2026-07-25 perf pass removed the
-        // AnimatedBuilder — a key can't rot like that.
-        key: ValueKey('map-node-$id'),
-        onTap: isReachable
-            ? () => widget.c.apply({'type': 'choose_node', 'node': id})
-            : null,
-        // Perf (2026-07-25): this used to be an AnimatedBuilder around the
-        // whole medallion, so every glow frame rebuilt the CustomPaint, the
-        // icon Image and their boxes for EVERY node — 20 nodes x 60fps of
-        // widget churn inside a scroll view, which then repainted the entire
-        // delve. The pulse now drives the painter directly (repaint:) and
-        // each medallion is its own repaint layer, so an idle map paints
-        // only the halos that are actually animating.
-        child: RepaintBoundary(
-          child: CustomPaint(
-            size: const Size(_nodeSize, _nodeSize),
-            painter: _MedallionPainter(
-              kind: kind,
-              here: isHere,
-              reachable: isReachable,
-              // Unreachable nodes have no halo, so they don't listen at all.
-              pulse: isReachable ? _pulse : null,
-            ),
-            child: SizedBox(
-              width: _nodeSize,
-              height: _nodeSize,
-              child: Center(
-                child: Opacity(
-                  opacity: isReachable || isHere ? 1.0 : 0.55,
-                  child: _nodeIcon(kind),
+      // TalkBack (v0.19.0): the medallion is pure CustomPaint + icon, so
+      // without a label a screen-reader user hears nothing but "double tap
+      // to activate" on the game's main navigation. Speak what the eye sees:
+      // kind, floor, and whether you can go there.
+      child: Semantics(
+        label:
+            '${_kindName(kind)}, floor ${layer + 1}'
+            '${isHere
+                ? ', you are here'
+                : isReachable
+                ? ', reachable'
+                : ', out of reach'}',
+        button: isReachable,
+        container: true,
+        child: GestureDetector(
+          // Stable hook for tests/tools (same pattern as the reward screen's
+          // ValueKey('reward-...')): the play harness taps nodes by id. The
+          // old structural finder (GestureDetector wrapping AnimatedBuilder)
+          // silently broke when the 2026-07-25 perf pass removed the
+          // AnimatedBuilder — a key can't rot like that.
+          key: ValueKey('map-node-$id'),
+          onTap: isReachable
+              ? () => widget.c.apply({'type': 'choose_node', 'node': id})
+              : null,
+          // Perf (2026-07-25): this used to be an AnimatedBuilder around the
+          // whole medallion, so every glow frame rebuilt the CustomPaint, the
+          // icon Image and their boxes for EVERY node — 20 nodes x 60fps of
+          // widget churn inside a scroll view, which then repainted the entire
+          // delve. The pulse now drives the painter directly (repaint:) and
+          // each medallion is its own repaint layer, so an idle map paints
+          // only the halos that are actually animating.
+          child: RepaintBoundary(
+            child: CustomPaint(
+              size: const Size(_nodeSize, _nodeSize),
+              painter: _MedallionPainter(
+                kind: kind,
+                here: isHere,
+                reachable: isReachable,
+                // Unreachable nodes have no halo, so they don't listen at all.
+                pulse: isReachable ? _pulse : null,
+              ),
+              child: SizedBox(
+                width: _nodeSize,
+                height: _nodeSize,
+                child: Center(
+                  child: Opacity(
+                    opacity: isReachable || isHere ? 1.0 : 0.55,
+                    child: _nodeIcon(kind),
+                  ),
                 ),
               ),
             ),
@@ -344,6 +360,27 @@ class _MapScreenState extends State<MapScreen>
       ),
     );
   }
+}
+
+/// Spoken name for a node kind (TalkBack label; mirrors _kindIcon).
+String _kindName(String kind) {
+  switch (kind) {
+    case 'start':
+      return 'Start';
+    case 'fight':
+      return 'Fight';
+    case 'elite':
+      return 'Elite fight';
+    case 'rest':
+      return 'Rest site';
+    case 'shop':
+      return 'Shop';
+    case 'event':
+      return 'Event';
+    case 'boss':
+      return 'Boss';
+  }
+  return kind;
 }
 
 /// Painted node icon when we have one; drawn glyph fallback (start node).
