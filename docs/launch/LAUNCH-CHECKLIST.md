@@ -39,20 +39,30 @@ rating that outlives the fix. The download bump (22→34) is encouraging but is 
 
 ## GO / NO-GO gates (all must be green)
 
-| # | Gate | Green threshold | Where to read it | Status |
+**Live console data as of 2026-08-16 (VERIFIED, `madie` session logged into Play Console):**
+- Installed audience: **32** (was 22 on 7 Aug → this is the "22→34" bump). ~40% Zimbabwe, then AU/DE/UK ~6% each, 5 countries total.
+- Tracks in use: `0.7.0 (33) "The Face Forge"` on **Early Access (open testing)**, full roll-out — but only **9.09%** of the base has updated to it. `0.4.2 (27)` Closed-testing Alpha holds **48.48%**. `12 (0.3.9)` Internal testing 15.15%. Production track = **Inactive**.
+- Production **access granted** (12-tester gate cleared).
+- Android vitals crash-free + ANR = **"Data unavailable"** (too few sessions + opt-in telemetry off).
+- Ratings/reviews = **0**. Pre-launch report = **never generated**.
+
+| # | Gate | Green threshold | Where to read it | Status (2026-08-16, VERIFIED) |
 |---|---|---|---|---|
-| G1 | **Crash-free rate** | ≥ 98% sessions (ANR < 0.47%) | Play Console → Quality → Android vitals | ⛔ *no data yet — generate a pre-launch report* |
-| G2 | **Pre-launch report** | 0 crashes on the robo test across device set | Play Console → Testing → Pre-launch report | ⛔ *never generated* |
-| G3 | **Progression cliff closed** | P0 achievements **and** P1 ember sink shipped (see below) | `features.json` + build | ⛔ *P0/P1 not shipped* |
-| G4 | **D1 retention on early-access cohort** | ≥ 20% (market median 22%) | Play Console → Statistics → Retention (needs real installs on v0.4.x) | ⛔ *0% on v0.4.x — nobody has played it yet* |
-| G5 | **Public rating** | ≥ 4.0★ **or** 0 ratings (no bad ones locked in) | Play Console → Ratings | ✅ *0 ratings / 0 reviews — clean slate* |
-| G6 | **Store listing final** | copy, 512 icon, 8 phone screenshots, feature graphic, privacy URL live | `docs/store/` | 🟡 *drafted; needs owner sign-off + live privacy URL* |
+| G1 | **Crash-free rate** | ≥ 98% sessions (ANR < 0.47%) | Monitor & improve → Android vitals | ⛔ *"Data unavailable" — no vitals yet (few sessions + opt-in telemetry). Won't self-resolve without more players → G2 is the only path to stability evidence.* |
+| G2 | **Pre-launch report** | 0 crashes on robo test across device set | Test & release → Pre-launch report | ⛔ *never generated. Fix: enable pre-launch report in Settings; it auto-runs on the next bundle upload. Cheapest de-risking step available.* |
+| G3 | **Progression cliff closed** | P0 achievements **and** P1 ember sink shipped | `features.json` + build | 🟡 *game advanced to v0.7.0 with keystones since the v0.4.x retention doc — RE-CHECK whether P0/P1 shipped before assuming ⛔* |
+| G4 | **D1 retention** | ≥ 20% (market median 22%) | Statistics → Retention | ⛔ *not measurable: base too small (32) and split across 3 tracks; only 9% on newest build* |
+| G5 | **Public rating** | ≥ 4.0★ **or** 0 ratings | Ratings and reviews | ✅ *0 ratings / 0 reviews — clean slate, nothing bad locked in* |
+| G6 | **Store listing final** | copy, 512 icon, 8 screenshots, feature graphic, privacy URL live | `docs/store/` | 🟡 *drafted; needs owner sign-off + confirm live privacy URL* |
 | G7 | **Signing = permanent upload key** | cert SHA-256 matches pinned fingerprint | `docs/release.md` / CI | ✅ *permanent keystore + CI verify in place* |
 
 **Verdict logic:** all green → **GO**. Any ⛔ → **NO-GO, fix first**. 🟡 → owner action.
 
-As of 2026-08-16 the honest verdict is **NO-GO for a full 1.0 launch** — but see the
-two legitimate lighter options below.
+As of 2026-08-16 the honest verdict is **NO-GO for a confident full 1.0 launch** — the
+blocker is not the platform (production access is granted) but **zero stability evidence**
+(G1/G2). The single cheapest fix is to **enable + generate a pre-launch report** on the
+0.7.0 bundle; it's the only way to get device-level crash data without first shipping to
+strangers. See the lighter options below.
 
 ---
 
