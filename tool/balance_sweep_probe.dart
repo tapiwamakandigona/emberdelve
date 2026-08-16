@@ -20,7 +20,10 @@ void main() {
           if (r.sim.phase == 'run_won') {
             wins++;
           } else {
-            final f = (r.sim.state()['map'] as Map?)?['floor'];
+            // Depth at death = the layer of the node the run stood on.
+            final map = r.sim.state()['map'] as Map?;
+            final node = ((map?['nodes'] as Map?) ?? {})['${map?['position']}'];
+            final f = (node as Map?)?['layer'];
             lossFloors.add(f is int ? f : -1);
           }
         }
