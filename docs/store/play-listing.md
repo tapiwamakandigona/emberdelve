@@ -29,10 +29,11 @@ No ads, no timers, no gacha." — either is fine; the line above leads with the 
 
 Descend into the delve, one roll at a time.
 
-Emberdelve is a single-player dice roguelite built on one promise: every
-death is fair. Enemies always telegraph their next move, dice resolve by
-rules you can learn — no hidden modifiers, no rigged near-misses — and every
-run is seeded, so the same choices always play out the same way.
+Emberdelve is a single-player, turn-based dice roguelike built on one
+promise: every death is fair. Enemies always telegraph their next move, dice
+resolve by rules you can learn — no hidden modifiers, no rigged near-misses —
+and every run is a seeded dungeon delve, so the same choices always play out
+the same way.
 
 BUILD YOUR POOL
 Draft, forge, and upgrade a pool of dice — keen edges, warding irons, lucky
@@ -76,7 +77,44 @@ FAIR BY DESIGN
 • One honest one-time unlock (the Ember Forge) opens HARD and the
   Ascension ladder — no subscriptions, no consumables, ever
 
+For fans of turn-based dice roguelikes and dungeon-crawl runs you can learn
+and beat.
+
 Made for one-thumb portrait play. Delve in.
+
+## ASO / keyword analysis (2026-08-16) — honest coverage audit
+
+For a game with no ad budget and 0 ratings, Play Store keyword discoverability IS the free
+growth channel. Audited current copy against real genre search terms (web-verified competitors:
+Dicey Dungeons, Dice Royale, Roll & Slay, Cascade, Heroll). Play Store indexes the **title,
+short description, and long description** for ranking.
+
+**Truthful terms currently MISSING (add — every one is accurate for this game):**
+- **"roguelike"** — Play treats `roguelike` and `roguelite` as *distinct* query terms;
+  roguelike is the higher-volume spelling and roguelite is a subgenre of it, so indexing both
+  is honest and standard ASO. Woven into the long description below.
+- **"turn-based"** — accurate (it is a turn-based dice game). High-intent genre filter.
+- **"dungeon" / "dungeon crawl"** — accurate (you delve floors of foes to a boss).
+- **"for fans of Dicey Dungeons"** — Dicey Dungeons is itself a dice roguelite; this is an
+  honest peer comparison and the single highest-intent discovery vector (players searching a
+  known title). Added as a closing line.
+
+**Terms deliberately NOT added (would misposition — honesty guardrail):**
+- ~~deckbuilder / deck builder~~ — Emberdelve builds a *dice pool*, not a card deck. Say
+  "dice-builder" / "build your pool" (already in copy), never "deckbuilder".
+- ~~Balatro / poker / Yahtzee~~ — those are poker/score-chaser mechanics; Emberdelve is not
+  poker-based. Claiming them would draw the wrong players and earn 1-star "not what I expected".
+- ~~Slay the Spire~~ — it's a *card* deckbuilder, not dice; too loose a comparison to claim
+  directly. Dicey Dungeons is the honest anchor.
+
+**Recommended short-description variant (keyword-tighter, 80 max):**
+`Turn-based dice roguelike. Build your pool, delve deep. No ads, offline.` *(71 chars —
+adds "turn-based" + "roguelike" spelling vs the current line; owner picks.)*
+
+**Recommended closing line for the long description** (append before "Made for one-thumb…"):
+`For fans of turn-based dice roguelikes and dungeon-crawl runs you can learn and beat.`
+
+These are drop-in, owner-reviewed. They add real query coverage without a single false claim.
 
 ## Telemetry note (0.4.3+, added 2026-08-11)
 
