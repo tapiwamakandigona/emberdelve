@@ -122,6 +122,27 @@ final List<CodexEntryDef> codexEntries = [
     'She spins in tallow, not silk. Whole camps have been found perfectly '
         'preserved, upright, and slightly translucent.',
   ),
+  // v0.12.0 commons
+  _enemy(
+    'tinder_mote',
+    'It burns at exactly one temperature and strikes at exactly one pace. '
+        'Delvers who learned to count learned it here.',
+  ),
+  _enemy(
+    'slag_snail',
+    'It has never hurried and never once been caught off guard. The shell '
+        'and the strike arrive together, every time, forever.',
+  ),
+  _enemy(
+    'vent_serpent',
+    'It breathes with the mountain — five beats to a cycle, same as the '
+        'deep vents. Old delvers tap the count on their pommels.',
+  ),
+  _enemy(
+    'pumice_hulk',
+    'Light as bread, hard as grudges. It swings twice because the first '
+        'one is for asking and the second is the answer.',
+  ),
   // enemies — elite --------------------------------------------------------
   _enemy(
     'pyre_howler',
@@ -163,6 +184,13 @@ final List<CodexEntryDef> codexEntries = [
     'quench_hag',
     'She hates fire the way only something made of it can. A hag\'s bucket '
         'has drowned more hearths than any flood.',
+    cost: 20,
+  ),
+  // v0.12.0 elite
+  _enemy(
+    'cinder_marshal',
+    'The delve\'s garrison never disbanded; it just stopped being alive. '
+        'The Marshal still drills, still inspects, still finds you wanting.',
     cost: 20,
   ),
   // enemies — bosses --------------------------------------------------------
@@ -314,6 +342,27 @@ final List<CodexEntryDef> codexEntries = [
     'ember_heartstone',
     'The heart of a hearth that burned a hundred years unbanked. What it '
         'sheltered then, it shelters still — currently, you.',
+  ),
+  // v0.12.0 relics
+  _relic(
+    'cinder_lantern',
+    'A lantern that gives no light, only steadiness. Watchmen of the old '
+        'garrison carried them; their shadows learned to stand still.',
+  ),
+  _relic(
+    'serpent_fang',
+    'Pulled from a vent serpent that bit a delver in full plate. The '
+        'serpent regretted it first. The fang remembers how that felt.',
+  ),
+  _relic(
+    'pumice_plate',
+    'Armor cut from a hulk\'s shoulder: absurdly light, stubbornly whole. '
+        'It floats, which has embarrassed exactly one delver at a crossing.',
+  ),
+  _relic(
+    'hearth_kettle',
+    'Every camp had one; this is the one that survived them. Water boiled '
+        'in it tastes faintly of iron and strongly of getting to rest.',
   ),
 ];
 

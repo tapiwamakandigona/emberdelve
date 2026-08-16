@@ -564,6 +564,96 @@
    ],
    "fps": 8,
    "scale": 3
+  },
+  {
+   "id": "tinder_mote",
+   "source_base": "cinder_wisp (v0.12.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "slag_snail",
+   "source_base": "ember_beetle (v0.12.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "vent_serpent",
+   "source_base": "cinder_crawler (v0.12.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "pumice_hulk",
+   "source_base": "slag_brute (v0.12.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "cinder_marshal",
+   "source_base": "pyre_howler (v0.12.0 palette variant)",
+   "frame_w": 48,
+   "frame_h": 69,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
   }
  ],
  "characters": [

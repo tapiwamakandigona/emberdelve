@@ -1,4 +1,4 @@
-// data/relics.dart — Emberdelve relic roster (M3 content: 22 relics).
+// data/relics.dart — Emberdelve relic roster (v0.12.0: 26 relics).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -53,6 +53,11 @@ const List<String> relicsOrder = [
   'haggler_tongue',
   'blood_ruby',
   'ember_heartstone',
+  // v0.12.0 additions (appended at END; never reorder)
+  'cinder_lantern',
+  'serpent_fang',
+  'pumice_plate',
+  'hearth_kettle',
 ];
 
 const Map<String, RelicDef> relics = {
@@ -179,6 +184,31 @@ const Map<String, RelicDef> relics = {
     'Ember Heartstone',
     '+10 max HP.',
     {'max_hp': 10},
+  ),
+
+  // v0.12.0 additions -----------------------------------------------------------
+  // First multi-hook relic: safe because relic_hooks.dart / assignment.dart
+  // query each hook key independently and sum across owned relics.
+  'cinder_lantern': RelicDef(
+    'cinder_lantern',
+    'Cinder Lantern',
+    'Gain 1 block at the start of every turn, and blocks grant +1.',
+    {'turn_block': 1, 'block_flat': 1},
+  ),
+  'serpent_fang': RelicDef(
+    'serpent_fang',
+    'Serpent Fang',
+    'Attackers take 5 damage.',
+    {'thorns': 5},
+  ),
+  'pumice_plate': RelicDef('pumice_plate', 'Pumice Plate', '+8 max HP.', {
+    'max_hp': 8,
+  }),
+  'hearth_kettle': RelicDef(
+    'hearth_kettle',
+    'Hearth Kettle',
+    'Resting heals +6.',
+    {'rest_bonus': 6},
   ),
 };
 
