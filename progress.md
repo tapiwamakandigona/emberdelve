@@ -1605,3 +1605,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates (tool/carried_ember_visual_test.dart): confirm dialog verified excellent (facts-first summary, primary Merge/ghost Keep-as-is); 320x568@1.3x showed over-wrapped row copy → tightened both row strings. LESSON: plate tools must pumpAndSettle + expect() the dialog exists before shooting, or the plate silently captures the base screen.
 - Copy polish landed AFTER the first v0.24.0 tag → old CI run 31955353938 cancelled, tag force-moved to include polish (nothing was published from the old tag), CI re-dispatched → tag run 31955524853. Rule kept: a tag may only move while its release is unpublished.
 - Suite re-verified after polish: analyze clean, save_transfer_ui + overflow 30/30 green.
+
+## 2026-08-16 ~15:37 GMT — v0.24.0 "The Carried Ember" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.24.0 — tag CI run 31955524853 success; suite at tag 452/452.
+- All 4 APKs androguard PIN-OK non-vacuously (0.24.0, codes 50/1050/2050/4050); AAB pkcs7 pin match. Assets+sha256 in docs/releases/v0.24.0.md (arm64 30MB fe6b0cdf…6769, v7a 28MB 39b3d9b9…3e15, x86_64 32MB fb0c658b…3baf→see notes, universal 63MB c7add9be…f2b9, AAB 62MB ce154817…6f46).
+
+## 2026-08-16 ~15:37 GMT — v0.25.0 "The Unquiet Deep" IN PROGRESS (content drop 3)
+- Design docs/improvements/v0.25.0-unquiet-deep-design.md (committed 8641825). +6 events (33→39) themed on the Hearthless King's aftermath, +4 combo relics (28→32), all existing vocab, appended at END; codex entries added for all 4 relics. Content-as-data, no sim logic, no simVersion bump (drops 1–2 precedent).
+- content_test + ember_sink_test (codex covers every relic exactly once) + news_test ethics sweep green; analyze --fatal-infos clean. Full suite running to surface the golden re-anchor list (fourth re-anchor).
+- Remaining gates: golden re-anchor table, boss-reach probe for all 8 bossGolden seeds, A20 ladder pins, 1000-seed sweep bands (re-baseline v0.24.0 first), news entry, version 0.25.0+51, notes, tag, CI, publish.
