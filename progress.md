@@ -1477,3 +1477,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   ghost fx (arrival pulses on labeled verb buttons), shop heal (text).
 - v0.17 candidate pivot: data-driven balance pass; tool/balance_sweep_probe.dart
   (character x difficulty x 150 seeds, median loss floors) running.
+
+## 2026-08-16 ~12:55 GMT — v0.17.0 "The Even Scales" PUBLISHED
+- CI run 31947535418 success on re-tag (first tag had probe compile bug, force-retagged).
+- Signer pin verified on all 5 artifacts (versionName 0.17.0, codes 43/1043/2043/4043;
+  AAB pkcs7 pin match). LESSON: verify.py globs apk/ + splits/ — with wrong dir layout
+  it printed a VACUOUS "ALL PINS OK" on zero files. Temp copy hardened (found==0 => FAIL,
+  exit code non-zero); port that hardening into CI's verify step next release.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.17.0
+  Assets emberdelve-v0.17.0[-abi].apk + .aab; sha256+size table in docs/releases/v0.17.0.md
+  (arm64 34.9 MB — already 1.7 MB lighter than v0.16 from the balance-data-only diff? No:
+  size delta is CI toolchain noise; treat sizes per-release, measured, never assumed).
+- Balance probe upgraded post-release: loss depth now reads the real node layer at death
+  (was map['floor'] => always -1). Sweep6 (150 seeds x char x diff, final kits):
+  hard medians — kindler L4, warden L5, gambler L4, ascetic L5; easy L5-6.
+  Deaths cluster mid-delve, not at the door: fail point is build quality, not gear checks. Good.
+- v0.18.0 candidate chosen: PAYLOAD DIET. Music = 14.1 MB of the APK (Vorbis stereo ~121kbps).
+  Measured re-encodes: q3 11.0 MB / q2 9.4 MB / q1 7.9 MB. Plan: q2 re-encode (saves ~4.8 MB),
+  add --split-debug-info to CI builds, evaluate Inter subsetting (856K). sfx_headroom.py only
+  gates sfx/, music re-encode out of its scope. Spectrogram A/B in /work/temp/v0180/ pending.
