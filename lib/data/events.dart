@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.12.0: 31 events).
+// data/events.dart — Emberdelve event deck (v0.22.0: 33 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -53,6 +53,8 @@ const List<String> eventsOrder = [
   // v0.12.0 additions (appended at END; never reorder), themed with the
   // New Embers bestiary drop.
   'serpents_molt', 'the_snail_road', 'marshals_muster',
+  // v0.22.0 additions (appended at deck END)
+  'regents_causeway', 'the_kings_toll',
 ];
 
 const Map<String, EventDef> events = {
@@ -423,6 +425,34 @@ const Map<String, EventDef> events = {
         'gain_random_die': 2,
       }),
       OptionDef('Stand at ease', {}),
+    ],
+  ),
+
+  // v0.22.0 additions -------------------------------------------------------
+  'regents_causeway': EventDef(
+    'regents_causeway',
+    "Regent's Causeway",
+    'A raised road of fused slag, swept clean. Someone still holds court below.',
+    [
+      OptionDef('Walk it openly (-4 hp, +30 gold in dropped tribute)', {
+        'hp': -4,
+        'gold': 30,
+      }),
+      OptionDef('Chip a paving stone (+13 embers)', {'embers': 13}),
+      OptionDef('Go around', {}),
+    ],
+  ),
+  'the_kings_toll': EventDef(
+    'the_kings_toll',
+    "The King's Toll",
+    'A toll arch with no keeper. The bowl is stone-cold, but it is not empty.',
+    [
+      OptionDef('Pay the old way (-20 gold, heal 25%)', {
+        'gold': -20,
+        'heal_pct': 25,
+      }),
+      OptionDef('Take from the bowl (-6 hp, +26 gold)', {'hp': -6, 'gold': 26}),
+      OptionDef('Pass without touching it', {}),
     ],
   ),
 };

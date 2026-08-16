@@ -1,4 +1,4 @@
-// data/relics.dart — Emberdelve relic roster (v0.12.0: 26 relics).
+// data/relics.dart — Emberdelve relic roster (v0.22.0: 28 relics).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -58,6 +58,9 @@ const List<String> relicsOrder = [
   'serpent_fang',
   'pumice_plate',
   'hearth_kettle',
+  // v0.22.0 additions (appended at END; never reorder)
+  'siege_hook',
+  'kings_ransom',
 ];
 
 const Map<String, RelicDef> relics = {
@@ -209,6 +212,22 @@ const Map<String, RelicDef> relics = {
     'Hearth Kettle',
     'Resting heals +6.',
     {'rest_bonus': 6},
+  ),
+
+  // v0.22.0 additions -----------------------------------------------------------
+  // Both multi-hook (cinder_lantern precedent: hook keys are queried
+  // independently and summed, so combinations are safe by construction).
+  'siege_hook': RelicDef(
+    'siege_hook',
+    'Siege Hook',
+    'Attacks deal +1, and +2 more against elites and bosses.',
+    {'attack_flat': 1, 'elite_damage': 2},
+  ),
+  'kings_ransom': RelicDef(
+    'kings_ransom',
+    "King's Ransom",
+    'Won fights pay +6 gold and +2 embers.',
+    {'gold_bonus': 6, 'ember_bonus': 2},
   ),
 };
 

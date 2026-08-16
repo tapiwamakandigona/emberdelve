@@ -654,6 +654,81 @@
    ],
    "fps": 8,
    "scale": 3
+  },
+  {
+   "id": "slag_regent",
+   "source_base": "ashen_colossus (palette variant)",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "hearthless_king",
+   "source_base": "ember_tyrant (palette variant)",
+   "frame_w": 96,
+   "frame_h": 108,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 3
+  },
+  {
+   "id": "ashglass_sentinel",
+   "source_base": "kiln_golem (palette variant)",
+   "frame_w": 64,
+   "frame_h": 72,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    },
+    {
+     "state": "run",
+     "frames": 4,
+     "row": 1
+    }
+   ],
+   "fps": 8,
+   "scale": 2
+  },
+  {
+   "id": "coal_seam_wyrm",
+   "source_base": "cinder_crawler (palette variant)",
+   "frame_w": 48,
+   "frame_h": 48,
+   "rows": [
+    {
+     "state": "idle",
+     "frames": 4,
+     "row": 0
+    }
+   ],
+   "fps": 8,
+   "scale": 3
   }
  ],
  "characters": [

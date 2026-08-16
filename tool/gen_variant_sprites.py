@@ -76,6 +76,16 @@ VARIANTS: dict[str, tuple[str, float, float, float, float]] = {
     "vent_serpent": ("cinder_crawler", 150.0, 0.90, 0.95, 0.30), # vent-gas teal
     "pumice_hulk": ("slag_brute", 40.0, 0.35, 1.15, 0.12),       # pale pumice
     "cinder_marshal": ("pyre_howler", -12.0, 1.15, 0.90, 0.20),  # drill crimson
+    # --- v0.22.0 "The Crowned Deep" ------------------------------------------
+    # Same rules: plausible relatives, and no two variants of one source in
+    # the same hue neighbourhood. Ogre-sheet hues already taken: original red
+    # (tyrant), cold ash (colossus), crimson (matriarch), gold-white
+    # (hierophant), pale ash (twins). kiln_golem hues taken: blue (basalt),
+    # brass (the_bellows).
+    "slag_regent": ("ashen_colossus", -50.0, 0.85, 0.90, 0.28),   # verdigris
+    "hearthless_king": ("ember_tyrant", 265.0, 0.70, 0.85, 0.24), # cold violet
+    "ashglass_sentinel": ("kiln_golem", 160.0, 0.55, 1.10, 0.20), # pale glass-green
+    "coal_seam_wyrm": ("cinder_crawler", -8.0, 1.20, 0.62, 0.30), # coal-and-ember
 }
 
 
