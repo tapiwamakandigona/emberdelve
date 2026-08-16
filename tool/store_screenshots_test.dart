@@ -21,6 +21,7 @@ import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/logo.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/game/tips.dart';
 
 const outDir = 'docs/store/screenshots';
 const shotSize = Size(360, 640); // x3.0 => 1080x1920 (9:16)
@@ -119,6 +120,7 @@ GameController richController() {
   final c = GameController();
   final m = c.meta
     ..tutorialSeen = true
+    ..tipsSeen.addAll(ContextTips.all)
     ..embers = 214
     ..runsPlayed = 23
     ..runsWon = 9

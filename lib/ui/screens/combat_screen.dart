@@ -243,8 +243,12 @@ class _CombatScreenState extends State<CombatScreen> {
   void initState() {
     super.initState();
     _wireBands();
-    // First-ever fight: run the 3-step onboarding overlay (F11).
-    if (!widget.c.meta.tutorialSeen) _tutStep = 0;
+    // v0.10.0 The First Delve: the up-front tutorial wall is gone. The
+    // fight-start moment fires the ROLL-THEN-SPEND tip on the first-ever
+    // fight only; every other rule is taught at its own first contact
+    // (lib/game/tips.dart). The manual help button still replays the full
+    // overlay deck any time.
+    widget.c.tipDirector.onFightStart();
     final enemy = widget.c.state?['enemy'] as Map?;
     if (enemy != null && (enemy['boss'] == true || enemy['elite'] == true)) {
       _splash = true;
@@ -407,6 +411,22 @@ class _CombatScreenState extends State<CombatScreen> {
     }
   }
 
+  /// v0.10.0: forward a processed event batch — and the freshly telegraphed
+  /// enemy intent — to the tip director. Each contextual tip fires at its
+  /// first-contact moment, once ever (lib/game/tips.dart). One tip at a
+  /// time; a suppressed trigger simply recurs at the next natural moment.
+  void _maybeTip(List<Map<String, Object?>> events) {
+    final d = widget.c.tipDirector;
+    var tip = d.onEvents(events);
+    if (tip == null) {
+      final intent = (widget.c.state?['enemy'] as Map?)?['intent'];
+      if (intent is Map) {
+        tip = d.onIntent(intent.map((k, v) => MapEntry('$k', v as Object?)));
+      }
+    }
+    if (tip != null) _ui(() {});
+  }
+
   /// LFP-3b: long-press tooltips — name what a badge means in one 2s
   /// call-out (reuses the existing note primitive; zero new systems).
   void _explainIntent(Map intent) {
@@ -453,6 +473,7 @@ class _CombatScreenState extends State<CombatScreen> {
       }
     });
     _announceCombos(events);
+    _maybeTip(events);
   }
 
   Future<void> _sleep(Duration d) => Future.delayed(d);
@@ -812,6 +833,7 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     // A straight last turn grants this turn's free reroll — announce it.
     _announceCombos(events);
+    _maybeTip(events);
     // Thorns relics and burn can kill the enemy during its own turn.
     // (Death choreography keeps its full length — the kill is the payoff.)
     if (mounted) await _enemyDeath(events);
@@ -1044,6 +1066,11 @@ class _CombatScreenState extends State<CombatScreen> {
                 ),
               ),
               if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
+              if (_tutStep < 0 && widget.c.tipDirector.active != null)
+                _ContextTip(
+                  id: widget.c.tipDirector.active!,
+                  onDismiss: () => setState(widget.c.dismissTip),
+                ),
               if (_tutStep >= 0)
                 _TutorialOverlay(
                   step: _tutStep,

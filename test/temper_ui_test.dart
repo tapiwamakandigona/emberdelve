@@ -6,6 +6,7 @@ import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/temper_sheet.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,6 +20,7 @@ Future<void> _settle(WidgetTester tester, [int ms = 600]) async {
 GameController _atRest() {
   final c = GameController();
   c.meta.tutorialSeen = true;
+  c.meta.tipsSeen.addAll(ContextTips.all);
   c.startRun(character: 'kindler', seed: 5, boons: false);
   // Drive straight to a rest node rather than hoping the seed offers one.
   c.sim!.phase = 'rest';

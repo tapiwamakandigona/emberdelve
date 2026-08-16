@@ -111,3 +111,107 @@ class _TutorialOverlay extends StatelessWidget {
     );
   }
 }
+
+/// v0.10.0 "The First Delve" — one staged contextual tip card, shown at the
+/// moment of first contact with its concept (lib/game/tips.dart decides the
+/// moment; this only renders). Lighter scrim than the manual overlay deck —
+/// a nudge beside live combat, not a wall in front of it. Tap anywhere
+/// dismisses (§Ethics: no forced taps), and a dismissed tip never returns.
+class _ContextTip extends StatelessWidget {
+  final String id;
+  final VoidCallback onDismiss;
+  const _ContextTip({required this.id, required this.onDismiss});
+
+  /// Same card copy as the replayable overlay deck — one rule, one card.
+  /// (icon, title, body, where the card sits so it points at its subject)
+  static const _cards = <String, (IconData, String, String, Alignment)>{
+    ContextTips.rollSpend: (
+      Icons.casino,
+      'ROLL, THEN SPEND',
+      'Roll your dice, tap one, then ATTACK or BLOCK with its value. Each '
+          'die is spent once per turn; a reroll can save a bad face.',
+      Alignment.bottomCenter,
+    ),
+    ContextTips.intentFair: (
+      Icons.visibility,
+      'THE DARK FIGHTS FAIR',
+      'That move was announced. The badge above the enemy\'s head is always '
+          'its next move — attack damage, shield block, or both — and it '
+          'always resolves exactly as shown.',
+      Alignment.topCenter,
+    ),
+    ContextTips.combosPay: (
+      Icons.local_fire_department,
+      'MATCHING FACES PAY',
+      'A PAIR adds +2, a TRIPLE ignites the enemy with burn, and a straight '
+          'earns a FREE risky reroll. Forge dice bigger at rest fires.',
+      Alignment.center,
+    ),
+    ContextTips.blockFades: (
+      Icons.shield,
+      'BLOCK FADES FAST',
+      'A big hit is telegraphed. Block absorbs exactly what the badge '
+          'shows, then melts before your next roll — stack block on turns '
+          'like this one, and spend nothing on it when the badge only '
+          'shows a shield.',
+      Alignment.topCenter,
+    ),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, title, body, align) = _cards[id]!;
+    // Anchor padding points the card at its subject (intent badge up top,
+    // dice tray at the bottom) but yields on short screens — at 320x568 with
+    // 1.3x text the full reservation would overflow the card (caught by
+    // tips_test's sweep). The scroll wrapper is the can't-overflow guarantee.
+    final short = MediaQuery.sizeOf(context).height < 640;
+    return Positioned.fill(
+      child: GestureDetector(
+        key: const Key('tip-card'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onDismiss, // tap anywhere — never traps the player
+        child: Container(
+          color: Colors.black.withValues(alpha: 0.35),
+          padding: EdgeInsets.only(
+            left: Space.l,
+            right: Space.l,
+            top: align == Alignment.topCenter ? (short ? 72 : 120) : Space.l,
+            bottom: align == Alignment.bottomCenter
+                ? (short ? 96 : 210)
+                : Space.l,
+          ),
+          child: Align(
+            alignment: align,
+            child: Panel(
+              key: Key('tip-$id'),
+              padding: const EdgeInsets.all(Space.l),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: EmberColors.ember, size: 28),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      title,
+                      style: EmberText.h2,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      body,
+                      style: EmberText.bodyDim,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: Space.l),
+                    EmberButton('Got it', primary: true, onTap: onDismiss),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

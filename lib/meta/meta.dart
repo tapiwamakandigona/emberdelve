@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
+import '../game/tips.dart' show ContextTips;
 import '../data/codex.dart';
 import '../data/skins.dart';
 import '../data/themes.dart';
@@ -27,6 +28,9 @@ class MetaState {
   int runsPlayed;
   int runsWon;
   bool tutorialSeen; // v0.3.1 F11: first-fight overlay shown once, ever
+  // v0.10.0 The First Delve: contextual tips already dismissed (ids from
+  // ContextTips.all). Sticky like tutorialSeen — cloud merge is set union.
+  Set<String> tipsSeen;
   // v0.3.2: sticky easy/normal/hard preference for the title-screen selector.
   // Pure convenience — the sim only ever sees it as a start_run param.
   String preferredDifficulty;
@@ -102,6 +106,7 @@ class MetaState {
     this.runsPlayed = 0,
     this.runsWon = 0,
     this.tutorialSeen = false,
+    Set<String>? tipsSeen,
     this.preferredDifficulty = 'normal',
     this.difficultyChosen = false,
     Map<String, int>? charRuns,
@@ -141,7 +146,8 @@ class MetaState {
        charWins = charWins ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
-       ownedCodex = ownedCodex ?? {};
+       ownedCodex = ownedCodex ?? {},
+       tipsSeen = tipsSeen ?? {};
 
   Map<String, Object?> toJson() => {
     'schema': metaSchemaVersion,
@@ -151,6 +157,7 @@ class MetaState {
     'runsPlayed': runsPlayed,
     'runsWon': runsWon,
     'tutorialSeen': tutorialSeen,
+    if (tipsSeen.isNotEmpty) 'tipsSeen': (tipsSeen.toList()..sort()),
     'preferredDifficulty': preferredDifficulty,
     'difficultyChosen': difficultyChosen,
     'charRuns': charRuns,
@@ -205,6 +212,13 @@ class MetaState {
     runsPlayed: j['runsPlayed'] as int? ?? 0,
     runsWon: j['runsWon'] as int? ?? 0,
     tutorialSeen: j['tutorialSeen'] as bool? ?? false,
+    // v0.10.0 migration: a save that finished the old 4-card wall but has no
+    // tipsSeen key is a veteran — pre-seed all tips so nothing replays.
+    tipsSeen:
+        ((j['tipsSeen'] as List?)?.cast<String>().toSet()) ??
+        ((j['tutorialSeen'] as bool? ?? false)
+            ? ContextTips.all.toSet()
+            : <String>{}),
     preferredDifficulty:
         const {'easy', 'normal', 'hard'}.contains(j['preferredDifficulty'])
         ? j['preferredDifficulty'] as String

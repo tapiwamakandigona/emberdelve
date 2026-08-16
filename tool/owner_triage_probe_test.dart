@@ -18,6 +18,7 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/game/tips.dart';
 
 const outDir = 'build/owner_triage_probe';
 final rootKey = GlobalKey();
@@ -176,6 +177,7 @@ void main() {
 
       final c = GameController();
       c.meta.tutorialSeen = true;
+      c.meta.tipsSeen.addAll(ContextTips.all);
       await tester.pumpWidget(
         RepaintBoundary(
           key: rootKey,

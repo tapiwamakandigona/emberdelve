@@ -12,6 +12,7 @@ import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
+import 'tips.dart';
 import '../data/relics.dart';
 import '../data/enemies.dart';
 import '../meta/achievements.dart';
@@ -31,6 +32,10 @@ import 'weekly.dart';
 class GameController extends ChangeNotifier {
   Sim? sim;
   MetaState meta = MetaState();
+
+  /// v0.10.0 The First Delve: staged contextual tip state. Rebuilt at boot
+  /// so it always shares the loaded meta's tipsSeen set (see tips.dart).
+  late TipDirector tipDirector = TipDirector(meta.tipsSeen);
 
   // -------------------------------------------------------------------------
   // Per-field change ticks (perf, v0.3.15)
@@ -190,6 +195,7 @@ class GameController extends ChangeNotifier {
   /// Boot: load meta, then resume a saved run if one is mid-flight.
   Future<void> boot() async {
     meta = await MetaStore.load();
+    tipDirector = TipDirector(meta.tipsSeen);
     // v0.6.1: HARD is Forge-gated again (free only during v0.6.0). A locked
     // profile whose sticky preference says 'hard' (set while 0.6.0 was live)
     // is moved back to 'normal' HERE, on the visible selector — the player
@@ -653,6 +659,14 @@ class GameController extends ChangeNotifier {
     }
     if (parts.isEmpty) return null;
     return parts.join(' · ');
+  }
+
+  /// v0.10.0: the player dismissed the active contextual tip — persist it.
+  /// When the LAST tip is dismissed the legacy tutorialSeen flag is set too,
+  /// so older builds sharing a cloud save never replay their 4-card wall.
+  void dismissTip() {
+    if (tipDirector.dismiss()) meta.tutorialSeen = true;
+    MetaStore.save(meta);
   }
 
   /// v0.3.1 F11: persist that the first-fight tutorial has been seen.

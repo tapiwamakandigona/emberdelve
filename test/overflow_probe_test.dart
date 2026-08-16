@@ -13,6 +13,7 @@ import 'package:emberdelve/ui/ledger_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/settings_screen.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/game/tips.dart';
 
 /// Logical sizes that cover the Android spread: tiny legacy phone, narrow
 /// 18:9, the common 360dp bucket, and a large tall phone.
@@ -92,6 +93,7 @@ Future<void> probeAllPhases(
 
   final c = GameController();
   c.meta.tutorialSeen = true;
+  c.meta.tipsSeen.addAll(ContextTips.all);
   installDetailHook();
   ctx('title@$size@${textScale}x');
   await tester.pumpWidget(appAt(GameRoot(c), textScale));

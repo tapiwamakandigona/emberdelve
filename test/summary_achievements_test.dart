@@ -14,6 +14,7 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/game/tips.dart';
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
@@ -85,6 +86,7 @@ void main() {
   testWidgets('loss summary also recaps the exact forged pool', (tester) async {
     final c = GameController();
     c.meta.tutorialSeen = true;
+    c.meta.tipsSeen.addAll(ContextTips.all);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );

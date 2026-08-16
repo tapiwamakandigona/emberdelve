@@ -11,6 +11,7 @@ import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/game/tips.dart';
 
 /// Pump frames for roughly [ms] of animation time without waiting to settle
 /// (the screens run ambient loops that never settle — same helper as
@@ -86,6 +87,7 @@ void main() {
         'long-press explains it', (tester) async {
       final c = GameController();
       c.meta.tutorialSeen = true;
+      c.meta.tipsSeen.addAll(ContextTips.all);
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
       );
@@ -224,6 +226,7 @@ void main() {
     ) async {
       final c = GameController();
       c.meta.tutorialSeen = true;
+      c.meta.tipsSeen.addAll(ContextTips.all);
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
       );
