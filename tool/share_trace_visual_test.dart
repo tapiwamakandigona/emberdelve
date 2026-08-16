@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
 // tool/share_trace_visual_test.dart — manual visual-critique plates for the
 // v0.8.0 summary-screen floor trace + seed challenge button. Not part of CI.
 //

@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 // One-off: find seeds where botCmd wins as kindler, boons off (matches
 // tool/share_trace_visual_test.dart's controller setup).
 import 'package:emberdelve/sim/autoplay.dart';
