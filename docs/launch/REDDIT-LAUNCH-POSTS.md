@@ -164,7 +164,10 @@ https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 > only (you qualify — no human team); ≤2 posts/week; **no AI ban**. Audience is
 > DEVELOPERS — tooling talk is craft here, not "slop". A plain "I released my first
 > game this week and it feels amazing" post hit 352 score this same week: the honest
-> journey post is this sub's native genre. Do NOT post the same night as the
+> journey post is this sub's native genre. Front-page re-check Sun 19:50: same post now
+> 368; a "lost my job two weeks ago, going all-in" post at 66 and climbing — milestone +
+> personal stakes + real numbers is what this sub upvotes, and questions drive comments
+> (a "which art is better" ask pulled 76 comments). Our draft already fits the genre. Do NOT post the same night as the
 > r/Zimbabwe update; Monday evening or midweek is the slot. Flair if offered: Game.
 
 **⚠ Check the update count before posting** — the game agent ships fast (v0.20→0.23
@@ -177,7 +180,7 @@ for the actual weekend number; an inflated count is exactly the kind of thing Re
 
 **Body:**
 
-Three weeks ago this game didn't exist. Today I shipped the fourth update of the weekend.
+Three weeks ago this game didn't exist. Today the sixth update of the weekend went out.
 
 I'm 20, in Kwekwe, Zimbabwe. I built Emberdelve — a dice-builder roguelite for Android — solo, in 18 days to Play review, working around load-shedding (power cuts are a scheduling constraint here the same way a day job is for most of this sub).
 
