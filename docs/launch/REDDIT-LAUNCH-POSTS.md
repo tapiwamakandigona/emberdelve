@@ -167,13 +167,17 @@ https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 > journey post is this sub's native genre. Do NOT post the same night as the
 > r/Zimbabwe update; Monday evening or midweek is the slot. Flair if offered: Game.
 
+**⚠ Check the update count before posting** — the game agent ships fast (v0.20→0.23
+all landed Sun 16 Aug). Count releases at github.com/tapiwamakandigona/emberdelve/releases
+for the actual weekend number; an inflated count is exactly the kind of thing Reddit catches.
+
 **Title options (pick one, don't A/B in public):**
 1. Shipped my first game to Google Play in 18 days, solo, from Kwekwe, Zimbabwe — through load-shedding. Tomorrow I start engineering school.
 2. Solo dev from Zimbabwe: my dice roguelite went from nothing to Google Play in 18 days. Here's what that actually looked like.
 
 **Body:**
 
-Three weeks ago this game didn't exist. Last night I shipped the third update of the weekend.
+Three weeks ago this game didn't exist. Today I shipped the fourth update of the weekend.
 
 I'm 20, in Kwekwe, Zimbabwe. I built Emberdelve — a dice-builder roguelite for Android — solo, in 18 days to Play review, working around load-shedding (power cuts are a scheduling constraint here the same way a day job is for most of this sub).
 
