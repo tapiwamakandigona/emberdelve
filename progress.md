@@ -1461,3 +1461,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 ## 2026-08-16 ~15:30 GMT — boundary snapshot (run ended on budget)
 - v0.15.0 PUBLISHED (see entry above). v0.16.0 tag pushed; CI run 31946489752 IN PROGRESS at snapshot — on success run the standard release procedure (expect versionName 0.16.0, codes 42 / 1042 / 2042 / 4042; verify pin on all 5 artifacts; rename assets emberdelve-v0.16.0[-abi].apk/.aab; append sha256 table to docs/releases/v0.16.0.md; gh release create).
 - v0.17.0 candidate: colorblind pass. Audit so far: map nodes + intent badges already dual-coded (icon+color). Red/green semantic-only sites to fix or dual-code: ledger_screen.dart:132, combat/action_zone.dart:67 (success/danger ternary), combat_screen.dart:379/399/406/1011, shop_screen.dart:74, badges.dart:153. Plan: render plates via existing tool/*_visual_test.dart pattern, apply CVD simulation matrices (protanopia/deuteranopia/tritanopia) in Python, critique, then design doc.
+
+## 2026-08-16 ~12:35 GMT — v0.16.0 "The Still Flame" PUBLISHED
+- CI run 31946489752 success; all 5 artifacts signer-pin verified
+  (versionName 0.16.0, codes 42/1042/2042/4042; AAB pkcs7 pin match).
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.16.0
+  Assets emberdelve-v0.16.0[-abi].apk + .aab; sha256+size table appended
+  to docs/releases/v0.16.0.md (arm64 36.6 MB).
+- v0.17 research: CVD audit via store plates + Machado matrices
+  (protan/deutan/tritan) — VERDICT: game already passes. Map nodes,
+  intent badges, HP bars, boon cards all icon/label/position-coded;
+  color is decorative everywhere checked. No placebo "colorblind mode"
+  release. Sites audited: ledger:132, action_zone:67 (text says FREE),
+  badges intent chips (icons differ), combat _note (text+icon),
+  ghost fx (arrival pulses on labeled verb buttons), shop heal (text).
+- v0.17 candidate pivot: data-driven balance pass; tool/balance_sweep_probe.dart
+  (character x difficulty x 150 seeds, median loss floors) running.
