@@ -105,6 +105,10 @@ class MetaState {
   Map<String, int> enemyMet; // encounters started against this enemy
   Map<String, int> enemyFelled; // fights won against it
   Map<String, int> enemyFellTo; // fights it won against you
+  // v0.15.0 Hearthside Post: the newest version whose title-screen note the
+  // player has dismissed ('' = never). Cloud merge keeps the LARGER version
+  // (compareVersions) so a merge can never re-show old news.
+  String lastSeenNewsVersion;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -147,6 +151,7 @@ class MetaState {
     Map<String, int>? enemyMet,
     Map<String, int>? enemyFelled,
     Map<String, int>? enemyFellTo,
+    this.lastSeenNewsVersion = '',
   }) : runHistory = runHistory ?? [],
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
@@ -205,6 +210,8 @@ class MetaState {
     if (enemyMet.isNotEmpty) 'enemyMet': enemyMet,
     if (enemyFelled.isNotEmpty) 'enemyFelled': enemyFelled,
     if (enemyFellTo.isNotEmpty) 'enemyFellTo': enemyFellTo,
+    if (lastSeenNewsVersion.isNotEmpty)
+      'lastSeenNewsVersion': lastSeenNewsVersion,
   };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -297,6 +304,7 @@ class MetaState {
     enemyMet: _intMap(j['enemyMet']),
     enemyFelled: _intMap(j['enemyFelled']),
     enemyFellTo: _intMap(j['enemyFellTo']),
+    lastSeenNewsVersion: j['lastSeenNewsVersion'] as String? ?? '',
   );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only

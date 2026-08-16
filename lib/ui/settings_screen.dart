@@ -9,6 +9,7 @@ import '../meta/reminder_service.dart';
 import '../meta/store_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
+import 'news_screen.dart';
 import 'haptics.dart';
 import 'theme.dart';
 import 'widgets.dart';
@@ -356,6 +357,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => const CreditsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: Space.s),
+            // Past posts (v0.15.0): the Hearthside Post archive — every
+            // release note, re-readable forever. No unread state (§Ethics).
+            Panel(
+              key: const ValueKey('past-posts-tile'),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.history_edu,
+                    color: EmberColors.textDim,
+                    size: 20,
+                  ),
+                  const SizedBox(width: Space.m),
+                  Expanded(child: Text('Past posts', style: EmberText.body)),
+                  EmberButton(
+                    'Read',
+                    onTap: () {
+                      AudioService.instance?.playSfx('ui_tap');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const NewsArchiveScreen(),
                         ),
                       );
                     },

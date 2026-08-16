@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
+import '../data/news.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import 'tips.dart';
@@ -221,6 +222,14 @@ class GameController extends ChangeNotifier {
     // moving the VISIBLE selector — what's highlighted is what they get, so
     // there is never a silent difficulty switch. One tap ends the steering.
     if (meta.steerToEasy) meta.preferredDifficulty = 'easy';
+    // v0.15.0 Hearthside Post: a brand-new profile has no "before" to
+    // compare against, so stamp the current version silently — the first
+    // post a new player ever sees is the first update they live through.
+    // A veteran save ('' but runs played) keeps '' and sees the note.
+    if (meta.lastSeenNewsVersion.isEmpty && meta.runsPlayed == 0) {
+      meta.lastSeenNewsVersion = currentAppVersion;
+      MetaStore.save(meta);
+    }
     try {
       final f = await _runFile();
       if (await f.exists()) {
@@ -445,6 +454,17 @@ class GameController extends ChangeNotifier {
     audio?.playSfx('unlock');
     notifyListeners();
     await MetaStore.save(meta);
+  }
+
+  /// v0.15.0 Hearthside Post: the player tapped "Noted" on the title-screen
+  /// news panel. Sticky per version — the note never returns for this
+  /// release, and cloud merge keeps the larger version (cloud_merge.dart).
+  void dismissNews() {
+    if (meta.lastSeenNewsVersion == currentAppVersion) return;
+    meta.lastSeenNewsVersion = currentAppVersion;
+    MetaStore.save(meta);
+    audio?.playSfx('ui_tap');
+    notifyListeners();
   }
 
   /// Buy a hearth color with embers (v0.3.3 ledger cosmetics).
