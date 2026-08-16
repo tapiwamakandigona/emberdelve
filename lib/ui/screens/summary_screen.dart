@@ -25,378 +25,388 @@ class SummaryScreen extends StatelessWidget {
         LayoutBuilder(
           builder: (context, box) {
             return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: box.maxHeight),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.all(Space.xl),
-                    child: Column(
-                      children: [
-                        const Spacer(),
-                        Icon(
-                          won
-                              ? Icons.emoji_events
-                              : Icons.local_fire_department,
-                          size: 56,
-                          color: won ? EmberColors.gold : EmberColors.ember,
-                        ),
-                        const SizedBox(height: Space.m),
-                        Text(
-                          won ? 'The Ember is yours' : 'The dark claims you',
-                          textAlign: TextAlign.center,
-                          style: EmberText.h1.copyWith(
-                            color: won
-                                ? EmberColors.gold
-                                : EmberColors.textPrimary,
-                            shadows: [
-                              Shadow(
-                                color:
-                                    (won ? EmberColors.gold : EmberColors.ember)
-                                        .withValues(alpha: 0.55),
-                                blurRadius: 18,
-                              ),
-                            ],
+              // Tablet clamp (v0.26.0): Center + maxWidth keep the summary
+              // column from stretching edge to edge on 800dp tablets.
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: box.maxHeight,
+                    maxWidth: kMaxContentWidth,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.all(Space.xl),
+                      child: Column(
+                        children: [
+                          const Spacer(),
+                          Icon(
+                            won
+                                ? Icons.emoji_events
+                                : Icons.local_fire_department,
+                            size: 56,
+                            color: won ? EmberColors.gold : EmberColors.ember,
                           ),
-                        ),
-                        const SizedBox(height: Space.xl),
-                        Panel(
-                          child: Column(
-                            children: [
-                              _ledgerRow(
-                                Icons.local_fire_department,
-                                EmberColors.ember,
-                                'Embers banked',
-                                '${run['embers']}',
-                              ),
-                              const Divider(
-                                color: EmberColors.line,
-                                height: Space.xl,
-                              ),
-                              _ledgerRow(
-                                Icons.sports_martial_arts,
-                                EmberColors.textPrimary,
-                                'Fights won',
-                                '${run['fights_won']}',
-                              ),
-                              const Divider(
-                                color: EmberColors.line,
-                                height: Space.xl,
-                              ),
-                              _ledgerRow(
-                                Icons.circle,
-                                EmberColors.gold,
-                                'Gold at the end',
-                                '${run['gold']}',
-                              ),
-                            ],
+                          const SizedBox(height: Space.m),
+                          Text(
+                            won ? 'The Ember is yours' : 'The dark claims you',
+                            textAlign: TextAlign.center,
+                            style: EmberText.h1.copyWith(
+                              color: won
+                                  ? EmberColors.gold
+                                  : EmberColors.textPrimary,
+                              shadows: [
+                                Shadow(
+                                  color:
+                                      (won
+                                              ? EmberColors.gold
+                                              : EmberColors.ember)
+                                          .withValues(alpha: 0.55),
+                                  blurRadius: 18,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: Space.l),
-                        _poolRecap(identity),
-                        // Delver's Ledger (v0.5.0): achievements this run earned, announced
-                        // in the same breath as the result. _bankRun collects them and
-                        // startRun clears them, so this list is exactly this run's harvest.
-                        // Recognition only — no reward talk, no next-goal teaser (§Ethics).
-                        if (c.pendingAchievements.isNotEmpty) ...[
-                          const SizedBox(height: Space.l),
+                          const SizedBox(height: Space.xl),
                           Panel(
-                            key: const ValueKey('achievements-earned'),
-                            color: EmberColors.raised,
                             child: Column(
                               children: [
-                                for (final (i, id)
-                                    in c.pendingAchievements.indexed) ...[
-                                  if (i > 0)
-                                    const Divider(
-                                      color: EmberColors.line,
-                                      height: Space.xl,
-                                    ),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.military_tech,
-                                        color: EmberColors.gold,
-                                        size: 20,
+                                _ledgerRow(
+                                  Icons.local_fire_department,
+                                  EmberColors.ember,
+                                  'Embers banked',
+                                  '${run['embers']}',
+                                ),
+                                const Divider(
+                                  color: EmberColors.line,
+                                  height: Space.xl,
+                                ),
+                                _ledgerRow(
+                                  Icons.sports_martial_arts,
+                                  EmberColors.textPrimary,
+                                  'Fights won',
+                                  '${run['fights_won']}',
+                                ),
+                                const Divider(
+                                  color: EmberColors.line,
+                                  height: Space.xl,
+                                ),
+                                _ledgerRow(
+                                  Icons.circle,
+                                  EmberColors.gold,
+                                  'Gold at the end',
+                                  '${run['gold']}',
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: Space.l),
+                          _poolRecap(identity),
+                          // Delver's Ledger (v0.5.0): achievements this run earned, announced
+                          // in the same breath as the result. _bankRun collects them and
+                          // startRun clears them, so this list is exactly this run's harvest.
+                          // Recognition only — no reward talk, no next-goal teaser (§Ethics).
+                          if (c.pendingAchievements.isNotEmpty) ...[
+                            const SizedBox(height: Space.l),
+                            Panel(
+                              key: const ValueKey('achievements-earned'),
+                              color: EmberColors.raised,
+                              child: Column(
+                                children: [
+                                  for (final (i, id)
+                                      in c.pendingAchievements.indexed) ...[
+                                    if (i > 0)
+                                      const Divider(
+                                        color: EmberColors.line,
+                                        height: Space.xl,
                                       ),
-                                      const SizedBox(width: Space.m),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              achievements[id]?.name ?? id,
-                                              style: EmberText.body.copyWith(
-                                                color: EmberColors.gold,
-                                              ),
-                                            ),
-                                            Text(
-                                              achievements[id]?.text ?? '',
-                                              style: EmberText.micro.copyWith(
-                                                color: EmberColors.textDim,
-                                              ),
-                                            ),
-                                          ],
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.military_tech,
+                                          color: EmberColors.gold,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: Space.m),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                achievements[id]?.name ?? id,
+                                                style: EmberText.body.copyWith(
+                                                  color: EmberColors.gold,
+                                                ),
+                                              ),
+                                              Text(
+                                                achievements[id]?.text ?? '',
+                                                style: EmberText.micro.copyWith(
+                                                  color: EmberColors.textDim,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                          // v0.13.0 Delver's Rank: one quiet line when this
+                          // run's banking crossed a tier. No badge rain, no
+                          // reward talk — the Ledger holds the detail.
+                          if (c.pendingRankUp != null) ...[
+                            const SizedBox(height: Space.l),
+                            Text(
+                              'You delve as '
+                              '${c.pendingRankUp!.withArticle} now.',
+                              key: const ValueKey('rank-up-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                          ],
+                          if (insight != null) ...[
+                            const SizedBox(height: Space.l),
+                            Panel(
+                              color: EmberColors.raised,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.lightbulb_outline,
+                                    color: EmberColors.gold,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: Space.m),
+                                  Expanded(
+                                    child: Text(insight, style: EmberText.body),
                                   ),
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                        // v0.13.0 Delver's Rank: one quiet line when this
-                        // run's banking crossed a tier. No badge rain, no
-                        // reward talk — the Ledger holds the detail.
-                        if (c.pendingRankUp != null) ...[
-                          const SizedBox(height: Space.l),
-                          Text(
-                            'You delve as '
-                            '${c.pendingRankUp!.withArticle} now.',
-                            key: const ValueKey('rank-up-line'),
-                            textAlign: TextAlign.center,
-                            style: EmberText.body.copyWith(
-                              color: EmberColors.gold,
-                            ),
-                          ),
-                        ],
-                        if (insight != null) ...[
-                          const SizedBox(height: Space.l),
-                          Panel(
-                            color: EmberColors.raised,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.lightbulb_outline,
-                                  color: EmberColors.gold,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: Space.m),
-                                Expanded(
-                                  child: Text(insight, style: EmberText.body),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: Space.m),
-                        // v0.8.0: the floor trace, shown exactly as it will
-                        // paste — the share artifact IS the display (Wordle
-                        // lesson, studio-priorities doc §7). One combined
-                        // screen-reader label; the emoji stay decorative.
-                        if (c.runTrace.marks.isNotEmpty) ...[
-                          Semantics(
-                            label: traceSemanticLabel(c.runTrace),
-                            child: ExcludeSemantics(
-                              child: Text(
-                                traceGrid(c.runTrace),
-                                key: const ValueKey('trace-grid'),
-                                textAlign: TextAlign.center,
-                                style: EmberText.body.copyWith(
-                                  height: 1.25,
-                                  letterSpacing: 2,
+                          ],
+                          const SizedBox(height: Space.m),
+                          // v0.8.0: the floor trace, shown exactly as it will
+                          // paste — the share artifact IS the display (Wordle
+                          // lesson, studio-priorities doc §7). One combined
+                          // screen-reader label; the emoji stay decorative.
+                          if (c.runTrace.marks.isNotEmpty) ...[
+                            Semantics(
+                              label: traceSemanticLabel(c.runTrace),
+                              child: ExcludeSemantics(
+                                child: Text(
+                                  traceGrid(c.runTrace),
+                                  key: const ValueKey('trace-grid'),
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.body.copyWith(
+                                    height: 1.25,
+                                    letterSpacing: 2,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: Space.s),
-                        ],
-                        // v0.11.0 Delver's Ledger: the firsts this run
-                        // produced — quiet, factual, absent when there are
-                        // none. Names resolve through enemies.dart so a
-                        // rename can never leave this line lying.
-                        if (_firstsLine(c) != null) ...[
-                          Text(
-                            _firstsLine(c)!,
-                            key: const ValueKey('firsts-line'),
-                            textAlign: TextAlign.center,
-                            style: EmberText.micro.copyWith(
-                              color: EmberColors.textDim,
+                            const SizedBox(height: Space.s),
+                          ],
+                          // v0.11.0 Delver's Ledger: the firsts this run
+                          // produced — quiet, factual, absent when there are
+                          // none. Names resolve through enemies.dart so a
+                          // rename can never leave this line lying.
+                          if (_firstsLine(c) != null) ...[
+                            Text(
+                              _firstsLine(c)!,
+                              key: const ValueKey('firsts-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
+                          // Today's Trial chip (v0.9.0): shown ONLY when a
+                          // goal-day daily met its objective — the bonus is a
+                          // banked fact by the time this screen exists. A
+                          // missed goal renders nothing at all (§Ethics).
+                          if (c.dailyTrialBonus > 0) ...[
+                            Text(
+                              'Trial met ✦ +${c.dailyTrialBonus} embers',
+                              key: const ValueKey('trial-met-chip'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
+                          // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
+                          // into 'Delve a seed' on the title to replay this exact delve.
+                          GestureDetector(
+                            key: const ValueKey('run-seed'),
+                            onTap: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: '${c.sim?.runSeed ?? ''}'),
+                              );
+                              c.announce('Seed copied');
+                            },
+                            child: Text(
+                              'Seed ${c.sim?.runSeed} — tap to copy',
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: Space.s),
-                        ],
-                        // Today's Trial chip (v0.9.0): shown ONLY when a
-                        // goal-day daily met its objective — the bonus is a
-                        // banked fact by the time this screen exists. A
-                        // missed goal renders nothing at all (§Ethics).
-                        if (c.dailyTrialBonus > 0) ...[
-                          Text(
-                            'Trial met ✦ +${c.dailyTrialBonus} embers',
-                            key: const ValueKey('trial-met-chip'),
-                            textAlign: TextAlign.center,
-                            style: EmberText.micro.copyWith(
-                              color: EmberColors.gold,
-                            ),
-                          ),
-                          const SizedBox(height: Space.s),
-                        ],
-                        // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
-                        // into 'Delve a seed' on the title to replay this exact delve.
-                        GestureDetector(
-                          key: const ValueKey('run-seed'),
-                          onTap: () async {
-                            await Clipboard.setData(
-                              ClipboardData(text: '${c.sim?.runSeed ?? ''}'),
-                            );
-                            c.announce('Seed copied');
-                          },
-                          child: Text(
-                            'Seed ${c.sim?.runSeed} — tap to copy',
-                            textAlign: TextAlign.center,
-                            style: EmberText.micro.copyWith(
-                              color: EmberColors.textDim,
-                            ),
-                          ),
-                        ),
-                        // Ember Forge (v0.4.0): ONE quiet panel, only on a WON run, only
-                        // while locked — the peak-joy moment is the only honest time to ask.
-                        // Never a popup, never blocks the buttons below (§Ethics).
-                        if (won && !c.meta.forgeUnlocked) ...[
-                          const SizedBox(height: Space.l),
-                          Panel(
-                            color: EmberColors.raised,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.local_fire_department,
-                                  color: EmberColors.ember,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: Space.m),
-                                Expanded(
-                                  child: Text(
-                                    'The dark goes deeper. The Ascension ladder '
-                                    'waits in the Ember Forge.',
-                                    style: EmberText.body,
+                          // Ember Forge (v0.4.0): ONE quiet panel, only on a WON run, only
+                          // while locked — the peak-joy moment is the only honest time to ask.
+                          // Never a popup, never blocks the buttons below (§Ethics).
+                          if (won && !c.meta.forgeUnlocked) ...[
+                            const SizedBox(height: Space.l),
+                            Panel(
+                              color: EmberColors.raised,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.local_fire_department,
+                                    color: EmberColors.ember,
+                                    size: 20,
                                   ),
-                                ),
-                                EmberButton(
-                                  'Open',
-                                  dense: true,
-                                  key: const ValueKey('forge-victory-cta'),
-                                  onTap: () => showForgeSheet(context, c),
-                                ),
-                              ],
+                                  const SizedBox(width: Space.m),
+                                  Expanded(
+                                    child: Text(
+                                      'The dark goes deeper. The Ascension ladder '
+                                      'waits in the Ember Forge.',
+                                      style: EmberText.body,
+                                    ),
+                                  ),
+                                  EmberButton(
+                                    'Open',
+                                    dense: true,
+                                    key: const ValueKey('forge-victory-cta'),
+                                    onTap: () => showForgeSheet(context, c),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                        const Spacer(),
-                        // Fast restart (backlog #8): straight into a new run — boon pick
-                        // included — without a detour through the title.
-                        SizedBox(
-                          width: double.infinity,
-                          child: EmberButton(
-                            'Delve again',
-                            primary: true,
-                            icon: Icons.bolt,
-                            onTap: () => c.delveAgain(),
-                          ),
-                        ),
-                        const SizedBox(height: Space.m),
-                        // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
-                        // Only offered when this run WAS the daily — normal runs stay quiet.
-                        if (c.dailyResultShareText != null) ...[
+                          ],
+                          const Spacer(),
+                          // Fast restart (backlog #8): straight into a new run — boon pick
+                          // included — without a detour through the title.
                           SizedBox(
                             width: double.infinity,
                             child: EmberButton(
-                              'Copy daily result',
-                              key: const ValueKey('copy-daily-result'),
-                              ghost: true,
-                              icon: Icons.copy,
-                              onTap: () async {
-                                final text = c.dailyResultShareText;
-                                if (text == null) return;
-                                await Clipboard.setData(
-                                  ClipboardData(text: text),
-                                );
-                                c.announce('Result copied');
-                              },
+                              'Delve again',
+                              primary: true,
+                              icon: Icons.bolt,
+                              onTap: () => c.delveAgain(),
                             ),
                           ),
                           const SizedBox(height: Space.m),
-                        ],
-                        // Weekly result share (P3): same plain-text copy, only when this run
-                        // WAS the weekly. States the seed + modifier fact and stops.
-                        if (c.weeklyResultShareText != null) ...[
+                          // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
+                          // Only offered when this run WAS the daily — normal runs stay quiet.
+                          if (c.dailyResultShareText != null) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Copy daily result',
+                                key: const ValueKey('copy-daily-result'),
+                                ghost: true,
+                                icon: Icons.copy,
+                                onTap: () async {
+                                  final text = c.dailyResultShareText;
+                                  if (text == null) return;
+                                  await Clipboard.setData(
+                                    ClipboardData(text: text),
+                                  );
+                                  c.announce('Result copied');
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
+                          // Weekly result share (P3): same plain-text copy, only when this run
+                          // WAS the weekly. States the seed + modifier fact and stops.
+                          if (c.weeklyResultShareText != null) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Copy weekly result',
+                                key: const ValueKey('copy-weekly-result'),
+                                ghost: true,
+                                icon: Icons.copy,
+                                onTap: () async {
+                                  final text = c.weeklyResultShareText;
+                                  if (text == null) return;
+                                  await Clipboard.setData(
+                                    ClipboardData(text: text),
+                                  );
+                                  c.announce('Result copied');
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
+                          // v0.8.0: seed challenge for every OTHER finished
+                          // run — the daily/weekly keep their own text above.
+                          // A seed plus a claim is a complete invitation
+                          // (Balatro lesson); the copy states facts and stops.
+                          if (c.seedChallengeShareText != null) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Copy seed challenge',
+                                key: const ValueKey('copy-seed-challenge'),
+                                ghost: true,
+                                icon: Icons.copy,
+                                onTap: () async {
+                                  final text = c.seedChallengeShareText;
+                                  if (text == null) return;
+                                  await Clipboard.setData(
+                                    ClipboardData(text: text),
+                                  );
+                                  c.announce('Challenge copied');
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
+                          // P5 (v0.5.0): straight to the board this run just landed on. Only
+                          // for a finished Daily/Weekly AND only while Play Games is connected
+                          // — normal runs and unconnected players see nothing.
+                          if (PlayGamesService.instance.connected &&
+                              (c.dailyResultShareText != null ||
+                                  c.weeklyResultShareText != null)) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Leaderboard',
+                                key: const ValueKey('summary-leaderboard'),
+                                ghost: true,
+                                icon: Icons.leaderboard,
+                                onTap: () {
+                                  AudioService.instance?.playSfx('ui_tap');
+                                  PlayGamesService.instance.showLeaderboards(
+                                    leaderboardId:
+                                        c.dailyResultShareText != null
+                                        ? PlayGamesService.dailyLeaderboardId
+                                        : PlayGamesService.weeklyLeaderboardId,
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
                           SizedBox(
                             width: double.infinity,
                             child: EmberButton(
-                              'Copy weekly result',
-                              key: const ValueKey('copy-weekly-result'),
+                              'Back to the fire',
                               ghost: true,
-                              icon: Icons.copy,
-                              onTap: () async {
-                                final text = c.weeklyResultShareText;
-                                if (text == null) return;
-                                await Clipboard.setData(
-                                  ClipboardData(text: text),
-                                );
-                                c.announce('Result copied');
-                              },
+                              onTap: () => c.endToTitle(),
                             ),
                           ),
-                          const SizedBox(height: Space.m),
                         ],
-                        // v0.8.0: seed challenge for every OTHER finished
-                        // run — the daily/weekly keep their own text above.
-                        // A seed plus a claim is a complete invitation
-                        // (Balatro lesson); the copy states facts and stops.
-                        if (c.seedChallengeShareText != null) ...[
-                          SizedBox(
-                            width: double.infinity,
-                            child: EmberButton(
-                              'Copy seed challenge',
-                              key: const ValueKey('copy-seed-challenge'),
-                              ghost: true,
-                              icon: Icons.copy,
-                              onTap: () async {
-                                final text = c.seedChallengeShareText;
-                                if (text == null) return;
-                                await Clipboard.setData(
-                                  ClipboardData(text: text),
-                                );
-                                c.announce('Challenge copied');
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: Space.m),
-                        ],
-                        // P5 (v0.5.0): straight to the board this run just landed on. Only
-                        // for a finished Daily/Weekly AND only while Play Games is connected
-                        // — normal runs and unconnected players see nothing.
-                        if (PlayGamesService.instance.connected &&
-                            (c.dailyResultShareText != null ||
-                                c.weeklyResultShareText != null)) ...[
-                          SizedBox(
-                            width: double.infinity,
-                            child: EmberButton(
-                              'Leaderboard',
-                              key: const ValueKey('summary-leaderboard'),
-                              ghost: true,
-                              icon: Icons.leaderboard,
-                              onTap: () {
-                                AudioService.instance?.playSfx('ui_tap');
-                                PlayGamesService.instance.showLeaderboards(
-                                  leaderboardId: c.dailyResultShareText != null
-                                      ? PlayGamesService.dailyLeaderboardId
-                                      : PlayGamesService.weeklyLeaderboardId,
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: Space.m),
-                        ],
-                        SizedBox(
-                          width: double.infinity,
-                          child: EmberButton(
-                            'Back to the fire',
-                            ghost: true,
-                            onTap: () => c.endToTitle(),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

@@ -23,6 +23,10 @@ const sizes = <Size>[
   Size(360, 640),
   Size(360, 800),
   Size(412, 915),
+  // Tablet portrait (v0.26.0): menu-family screens clamp content at
+  // kMaxContentWidth; these sizes prove nothing overflows OR stretches wrong.
+  Size(800, 1280),
+  Size(1600, 2560),
 ];
 
 final List<String> problems = [];

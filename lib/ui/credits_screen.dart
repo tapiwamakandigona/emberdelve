@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../audio/audio_service.dart';
 import 'theme.dart';
+import 'widgets.dart';
 
 class CreditsScreen extends StatelessWidget {
   const CreditsScreen({super.key});
@@ -22,23 +23,26 @@ class CreditsScreen extends StatelessWidget {
           },
         ),
       ),
-      body: SafeArea(
-        child: FutureBuilder<String>(
-          future: rootBundle.loadString('CREDITS.md'),
-          builder: (context, snap) {
-            if (!snap.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(color: EmberColors.ember),
+      // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
+      body: ContentClamp(
+        child: SafeArea(
+          child: FutureBuilder<String>(
+            future: rootBundle.loadString('CREDITS.md'),
+            builder: (context, snap) {
+              if (!snap.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(color: EmberColors.ember),
+                );
+              }
+              return ListView(
+                padding: const EdgeInsets.all(Space.l),
+                children: [
+                  for (final line in snap.data!.split('\n')) _line(line),
+                  const SizedBox(height: Space.xl),
+                ],
               );
-            }
-            return ListView(
-              padding: const EdgeInsets.all(Space.l),
-              children: [
-                for (final line in snap.data!.split('\n')) _line(line),
-                const SizedBox(height: Space.xl),
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
     );

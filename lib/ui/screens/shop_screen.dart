@@ -15,31 +15,43 @@ class ShopScreen extends StatelessWidget {
     return Column(
       children: [
         _TopBar(c),
-        const SizedBox(height: Space.l),
-        Text('The Ashmonger', style: EmberText.h1),
-        const SizedBox(height: Space.xs),
-        Text('Spend your gold before the descent.', style: EmberText.bodyDim),
-        const SizedBox(height: Space.l),
+        // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: Space.l),
-            children: [
-              for (var i = 0; i < slots.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: Space.m),
-                  child: _slot(slots[i], i + 1, gold),
+          child: ContentClamp(
+            child: Column(
+              children: [
+                const SizedBox(height: Space.l),
+                Text('The Ashmonger', style: EmberText.h1),
+                const SizedBox(height: Space.xs),
+                Text(
+                  'Spend your gold before the descent.',
+                  style: EmberText.bodyDim,
                 ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(Space.l),
-          child: SizedBox(
-            width: double.infinity,
-            child: EmberButton(
-              'Leave shop',
-              primary: true,
-              onTap: () => c.apply({'type': 'leave_shop'}),
+                const SizedBox(height: Space.l),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                    children: [
+                      for (var i = 0; i < slots.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: Space.m),
+                          child: _slot(slots[i], i + 1, gold),
+                        ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(Space.l),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: EmberButton(
+                      'Leave shop',
+                      primary: true,
+                      onTap: () => c.apply({'type': 'leave_shop'}),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

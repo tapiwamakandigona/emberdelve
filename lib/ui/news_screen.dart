@@ -24,31 +24,34 @@ class NewsArchiveScreen extends StatelessWidget {
           },
         ),
       ),
-      body: SafeArea(
-        child: ListView.separated(
-          padding: const EdgeInsets.all(Space.l),
-          itemCount: newsEntries.length,
-          separatorBuilder: (_, _) => const SizedBox(height: Space.m),
-          itemBuilder: (context, i) {
-            final e = newsEntries[i];
-            return Panel(
-              key: ValueKey('news-archive-${e.version}'),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('v${e.version}', style: EmberText.micro),
-                  const SizedBox(height: Space.xs),
-                  Text(e.title, style: EmberText.body),
-                  const SizedBox(height: Space.s),
-                  for (final line in e.lines)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: Space.xs),
-                      child: Text(line, style: EmberText.bodyDim),
-                    ),
-                ],
-              ),
-            );
-          },
+      // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
+      body: ContentClamp(
+        child: SafeArea(
+          child: ListView.separated(
+            padding: const EdgeInsets.all(Space.l),
+            itemCount: newsEntries.length,
+            separatorBuilder: (_, _) => const SizedBox(height: Space.m),
+            itemBuilder: (context, i) {
+              final e = newsEntries[i];
+              return Panel(
+                key: ValueKey('news-archive-${e.version}'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('v${e.version}', style: EmberText.micro),
+                    const SizedBox(height: Space.xs),
+                    Text(e.title, style: EmberText.body),
+                    const SizedBox(height: Space.s),
+                    for (final line in e.lines)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: Space.xs),
+                        child: Text(line, style: EmberText.bodyDim),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

@@ -21,48 +21,60 @@ class KeystoneScreen extends StatelessWidget {
         Column(
           children: [
             _TopBar(c),
-            const SizedBox(height: Space.xl),
-            // Padded so the heading WRAPS at large accessibility text scales
-            // instead of running off both edges (visual sweep 2026-08-12).
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.l),
-              child: Text(
-                'Set a keystone',
-                style: EmberText.h1,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: Space.xs),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-              child: Text(
-                'One rule for the rest of this delve. It rewards how you '
-                'play, not what you roll.',
-                style: EmberText.bodyDim,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: Space.l),
+            // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                children: [
-                  for (var i = 0; i < ids.length; i++)
+              child: ContentClamp(
+                child: Column(
+                  children: [
+                    const SizedBox(height: Space.xl),
+                    // Padded so the heading WRAPS at large accessibility text scales
+                    // instead of running off both edges (visual sweep 2026-08-12).
                     Padding(
-                      padding: const EdgeInsets.only(bottom: Space.m),
-                      child: _card(ids[i], i + 1),
+                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                      child: Text(
+                        'Set a keystone',
+                        style: EmberText.h1,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(Space.l),
-              child: SizedBox(
-                width: double.infinity,
-                child: EmberButton(
-                  'Take none',
-                  key: const ValueKey('keystone-skip'),
-                  onTap: () => c.apply({'type': 'choose_keystone', 'index': 0}),
+                    const SizedBox(height: Space.xs),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+                      child: Text(
+                        'One rule for the rest of this delve. It rewards how you '
+                        'play, not what you roll.',
+                        style: EmberText.bodyDim,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: Space.l),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Space.l,
+                        ),
+                        children: [
+                          for (var i = 0; i < ids.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: Space.m),
+                              child: _card(ids[i], i + 1),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(Space.l),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: EmberButton(
+                          'Take none',
+                          key: const ValueKey('keystone-skip'),
+                          onTap: () =>
+                              c.apply({'type': 'choose_keystone', 'index': 0}),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
