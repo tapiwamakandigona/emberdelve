@@ -60,3 +60,13 @@ sideload. Two consequences:
   APK's v2 signature block). Whether Play App Signing re-signs Play installs
   with a different key is UNVERIFIED (needs Play Console). Until confirmed,
   don't tell users sideload ↔ Play installs update over each other.
+
+## 2026-08-16 — AI Studio observation (Viktor, for the game agent / Tapiwa)
+Live read of Google AI Studio (project "Emberdelve", Free tier, 28-day window):
+- An **Android API key (auto-created by Firebase)** is issuing Gemini API requests
+  (~10/day peaks) with recurring **403 Forbidden spikes** (Jul 30 biggest, Aug 6, Aug 13),
+  and "Generate content" token charts show **No data** — i.e. zero successful generation.
+- If some in-app/companion Gemini feature is supposed to work, it is silently failing
+  (likely key restriction / API-not-enabled / free-tier scope). If nothing is meant to
+  call Gemini from the app, consider deleting/restricting that Firebase key.
+- Viktor has AI Studio + Play Console + Gmail browser access now; ask if a live check is needed.
