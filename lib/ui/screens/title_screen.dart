@@ -254,6 +254,37 @@ class TitleScreen extends StatelessWidget {
                               const SizedBox(height: Space.m),
                               _HearthsidePost(c),
                             ],
+                            // The Watchtower (v0.21.0): the opt-in launch
+                            // check found a newer release. ONE quiet line,
+                            // never a modal or badge; tap opens Settings
+                            // and the dismissal sticks per-version.
+                            AnimatedBuilder(
+                              animation: UpdateService.instance.tick,
+                              builder: (context, _) {
+                                final tag =
+                                    UpdateService.instance.noticeTag;
+                                if (tag == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return TextButton(
+                                  key: const ValueKey('update-notice'),
+                                  onPressed: () {
+                                    UpdateService.instance.dismissNotice();
+                                    Navigator.of(context).push(
+                                      emberRoute(
+                                        (_) => const SettingsScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'v$tag is available — see Settings',
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),

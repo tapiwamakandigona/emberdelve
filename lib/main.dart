@@ -1,5 +1,7 @@
 // lib/main.dart — Emberdelve entry point.
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +16,7 @@ import 'game/controller.dart';
 import 'meta/play_games_service.dart';
 import 'meta/reminder_service.dart';
 import 'meta/store_service.dart';
+import 'meta/update_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
 import 'telemetry/telemetry_service.dart';
@@ -83,11 +86,38 @@ Future<void> main() async {
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     unawaited(_wireReminderBackends(reminder));
   }
+  // The Watchtower (v0.21.0): update awareness for GitHub-only builds.
+  // The fetcher is wired on Android only; the launch check runs only on a
+  // remembered opt-in and is not awaited — startup never blocks on GitHub.
+  final updates = UpdateService.instance;
+  await updates.load();
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    updates.fetcher = _fetchReleaseJson;
+    unawaited(updates.launchCheckIfEnabled());
+  }
   // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
   // no-op if Firebase is unconfigured; nothing fires before opt-in.
   await initTelemetry();
   TelemetryService.instance.logEvent('app_open');
   runApp(EmberdelveApp(controller));
+}
+
+/// One GET against GitHub's public releases API (The Watchtower, v0.21.0).
+/// Plain dart:io — no new dependency. Throws on any failure; UpdateService
+/// maps every throw to a quiet inline error, never a crash.
+Future<String> _fetchReleaseJson(Uri url) async {
+  final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+  try {
+    final req = await client.getUrl(url);
+    req.headers.set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
+    final res = await req.close().timeout(const Duration(seconds: 8));
+    if (res.statusCode != 200) {
+      throw HttpException('HTTP ${res.statusCode}', uri: url);
+    }
+    return await res.transform(utf8.decoder).join();
+  } finally {
+    client.close(force: true);
+  }
 }
 
 /// Wire the real notification backends (Android). Kept out of main()'s

@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.20.0';
+const String currentAppVersion = '0.21.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.21.0',
+    title: 'The Watchtower',
+    lines: [
+      'The game can now tell you when a newer release is out. A "Check" '
+          'button lives in Settings — one tap, one plain answer, and a '
+          'copyable link to the releases page. Nothing downloads itself.',
+      'Prefer it automatic? Turn on "Check once at launch" (it starts '
+          'OFF). If a newer release exists you get one quiet line on the '
+          'title screen; dismiss it once and it stays gone.',
+      'No nags, no badges, and zero network calls unless you ask - '
+          'our tests prove the off switch means off.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.20.0',
     title: 'The Living Ladder',

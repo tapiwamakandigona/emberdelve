@@ -2,11 +2,13 @@
 // persisted via SettingsStore, applied live to the AudioService. Also the
 // route to Credits & Licenses.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
 import '../meta/play_games_service.dart';
 import '../meta/reminder_service.dart';
 import '../meta/store_service.dart';
+import '../meta/update_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'news_screen.dart';
@@ -24,6 +26,20 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   AudioSettings get _s => AudioService.instance?.settings ?? _fallback;
   static final AudioSettings _fallback = AudioSettings();
+
+  /// "Copy link" feedback for the Watchtower row (resets when leaving).
+  bool _linkCopied = false;
+
+  /// Neutral-fact status line for the update panel (§Ethics: no pressure,
+  /// no loss frame — a newer release is stated like a weather report).
+  String _updateLine(UpdateService up) => switch (up.status) {
+    UpdateStatus.checking => 'Checking the watchtower…',
+    UpdateStatus.newer =>
+      'v${up.latest} is out — you have v${up.installedVersion}.',
+    UpdateStatus.current => "You're on the latest release.",
+    UpdateStatus.error => "Couldn't reach the watchtower. Try again later.",
+    UpdateStatus.unknown => 'Compare this build to the newest release.',
+  };
 
   void _changed({bool preview = false, bool persist = true}) {
     AudioService.instance?.applySettings();
@@ -289,6 +305,122 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                     ),
+                  );
+                },
+              ),
+            ],
+            // The Watchtower (v0.21.0): update awareness for GitHub-only
+            // builds. Manual check + opt-in launch check; §Ethics: neutral
+            // facts, never a nag, nothing auto-downloads. Hidden entirely
+            // when no fetcher is wired (tests, non-Android).
+            if (UpdateService.instance.available) ...[
+              const SizedBox(height: Space.xl),
+              Text('UPDATES', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              AnimatedBuilder(
+                animation: UpdateService.instance.tick,
+                builder: (context, _) {
+                  final up = UpdateService.instance;
+                  final newer = up.status == UpdateStatus.newer;
+                  return Column(
+                    children: [
+                      Panel(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.new_releases_outlined,
+                                  color: newer
+                                      ? EmberColors.ember
+                                      : EmberColors.textDim,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: Space.m),
+                                Expanded(
+                                  child: Text(
+                                    _updateLine(up),
+                                    style: EmberText.body,
+                                  ),
+                                ),
+                                EmberButton(
+                                  'Check',
+                                  key: const ValueKey('update-check-now'),
+                                  dense: true,
+                                  onTap: up.status == UpdateStatus.checking
+                                      ? null
+                                      : () async {
+                                          await up.check();
+                                          if (mounted) setState(() {});
+                                        },
+                                ),
+                              ],
+                            ),
+                            if (newer) ...[
+                              const SizedBox(height: Space.s),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'New releases live on the GitHub '
+                                      'releases page.',
+                                      style: EmberText.bodyDim,
+                                    ),
+                                  ),
+                                  EmberButton(
+                                    _linkCopied ? 'Copied' : 'Copy link',
+                                    key: const ValueKey('update-copy-link'),
+                                    dense: true,
+                                    onTap: () async {
+                                      await Clipboard.setData(
+                                        const ClipboardData(
+                                          text:
+                                              UpdateService.releasesPageUrl,
+                                        ),
+                                      );
+                                      if (mounted) {
+                                        setState(() => _linkCopied = true);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: Space.s),
+                      Panel(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.update,
+                              color: up.enabled
+                                  ? EmberColors.ember
+                                  : EmberColors.textDim,
+                              size: 20,
+                            ),
+                            const SizedBox(width: Space.m),
+                            Expanded(
+                              child: Text(
+                                'Check once at launch',
+                                style: EmberText.body,
+                              ),
+                            ),
+                            _EmberToggle(
+                              semanticLabel: 'Check for updates at launch',
+                              key: const ValueKey('update-launch-check'),
+                              value: up.enabled,
+                              onChanged: (v) async {
+                                AudioService.instance?.playSfx('ui_tap');
+                                await up.setEnabled(v);
+                                if (mounted) setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
