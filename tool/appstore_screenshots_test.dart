@@ -18,9 +18,7 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/art.dart';
 import 'package:emberdelve/ui/ledger_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
-import 'package:emberdelve/ui/logo.dart';
 import 'package:emberdelve/ui/theme.dart';
-import 'package:emberdelve/ui/widgets.dart';
 import 'package:emberdelve/game/tips.dart';
 
 const outDir = 'docs/store/screenshots/ios';
