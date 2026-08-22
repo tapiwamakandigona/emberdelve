@@ -1,0 +1,54 @@
+# iOS build check (v0.26.0 workstream): proves the app compiles for iOS on
+# every push that touches Dart or iOS platform code. Unsigned — signing and
+# App Store upload need the Apple Developer Program and are done separately.
+name: ios
+
+on:
+  push:
+    branches: [main, "legacy/**", "ios/**"]
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - ".github/workflows/ios.yml"
+  workflow_dispatch: {}
+
+env:
+  FLUTTER_VERSION: 3.44.9
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build iOS (unsigned)
+        run: flutter build ios --release --no-codesign
+
+      - name: Upload Runner.app
+        uses: actions/upload-artifact@v4
+        with:
+          name: emberdelve-ios-unsigned
+          path: build/ios/iphoneos/Runner.app
+          if-no-files-found: error
+          retention-days: 14
