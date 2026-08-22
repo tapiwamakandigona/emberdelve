@@ -4,11 +4,14 @@ A crisp **pixel action-platformer** for Android. Fight through the cursed forest
 
 **Tsoro Studios** · Flutter 3.32 + Flame · public repo
 
+> **🎲 Looking for Emberdelve?** The dice roguelite is **live on Google Play worldwide** —
+> [**Emberdelve: Dice Roguelite**](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve)
+> (v0.7.0, production, 177 countries). Its code lives on the actively shipped
+> [`legacy/dice-builder`](../../tree/legacy/dice-builder) branch of this repo.
+>
 > **v2 pivot (2026-07-24):** this game began as a v2 rewrite of Emberdelve, reborn as an action platformer.
 > **Renamed (2026-08-11, owner-directed):** the platformer is now **Emberwood** (`com.tsorostudios.emberwood`) —
-> a separate app, so it can never collide with Emberdelve Classic on Google Play. The original
-> dice-builder roguelite is preserved on branch [`legacy/dice-builder`](../../tree/legacy/dice-builder),
-> tag `v0.3.10-legacy`, and the ["Emberdelve Classic" release](../../releases/tag/v0.3.10-legacy).
+> a separate app, so it can never collide with Emberdelve Classic on Google Play.
 
 ## Start here (human or AI)
 1. `PROJECT.md` — goal, standing decisions, session-start ritual
