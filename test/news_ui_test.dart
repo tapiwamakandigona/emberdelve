@@ -47,6 +47,11 @@ void main() {
       findsOneWidget,
     );
 
+    // The title screen scrolls on short viewports (the 800x600 test surface
+    // included) — bring the button into view before tapping, same as a player
+    // scrolling. Assertions below are unchanged.
+    await tester.ensureVisible(find.byKey(const ValueKey('news-dismiss')));
+    await pumpFor(tester, 300);
     await tester.tap(find.byKey(const ValueKey('news-dismiss')));
     await pumpFor(tester, 400);
     expect(find.byKey(const ValueKey('news-panel')), findsNothing);
