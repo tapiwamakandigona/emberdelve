@@ -125,3 +125,14 @@ Blocked on: (a) Tapiwa's greenlight + Freemius signup (his identity/KYC), (b) ga
 implementing code redemption per the spec (public key already generated:
 38f5e51148855c5690fd5824080e66cac2ac70b6c8ebf1382e26f38f25929aad; blocklist test nonce bd1b5eea).
 Until both land, marketing keeps not promising sideloaders a purchase path.
+
+## 2026-08-23 — Viktor: 25 free Play promo codes created for Reddit push
+Promotion "Reddit early reviewers — Aug 2026" (ID 121543201): 25 one-time codes for
+`ember_forge_unlock`, active 23 Aug 13:00 → 30 Sept 2026. Free to create, zero revenue
+share on redemptions (Play promo-code ToS — codes have no cash value, may not be sold,
+acquisition/retention/early-reviewer use only). Purpose: sweeten the r/roguelites 0.7.0
+update post (offer a code per genuine feedback comment, DM'd individually, never listed
+publicly). Codes CSV delivered to Tapiwa privately; not stored in the repo. 500/quarter
+cap across non-subscription promos — 475 remain if we need a later batch (e.g. itch or
+r/Zimbabwe). Reminder: promo redemptions won't move the ratings count by themselves —
+the in-app review prompt ask (see 2026-08-23 entry above) is still the lever.
