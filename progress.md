@@ -1658,3 +1658,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CRITIQUE CATCH #2 (same eye, new lesson): polite grade (hue -44, sat 0.82) was INVISIBLE on the near-black art — plates showed four identical bands. Rebuilt with a hard hue swing (0→-115) + saturation RISING to 1.45 + a translucent depth wash; plates now show warm→ash-blue→violet unmistakably. LESSON: grading near-black art needs saturation UP and a wash layer, not tasteful drains.
 - test/strata_test.dart 4 tests (identity/clamp/distinctness, ColorFiltered iff graded, controller wiring no-run + in-run). Strata+overflow 39/39. tool/strata_visual_test.dart plate tool kept.
 - v0.27.0 CI run 32634359742 in_progress at time of writing.
+
+## 2026-08-23 ~14:00Z — v0.27.0 published; v0.28.0 train started
+- v0.27.0 "The Delver's Wardrobe" PUBLISHED: CI run 32634359742 green on tag SHA 6f5ac72;
+  4/4 APKs PIN-OK (0.27.0, codes 53/1053/2053/4053), AAB pin match; standard 5-asset set
+  uploaded; sha256+size table in docs/releases/v0.27.0.md (also release body). Notes fixed
+  pre-publish: dye described as hue-rotation matrix (not the superseded multiply tint).
+- v0.28.0 train: pubspec → 0.28.0+54; news entry "The Shifting Strata" + currentAppVersion
+  '0.28.0'; ethics sweep clean; analyze clean; full suite running.

@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.27.0';
+const String currentAppVersion = '0.28.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.28.0',
+    title: 'The Shifting Strata',
+    lines: [
+      'The delve now looks as deep as it feels. Each layer you descend, '
+          'the world itself shifts - warm hearthlight at the surface, '
+          'ash-blue in the middle depths, wyrm-violet where the boss waits.',
+      'Same rooms, same fights, same odds - only the light changes. '
+          'Climb back to the surface and the warmth returns.',
+      'Thank you for delving with us. See you by the fire.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.27.0',
     title: 'The Delver\'s Wardrobe',
