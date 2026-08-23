@@ -14,6 +14,7 @@ import '../data/news.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import 'tips.dart';
+import 'tour.dart';
 import '../data/relics.dart';
 import '../data/enemies.dart';
 import '../meta/achievements.dart';
@@ -38,6 +39,9 @@ class GameController extends ChangeNotifier {
   /// v0.10.0 The First Delve: staged contextual tip state. Rebuilt at boot
   /// so it always shares the loaded meta's tipsSeen set (see tips.dart).
   late TipDirector tipDirector = TipDirector(meta.tipsSeen);
+  // v0.8.0 The Guided Delve: anchored tour. Recreated on boot; runs when
+  // meta.tourSeenVersion < tourVersion, or on demand via requestTourReplay.
+  late TourDirector tour = TourDirector(seenVersion: meta.tourSeenVersion);
 
   // -------------------------------------------------------------------------
   // Per-field change ticks (perf, v0.3.15)
@@ -211,6 +215,7 @@ class GameController extends ChangeNotifier {
   Future<void> boot() async {
     meta = await MetaStore.load();
     tipDirector = TipDirector(meta.tipsSeen);
+    tour = TourDirector(seenVersion: meta.tourSeenVersion);
     // v0.6.1: HARD is Forge-gated again (free only during v0.6.0). A locked
     // profile whose sticky preference says 'hard' (set while 0.6.0 was live)
     // is moved back to 'normal' HERE, on the visible selector — the player
@@ -745,6 +750,36 @@ class GameController extends ChangeNotifier {
   void markTutorialSeen() {
     if (meta.tutorialSeen) return;
     meta.tutorialSeen = true;
+    MetaStore.save(meta);
+  }
+
+  /// v0.8.0 Guided Delve: forward a player moment to the tour; stamp +
+  /// persist when it finishes. While the tour is on screen the contextual
+  /// tips stay quiet (same suppression rule as the manual how-to-play).
+  void tourMoment(TourMoment m) {
+    if (tour.onMoment(m)) _stampTour();
+  }
+
+  /// Tap-to-continue on an info beat.
+  void tourAdvanceInfo() {
+    if (tour.advanceInfo()) _stampTour();
+  }
+
+  /// SKIP: always available, stamps exactly like completion (§Ethics —
+  /// a skipped tour never nags again).
+  void tourSkip() {
+    if (tour.skip()) _stampTour();
+  }
+
+  /// Settings → "How to play (guided tour)": replay on the next fight.
+  void requestTourReplay() {
+    tour = TourDirector(seenVersion: meta.tourSeenVersion, replay: true);
+  }
+
+  void _stampTour() {
+    if (meta.tourSeenVersion < tourVersion) {
+      meta.tourSeenVersion = tourVersion;
+    }
     MetaStore.save(meta);
   }
 

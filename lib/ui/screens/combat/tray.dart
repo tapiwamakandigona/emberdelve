@@ -21,6 +21,7 @@ extension _CombatTrayBand on _CombatScreenState {
     // past ~2 rows the tray scrolls instead of squeezing the stage out and
     // overflowing the column on short screens.
     Padding(
+      key: TourAnchors.of(TourBeats.pick),
       padding: const EdgeInsets.symmetric(horizontal: Space.l),
       child: Stack(
         clipBehavior: Clip.none,
@@ -89,6 +90,11 @@ extension _CombatTrayBand on _CombatScreenState {
                                         () =>
                                             selected = selected == i ? null : i,
                                       );
+                                      if (selected != null) {
+                                        widget.c.tourMoment(
+                                          TourMoment.diePicked,
+                                        );
+                                      }
                                     },
                             ),
                           ),
