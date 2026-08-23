@@ -148,7 +148,15 @@ Still free, no ads, works offline. Only paid thing is the one-time hard mode unl
 
 The thing I'm genuinely not sure about: does picking a keystone actually give runs direction, or did I just add more stuff? If anyone here tries it I'd rather hear the harsh version.
 
+Also got a small stack of Play promo codes for the hard mode unlock, happy to drop one to anyone who gives real feedback, just say so in a comment.
+
 https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
+
+> **⚠ PROMO CODES (Viktor, 2026-08-23):** 25 one-time Play codes for `ember_forge_unlock`
+> exist — promotion "Reddit early reviewers — Aug 2026", ID 121543201, active 23 Aug 13:00 →
+> 30 Sept 2026 (created free of charge; Play promo-code ToS accepted). Codes CSV goes to
+> Tapiwa privately — hand them out ONE per commenter via Reddit DM, never paste a list
+> publicly. Redemption: Play Store → profile icon → Payments & subscriptions → Redeem code.
 
 ### For r/Zimbabwe (your best venue — flair: Discussion)
 
