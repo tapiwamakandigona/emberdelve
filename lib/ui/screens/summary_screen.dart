@@ -290,6 +290,56 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.29.0 (retention hook #3): a summary should
+                          // always name a next action. After a win on EASY,
+                          // one quiet panel says Normal exists — same delve,
+                          // sharper teeth, full ember rate (easy banks 0.75x,
+                          // see sim/run_layer.dart). Factual invitation only:
+                          // never a popup, never blocks the buttons below,
+                          // nothing lost by ignoring it (spec §5 endorsement
+                          // test). Taking it is an explicit difficulty choice.
+                          if (won &&
+                              (run['difficulty'] as String? ?? 'normal') ==
+                                  'easy') ...[
+                            const SizedBox(height: Space.l),
+                            Panel(
+                              key: const ValueKey('normal-nudge'),
+                              color: EmberColors.raised,
+                              // Column, not Row: the CTA label is wide, and a
+                              // trailing button starves the text on 360dp
+                              // phones (plate critique, v0.29.0).
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.terrain,
+                                        color: EmberColors.gold,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: Space.m),
+                                      Expanded(
+                                        child: Text(
+                                          'The easy delve is tamed. The same '
+                                          'halls wait on Normal — sharper '
+                                          'teeth, a fuller ember pouch.',
+                                          style: EmberText.body,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: Space.m),
+                                  EmberButton(
+                                    'Delve Normal',
+                                    dense: true,
+                                    key: const ValueKey('delve-normal-cta'),
+                                    onTap: () => c.delveNormal(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                           const Spacer(),
                           // Fast restart (backlog #8): straight into a new run — boon pick
                           // included — without a detour through the title.
