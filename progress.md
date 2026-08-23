@@ -1635,3 +1635,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   - Note: before-plate title_800x1280 was missing parallax/sprite; after-plate identical symptom is a capture-timing artifact (600x960 plate renders them; asset decode async in test harness) — NOT a regression.
 - REMAINING for v0.26.0 release (next session): version bump 0.26.0+52 in pubspec, news entry + currentAppVersion '0.26.0', full suite (452 tests), tag, CI dispatch, verify pins (expect codes 52/1052/2052/4052), publish with docs/releases/v0.26.0.md (already drafted; checksums pending).
 - v0.25.0 "The Unquiet Deep" PUBLISHED this session (see entry above).
+
+## 2026-08-23 ~10:15 GMT — SESSION START (new directive: gameplay/characters/UI improvements + retention research, GitHub releases only)
+- USER-REPORTED (contamination log) — first outside player review (WhatsApp, +263 78 958 3330, 2026-08-23):
+  1. "finished easy mode" + "game is good and fun" — easy clear happens; need a next-hook toward Normal.
+  2. "still don't understand what's a delve" — the core noun is unexplained anywhere in-game. Loop's eyes missed this for 26 releases.
+  3. ASKS: character customisation; changing backgrounds. LIKES: boss designs, music 9/10.
+- Found on return: v0.26.0 "The Guided Delve" (anchored onboarding tour, PR #93, merged as Tapiwa) was tagged+released 08:43Z with only app-release.aab attached and no checksums. Verified tag CI run 32628247445 = tag SHA de1777f; downloaded artifacts; 4/4 APK PIN-OK (0.26.0, codes 52/1052/2052/4052); AAB pkcs7 pin match; released app-release.aab byte-identical to CI artifact. Uploaded standard 5-asset set, removed nonstandard aab name, sha256 table appended above in docs/releases/v0.26.0.md.
+- CI-red episode while away: ContentClamp moved news-dismiss below fold at test viewport; fixed in 4238f8f by scrolling into view before tap (test-side; real UX has scroll). Noted.
+- Marketing asks pending: in-app review prompt (Play In-App Review, after 2nd win, once per install) — good v0.27+ candidate; unlock-code redemption blocked on Tapiwa/Freemius greenlight.
