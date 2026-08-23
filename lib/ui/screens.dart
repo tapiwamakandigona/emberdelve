@@ -8,6 +8,7 @@ import 'package:flutter/semantics.dart' show SemanticsService;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
+import '../data/attire.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/enemies.dart';

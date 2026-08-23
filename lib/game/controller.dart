@@ -526,6 +526,24 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // v0.27.0 The Delver's Wardrobe — delver dyes, same shape as dice skins.
+  bool buyDye(String id) {
+    final ok = meta.tryBuyDye(id);
+    if (ok) {
+      MetaStore.save(meta);
+      audio?.playSfx('unlock');
+    }
+    notifyListeners();
+    return ok;
+  }
+
+  void setActiveDye(String id) {
+    if (!meta.ownedDyes.contains(id) || meta.activeDye == id) return;
+    meta.activeDye = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
   bool buyCodexEntry(String id) {
     final ok = meta.tryBuyCodex(id);
     if (ok) {

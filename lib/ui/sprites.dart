@@ -128,6 +128,12 @@ class SpriteView extends StatefulWidget {
   /// an attack, so the badge has body language (echoes the 190ms wind-up
   /// that plays when the hit actually comes).
   final bool sway;
+
+  /// v0.27.0 Delver's Wardrobe: optional dye ColorFilter (Art.dyeFilter).
+  /// Null (the default) skips the filter entirely, so undyed sprites render
+  /// pixel-for-pixel as before. Only player-character call sites pass this;
+  /// enemies are never dyed.
+  final ColorFilter? dye;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -137,6 +143,7 @@ class SpriteView extends StatefulWidget {
     this.animate = true,
     this.bob = false,
     this.sway = false,
+    this.dye,
   });
 
   @override
@@ -284,6 +291,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           bob: widget.bob,
           sway: widget.sway,
           flipX: widget.flipX,
+          dye: widget.dye,
           repaint: _repaintDriver,
         ),
       ),
@@ -306,6 +314,7 @@ class _SpritePainter extends CustomPainter {
   final bool bob;
   final bool sway;
   final bool flipX;
+  final ColorFilter? dye;
   _SpritePainter({
     required this.img,
     required this.def,
@@ -316,6 +325,7 @@ class _SpritePainter extends CustomPainter {
     required this.bob,
     required this.sway,
     required this.flipX,
+    required this.dye,
     required super.repaint,
   });
 
@@ -335,6 +345,8 @@ class _SpritePainter extends CustomPainter {
     );
     final dst = Rect.fromLTWH(0, 0, size.width, size.height);
     final paint = Paint()..filterQuality = FilterQuality.none;
+    // Delver dye: hue-rotation matrix; null (undyed) costs nothing.
+    if (dye != null) paint.colorFilter = dye;
     canvas.save();
     final l = life;
     if (l != null && (bob || sway)) {
@@ -369,5 +381,6 @@ class _SpritePainter extends CustomPainter {
       old.frames != frames ||
       old.row != row ||
       old.img != img ||
-      old.flipX != flipX;
+      old.flipX != flipX ||
+      old.dye != dye;
 }

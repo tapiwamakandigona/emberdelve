@@ -124,9 +124,10 @@ class TitleScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  const SpriteView(
+                                  SpriteView(
                                     defaultCharacter,
                                     height: 72,
+                                    dye: Art.dyeFilter(m.activeDye),
                                   ),
                                   const SizedBox(width: Space.l),
                                   CampFire(

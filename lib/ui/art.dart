@@ -1,9 +1,84 @@
 // lib/ui/art.dart — static art lookups: backgrounds per phase, node/relic/
 // event/currency icon assets, and the shared full-bleed background widget.
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import '../data/attire.dart';
 import 'theme.dart';
 
 class Art {
+  /// v0.27.0 Delver's Wardrobe: ColorFilter for a dye id, or null for the
+  /// identity (undyed/unknown — a stale id can never mispaint the delver).
+  /// Hue rotation + saturation/value scaling; a plain multiply tint was
+  /// rejected by visual critique (it can only darken, so dyes were invisible
+  /// on the red-cloaked sprites).
+  static ColorFilter? dyeFilter(String dyeId) {
+    final d = delverDyes[dyeId];
+    if (d == null || (d.hueDeg == 0 && d.satMul == 1 && d.valMul == 1)) {
+      return null;
+    }
+    return ColorFilter.matrix(_dyeMatrix(d.hueDeg, d.satMul, d.valMul));
+  }
+
+  /// 4x5 color matrix = value ∘ saturation ∘ hueRotate (standard SVG
+  /// feColorMatrix luminance weights). Alpha untouched.
+  static List<double> _dyeMatrix(double hueDeg, double sat, double val) {
+    const lr = 0.213, lg = 0.715, lb = 0.072;
+    final rad = hueDeg * math.pi / 180.0;
+    final c = math.cos(rad), s = math.sin(rad);
+    final hue = <double>[
+      lr + c * (1 - lr) - s * lr,
+      lg - c * lg - s * lg,
+      lb - c * lb + s * (1 - lb),
+      0,
+      0, //
+      lr - c * lr + s * 0.143,
+      lg + c * (1 - lg) + s * 0.140,
+      lb - c * lb - s * 0.283,
+      0,
+      0, //
+      lr - c * lr - s * (1 - lr),
+      lg - c * lg + s * lg,
+      lb + c * (1 - lb) + s * lb,
+      0,
+      0, //
+      0, 0, 0, 1, 0,
+    ];
+    final satM = <double>[
+      lr + (1 - lr) * sat, lg * (1 - sat), lb * (1 - sat), 0, 0, //
+      lr * (1 - sat), lg + (1 - lg) * sat, lb * (1 - sat), 0, 0, //
+      lr * (1 - sat), lg * (1 - sat), lb + (1 - lb) * sat, 0, 0, //
+      0, 0, 0, 1, 0,
+    ];
+    var m = _mul(satM, hue);
+    if (val != 1) {
+      final valM = <double>[
+        val, 0, 0, 0, 0, //
+        0, val, 0, 0, 0, //
+        0, 0, val, 0, 0, //
+        0, 0, 0, 1, 0,
+      ];
+      m = _mul(valM, m);
+    }
+    return m;
+  }
+
+  /// Compose two 4x5 affine color matrices: result = a ∘ b.
+  static List<double> _mul(List<double> a, List<double> b) {
+    final out = List<double>.filled(20, 0);
+    for (var row = 0; row < 4; row++) {
+      for (var col = 0; col < 5; col++) {
+        var v = 0.0;
+        for (var k = 0; k < 4; k++) {
+          v += a[row * 5 + k] * b[k * 5 + col];
+        }
+        if (col == 4) v += a[row * 5 + 4];
+        out[row * 5 + col] = v;
+      }
+    }
+    return out;
+  }
+
   static const bgTitle = 'assets/images/backgrounds/bg_title.png';
   static const bgMap = 'assets/images/backgrounds/bg_map.png';
   static const bgCombat = 'assets/images/backgrounds/bg_combat.png';
