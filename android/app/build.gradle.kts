@@ -84,6 +84,15 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            // R8 shrinking/optimization (Play technical-quality recommendation,
+            // issue #94). Keep rules for reflection-heavy plugins live in
+            // proguard-rules.pro.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
