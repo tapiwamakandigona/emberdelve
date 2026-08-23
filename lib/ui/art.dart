@@ -63,6 +63,44 @@ class Art {
     return m;
   }
 
+  /// v0.28.0 The Shifting Strata: background grade for a run depth
+  /// (0 surface .. 1 boss layer). Null at the surface = identity — the
+  /// title and every pre-run phase render byte-identical to pre-strata
+  /// builds. The grade cools the kiln-brown rock toward ash by mid-delve
+  /// and toward wyrm-violet at the bottom; it sits UNDER the scrim, so
+  /// text contrast never changes.
+  static ColorFilter? strataFilter(double depth) {
+    final t = depth.clamp(0.0, 1.0);
+    if (t <= 0) return null;
+    // The backdrop art is near-black, so a polite grade is invisible (first
+    // plate pass proved it). The hue swing is therefore LARGE — the warm
+    // ember specks and rock seams visibly turn ash-teal by mid-delve and
+    // wyrm-violet at the bottom — and saturation RISES with depth so the
+    // recolored accents glow instead of draining away.
+    final hue = t < 0.5
+        ? _lerp(0, -60, t * 2)
+        : _lerp(-60, -115, (t - 0.5) * 2);
+    final sat = _lerp(1.0, 1.45, t);
+    final val = _lerp(1.0, 0.94, t);
+    return ColorFilter.matrix(_dyeMatrix(hue, sat, val));
+  }
+
+  /// Depth wash above the graded art but under the scrim: a colored breath
+  /// the eye catches even where the rock is pitch black. Transparent at the
+  /// surface; ash-blue mid; violet at the boss layer.
+  static Color strataWash(double depth) {
+    final t = depth.clamp(0.0, 1.0);
+    if (t <= 0) return const Color(0x00000000);
+    final mid = const Color(0xFF2A3A55); // ash-blue
+    final deep = const Color(0xFF3A2450); // wyrm-violet
+    final c = t < 0.5
+        ? Color.lerp(mid, mid, t * 2)!
+        : Color.lerp(mid, deep, (t - 0.5) * 2)!;
+    return c.withValues(alpha: 0.30 * (t < 0.5 ? t * 2 : 1.0));
+  }
+
+  static double _lerp(double a, double b, double t) => a + (b - a) * t;
+
   /// Compose two 4x5 affine color matrices: result = a ∘ b.
   static List<double> _mul(List<double> a, List<double> b) {
     final out = List<double>.filled(20, 0);
@@ -180,19 +218,32 @@ class ScreenBackground extends StatelessWidget {
   final String asset;
   final Widget child;
   final double scrim;
+
+  /// v0.28.0 strata grade (Art.strataFilter). Null = identity, no wrapper.
+  final ColorFilter? grade;
+
+  /// v0.28.0 depth wash (Art.strataWash). Fully transparent = skipped.
+  final Color wash;
   const ScreenBackground({
     super.key,
     required this.asset,
     required this.child,
     this.scrim = 0.45,
+    this.grade,
+    this.wash = const Color(0x00000000),
   });
 
   @override
   Widget build(BuildContext context) {
+    final img = Image.asset(asset, fit: BoxFit.cover, gaplessPlayback: true);
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(asset, fit: BoxFit.cover, gaplessPlayback: true),
+        if (grade == null)
+          img
+        else
+          ColorFiltered(colorFilter: grade!, child: img),
+        if (wash.a > 0) Container(color: wash),
         Container(color: EmberColors.bg.withValues(alpha: scrim)),
         child,
       ],

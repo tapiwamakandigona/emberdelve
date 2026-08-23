@@ -134,6 +134,10 @@ class _GameRootState extends State<GameRoot> {
             flameWipe: phase == 'player_turn',
             child: ScreenBackground(
               asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+              // v0.28.0 The Shifting Strata: the rock changes as you
+              // descend (depth 0 = identity, so the title never grades).
+              grade: Art.strataFilter(c.mapDepth),
+              wash: Art.strataWash(c.mapDepth),
               child: SafeArea(
                 child: KeyedSubtree(
                   key: ValueKey(phase ?? 'title'),
