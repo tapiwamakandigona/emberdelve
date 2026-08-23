@@ -588,6 +588,7 @@ class _CombatScreenState extends State<CombatScreen> {
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
     if (da != null) {
+      widget.c.tourMoment(TourMoment.actionSpent);
       _assignedValue[da['die'] as int] = da['value'] as int;
       // LFP-2a: the die visibly travels to the verb it was spent on.
       _spawnGhost(assignedDie, 'attack', da['value'] as int, ghostFrom);
@@ -706,6 +707,7 @@ class _CombatScreenState extends State<CombatScreen> {
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
     if (da != null) {
+      widget.c.tourMoment(TourMoment.actionSpent);
       _assignedValue[da['die'] as int] = da['value'] as int;
       // LFP-2a: the die visibly travels to the verb it was spent on.
       _spawnGhost(assignedDie, 'block', da['value'] as int, ghostFrom);
@@ -1066,7 +1068,26 @@ class _CombatScreenState extends State<CombatScreen> {
                 ),
               ),
               if (_splash) _NamePlate(enemy: enemy, layer: _currentLayer(st)),
-              if (_tutStep < 0 && widget.c.tipDirector.active != null)
+              // Rebuilds with the dice band: tour moments fire inside _ui
+              // scopes, which never reach this outer Stack on their own.
+              AnimatedBuilder(
+                animation: _diceBand,
+                builder: (context, _) => _consumeTourReplay()
+                    ? _TourOverlay(
+                        beat: widget.c.tour.active!,
+                        isInfo: widget.c.tour.activeIsInfo,
+                        step: widget.c.tour.step,
+                        total: widget.c.tour.total,
+                        onAdvanceInfo: () =>
+                            setState(widget.c.tourAdvanceInfo),
+                        onSkip: () => setState(widget.c.tourSkip),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              // Tips stay quiet while the tour is on screen (tour.dart rule).
+              if (!widget.c.tour.running &&
+                  _tutStep < 0 &&
+                  widget.c.tipDirector.active != null)
                 _ContextTip(
                   id: widget.c.tipDirector.active!,
                   onDismiss: () => setState(widget.c.dismissTip),
@@ -1120,4 +1141,14 @@ class _CombatScreenState extends State<CombatScreen> {
   /// Restart the combat tutorial (band extensions cannot call the
   /// protected [setState] directly).
   void _restartTutorial() => setState(() => _tutStep = 0);
+
+  /// Settings-requested replay: swap in a replay director the first combat
+  /// frame after the request, then fall through to the normal running check.
+  bool _consumeTourReplay() {
+    if (TourDirector.replayRequested) {
+      TourDirector.replayRequested = false;
+      widget.c.requestTourReplay();
+    }
+    return widget.c.tour.running;
+  }
 }

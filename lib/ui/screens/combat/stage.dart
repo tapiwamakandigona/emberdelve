@@ -200,9 +200,12 @@ extension _CombatStageBand on _CombatScreenState {
                           // below, in a visibly different chip style.
                           Positioned(
                             top: -badgeLift,
-                            child: _IntentBadge(
-                              intent,
-                              onLongPress: () => _explainIntent(intent),
+                            child: KeyedSubtree(
+                              key: TourAnchors.of(TourBeats.intent),
+                              child: _IntentBadge(
+                                intent,
+                                onLongPress: () => _explainIntent(intent),
+                              ),
                             ),
                           ),
                           // LFP-3a: status stacks live ON the enemy sprite —

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tips.dart';
+import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -187,6 +188,8 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
 
     final c = GameController();
+    c.meta.tourSeenVersion = tourVersion; // tips-in-isolation (see above)
+    c.tour = TourDirector(seenVersion: tourVersion);
     Widget app() => MaterialApp(
       theme: buildEmberTheme(),
       builder: (context, child) => MediaQuery(
@@ -236,6 +239,10 @@ void main() {
     tester,
   ) async {
     final c = GameController(); // fresh profile — nothing seen
+    // Tips-in-isolation: stamp the Guided Delve tour as seen so it doesn't
+    // (correctly) suppress the tip under test.
+    c.meta.tourSeenVersion = tourVersion;
+    c.tour = TourDirector(seenVersion: tourVersion);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );

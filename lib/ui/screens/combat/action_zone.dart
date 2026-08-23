@@ -27,6 +27,7 @@ extension _CombatActionZoneBand on _CombatScreenState {
       child: RepaintBoundary(
         child: rolled == null
             ? SizedBox(
+                key: TourAnchors.of(TourBeats.roll),
                 width: double.infinity,
                 child: EmberButton(
                   'Roll',
@@ -43,6 +44,7 @@ extension _CombatActionZoneBand on _CombatScreenState {
                             _reflyGen.clear(); // fresh throw set (LFP-1c)
                             _rollGen++; // trigger the dice throw cascade
                           });
+                          c.tourMoment(TourMoment.rolled);
                           final events = c.apply({'type': 'roll'});
                           // Combo call-outs land after the tumble reads.
                           Future.delayed(const Duration(milliseconds: 550), () {
@@ -101,6 +103,7 @@ extension _CombatActionZoneBand on _CombatScreenState {
             : Column(
                 children: [
                   Row(
+                    key: TourAnchors.of(TourBeats.spend),
                     children: [
                       // Enabled during choreography too: taps land in the
                       // one-slot queue instead of being dropped (F2).
@@ -133,6 +136,7 @@ extension _CombatActionZoneBand on _CombatScreenState {
                   ),
                   SizedBox(height: compact ? Space.s : Space.m),
                   Row(
+                    key: TourAnchors.of(TourBeats.reroll),
                     children: [
                       if (rerolls > 0)
                         Expanded(

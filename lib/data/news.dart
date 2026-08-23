@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.25.0';
+const String currentAppVersion = '0.26.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.26.0',
+    title: 'The Guided Delve',
+    lines: [
+      'New delvers asked how the delve actually works - fair. The first '
+          'fight now walks you through it on the real screen: your dice, '
+          'the enemy\'s telegraphed move, attack and block, the risky '
+          'reroll. Five short steps, skippable any time.',
+      'Everyone sees the tour once - even long-time delvers, since it '
+          'points at things the old cards only described. Replay it '
+          'whenever you like from Settings.',
+      'Thanks for every message about what was confusing. This update '
+          'exists because you sent them.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.25.0',
     title: 'The Unquiet Deep',

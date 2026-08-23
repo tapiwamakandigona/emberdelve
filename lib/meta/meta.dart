@@ -31,6 +31,10 @@ class MetaState {
   // v0.10.0 The First Delve: contextual tips already dismissed (ids from
   // ContextTips.all). Sticky like tutorialSeen — cloud merge is set union.
   Set<String> tipsSeen;
+  // v0.8.0 The Guided Delve: highest anchored-tour version this profile has
+  // completed or skipped (tour.dart/tourVersion). 0 = never toured — new
+  // installs AND veterans of the old card wall both see tour v2 once.
+  int tourSeenVersion;
   // v0.3.2: sticky easy/normal/hard preference for the title-screen selector.
   // Pure convenience — the sim only ever sees it as a start_run param.
   String preferredDifficulty;
@@ -117,6 +121,7 @@ class MetaState {
     this.runsWon = 0,
     this.tutorialSeen = false,
     Set<String>? tipsSeen,
+    this.tourSeenVersion = 0,
     this.preferredDifficulty = 'normal',
     this.difficultyChosen = false,
     Map<String, int>? charRuns,
@@ -175,6 +180,7 @@ class MetaState {
     'runsWon': runsWon,
     'tutorialSeen': tutorialSeen,
     if (tipsSeen.isNotEmpty) 'tipsSeen': (tipsSeen.toList()..sort()),
+    if (tourSeenVersion != 0) 'tourSeenVersion': tourSeenVersion,
     'preferredDifficulty': preferredDifficulty,
     'difficultyChosen': difficultyChosen,
     'charRuns': charRuns,
@@ -241,6 +247,7 @@ class MetaState {
         ((j['tutorialSeen'] as bool? ?? false)
             ? ContextTips.all.toSet()
             : <String>{}),
+    tourSeenVersion: j['tourSeenVersion'] as int? ?? 0,
     preferredDifficulty:
         const {'easy', 'normal', 'hard'}.contains(j['preferredDifficulty'])
         ? j['preferredDifficulty'] as String
