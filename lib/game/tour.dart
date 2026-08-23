@@ -42,6 +42,11 @@ class TourBeats {
 enum TourMoment { rolled, diePicked, actionSpent }
 
 class TourDirector {
+  /// Settings → "How to play (guided tour)" sets this; the next combat
+  /// build consumes it (SettingsScreen has no controller reference — this
+  /// one static flag is the whole bridge, cleared on consume).
+  static bool replayRequested = false;
+
   /// Version stamp already persisted for this profile (MetaState field).
   final int seenVersion;
 

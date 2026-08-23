@@ -18,13 +18,22 @@ class TourAnchors {
   /// The anchor's rect in the overlay's coordinate space, or null while the
   /// target hasn't laid out yet (the overlay just paints a plain scrim then).
   static Rect? rectOf(String beat, BuildContext overlayContext) {
-    final key = _keys[beat];
-    final target = key?.currentContext?.findRenderObject();
-    final host = overlayContext.findRenderObject();
-    if (target is! RenderBox || host is! RenderBox) return null;
-    if (!target.attached || !host.attached || !target.hasSize) return null;
-    final topLeft = target.localToGlobal(Offset.zero, ancestor: host);
-    return topLeft & target.size;
+    final ctx = _keys[beat]?.currentContext;
+    if (ctx == null) return null;
+    // Mid-transition (screen swaps, phase sweeps) the anchor's element can
+    // linger inactive; findRenderObject throws on it and `mounted` does not
+    // catch every lifecycle state — a missed frame just paints a plain
+    // scrim, so failing null here is strictly better than failing loud.
+    try {
+      final target = ctx.findRenderObject();
+      final host = overlayContext.findRenderObject();
+      if (target is! RenderBox || host is! RenderBox) return null;
+      if (!target.attached || !host.attached || !target.hasSize) return null;
+      final topLeft = target.localToGlobal(Offset.zero, ancestor: host);
+      return topLeft & target.size;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

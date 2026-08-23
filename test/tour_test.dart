@@ -3,10 +3,42 @@
 // Pure-logic contract for TourDirector (order, action gating, info taps,
 // skip, soft-lock immunity) plus MetaState.tourSeenVersion persistence and
 // cloud-merge max — the "everyone sees v2 once, including veterans" rule.
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
 import 'package:emberdelve/meta/meta.dart';
+import 'package:emberdelve/ui/screens.dart';
+import 'package:emberdelve/ui/theme.dart';
+
+Future<void> pumpFor(WidgetTester tester, int ms) async {
+  const step = 50;
+  for (var t = 0; t < ms; t += step) {
+    await tester.pump(Duration(milliseconds: step));
+  }
+}
+
+/// Walk a fresh run to its first fight (same walk as tips_test).
+Future<bool> walkToFight(WidgetTester tester, GameController c) async {
+  c.startRun(character: 'kindler', seed: 1);
+  await pumpFor(tester, 700);
+  final map = c.state!['map'] as Map;
+  final edges = (map['edges'] as Map).cast<String, List>();
+  var guard = 0;
+  while (c.phase == 'map' && guard++ < 10) {
+    final position = (c.state!['map'] as Map)['position'] as int;
+    final next = (edges['$position'] as List).cast<int>().first;
+    c.apply({'type': 'choose_node', 'node': next});
+    await pumpFor(tester, 700);
+    if (c.phase == 'reward') c.apply({'type': 'choose_reward', 'index': 0});
+    if (c.phase == 'rest') c.apply({'type': 'rest'});
+    if (c.phase == 'shop') c.apply({'type': 'leave_shop'});
+    if (c.phase == 'event') c.apply({'type': 'event_choose', 'option': 1});
+    await pumpFor(tester, 700);
+  }
+  return c.phase == 'player_turn';
+}
 
 void main() {
   group('TourDirector', () {
@@ -111,6 +143,60 @@ void main() {
       final b = MetaState();
       expect(mergeMetaStates(a, b).tourSeenVersion, tourVersion);
       expect(mergeMetaStates(b, a).tourSeenVersion, tourVersion);
+    });
+  });
+
+  group('tour in combat (widget)', () {
+    testWidgets('fresh profile: tour shows in first fight, tips stay quiet', (
+      tester,
+    ) async {
+      final c = GameController(); // tourSeenVersion 0 → tour must run
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      if (!await walkToFight(tester, c)) return; // no early fight; fine
+      await pumpFor(tester, 400);
+      expect(c.tour.running, isTrue);
+      expect(c.tour.active, TourBeats.roll);
+      // The overlay's beat card and SKIP are on screen; no context tip.
+      expect(find.text('YOUR DICE'), findsOneWidget);
+      expect(find.text('SKIP'), findsOneWidget);
+      expect(find.text('Roll, then spend'), findsNothing);
+      // The game is live under the scrim: tap ROLL — the beat advances.
+      await tester.tap(find.text('Roll'), warnIfMissed: false);
+      await pumpFor(tester, 700);
+      expect(c.tour.active, TourBeats.pick);
+      expect(find.text('PICK ONE UP'), findsOneWidget);
+    });
+
+    testWidgets('skip stamps the version and never re-runs', (tester) async {
+      final c = GameController();
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      if (!await walkToFight(tester, c)) return;
+      await pumpFor(tester, 400);
+      expect(c.tour.running, isTrue);
+      await tester.tap(find.text('SKIP'));
+      await pumpFor(tester, 300);
+      expect(c.tour.running, isFalse);
+      expect(c.meta.tourSeenVersion, tourVersion);
+      expect(find.text('SKIP'), findsNothing);
+    });
+
+    testWidgets('stamped profile: no tour, tips run as before', (
+      tester,
+    ) async {
+      final c = GameController();
+      c.meta.tourSeenVersion = tourVersion;
+      c.tour = TourDirector(seenVersion: tourVersion);
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      if (!await walkToFight(tester, c)) return;
+      await pumpFor(tester, 400);
+      expect(c.tour.running, isFalse);
+      expect(find.text('SKIP'), findsNothing);
     });
   });
 }
