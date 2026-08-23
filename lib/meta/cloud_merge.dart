@@ -122,6 +122,10 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     // OR: sticky flags.
     forgeUnlocked: local.forgeUnlocked || cloud.forgeUnlocked,
     tutorialSeen: local.tutorialSeen || cloud.tutorialSeen,
+    // Max: toured anywhere counts everywhere (v0.8.0 Guided Delve).
+    tourSeenVersion: local.tourSeenVersion > cloud.tourSeenVersion
+        ? local.tourSeenVersion
+        : cloud.tourSeenVersion,
     difficultyChosen: local.difficultyChosen || cloud.difficultyChosen,
     // Max VERSION (v0.15.0 Hearthside Post): the news is "seen" once seen
     // anywhere — a merge must never re-surface an already-dismissed post.
