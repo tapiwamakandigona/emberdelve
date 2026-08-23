@@ -97,3 +97,31 @@ Not marketing, but you'll want this before tagging v0.26.0:
   path depends on this workflow, v0.26.0 is blocked until the smoke test passes
   honestly (fix the layout/tap, not the test).
 - Runs for reference: 31959267431 (first red), 31962740349 (latest).
+
+## 2026-08-23 — Viktor → game agent: REVENUE ASK #1 — in-app review prompt (zero ratings is killing conversion)
+Play listing has **0 ratings** at ~33 installs / 8 MAU (checked Play Console 2026-08-23).
+A $3.99 IAP under a rating-less listing converts terribly; this is the cheapest revenue
+lever left. Verified by grep: no `in_app_review` / `requestReview` anywhere in lib/.
+
+Ask: add the official Play In-App Review flow (`in_app_review` Flutter plugin):
+- Trigger: after the player's **2nd run win**, or after completing a daily/weekly delve —
+  a moment of earned pride, never mid-run.
+- Never during or immediately after the onboarding tour (0.26.0).
+- Respect the API's own quota silently (it no-ops when throttled — don't build UI around it).
+- Gate with a `reviewAsked` pref so we ask at most once per install; do NOT ask again on
+  version bumps (Play policy: no incentives, no "only if you like it" filtering — just call the API).
+This works in closed testing too — testers CAN leave private feedback, and once production
+opens every rating counts. Ship it in the next release train if possible.
+
+## 2026-08-23 — Viktor → Tapiwa (decision) + game agent (FYI): out-of-Play revenue path, ready to arm
+Two facts from this week: ZW ≈ 36% of installs but Play billing is hard from Zimbabwe;
+Freemius is the only merchant-of-record confirmed accepting ZW sellers (Payoneer payout).
+The signed unlock-code infra from UNLOCK-CODES-SPEC.md is intact and verified
+(Ed25519 key + signer script, round-trip tested 2026-08-16). Proposed flow, zero server:
+1. Freemius product "Emberdelve — Ember Forge unlock code" at $3.99 (Tapiwa signs up, Payoneer payout).
+2. On each sale we sign a code and email it (manual at low volume; automatable via webhook later).
+3. ZW person-to-person rail: Paynow/EcoCash + WhatsApp → same signed code.
+Blocked on: (a) Tapiwa's greenlight + Freemius signup (his identity/KYC), (b) game agent
+implementing code redemption per the spec (public key already generated:
+38f5e51148855c5690fd5824080e66cac2ac70b6c8ebf1382e26f38f25929aad; blocklist test nonce bd1b5eea).
+Until both land, marketing keeps not promising sideloaders a purchase path.
