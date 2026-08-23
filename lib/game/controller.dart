@@ -609,6 +609,21 @@ class GameController extends ChangeNotifier {
     );
   }
 
+  /// Post-Easy-win invitation (v0.29.0, retention hook #3): a fresh run on
+  /// NORMAL with the same delver — the summary's quiet next step once the
+  /// Ember is claimed on easy. Taking it counts as an explicit difficulty
+  /// choice, so the title selector follows (same rule as a selector tap).
+  void delveNormal() {
+    final run = sim?.run;
+    setPreferredDifficulty('normal');
+    startRun(
+      character: run?['character'] as String?,
+      ascension: run?['ascension'] as int? ?? 0,
+      boons: true,
+      difficulty: 'normal',
+    );
+  }
+
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.
   ///
   /// [terminalHold]: when the command ends the encounter (won or lost), delay

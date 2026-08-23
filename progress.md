@@ -1666,3 +1666,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   pre-publish: dye described as hue-rotation matrix (not the superseded multiply tint).
 - v0.28.0 train: pubspec → 0.28.0+54; news entry "The Shifting Strata" + currentAppVersion
   '0.28.0'; ethics sweep clean; analyze clean; full suite running.
+
+## 2026-08-23 ~15:40Z — v0.28.0 CI building; v0.29.0 feature complete
+- v0.28.0 tagged (fa3d3be after rebase over marketing push); CI run 32647152743 building.
+- v0.29.0 "The Next Delve" CODE DONE (hook #3, answers reviewer who finished Easy):
+  GameController.delveNormal(); summary panel 'normal-nudge' + CTA 'delve-normal-cta',
+  won-on-easy only. PLATE CRITIQUE CATCH: trailing button starved copy to one word/line
+  on 360dp — rebuilt as Column (text row above, CTA below); plates clean at 360/412/800dp.
+  Fact-checked copy: easy banks 0.75x embers (run_layer.dart L768). test/normal_nudge_test.dart
+  3 tests (pinned seeds: 1 wins easy+normal, 13 loses easy). Full suite 490/490, analyze clean.
+  Version bump + news + tag deferred until v0.28.0 publishes (one release at a time).
