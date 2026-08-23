@@ -2,6 +2,7 @@
 // persisted via SettingsStore, applied live to the AudioService. Also the
 // route to Credits & Licenses.
 import 'package:flutter/material.dart';
+import '../game/tour.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../audio/settings.dart';
@@ -27,6 +28,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // Guided Delve replay: reflect the pending request in the button label.
+  bool _tourQueued = TourDirector.replayRequested;
   AudioSettings get _s => AudioService.instance?.settings ?? _fallback;
   static final AudioSettings _fallback = AudioSettings();
 
@@ -574,6 +577,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           key: const ValueKey('paste-save-code'),
                           dense: true,
                           onTap: _pasteSaveCode,
+                        ),
+                      ],
+                    ),
+                    const Divider(color: EmberColors.line, height: Space.xl),
+                    // v0.8.0 Guided Delve: replay the anchored tour anytime.
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.tour,
+                          color: EmberColors.textDim,
+                          size: 20,
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: Text(
+                            'Replay the guided tour in your next fight.',
+                            style: EmberText.body,
+                          ),
+                        ),
+                        EmberButton(
+                          _tourQueued ? 'Queued' : 'Replay',
+                          key: const ValueKey('replay-tour'),
+                          dense: true,
+                          onTap: _tourQueued
+                              ? null
+                              : () => setState(
+                                  () => _tourQueued =
+                                      TourDirector.replayRequested = true,
+                                ),
                         ),
                       ],
                     ),
