@@ -1652,3 +1652,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - LESSON (plate tools): first-mount sprites render BLANK in fake-async plates — image codec needs real async; warm with tester.binding.runAsync(delay) before shooting. This also explains the v0.26 title-plate 800x1280 missing-background artifact.
 - LESSON (widget tests): scrollUntilVisible only drags in its delta's sign — a card above the viewport needs a NEGATIVE delta, and a disposed lazy child needs scrollUntilVisible (not ensureVisible, which throws No element).
 - test/attire_test.dart 6 tests (catalog+identity+distinctness, ethics sweep, buy rules, json round-trip + byte-compat + stale-id fallback, cloud merge, rack buy+wear widget test). Version 0.27.0+53; news entry; docs/releases/v0.27.0.md drafted (checksums pending).
+
+## 2026-08-23 ~11:15 GMT — v0.28.0 "The Shifting Strata" built (backgrounds, review ask #2)
+- Depth-graded backdrops: Art.strataFilter(mapDepth) hue/sat/val matrix + Art.strataWash color breath, wired at the single ScreenBackground site in game_root. Depth 0 = true identity (null filter, zero-alpha wash) — title/pre-run byte-identical. Boss layer = full depth.
+- CRITIQUE CATCH #2 (same eye, new lesson): polite grade (hue -44, sat 0.82) was INVISIBLE on the near-black art — plates showed four identical bands. Rebuilt with a hard hue swing (0→-115) + saturation RISING to 1.45 + a translucent depth wash; plates now show warm→ash-blue→violet unmistakably. LESSON: grading near-black art needs saturation UP and a wash layer, not tasteful drains.
+- test/strata_test.dart 4 tests (identity/clamp/distinctness, ColorFiltered iff graded, controller wiring no-run + in-run). Strata+overflow 39/39. tool/strata_visual_test.dart plate tool kept.
+- v0.27.0 CI run 32634359742 in_progress at time of writing.
