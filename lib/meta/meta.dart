@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
 import '../game/tips.dart' show ContextTips;
 import '../data/codex.dart';
+import '../data/attire.dart';
 import '../data/skins.dart';
 import '../data/themes.dart';
 
@@ -58,6 +59,10 @@ class MetaState {
   // colors: pure cosmetics / lore, ember-priced, never a gameplay effect.
   Set<String> ownedDieSkins;
   String activeDieSkin;
+  // v0.27.0 The Delver's Wardrobe — delver dyes (first outside player ask).
+  // Same charter as themes/skins: pure cosmetic, ember-priced, no FOMO.
+  Set<String> ownedDyes;
+  String activeDye;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -134,6 +139,8 @@ class MetaState {
     this.activeTheme = defaultTheme,
     Set<String>? ownedDieSkins,
     this.activeDieSkin = defaultDieSkin,
+    Set<String>? ownedDyes,
+    this.activeDye = defaultDye,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -165,6 +172,7 @@ class MetaState {
        charWins = charWins ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
+       ownedDyes = ownedDyes ?? {defaultDye},
        ownedCodex = ownedCodex ?? {},
        tipsSeen = tipsSeen ?? {},
        enemyMet = enemyMet ?? {},
@@ -193,6 +201,9 @@ class MetaState {
     'activeTheme': activeTheme,
     'ownedDieSkins': ownedDieSkins.toList(),
     'activeDieSkin': activeDieSkin,
+    // Omitted at defaults so pre-wardrobe saves stay byte-identical.
+    if (ownedDyes.length > 1) 'ownedDyes': ownedDyes.toList(),
+    if (activeDye != defaultDye) 'activeDye': activeDye,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -276,6 +287,12 @@ class MetaState {
     activeDieSkin: dieSkins.containsKey(j['activeDieSkin'])
         ? j['activeDieSkin'] as String
         : defaultDieSkin,
+    ownedDyes:
+        ((j['ownedDyes'] as List?)?.cast<String>().toSet()?..add(defaultDye)) ??
+        {defaultDye},
+    activeDye: delverDyes.containsKey(j['activeDye'])
+        ? j['activeDye'] as String
+        : defaultDye,
     ownedCodex: ((j['ownedCodex'] as List?)?.cast<String>().toSet()) ?? {},
     lastDailyDate: j['lastDailyDate'] as String?,
     lastDailyWon: j['lastDailyWon'] as bool? ?? false,
@@ -349,6 +366,16 @@ class MetaState {
     if (embers < s.costEmbers) return false;
     embers -= s.costEmbers;
     ownedDieSkins.add(id);
+    return true;
+  }
+
+  /// Try to buy a delver dye with embers; returns true on success.
+  bool tryBuyDye(String id) {
+    final d = delverDyes[id];
+    if (d == null || ownedDyes.contains(id)) return false;
+    if (embers < d.costEmbers) return false;
+    embers -= d.costEmbers;
+    ownedDyes.add(id);
     return true;
   }
 

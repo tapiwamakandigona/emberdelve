@@ -36,6 +36,36 @@ class _CharacterScreenState extends State<CharacterScreen> {
               const SizedBox(height: Space.l),
               for (final id in charactersOrder) _charCard(context, id),
               const SizedBox(height: Space.l),
+              // v0.27.0 The Delver's Wardrobe — dyes, same tap contract as
+              // the Ledger's hearth colors / dice skins: tap owned to wear,
+              // tap locked to buy (price always visible).
+              Row(
+                children: [
+                  Expanded(child: Text('THE WARDROBE', style: EmberText.micro)),
+                  const Icon(
+                    Icons.local_fire_department,
+                    color: EmberColors.ember,
+                    size: 14,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${m.embers}',
+                    style: EmberText.label.copyWith(color: EmberColors.ember),
+                  ),
+                ],
+              ),
+              const SizedBox(height: Space.s),
+              for (final id in delverDyesOrder) ...[
+                _dyeCard(context, id),
+                const SizedBox(height: Space.m),
+              ],
+              const SizedBox(height: Space.s),
+              Text(
+                'Dyes recolor your delver everywhere they appear. '
+                'Pure cosmetics — the delve itself never changes.',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              ),
+              const SizedBox(height: Space.l),
               Text('ASCENSION', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Text(
@@ -135,6 +165,103 @@ class _CharacterScreenState extends State<CharacterScreen> {
     );
   }
 
+  /// Same contract as the Ledger's _skinCard: tap owned to wear, tap locked
+  /// to buy (price always visible). The swatch is the delver sprite wearing
+  /// the dye — what you see is exactly what every screen will paint.
+  Widget _dyeCard(BuildContext context, String id) {
+    final c = widget.c;
+    final d = delverDyes[id]!;
+    final m = c.meta;
+    final owned = m.ownedDyes.contains(id);
+    final active = m.activeDye == id;
+    final affordable = m.embers >= d.costEmbers;
+    return GestureDetector(
+      key: ValueKey('dye-$id'),
+      onTap: () {
+        if (active) return;
+        if (owned) {
+          AudioService.instance?.playSfx('ui_tap');
+          c.setActiveDye(id);
+        } else if (c.buyDye(id)) {
+          c.setActiveDye(id);
+        } else {
+          AudioService.instance?.playSfx('ui_back');
+        }
+        setState(() {});
+      },
+      child: Panel(
+        color: active ? EmberColors.raised : EmberColors.surface,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 34,
+              height: 42,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: SpriteView(
+                  defaultCharacter,
+                  height: 40,
+                  animate: false,
+                  dye: Art.dyeFilter(id),
+                ),
+              ),
+            ),
+            const SizedBox(width: Space.m),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(d.name, style: EmberText.body),
+                  const SizedBox(height: 2),
+                  Text(
+                    d.text,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: Space.s),
+            if (active)
+              Text(
+                'WORN',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.ember,
+                  fontWeight: FontWeight.w700,
+                ),
+              )
+            else if (owned)
+              Text(
+                'OWNED',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              )
+            else
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.local_fire_department,
+                    size: 14,
+                    color: affordable
+                        ? EmberColors.ember
+                        : EmberColors.textDisabled,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${d.costEmbers}',
+                    style: EmberText.label.copyWith(
+                      color: affordable
+                          ? EmberColors.ember
+                          : EmberColors.textDisabled,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _charCard(BuildContext context, String id) {
     final c = widget.c;
     final def = characters[id]!;
@@ -160,7 +287,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        SpriteView(id, height: 56, animate: false),
+                        SpriteView(
+                          id,
+                          height: 56,
+                          animate: false,
+                          dye: Art.dyeFilter(c.meta.activeDye),
+                        ),
                         Positioned(
                           right: 0,
                           bottom: -2,

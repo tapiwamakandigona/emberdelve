@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.26.0';
+const String currentAppVersion = '0.27.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.27.0',
+    title: 'The Delver\'s Wardrobe',
+    lines: [
+      'The first thing a player ever asked us for: make the delver yours. '
+          'The Wardrobe opens on the Choose-a-delver screen with eight '
+          'dyes - ember-warm, frost-pale, moss-green and more. Your dye '
+          'follows you everywhere: the title fire, the map, the fight.',
+      'Dyes are bought with embers you earn by delving, prices up front, '
+          'same as hearth colors and dice skins. Pure cosmetics - the '
+          'delve itself never changes.',
+      'Asked for by our very first outside reviewer. Keep telling us what '
+          'you want; it clearly works.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.26.0',
     title: 'The Guided Delve',

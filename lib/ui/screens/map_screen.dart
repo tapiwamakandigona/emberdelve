@@ -225,7 +225,12 @@ class _MapScreenState extends State<MapScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SpriteView(characterId, height: 30, animate: false),
+              SpriteView(
+                characterId,
+                height: 30,
+                animate: false,
+                dye: Art.dyeFilter(widget.c.meta.activeDye),
+              ),
               Container(
                 width: 14,
                 height: 4,
