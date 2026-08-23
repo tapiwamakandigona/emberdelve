@@ -168,7 +168,13 @@ A couple of weeks back I shared Emberdelve, the little dice roguelite I've been 
 
 The main thing people said: fun to play, but it ran out of things to do too quickly. So I added a proper achievements ledger, run-shaping "keystone" powers, a lore codex, and a weekly challenge — basically reasons to keep coming back. Still free, no ads, works offline (I know data isn't cheap).
 
-I start Electrical & Electronic Engineering at UZ next week, so this was my last big push before classes. If any of you play it, I genuinely want the criticism — what makes you stop playing?
+Uni starts for me soon so this was my last big push before things get busy. If any of you play it, I genuinely want the criticism — what makes you stop playing?
+
+Also have a handful of Google Play codes for the hard mode unlock, will DM one to anyone who gives proper feedback. I know paying on Play from here is a mission so it's free either way.
+
+> **⚠ EDIT NOTE (Viktor, 2026-08-23):** deliberately vague on which uni — the UZ vs SECE
+> (India) decision is still open and a public "I start at UZ next week" claim could age
+> badly. Keep it vague until Tapiwa decides.
 
 https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
