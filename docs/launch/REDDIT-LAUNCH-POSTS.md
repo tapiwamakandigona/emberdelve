@@ -120,23 +120,33 @@ Since you already posted the launch to r/roguelites (`1vkygos`) and r/Zimbabwe
 Update/dev-log posts are welcome in r/roguelites. Post from your phone; reply to every
 comment in the first 3 hours; reword before crossposting.
 
+> **⚠ LESSON FROM r/incremental_games BURIAL (2026-08-23, hard-won):** the Aug 22 post
+> with the sub-mandated AI-disclosure section died at score 0 / 24% ratio with an
+> "AI slop" top comment within hours. Two takeaways for every *player-facing* sub:
+> 1. **Never volunteer AI-tooling talk** where it isn't required by sub rules. Player
+>    subs read "AI" and stop listening (dev subs like r/SoloDevelopment are different —
+>    there it's craft talk and the honest version scores).
+> 2. **Kill the AI texture, not just the disclosure.** Perfectly parallel bullet lists,
+>    bolded feature names, em-dash-heavy sentences and a tidy closing question read as
+>    generated even without a disclosure. Post like a human typing on a phone: shorter,
+>    slightly uneven, one thing you're unsure about. The body below was rewritten to
+>    this standard — if you edit it, edit it *rougher*, not cleaner.
+> If someone asks about AI in the comments, answer honestly (the r/incremental_games
+> reply under u/Nyxot is the template: skepticism is fair, design is mine, no arguing).
+
 ### For r/roguelites
 
-**Title:** Two weeks after launching my fair dice roguelite, here's what your feedback made me build
+**Title:** Update on my dice roguelite — added run-shaping keystones, curious if I made runs better or just busier
 
 **Body:**
 
-A couple of weeks ago I shared Emberdelve here — a dice-builder roguelite with one rule: every death is fair (enemies telegraph, dice follow learnable rules, runs are seeded). The feedback was blunt and useful: the core turn was solid, but it got samey too fast and there was nothing to chase once you'd seen the enemies.
+Posted Emberdelve here a couple weeks back. Short version of the feedback: core combat fine, gets samey, nothing to chase after you've seen the enemies. Fair.
 
-So that's what I spent the last two weeks on. What's new since then:
-- **Keystones** — a run-shaping power you pick after your first win (reward early strikes, carry unused block, pay for die variety…), so every run has a plan instead of being a pile of dice.
-- **The Ledger** — a proper achievements screen tracking real feats (exact-kill streaks, boss clears, wins per delver), not busywork.
-- **A Codex** — lore for every enemy and relic, plus more hearth colours and dice skins to spend embers on, so the meta doesn't run dry at run 10.
-- A weekly seeded delve with one declared modifier, on top of the daily.
+So the last two weeks went into fixing that. Biggest change is keystones — after your first win you pick a power that bends the whole run (stuff like rewarding early strikes, or banking unused block). The idea is that a run has a plan now instead of just being a pile of dice. There's also a proper achievements screen, a lore codex, and a weekly seeded challenge with one declared modifier on top of the daily.
 
-Still free, still no ads, still fully offline. The one-time hard-mode/ascension unlock is the only paid thing.
+Still free, no ads, works offline. Only paid thing is the one-time hard mode unlock.
 
-What I'd love this crowd's read on: **does the keystone-on-first-win change actually give a run direction, or is it just more stuff?** That's the design bet I'm least sure about.
+The thing I'm genuinely not sure about: does picking a keystone actually give runs direction, or did I just add more stuff? If anyone here tries it I'd rather hear the harsh version.
 
 https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
