@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/delve_code.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/share_card.dart';
@@ -199,7 +200,14 @@ void main() {
     }
 
     expect(clipped, isNotNull, reason: 'fallback must copy the summary');
-    expect(clipped, contains('Seed 13'));
+    // v0.37.0: the fallback carries the full-challenge Delve Code instead
+    // of the bare seed — it must decode back to this exact run.
+    final codeMatch = RegExp(
+      r'DELVE-[0-9A-Z]{10}',
+    ).firstMatch(clipped!)!.group(0)!;
+    final challenge = decodeDelveCode(codeMatch)!;
+    expect(challenge.seed, 13);
+    expect(challenge.character, 'kindler');
     expect(clipped, contains('the dark claimed me'));
     expect(clipped, contains('tsorostudios.itch.io/emberdelve'));
     // Sweep the degraded artifact too.

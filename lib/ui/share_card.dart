@@ -22,6 +22,7 @@ import 'package:share_plus/share_plus.dart';
 import '../data/characters.dart';
 import '../data/epithets.dart';
 import '../game/controller.dart';
+import '../game/delve_code.dart';
 import '../game/run_trace.dart';
 import 'theme.dart';
 import 'widgets.dart';
@@ -40,6 +41,11 @@ class DelverCardFacts {
   final int embers;
   final int fightsWon;
   final int seed;
+
+  /// The full-challenge Delve Code ('' when unavailable) — v0.37.0. When
+  /// present it replaces the bare seed line: the code carries delver,
+  /// difficulty and ascension too, so a friend plays THIS run.
+  final String delveCode;
   const DelverCardFacts({
     required this.won,
     required this.delverName,
@@ -50,6 +56,7 @@ class DelverCardFacts {
     required this.embers,
     required this.fightsWon,
     required this.seed,
+    this.delveCode = '',
   });
 
   static DelverCardFacts fromController(GameController c) {
@@ -66,8 +73,21 @@ class DelverCardFacts {
       embers: (run['embers'] as num?)?.toInt() ?? 0,
       fightsWon: (run['fights_won'] as num?)?.toInt() ?? 0,
       seed: c.sim?.runSeed ?? 0,
+      delveCode:
+          encodeDelveCode(
+            seed: c.sim?.runSeed ?? 0,
+            character: charId,
+            difficulty: run['difficulty'] as String? ?? 'normal',
+            ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
+          ) ??
+          '',
     );
   }
+
+  /// 'DELVE-… — delve it yourself.' or the bare-seed line when no code.
+  String get challengeLine => delveCode.isEmpty
+      ? 'Seed $seed — delve it yourself.'
+      : '$delveCode — delve it yourself.';
 
   /// 'The Kindler' or 'The Kindler, the Unburnt' when an epithet is worn.
   String get nameLine =>
@@ -151,7 +171,7 @@ class DelverCard extends StatelessWidget {
             style: EmberText.micro.copyWith(color: EmberColors.textPrimary),
           ),
           Text(
-            'Seed ${facts.seed} — delve it yourself.',
+            facts.challengeLine,
             textAlign: TextAlign.center,
             style: EmberText.micro.copyWith(color: EmberColors.textDim),
           ),
@@ -266,6 +286,6 @@ String _fallbackText(DelverCardFacts facts) => [
   '${facts.nameLine} · ${facts.modeLine}',
   if (facts.traceGridText.isNotEmpty) facts.traceGridText,
   '${facts.embers} embers banked · ${facts.fightsWon} fights won',
-  'Seed ${facts.seed} — delve it yourself.',
+  facts.challengeLine,
   'tsorostudios.itch.io/emberdelve',
 ].join('\n');
