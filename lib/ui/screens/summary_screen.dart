@@ -392,6 +392,23 @@ class SummaryScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: Space.m),
+                          // v0.34.0 The Delver's Card: an IMAGE of this run,
+                          // previewed before it leaves the device (design doc
+                          // v0.34.0-delvers-card-design.md). Player-initiated,
+                          // never prompted, never rewarded (§Ethics); loss
+                          // cards are equally supported — honesty is the
+                          // brand.
+                          SizedBox(
+                            width: double.infinity,
+                            child: EmberButton(
+                              'Share this delve',
+                              key: const ValueKey('share-delve-card'),
+                              ghost: true,
+                              icon: Icons.ios_share,
+                              onTap: () => showDelverCardSheet(context, c),
+                            ),
+                          ),
+                          const SizedBox(height: Space.m),
                           // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
                           // Only offered when this run WAS the daily — normal runs stay quiet.
                           if (c.dailyResultShareText != null) ...[

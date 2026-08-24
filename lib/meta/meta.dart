@@ -127,6 +127,10 @@ class MetaState {
   // version bumps never reset it. Cloud merge: sticky OR, so a profile that
   // was already asked on one device is never asked again on another.
   bool reviewAsked;
+  // Offline unlock codes (lib/meta/unlock_codes.dart): nonces of codes this
+  // profile has redeemed. Re-entering a code is idempotent; cloud merge is
+  // a union so a redeem is never forgotten across devices.
+  Set<String> redeemedCodes;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -175,7 +179,9 @@ class MetaState {
     this.lastSeenNewsVersion = '',
     Set<String>? heardTracks,
     this.reviewAsked = false,
+    Set<String>? redeemedCodes,
   }) : runHistory = runHistory ?? [],
+       redeemedCodes = redeemedCodes ?? {},
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
        unlockedCharacters = unlocked ?? {defaultCharacter},
@@ -243,6 +249,8 @@ class MetaState {
       'lastSeenNewsVersion': lastSeenNewsVersion,
     if (heardTracks.isNotEmpty) 'heardTracks': (heardTracks.toList()..sort()),
     if (reviewAsked) 'reviewAsked': true,
+    if (redeemedCodes.isNotEmpty)
+      'redeemedCodes': (redeemedCodes.toList()..sort()),
   };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -345,6 +353,8 @@ class MetaState {
     lastSeenNewsVersion: j['lastSeenNewsVersion'] as String? ?? '',
     heardTracks: ((j['heardTracks'] as List?)?.cast<String>().toSet()) ?? {},
     reviewAsked: j['reviewAsked'] as bool? ?? false,
+    redeemedCodes:
+        ((j['redeemedCodes'] as List?)?.cast<String>().toSet()) ?? {},
   );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only

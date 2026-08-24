@@ -12,6 +12,7 @@ import '../meta/cloud_merge.dart';
 import '../meta/meta.dart';
 import '../meta/save_transfer.dart';
 import '../meta/store_service.dart';
+import '../meta/unlock_codes.dart';
 import '../meta/update_service.dart';
 import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
@@ -39,6 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// Neutral-fact status line for the Carried Ember panel (v0.24.0):
   /// states what just happened, nothing more.
   String? _transferLine;
+
+  /// Neutral-fact status line for the unlock-code row: what happened, only.
+  String? _redeemLine;
 
   /// Neutral-fact status line for the update panel (§Ethics: no pressure,
   /// no loss frame — a newer release is stated like a weather report).
@@ -609,6 +613,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ],
                     ),
+                    const Divider(color: EmberColors.line, height: Space.xl),
+                    // Offline unlock codes (UNLOCK-CODES-SPEC): a signed code
+                    // lights the Forge on builds without Play billing. Reads
+                    // the clipboard like the save-code row — one gesture, no
+                    // typing a 100-char code on a phone keyboard.
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.vpn_key,
+                          color: EmberColors.textDim,
+                          size: 20,
+                        ),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: Text(
+                            'Have an unlock code? Copy it, then redeem '
+                            'it here.',
+                            style: EmberText.body,
+                          ),
+                        ),
+                        EmberButton(
+                          'Redeem',
+                          key: const ValueKey('redeem-unlock-code'),
+                          dense: true,
+                          onTap: _redeemUnlockCode,
+                        ),
+                      ],
+                    ),
+                    if (_redeemLine != null) ...[
+                      const SizedBox(height: Space.m),
+                      Text(
+                        _redeemLine!,
+                        key: const ValueKey('redeem-line'),
+                        style: EmberText.micro.copyWith(
+                          color: EmberColors.textDim,
+                        ),
+                      ),
+                    ],
                     if (_transferLine != null) ...[
                       const SizedBox(height: Space.m),
                       Text(
@@ -780,6 +822,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (mounted) {
       setState(() => _transferLine = 'Ember carried — progress merged.');
     }
+  }
+
+  Future<void> _redeemUnlockCode() async {
+    AudioService.instance?.playSfx('ui_tap');
+    final redeem = UnlockRedeem.redeemHook;
+    if (redeem == null) return;
+    final clip = await Clipboard.getData('text/plain');
+    final result = await redeem(clip?.text ?? '');
+    if (!mounted) return;
+    setState(
+      () => _redeemLine = switch (result) {
+        // Neutral facts, no blame (§Ethics) — same voice as the save-code row.
+        UnlockRedeemResult.invalid =>
+          'The clipboard does not hold a valid unlock code.',
+        UnlockRedeemResult.blocked =>
+          'That code is the published example — it cannot unlock.',
+        UnlockRedeemResult.alreadyOwned =>
+          'The Ember Forge is already lit on this profile.',
+        UnlockRedeemResult.granted => 'The Ember Forge is lit. Enjoy.',
+      },
+    );
   }
 
   /// States what the code holds and what merging does, then asks. Facts

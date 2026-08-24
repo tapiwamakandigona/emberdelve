@@ -195,8 +195,8 @@ class ForgeSheet extends StatelessWidget {
             child: Text(
               state == ForgeStoreState.unknown
                   ? 'Reaching Google Play…'
-                  : 'Google Play isn\'t reachable right now. The Forge '
-                        'will be here when it is — nothing is lost.',
+                  : 'Google Play isn\'t reachable right now — nothing is '
+                        'lost. Have an unlock code? Redeem it in Settings.',
               style: EmberText.bodyDim,
               textAlign: TextAlign.center,
             ),

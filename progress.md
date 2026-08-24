@@ -1733,3 +1733,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 ## 2026-08-24 22:45 — v0.32.0 "The Open Rung" PUBLISHED
 - https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.32.0 — CI 32782975815, 4/4 APKs PIN-OK (codes 58/1058/2058/4058), AAB pin match, 5 assets, sha256+size table in notes.
 - Next: v0.33.0 Gramophone release train (bump 0.33.0+59, news, analyze, suite, tag, CI).
+
+## 2026-08-24 23:00 — v0.33.0 "The Gramophone" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.33.0 — CI 32784447131, 4/4 APKs PIN-OK (codes 59/1059/2059/4059), AAB pin match, 5 assets, checksums in notes.
+
+## 2026-08-24 23:00 — v0.34.0 "The Delver's Card" code complete
+- Shareable IMAGE run summary (acquisition hook; design doc docs/improvements/v0.34.0-delvers-card-design.md). New dep share_plus ^13.3.0 (first plugin-channel feature; headless/denied share degrades to clipboard copy of the same facts).
+- lib/ui/share_card.dart (DelverCardFacts + DelverCard + preview sheet), summary button 'Share this delve' on win AND loss. test/share_card_test.dart 6 pins. Full suite 512/512 green (/work/temp/v0340_full_test.log). Plates build/share_card_visual/ reviewed clean (trace NO-GLYPH boxes = test-env emoji-font artifact, renders on device).
