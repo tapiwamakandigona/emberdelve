@@ -14,6 +14,7 @@ import '../data/achievements.dart';
 import '../data/characters.dart';
 import '../data/codex.dart';
 import '../data/skins.dart';
+import '../data/tracks.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
 import '../meta/achievements.dart' as ach;
@@ -349,6 +350,24 @@ class LedgerScreen extends StatelessWidget {
                   Text(
                     'Enemy and relic lore, unsealed with embers. Flavor '
                     'only — every rule stays readable in play for free.',
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                  const SizedBox(height: Space.xl),
+                  // v0.33.0 The Gramophone: the soundtrack as a collection.
+                  // Tracks unlock by simply playing (each names how, plainly);
+                  // tap an unlocked track to hear it here. No purchase, no
+                  // timer — a record of what the delve has already sung.
+                  Text('THE GRAMOPHONE', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  _GramophoneSection(
+                    key: const ValueKey('gramophone-section'),
+                    heard: m.heardTracks,
+                  ),
+                  const SizedBox(height: Space.s),
+                  Text(
+                    'Every tune the delve has played for you, kept by the '
+                    'fire. The rest are earned by delving — each row says '
+                    'how.',
                     style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
                 ],
@@ -729,6 +748,107 @@ class LedgerScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// v0.33.0 The Gramophone — soundtrack rows inside the Ledger.
+///
+/// Stateful because playback preview is screen-local: tap an unlocked track
+/// to play it (looped), tap it again to stop; leaving the Ledger restores
+/// the hearth theme. The unlock record itself lives in MetaState.heardTracks
+/// (written by GameController, merged by union in the cloud) — this widget
+/// only reads it.
+class _GramophoneSection extends StatefulWidget {
+  final Set<String> heard;
+  const _GramophoneSection({super.key, required this.heard});
+
+  @override
+  State<_GramophoneSection> createState() => _GramophoneSectionState();
+}
+
+class _GramophoneSectionState extends State<_GramophoneSection> {
+  String? _playing;
+
+  @override
+  void dispose() {
+    // Hand the speakers back to the hearth. playMusic dedupes on key, so
+    // this is a no-op when nothing was previewed.
+    if (_playing != null) {
+      AudioService.instance?.playMusic('title_menu');
+    }
+    super.dispose();
+  }
+
+  void _toggle(String key) {
+    final audio = AudioService.instance;
+    setState(() {
+      if (_playing == key) {
+        _playing = null;
+        audio?.playMusic('title_menu');
+      } else {
+        _playing = key;
+        audio?.playSfx('ui_tap');
+        audio?.playMusic(key);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final t in gramophoneTracks) ...[
+          _trackRow(t),
+          const SizedBox(height: Space.m),
+        ],
+      ],
+    );
+  }
+
+  Widget _trackRow(TrackDef t) {
+    final heard = widget.heard.contains(t.key);
+    final playing = _playing == t.key;
+    return Panel(
+      child: InkWell(
+        onTap: heard ? () => _toggle(t.key) : null,
+        child: Row(
+          children: [
+            Icon(
+              heard
+                  ? (playing ? Icons.graphic_eq : Icons.music_note)
+                  : Icons.lock_outline,
+              color: heard ? EmberColors.gold : EmberColors.textDim,
+              size: 20,
+            ),
+            const SizedBox(width: Space.m),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    heard ? t.name : '— — —',
+                    style: EmberText.body.copyWith(
+                      color: heard ? EmberColors.textPrimary : EmberColors.textDim,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    heard ? (playing ? 'Playing — tap to stop' : 'Tap to play') : t.hint,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ],
+              ),
+            ),
+            if (heard)
+              Icon(
+                playing ? Icons.stop : Icons.play_arrow,
+                color: EmberColors.textDim,
+                size: 18,
               ),
           ],
         ),

@@ -118,6 +118,10 @@ class MetaState {
   // player has dismissed ('' = never). Cloud merge keeps the LARGER version
   // (compareVersions) so a merge can never re-show old news.
   String lastSeenNewsVersion;
+  // v0.33.0 Gramophone: music tracks heard in play (keys of
+  // AudioService.musicPaths). 'title_menu' is seeded on load — every profile
+  // has heard the hearth. Cloud merge: union, like every other collection.
+  Set<String> heardTracks;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -164,6 +168,7 @@ class MetaState {
     Map<String, int>? enemyFelled,
     Map<String, int>? enemyFellTo,
     this.lastSeenNewsVersion = '',
+    Set<String>? heardTracks,
   }) : runHistory = runHistory ?? [],
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
@@ -177,7 +182,8 @@ class MetaState {
        tipsSeen = tipsSeen ?? {},
        enemyMet = enemyMet ?? {},
        enemyFelled = enemyFelled ?? {},
-       enemyFellTo = enemyFellTo ?? {};
+       enemyFellTo = enemyFellTo ?? {},
+       heardTracks = heardTracks ?? {};
 
   Map<String, Object?> toJson() => {
     'schema': metaSchemaVersion,
@@ -229,6 +235,7 @@ class MetaState {
     if (enemyFellTo.isNotEmpty) 'enemyFellTo': enemyFellTo,
     if (lastSeenNewsVersion.isNotEmpty)
       'lastSeenNewsVersion': lastSeenNewsVersion,
+    if (heardTracks.isNotEmpty) 'heardTracks': (heardTracks.toList()..sort()),
   };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -329,6 +336,7 @@ class MetaState {
     enemyFelled: _intMap(j['enemyFelled']),
     enemyFellTo: _intMap(j['enemyFellTo']),
     lastSeenNewsVersion: j['lastSeenNewsVersion'] as String? ?? '',
+    heardTracks: ((j['heardTracks'] as List?)?.cast<String>().toSet()) ?? {},
   );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only

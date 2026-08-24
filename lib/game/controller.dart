@@ -245,6 +245,11 @@ class GameController extends ChangeNotifier {
       meta.lastSeenNewsVersion = currentAppVersion;
       MetaStore.save(meta);
     }
+    // v0.33.0 Gramophone: every profile that reaches the title screen has
+    // heard the hearth theme — seed it here so legacy saves need no
+    // migration. Saved lazily with whatever save happens next; seeding alone
+    // is not worth a disk write on every boot.
+    meta.heardTracks.add('title_menu');
     try {
       final f = await _runFile();
       if (await f.exists()) {
@@ -303,6 +308,18 @@ class GameController extends ChangeNotifier {
   void _syncAudio() {
     audio?.syncPhase(phase, bossFight: _bossFight, mapDepth: mapDepth);
     audio?.setDanger(_inDanger);
+    // v0.33.0 Gramophone: record which tracks this profile has heard. The
+    // key is computed from the SAME static rule the audio layer uses, so the
+    // record is gameplay-owned and testable with audio == null — the exact
+    // split _inDanger and mapDepth already follow. Only mid-run phases are
+    // recorded here ('title_menu' is seeded in boot); saves only when the
+    // set actually grows.
+    if (sim != null) {
+      final key = AudioService.musicKeyForPhase(phase, bossFight: _bossFight);
+      if (key != null && key != 'title_menu' && meta.heardTracks.add(key)) {
+        MetaStore.save(meta);
+      }
+    }
   }
 
   /// Descent depth for the Deep Hum ambience (v0.23.0): 0.0 on the first
