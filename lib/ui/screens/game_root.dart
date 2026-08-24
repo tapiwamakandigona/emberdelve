@@ -136,8 +136,10 @@ class _GameRootState extends State<GameRoot> {
               asset: Art.backgroundForPhase(phase, bossFight: bossFight),
               // v0.28.0 The Shifting Strata: the rock changes as you
               // descend (depth 0 = identity, so the title never grades).
-              grade: Art.strataFilter(c.mapDepth),
-              wash: Art.strataWash(c.mapDepth),
+              // v0.35.0 The Vistas: player-selected grade composed with
+              // the strata depth grade in a single matrix.
+              grade: Art.backgroundGrade(c.mapDepth, c.meta.selectedVista),
+              wash: Art.backgroundWash(c.mapDepth, c.meta.selectedVista),
               child: SafeArea(
                 child: KeyedSubtree(
                   key: ValueKey(phase ?? 'title'),

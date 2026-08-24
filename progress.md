@@ -1740,3 +1740,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 ## 2026-08-24 23:00 — v0.34.0 "The Delver's Card" code complete
 - Shareable IMAGE run summary (acquisition hook; design doc docs/improvements/v0.34.0-delvers-card-design.md). New dep share_plus ^13.3.0 (first plugin-channel feature; headless/denied share degrades to clipboard copy of the same facts).
 - lib/ui/share_card.dart (DelverCardFacts + DelverCard + preview sheet), summary button 'Share this delve' on win AND loss. test/share_card_test.dart 6 pins. Full suite 512/512 green (/work/temp/v0340_full_test.log). Plates build/share_card_visual/ reviewed clean (trace NO-GLYPH boxes = test-env emoji-font artifact, renders on device).
+
+## 2026-08-24 23:30 — v0.34.0 "The Delver's Card" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.34.0 — CI 32785868660, 4/4 APKs PIN-OK (codes 60/1060/2060/4060), AAB pin match, 5 assets, checksums in notes.
+- Notes also cover marketing agent's shipped features in this build: one-quiet-ask in-app review prompt (4cc1aa1) and offline signed unlock-code redemption (50266ba).
+
+## 2026-08-24 23:30 — v0.35.0 "The Vistas" code complete
+- Selectable background color-grades (answer to player review "change backgrounds in the update"). Milestone-unlocked, never sold; zero new PNGs (no APK growth); no sim change.
+- lib/data/vistas.dart (4 vistas: emberlight default, moonveil = win a delve, verdigris = fell 15 different foes, bloodstone = win on Hard; unlocks derived from meta stats, nothing persisted). meta.selectedVista + cloud merge. Art.backgroundGrade/backgroundWash compose vista+strata in one matrix. Picker in character screen THE VISTA section.
+- test/vistas_test.dart 12/12; full suite 545/545 (/work/temp/v0350_full_test.log). Plates build/vistas_visual/ reviewed clean after verdigris/bloodstone tuning. Next: v0.35.0 release train.

@@ -61,6 +61,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     activeTheme: fresh.activeTheme,
     activeDieSkin: fresh.activeDieSkin,
     activeDye: fresh.activeDye,
+    selectedVista: fresh.selectedVista,
     preferredDifficulty: fresh.preferredDifficulty,
     lastDailyDate: fresh.lastDailyDate,
     lastDailyWon: fresh.lastDailyWon,
