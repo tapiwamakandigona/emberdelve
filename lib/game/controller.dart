@@ -13,6 +13,7 @@ import '../data/characters.dart';
 import '../data/news.dart';
 import '../data/vistas.dart';
 import '../data/epithets.dart';
+import 'delve_code.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import 'tips.dart';
@@ -1257,6 +1258,14 @@ class GameController extends ChangeNotifier {
       floor: floorReached,
       floors: s.map?['layers'] as int? ?? 0,
       grid: traceGrid(runTrace),
+      code:
+          encodeDelveCode(
+            seed: s.runSeed,
+            character: run?['character'] as String? ?? defaultCharacter,
+            difficulty: run?['difficulty'] as String? ?? 'normal',
+            ascension: run?['ascension'] as int? ?? 0,
+          ) ??
+          '',
     );
   }
 

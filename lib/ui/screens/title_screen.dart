@@ -342,7 +342,7 @@ class TitleScreen extends StatelessWidget {
               controller: input,
               autofocus: true,
               style: EmberText.body,
-              decoration: const InputDecoration(hintText: 'seed or word'),
+              decoration: const InputDecoration(hintText: 'code, seed, or word'),
             ),
           ],
         ),
