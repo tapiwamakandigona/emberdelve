@@ -120,6 +120,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     ownedCodex: {...local.ownedCodex, ...cloud.ownedCodex},
     bossesBeaten: {...local.bossesBeaten, ...cloud.bossesBeaten},
     seenAchievements: {...local.seenAchievements, ...cloud.seenAchievements},
+    heardTracks: {...local.heardTracks, ...cloud.heardTracks},
     tipsSeen: {...local.tipsSeen, ...cloud.tipsSeen},
     // OR: sticky flags.
     forgeUnlocked: local.forgeUnlocked || cloud.forgeUnlocked,
