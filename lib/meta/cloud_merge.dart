@@ -125,6 +125,9 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     // OR: sticky flags.
     forgeUnlocked: local.forgeUnlocked || cloud.forgeUnlocked,
     tutorialSeen: local.tutorialSeen || cloud.tutorialSeen,
+    // Asked anywhere = asked everywhere: the one review ask must never be
+    // repeated on a second device after a cloud merge.
+    reviewAsked: local.reviewAsked || cloud.reviewAsked,
     // Max: toured anywhere counts everywhere (v0.8.0 Guided Delve).
     tourSeenVersion: local.tourSeenVersion > cloud.tourSeenVersion
         ? local.tourSeenVersion

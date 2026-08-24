@@ -122,6 +122,11 @@ class MetaState {
   // AudioService.musicPaths). 'title_menu' is seeded on load — every profile
   // has heard the hearth. Cloud merge: union, like every other collection.
   Set<String> heardTracks;
+  // In-app review prompt (see lib/meta/review_service.dart): true once the
+  // Play review flow has been REQUESTED on this profile. One ask, ever —
+  // version bumps never reset it. Cloud merge: sticky OR, so a profile that
+  // was already asked on one device is never asked again on another.
+  bool reviewAsked;
   MetaState({
     this.embers = 0,
     Set<String>? unlocked,
@@ -169,6 +174,7 @@ class MetaState {
     Map<String, int>? enemyFellTo,
     this.lastSeenNewsVersion = '',
     Set<String>? heardTracks,
+    this.reviewAsked = false,
   }) : runHistory = runHistory ?? [],
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
@@ -236,6 +242,7 @@ class MetaState {
     if (lastSeenNewsVersion.isNotEmpty)
       'lastSeenNewsVersion': lastSeenNewsVersion,
     if (heardTracks.isNotEmpty) 'heardTracks': (heardTracks.toList()..sort()),
+    if (reviewAsked) 'reviewAsked': true,
   };
 
   /// Prepend a run record and trim to [runHistoryCap] (newest first).
@@ -337,6 +344,7 @@ class MetaState {
     enemyFellTo: _intMap(j['enemyFellTo']),
     lastSeenNewsVersion: j['lastSeenNewsVersion'] as String? ?? '',
     heardTracks: ((j['heardTracks'] as List?)?.cast<String>().toSet()) ?? {},
+    reviewAsked: j['reviewAsked'] as bool? ?? false,
   );
 
   /// Deepest `floor` value in a raw runHistory list; 0 when unknown. Used only

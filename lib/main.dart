@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:games_services/games_services.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'audio/audio_service.dart';
@@ -16,6 +17,7 @@ import 'game/controller.dart';
 import 'meta/play_games_service.dart';
 import 'meta/save_transfer.dart';
 import 'meta/reminder_service.dart';
+import 'meta/review_service.dart';
 import 'meta/store_service.dart';
 import 'meta/update_service.dart';
 import 'telemetry/consent_dialog.dart';
@@ -77,6 +79,13 @@ Future<void> main() async {
   }
   pgs.loadLocalHook = () async => controller.meta;
   pgs.adoptMergedHook = controller.adoptMeta;
+  // In-app review (REVENUE ASK #1): backend wired on Android only; the
+  // service is a silent no-op everywhere else. One quiet ask per profile —
+  // see lib/meta/review_service.dart for the charter.
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    ReviewService.instance.backend = () =>
+        InAppReview.instance.requestReview();
+  }
   // The Carried Ember (v0.24.0): the Settings save-code panel reads and
   // adopts meta through the same two doors as the cloud path.
   SaveTransfer.loadLocalHook = () async => controller.meta;

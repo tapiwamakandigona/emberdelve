@@ -29,6 +29,10 @@ dependencies:
   # Play Games Services v2 (P4 cloud save + P5 leaderboards, v0.5.0).
   # Opt-in connect only — see lib/meta/play_games_service.dart header.
   games_services: ^5.3.0
+  # Official Play In-App Review flow (REVENUE ASK #1, MARKETING-SYNC
+  # 2026-08-23). One quiet ask per install at a moment of earned pride —
+  # see lib/meta/review_service.dart header for the exact charter.
+  in_app_review: ^2.0.9
   # Opt-in Daily Delve reminder (v0.6.0) — local notifications only, no
   # push infra, OFF by default. See lib/meta/reminder_service.dart header.
   flutter_local_notifications: ^22.3.0
