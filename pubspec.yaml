@@ -43,6 +43,7 @@ dependencies:
   # zonedSchedule needs a TZ database + the device's IANA zone name.
   timezone: ^0.11.1
   flutter_timezone: ^5.1.0
+  share_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:
