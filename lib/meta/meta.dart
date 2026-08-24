@@ -13,6 +13,7 @@ import '../data/characters.dart';
 import '../game/tips.dart' show ContextTips;
 import '../data/codex.dart';
 import '../data/attire.dart';
+import '../data/vistas.dart';
 import '../data/skins.dart';
 import '../data/themes.dart';
 
@@ -63,6 +64,9 @@ class MetaState {
   // Same charter as themes/skins: pure cosmetic, ember-priced, no FOMO.
   Set<String> ownedDyes;
   String activeDye;
+  // v0.35.0 The Vistas — selected background grade. Milestone-derived
+  // unlocks (data/vistas.dart), so only the SELECTION persists.
+  String selectedVista;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -154,6 +158,7 @@ class MetaState {
     this.activeDieSkin = defaultDieSkin,
     Set<String>? ownedDyes,
     this.activeDye = defaultDye,
+    this.selectedVista = defaultVista,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -222,6 +227,7 @@ class MetaState {
     // Omitted at defaults so pre-wardrobe saves stay byte-identical.
     if (ownedDyes.length > 1) 'ownedDyes': ownedDyes.toList(),
     if (activeDye != defaultDye) 'activeDye': activeDye,
+    if (selectedVista != defaultVista) 'selectedVista': selectedVista,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -312,6 +318,9 @@ class MetaState {
     ownedDyes:
         ((j['ownedDyes'] as List?)?.cast<String>().toSet()?..add(defaultDye)) ??
         {defaultDye},
+    selectedVista: vistas.containsKey(j['selectedVista'])
+        ? j['selectedVista'] as String
+        : defaultVista,
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

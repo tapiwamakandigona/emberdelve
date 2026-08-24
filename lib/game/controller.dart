@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../data/news.dart';
+import '../data/vistas.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import 'tips.dart';
@@ -591,6 +592,26 @@ class GameController extends ChangeNotifier {
   void setActiveDye(String id) {
     if (!meta.ownedDyes.contains(id) || meta.activeDye == id) return;
     meta.activeDye = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  // v0.35.0 The Vistas — selection persists; unlocks are derived, so the
+  // gate is re-checked here (a stale UI can never select a locked vista).
+  bool vistaUnlocked(String id) => vistaUnlockedFor(
+    id,
+    runsWon: meta.runsWon,
+    distinctFelled: meta.enemyFelled.length,
+    hardWins: meta.hardWins,
+  );
+
+  void selectVista(String id) {
+    if (!vistas.containsKey(id) ||
+        meta.selectedVista == id ||
+        !vistaUnlocked(id)) {
+      return;
+    }
+    meta.selectedVista = id;
     MetaStore.save(meta);
     notifyListeners();
   }

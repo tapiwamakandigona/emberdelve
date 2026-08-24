@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import '../data/attire.dart';
+import '../data/vistas.dart';
 import 'theme.dart';
 
 class Art {
@@ -83,6 +84,46 @@ class Art {
     final sat = _lerp(1.0, 1.45, t);
     final val = _lerp(1.0, 0.94, t);
     return ColorFilter.matrix(_dyeMatrix(hue, sat, val));
+  }
+
+  /// v0.35.0 The Vistas: combined vista + strata grade for the painted
+  /// backgrounds. Both grades live in the same hue/sat/val matrix family,
+  /// so they compose as one matrix (hues add, sat/val multiply) — the vista
+  /// costs ZERO extra render passes on top of what strata already pays.
+  /// Emberlight at depth 0 returns null: byte-identical to every build
+  /// since v0.28.0.
+  static ColorFilter? backgroundGrade(double depth, String vistaId) {
+    final v = vistas[vistaId];
+    final t = depth.clamp(0.0, 1.0);
+    final strataHue = t <= 0
+        ? 0.0
+        : (t < 0.5 ? _lerp(0, -60, t * 2) : _lerp(-60, -115, (t - 0.5) * 2));
+    final strataSat = t <= 0 ? 1.0 : _lerp(1.0, 1.45, t);
+    final strataVal = t <= 0 ? 1.0 : _lerp(1.0, 0.94, t);
+    final hue = (v?.hueDeg ?? 0) + strataHue;
+    final sat = (v?.satMul ?? 1) * strataSat;
+    final val = (v?.valMul ?? 1) * strataVal;
+    if (hue == 0 && sat == 1 && val == 1) return null;
+    return ColorFilter.matrix(_dyeMatrix(hue, sat, val));
+  }
+
+  /// v0.35.0: vista wash composed UNDER the strata wash (paint order: art,
+  /// vista breath, depth breath, scrim). Source-over math folded into one
+  /// color so ScreenBackground still paints a single wash Container.
+  static Color backgroundWash(double depth, String vistaId) {
+    final vista = vistas[vistaId]?.wash ?? const Color(0x00000000);
+    final strata = strataWash(depth);
+    if (strata.a <= 0) return vista;
+    if (vista.a <= 0) return strata;
+    final a = strata.a + vista.a * (1 - strata.a);
+    double ch(double top, double bot) =>
+        (top * strata.a + bot * vista.a * (1 - strata.a)) / a;
+    return Color.from(
+      alpha: a,
+      red: ch(strata.r, vista.r),
+      green: ch(strata.g, vista.g),
+      blue: ch(strata.b, vista.b),
+    );
   }
 
   /// Depth wash above the graded art but under the scrim: a colored breath

@@ -66,6 +66,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
+              // v0.35.0 The Vistas — background grades, milestone-unlocked
+              // (the other half of the wardrobe ask: 'change backgrounds').
+              Text('THE VISTA', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              for (final id in vistasOrder) ...[
+                _vistaCard(context, id),
+                const SizedBox(height: Space.m),
+              ],
+              const SizedBox(height: Space.s),
+              Text(
+                'Vistas repaint the delve itself — every layer, in the light '
+                'you choose. Earned by delving, never sold.',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              ),
+              const SizedBox(height: Space.l),
               Text('ASCENSION', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Text(
@@ -161,6 +176,92 @@ class _CharacterScreenState extends State<CharacterScreen> {
             style: EmberText.bodyDim,
           ),
         ],
+      ),
+    );
+  }
+
+  /// v0.35.0: tap unlocked to choose; a locked vista shows its real
+  /// milestone (never a price — vistas are earned, §Ethics). The swatch is
+  /// the map backdrop wearing the vista — exactly what the delve will paint.
+  Widget _vistaCard(BuildContext context, String id) {
+    final c = widget.c;
+    final v = vistas[id]!;
+    final unlocked = c.vistaUnlocked(id);
+    final chosen = c.meta.selectedVista == id;
+    final grade = Art.backgroundGrade(0, id);
+    Widget swatch = Image.asset(
+      'assets/images/backgrounds/bg_map.png',
+      width: 34,
+      height: 42,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+    );
+    if (grade != null) {
+      swatch = ColorFiltered(colorFilter: grade, child: swatch);
+    }
+    final wash = Art.backgroundWash(0, id);
+    return GestureDetector(
+      key: ValueKey('vista-$id'),
+      onTap: () {
+        if (chosen) return;
+        if (unlocked) {
+          AudioService.instance?.playSfx('ui_tap');
+          c.selectVista(id);
+        } else {
+          AudioService.instance?.playSfx('ui_back');
+        }
+        setState(() {});
+      },
+      child: Panel(
+        color: chosen ? EmberColors.raised : EmberColors.surface,
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: SizedBox(
+                width: 34,
+                height: 42,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    swatch,
+                    if (wash.a > 0) Container(color: wash),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: Space.m),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    v.name,
+                    style: unlocked
+                        ? EmberText.body
+                        : EmberText.body.copyWith(color: EmberColors.textDim),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    unlocked ? v.text : v.unlockLine,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: Space.s),
+            if (chosen)
+              Text(
+                'CHOSEN',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.ember,
+                  fontWeight: FontWeight.w700,
+                ),
+              )
+            else if (!unlocked)
+              const Icon(Icons.lock_outline, color: EmberColors.textDim, size: 16),
+          ],
+        ),
       ),
     );
   }

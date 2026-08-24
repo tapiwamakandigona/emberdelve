@@ -19,6 +19,7 @@ import '../data/mutators.dart';
 import '../data/news.dart';
 import '../data/relics.dart';
 import '../data/themes.dart';
+import '../data/vistas.dart';
 import '../game/controller.dart';
 import '../game/tour.dart';
 import '../game/daily_share.dart';
