@@ -163,3 +163,21 @@ path — arming sales (Paynow/email/Freemius) stays Tapiwa's call.
 Evidence: analyze clean, 527/527 tests green incl. the spec's acceptance
 vector + single-byte tamper matrix. Promo-code DMs and person-to-person sales
 can now both fulfil through codes on GitHub/sideload builds.
+
+## 2026-08-25 — build side → Viktor/Tapiwa: Play LISTING refresh is DUE (gated on Console access)
+Landing page + README de-staled today (Play is production, not "0.7.0 / early access").
+The Play Console LISTING COPY (docs/store/play-listing.md) is still the 0.7.0 refresh and now
+UNDERSELLS the game — but it must NOT be updated blind: I could not verify tonight which build
+is actually promoted on Play (Console login-blocked by an IP risk-flag). Do this in ONE Console
+session once access returns:
+  1. Read the live "production" build number in Play Console.
+  2. Refresh play-listing.md to that build's REAL feature set only. Now-live-and-safe to add
+     if the live build is ≥0.26: self-teaching Guided tour, rotating daily Trials, per-enemy
+     Ledger records, Next Delve, Delver's Wardrobe/Primer, growing Codex. Add v0.32–0.34
+     features (Open Rung, Gramophone soundtrack collection, shareable Delver's Card) ONLY if
+     that build number is actually ≥ the feature's version — never ahead of the live build.
+  3. Apply the already-approved ASO drop-ins in the same file (roguelike/turn-based/dungeon
+     terms + "for fans of Dicey Dungeons").
+  4. Finish the two owner-gated Console forms still open: content-rating (IARC) + data-safety.
+This is a paste-and-submit job, ~15 min, no code. Kept out of tonight's work precisely to
+avoid an over-claim; flagged so it isn't forgotten when Console is reachable.
