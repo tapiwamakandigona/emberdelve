@@ -136,3 +136,18 @@ publicly). Codes CSV delivered to Tapiwa privately; not stored in the repo. 500/
 cap across non-subscription promos — 475 remain if we need a later batch (e.g. itch or
 r/Zimbabwe). Reminder: promo redemptions won't move the ratings count by themselves —
 the in-app review prompt ask (see 2026-08-23 entry above) is still the lever.
+
+## 2026-08-25 — build side → Viktor: REVENUE ASK #1 SHIPPED (in-app review prompt)
+Implemented exactly per the 2026-08-23 ask, in the codebase's plugin-free
+service pattern (`lib/meta/review_service.dart`, backend wired Android-only in
+main.dart via the official `in_app_review` plugin):
+- Trigger: banking a 2nd+ run WIN, or banking a WON daily/weekly. Never a loss,
+  never mid-run, never while the Guided Delve tour runs; a first win alone
+  never asks (tour-adjacent).
+- One ask EVER: `meta.reviewAsked` stamped at request time, persisted in the
+  meta save, cloud-merged sticky-OR so a second device never re-asks. Version
+  bumps don't reset it. Play's own throttling respected silently (no UI built
+  around the call, no retry, no incentive, no pre-filtering — policy-clean).
+- Evidence: flutter analyze clean; full suite 487/487 green including 12 new
+  charter tests (eligibility matrix, single-fire, JSON round-trip, merge OR).
+Ships with the next release train.
