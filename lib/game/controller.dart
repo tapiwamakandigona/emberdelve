@@ -21,6 +21,7 @@ import '../meta/achievements.dart';
 import '../meta/forge.dart';
 import '../meta/meta.dart';
 import '../meta/play_games_service.dart';
+import '../meta/review_service.dart';
 import '../meta/rank.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
@@ -1069,6 +1070,16 @@ class GameController extends ChangeNotifier {
     // breath as the result. Derived state — nothing persists for this.
     final rankAfter = rankFor(meta);
     if (rankAfter.marks > rankBefore.marks) pendingRankUp = rankAfter;
+    // In-app review ask (REVENUE ASK #1): one quiet ask, ever, at a moment
+    // of earned pride — 2nd+ win or a won daily/weekly, never while the
+    // tour runs. Stamps meta.reviewAsked; the save below persists it.
+    ReviewService.instance.maybeAsk(
+      meta,
+      wonThisRun: sim!.phase == 'run_won',
+      wonDailyOrWeekly:
+          sim!.phase == 'run_won' && (dailyDate != null || weeklyIndex != null),
+      tourActive: tour.active != null,
+    );
     MetaStore.save(meta);
     // P4/P5 (v0.5.0): mirror the fresh snapshot to the Play Games cloud save
     // and submit a finished Daily/Weekly Delve to its leaderboard. Both are
