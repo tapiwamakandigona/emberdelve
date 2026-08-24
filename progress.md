@@ -1700,3 +1700,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI run 32778346012 green; 4/4 APKs PIN-OK (0.29.0, codes 55/1055/2055/4055), AAB pin match.
 - Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.29.0 with 5 standard assets; sha256+size table in docs/releases/v0.29.0.md and release body.
 - Next: v0.30.0 "The Delver's Primer" release train (code already committed).
+
+## 2026-08-24 — v0.31.0 "The Growing Codex" code complete (hook #6)
+- Summary codex pull line (`codex-pull-line`) under the firsts line: "Their tales wait in the Codex — N of 71 unsealed", gated on run firsts, win or loss.
+- screens.dart imports data/codex.dart; counts live from meta.ownedCodex + codexEntries.
+- Tests: enemy_record_test extended (exact text on fresh profile; absent on all-met veteran profile). Plates via tool/codex_pull_visual_test.dart reviewed clean at 360/412/800dp.
+- Version bump/news/tag deferred until v0.30.0 publishes (one release at a time).

@@ -7,6 +7,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/data/codex.dart';
 import 'package:emberdelve/data/enemies.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
@@ -215,6 +216,43 @@ void main() {
     expect(line, findsOneWidget);
     final text = tester.widget<Text>(line).data!;
     expect(text, contains('First sighting: '));
+    // v0.31.0 codex pull: a run that produced firsts also names the
+    // collection — factual count, matching the live meta.
+    final pull = find.byKey(const ValueKey('codex-pull-line'));
+    await tester.ensureVisible(pull);
+    expect(pull, findsOneWidget);
+    expect(
+      tester.widget<Text>(pull).data,
+      'Their tales wait in the Codex — '
+      '${c.meta.ownedCodex.length} of ${codexEntries.length} unsealed.',
+    );
+    await pumpFor(tester, 800);
+  });
+
+  testWidgets('summary hides firsts and codex pull when nothing was new', (
+    tester,
+  ) async {
+    final c = GameController(saveDirOverride: dir.path);
+    // Veteran record: every enemy already met AND felled, so no run can
+    // produce a first of either kind — both lines must stay absent.
+    for (final id in enemies.keys) {
+      c.meta.enemyMet[id] = 5;
+      c.meta.enemyFelled[id] = 3;
+    }
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
+    await tester.runAsync(() async {
+      c.startRun(character: 'kindler', seed: 503, boons: true);
+      driveToTerminal(c);
+      await c.flushSaves();
+    });
+    expect({'run_won', 'run_lost'}.contains(c.phase), isTrue);
+    expect(c.runFirstMet, isEmpty);
+    expect(c.runFirstFelled, isEmpty);
+    await pumpFor(tester, 2500);
+    expect(find.byKey(const ValueKey('firsts-line')), findsNothing);
+    expect(find.byKey(const ValueKey('codex-pull-line')), findsNothing);
     await pumpFor(tester, 800);
   });
 
