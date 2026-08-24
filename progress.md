@@ -1724,3 +1724,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 5 assets on https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.31.0 with sha256+size table in notes + body.
 - v0.32.0 full suite green (499/499, /work/temp/v0320_full_test.log) — release train next.
 - v0.33.0 scoped: "The Gramophone" (docs/improvements/v0.33.0-gramophone-design.md) — soundtrack collection in the Ledger, grounded in review's "music 9/10". No sim change.
+
+## 2026-08-24 22:35 — v0.33.0 "The Gramophone" code complete
+- New Ledger section: 6-track soundtrack collection (review's "music 9/10" celebrated). meta.heardTracks (union cloud merge), gameplay-owned detection in _syncAudio via static musicKeyForPhase, boot seeds title_menu.
+- test/gramophone_test.dart 7 pins; tool/gramophone_visual_test.dart 4 plates reviewed clean (360/412/800 + playing state).
+- Full suite 506/506 green (/work/temp/v0330_full_test.log). docs/releases/v0.33.0.md written (versionCode 59). Release train queues behind v0.32.0 publish.
