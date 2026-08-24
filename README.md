@@ -28,7 +28,7 @@ permanent Tsoro Studios key; notes explain exactly what changed and why.
 | Emulators / Chromebooks | `...-x86_64.apk` |
 | Not sure | `...-universal.apk` (bigger, works everywhere) |
 
-Also on [Google Play (public early access)](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve) ·
+Also on [Google Play](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve) (out now, 177 countries) ·
 [download page](https://tapiwa.me/emberdelve/)
 
 ## The game

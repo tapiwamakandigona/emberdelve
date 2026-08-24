@@ -3,7 +3,7 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.33.0+59
+version: 0.34.0+60
 
 environment:
   sdk: ^3.12.0
@@ -33,12 +33,17 @@ dependencies:
   # 2026-08-23). One quiet ask per install at a moment of earned pride —
   # see lib/meta/review_service.dart header for the exact charter.
   in_app_review: ^2.0.9
+  # Ed25519 verification for offline signed unlock codes (UNLOCK-CODES-SPEC,
+  # the out-of-Play purchase path for sideload/ZW players). Pure Dart — the
+  # verifier stays headless-testable. Public key only; signing never ships.
+  cryptography: ^2.7.0
   # Opt-in Daily Delve reminder (v0.6.0) — local notifications only, no
   # push infra, OFF by default. See lib/meta/reminder_service.dart header.
   flutter_local_notifications: ^22.3.0
   # zonedSchedule needs a TZ database + the device's IANA zone name.
   timezone: ^0.11.1
   flutter_timezone: ^5.1.0
+  share_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:
