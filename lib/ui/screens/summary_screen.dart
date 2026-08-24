@@ -244,6 +244,26 @@ class SummaryScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Space.s),
                           ],
+                          // v0.32.0 (retention hook #7): an earned rung.
+                          // Shown only when THIS win raised bestAscension
+                          // AND the profile owns the Forge — a free
+                          // profile's first win moves the ledger number but
+                          // cannot climb, and saying so would be a soft
+                          // upsell (§Ethics, v0.32.0 design doc). Pure
+                          // fact, no button, no price talk.
+                          if (c.pendingRungOpened != null &&
+                              c.meta.forgeUnlocked) ...[
+                            Text(
+                              'Rung ${c.pendingRungOpened} of the '
+                              'Ascension now stands open.',
+                              key: const ValueKey('rung-open-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
                           // Today's Trial chip (v0.9.0): shown ONLY when a
                           // goal-day daily met its objective — the bonus is a
                           // banked fact by the time this screen exists. A
