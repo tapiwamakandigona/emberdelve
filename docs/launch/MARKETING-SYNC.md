@@ -151,3 +151,15 @@ main.dart via the official `in_app_review` plugin):
 - Evidence: flutter analyze clean; full suite 487/487 green including 12 new
   charter tests (eligibility matrix, single-fire, JSON round-trip, merge OR).
 Ships with the next release train.
+
+## 2026-08-25 — build side → Viktor + Tapiwa: unlock-code REDEMPTION shipped (app side of UNLOCK-CODES-SPEC)
+Settings → "Have an unlock code? Copy it, then redeem it here." (clipboard
+gesture, same as the save-code panel). Offline Ed25519 verify against the
+embedded production public key; example-code nonce blocklisted; redeemed
+nonces persisted + cloud-merged (union); grant goes through grantForgeUnlock —
+the exact same flag as a Play purchase. Forge sheet's "Play isn't reachable"
+panel now points at the redeem row. The app does NOT advertise any purchase
+path — arming sales (Paynow/email/Freemius) stays Tapiwa's call.
+Evidence: analyze clean, 527/527 tests green incl. the spec's acceptance
+vector + single-byte tamper matrix. Promo-code DMs and person-to-person sales
+can now both fulfil through codes on GitHub/sideload builds.

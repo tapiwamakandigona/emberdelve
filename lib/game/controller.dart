@@ -22,6 +22,7 @@ import '../meta/forge.dart';
 import '../meta/meta.dart';
 import '../meta/play_games_service.dart';
 import '../meta/review_service.dart';
+import '../meta/unlock_codes.dart';
 import '../meta/rank.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
@@ -503,6 +504,27 @@ class GameController extends ChangeNotifier {
     audio?.playSfx('unlock');
     notifyListeners();
     await MetaStore.save(meta);
+  }
+
+  /// Offline unlock code redeem (UNLOCK-CODES-SPEC): verify against the
+  /// embedded public key, refuse blocklisted nonces, grant through the SAME
+  /// door as a Play purchase (grantForgeUnlock), and persist the nonce so
+  /// re-entry is idempotent. [publicKeyHex] is a test seam only.
+  Future<UnlockRedeemResult> redeemUnlockCode(
+    String raw, {
+    String publicKeyHex = unlockPublicKeyHex,
+  }) async {
+    final code = await verifyUnlockCode(raw, publicKeyHex: publicKeyHex);
+    if (code == null || code.product != unlockProductForge) {
+      return UnlockRedeemResult.invalid;
+    }
+    if (blockedUnlockNonces.contains(code.nonce)) {
+      return UnlockRedeemResult.blocked;
+    }
+    if (meta.forgeUnlocked) return UnlockRedeemResult.alreadyOwned;
+    meta.redeemedCodes.add(code.nonce);
+    await grantForgeUnlock();
+    return UnlockRedeemResult.granted;
   }
 
   /// v0.15.0 Hearthside Post: the player tapped "Noted" on the title-screen
