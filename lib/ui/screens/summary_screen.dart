@@ -279,23 +279,52 @@ class SummaryScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Space.s),
                           ],
-                          // Run seed (v0.3.4): shown on every summary, tap to copy. Paste it
-                          // into 'Delve a seed' on the title to replay this exact delve.
-                          GestureDetector(
-                            key: const ValueKey('run-seed'),
-                            onTap: () async {
-                              await Clipboard.setData(
-                                ClipboardData(text: '${c.sim?.runSeed ?? ''}'),
+                          // Run seed (v0.3.4) upgraded to a Delve Code
+                          // (v0.37.0): the code packs seed + delver +
+                          // difficulty + ascension, so a friend plays THIS
+                          // run. Tap to copy; falls back to the bare seed
+                          // when the run can't be encoded.
+                          Builder(
+                            builder: (context) {
+                              final run = c.state!['run'] as Map;
+                              final code = encodeDelveCode(
+                                seed: c.sim?.runSeed ?? 0,
+                                character:
+                                    run['character'] as String? ??
+                                    defaultCharacter,
+                                difficulty:
+                                    run['difficulty'] as String? ?? 'normal',
+                                ascension:
+                                    int.tryParse(
+                                      '${run['ascension'] ?? 0}',
+                                    ) ??
+                                    0,
                               );
-                              c.announce('Seed copied');
+                              final label = code ?? 'Seed ${c.sim?.runSeed}';
+                              return GestureDetector(
+                                key: const ValueKey('run-seed'),
+                                onTap: () async {
+                                  await Clipboard.setData(
+                                    ClipboardData(
+                                      text:
+                                          code ?? '${c.sim?.runSeed ?? ''}',
+                                    ),
+                                  );
+                                  c.announce(
+                                    code == null
+                                        ? 'Seed copied'
+                                        : 'Delve Code copied',
+                                  );
+                                },
+                                child: Text(
+                                  '$label — tap to copy',
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                ),
+                              );
                             },
-                            child: Text(
-                              'Seed ${c.sim?.runSeed} — tap to copy',
-                              textAlign: TextAlign.center,
-                              style: EmberText.micro.copyWith(
-                                color: EmberColors.textDim,
-                              ),
-                            ),
                           ),
                           // Ember Forge (v0.4.0): ONE quiet panel, only on a WON run, only
                           // while locked — the peak-joy moment is the only honest time to ask.

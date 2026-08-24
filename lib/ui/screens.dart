@@ -25,6 +25,7 @@ import '../game/controller.dart';
 import '../game/tour.dart';
 import '../game/daily_share.dart';
 import '../game/run_trace.dart';
+import '../game/delve_code.dart';
 import '../game/seed_input.dart';
 import '../game/tips.dart';
 import '../game/trials.dart';

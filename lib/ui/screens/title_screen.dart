@@ -332,7 +332,8 @@ class TitleScreen extends StatelessWidget {
           children: [
             Text(
               'A seed decides the whole delve — map, offers, rolls. '
-              'Paste a number from a run summary, or type any word.',
+              'Paste a Delve Code or a number from a run summary, or '
+              'type any word.',
               style: EmberText.bodyDim,
             ),
             const SizedBox(height: Space.m),
@@ -353,6 +354,21 @@ class TitleScreen extends StatelessWidget {
           TextButton(
             key: const ValueKey('seed-start'),
             onPressed: () {
+              // v0.37.0: a Delve Code carries the WHOLE challenge — seed,
+              // delver, difficulty, ascension. Locked tiers still clamp
+              // down via startRun's clampRunParams guarantee.
+              final code = decodeDelveCode(input.text);
+              if (code != null) {
+                Navigator.of(dialogCtx).pop();
+                c.startRun(
+                  character: code.character,
+                  boons: true,
+                  seed: code.seed,
+                  difficulty: code.difficulty,
+                  ascension: code.ascension,
+                );
+                return;
+              }
               final seed = parseSeedInput(input.text);
               if (seed == null) return; // blank: nothing to delve
               Navigator.of(dialogCtx).pop();
