@@ -185,6 +185,16 @@ class GameController extends ChangeNotifier {
   /// quiet line and [startRun] clears it. Nothing else may write it.
   RankTier? pendingRankUp;
 
+  /// The Ascension rung this run's win just opened, if any (v0.32.0, hook
+  /// #7). Set inside [_bankRun] only when the win actually raised
+  /// [MetaState.bestAscension] (a frontier win below the rung-20 cap);
+  /// cleared by [startRun]. Derived announcement state — never persisted,
+  /// same contract as [pendingRankUp]. The summary additionally gates the
+  /// line on forgeUnlocked: a free profile's first win moves bestAscension
+  /// 0→1 but cannot use rung 1, and announcing it would be a soft upsell
+  /// (§Ethics — see docs/improvements/v0.32.0-open-rung-design.md).
+  int? pendingRungOpened;
+
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
   /// [boot], because [_bankRun] gates the daily record on it — a resumed
@@ -416,6 +426,7 @@ class GameController extends ChangeNotifier {
     // resurface on the next summary.
     pendingAchievements = const [];
     pendingRankUp = null;
+    pendingRungOpened = null;
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -961,7 +972,11 @@ class GameController extends ChangeNotifier {
       // The ladder tops out at rung 20 (forge.dart clamps the same), so a
       // win at 20 must not mint a rung 21 in the ledger.
       if (asc >= meta.bestAscension) {
-        meta.bestAscension = (asc + 1).clamp(0, 20);
+        final opened = (asc + 1).clamp(0, 20);
+        // v0.32.0 (hook #7): announce the rung only when it actually moved —
+        // a win at the rung-20 cap re-clamps to 20 and says nothing.
+        if (opened > meta.bestAscension) pendingRungOpened = opened;
+        meta.bestAscension = opened;
       }
     }
     // Daily Delve record (v0.3.4): only a FINISHED daily counts as played —

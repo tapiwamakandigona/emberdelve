@@ -1711,3 +1711,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI run 32779841615 success; 4/4 APKs PIN-OK (0.30.0, codes 56/1056/2056/4056); AAB EMBERDEL.RSA pin match.
 - Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.30.0 — 5 standard assets; sha256+size table in docs/releases/v0.30.0.md and release body.
 - Next: v0.31.0 "The Growing Codex" release train (code committed 66e7dd0; full suite 493/493 green in /work/temp/v0310_full_test.log). v0.32.0 "The Open Rung" design committed (docs/improvements/v0.32.0-open-rung-design.md).
+
+## 2026-08-24 — v0.32.0 "The Open Rung" code complete (hook #7)
+- controller: pendingRungOpened (pendingRankUp lifecycle — cleared in startRun, set in _bankRun only when bestAscension actually moved; rung-20 cap announces nothing).
+- summary: rung-open-line after codex-pull block, gated pendingRungOpened != null && forgeUnlocked (free profiles: ledger moves, summary silent — §Ethics).
+- tests: test/rung_open_test.dart 6 pins incl. A20 cap via pinned kindler seed 39 hard win; targeted 19/19 green; analyze clean.
+- plates: tool/rung_open_visual_test.dart → build/rung_open_visual {small/phone/tablet} reviewed clean.
+- release train pending: after v0.31.0 publishes (CI 32781387234) → bump 0.32.0+58 + news + full suite + tag.
