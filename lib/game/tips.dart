@@ -3,6 +3,8 @@
 // Replaces the up-front 4-card tutorial wall. Each tip fires at the moment
 // of first contact with its concept, shows one card, once ever:
 //
+//   whats_a_delve — the run map (the delve itself) first comes on screen
+//                 (v0.30.0: review said the word was never explained)
 //   roll_spend  — first-ever fight starts (the only up-front card)
 //   intent_fair — the enemy's first action resolves (the receipt moment:
 //                 what just happened is exactly what the badge announced)
@@ -21,11 +23,21 @@
 
 /// Stable tip ids — persisted in MetaState.tipsSeen, never renamed.
 class ContextTips {
+  /// v0.30.0: our first outside review said "I still don't understand
+  /// what's a delve". First contact with the delve is the run map itself,
+  /// so the word is defined there, once, in one card.
+  static const whatsADelve = 'whats_a_delve';
   static const rollSpend = 'roll_spend';
   static const intentFair = 'intent_fair';
   static const combosPay = 'combos_pay';
   static const blockFades = 'block_fades';
-  static const List<String> all = [rollSpend, intentFair, combosPay, blockFades];
+  static const List<String> all = [
+    whatsADelve,
+    rollSpend,
+    intentFair,
+    combosPay,
+    blockFades,
+  ];
 }
 
 /// An incoming telegraphed attack at or above this is a "big hit" — the
@@ -43,6 +55,11 @@ class TipDirector {
   TipDirector(this.seen);
 
   bool get allSeen => ContextTips.all.every(seen.contains);
+
+  /// The run map — the delve itself — comes on screen. Returns the tip to
+  /// show, or null. Fires once ever (v0.30.0: defines the word "delve" at
+  /// the moment the player first stands inside one).
+  String? onMapArrival() => _fire(ContextTips.whatsADelve);
 
   /// First-ever fight begins. Returns the tip to show, or null.
   String? onFightStart() => _fire(ContextTips.rollSpend);

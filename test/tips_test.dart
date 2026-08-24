@@ -23,6 +23,27 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 
 void main() {
   group('TipDirector', () {
+    test('map arrival fires whats_a_delve once ever', () {
+      final d = TipDirector(<String>{});
+      expect(d.onMapArrival(), ContextTips.whatsADelve);
+      expect(d.active, ContextTips.whatsADelve);
+      d.dismiss();
+      expect(d.seen, contains(ContextTips.whatsADelve));
+      // Every later map visit is a no-op.
+      expect(d.onMapArrival(), isNull);
+      expect(d.active, isNull);
+    });
+
+    test('map arrival while another tip is up is suppressed, not consumed', () {
+      final d = TipDirector(<String>{});
+      d.onFightStart(); // roll_spend active
+      expect(d.onMapArrival(), isNull);
+      expect(d.seen, isNot(contains(ContextTips.whatsADelve)));
+      d.dismiss();
+      // Recurs at the next map arrival.
+      expect(d.onMapArrival(), ContextTips.whatsADelve);
+    });
+
     test('fight start fires roll_spend once ever', () {
       final d = TipDirector(<String>{});
       expect(d.onFightStart(), ContextTips.rollSpend);
@@ -101,6 +122,7 @@ void main() {
 
     test('dismissing the last unseen tip reports allSeen', () {
       final d = TipDirector({
+        ContextTips.whatsADelve,
         ContextTips.rollSpend,
         ContextTips.intentFair,
         ContextTips.combosPay,
@@ -249,6 +271,15 @@ void main() {
     c.startRun(character: 'kindler', seed: 1);
     await pumpFor(tester, 700);
 
+    // v0.30.0: first contact with the map fires whats_a_delve — dismiss it
+    // the way a player would (tap anywhere) before walking to the fight.
+    expect(find.byKey(const Key('tip-whats_a_delve')), findsOneWidget);
+    expect(find.text('THIS IS A DELVE'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('tip-card')));
+    await pumpFor(tester, 400);
+    expect(find.byKey(const Key('tip-card')), findsNothing);
+    expect(c.meta.tipsSeen, contains(ContextTips.whatsADelve));
+
     // Walk to the first fight (seed 1 reaches one; same walk as widget_test).
     final map = c.state!['map'] as Map;
     final edges = (map['edges'] as Map).cast<String, List>();
@@ -271,7 +302,7 @@ void main() {
     // The staged tip is up; the 4-card wall's paging footer is not.
     expect(find.byKey(const Key('tip-card')), findsOneWidget);
     expect(find.text('ROLL, THEN SPEND'), findsOneWidget);
-    expect(find.text('1 / 4'), findsNothing);
+    expect(find.textContaining(RegExp(r'^1 / \d')), findsNothing);
 
     // Tap-anywhere dismisses, persists, and never returns.
     await tester.tap(find.byKey(const Key('tip-card')));

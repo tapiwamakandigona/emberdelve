@@ -30,6 +30,15 @@ class _MapScreenState extends State<MapScreen>
   int? _scrolledForPos;
 
   @override
+  void initState() {
+    super.initState();
+    // v0.30.0 The Delver's Primer: the map IS the delve, so first contact
+    // with it defines the word. Fires once ever; a no-op on every later
+    // visit (lib/game/tips.dart owns the once-and-suppression rules).
+    widget.c.tipDirector.onMapArrival();
+  }
+
+  @override
   void dispose() {
     _pulse.dispose();
     _scroll.dispose();
@@ -187,6 +196,15 @@ class _MapScreenState extends State<MapScreen>
         ),
         // Ambient embers rising off the delve.
         const EmberDrift(count: 18, opacity: 0.7),
+        // v0.30.0: the whats_a_delve tip fires on first arrival (initState);
+        // the shared card renders here so the word is defined where the
+        // player is standing. Same widget, same tap-anywhere dismiss as the
+        // combat tips (tutorial_overlay.dart).
+        if (c.tipDirector.active != null)
+          _ContextTip(
+            id: c.tipDirector.active!,
+            onDismiss: () => setState(c.dismissTip),
+          ),
       ],
     );
   }
