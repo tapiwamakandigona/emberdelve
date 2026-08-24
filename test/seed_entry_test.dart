@@ -117,7 +117,7 @@ void main() {
     await tester.tap(seedLine);
     await pumpFor(tester, 200);
     expect(copied.single, code);
-    expect(decodeDelveCode(copied.single as String)!.seed, 424242);
+    expect(decodeDelveCode(copied.single)!.seed, 424242);
     await pumpFor(tester, 400);
   });
 

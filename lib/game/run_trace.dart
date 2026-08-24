@@ -142,15 +142,21 @@ String seedChallengeText({
   required int floor,
   required int floors,
   String grid = '',
+  String code = '',
 }) {
   final diff = difficulty.toUpperCase() + (ascension > 0 ? ' A$ascension' : '');
   final line = won
       ? '🔥 Claimed the Ember — floor $floors of $floors'
       : '🕯️ Fell on floor $floor of $floors';
+  // v0.37.0: when a Delve Code is available it replaces the bare seed — the
+  // code packs delver + difficulty + ascension too, so the friend plays THIS
+  // run, not one like it.
+  final what = code.isEmpty ? 'seed $seed' : code;
+  final claim = code.isEmpty ? 'Same seed, same delve' : 'Same code, same delve';
   return [
-    'Emberdelve — seed $seed ($diff)',
+    'Emberdelve — $what ($diff)',
     if (grid.isNotEmpty) grid,
     line,
-    'Same seed, same delve: title screen → Delve a seed.',
+    '$claim: title screen → Delve a seed.',
   ].join('\n');
 }

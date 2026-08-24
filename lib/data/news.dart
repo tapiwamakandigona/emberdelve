@@ -23,10 +23,23 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.36.0';
+const String currentAppVersion = '0.37.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.37.0',
+    title: 'The Delve Codes',
+    lines: [
+      'Every finished run now leaves a Delve Code - one short code that '
+          'packs the seed, the delver, the difficulty, the rung. '
+          'A friend plays YOUR run, not one like it.',
+      'Tap it on the summary to copy; paste any code into "Delve a seed" '
+          'on the title screen. It rides your shared cards too.',
+      'Codes work anywhere text does - no account, no internet needed. '
+          'Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.36.0',
     title: 'The Epithets',

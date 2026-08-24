@@ -14,6 +14,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/daily_share.dart';
+import 'package:emberdelve/game/delve_code.dart';
 import 'package:emberdelve/game/run_trace.dart';
 import 'package:emberdelve/game/weekly.dart';
 import 'package:emberdelve/meta/meta.dart';
@@ -226,6 +227,22 @@ void main() {
       expect(text, contains('Delve a seed'));
     });
 
+    test('a Delve Code replaces the bare seed when provided (v0.37.0)', () {
+      final text = seedChallengeText(
+        seed: 123456789,
+        difficulty: 'hard',
+        ascension: 3,
+        won: true,
+        floor: 8,
+        floors: 8,
+        code: 'DELVE-0123456789',
+      );
+      expect(text, contains('DELVE-0123456789'));
+      expect(text, isNot(contains('seed 123456789')));
+      expect(text, contains('Same code, same delve'));
+      expect(text, contains('HARD A3'));
+    });
+
     test('share copy carries no pressure language (§Ethics)', () {
       final all = [
         seedChallengeText(
@@ -291,7 +308,11 @@ void main() {
       expect(grid, isNotEmpty);
       final share = c.seedChallengeShareText;
       expect(share, isNotNull, reason: 'normal finished run offers the seed');
-      expect(share, contains('seed 20260816'));
+      // v0.37.0: the share text carries the full-challenge Delve Code; it
+      // must decode straight back to this run's seed.
+      final m = RegExp(r'DELVE-[0-9A-Z]{10}').firstMatch(share!)!;
+      expect(decodeDelveCode(m.group(0)!)!.seed, 20260816);
+      expect(decodeDelveCode(m.group(0)!)!.character, 'kindler');
       expect(share, contains(grid.split('\n').first));
       expect(c.dailyResultShareText, isNull);
       await c.flushSaves();
