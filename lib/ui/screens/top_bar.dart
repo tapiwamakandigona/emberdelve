@@ -64,9 +64,31 @@ class _TopBar extends StatelessWidget {
             ),
             const SizedBox(width: Space.m),
           ],
-          Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
-          const SizedBox(width: 4),
-          Text('${(run['relics'] as List).length}', style: EmberText.label),
+          // v0.27.0 (#97): the relic pip opens the relic inventory — owned
+          // relics and their effects were invisible mid-run before this.
+          Semantics(
+            button: true,
+            label: 'Relic inventory',
+            child: GestureDetector(
+              key: const ValueKey('topbar-relics'),
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                AudioService.instance?.playSfx('ui_tap');
+                showRelicInventory(context, c);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${(run['relics'] as List).length}',
+                    style: EmberText.label,
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(width: Space.m),
           // v0.3.1 F10: in-run pause menu — settings (volume!) and a way out
           // of a delve were unreachable before the run ended.
@@ -117,6 +139,20 @@ void showPauseMenu(BuildContext context, GameController c) {
                 primary: true,
                 icon: Icons.play_arrow,
                 onTap: () => Navigator.of(ctx).pop(),
+              ),
+            ),
+            const SizedBox(height: Space.m),
+            // v0.27.0 (#97): relics reachable from the pause menu too, for
+            // players who never discover the top-bar pip is tappable.
+            SizedBox(
+              width: double.infinity,
+              child: EmberButton(
+                'Relics',
+                icon: Icons.diamond,
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  showRelicInventory(context, c);
+                },
               ),
             ),
             const SizedBox(height: Space.m),
