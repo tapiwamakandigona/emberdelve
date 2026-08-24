@@ -1706,3 +1706,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - screens.dart imports data/codex.dart; counts live from meta.ownedCodex + codexEntries.
 - Tests: enemy_record_test extended (exact text on fresh profile; absent on all-met veteran profile). Plates via tool/codex_pull_visual_test.dart reviewed clean at 360/412/800dp.
 - Version bump/news/tag deferred until v0.30.0 publishes (one release at a time).
+
+## 2026-08-24 — v0.30.0 "The Delver's Primer" PUBLISHED
+- CI run 32779841615 success; 4/4 APKs PIN-OK (0.30.0, codes 56/1056/2056/4056); AAB EMBERDEL.RSA pin match.
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.30.0 — 5 standard assets; sha256+size table in docs/releases/v0.30.0.md and release body.
+- Next: v0.31.0 "The Growing Codex" release train (code committed 66e7dd0; full suite 493/493 green in /work/temp/v0310_full_test.log). v0.32.0 "The Open Rung" design committed (docs/improvements/v0.32.0-open-rung-design.md).
