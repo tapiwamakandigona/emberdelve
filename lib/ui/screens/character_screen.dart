@@ -536,8 +536,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(def.name, style: EmberText.h2),
-                      // v0.36.0: the worn epithet, under every delver's name.
-                      if (epithets[c.meta.selectedEpithet] != null)
+                      // v0.36.0: the worn epithet, under each unlocked
+                      // delver's name (a title is worn, not window-shopped).
+                      if (unlocked &&
+                          epithets[c.meta.selectedEpithet] != null)
                         Text(
                           epithets[c.meta.selectedEpithet]!.title,
                           style: EmberText.micro.copyWith(
