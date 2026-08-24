@@ -81,6 +81,24 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
+              // v0.36.0 The Epithets — earned titles worn under the delver's
+              // name; carried onto the shareable Delver's Card.
+              Text('THE EPITHET', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              _epithetNoneCard(context),
+              const SizedBox(height: Space.m),
+              for (final id in epithetsOrder) ...[
+                _epithetCard(context, id),
+                const SizedBox(height: Space.m),
+              ],
+              const SizedBox(height: Space.s),
+              Text(
+                'An epithet is worn under your delver\'s name — on this '
+                'screen, on the summary, and on any card you share. Earned '
+                'by delving, never sold.',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              ),
+              const SizedBox(height: Space.l),
               Text('ASCENSION', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Text(
@@ -183,6 +201,111 @@ class _CharacterScreenState extends State<CharacterScreen> {
   /// v0.35.0: tap unlocked to choose; a locked vista shows its real
   /// milestone (never a price — vistas are earned, §Ethics). The swatch is
   /// the map backdrop wearing the vista — exactly what the delve will paint.
+  /// The bare option: no epithet at all. Always selectable.
+  Widget _epithetNoneCard(BuildContext context) {
+    final c = widget.c;
+    final chosen = c.meta.selectedEpithet == defaultEpithet;
+    return GestureDetector(
+      key: const ValueKey('epithet-none'),
+      onTap: () {
+        if (chosen) return;
+        AudioService.instance?.playSfx('ui_tap');
+        c.selectEpithet(defaultEpithet);
+        setState(() {});
+      },
+      child: Panel(
+        color: chosen ? EmberColors.raised : EmberColors.surface,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('No epithet', style: EmberText.body),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Just a delver. The dark asks no more.',
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ],
+              ),
+            ),
+            if (chosen)
+              Text(
+                'WORN',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.ember,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Same contract as _vistaCard: tap unlocked to wear; locked shows the
+  /// honest milestone and a lock.
+  Widget _epithetCard(BuildContext context, String id) {
+    final c = widget.c;
+    final e = epithets[id]!;
+    final unlocked = c.epithetUnlocked(id);
+    final chosen = c.meta.selectedEpithet == id;
+    return GestureDetector(
+      key: ValueKey('epithet-$id'),
+      onTap: () {
+        if (chosen) return;
+        if (unlocked) {
+          AudioService.instance?.playSfx('ui_tap');
+          c.selectEpithet(id);
+        } else {
+          AudioService.instance?.playSfx('ui_back');
+        }
+        setState(() {});
+      },
+      child: Panel(
+        color: chosen ? EmberColors.raised : EmberColors.surface,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    e.title,
+                    style: unlocked
+                        ? EmberText.body
+                        : EmberText.body.copyWith(color: EmberColors.textDim),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    e.unlockLine,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: Space.s),
+            if (chosen)
+              Text(
+                'WORN',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.ember,
+                  fontWeight: FontWeight.w700,
+                ),
+              )
+            else if (!unlocked)
+              const Icon(
+                Icons.lock_outline,
+                color: EmberColors.textDim,
+                size: 16,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _vistaCard(BuildContext context, String id) {
     final c = widget.c;
     final v = vistas[id]!;
@@ -408,7 +531,22 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   ),
                 ),
                 const SizedBox(width: Space.m),
-                Expanded(child: Text(def.name, style: EmberText.h2)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(def.name, style: EmberText.h2),
+                      // v0.36.0: the worn epithet, under every delver's name.
+                      if (epithets[c.meta.selectedEpithet] != null)
+                        Text(
+                          epithets[c.meta.selectedEpithet]!.title,
+                          style: EmberText.micro.copyWith(
+                            color: EmberColors.gold,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 if (!unlocked)
                   Row(
                     children: [

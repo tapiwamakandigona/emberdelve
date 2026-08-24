@@ -14,6 +14,7 @@ import '../game/tips.dart' show ContextTips;
 import '../data/codex.dart';
 import '../data/attire.dart';
 import '../data/vistas.dart';
+import '../data/epithets.dart';
 import '../data/skins.dart';
 import '../data/themes.dart';
 
@@ -67,6 +68,10 @@ class MetaState {
   // v0.35.0 The Vistas — selected background grade. Milestone-derived
   // unlocks (data/vistas.dart), so only the SELECTION persists.
   String selectedVista;
+  // v0.36.0 The Epithets — worn title ('' = none). Milestone-derived
+  // unlocks (data/epithets.dart via the Ledger's statValue), so only the
+  // SELECTION persists.
+  String selectedEpithet;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -159,6 +164,7 @@ class MetaState {
     Set<String>? ownedDyes,
     this.activeDye = defaultDye,
     this.selectedVista = defaultVista,
+    this.selectedEpithet = defaultEpithet,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -228,6 +234,7 @@ class MetaState {
     if (ownedDyes.length > 1) 'ownedDyes': ownedDyes.toList(),
     if (activeDye != defaultDye) 'activeDye': activeDye,
     if (selectedVista != defaultVista) 'selectedVista': selectedVista,
+    if (selectedEpithet != defaultEpithet) 'selectedEpithet': selectedEpithet,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -321,6 +328,9 @@ class MetaState {
     selectedVista: vistas.containsKey(j['selectedVista'])
         ? j['selectedVista'] as String
         : defaultVista,
+    selectedEpithet: epithets.containsKey(j['selectedEpithet'])
+        ? j['selectedEpithet'] as String
+        : defaultEpithet,
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

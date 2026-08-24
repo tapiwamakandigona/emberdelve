@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../data/characters.dart';
+import '../data/epithets.dart';
 import '../game/controller.dart';
 import '../game/run_trace.dart';
 import 'theme.dart';
@@ -30,6 +31,9 @@ import 'widgets.dart';
 class DelverCardFacts {
   final bool won;
   final String delverName;
+
+  /// The worn epithet's title ('' when none) — v0.36.0 The Epithets.
+  final String epithetTitle;
   final String difficulty; // 'easy' | 'normal' | 'hard'
   final int ascension;
   final String traceGridText; // '' when the trace is empty
@@ -39,6 +43,7 @@ class DelverCardFacts {
   const DelverCardFacts({
     required this.won,
     required this.delverName,
+    this.epithetTitle = '',
     required this.difficulty,
     required this.ascension,
     required this.traceGridText,
@@ -54,6 +59,7 @@ class DelverCardFacts {
     return DelverCardFacts(
       won: st['phase'] == 'run_won',
       delverName: characters[charId]?.name ?? charId,
+      epithetTitle: epithets[c.meta.selectedEpithet]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
       traceGridText: c.runTrace.marks.isEmpty ? '' : traceGrid(c.runTrace),
@@ -62,6 +68,10 @@ class DelverCardFacts {
       seed: c.sim?.runSeed ?? 0,
     );
   }
+
+  /// 'The Kindler' or 'The Kindler, the Unburnt' when an epithet is worn.
+  String get nameLine =>
+      epithetTitle.isEmpty ? delverName : '$delverName, $epithetTitle';
 
   /// 'Easy' / 'Normal' / 'Hard', plus the rung when one was climbed.
   String get modeLine {
@@ -125,7 +135,7 @@ class DelverCard extends StatelessWidget {
             ),
           ),
           Text(
-            '${facts.delverName} · ${facts.modeLine}',
+            '${facts.nameLine} · ${facts.modeLine}',
             textAlign: TextAlign.center,
             style: EmberText.body.copyWith(color: EmberColors.textDim),
           ),
@@ -253,7 +263,7 @@ Future<void> _shareCard(
 /// The degraded artifact: same facts, plain text, pastes anywhere.
 String _fallbackText(DelverCardFacts facts) => [
   'Emberdelve — ${facts.won ? 'the Ember is mine' : 'the dark claimed me'}',
-  '${facts.delverName} · ${facts.modeLine}',
+  '${facts.nameLine} · ${facts.modeLine}',
   if (facts.traceGridText.isNotEmpty) facts.traceGridText,
   '${facts.embers} embers banked · ${facts.fightsWon} fights won',
   'Seed ${facts.seed} — delve it yourself.',

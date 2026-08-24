@@ -12,6 +12,7 @@ import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../data/news.dart';
 import '../data/vistas.dart';
+import '../data/epithets.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
 import 'tips.dart';
@@ -612,6 +613,23 @@ class GameController extends ChangeNotifier {
       return;
     }
     meta.selectedVista = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  // v0.36.0 The Epithets — worn title. Unlocks derive from the Ledger's
+  // banked counters via statValue, so the gate is re-checked here (a stale
+  // UI can never select a locked epithet). '' = take the title off.
+  bool epithetUnlocked(String id) {
+    final def = epithets[id];
+    if (def == null) return false;
+    return statValue(meta, def.stat, def.param) >= def.target;
+  }
+
+  void selectEpithet(String id) {
+    if (meta.selectedEpithet == id) return;
+    if (id != defaultEpithet && !epithetUnlocked(id)) return;
+    meta.selectedEpithet = id;
     MetaStore.save(meta);
     notifyListeners();
   }
