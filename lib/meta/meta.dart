@@ -113,6 +113,8 @@ class MetaState {
   // a progress bar built on a guess would be a lie (§Ethics honesty).
   Set<String> bossesBeaten; // distinct boss enemy ids put down on layer N
   Set<String> seenAchievements; // ids whose earned-toast has been shown
+  // v0.38.0 The Provings — ids of curated challenge delves cleared.
+  Set<String> provingsCleared;
   int bestFloor; // deepest 1-based layer ever reached, won or lost
   int dailiesPlayed; // Daily Delves FINISHED (abandoning counts for nothing)
   int winsNoRest; // runs won without visiting a single rest node
@@ -180,6 +182,7 @@ class MetaState {
     this.forgeUnlocked = false,
     Set<String>? bossesBeaten,
     Set<String>? seenAchievements,
+    Set<String>? provingsCleared,
     this.bestFloor = 0,
     this.dailiesPlayed = 0,
     this.winsNoRest = 0,
@@ -195,6 +198,7 @@ class MetaState {
        redeemedCodes = redeemedCodes ?? {},
        bossesBeaten = bossesBeaten ?? {},
        seenAchievements = seenAchievements ?? {},
+       provingsCleared = provingsCleared ?? {},
        unlockedCharacters = unlocked ?? {defaultCharacter},
        charRuns = charRuns ?? {},
        charWins = charWins ?? {},
@@ -251,6 +255,7 @@ class MetaState {
     if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
     if (seenAchievements.isNotEmpty)
       'seenAchievements': seenAchievements.toList(),
+    if (provingsCleared.isNotEmpty) 'provingsCleared': provingsCleared.toList(),
     if (bestFloor > 0) 'bestFloor': bestFloor,
     if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
     if (winsNoRest > 0) 'winsNoRest': winsNoRest,
@@ -353,6 +358,8 @@ class MetaState {
     bossesBeaten: ((j['bossesBeaten'] as List?)?.cast<String>().toSet()) ?? {},
     seenAchievements:
         ((j['seenAchievements'] as List?)?.cast<String>().toSet()) ?? {},
+    provingsCleared:
+        ((j['provingsCleared'] as List?)?.cast<String>().toSet()) ?? {},
     // Pre-v0.5.0 saves have no bestFloor. Seeding it from the run history
     // (the deepest floor we can actually prove) is honest; inventing a
     // number from runsPlayed would not be.

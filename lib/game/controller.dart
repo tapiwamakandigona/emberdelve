@@ -13,6 +13,7 @@ import '../data/characters.dart';
 import '../data/news.dart';
 import '../data/vistas.dart';
 import '../data/epithets.dart';
+import '../data/provings.dart';
 import 'delve_code.dart';
 import '../telemetry/telemetry_service.dart';
 import '../data/dice.dart';
@@ -1057,6 +1058,21 @@ class GameController extends ChangeNotifier {
         // a win at the rung-20 cap re-clamps to 20 and says nothing.
         if (opened > meta.bestAscension) pendingRungOpened = opened;
         meta.bestAscension = opened;
+      }
+      // v0.38.0 The Provings: a win that exactly matches a curated proving
+      // (seed + delver + difficulty + rung; never a daily/weekly, whose
+      // seeds are drawn from the calendar) marks it cleared. Idempotent by
+      // construction — it's a set. Clearing pays nothing (§Ethics): the
+      // mark is the prize.
+      if (dailyDate == null && weeklyIndex == null) {
+        for (final p in provings) {
+          if (p.seed == sim!.runSeed &&
+              p.character == char &&
+              p.difficulty == (run['difficulty'] as String? ?? 'normal') &&
+              p.ascension == asc) {
+            meta.provingsCleared.add(p.id);
+          }
+        }
       }
     }
     // Daily Delve record (v0.3.4): only a FINISHED daily counts as played —
