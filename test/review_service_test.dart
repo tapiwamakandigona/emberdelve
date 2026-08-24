@@ -1,0 +1,160 @@
+// test/review_service_test.dart — charter tests for the one-ask-ever
+// in-app review gate (lib/meta/review_service.dart). Headless: the plugin
+// backend is injected, so these prove the eligibility logic and the stamp
+// semantics without any platform channel.
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:emberdelve/meta/cloud_merge.dart';
+import 'package:emberdelve/meta/meta.dart';
+import 'package:emberdelve/meta/review_service.dart';
+
+void main() {
+  group('ReviewService.eligible', () {
+    test('never asks twice: reviewAsked blocks everything', () {
+      final m = MetaState(runsWon: 10, reviewAsked: true);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: true,
+          tourActive: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('never asks while the tour runs', () {
+      final m = MetaState(runsWon: 5);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: true,
+          tourActive: true,
+        ),
+        isFalse,
+      );
+    });
+
+    test('first win alone does not ask (tour-adjacent)', () {
+      final m = MetaState(runsWon: 1);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('second win asks', () {
+      final m = MetaState(runsWon: 2);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+        ),
+        isTrue,
+      );
+    });
+
+    test('a lost run never asks, whatever the counters say', () {
+      final m = MetaState(runsWon: 9);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('a won daily/weekly asks even before the 2nd freeplay win', () {
+      final m = MetaState(runsWon: 1);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: true,
+          tourActive: false,
+        ),
+        isTrue,
+      );
+    });
+  });
+
+  group('ReviewService.maybeAsk', () {
+    test('stamps reviewAsked and fires the backend exactly once', () async {
+      var calls = 0;
+      final svc = ReviewService.instance;
+      svc.backend = () async => calls++;
+      final m = MetaState(runsWon: 2);
+      final fired = svc.maybeAsk(
+        m,
+        wonThisRun: true,
+        wonDailyOrWeekly: false,
+        tourActive: false,
+      );
+      expect(fired, isTrue);
+      expect(m.reviewAsked, isTrue);
+      // A later, equally-proud moment must be a no-op.
+      final again = svc.maybeAsk(
+        m,
+        wonThisRun: true,
+        wonDailyOrWeekly: true,
+        tourActive: false,
+      );
+      expect(again, isFalse);
+      await Future<void>.delayed(Duration.zero); // let unawaited() settle
+      expect(calls, 1);
+      svc.backend = null;
+    });
+
+    test('no backend (tests/web/desktop) still stamps quietly', () {
+      final svc = ReviewService.instance;
+      svc.backend = null;
+      final m = MetaState(runsWon: 3);
+      expect(
+        svc.maybeAsk(
+          m,
+          wonThisRun: true,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+        ),
+        isTrue,
+      );
+      expect(m.reviewAsked, isTrue);
+    });
+  });
+
+  group('persistence + merge', () {
+    test('reviewAsked round-trips through JSON and defaults false', () {
+      final m = MetaState(reviewAsked: true);
+      final back = MetaState.fromJson(m.toJson());
+      expect(back.reviewAsked, isTrue);
+      expect(MetaState.fromJson(MetaState().toJson()).reviewAsked, isFalse);
+      // Compactness charter: an unasked profile writes no key at all.
+      expect(MetaState().toJson().containsKey('reviewAsked'), isFalse);
+    });
+
+    test('cloud merge is sticky OR — asked anywhere is asked everywhere', () {
+      final local = MetaState(reviewAsked: true);
+      final cloud = MetaState();
+      expect(mergeMetaStates(local, cloud).reviewAsked, isTrue);
+      expect(
+        mergeMetaStates(cloud, local).reviewAsked,
+        isTrue,
+      );
+      expect(
+        mergeMetaStates(MetaState(), MetaState()).reviewAsked,
+        isFalse,
+      );
+    });
+  });
+}
