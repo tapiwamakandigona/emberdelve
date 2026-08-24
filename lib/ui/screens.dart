@@ -68,5 +68,6 @@ part 'screens/shop_screen.dart';
 part 'screens/event_screen.dart';
 part 'screens/summary_screen.dart';
 part 'screens/top_bar.dart';
+part 'screens/relic_inventory.dart';
 part 'screens/tutorial_overlay.dart';
 part 'screens/tour_overlay.dart';
