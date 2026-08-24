@@ -252,6 +252,27 @@ class TitleScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: Space.s),
+                              // The Provings (v0.38.0): eight curated, exact
+                              // delves. Quiet entry beside the other
+                              // out-of-flow modes; the count is a fact, not
+                              // a nag.
+                              TextButton(
+                                key: const ValueKey('provings-button'),
+                                onPressed: () {
+                                  AudioService.instance?.playSfx('ui_confirm');
+                                  Navigator.of(context).push(
+                                    emberRoute((_) => ProvingsScreen(c)),
+                                  );
+                                },
+                                child: Text(
+                                  'The Provings — '
+                                  '${m.provingsCleared.length} of '
+                                  '${provings.length} cleared',
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                ),
+                              ),
                               // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
                               // shared seed IS a shared delve. Small, out of the main flow.
                               TextButton(
