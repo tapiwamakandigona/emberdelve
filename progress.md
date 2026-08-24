@@ -1729,3 +1729,7 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - New Ledger section: 6-track soundtrack collection (review's "music 9/10" celebrated). meta.heardTracks (union cloud merge), gameplay-owned detection in _syncAudio via static musicKeyForPhase, boot seeds title_menu.
 - test/gramophone_test.dart 7 pins; tool/gramophone_visual_test.dart 4 plates reviewed clean (360/412/800 + playing state).
 - Full suite 506/506 green (/work/temp/v0330_full_test.log). docs/releases/v0.33.0.md written (versionCode 59). Release train queues behind v0.32.0 publish.
+
+## 2026-08-24 22:45 — v0.32.0 "The Open Rung" PUBLISHED
+- https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.32.0 — CI 32782975815, 4/4 APKs PIN-OK (codes 58/1058/2058/4058), AAB pin match, 5 assets, sha256+size table in notes.
+- Next: v0.33.0 Gramophone release train (bump 0.33.0+59, news, analyze, suite, tag, CI).
