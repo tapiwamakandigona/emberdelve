@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.32.0';
+const String currentAppVersion = '0.33.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.33.0',
+    title: 'The Gramophone',
+    lines: [
+      'The Ledger has grown a gramophone. Every tune the delve has played '
+          'you is kept there now - tap a heard track to let it play by '
+          'the fire.',
+      'Six songs wait in the dark. You will meet the rest the way you '
+          'meet everything down there: by delving.',
+      'Thank you for delving with us. See you by the fire.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.32.0',
     title: 'The Open Rung',
