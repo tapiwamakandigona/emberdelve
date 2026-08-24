@@ -1676,3 +1676,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Fact-checked copy: easy banks 0.75x embers (run_layer.dart L768). test/normal_nudge_test.dart
   3 tests (pinned seeds: 1 wins easy+normal, 13 loses easy). Full suite 490/490, analyze clean.
   Version bump + news + tag deferred until v0.28.0 publishes (one release at a time).
+
+## 2026-08-24 ~18:30Z — v0.28.0 PUBLISHED; v0.29.0 train started
+- v0.28.0 "The Shifting Strata" PUBLISHED: CI run 32647152743 green on tag fa3d3be;
+  4/4 APKs PIN-OK (0.28.0, codes 54/1054/2054/4054), AAB pin match; standard 5-asset set;
+  sha256+size table in docs/releases/v0.28.0.md and release body.
+- v0.29.0 train: pubspec → 0.29.0+55; news entry "The Next Delve" + currentAppVersion
+  '0.29.0'; ethics sweep clean; analyze clean; full suite 490/490.
