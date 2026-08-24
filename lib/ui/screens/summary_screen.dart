@@ -225,6 +225,25 @@ class SummaryScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Space.s),
                           ],
+                          // v0.31.0 (retention hook #6): the codex pull. The
+                          // moment the record grows is the only honest moment
+                          // to name the collection — one factual line, shown
+                          // only when this run produced a first, win or loss
+                          // (records grow either way). No button, no urgency,
+                          // no price talk; the Ledger holds the door (§Ethics).
+                          if (_firstsLine(c) != null) ...[
+                            Text(
+                              'Their tales wait in the Codex — '
+                              '${c.meta.ownedCodex.length} of '
+                              '${codexEntries.length} unsealed.',
+                              key: const ValueKey('codex-pull-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
                           // Today's Trial chip (v0.9.0): shown ONLY when a
                           // goal-day daily met its objective — the bonus is a
                           // banked fact by the time this screen exists. A

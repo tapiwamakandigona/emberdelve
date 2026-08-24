@@ -11,6 +11,7 @@ import '../data/achievements.dart';
 import '../data/attire.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
+import '../data/codex.dart';
 import '../data/enemies.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
