@@ -1695,3 +1695,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   first; progression_glitch_test pre-seeds tips (second-Scrollable clash). Full suite 492/492,
   analyze clean. Plates (tool/primer_visual_test.dart → build/primer_visual/) reviewed clean
   at 360x640/412x915/800x1280. Version bump + news + tag deferred (one release at a time).
+
+## 2026-08-24 — v0.29.0 "The Next Delve" PUBLISHED
+- CI run 32778346012 green; 4/4 APKs PIN-OK (0.29.0, codes 55/1055/2055/4055), AAB pin match.
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.29.0 with 5 standard assets; sha256+size table in docs/releases/v0.29.0.md and release body.
+- Next: v0.30.0 "The Delver's Primer" release train (code already committed).
