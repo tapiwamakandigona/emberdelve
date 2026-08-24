@@ -16,6 +16,17 @@ class _TutorialOverlay extends StatelessWidget {
   static int get cardCount => _cards.length;
 
   static const _cards = [
+    // v0.30.0 The Delver's Primer: the word "delve" itself, first — our
+    // first outside review finished Easy still not knowing what one was.
+    (
+      Icons.explore,
+      'WHAT\'S A DELVE?',
+      'One descent into the dark. Pick a glowing path on the map, clear '
+          'each room, and face what waits at the bottom. Win, and every '
+          'ember you gathered comes home. Fall, and the ledger still keeps '
+          'half. Either way the delve ends there — the next one starts '
+          'fresh.',
+    ),
     (
       Icons.visibility,
       'THE DARK FIGHTS FAIR',
@@ -125,6 +136,15 @@ class _ContextTip extends StatelessWidget {
   /// Same card copy as the replayable overlay deck — one rule, one card.
   /// (icon, title, body, where the card sits so it points at its subject)
   static const _cards = <String, (IconData, String, String, Alignment)>{
+    ContextTips.whatsADelve: (
+      Icons.explore,
+      'THIS IS A DELVE',
+      'One descent into the dark. Pick a glowing path, clear each room, '
+          'and face what waits at the bottom. Win, and every ember you '
+          'gathered comes home. Fall, and the ledger still keeps half. '
+          'Either way the delve ends there — and the next one starts fresh.',
+      Alignment.center,
+    ),
     ContextTips.rollSpend: (
       Icons.casino,
       'ROLL, THEN SPEND',

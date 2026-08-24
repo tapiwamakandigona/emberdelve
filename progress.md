@@ -1683,3 +1683,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   sha256+size table in docs/releases/v0.28.0.md and release body.
 - v0.29.0 train: pubspec → 0.29.0+55; news entry "The Next Delve" + currentAppVersion
   '0.29.0'; ethics sweep clean; analyze clean; full suite 490/490.
+
+## 2026-08-24 ~19:25Z — v0.29.0 tagged+CI building; v0.30.0 feature complete
+- v0.29.0 tagged at eab33d8; CI run 32778346012 building.
+- v0.30.0 "The Delver's Primer" CODE DONE (hook #4, answers USER-REPORTED "what's a delve"):
+  ContextTips.whatsADelve + TipDirector.onMapArrival(); map screen fires on first arrival and
+  renders the shared _ContextTip; manual How-to-play deck gains "WHAT'S A DELVE?" first card.
+  Copy fact-checked: win banks all embers (_bankRun), death keeps half floor 5+layer (run_layer).
+  Veteran preseed now covers the new id; post-v0.10 existing players see it once (intended —
+  the reviewer is one). Tests: 2 new TipDirector units; first-fight test dismisses map card
+  first; progression_glitch_test pre-seeds tips (second-Scrollable clash). Full suite 492/492,
+  analyze clean. Plates (tool/primer_visual_test.dart → build/primer_visual/) reviewed clean
+  at 360x640/412x915/800x1280. Version bump + news + tag deferred (one release at a time).

@@ -15,6 +15,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/sim/autoplay.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -92,6 +93,9 @@ void main() {
     GameController? mid;
     for (var seed = 1; seed <= 40 && mid == null; seed++) {
       final c = GameController();
+      // Camera-in-isolation: pre-seed all tips so the v0.30.0 whats_a_delve
+      // card (its own Scrollable) doesn't stack a second scrollable here.
+      c.meta.tipsSeen.addAll(ContextTips.all);
       c.startRun(character: 'kindler', seed: seed);
       var guard = 0;
       while (guard++ < 600 && c.phase != 'run_won' && c.phase != 'run_lost') {
