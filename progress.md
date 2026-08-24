@@ -1772,3 +1772,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (/work/temp/v0370_release_test.log). Bumped 0.37.0+63, news entry.
   Tagged; CI run 32790422755 in_progress. Expect codes 63/1063/2063/4063.
 - Next: publish v0.37.0 when green; v0.38.0 scoping (localization lead).
+
+## 2026-08-25T00:15Z — v0.37.0 PUBLISHED, v0.38.0 tagged
+- v0.37.0 "The Delve Codes" published: CI 32790422755 green, 4/4 PIN-OK
+  (63/1063/2063/4063), AAB pin match, checksums in notes.
+- v0.38.0 "The Provings" built this session: 8 curated exact delves on
+  bot-proven seeds (data/provings.dart, ui/provings_screen.dart, meta
+  provingsCleared + cloud union, controller clear-marking, title entry).
+  9 new tests, suite 581/581, plates reviewed (incl. forge-owner state).
+  Tagged; CI 32791272915 in_progress. Expect codes 64/1064/2064/4064.
