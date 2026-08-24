@@ -1761,3 +1761,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.36.0 UI gate passed: tool/epithets_visual_test.dart plates (picker 360x640 + 412x915 + worn-top mixed state, roster header, card titled/bare) reviewed clean; WORN marker reads well; card name line wraps cleanly at worst length. Polish landed: worn title only under UNLOCKED delvers.
 - v0.36.0 release train: bump 0.36.0+62, Hearthside Post entry (ethics CLEAN), analyze clean, full suite 560/560 (/work/temp/v0360_release_test.log), notes docs/releases/v0.36.0.md, tag pushed, CI run 32788939523 dispatched.
 - PLATE TOOL LESSON: scrollUntilVisible overshoots for "top of section" frames — target a mid-section key then tester.drag back (backDrag param) to compose the frame.
+
+## 2026-08-24T23:45Z — v0.36.0 PUBLISHED, v0.37.0 tagged
+- v0.36.0 "The Epithets" published: CI 32788939523 green, 4/4 APK PIN-OK
+  (codes 62/1062/2062/4062), AAB pin match, 5 assets + sha256 table.
+- v0.37.0 "The Delve Codes" release train: plates reviewed clean
+  (card_code / summary_code_row / dialog_code), seed-challenge text +
+  Delver's Card now carry the code, dialog hint 'code, seed, or word',
+  ethics CLEAN, analyze clean, suite 572/572
+  (/work/temp/v0370_release_test.log). Bumped 0.37.0+63, news entry.
+  Tagged; CI run 32790422755 in_progress. Expect codes 63/1063/2063/4063.
+- Next: publish v0.37.0 when green; v0.38.0 scoping (localization lead).
