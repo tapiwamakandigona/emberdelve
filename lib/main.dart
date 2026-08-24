@@ -18,6 +18,7 @@ import 'meta/play_games_service.dart';
 import 'meta/save_transfer.dart';
 import 'meta/reminder_service.dart';
 import 'meta/review_service.dart';
+import 'meta/unlock_codes.dart';
 import 'meta/store_service.dart';
 import 'meta/update_service.dart';
 import 'telemetry/consent_dialog.dart';
@@ -90,6 +91,9 @@ Future<void> main() async {
   // adopts meta through the same two doors as the cloud path.
   SaveTransfer.loadLocalHook = () async => controller.meta;
   SaveTransfer.adoptMergedHook = controller.adoptMeta;
+  // Offline unlock codes (UNLOCK-CODES-SPEC): Settings redeems through this
+  // hook. Verification is pure Dart — wired on every platform.
+  UnlockRedeem.redeemHook = controller.redeemUnlockCode;
   unawaited(pgs.resumeIfWanted());
   // Daily Delve reminder (v0.6.0): OFF by default, enabled only by an
   // explicit Settings tap. Backends wired on Android only; the service is a

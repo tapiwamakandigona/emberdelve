@@ -128,6 +128,8 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     // Asked anywhere = asked everywhere: the one review ask must never be
     // repeated on a second device after a cloud merge.
     reviewAsked: local.reviewAsked || cloud.reviewAsked,
+    // Union: a code redeemed anywhere stays redeemed everywhere.
+    redeemedCodes: {...local.redeemedCodes, ...cloud.redeemedCodes},
     // Max: toured anywhere counts everywhere (v0.8.0 Guided Delve).
     tourSeenVersion: local.tourSeenVersion > cloud.tourSeenVersion
         ? local.tourSeenVersion

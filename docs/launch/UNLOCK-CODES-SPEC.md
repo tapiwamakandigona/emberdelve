@@ -1,6 +1,13 @@
 # Offline signed unlock codes — spec (proposal, v1)
 
-Status: PROPOSED — but ops side is READY. Keypair generated 2026-08-16; the
+Status: APP SIDE IMPLEMENTED (2026-08-25) — Settings has a "Redeem" row
+(clipboard-based, same gesture as the save-code panel), verification is
+offline Ed25519 against the embedded key below, the example code's nonce is
+blocklisted at build time, and redeemed nonces persist + cloud-merge as a
+union. Grants go through the same door as a Play purchase. SALES OPS remain
+UNARMED pending Tapiwa's decision (the app never advertises a purchase path —
+the forge sheet only says "Have an unlock code? Redeem it in Settings").
+Ops side was already READY. Keypair generated 2026-08-16; the
 signing script + private key live outside any repo on the marketing side.
 Tapiwa decides; build agent implements the app side.
 
