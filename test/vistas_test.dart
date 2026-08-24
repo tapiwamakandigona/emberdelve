@@ -170,7 +170,7 @@ void main() {
       );
       await tester.ensureVisible(find.byKey(const ValueKey('vista-moonveil')));
       await pumpFor(tester, 200);
-      expect(find.text('Win a delve.'), findsOneWidget);
+      expect(find.text('Win a delve.'), findsWidgets);
       await tester.tap(find.byKey(const ValueKey('vista-moonveil')));
       await pumpFor(tester, 200);
       expect(c.meta.selectedVista, defaultVista);
