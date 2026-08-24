@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.34.0';
+const String currentAppVersion = '0.35.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.35.0',
+    title: 'The Vistas',
+    lines: [
+      'The delve can wear new light. Vistas - moonveil, verdigris, '
+          'bloodstone - re-tint every floor, earned by the delving itself.',
+      'Find them beside your dyes on the character screen. Nothing to buy; '
+          'win a delve and the first one is already yours.',
+      'Asked for by a delver by the fire - thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.34.0',
     title: "The Delver's Card",
