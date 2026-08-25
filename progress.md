@@ -1814,3 +1814,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   delves" going stale beside "0 of 9 CLEARED" — counts live only in the
   N-of-M header). Suite 588/588, plates reviewed incl. The Full Purse
   card + requirement fact. Bump 0.41.0+67, news, notes v0.41.0.md.
+
+## 2026-08-25T01:50Z — v0.40.0 PUBLISHED
+- v0.40.0 "The Peddler" published: CI 32794594399 green, 4/4 PIN-OK
+  (66/1066/2066/4066), AAB pin match, 5 assets + sha256 table.
+- v0.41.0 CI 32795084973 queued/running; publish when green.
