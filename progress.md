@@ -2054,3 +2054,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   so sprite sheets decode (cold cache = spriteless washed plate).
 - peddler_test charactersOrder.last pin updated to indexOf==4 (the wire
   format is the INDEX, not last-ness).
+
+## 2026-08-25T13:15Z — v0.50.0 "The Tinker" PUBLISHED
+- CI 32809432133 (workflow_dispatch on tag) success. Artifacts: aab
+  9549537928, splits 9549536826, apk 9549535269 (debug-symbols skipped).
+- Verified: 4 APK signer pins PIN-OK, version codes 76/1076/2076/4076,
+  AAB pkcs7 pin 031acb42… matched.
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.50.0
+  with 5 standard assets; notes_final.md (sha256+size table) applied.
+  SHA-256: universal 415d65dc…, arm64 19e4cc34…, armeabi 6524dd3b…,
+  x86_64 e386a883…, aab 90e85f7c….
+- Committed alongside: v0.51.0 lead scout doc + delve-obituary design doc.
+  Groundwork verified: cloud_merge.dart L77 copies runHistory wholesale, so
+  an additive killed_by key round-trips; runHistory cap 30, ledger renders
+  Recent Delves via _historyRow; summary copy pattern = copy-daily-result.
