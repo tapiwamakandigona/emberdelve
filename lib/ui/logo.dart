@@ -34,6 +34,11 @@ class _EmberLogotypeState extends State<EmberLogotype>
     // PERF: the clock drives the painter directly. As an AnimatedBuilder this
     // was a setState 60x/s, and because the title screen lives in a scroll
     // view that forced a relayout of the whole screen every frame.
+    // v0.63.0 The Fitted Name: the fit happens INSIDE the painter (which
+    // knows its real width at paint time) — a LayoutBuilder here breaks the
+    // title's IntrinsicHeight ("LayoutBuilder does not support returning
+    // intrinsic dimensions"). The reserved HEIGHT stays at the requested
+    // size — the title's vertical rhythm never shifts.
     return RepaintBoundary(
       child: CustomPaint(
         painter: _LogotypePainter(widget.text, widget.fontSize, _t),
@@ -50,17 +55,49 @@ class _EmberLogotypeState extends State<EmberLogotype>
 final Map<String, TextPainter> _tpCache = {};
 const int _glowSteps = 24;
 
+/// v0.63.0 The Fitted Name: the largest fontSize (capped at [requested])
+/// at which [text] in the logotype style fits [maxWidth]. Unbounded widths
+/// keep the requested size. Pure and layout-only — exposed for tests.
+final Map<String, double> _probeWidthCache = {};
+
+double fittedLogoFontSize(String text, double requested, double maxWidth) {
+  if (!maxWidth.isFinite || maxWidth <= 0) return requested;
+  final width = _probeWidthCache.putIfAbsent('$text|$requested', () {
+    final probe = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontFamily: 'Cinzel',
+          fontSize: requested,
+          fontWeight: FontWeight.w900,
+          letterSpacing: requested * 0.06,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return probe.width;
+  });
+  if (width <= maxWidth) return requested;
+  return requested * maxWidth / width;
+}
+
 class _LogotypePainter extends CustomPainter {
   final String text;
   final double fontSize;
   final Animation<double> clock;
   _LogotypePainter(this.text, this.fontSize, this.clock)
-    : super(repaint: clock);
+    : effectiveFontSize = fontSize,
+      super(repaint: clock);
 
   double get time => clock.value;
 
+  /// v0.63.0 The Fitted Name: the size actually painted with — [fontSize]
+  /// scaled down (never up) to the width paint() was given. Recomputed at
+  /// the top of every paint; exposed for tests.
+  double effectiveFontSize;
+
   TextPainter _tp(String cacheKey, TextStyle Function() style) {
-    final key = '$text|$fontSize|$cacheKey';
+    final key = '$text|$effectiveFontSize|$cacheKey';
     final hit = _tpCache[key];
     if (hit != null) return hit;
     final tp = TextPainter(
@@ -73,9 +110,9 @@ class _LogotypePainter extends CustomPainter {
 
   TextStyle _base({Paint? foreground, Color? color}) => TextStyle(
     fontFamily: 'Cinzel',
-    fontSize: fontSize,
+    fontSize: effectiveFontSize,
     fontWeight: FontWeight.w900,
-    letterSpacing: fontSize * 0.06,
+    letterSpacing: effectiveFontSize * 0.06,
     foreground: foreground,
     color: foreground == null ? color : null,
   );
@@ -87,6 +124,9 @@ class _LogotypePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // v0.63.0 The Fitted Name: fit to the width actually given, once per
+    // paint (the probe measure is cached per text|requested pair).
+    effectiveFontSize = fittedLogoFontSize(text, fontSize, size.width);
     final rawPulse = 0.5 + 0.5 * math.sin(time * math.pi * 2);
     // Quantised so the blurred glow pass is cacheable. 1/24 of the pulse is
     // an alpha step of 0.005 and a blur step of 0.09px at fontSize 44 —
@@ -106,14 +146,17 @@ class _LogotypePainter extends CustomPainter {
         ..color = EmberColors.ember.withValues(alpha: 0.30 + 0.12 * pulse)
         ..maskFilter = MaskFilter.blur(
           BlurStyle.normal,
-          fontSize * (0.34 + 0.05 * pulse),
+          effectiveFontSize * (0.34 + 0.05 * pulse),
         );
       return _base(foreground: glowBig);
     }).paint(canvas, origin);
     _tp('glowTight', () {
       final glowTight = Paint()
         ..color = const Color(0xFFFFB65C).withValues(alpha: 0.35)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, fontSize * 0.10);
+        ..maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          effectiveFontSize * 0.10,
+        );
       return _base(foreground: glowTight);
     }).paint(canvas, origin);
 
@@ -121,7 +164,7 @@ class _LogotypePainter extends CustomPainter {
     _tp('outline', () {
       final outline = Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = math.max(2.5, fontSize * 0.07)
+        ..strokeWidth = math.max(2.5, effectiveFontSize * 0.07)
         ..color = const Color(0xFF17110A);
       return _base(foreground: outline);
     }).paint(canvas, origin);
