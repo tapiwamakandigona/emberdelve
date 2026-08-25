@@ -34,3 +34,20 @@ replace with `docs/store/screenshots/framed/*.png` (already 1080×1920, Play-com
 Reversible; not a release. Do this before driving Reddit traffic so the first visitors
 hit the improved listing. NOTE 2026-08-16: the console's listing/testing pages were
 throwing transient server errors (Google-side); retry when stable.
+
+## Update 2026-08-25 — assets re-rendered from v0.34.0
+The 2026-08-16 QA above was done on screenshots rendered from the **v0.7-era UI**
+(last raw render 2026-07-24). All raw shots + the feature graphic + the framed
+captioned set have now been **re-rendered from the exact v0.34.0 commit** that is
+live on Play (build 0.34.0+60), so the listing images finally match what a user
+downloads. The caption text and hook order above are unchanged (same
+`frame_store_screenshots.py`), so the conversion reasoning still holds.
+
+Harness bug fixed in the same pass: the v0.26 onboarding spotlight tour was
+firing *inside* `store_screenshots_test.dart`, dimming the combat shot and
+overlaying a "Tap ROLL" tooltip. `richController()` now stamps
+`tourSeenVersion = tourVersion`, so combat renders clean. Fix ported to the
+build agent's HEAD too. Ledger now reads "9 of 24" (was "9/23").
+
+Status: raw + framed + feature graphic are all v0.34.0-true and eyeballed.
+Upload steps above are unchanged and paste-ready the moment Console access returns.
