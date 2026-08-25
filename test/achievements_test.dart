@@ -165,6 +165,7 @@ void main() {
           ..hardWins = 3;
     m.charWins['kindler'] = 6;
     m.bossesBeaten.add('ember_tyrant');
+    m.provingsCleared.add('first_flame'); // v0.59.0 provings_cleared
     for (final stat in achievementStats) {
       final param = stat == 'char_wins' ? 'kindler' : null;
       expect(

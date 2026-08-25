@@ -49,6 +49,7 @@ const List<String> epithetsOrder = [
   'the_unburnt',
   'the_highborne',
   'the_well_oiled',
+  'the_proven', // v0.59.0 — append-LAST rule
 ];
 
 const Map<String, EpithetDef> epithets = {
@@ -115,5 +116,15 @@ const Map<String, EpithetDef> epithets = {
     stat: 'char_wins',
     target: 1,
     param: 'tinker',
+  ),
+  // v0.59.0 The Proven: the Provings arc's summit reward. Target must
+  // equal provings.length — pinned by test so a future proving can never
+  // silently orphan the unlock line's promise.
+  'the_proven': EpithetDef(
+    'the_proven',
+    'the Proven',
+    unlockLine: 'Clear every proving.',
+    stat: 'provings_cleared',
+    target: 10,
   ),
 };

@@ -45,6 +45,9 @@ int statValue(MetaState m, String stat, [String? param]) {
       return m.ownedThemes.length;
     case 'hard_wins':
       return m.hardWins;
+    case 'provings_cleared':
+      // v0.59.0 The Proven: distinct provings cleared (Set, junk-proof).
+      return m.provingsCleared.length;
     case 'delvers_cleared':
       // Distinct ROSTER characters with a win: junk charWins keys from a
       // hand-edited save can never inflate this past the real roster.
