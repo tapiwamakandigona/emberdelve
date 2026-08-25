@@ -1781,3 +1781,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   provingsCleared + cloud union, controller clear-marking, title entry).
   9 new tests, suite 581/581, plates reviewed (incl. forge-owner state).
   Tagged; CI 32791272915 in_progress. Expect codes 64/1064/2064/4064.
+
+## 2026-08-25T00:35Z — v0.38.0 PUBLISHED, v0.39.0 built
+- v0.38.0 "The Provings" published: CI 32791272915 green, 4/4 PIN-OK
+  (64/1064/2064/4064), AAB pin match, 5 assets + sha256 table.
+- v0.39.0 "The Waymarks": summary surfaces nearestAchievements (existed
+  since v0.5.0, shown nowhere) as a WITHIN REACH panel — up to two started
+  unearned marks with real statValue counts, win AND loss, nothing at
+  zero progress or all-earned. 3 new tests (exact mirror pins + all-earned
+  negative with stat-coverage guard), plates reviewed (win 360/412, loss
+  360), overflow sweep 35/35, ethics CLEAN, analyze clean. Bumped
+  0.39.0+65, news entry, notes docs/releases/v0.39.0.md. Full suite
+  running (/work/temp/v0390_release_test.log).
+- Next: tag v0.39.0 when suite green; scope v0.40.0.

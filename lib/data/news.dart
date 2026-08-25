@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.38.0';
+const String currentAppVersion = '0.39.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.39.0',
+    title: 'The Waymarks',
+    lines: [
+      'The end of a run now names what is within reach: up to two ledger '
+          'marks you have already started, with the true count beside each.',
+      'Only real progress is shown - a goal you have not begun stays '
+          'quiet, and a mark grants nothing but its name.',
+      'The same counts have always lived in the Ledger. Now the summary '
+          'points the way. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.38.0',
     title: 'The Provings',
