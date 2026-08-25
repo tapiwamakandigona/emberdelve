@@ -46,6 +46,11 @@ class DelverCardFacts {
   /// present it replaces the bare seed line: the code carries delver,
   /// difficulty and ascension too, so a friend plays THIS run.
   final String delveCode;
+
+  /// The run's one-or-two-sentence story (v0.54.0 The Epitaph) — the
+  /// card-sized cut of the Obituary. '' when no story is available (facts
+  /// built off a live controller always have one).
+  final String epitaph;
   const DelverCardFacts({
     required this.won,
     required this.delverName,
@@ -57,6 +62,7 @@ class DelverCardFacts {
     required this.fightsWon,
     required this.seed,
     this.delveCode = '',
+    this.epitaph = '',
   });
 
   static DelverCardFacts fromController(GameController c) {
@@ -82,6 +88,7 @@ class DelverCardFacts {
             shortRoad: c.sim?.hasMutator('short_road') ?? false,
           ) ??
           '',
+      epitaph: c.delveEpitaphLine ?? '',
     );
   }
 
@@ -103,8 +110,9 @@ class DelverCardFacts {
   }
 }
 
-/// The card itself: fixed 340×420 logical canvas, hearth palette, bundled
-/// fonts only — a pure function of [facts] so tests can pin every line.
+/// The card itself: fixed 340×480 logical canvas (420 before v0.54.0 — the
+/// epitaph bought 60px), hearth palette, bundled fonts only — a pure
+/// function of [facts] so tests can pin every line.
 class DelverCard extends StatelessWidget {
   final DelverCardFacts facts;
   const DelverCard(this.facts, {super.key});
@@ -112,78 +120,101 @@ class DelverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = facts.won ? EmberColors.gold : EmberColors.ember;
-    return Container(
-      width: 340,
-      height: 420,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF1B1410), Color(0xFF0E0A08)],
+    // The card is an exported IMAGE on a fixed canvas — device text scale
+    // must not reflow it (pre-v0.54.0 it did, and big-text devices exported
+    // an overflowed card). Like any picture, it renders at 1.0 and ships at
+    // 3x; the sheet AROUND it honors the device setting.
+    return MediaQuery.withNoTextScaling(
+      child: Container(
+        width: 340,
+        height: 480,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1B1410), Color(0xFF0E0A08)],
+          ),
+          border: Border.all(color: accent.withValues(alpha: 0.55), width: 2),
+          borderRadius: BorderRadius.circular(14),
         ),
-        border: Border.all(color: accent.withValues(alpha: 0.55), width: 2),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: Space.xl,
-        vertical: Space.l,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'EMBERDELVE',
-            style: EmberText.h2.copyWith(
-              color: EmberColors.textDim,
-              letterSpacing: 4,
-              fontSize: 15,
-            ),
-          ),
-          Icon(
-            facts.won ? Icons.emoji_events : Icons.local_fire_department,
-            size: 40,
-            color: accent,
-          ),
-          Text(
-            facts.won ? 'The Ember is yours' : 'The dark claims you',
-            textAlign: TextAlign.center,
-            style: EmberText.h1.copyWith(
-              fontSize: 21,
-              color: facts.won ? EmberColors.gold : EmberColors.textPrimary,
-              shadows: [
-                Shadow(color: accent.withValues(alpha: 0.5), blurRadius: 14),
-              ],
-            ),
-          ),
-          Text(
-            '${facts.nameLine} · ${facts.modeLine}',
-            textAlign: TextAlign.center,
-            style: EmberText.body.copyWith(color: EmberColors.textDim),
-          ),
-          if (facts.traceGridText.isNotEmpty)
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.xl,
+          vertical: Space.l,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
             Text(
-              facts.traceGridText,
+              'EMBERDELVE',
+              style: EmberText.h2.copyWith(
+                color: EmberColors.textDim,
+                letterSpacing: 4,
+                fontSize: 15,
+              ),
+            ),
+            Icon(
+              facts.won ? Icons.emoji_events : Icons.local_fire_department,
+              size: 40,
+              color: accent,
+            ),
+            Text(
+              facts.won ? 'The Ember is yours' : 'The dark claims you',
               textAlign: TextAlign.center,
-              style: EmberText.body.copyWith(height: 1.25, letterSpacing: 2),
+              style: EmberText.h1.copyWith(
+                fontSize: 21,
+                color: facts.won ? EmberColors.gold : EmberColors.textPrimary,
+                shadows: [
+                  Shadow(color: accent.withValues(alpha: 0.5), blurRadius: 14),
+                ],
+              ),
             ),
-          Text(
-            '${facts.embers} embers banked · ${facts.fightsWon} fights won',
-            textAlign: TextAlign.center,
-            style: EmberText.micro.copyWith(color: EmberColors.textPrimary),
-          ),
-          Text(
-            facts.challengeLine,
-            textAlign: TextAlign.center,
-            style: EmberText.micro.copyWith(color: EmberColors.textDim),
-          ),
-          Text(
-            'tsorostudios.itch.io/emberdelve',
-            style: EmberText.micro.copyWith(
-              color: accent.withValues(alpha: 0.85),
-              letterSpacing: 1,
+            Text(
+              '${facts.nameLine} · ${facts.modeLine}',
+              textAlign: TextAlign.center,
+              style: EmberText.body.copyWith(color: EmberColors.textDim),
             ),
-          ),
-        ],
+            // v0.54.0 The Epitaph: the story under the name — italic, dim,
+            // the narrative voice the numbers below can't carry.
+            if (facts.epitaph.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.s),
+                child: Text(
+                  facts.epitaph,
+                  key: const ValueKey('card-epitaph'),
+                  textAlign: TextAlign.center,
+                  style: EmberText.label.copyWith(
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                    color: EmberColors.textDim,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            if (facts.traceGridText.isNotEmpty)
+              Text(
+                facts.traceGridText,
+                textAlign: TextAlign.center,
+                style: EmberText.body.copyWith(height: 1.25, letterSpacing: 2),
+              ),
+            Text(
+              '${facts.embers} embers banked · ${facts.fightsWon} fights won',
+              textAlign: TextAlign.center,
+              style: EmberText.micro.copyWith(color: EmberColors.textPrimary),
+            ),
+            Text(
+              facts.challengeLine,
+              textAlign: TextAlign.center,
+              style: EmberText.micro.copyWith(color: EmberColors.textDim),
+            ),
+            Text(
+              'tsorostudios.itch.io/emberdelve',
+              style: EmberText.micro.copyWith(
+                color: accent.withValues(alpha: 0.85),
+                letterSpacing: 1,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -285,6 +316,7 @@ Future<void> _shareCard(
 String _fallbackText(DelverCardFacts facts) => [
   'Emberdelve — ${facts.won ? 'the Ember is mine' : 'the dark claimed me'}',
   '${facts.nameLine} · ${facts.modeLine}',
+  if (facts.epitaph.isNotEmpty) facts.epitaph,
   if (facts.traceGridText.isNotEmpty) facts.traceGridText,
   '${facts.embers} embers banked · ${facts.fightsWon} fights won',
   facts.challengeLine,

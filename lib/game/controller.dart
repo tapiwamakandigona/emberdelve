@@ -321,8 +321,12 @@ class GameController extends ChangeNotifier {
   }
 
   void _syncAudio() {
-    audio?.syncPhase(phase,
-        bossFight: _bossFight, eliteFight: _eliteFight, mapDepth: mapDepth);
+    audio?.syncPhase(
+      phase,
+      bossFight: _bossFight,
+      eliteFight: _eliteFight,
+      mapDepth: mapDepth,
+    );
     audio?.setDanger(_inDanger);
     // v0.33.0 Gramophone: record which tracks this profile has heard. The
     // key is computed from the SAME static rule the audio layer uses, so the
@@ -331,8 +335,12 @@ class GameController extends ChangeNotifier {
     // recorded here ('title_menu' is seeded in boot); saves only when the
     // set actually grows.
     if (sim != null) {
-      final key = AudioService.musicKeyForPhase(phase,
-          bossFight: _bossFight, eliteFight: _eliteFight, mapDepth: mapDepth);
+      final key = AudioService.musicKeyForPhase(
+        phase,
+        bossFight: _bossFight,
+        eliteFight: _eliteFight,
+        mapDepth: mapDepth,
+      );
       if (key != null && key != 'title_menu' && meta.heardTracks.add(key)) {
         MetaStore.save(meta);
       }
@@ -1282,6 +1290,31 @@ class GameController extends ChangeNotifier {
       bossName: won ? (enemies[bossForSeed(sim!.runSeed)]?.name ?? '') : '',
       embers: (run['embers'] as num?)?.toInt() ?? 0,
       short: sim!.hasMutator('short_road'),
+      seed: sim!.runSeed,
+    );
+  }
+
+  /// v0.54.0 The Epitaph: the card-sized cut of [delveStoryText] — one or
+  /// two sentences carrying only what the Delver's Card doesn't already
+  /// show. Null while no run has ended. Same fact sources as the full
+  /// story, so the card and the summary can never disagree.
+  String? get delveEpitaphLine {
+    final phase = sim?.phase;
+    if (phase != 'run_won' && phase != 'run_lost') return null;
+    final run = sim!.run;
+    if (run == null) return null;
+    final won = phase == 'run_won';
+    final charId = run['character'] as String? ?? defaultCharacter;
+    final killerId = sim!.enemy?['id'] as String?;
+    return epitaphLine(
+      won: won,
+      delverName: characters[charId]?.name ?? charId,
+      epithetTitle: epithets[meta.selectedEpithet]?.title ?? '',
+      floor: floorReached,
+      killerName: won || killerId == null
+          ? ''
+          : (enemies[killerId]?.name ?? ''),
+      bossName: won ? (enemies[bossForSeed(sim!.runSeed)]?.name ?? '') : '',
       seed: sim!.runSeed,
     );
   }

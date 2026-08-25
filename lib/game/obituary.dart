@@ -45,9 +45,7 @@ String obituaryText({
     final opener = seed.isEven
         ? '$who came back up.'
         : '$who walked out with the Ember.';
-    final felled = bossName.isEmpty
-        ? ''
-        : ' $bossName felled at the bottom.';
+    final felled = bossName.isEmpty ? '' : ' $bossName felled at the bottom.';
     return '$opener All $floors floors on $diff$asc$road$clean.'
         '$felled $embers $emberWord banked.';
   }
@@ -57,4 +55,34 @@ String obituaryText({
       : 'there $killerName ended the run';
   return '$opener Floor $floor of $floors on $diff$asc$road$clean — '
       '$ended. $embers $emberWord carried home.';
+}
+
+/// The card-sized cut of the same story (v0.54.0 The Epitaph): one or two
+/// short sentences for the Delver's Card image. It restates NOTHING the
+/// card already shows (mode, embers, trace grid) — only the narrative the
+/// numbers can't carry: how it ended, and who ended it. Same contracts as
+/// [obituaryText]: pure, deterministic on [seed], losses dignified, every
+/// name a banked fact. Tests pin the exact strings.
+String epitaphLine({
+  required bool won,
+  required String delverName,
+  required String epithetTitle,
+  required int floor,
+  required String killerName,
+  required String bossName,
+  required int seed,
+}) {
+  final who = epithetTitle.isEmpty ? delverName : '$delverName, $epithetTitle';
+  if (won) {
+    final opener = seed.isEven
+        ? '$who came back up.'
+        : '$who walked out with the Ember.';
+    return bossName.isEmpty
+        ? opener
+        : '$opener $bossName felled at the bottom.';
+  }
+  final opener = seed.isEven ? 'Here fell $who' : 'The delve took $who';
+  return killerName.isEmpty
+      ? '$opener on floor $floor.'
+      : '$opener — $killerName ended the run on floor $floor.';
 }

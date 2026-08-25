@@ -113,6 +113,9 @@ void main() {
         embers: 42,
         fightsWon: 9,
         seed: 1234,
+        epitaph: won
+            ? 'Kindler came back up. Hearthless King felled at the bottom.'
+            : 'Here fell Kindler — Coal-Seam Wyrm ended the run on floor 4.',
       );
       await tester.pumpWidget(
         MaterialApp(
@@ -209,6 +212,8 @@ void main() {
     expect(challenge.seed, 18);
     expect(challenge.character, 'kindler');
     expect(clipped, contains('the dark claimed me'));
+    // v0.54.0: the degraded artifact carries the epitaph too.
+    expect(clipped, contains(c.delveEpitaphLine!));
     expect(clipped, contains('tsorostudios.itch.io/emberdelve'));
     // Sweep the degraded artifact too.
     for (final word in bannedWords) {
