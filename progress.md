@@ -1957,3 +1957,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   0.47.0+73 + news entry + notes docs/releases/v0.47.0.md (balance numbers
   need filling in); (4) tag at release sha, dispatch CI, publish with
   checksums (expect codes 73/1073/2073/4073).
+
+## 2026-08-25T04:05Z — v0.47.0 gates ALL GREEN; tagged
+- HARD1000 42.1% vs 42.3% pre-drop (within noise). BAND400 89.0/62.75/39.75.
+- Plate critique done (tool/answered_blow_plates_test.dart, tour suppressed
+  via meta.tourSeenVersion = tourVersion): found + FIXED a pre-existing
+  defect — 2-chip intent badges (attack_block/charge) clipped the right
+  screen edge at 320x568@1.3x. Badge now Positioned right:-(Space.xl-Space.s)
+  in combat/stage.dart (right edge Space.s inside the screen at every width;
+  ~unchanged at 360px). Suite re-run after the fix: 606/606; analyze clean.
+- Release notes filled with measured numbers; tag v0.47.0 at this sha;
+  CI dispatch next. Expect codes 73/1073/2073/4073.
+- PLATE LESSON: never combatBegin() from the map phase for screenshots (the
+  screen renders a broken hybrid) — walk to a real fight, then swap
+  (c.state!['enemy'] as Map)['intent'] and tick with a benign apply.

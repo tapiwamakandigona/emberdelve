@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tips.dart';
-import 'package:emberdelve/sim/combat.dart';
+import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/ui/screens.dart';
 
 const outDir = 'build/answered_blow_plates';
@@ -97,6 +97,7 @@ Future<void> plates(WidgetTester tester, String suffix) async {
   final c = GameController();
   c.meta
     ..tutorialSeen = true
+    ..tourSeenVersion = tourVersion
     ..tipsSeen.addAll(ContextTips.all);
   await tester.pumpWidget(app(GameRoot(c)));
   await pumpFor(tester, 600);
