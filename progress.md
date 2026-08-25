@@ -2208,3 +2208,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze clean; suite 668/668 (/work/temp/v0600_suite1.log; +4 test/delver_tally_test.dart).
 - Plates critiqued clean (tool/delver_tally_visual_test.dart: 360, 320 worst-case with the Well-Oiled + 4-digit tally, fresh-install negative).
 - Zero sim movement — no re-anchors.
+
+## 2026-08-25 — v0.61.0 "The Deepest Mark" gates GREEN (push pending GitHub auth)
+- One improvement: summary announces a moved bestFloor with one gold line "Floor N — the deepest you have delved." (key deepest-line), win or LOSS alike; gated on a previous record existing (bestFloor > 0). Transient pendingDeepestFloor, pendingRankUp lifecycle. Scout: docs/improvements/v0.61.0-lead-scout.md (post-run record-card conventions + Balatro stats culture + loss-retention data).
+- analyze clean; suite 674/674 (/work/temp/v0610_suite1.log; +6 test/deepest_mark_test.dart incl. loss-sets-the-mark and first-run-silent pins).
+- Plates critiqued clean (tool/deepest_mark_visual_test.dart: deepest_win_360x640, deepest_loss_320x568 dignity plate). PLATE LESSON: SummaryScreen pumped directly needs a Material(color: EmberColors.bg) host or every Text paints the yellow missing-DefaultTextStyle underline; the line sits below the fold — scrollUntilVisible before snap.
+- Zero sim movement, zero save-format movement (bestFloor persisted since v0.5.0). pubspec 0.61.0+87.
+- itch.io same session: android channel butler-pushed to v0.59.0 (was stale at 0.45.0 — the "CI auto-sync" note was wrong, corrected in MARKETING-SYNC.md); devlog 1640696 posted; new password + API key stored Viktor-side.
