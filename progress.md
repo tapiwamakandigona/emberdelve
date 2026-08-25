@@ -1847,3 +1847,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI 32795983316 green; staged /work/temp/v0420; verify.py 4/4 PIN-OK (codes 68/1068/2068/4068); AAB pin match 031acb42…
 - Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.42.0 — 5 assets, sha256 table appended.
 - v0.43.0 CI 32796450867 still in_progress; publish next.
+
+## 2026-08-25T05:50Z — v0.43.0 "The Remembered Delves" PUBLISHED; v0.44.0 built
+- v0.43.0: CI 32796450867 green; verify.py 4/4 PIN-OK (69/1069/2069/4069);
+  AAB pin match; release live with 5 assets + sha256 table.
+- v0.44.0 "The Retraced Road" (in progress): loss summary gains a quiet
+  'Retrace this delve' ghost button + honest fact line — same seed, delver,
+  difficulty, rung via startRun (the Delve Code path). canRetrace gates:
+  run_lost only, never Daily/Weekly (shared-attempt integrity), seed >= 1.
+  3 new tests (retraced_road_test.dart) green; plates
+  tool/retraced_visual_test.dart (loss at 360/412/320) reviewed clean;
+  analyze clean. Bump 0.44.0+70; news entry; notes docs/releases/v0.44.0.md.
+  Full suite + overflow sweep running.

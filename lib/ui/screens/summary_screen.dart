@@ -493,6 +493,33 @@ class SummaryScreen extends StatelessWidget {
                               onTap: () => c.delveAgain(),
                             ),
                           ),
+                          // v0.44.0 The Retraced Road: a lost delve offers
+                          // one more honest door — the SAME seed, so the map,
+                          // offers, and rolls repeat and only the choices
+                          // change (learning made playable). Quiet ghost
+                          // button, no urgency; shared-seed runs never show
+                          // it (controller.canRetrace).
+                          if (c.canRetrace) ...[
+                            const SizedBox(height: Space.m),
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Retrace this delve',
+                                key: const ValueKey('retrace-delve'),
+                                ghost: true,
+                                icon: Icons.replay,
+                                onTap: () => c.retraceDelve(),
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                            Text(
+                              'Same map, same offers, same rolls — '
+                              'only your choices change.',
+                              key: const ValueKey('retrace-fact'),
+                              style: EmberText.micro,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                           const SizedBox(height: Space.m),
                           // v0.34.0 The Delver's Card: an IMAGE of this run,
                           // previewed before it leaves the device (design doc

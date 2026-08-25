@@ -716,6 +716,30 @@ class GameController extends ChangeNotifier {
     );
   }
 
+  /// v0.44.0 The Retraced Road: a lost delve can be retraced — the SAME
+  /// seed, delver, difficulty, and rung, so the map, offers, and rolls all
+  /// repeat and only the choices change. Learning made playable (Slay the
+  /// Spire lesson: a loss should sharpen a theory, not just restart).
+  /// Never for shared-seed runs — the Daily and Weekly keep their
+  /// one-shared-attempt integrity — and never without a real seed.
+  bool get canRetrace =>
+      phase == 'run_lost' &&
+      dailyDate == null &&
+      weeklyIndex == null &&
+      (runSeed ?? 0) >= 1;
+
+  void retraceDelve() {
+    if (!canRetrace) return;
+    final run = sim?.run;
+    startRun(
+      character: run?['character'] as String?,
+      ascension: run?['ascension'] as int? ?? 0,
+      boons: true,
+      seed: runSeed,
+      difficulty: run?['difficulty'] as String? ?? 'normal',
+    );
+  }
+
   /// The ONLY mutation path. Applies, banks on terminal, autosaves, flashes.
   ///
   /// [terminalHold]: when the command ends the encounter (won or lost), delay
