@@ -2176,3 +2176,7 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze --fatal-warnings clean; suite 656/656 (/work/temp/v0570_suite2.log; +6 test/fuller_record_test.dart incl. bot-played win seed 1 / loss seed 18 banking pins and fuller worst-case canvas).
 - Plates critiqued clean: build/ledger_card_plates now 5 plates (fuller_loss_card with "The Gambler, the Well-Oiled" + 2-row trace + fights line; fuller_win_card grid ends on ember cell; legacy cards keep omissions) + 3 news plates (build/news_visual).
 - Zero sim changes → no sweep/golden re-anchor. pubspec 0.57.0+83.
+
+## 2026-08-25 — v0.57.0 PUBLISHED
+- CI run 32874509333 success. Version codes 83/1083/2083/4083. 4 APK pins PIN-OK; AAB cert pin matched.
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.57.0 — 5 signed assets; sha256 table appended.
