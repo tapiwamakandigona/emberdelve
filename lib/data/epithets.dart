@@ -48,6 +48,7 @@ const List<String> epithetsOrder = [
   'the_emberled',
   'the_unburnt',
   'the_highborne',
+  'the_well_oiled',
 ];
 
 const Map<String, EpithetDef> epithets = {
@@ -106,5 +107,13 @@ const Map<String, EpithetDef> epithets = {
     unlockLine: 'Climb to ascension 5.',
     stat: 'best_ascension',
     target: 5,
+  ),
+  'the_well_oiled': EpithetDef(
+    'the_well_oiled',
+    'the Well-Oiled',
+    unlockLine: 'Win a delve as the Tinker.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'tinker',
   ),
 };

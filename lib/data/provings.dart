@@ -79,6 +79,17 @@ const List<ProvingDef> provings = [
     character: 'peddler',
     difficulty: 'normal',
   ),
+  // v0.52.0: the tenth proving — the last empty seat. Seed 131 is bot-win
+  // proven for the tinker on normal (tool/tinker_proving_hunt_test.dart);
+  // steady dice mean the plan, not the roll, decides the delve.
+  ProvingDef(
+    id: 'tinkers_proving',
+    title: "The Tinker's Proving",
+    blurb: 'The Tinker on normal floors. Steady pips; the plan does the work.',
+    seed: 131,
+    character: 'tinker',
+    difficulty: 'normal',
+  ),
   ProvingDef(
     id: 'fifth_rung',
     title: 'The Fifth Rung',
