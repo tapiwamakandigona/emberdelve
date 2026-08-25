@@ -2125,3 +2125,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Pre-delve boss telegraph: rumorForSeed (lib/game/rumor.dart, pure bossForSeed read) on the boon pick (rumor-line) + live preview in the Delve a seed dialog (rumor-preview; code seed wins over raw text).
 - Overflow sweep fixes shipped with it: boon header now scrolls with the cards (fixed header overran 320@1.3x under the probe font); boon title Row→Wrap (RECOMMENDED chip starved the title to letter-per-line at 320@1.3x — pre-existing, plate-proven); seed dialog content scrollable + tighter insetPadding.
 - Zero sim changes; suite 636/636; analyze clean; 14 plates critiqued clean at 4 sizes (build/rumor_plates, logs /work/temp/v0530_*).
+
+## 2026-08-25T07:15Z — v0.53.0 "The Rumor" PUBLISHED
+- CI 32819302281 (workflow_dispatch on tag) success; artifacts aab 9552903903 / splits 9552902373 / apk 9552900177.
+- 4 APK pins PIN-OK (codes 79/1079/2079/4079); AAB signer pin matched. Staging /work/temp/v0530/rel.
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.53.0 — 5 assets, sha256 table in notes (notes_final.md).
+- v0.54.0 "The Epitaph" underway in-tree: epitaphLine + delveEpitaphLine + card epitaph render/fallback; worst-case card gate FOUND pre-existing bug — the shipped card overflowed 90px at 1.3x device text scale since v0.34.0 (fix: MediaQuery.withNoTextScaling — the card is an exported image; + canvas 420→470 for the epitaph under the wide test font).
