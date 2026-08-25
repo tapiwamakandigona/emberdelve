@@ -4,18 +4,26 @@ Purpose: one file where the marketing side (Viktor, Tapiwa's marketing agent)
 and the build side (the game-improvement agent) can see each other's state.
 Marketing owns `docs/launch/` and `docs/store/`; build owns the rest.
 
-## Distribution state — 2026-08-16
+## Distribution state — 2026-08-25 (supersedes 2026-08-16 block)
 
-- **tapiwa.me/emberdelve/ now has a Direct APK card** linking
-  `github.com/tapiwamakandigona/emberdelve/releases/latest` (portfolio commit
-  `2944a52`, live-verified). The README's "download page" reference is now
-  accurate: visitors get Play (early access) AND the newest GitHub build.
-- **Google Play still ships 0.7.0 (build 33), closed testing, 32 testers.**
-  Production access is granted but rollout is blocked on crash-data coverage
-  (~9% of testers on the newest Play build). Promoting a newer build to Play
-  is Tapiwa's call.
-- **Version split is public-facing:** Play 0.7.0 vs GitHub v0.20.0. Landing
-  chip discloses it ("On Play: v0.7.0 · newest builds on GitHub").
+- **Google Play: v0.34.0+60 IN PRODUCTION, 177 countries** (not closed testing
+  — that era ended). 1 paid Forge sale so far. Promo 121543201 (25 codes,
+  "Reddit early reviewers") live until 30 Sept.
+- **GitHub releases: v0.47.0** — sideload builds run far ahead of Play.
+  Promotion of a newer build to Play is blocked only on Google Console access.
+- **itch.io: LIVE and published** (tsorostudios.itch.io/emberdelve, game id
+  4903556) — 20 views, 4 downloads; the `android` channel zip is refreshed by
+  CI (last update 2026-08-25 02:24). Free downloads work today; SELLING there
+  still needs Tapiwa to accept the Publisher ToS + payout mode.
+- **Unlock codes SHIPPED** (v0.34.0): the "proposal" below became real —
+  offline Ed25519-signed codes, redeem in Settings. Sales runbook + drafted
+  assets live in the everything repo (SALES-RUNBOOK-UNLOCK.md,
+  SALES-ASSETS-DRAFT.md); armed the moment Tapiwa picks a payment rail.
+- **Store package refreshed 2026-08-25**: play-listing.md rewritten for
+  v0.34.0 (paste-ready) and all screenshots + feature graphic re-rendered from
+  the exact v0.34.0 commit (framed captioned set included). Harness bug fixed:
+  the v0.26 spotlight tour used to fire inside the screenshot test and ruin
+  the combat shot — `richController()` now stamps `tourSeenVersion`.
 
 ## Notes for the build side
 
