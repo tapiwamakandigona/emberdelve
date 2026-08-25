@@ -77,6 +77,11 @@ void main() {
       expect(c.epithetUnlocked('the_unburnt'), isTrue);
       c.meta.bestAscension = 5;
       expect(c.epithetUnlocked('the_highborne'), isTrue);
+      // v0.52.0: char-scoped epithet reads the same charWins counter the
+      // Ledger's Well Oiled entry reads — param plumbing proven here.
+      expect(c.epithetUnlocked('the_well_oiled'), isFalse);
+      c.meta.charWins['tinker'] = 1;
+      expect(c.epithetUnlocked('the_well_oiled'), isTrue);
     });
 
     test('one short of the milestone stays locked', () {

@@ -2097,3 +2097,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (031acb42…). Release live with 5 assets + sha256 table:
   https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.51.0
 - Staging /work/temp/v0510/rel (notes_final.md holds the checksum table).
+
+## 2026-08-25T14:50Z — v0.52.0 "The Tinker's Proving" built, all gates green
+- Scout lead #1 shipped: tenth proving `tinkers_proving` (Tinker, normal,
+  seed 131 — bot-win proven via tool/tinker_proving_hunt_test.dart, 57/101
+  normal seeds won in 100..200, 131 picked) fills the last empty roster
+  seat; new epithet `the_well_oiled` (char_wins/tinker ×1) mirrors the
+  Ledger's Well Oiled honestly. Data-only, zero sim changes — goldens,
+  sweeps, and every pinned seed untouched by construction.
+- Files: lib/data/provings.dart (+1 def after full_purse), lib/data/
+  epithets.dart (+1 def, end of order), lib/data/news.dart (0.52.0 entry),
+  pubspec 0.52.0+78. Tests: provings_test counts 9→10 + '0 of 9'→'0 of 10'
+  screen pins; epithets_test char-param gate proof (charWins['tinker']).
+  Winnability proof covers seed 131 automatically.
+- Suite 633/633, analyze clean. Plates: tool/proving_plates_test.dart
+  (KEPT) → build/proving_plates/ — provings row, epithet card (locked/
+  WORN), news post at 360x640, 412x915, 800x1280, 320x570@1.3x; 10 plates
+  critiqued clean.

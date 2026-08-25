@@ -32,9 +32,9 @@ void driveToTerminal(GameController c) {
 
 void main() {
   group('data integrity', () {
-    test('nine provings, unique ids, valid params, all encodable', () {
-      expect(provings.length, 9);
-      expect(provings.map((p) => p.id).toSet().length, 9);
+    test('ten provings, unique ids, valid params, all encodable', () {
+      expect(provings.length, 10);
+      expect(provings.map((p) => p.id).toSet().length, 10);
       for (final p in provings) {
         expect(characters.containsKey(p.character), isTrue, reason: p.id);
         expect(['easy', 'normal', 'hard'], contains(p.difficulty));
@@ -153,7 +153,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('The First Flame'), findsOneWidget);
-      expect(find.textContaining('0 of 9'), findsOneWidget);
+      expect(find.textContaining('0 of 10'), findsOneWidget);
       // Fresh meta: only the kindler is unlocked and hard is forge-gated,
       // so The Shield Oath (warden) states its delver requirement...
       await tester.scrollUntilVisible(
@@ -194,7 +194,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('CLEARED'), findsOneWidget);
-      expect(find.textContaining('1 of 9'), findsOneWidget);
+      expect(find.textContaining('1 of 10'), findsOneWidget);
       expect(find.text('Delve it again'), findsOneWidget);
     });
   });
