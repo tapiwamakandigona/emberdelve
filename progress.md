@@ -1980,3 +1980,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   own combat theme (KM "Volatile Reaction", -19.06 LUFS, TP -9.17, OGG q4)
   as the eighth Gramophone record; _bossFight split into boss-only +
   _eliteFight; boss music no longer plays for elites. WIP uncommitted.
+
+## 2026-08-25T07:40Z — v0.48.0 "The Iron Between" gates green
+- Elite fights get their own theme (KM "Volatile Reaction" -> combat_elite,
+  -19.06 LUFS, TP -9.17, OGG q4, 2.4MB). Eighth Gramophone record "Iron
+  Between" between Steel and Ember and Deeper Still. _bossFight boss-only;
+  new _eliteFight; boss outranks elite in musicKeyForPhase.
+- No sim change: no re-anchor, no band sweep. Suite 610/610 (4 new
+  iron_between tests; gramophone mask pin 5->6). Analyze clean.
+- Pinned: kindler easy seed 2 win crosses an elite (records combat_elite +
+  boss_combat separately); seed 1 win meets no elite (probe: elites on easy
+  seeds 2,3,4,5,7,9,12 of 1..12).
+- Gramophone plates re-critiqued clean at 360x640/412x915/800x1280 +
+  playing state. Version 0.48.0+74, news entry, notes docs/releases/
+  v0.48.0.md, design doc, PROVENANCE + CREDITS rows.
+- Next: commit, tag v0.48.0, dispatch CI, publish with checksums
+  (expect codes 74/1074/2074/4074).

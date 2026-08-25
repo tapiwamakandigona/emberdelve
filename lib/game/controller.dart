@@ -308,11 +308,19 @@ class GameController extends ChangeNotifier {
 
   bool get _bossFight {
     final e = sim?.enemy;
-    return e != null && (e['boss'] == true || e['elite'] == true);
+    return e != null && e['boss'] == true;
+  }
+
+  /// v0.48.0 The Iron Between: elites get their own combat theme. A crowned
+  /// foe outranks it (checked in musicKeyForPhase), so boss stays boss.
+  bool get _eliteFight {
+    final e = sim?.enemy;
+    return e != null && e['elite'] == true;
   }
 
   void _syncAudio() {
-    audio?.syncPhase(phase, bossFight: _bossFight, mapDepth: mapDepth);
+    audio?.syncPhase(phase,
+        bossFight: _bossFight, eliteFight: _eliteFight, mapDepth: mapDepth);
     audio?.setDanger(_inDanger);
     // v0.33.0 Gramophone: record which tracks this profile has heard. The
     // key is computed from the SAME static rule the audio layer uses, so the
@@ -322,7 +330,7 @@ class GameController extends ChangeNotifier {
     // set actually grows.
     if (sim != null) {
       final key = AudioService.musicKeyForPhase(phase,
-          bossFight: _bossFight, mapDepth: mapDepth);
+          bossFight: _bossFight, eliteFight: _eliteFight, mapDepth: mapDepth);
       if (key != null && key != 'title_menu' && meta.heardTracks.add(key)) {
         MetaStore.save(meta);
       }

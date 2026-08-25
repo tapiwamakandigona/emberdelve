@@ -26,6 +26,7 @@ class AudioService {
     'map': 'audio/music/map.ogg',
     'map_deep': 'audio/music/map_deep.ogg',
     'combat': 'audio/music/combat.ogg',
+    'combat_elite': 'audio/music/combat_elite.ogg',
     'boss_combat': 'audio/music/boss_combat.ogg',
     'victory': 'audio/music/victory.ogg',
     'defeat': 'audio/music/defeat.ogg',
@@ -175,14 +176,20 @@ class AudioService {
   /// theme past the delve's midpoint (v0.45.0 "The Deeper Song"): the same
   /// depth signal the Deep Hum ambience follows, so sound and music agree
   /// about how far down the delver stands.
+  ///
+  /// [eliteFight] (v0.48.0 "The Iron Between") gives elite fights their own
+  /// theme between the regular combat piece and the crowned-boss piece; a
+  /// crowned foe always outranks it.
   static String? musicKeyForPhase(
     String? phase, {
     bool bossFight = false,
+    bool eliteFight = false,
     double mapDepth = 0,
   }) {
     switch (phase) {
       case 'player_turn':
-        return bossFight ? 'boss_combat' : 'combat';
+        if (bossFight) return 'boss_combat';
+        return eliteFight ? 'combat_elite' : 'combat';
       // 'boon' is part of the run (the map background already shows behind
       // it) — without this case it fell through to title music, so "Delve
       // again" after a defeat played: defeat sting -> title theme for the
@@ -214,9 +221,11 @@ class AudioService {
   Future<void> syncPhase(
     String? phase, {
     bool bossFight = false,
+    bool eliteFight = false,
     double mapDepth = 0,
   }) async {
-    final key = musicKeyForPhase(phase, bossFight: bossFight, mapDepth: mapDepth);
+    final key = musicKeyForPhase(phase,
+        bossFight: bossFight, eliteFight: eliteFight, mapDepth: mapDepth);
     if (phase == 'map') {
       setAmbience(true, level: mapAmbienceLevel(mapDepth));
     } else {

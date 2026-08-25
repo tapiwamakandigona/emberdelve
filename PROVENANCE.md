@@ -167,6 +167,7 @@ SFX q4–5), 44.1 kHz, SFX mono / music stereo. All music decodes with peak ≤
 | map.ogg | "Ossuary 2 - Turn" — https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ossuary%202%20-%20Turn.mp3 | KM | same as above |
 | combat.ogg | "Curse of the Scarab" — https://incompetech.com/music/royalty-free/mp3-royaltyfree/Curse%20of%20the%20Scarab.mp3 | KM | same |
 | boss_combat.ogg | "Five Armies" — https://incompetech.com/music/royalty-free/mp3-royaltyfree/Five%20Armies.mp3 | KM | same |
+| combat_elite.ogg | "Volatile Reaction" — https://incompetech.com/music/royalty-free/mp3-royaltyfree/Volatile%20Reaction.mp3 | KM | no edge silence at −60 dB, −11.08 dB measured gain to −19 LUFS (verified −19.06 LUFS, TP −9.17 dBFS), alimiter −1.4 dBFS ceiling, 20/40 ms edge fades, OGG q4 stereo 44.1 kHz (v0.48.0) |
 | map_deep.ogg | "Ossuary 6 - Air" — https://incompetech.com/music/royalty-free/mp3-royaltyfree/Ossuary%206%20-%20Air.mp3 | KM | trim edge silence (−60 dB: 1.30 s head, 3.22 s tail), +3.48 dB measured gain to −19 LUFS (verified −19.0 LUFS, TP −2.91 dBFS), alimiter −1.4 dBFS ceiling, 20/40 ms edge fades, OGG q4 stereo 44.1 kHz (v0.45.0) |
 | victory.ogg | fanfare #1 (0.00–5.43 s cut of pack file) | SS-FAN | cut, −18 LUFS, 0.4 s fade-out, OGG q5 |
 | defeat.ogg | first 12 s of "Defeat" | TC-DEF | cut, −18 LUFS, 2.5 s fade-out, OGG q5 |
