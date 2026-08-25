@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.49.0';
+const String currentAppVersion = '0.50.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.50.0',
+    title: 'The Tinker',
+    lines: [
+      'A sixth delver joins the hearth: the Tinker never rolls scared and '
+          'never rolls wild. Steady dice under Loaded Pips - the best '
+          'floors in the roster, traded for the smallest ceiling.',
+      'Unlocks for 600 embers. Two new ledger entries wait: Well Oiled, '
+          'and Six Ways Down for winning with the whole company. Thank you '
+          'for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.49.0',
     title: 'The Shorter Road',

@@ -96,6 +96,17 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.65,
     swingAngle: 1.9,
   ),
+  // Control (v0.50.0): a long-handled pin wrench with a burnished steel
+  // head — the tool of someone who fixes the delve rather than fights it.
+  'tinker': WeaponDef(
+    'pin_wrench',
+    'Pin Wrench',
+    accent: Color(0xFF8FB4C9),
+    reach: 0.54,
+    idleAngle: 0.32,
+    raiseAngle: -1.55,
+    swingAngle: 1.8,
+  ),
 };
 
 WeaponDef weaponFor(String characterId) =>
@@ -397,6 +408,9 @@ class _WeaponPainter extends CustomPainter {
         break;
       case 'coin_hook':
         _coinHook(canvas, reach);
+        break;
+      case 'pin_wrench':
+        _pinWrench(canvas, reach);
         break;
       default:
         _sword(canvas, reach);
@@ -716,6 +730,80 @@ class _WeaponPainter extends CustomPainter {
     ).createShader(Rect.fromLTWH(-w, -reach, w * 3.0, reach * 0.5));
     canvas.drawPath(hook, _p);
     _p.shader = null;
+  }
+
+  void _pinWrench(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Cross-pin through the pommel: the tool's namesake.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF6E7B85);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.14),
+          width: w * 1.7,
+          height: w * 0.42,
+        ),
+        Radius.circular(w * 0.2),
+      ),
+      _p,
+    );
+    // Wrapped grip: dark leather over the lower shaft.
+    _p.color = const Color(0xFF3A3F45);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.04),
+          width: w * 0.78,
+          height: reach * 0.34,
+        ),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Long burnished steel shaft up to the head.
+    _p.shader = const LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [Color(0xFF7C8B96), Color(0xFFB9CBD6)],
+    ).createShader(Rect.fromLTWH(-w, -reach, w * 2.0, reach));
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.44),
+          width: w * 0.6,
+          height: reach * 0.52,
+        ),
+        Radius.circular(w * 0.3),
+      ),
+      _p,
+    );
+    _p.shader = null;
+    // The spanner head: a C-jaw opening into the swing, drawn as a thick
+    // crescent with a squared bite so it reads as a tool, not a blade.
+    final jaw = Path()
+      ..moveTo(-w * 0.9, -reach * 0.70)
+      ..quadraticBezierTo(-w * 1.5, -reach * 0.94, -w * 0.4, -reach * 1.02)
+      ..lineTo(w * 1.0, -reach * 1.06)
+      ..lineTo(w * 1.0, -reach * 0.92)
+      ..lineTo(w * 0.15, -reach * 0.90)
+      ..quadraticBezierTo(-w * 0.5, -reach * 0.86, -w * 0.25, -reach * 0.70)
+      ..close();
+    _p.shader = const LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [Color(0xFF8FA5B2), Color(0xFFD3E2EA)],
+    ).createShader(Rect.fromLTWH(-w * 1.5, -reach * 1.1, w * 3.0, reach * 0.4));
+    canvas.drawPath(jaw, _p);
+    _p.shader = null;
+    // Adjustment pin socket on the head.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.2
+      ..color = const Color(0xFF4C5B66);
+    canvas.drawCircle(Offset(w * 0.55, -reach * 0.99), w * 0.28, _p);
+    _p.style = PaintingStyle.fill;
   }
 
   void _brandIron(Canvas canvas, double reach) {

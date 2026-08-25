@@ -2,7 +2,7 @@
 //
 // The title fire seats every unlocked delver. These tests pin the two load-
 // bearing promises: a fresh profile renders exactly one delver (the kindler,
-// in their pre-v0.42.0 spot), and a full company seats all five around the
+// in their pre-v0.42.0 spot), and a full company seats every delver around the
 // fire — left side facing right (unflipped), right side flipped toward the
 // flames — in the alternating unlock-order arrangement.
 import 'package:flutter/material.dart';
@@ -52,7 +52,7 @@ void main() {
     await pumpFor(tester, 400);
   });
 
-  testWidgets('full company: all five delvers gather, facing the fire', (
+  testWidgets('full company: every delver gathers, facing the fire', (
     tester,
   ) async {
     final c = GameController();
