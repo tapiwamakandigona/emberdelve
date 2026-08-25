@@ -23,6 +23,7 @@ import '../data/vistas.dart';
 import '../data/epithets.dart';
 import '../data/provings.dart';
 import '../game/controller.dart';
+import '../meta/meta.dart' show MetaState;
 import '../game/tour.dart';
 import '../game/daily_share.dart';
 import '../game/run_trace.dart';

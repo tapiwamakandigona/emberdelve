@@ -1819,3 +1819,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.40.0 "The Peddler" published: CI 32794594399 green, 4/4 PIN-OK
   (66/1066/2066/4066), AAB pin match, 5 assets + sha256 table.
 - v0.41.0 CI 32795084973 queued/running; publish when green.
+
+## 2026-08-25T02:15Z — v0.42.0 The Gathered Hearth (tagged)
+- Title fire seats every unlocked delver (alternating seats, facing the
+  flames; 72/64/58px by count; FittedBox overflow guard; dye applies to all).
+  Fresh profile renders the classic single-kindler scene unchanged.
+- 2 new tests (gathered_hearth_test.dart); plates tool/hearth_visual_test.dart
+  (1/2/3/5 delvers, 3 sizes) reviewed clean; overflow 35/35; suite 590/590;
+  analyze clean; perf probe green (map drag 9.0 paints/frame). Sim untouched.
+- Bump 0.42.0+68; news entry; notes docs/releases/v0.42.0.md.

@@ -119,24 +119,11 @@ class TitleScreen extends StatelessWidget {
                                 ],
                               ),
                               const Spacer(),
-                              // The delver, idling by a fire while the dark waits below.
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SpriteView(
-                                    defaultCharacter,
-                                    height: 72,
-                                    dye: Art.dyeFilter(m.activeDye),
-                                  ),
-                                  const SizedBox(width: Space.l),
-                                  CampFire(
-                                    size: 40,
-                                    warm: warm,
-                                    bright: bright,
-                                  ),
-                                ],
-                              ),
+                              // The Gathered Hearth (v0.42.0): every unlocked
+                              // delver idles at the fire, so the roster you
+                              // earned is visible the moment the game opens.
+                              // One delver renders exactly as it always did.
+                              _GatheredHearth(m, warm: warm, bright: bright),
                               const SizedBox(height: Space.xxl),
                               // Difficulty selector (v0.3.2): sticky, honest about the trade —
                               // easier fights pay fewer embers, harder fights pay more. The
@@ -455,6 +442,79 @@ class TitleScreen extends StatelessWidget {
         ? ' Met, it pays +${t.emberBonus} embers.'
         : '';
     return '${t.name} — ${t.blurb}$bonus';
+  }
+}
+
+/// The Gathered Hearth (v0.42.0): the title fire with every unlocked delver
+/// idling around it — collection progress as a scene, not a counter. Unlock
+/// order decides the seating: the kindler keeps their old spot left of the
+/// fire, and each newly unlocked delver alternates right, left, right...
+/// facing the flames. With only the kindler unlocked this renders the exact
+/// pre-v0.42.0 row. FittedBox scales the whole gathering down on narrow
+/// screens so a full company can never overflow 320px (overflow probe).
+class _GatheredHearth extends StatelessWidget {
+  final MetaState m;
+  final Color? warm;
+  final Color? bright;
+  const _GatheredHearth(this.m, {this.warm, this.bright});
+
+  @override
+  Widget build(BuildContext context) {
+    final unlocked = [
+      for (final id in charactersOrder)
+        if (m.isUnlocked(id)) id,
+    ];
+    // Alternate seats around the fire in unlock-price order: even index
+    // sits left (default facing, toward the fire), odd sits right (flipped
+    // toward the fire). Left list is built outer-to-inner so the kindler
+    // always ends up beside the flames.
+    final left = <String>[];
+    final right = <String>[];
+    for (final (i, id) in unlocked.indexed) {
+      if (i.isEven) {
+        left.insert(0, id);
+      } else {
+        right.add(id);
+      }
+    }
+    // A fuller hearth seats slightly smaller delvers so five sprites plus
+    // the fire still read as one campfire scene, not a police lineup.
+    final h = unlocked.length <= 2
+        ? 72.0
+        : unlocked.length == 3
+        ? 64.0
+        : 58.0;
+    final dye = Art.dyeFilter(m.activeDye);
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        key: const ValueKey('gathered-hearth'),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          for (final id in left) ...[
+            SpriteView(
+              id,
+              key: ValueKey('hearth-$id'),
+              height: h,
+              dye: dye,
+            ),
+            SizedBox(width: id == left.last ? Space.l : Space.s),
+          ],
+          CampFire(size: 40, warm: warm, bright: bright),
+          for (final id in right) ...[
+            SizedBox(width: id == right.first ? Space.l : Space.s),
+            SpriteView(
+              id,
+              key: ValueKey('hearth-$id'),
+              height: h,
+              flipX: true,
+              dye: dye,
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 

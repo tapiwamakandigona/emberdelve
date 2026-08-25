@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.41.0';
+const String currentAppVersion = '0.42.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.42.0',
+    title: 'The Gathered Hearth',
+    lines: [
+      'The title fire now seats every delver you have unlocked - the '
+          'whole company idles at the hearth, right where the kindler '
+          'always stood.',
+      'Nothing to buy, nothing to do: the roster you earned is simply '
+          'there each time the game opens. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.41.0',
     title: 'The Ninth Proving',
