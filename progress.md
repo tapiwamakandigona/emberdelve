@@ -1872,3 +1872,34 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   4->5; full suite 597/597; overflow 35/35; gramophone plates (360/412/800
   + playing) reviewed clean; analyze clean. Bump 0.45.0+71; news entry;
   notes docs/releases/v0.45.0.md. Expect codes 71/1071/2071/4071.
+
+## 2026-08-25T07:45Z — v0.45.0 PUBLISHED; v0.46.0 "The Delvers Before" built (content drop 4, FIFTH golden re-anchor)
+- v0.45.0: CI 32798675625 green; verify.py 4/4 PIN-OK (71/1071/2071/4071);
+  AAB pin match; release live with 5 assets + sha256 table.
+- v0.46.0: +6 events (39→45: the_cold_camp, delvers_cairn, the_old_rope,
+  rivals_ledger, the_left_lantern, the_first_delver) and +4 combo relics
+  (32→36: cairn_stone, rivals_compass, keepers_lantern, tally_chain), all
+  appended at END, existing vocab only; 4 codex entries; 4 event-icon map
+  rows (fallback precedent kept). Theme: the delvers who came before.
+- FIFTH GOLDEN RE-ANCHOR (deck/relic growth re-rolls loot/shuffle draws;
+  boss mapping untouched; all 8 anchor seeds unchanged and reach-PROVEN via
+  tool/reanchor_v0460_probe_test.dart): goldenV6 1607954204→2043266176.
+  bossGoldens old→new: colossus 1626301198→2114249795@20260728, tyrant
+  1459254341→1274323147@20260721, matriarch 445696919→1246566942@20260722,
+  hierophant 1607954204→2043266176@20260723, bellows 565723793→1874083357
+  @20260724, twins 1991211581→1238512999@20260725, regent 1258221119→
+  2127043565@20260734, king 510459434→1841674163@20260743.
+- Pins re-hunted: kindler easy-loss 13→3 (6 test files); peddler easy-loss
+  5→16; ash_summit proving seed 908→912 (lib/data/provings.dart); A20 ladder
+  kindler 39→6, warden 4, gambler 40→10, ascetic 106→20 (distinct); rung-20
+  cap seed 39→6. Peddler normal wins 1..8 now {1,2,4,6,8}.
+- Sweeps IN BAND: BAND400 easy 88.5 / normal 63.5 / hard 39.0; HARD1000
+  42.3% vs 41.3% pre-drop (within noise). Suite 597/597; overflow 35/35;
+  analyze clean.
+- LESSON (overflow): a 3-option event with two 2-line labels overflows the
+  pinned button block at 320x568@1.3x — keep option labels ≤ ~32 chars on
+  3-option events. the_cold_camp needed two trims (45px→15px→0). Find the
+  drawn event by replicating the probe walk (choose_boon index 1 first!).
+- Version 0.46.0+72; news entry; notes docs/releases/v0.46.0.md. Expect
+  codes 72/1072/2072/4072. Probe tool/reanchor_v0460_probe_test.dart kept
+  as the pattern for future drops.

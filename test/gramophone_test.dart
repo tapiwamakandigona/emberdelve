@@ -10,7 +10,7 @@
 //      legacy JSON without the field decodes to empty (boot seeds the hearth).
 //   3. boot() seeds 'title_menu' on every profile, legacy included.
 //   4. A played run records the run tracks: seed 1 easy win → map, combat,
-//      victory all heard; seed 13 easy loss → defeat heard, victory not.
+//      victory all heard; seed 3 easy loss → defeat heard, victory not.
 //   5. Cloud merge unions heardTracks.
 //   6. Ledger widget: an unheard track hides its name behind '— — —' and
 //      shows its earn-hint; a heard track shows its name.
@@ -105,9 +105,9 @@ void main() {
   test('a lost run records defeat, not victory', () async {
     final c = GameController(saveDirOverride: dir.path);
     await c.boot();
-    c.startRun(character: 'kindler', seed: 13, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
     driveToTerminal(c);
-    expect(c.phase, 'run_lost', reason: 'seed 13 must lose on easy');
+    expect(c.phase, 'run_lost', reason: 'seed 3 must lose on easy');
     expect(c.meta.heardTracks, contains('defeat'));
     expect(c.meta.heardTracks, isNot(contains('victory')));
     await c.flushSaves();

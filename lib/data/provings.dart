@@ -109,7 +109,7 @@ const List<ProvingDef> provings = [
     id: 'ash_summit',
     title: 'The Ash Summit',
     blurb: 'The Ascetic, hard, Ascension 15. The last name on the list.',
-    seed: 908,
+    seed: 912,
     character: 'ascetic',
     difficulty: 'hard',
     ascension: 15,

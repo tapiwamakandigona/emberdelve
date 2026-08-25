@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.45.0';
+const String currentAppVersion = '0.46.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.46.0',
+    title: 'The Delvers Before',
+    lines: [
+      'Six new happenings below - cold camps, cairns, a lantern left '
+          'burning - and four new relics left by the delvers who walked '
+          'this road ahead of you.',
+      'The Codex grows four entries to match. The delve remembers '
+          'everyone. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.45.0',
     title: 'The Deeper Song',

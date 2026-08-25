@@ -85,9 +85,9 @@ void main() {
     final c = GameController(saveDirOverride: dir.path);
     await c.boot();
     c.meta.forgeUnlocked = true;
-    c.startRun(character: 'kindler', seed: 13, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
     driveToTerminal(c);
-    expect(c.phase, 'run_lost', reason: 'seed 13 must lose on easy');
+    expect(c.phase, 'run_lost', reason: 'seed 3 must lose on easy');
     expect(c.pendingRungOpened, isNull);
     await c.flushSaves();
   });
@@ -99,7 +99,7 @@ void main() {
     c.meta.bestAscension = 20;
     c.startRun(
       character: 'kindler',
-      seed: 39,
+      seed: 6,
       boons: true,
       difficulty: 'hard',
       ascension: 20,

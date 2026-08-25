@@ -65,7 +65,13 @@ import 'package:emberdelve/sim/autoplay.dart';
 // precedent). Boss mapping is untouched (still 8). Old value: 210389070.
 // Reach re-proven for every anchor seed with
 // tool/golden_boss_reach_probe_test.dart; old -> new in progress.md.
-const int goldenV6 = 1607954204;
+//
+// v0.46.0 re-anchor (2026-08-25, "The Delvers Before" content drop): events
+// 39 -> 45 and relics 32 -> 36 (appended at END; content-as-data, zero
+// logic). Same cause as v0.25.0. Boss mapping untouched; every anchor seed
+// still reaches its boss (re-proven, tool/reanchor_v0460_probe_test.dart).
+// Old value: 1607954204.
+const int goldenV6 = 2043266176;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -142,15 +148,24 @@ const Map<int, String> bossAnchorSeeds = {
 // swing 34->32: 1087925192 -> 537232144; the other seven anchors were
 // byte-identical across the tune, proving it touched only king fights.)
 // cinder_hierophant equals goldenV6 by construction (same seed 20260723).
+// v0.46.0 re-anchor (2026-08-25), old -> new, same anchor seeds:
+//   ashen_colossus     1626301198 -> 2114249795
+//   ember_tyrant       1459254341 -> 1274323147
+//   pyre_matriarch      445696919 -> 1246566942
+//   cinder_hierophant  1607954204 -> 2043266176
+//   the_bellows         565723793 -> 1874083357
+//   ashfall_twins      1991211581 -> 1238512999
+//   slag_regent        1258221119 -> 2127043565
+//   hearthless_king     510459434 -> 1841674163
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 1626301198,
-  'ember_tyrant': 1459254341,
-  'pyre_matriarch': 445696919,
-  'cinder_hierophant': 1607954204,
-  'the_bellows': 565723793,
-  'ashfall_twins': 1991211581,
-  'slag_regent': 1258221119,
-  'hearthless_king': 510459434,
+  'ashen_colossus': 2114249795,
+  'ember_tyrant': 1274323147,
+  'pyre_matriarch': 1246566942,
+  'cinder_hierophant': 2043266176,
+  'the_bellows': 1874083357,
+  'ashfall_twins': 1238512999,
+  'slag_regent': 2127043565,
+  'hearthless_king': 1841674163,
 };
 
 void main() {
