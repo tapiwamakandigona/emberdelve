@@ -2114,3 +2114,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (KEPT) → build/proving_plates/ — provings row, epithet card (locked/
   WORN), news post at 360x640, 412x915, 800x1280, 320x570@1.3x; 10 plates
   critiqued clean.
+
+## 2026-08-25T05:45Z — v0.52.0 "The Tinker's Proving" PUBLISHED
+- CI 32812237432 success; artifacts aab 9550481795 / splits 9550480779 / apk 9550479131.
+- 4 APK signer pins PIN-OK (codes 78/1078/2078/4078); AAB pin matched 031acb42….
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.52.0 — 5 assets, sha256 table appended to notes.
+- v0.53.0 lead scout (docs/improvements/v0.53.0-lead-scout.md) committed with this entry; leading candidate "The Rumor".
