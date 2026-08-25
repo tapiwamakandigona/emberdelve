@@ -1903,3 +1903,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Version 0.46.0+72; news entry; notes docs/releases/v0.46.0.md. Expect
   codes 72/1072/2072/4072. Probe tool/reanchor_v0460_probe_test.dart kept
   as the pattern for future drops.
+
+## 2026-08-25T02:35Z — v0.46.0 "The Delvers Before" PUBLISHED
+- CI run 32800123298 green (dispatched on tag v0.46.0, commit cc51cf9).
+- Verified: 4x signer PIN-OK, versionName 0.46.0, codes 72/1072/2072/4072;
+  AAB cert sha256 matches pin 031acb42...44d.
+- Release live: github.com/tapiwamakandigona/emberdelve/releases/tag/v0.46.0
+  (5 assets); sha256 + size table appended to notes.
+- Next: v0.47.0 "The Answered Blow" — response-puzzle intents (charge/counter/
+  stagger), 3 new enemies (vent_ram, cinder_urchin, magma_lancer), design doc
+  docs/improvements/v0.47.0-answered-blow-design.md. Sim + UI + bot landed in
+  working tree; tests/gates next. Golden re-anchor expected (pool growth).
