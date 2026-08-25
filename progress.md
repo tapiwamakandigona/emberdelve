@@ -2197,3 +2197,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI run 32876420605 success. Version codes 84/1084/2084/4084. 4 APK pins PIN-OK; AAB cert pin matched.
 - Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.58.0 — 5 signed assets; sha256 table appended.
 - v0.59.0 tagged, CI run 32877791422 dispatched (expect codes 85/1085/2085/4085).
+
+## 2026-08-25 — v0.59.0 PUBLISHED
+- CI run 32877791422 success. Version codes 85/1085/2085/4085. 4 APK pins PIN-OK; AAB cert pin matched.
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.59.0 — 5 signed assets; sha256 table appended.
+- Next: v0.60.0 "The Delver's Tally" (picker cards state charWins/charRuns record; scout doc docs/improvements/v0.60.0-lead-scout.md) — WIP in flight, gates pending.
