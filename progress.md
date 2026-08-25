@@ -2222,3 +2222,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates critiqued clean (tool/kept_fire_visual_test.dart: 23-day 360x640, 365-day 320x568 restraint, fresh negative).
 - OBSERVATION for a future lead: EmberLogotype edge-clips at 320dp width on the title (pre-existing, visible in kept_fire_320x568 plate) — candidate v0.63.0 fix.
 - Zero sim movement, zero save-format movement. pubspec 0.62.0+88.
+
+## 2026-08-25 — v0.63.0 "The Fitted Name" gates GREEN (push pending GitHub auth)
+- One improvement (bugfix): EmberLogotype hard-clipped both edges at 320dp title widths since it shipped. Fit now happens INSIDE the painter at paint time (fittedLogoFontSize pure helper, probe width memoized; effectiveFontSize field exposed for tests); reserved height unchanged so vertical rhythm never shifts; never scales up. Scout: docs/improvements/v0.63.0-lead-scout.md (defect found by our own v0.62.0 320x568 plate).
+- LAYOUT LESSON: a LayoutBuilder inside the title column breaks its IntrinsicHeight ("LayoutBuilder does not support returning intrinsic dimensions" — 99 test failures). For width-aware painting, fit inside CustomPainter.paint(size) instead.
+- analyze clean; suite 682/682 (/work/temp/v0630_suite2.log; +2 test/fitted_name_test.dart — Ahem's 1em glyphs make the narrow case trigger without real fonts).
+- Plates: kept_fire re-render critiqued clean — 320x568 now shows the FULL wordmark with margins; 360x640 pixel-consistent.
+- Zero sim movement. pubspec 0.63.0+89.
