@@ -1,4 +1,4 @@
-# itch devlog — "The delve remembers" (v0.54 → v0.59 arc) — DRAFT
+# itch devlog — "The delve remembers" (v0.54 → v0.59 arc) — POSTED 2026-08-25 (devlog/1640696)
 
 Post via: itch.io → dashboard → Emberdelve → Devlog → new post.
 

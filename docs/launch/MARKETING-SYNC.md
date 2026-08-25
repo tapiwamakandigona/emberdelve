@@ -189,3 +189,14 @@ session once access returns:
   4. Finish the two owner-gated Console forms still open: content-rating (IARC) + data-safety.
 This is a paste-and-submit job, ~15 min, no code. Kept out of tonight's work precisely to
 avoid an over-claim; flagged so it isn't forgotten when Console is reachable.
+
+## 2026-08-25 18:35Z — Viktor: itch.io refreshed to 0.59.0 + devlog posted (correction on sync claim)
+- CORRECTION: the 2026-08-16 note claiming "/work/scripts/emberdelve_itch_sync.py auto-syncs
+  itch from GitHub latest" was STALE — that script no longer exists (lost in a sandbox reset)
+  and no CI workflow has a butler step. The itch android channel had sat at 0.45.0.
+- Today: itch password reset (new password stored Viktor-side in /work/secrets2/credentials.md),
+  fresh API key minted, butler-pushed the verified v0.59.0 universal APK
+  → channel android now serves 0.59.0 (build #1915653). [itch, 2026-08-25]
+- Devlog published: "The delve remembers now — six updates on memory" (v0.54→v0.59 arc)
+  https://tsorostudios.itch.io/emberdelve/devlog/1640696/the-delve-remembers-now-six-updates-on-memory
+- itch refresh remains MANUAL (butler push) until an automated path is rebuilt and verified.
