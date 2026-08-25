@@ -382,7 +382,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 ),
               )
             else if (!unlocked)
-              const Icon(Icons.lock_outline, color: EmberColors.textDim, size: 16),
+              const Icon(
+                Icons.lock_outline,
+                color: EmberColors.textDim,
+                size: 16,
+              ),
           ],
         ),
       ),
@@ -486,6 +490,18 @@ class _CharacterScreenState extends State<CharacterScreen> {
     );
   }
 
+  /// v0.60.0 The Delver's Tally: "N wins · M delves" for a delver you have
+  /// actually taken down (charRuns/charWins, the same counters the Ledger
+  /// roster reads). Null when the delver has never delved — the picker stays
+  /// clean for fresh delvers and fresh installs.
+  static String? _tallyLine(MetaState m, String id) {
+    final runs = m.charRuns[id] ?? 0;
+    if (runs <= 0) return null;
+    final wins = m.charWins[id] ?? 0;
+    return '$wins ${wins == 1 ? 'win' : 'wins'} · '
+        '$runs ${runs == 1 ? 'delve' : 'delves'}';
+  }
+
   Widget _charCard(BuildContext context, String id) {
     final c = widget.c;
     final def = characters[id]!;
@@ -538,12 +554,24 @@ class _CharacterScreenState extends State<CharacterScreen> {
                       Text(def.name, style: EmberText.h2),
                       // v0.36.0: the worn epithet, under each unlocked
                       // delver's name (a title is worn, not window-shopped).
-                      if (unlocked &&
-                          epithets[c.meta.selectedEpithet] != null)
+                      if (unlocked && epithets[c.meta.selectedEpithet] != null)
                         Text(
                           epithets[c.meta.selectedEpithet]!.title,
                           style: EmberText.micro.copyWith(
                             color: EmberColors.gold,
+                          ),
+                        ),
+                      // v0.60.0 The Delver's Tally: your record with this
+                      // delver, at the moment you pick them. Same vocabulary
+                      // as the Ledger roster row (one language, two rooms).
+                      // A delver never delved with shows nothing — no
+                      // "0 delves" line, no clutter, no shame.
+                      if (unlocked && _tallyLine(c.meta, id) != null)
+                        Text(
+                          _tallyLine(c.meta, id)!,
+                          key: ValueKey('char-tally-$id'),
+                          style: EmberText.micro.copyWith(
+                            color: EmberColors.textDim,
                           ),
                         ),
                     ],
