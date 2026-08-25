@@ -523,6 +523,23 @@ class SummaryScreen extends StatelessWidget {
                             ),
                           ],
                           const SizedBox(height: Space.m),
+                          // v0.51.0 The Obituary: the run's story told back
+                          // in two or three sentences — every figure real
+                          // (design doc v0.51.0-delve-obituary-design.md).
+                          // Losses get a dignified epitaph, wins a proud one;
+                          // deterministic per run, so retelling never drifts.
+                          if (c.delveStoryText != null) ...[
+                            Text(
+                              c.delveStoryText!,
+                              key: const ValueKey('delve-story'),
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
                           // v0.34.0 The Delver's Card: an IMAGE of this run,
                           // previewed before it leaves the device (design doc
                           // v0.34.0-delvers-card-design.md). Player-initiated,
@@ -540,6 +557,29 @@ class SummaryScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: Space.m),
+                          // v0.51.0: the story above, as plain text that
+                          // pastes anywhere — same pattern as the daily copy
+                          // below. Player-initiated, never rewarded (§Ethics).
+                          if (c.delveStoryText != null) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: EmberButton(
+                                'Copy delve story',
+                                key: const ValueKey('copy-delve-story'),
+                                ghost: true,
+                                icon: Icons.copy,
+                                onTap: () async {
+                                  final text = c.delveStoryText;
+                                  if (text == null) return;
+                                  await Clipboard.setData(
+                                    ClipboardData(text: text),
+                                  );
+                                  c.announce('Story copied');
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: Space.m),
+                          ],
                           // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
                           // Only offered when this run WAS the daily — normal runs stay quiet.
                           if (c.dailyResultShareText != null) ...[

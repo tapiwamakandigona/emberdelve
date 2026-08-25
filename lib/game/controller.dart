@@ -30,6 +30,8 @@ import '../meta/unlock_codes.dart';
 import '../meta/rank.dart';
 import '../sim/daily.dart';
 import '../sim/hashing.dart';
+import '../sim/run_layer.dart' show bossForSeed;
+import 'obituary.dart';
 import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
 import '../sim/sim.dart';
@@ -1243,7 +1245,45 @@ class GameController extends ChangeNotifier {
       // The Shorter Road: remembered so the Ledger can rebuild an honest
       // Delve Code — a short run's code must reproduce a short map.
       if (sim?.hasMutator('short_road') ?? false) 'short': true,
+      // v0.51.0 The Obituary: remember WHO ended a lost run. Additive — old
+      // records (and cloud copies; cloud_merge carries runHistory wholesale)
+      // simply lack the key. Only combat can kill (events clamp HP to 1,
+      // fair-death pillar), so a loss still holds its enemy on the terminal
+      // sim; the guard keeps an impossible enemy-less loss honest.
+      if (result == 'lost' && sim?.enemy?['id'] is String)
+        'killed_by': sim?.enemy?['id'],
     };
+  }
+
+  /// v0.51.0 The Obituary: the finished run's story in two or three honest
+  /// sentences, or null while no run has ended. Every figure comes from the
+  /// terminal sim and the floor trace — same charter as
+  /// [dailyResultShareText]: recomputation only, never invention.
+  String? get delveStoryText {
+    final phase = sim?.phase;
+    if (phase != 'run_won' && phase != 'run_lost') return null;
+    final run = sim!.run;
+    if (run == null) return null;
+    final won = phase == 'run_won';
+    final charId = run['character'] as String? ?? defaultCharacter;
+    final killerId = sim!.enemy?['id'] as String?;
+    return obituaryText(
+      won: won,
+      delverName: characters[charId]?.name ?? charId,
+      epithetTitle: epithets[meta.selectedEpithet]?.title ?? '',
+      difficulty: run['difficulty'] as String? ?? 'normal',
+      ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
+      floor: floorReached,
+      floors: sim!.map?['layers'] as int? ?? 0,
+      cleanFloors: runTrace.marks.where((m) => m == markClean).length,
+      killerName: won || killerId == null
+          ? ''
+          : (enemies[killerId]?.name ?? ''),
+      bossName: won ? (enemies[bossForSeed(sim!.runSeed)]?.name ?? '') : '',
+      embers: (run['embers'] as num?)?.toInt() ?? 0,
+      short: sim!.hasMutator('short_road'),
+      seed: sim!.runSeed,
+    );
   }
 
   /// 1-based map layer of the node the run currently stands on (the boss
