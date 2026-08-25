@@ -97,15 +97,27 @@ class DelverCardFacts {
     // Losses since v0.51.0 bank their killer; older records simply lack the
     // key and the epitaph degrades to its opener — floor included, honest.
     final killerName = enemies[r['killed_by']]?.name ?? '';
+    // v0.57.0 The Fuller Record: records bank fights, the compact floor
+    // trace, and the worn epithet — so a card from a NEW record states all
+    // three again. Absent keys degrade by omission, exactly as v0.56.0
+    // shipped for the 30 remembered runs that predate the banking.
+    final fights = r['fights'];
+    final compact = r['trace'] as String? ?? '';
+    final epithetTitle = epithets[r['epithet']]?.title ?? '';
     return DelverCardFacts(
       won: won,
       delverName: delverName,
+      epithetTitle: epithetTitle,
       difficulty: difficulty,
       ascension: ascension,
-      traceGridText: '',
+      traceGridText: compact.isEmpty
+          ? ''
+          : traceGrid(
+              RunTrace.fromCompact(compact, outcome: won ? 'won' : 'lost'),
+            ),
       embers: int.tryParse('${r['embers'] ?? 0}') ?? 0,
-      fightsWon: 0,
-      fightsKnown: false,
+      fightsWon: fights is num ? fights.toInt() : 0,
+      fightsKnown: fights is num,
       seed: seed,
       delveCode:
           encodeDelveCode(
@@ -119,7 +131,9 @@ class DelverCardFacts {
       epitaph: epitaphLine(
         won: won,
         delverName: delverName,
-        epithetTitle: '',
+        // Worn-at-the-time is knowable since v0.57.0 records bank it;
+        // older records keep the bare name — stated facts only.
+        epithetTitle: epithetTitle,
         floor: int.tryParse('${r['floor'] ?? 0}') ?? 0,
         killerName: killerName,
         bossName: bossName,

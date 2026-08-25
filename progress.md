@@ -2170,3 +2170,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Verified: 4 APK signer pins PIN-OK (versionName 0.56.0), AAB pkcs7 cert pin matched (031acb42…3a0d).
 - Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.56.0 — 5 signed assets; sha256 table appended to notes.
 - Content: Ledger rows (won/lost, not abandoned) get a share icon → Delver's Card rebuilt from the run record via DelverCardFacts.fromRecord; honesty-by-omission (fights/trace/epithet omitted when unknown).
+
+## 2026-08-25 — v0.57.0 "The Fuller Record" gates GREEN
+- One improvement: run records bank fights won + compact floor trace ('c'/'h' string, RunTrace.toCompact/fromCompact) + worn epithet id — DelverCardFacts.fromRecord restores figure/grid/title (name line AND epitaph). Absent keys keep v0.56.0 omission behaviour.
+- analyze --fatal-warnings clean; suite 656/656 (/work/temp/v0570_suite2.log; +6 test/fuller_record_test.dart incl. bot-played win seed 1 / loss seed 18 banking pins and fuller worst-case canvas).
+- Plates critiqued clean: build/ledger_card_plates now 5 plates (fuller_loss_card with "The Gambler, the Well-Oiled" + 2-row trace + fights line; fuller_win_card grid ends on ember cell; legacy cards keep omissions) + 3 news plates (build/news_visual).
+- Zero sim changes → no sweep/golden re-anchor. pubspec 0.57.0+83.
