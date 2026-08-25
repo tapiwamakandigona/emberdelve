@@ -85,6 +85,17 @@ const Map<String, WeaponDef> _weapons = {
     reach: 0.58,
     idleAngle: 0.36,
   ),
+  // Mercantile (v0.40.0): a brass cargo hook with a coin-weighted pommel —
+  // the tool of someone who hauls goods first and fights second.
+  'peddler': WeaponDef(
+    'coin_hook',
+    'Coin Hook',
+    accent: Color(0xFFDCB65A),
+    reach: 0.50,
+    idleAngle: 0.38,
+    raiseAngle: -1.65,
+    swingAngle: 1.9,
+  ),
 };
 
 WeaponDef weaponFor(String characterId) =>
@@ -384,6 +395,9 @@ class _WeaponPainter extends CustomPainter {
       case 'brand_iron':
         _brandIron(canvas, reach);
         break;
+      case 'coin_hook':
+        _coinHook(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -643,6 +657,65 @@ class _WeaponPainter extends CustomPainter {
       ..quadraticBezierTo(w * 1.35, -reach * 0.5, w * 0.32, -reach * 0.94);
     canvas.drawPath(glint, _p);
     _p.style = PaintingStyle.fill;
+  }
+
+  void _coinHook(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Coin-weighted pommel: a brass disc with a stamped inner ring.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFB98F3E);
+    canvas.drawCircle(Offset(0, reach * 0.14), w * 0.85, _p);
+    _p.color = const Color(0xFFE6C878);
+    canvas.drawCircle(Offset(0, reach * 0.14), w * 0.6, _p);
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.18
+      ..color = const Color(0xFF8A6A3A);
+    canvas.drawCircle(Offset(0, reach * 0.14), w * 0.38, _p);
+    // Wrapped grip + slim hardwood shaft up to the hook's throat.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.28),
+          width: w * 0.7,
+          height: reach * 0.78,
+        ),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Brass ferrule where the hook is socketed onto the shaft.
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.62),
+          width: w * 1.1,
+          height: w * 0.7,
+        ),
+        Radius.circular(w * 0.3),
+      ),
+      _p,
+    );
+    // The cargo hook: a thick brass crescent opening into the swing.
+    final hook = Path()
+      ..moveTo(-w * 0.35, -reach * 0.64)
+      ..quadraticBezierTo(-w * 0.5, -reach * 1.02, w * 0.9, -reach * 0.98)
+      ..quadraticBezierTo(w * 1.9, -reach * 0.94, w * 1.6, -reach * 0.72)
+      ..quadraticBezierTo(w * 1.75, -reach * 0.9, w * 0.95, -reach * 0.86)
+      ..quadraticBezierTo(w * 0.2, -reach * 0.88, w * 0.35, -reach * 0.64)
+      ..close();
+    _p.shader = const LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [Color(0xFFB98F3E), Color(0xFFE6C878)],
+    ).createShader(Rect.fromLTWH(-w, -reach, w * 3.0, reach * 0.5));
+    canvas.drawPath(hook, _p);
+    _p.shader = null;
   }
 
   void _brandIron(Canvas canvas, double reach) {

@@ -92,6 +92,7 @@ const List<String> achievementsOrder = [
   // --- the roster --------------------------------------------------------
   'warden_wins', 'gambler_wins', 'ascetic_wins', 'kindler_wins',
   'full_roster', 'every_delver_clears',
+  'peddler_wins', 'full_company', 'five_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -259,22 +260,49 @@ const Map<String, AchievementDef> achievements = {
     target: 1,
     param: 'ascetic',
   ),
+  // v0.40.0 reword: the roster grew to five, so "every delver" would lie
+  // about a target of 4 — but bumping the target would UN-earn a mark
+  // players already hold, and a derived recognition must never be taken
+  // back (§Ethics: nothing can be lost). The counts stay; the words now
+  // state exactly what they count. The five-delver chases are new marks.
   'full_roster': AchievementDef(
     'full_roster',
     'Full Hearth',
-    'Unlock every delver.',
+    'Unlock four delvers.',
     stat: 'chars_unlocked',
     target: 4,
   ),
-  // v0.5.0 fix: the name promises all four delvers, so the counter must too.
+  // v0.5.0 fix: the name promises four delvers, so the counter must too.
   // (It shipped reading 4 Ascetic wins — name and stat told different
   // stories, which fails the §Ethics honesty test.)
   'every_delver_clears': AchievementDef(
     'every_delver_clears',
     'Four Ways Down',
-    'Win a run with every delver — all four of them.',
+    'Win a run with four different delvers.',
     stat: 'delvers_cleared',
     target: 4,
+  ),
+  'peddler_wins': AchievementDef(
+    'peddler_wins',
+    'Fair Trade',
+    'Win a run as the Peddler.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'peddler',
+  ),
+  'full_company': AchievementDef(
+    'full_company',
+    'Full Company',
+    'Unlock all five delvers.',
+    stat: 'chars_unlocked',
+    target: 5,
+  ),
+  'five_ways_down': AchievementDef(
+    'five_ways_down',
+    'Five Ways Down',
+    'Win a run with all five delvers.',
+    stat: 'delvers_cleared',
+    target: 5,
   ),
 
   // --- the bestiary -----------------------------------------------------
