@@ -436,6 +436,7 @@ class GameController extends ChangeNotifier {
     String? daily,
     String? difficulty,
     List<String> mutators = const [],
+    bool shortRoad = false,
   }) {
     // Deterministic-enough seed for real play; runs are still fully replayable
     // from their seed. Daily runs pin [seed] via [startDailyRun]; the play
@@ -470,7 +471,11 @@ class GameController extends ChangeNotifier {
     // The modifier IS the difficulty knob for the weekly. Ember Forge gate
     // (v0.4.0, spec R8): UI locks are the polite layer; this clamp is the
     // guarantee. Shared runs are pinned to normal above.
+    // v0.49.0 The Shorter Road: the Short Delve is a FORMAT, not a shared
+    // challenge — it composes with any difficulty/ascension, so it joins the
+    // sim's mutator list below without tripping the shared-run normal pin.
     final shared = daily != null || mutators.isNotEmpty;
+    final muts = [...mutators, if (shortRoad) 'short_road'];
     final wanted = shared ? 'normal' : (difficulty ?? meta.preferredDifficulty);
     final allowed = clampRunParams(
       meta,
@@ -484,7 +489,7 @@ class GameController extends ChangeNotifier {
       'ascension': allowed.ascension,
       if (boons) 'boons': true,
       if (diff != 'normal') 'difficulty': diff,
-      if (mutators.isNotEmpty) 'mutators': mutators,
+      if (muts.isNotEmpty) 'mutators': muts,
     });
     // Opt-in analytics only; no-op without consent (docs/telemetry-events.md).
     TelemetryService.instance.logEvent('run_started', {
@@ -504,6 +509,15 @@ class GameController extends ChangeNotifier {
     if (meta.preferredDifficulty == d && meta.difficultyChosen) return;
     meta.preferredDifficulty = d;
     meta.difficultyChosen = true;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  /// The Shorter Road (v0.49.0): sticky Short Delve toggle behind the title
+  /// screen. A format preference, same persistence path as difficulty.
+  void setPreferShortRoad(bool v) {
+    if (meta.preferShortRoad == v) return;
+    meta.preferShortRoad = v;
     MetaStore.save(meta);
     notifyListeners();
   }
@@ -746,6 +760,9 @@ class GameController extends ChangeNotifier {
       boons: true,
       seed: runSeed,
       difficulty: run?['difficulty'] as String? ?? 'normal',
+      // The Shorter Road: a retraced short delve must regenerate the SAME
+      // six-layer map, so the format rides along with the seed.
+      shortRoad: sim?.hasMutator('short_road') ?? false,
     );
   }
 
@@ -1223,6 +1240,9 @@ class GameController extends ChangeNotifier {
       'seed': sim?.runSeed ?? 0,
       'embers': embers,
       if (dailyDate != null) 'daily': true,
+      // The Shorter Road: remembered so the Ledger can rebuild an honest
+      // Delve Code — a short run's code must reproduce a short map.
+      if (sim?.hasMutator('short_road') ?? false) 'short': true,
     };
   }
 
@@ -1313,6 +1333,7 @@ class GameController extends ChangeNotifier {
             character: run?['character'] as String? ?? defaultCharacter,
             difficulty: run?['difficulty'] as String? ?? 'normal',
             ascension: run?['ascension'] as int? ?? 0,
+            shortRoad: s.hasMutator('short_road'),
           ) ??
           '',
     );

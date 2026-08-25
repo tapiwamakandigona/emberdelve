@@ -584,6 +584,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                           character: id,
                           ascension: ascension,
                           boons: true,
+                          shortRoad: c.meta.preferShortRoad,
                         );
                       },
                     )

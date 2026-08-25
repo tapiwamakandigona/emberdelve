@@ -64,6 +64,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     selectedVista: fresh.selectedVista,
     selectedEpithet: fresh.selectedEpithet,
     preferredDifficulty: fresh.preferredDifficulty,
+    preferShortRoad: fresh.preferShortRoad,
     lastDailyDate: fresh.lastDailyDate,
     lastDailyWon: fresh.lastDailyWon,
     lastDailyFloor: fresh.lastDailyFloor,

@@ -129,6 +129,12 @@ class TitleScreen extends StatelessWidget {
                               // easier fights pay fewer embers, harder fights pay more. The
                               // Daily Delve ignores it (shared seed, level field for everyone).
                               _DifficultySelector(c),
+                              const SizedBox(height: Space.s),
+                              // The Shorter Road (v0.49.0): sticky Short
+                              // Delve format toggle — six floors instead of
+                              // nine, composing with any difficulty. Plain
+                              // words; shared delves (Daily/Weekly) ignore it.
+                              _ShortRoadToggle(c),
                               const SizedBox(height: Space.m),
                               // Primary CTA in the thumb zone.
                               SizedBox(
@@ -140,6 +146,7 @@ class TitleScreen extends StatelessWidget {
                                   onTap: () => c.startRun(
                                     character: defaultCharacter,
                                     boons: true,
+                                    shortRoad: c.meta.preferShortRoad,
                                   ),
                                 ),
                               ),
@@ -374,13 +381,23 @@ class TitleScreen extends StatelessWidget {
                   seed: code.seed,
                   difficulty: code.difficulty,
                   ascension: code.ascension,
+                  // v0.49.0: the code carries the format too, so a short
+                  // run's code reproduces the same six-layer map.
+                  shortRoad: code.shortRoad,
                 );
                 return;
               }
               final seed = parseSeedInput(input.text);
               if (seed == null) return; // blank: nothing to delve
               Navigator.of(dialogCtx).pop();
-              c.startRun(character: defaultCharacter, boons: true, seed: seed);
+              c.startRun(
+                character: defaultCharacter,
+                boons: true,
+                seed: seed,
+                // A bare seed respects the visible title-screen toggle; a
+                // full Delve Code (above) overrides it with its own bit.
+                shortRoad: c.meta.preferShortRoad,
+              );
             },
             child: Text(
               'Delve',
@@ -513,6 +530,63 @@ class _GatheredHearth extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// The Shorter Road (v0.49.0): sticky Short Delve toggle under the
+/// difficulty selector. Six floors instead of nine — the whole delve grammar
+/// (elite, rest, shop, boss) in roughly half a sit. States the format and
+/// stops: no bonus, no penalty, no pressure (spec §Ethics). The Daily and
+/// Weekly ignore it — shared delves stay identical for everyone.
+class _ShortRoadToggle extends StatelessWidget {
+  final GameController c;
+  const _ShortRoadToggle(this.c);
+
+  @override
+  Widget build(BuildContext context) {
+    final on = c.meta.preferShortRoad;
+    return GestureDetector(
+      key: const ValueKey('short-road-toggle'),
+      onTap: () {
+        AudioService.instance?.playSfx('ui_tap');
+        c.setPreferShortRoad(!on);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.m,
+          vertical: Space.s,
+        ),
+        decoration: BoxDecoration(
+          color: EmberColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: on ? EmberColors.ember : EmberColors.line,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              on ? Icons.check_box : Icons.check_box_outline_blank,
+              size: 15,
+              color: on ? EmberColors.ember : EmberColors.textDim,
+            ),
+            const SizedBox(width: Space.s),
+            Text('SHORT DELVE', style: EmberText.label),
+            const SizedBox(width: Space.s),
+            // Ellipsis, never overflow, on 320px at 1.3x text.
+            Expanded(
+              child: Text(
+                'six floors — a shorter sit',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

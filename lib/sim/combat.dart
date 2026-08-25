@@ -154,16 +154,30 @@ void combatBegin(
   // the `layer = 99` default — intentional.) Deterministic pure function of
   // (difficulty, layer); normal and easy paths are untouched.
   final difficulty = sim.run?['difficulty'] as String? ?? 'normal';
-  final diffAmount = difficulty == 'easy'
+  var diffAmount = difficulty == 'easy'
       ? -easyAttackShave(layer)
       : difficulty == 'hard'
       ? hardAttackBonus(layer)
       : 0;
+  // v0.49.0 The Shorter Road: on the six-layer format the heaviest foes
+  // stand floors earlier than the long delve tuned them for, so they fight
+  // shaved — the boss at HP x0.58 (below) and attacks/blocks -3, elites at
+  // HP x0.80 and -2, min 1 as ever. Deterministic, elites and boss only:
+  // regular floors are simply the long delve's first six and stay
+  // untouched, as does every run without the mutator. Magnitudes are sweep-
+  // tuned (400 seeds x 3 difficulties; see the v0.49.0 design doc).
+  final shortRoad = sim.hasMutator('short_road');
+  final shortBoss = def.boss && shortRoad;
+  final shortElite = !def.boss && (elite || def.elite) && shortRoad;
+  if (shortBoss) diffAmount -= 3;
+  if (shortElite) diffAmount -= 2;
   final mercy = (!elite && !def.boss) ? earlyMercyAttackShave(layer) : 0;
   final hpCap = (!elite && !def.boss) ? earlyMercyHpCap(layer) : (1 << 30);
   var hp = def.hp > hpCap ? hpCap : def.hp;
   if (difficulty == 'easy') hp = (hp * easyHpScalar(layer)).round();
   if (difficulty == 'hard') hp = (hp * hardHpScalar(layer)).round();
+  if (shortBoss) hp = (hp * 0.58).round();
+  if (shortElite) hp = (hp * 0.80).round();
   // v0.20.0: ascension HP term applies after the difficulty scalar so every
   // rung changes the fight (the attack ramp only steps at tier boundaries).
   final ascRung = sim.run?['ascension'] as int? ?? 0;

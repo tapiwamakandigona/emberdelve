@@ -45,6 +45,10 @@ class MetaState {
   // While false and runsPlayed == 0, the title steers a brand-new profile
   // toward easy (first-run on-ramp) — never silently after that.
   bool difficultyChosen;
+  // v0.49.0 The Shorter Road: sticky Short Delve (6-layer) format toggle.
+  // Pure convenience like preferredDifficulty — the sim only ever sees it
+  // as the `short_road` mutator id on start_run.
+  bool preferShortRoad;
   // v0.3.3 ledger stats — all real, never faked (§Ethics honesty):
   // per-character runs/wins, lifetime embers banked, exact-kill counters.
   Map<String, int> charRuns;
@@ -153,6 +157,7 @@ class MetaState {
     this.tourSeenVersion = 0,
     this.preferredDifficulty = 'normal',
     this.difficultyChosen = false,
+    this.preferShortRoad = false,
     Map<String, int>? charRuns,
     Map<String, int>? charWins,
     this.lifetimeEmbers = 0,
@@ -224,6 +229,7 @@ class MetaState {
     if (tourSeenVersion != 0) 'tourSeenVersion': tourSeenVersion,
     'preferredDifficulty': preferredDifficulty,
     'difficultyChosen': difficultyChosen,
+    if (preferShortRoad) 'preferShortRoad': true,
     'charRuns': charRuns,
     'charWins': charWins,
     'lifetimeEmbers': lifetimeEmbers,
@@ -307,6 +313,7 @@ class MetaState {
     // must never be steered, so treat it as already chosen.
     difficultyChosen:
         j['difficultyChosen'] as bool? ?? ((j['runsPlayed'] as int? ?? 0) > 0),
+    preferShortRoad: j['preferShortRoad'] as bool? ?? false,
     charRuns: _intMap(j['charRuns']),
     charWins: _intMap(j['charWins']),
     lifetimeEmbers: j['lifetimeEmbers'] as int? ?? 0,

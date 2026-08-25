@@ -49,6 +49,29 @@ class MapCfg {
   });
 }
 
+/// v0.49.0 The Shorter Road: the Short Delve's map shape. Six layers instead
+/// of nine — a true run (elite, rest, shop, boss) in roughly half a sit.
+/// Guarantee layers are pulled forward proportionally so the format keeps the
+/// full delve grammar: elites can appear from layer 3, a rest is guaranteed by
+/// layer 4, shops from layer 2. Only [startRun] selects this cfg (mutator id
+/// `short_road`); every other caller keeps the 9-layer default, so existing
+/// goldens and pinned seeds are untouched by construction.
+const MapCfg shortRoadCfg = MapCfg(
+  layers: 6,
+  // Elites hold to layer 4 exactly like the long delve — the 400-seed sweep
+  // with eliteFromLayer 3 put a death spike on floor 3 (34/147 normal
+  // losses): a fresh pool meeting an elite two fights in is a bouncer.
+  eliteFromLayer: 4,
+  // Rest guaranteed on the LAST middle layer, mirroring the long delve's
+  // near-boss guarantee: with restGuaranteeLayer 4 the kind probe put 71/400
+  // normal losses on the boss — runs whose only rest landed on floor 4
+  // reached it unhealed. Layer 5 pins the guaranteed hearth beside the door.
+  restGuaranteeLayer: 5,
+  shopFromLayer: 2,
+  shopGuaranteeLayer: 2,
+  eventFromLayer: 2,
+);
+
 Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
   final layers = cfg.layers;
   final minNodes = cfg.minNodes;
@@ -154,18 +177,26 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
     }
   }
   if (!haveLateRest) {
-    final fights = <int>[];
-    final nonrest = <int>[];
-    for (var id = 2; id <= nextId - 2; id++) {
-      final n = nodes['$id']!;
-      if ((n['layer'] as int) >= restFrom &&
-          !hasRestParent(id) &&
-          !hasRestChild(id)) {
-        if (n['kind'] == 'fight') fights.add(id);
-        if (n['kind'] != 'rest') nonrest.add(id);
+    // v0.49.0: on the short cfg the window can be a single layer whose every
+    // node touches a sprinkled rest — relax the floor one layer at a time
+    // (never past 2) so the guarantee always lands without ever placing two
+    // rests adjacent. Nine-layer maps always found a candidate in the first
+    // pass (golden-verified), so the relaxation never fires for them.
+    var pool = const <int>[];
+    for (var from = restFrom; from >= 2 && pool.isEmpty; from--) {
+      final fights = <int>[];
+      final nonrest = <int>[];
+      for (var id = 2; id <= nextId - 2; id++) {
+        final n = nodes['$id']!;
+        if ((n['layer'] as int) >= from &&
+            !hasRestParent(id) &&
+            !hasRestChild(id)) {
+          if (n['kind'] == 'fight') fights.add(id);
+          if (n['kind'] != 'rest') nonrest.add(id);
+        }
       }
+      pool = fights.isNotEmpty ? fights : nonrest;
     }
-    final pool = fights.isNotEmpty ? fights : nonrest;
     assert(pool.isNotEmpty, 'map: no candidate for guaranteed rest');
     nodes['${pool[rng.range(1, pool.length) - 1]}']!['kind'] = 'rest';
   }
@@ -176,15 +207,25 @@ Map<String, Object?> generateMap(Rng rng, [MapCfg cfg = const MapCfg()]) {
     if (nodes['$id']!['kind'] == 'elite') haveElite = true;
   }
   if (!haveElite) {
-    final cands = <int>[];
+    final fights = <int>[];
+    final nonRest = <int>[];
     for (var id = 2; id <= nextId - 2; id++) {
       final n = nodes['$id']!;
-      if ((n['layer'] as int) >= eliteFrom && n['kind'] == 'fight') {
-        cands.add(id);
+      if ((n['layer'] as int) >= eliteFrom) {
+        if (n['kind'] == 'fight') fights.add(id);
+        if (n['kind'] != 'rest') nonRest.add(id);
       }
     }
-    assert(cands.isNotEmpty, 'map: no candidate for guaranteed elite');
-    nodes['${cands[rng.range(1, cands.length) - 1]}']!['kind'] = 'elite';
+    // v0.49.0: short maps have only three elite-eligible layers, so the
+    // sprinkle + rest guarantee can occasionally leave no plain fight there.
+    // Mirror the rest guarantee: prefer fights, fall back to any non-rest
+    // node (provably non-empty — rests are never adjacent, so consecutive
+    // layers cannot all be rest). Nine-layer maps always had a fight
+    // candidate here (golden-verified), so the fallback never fires for
+    // them and this stays byte-identical for every default map.
+    final pool = fights.isNotEmpty ? fights : nonRest;
+    assert(pool.isNotEmpty, 'map: no candidate for guaranteed elite');
+    nodes['${pool[rng.range(1, pool.length) - 1]}']!['kind'] = 'elite';
   }
 
   // ---- 6. Guarantee: >=1 shop on layer shopGuarantee+ ---------------------

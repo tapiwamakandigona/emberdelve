@@ -413,6 +413,9 @@ class LedgerScreen extends StatelessWidget {
       character: r['character'] as String? ?? defaultCharacter,
       difficulty: diff,
       ascension: int.tryParse('${r['ascension'] ?? 0}') ?? 0,
+      // v0.49.0: a remembered short run rebuilds a SHORT code — the code
+      // must reproduce the same six-layer map, never one like it.
+      shortRoad: r['short'] == true,
     );
     final row = Row(
       children: [

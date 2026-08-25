@@ -1996,3 +1996,29 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   v0.48.0.md, design doc, PROVENANCE + CREDITS rows.
 - Next: commit, tag v0.48.0, dispatch CI, publish with checksums
   (expect codes 74/1074/2074/4074).
+
+## 2026-08-25T09:05Z — v0.48.0 PUBLISHED + v0.49.0 "The Shorter Road" gates green
+- v0.48.0 published: CI 32804373058 success; all 4 APK pins OK, codes
+  74/1074/2074/4074; AAB pin match. Release + checksums table live at
+  releases/tag/v0.48.0.
+- v0.49.0 The Shorter Road: 4th mutator `short_road` = six-layer Short Delve.
+  shortRoadCfg (layers 6, eliteFrom 4, restGuarantee 5, shop 2/2, event 2);
+  map_gen guarantee hardening (elite fallback to non-rest; rest floor
+  relaxation) — both inert on 9-layer maps. Boss shaved x0.58/-3, elites
+  x0.80/-2 on the format; offer/shop tier ceiling reads layer+3; fight gold
+  x1.5 (embers untouched). Title-screen sticky toggle
+  (meta.preferShortRoad), controller shortRoad param (composes with any
+  difficulty — NOT the shared-run mutators pin), retrace + run records +
+  Ledger carry the format, Delve Code bit 44 (backward compatible), trial
+  short_day, Weekly rotation gains Short Week.
+- Tuned by 9 400-seed sweeps + death-location/kind probes: final bands
+  easy 87.5 / normal 56.0 / hard 32.75 — all in band on the short format.
+  Full tuning table in docs/improvements/v0.49.0-shorter-road-design.md.
+- Suite 621/621 (11 new in test/shorter_road_test.dart); analyze clean;
+  goldens + all pinned seeds untouched (default runs byte-identical by
+  construction). Plates critiqued clean at 360x640/412x915/800x1280 +
+  320x570@1.3x (tool/short_road_plates_test.dart); no overflow.
+- Pinned: kindler short seed 6 wins normal, seed 1 wins easy / falls normal.
+- Version 0.49.0+75; news entry; notes docs/releases/v0.49.0.md.
+- Next: commit, tag v0.49.0, dispatch CI, publish with checksums
+  (expect codes 75/1075/2075/4075).

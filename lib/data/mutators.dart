@@ -24,7 +24,12 @@ class MutatorDef {
 
 /// Deterministic authoring order — the weekly picker indexes into this, so a
 /// reorder reshuffles which week gets which modifier. Append, don't reorder.
-const List<String> mutatorsOrder = ['all_d4', 'elites_only', 'no_shops'];
+const List<String> mutatorsOrder = [
+  'all_d4',
+  'elites_only',
+  'no_shops',
+  'short_road',
+];
 
 const Map<String, MutatorDef> mutators = {
   'all_d4': MutatorDef(
@@ -41,6 +46,13 @@ const Map<String, MutatorDef> mutators = {
     'no_shops',
     'No Quarter',
     'No shops on the map. What you find is all you get — no gold to spend your way out of trouble.',
+  ),
+  'short_road': MutatorDef(
+    'short_road',
+    'Short Road',
+    'Six floors instead of nine — a whole delve for a shorter sit. '
+        'Rewards run deeper to fit the climb; the heaviest foes are tuned '
+        'to match.',
   ),
 };
 
