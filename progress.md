@@ -2180,3 +2180,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 ## 2026-08-25 — v0.57.0 PUBLISHED
 - CI run 32874509333 success. Version codes 83/1083/2083/4083. 4 APK pins PIN-OK; AAB cert pin matched.
 - Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.57.0 — 5 signed assets; sha256 table appended.
+
+## 2026-08-25 — v0.58.0 "The Remembered Fights" gates GREEN
+- One improvement: Ledger rows state the worn epithet (row title) and fights count (meta line, singular/plural) when the fuller record banked them; old records render byte-identical. lib/ui/ledger_screen.dart _historyRow only.
+- analyze --fatal-warnings clean; suite 660/660 (/work/temp/v0580_suite2.log; +4 test/remembered_fights_test.dart incl. panel-scoped negative pins for old records).
+- Plates critiqued clean: ledger_rows_360x640 + NEW ledger_rows_320x568 restraint check (worst case wraps 4 legible lines — fights token kept per scout condition) + 3 news plates. Plate scroll now targets recent-delves panel (newest fuller rows visible).
+- Zero sim changes → no sweep/golden re-anchor. pubspec 0.58.0+84.

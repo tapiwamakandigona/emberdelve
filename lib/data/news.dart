@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.57.0';
+const String currentAppVersion = '0.58.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.58.0',
+    title: 'The Remembered Fights',
+    lines: [
+      'The Ledger\'s rows now say who the delver WAS that day: runs '
+          'remembered with a worn epithet carry it in their line, and the '
+          'fights-won count sits beside the date.',
+      'Only banked facts, as always - rows from before the fuller record '
+          'stay exactly as they were. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.57.0',
     title: 'The Fuller Record',
