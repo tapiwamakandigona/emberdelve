@@ -2156,3 +2156,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 4 APK pins PIN-OK (0.55.0, codes 81/1081/2081/4081); AAB signer pin matched.
 - Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.55.0 — 5 assets; sha256 table in notes (universal 563f0422… 70M, arm64 ac391103… 36M, armeabi def94ebc… 34M, x86_64 94cd282d… 37M, aab fcb89a79… 68M).
 - Next: v0.56.0 lead = Card from the Ledger (docs/improvements/v0.56.0-lead-scout.md).
+
+## 2026-08-25T10:15Z — v0.56.0 "Card from the Ledger" gates GREEN
+- Any remembered win/loss in the Ledger's Recent Delves now shares a full Delver's Card (share icon per row, key history-card-<seed>-<date>); walkaways offer no card.
+- DelverCardFacts.fromRecord: honesty by omission — fights/trace/epithet never banked → omitted (new fightsKnown flag drops the fights figure from card + fallback text); win boss via bossForSeed(seed) (seed-0 relics name no boss, offer no code); pre-v0.51 losses keep opener+floor; short records rebuild SHORT codes.
+- showDelverCardSheet gained optional facts param (summary path unchanged).
+- Tests: test/ledger_card_test.dart (7 — truth table, degradations, worst-case canvas with Ashglass Sentinel two-clause epitaph + guard against silent degradation, ledger entry-point incl. abandoned-row absence); suite 650/650; analyze fatal-warnings clean.
+- Plates: build/ledger_card_plates (rows + remembered loss/win cards) + 3 news plates critiqued clean. LESSON: a wrong enemy id in test fixtures degrades the epitaph SILENTLY — pin the expected two-clause string in worst-case tests.
+- Zero sim changes; no sweep or golden re-anchor. Logs /work/temp/v0560_*.
