@@ -2143,3 +2143,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 4 APK pins PIN-OK (codes 80/1080/2080/4080); AAB signer pin matched 031acb42…. Staging /work/temp/v0540/rel.
 - Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.54.0 — 5 assets, sha256 table in notes (notes_final.md).
 - v0.55.0 lead scout (docs/improvements/v0.55.0-lead-scout.md) committed with this entry; leading candidate "Duskquartz" (fifth vista, provings-tied). Build already underway in-tree: VistaDef + resolver param + controller + truth-table/gate/picker tests green (13/13); plates rendering.
+
+## 2026-08-25T08:20Z — v0.55.0 "The Duskquartz" gates GREEN
+- Fifth vista, the first the Provings feed: duskquartz (violet-gold grade, hue -95 / sat 1.35 / val 0.96 / wash 0x3D2E1E4E), unlock "Clear 3 provings." — vistaUnlockedFor gains required provingsCleared param (controller passes meta.provingsCleared.length); appended LAST to vistasOrder.
+- Palette-only, zero PNGs, zero size growth; strata depth grade still composes (identity pins untouched).
+- Tests: truth table extended (2 vs 3 provings, blind to other counters), controller gate flips with a real cleared set, picker shows the locked milestone; suite 643/643; analyze clean.
+- Plates: 13 vista plates (build/vistas_visual — incl. duskquartz surface/deep + earned-CHOSEN wardrobe) + 3 news plates (build/news_visual) critiqued clean; plate tool fixed for the 5-card shelf (scroll target duskquartz, snap the shelf tail — emberlight gets evicted from the lazy list).
+- Zero sim changes; no sweep or golden re-anchor needed. Logs /work/temp/v0550_*.

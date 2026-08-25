@@ -133,13 +133,15 @@ Future<void> captureWardrobe(
     () => Future<void>.delayed(const Duration(milliseconds: 300)),
   );
   await tester.pump(const Duration(milliseconds: 400));
+  // v0.55.0: the shelf is 5 cards — scrolling to the last (duskquartz)
+  // evicts emberlight from the lazy list, so snap the shelf tail instead.
   await tester.scrollUntilVisible(
-    find.byKey(const ValueKey('vista-bloodstone')),
+    find.byKey(const ValueKey('vista-duskquartz')),
     400,
     scrollable: find.byType(Scrollable).first,
     maxScrolls: 200,
   );
-  await tester.ensureVisible(find.byKey(const ValueKey('vista-emberlight')));
+  await tester.ensureVisible(find.byKey(const ValueKey('vista-duskquartz')));
   await tester.pump(const Duration(milliseconds: 400));
   await snap(tester, key, name);
   await tester.pumpWidget(const SizedBox.shrink());
@@ -156,10 +158,21 @@ void main() {
     }
 
     final c = GameController();
-    c.meta.runsWon = 1; // moonveil earned; verdigris/bloodstone locked
+    c.meta.runsWon = 1; // moonveil earned; verdigris/bloodstone/dusk locked
     c.meta.selectedVista = 'moonveil';
     await captureWardrobe(tester, c, const Size(360, 640), 'wardrobe_360x640');
     await captureWardrobe(tester, c, const Size(412, 915), 'wardrobe_412x915');
+
+    // v0.55.0: duskquartz earned via a real cleared set, worn (CHOSEN).
+    final c2 = GameController();
+    c2.meta.provingsCleared.addAll({'a', 'b', 'c'});
+    c2.meta.selectedVista = 'duskquartz';
+    await captureWardrobe(
+      tester,
+      c2,
+      const Size(360, 640),
+      'wardrobe_duskquartz_chosen_360x640',
+    );
     debugPrint('STAGE: vista plates done');
   });
 }

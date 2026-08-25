@@ -639,6 +639,7 @@ class GameController extends ChangeNotifier {
     runsWon: meta.runsWon,
     distinctFelled: meta.enemyFelled.length,
     hardWins: meta.hardWins,
+    provingsCleared: meta.provingsCleared.length,
   );
 
   void selectVista(String id) {
