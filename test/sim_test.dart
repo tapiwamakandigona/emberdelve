@@ -71,7 +71,13 @@ import 'package:emberdelve/sim/autoplay.dart';
 // logic). Same cause as v0.25.0. Boss mapping untouched; every anchor seed
 // still reaches its boss (re-proven, tool/reanchor_v0460_probe_test.dart).
 // Old value: 1607954204.
-const int goldenV6 = 2043266176;
+//
+// v0.47.0 re-anchor (2026-08-25, "The Answered Blow"): enemy pool 39 -> 42
+// (appended at band ENDS — pool growth re-rolls every seeded encounter
+// offering, the documented v0.12.0/v0.22.0 cause). SIXTH re-anchor; reach
+// re-proven per anchor seed with tool/reanchor_v0470_probe_test.dart.
+// Old value: 2043266176.
+const int goldenV6 = 111116111;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -98,7 +104,10 @@ const Map<int, String> bossAnchorSeeds = {
   20260723: 'cinder_hierophant',
   20260724: 'the_bellows',
   20260725: 'ashfall_twins',
-  20260734: 'slag_regent', // 20260726 dies early
+  // v0.47.0 re-screen: the enemy-pool growth changed which base seeds
+  // survive. 20260726 (slag_regent) now provably reaches its boss again, so
+  // the +8 substitute 20260734 is retired.
+  20260726: 'slag_regent',
   20260743: 'hearthless_king', // 20260727 and 20260735 die early
 };
 
@@ -157,15 +166,25 @@ const Map<int, String> bossAnchorSeeds = {
 //   ashfall_twins      1991211581 -> 1238512999
 //   slag_regent        1258221119 -> 2127043565
 //   hearthless_king     510459434 -> 1841674163
+// v0.47.0 re-anchor (2026-08-25, enemy pool 39 -> 42), old -> new; the
+// slag_regent anchor seed moved 20260734 -> 20260726 (reach re-screen):
+//   ashen_colossus     2114249795 -> 1144080449
+//   ember_tyrant       1274323147 -> 1236716520
+//   pyre_matriarch     1246566942 -> 2027004709
+//   cinder_hierophant  2043266176 ->  111116111
+//   the_bellows        1874083357 -> 1475540171
+//   ashfall_twins      1238512999 ->  338964903
+//   slag_regent        2127043565 -> 1367915457 (@ 20260726)
+//   hearthless_king    1841674163 ->  648955842
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 2114249795,
-  'ember_tyrant': 1274323147,
-  'pyre_matriarch': 1246566942,
-  'cinder_hierophant': 2043266176,
-  'the_bellows': 1874083357,
-  'ashfall_twins': 1238512999,
-  'slag_regent': 2127043565,
-  'hearthless_king': 1841674163,
+  'ashen_colossus': 1144080449,
+  'ember_tyrant': 1236716520,
+  'pyre_matriarch': 2027004709,
+  'cinder_hierophant': 111116111,
+  'the_bellows': 1475540171,
+  'ashfall_twins': 338964903,
+  'slag_regent': 1367915457,
+  'hearthless_king': 648955842,
 };
 
 void main() {

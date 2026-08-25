@@ -85,10 +85,14 @@ class TipDirector {
   }
 
   /// A turn began with this telegraphed enemy intent
-  /// (`{'kind': 'attack'|'block'|'attack_block', 'amount': n, ...}`).
+  /// (`{'kind': 'attack'|'block'|'attack_block'|'charge'|'counter'|'stagger',
+  /// 'amount': n, ...}`). A charge is a big telegraphed hit, so it counts
+  /// toward the block-fades warning like any attack (v0.47.0).
   String? onIntent(Map<String, Object?> intent) {
     final kind = intent['kind'];
-    if (kind != 'attack' && kind != 'attack_block') return null;
+    if (kind != 'attack' && kind != 'attack_block' && kind != 'charge') {
+      return null;
+    }
     final amount = intent['amount'];
     if (amount is! int || amount < bigHitThreshold) return null;
     return _fire(ContextTips.blockFades);

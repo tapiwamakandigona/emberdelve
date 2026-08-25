@@ -45,6 +45,7 @@ class RunTrace {
           _open = true;
           _hurt = false;
         case 'enemy_attacked':
+        case 'counter_struck': // v0.47.0: a riposte hurts like any hit
           if (((e['damage'] as num?) ?? 0) > 0) _hurt = true;
         case 'hp_lost':
           _hurt = true;

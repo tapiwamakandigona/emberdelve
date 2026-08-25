@@ -1,4 +1,4 @@
-// data/enemies.dart — Emberdelve enemy roster (v0.22.0: 39 enemies).
+// data/enemies.dart — Emberdelve enemy roster (v0.47.0: 42 enemies).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -20,15 +20,23 @@
 // regulars threaten ~19-28/turn, elites ~21-31, boss ~23-32 with a block cycle.
 
 class Intent {
-  final String kind; // attack | block | attack_block
+  // attack | block | attack_block
+  // v0.47.0 response puzzles (docs/improvements/v0.47.0-answered-blow-design.md):
+  //   charge  — telegraphed big hit; dealing `block` (as break threshold) HP
+  //             damage with dice THIS turn flips it to a no-op stagger.
+  //   counter — riposte stance; every non-killing attack die costs the player
+  //             `amount` damage (their block absorbs first). The enemy does
+  //             not act at end of turn — the ripostes were its action.
+  final String kind;
   final int amount;
-  final int block; // only for attack_block
+  final int block; // attack_block: block gained · charge: break threshold
   const Intent(this.kind, this.amount, [this.block = 0]);
 
   Map<String, Object> toMap() => {
     'kind': kind,
     'amount': amount,
     if (kind == 'attack_block') 'block': block,
+    if (kind == 'charge') 'threshold': block,
   };
 }
 
@@ -67,12 +75,16 @@ const List<String> enemiesOrder = [
   'vent_serpent', 'pumice_hulk',
   // regulars — late band, v0.22.0 additions (appended at band END)
   'ashglass_sentinel', 'coal_seam_wyrm',
+  // regulars — late band, v0.47.0 response puzzles (appended at band END)
+  'vent_ram', 'cinder_urchin',
   // elites
   'pyre_howler', 'kiln_golem', 'ash_reaper', 'forge_warden', 'molten_maw',
   // elites — v0.5.0 additions
   'bellows_knight', 'quench_hag',
   // elites — v0.12.0 addition (appended at band END)
   'cinder_marshal',
+  // elites — v0.47.0 response-puzzle exam (appended at band END)
+  'magma_lancer',
   // bosses (exactly one per run, chosen deterministically from the run seed
   // in run_layer.dart — see bossForSeed). Ordering is deliberate: the golden
   // anchor seed (20260723 % 3 == 1) must keep mapping to the Ember Tyrant so
@@ -339,6 +351,32 @@ const Map<String, EnemyDef> enemies = {
       Intent('block', 20),
     ],
   ),
+  'vent_ram': EnemyDef(
+    'vent_ram',
+    'Vent Ram',
+    44,
+    fromLayer: 5,
+    pattern: [
+      // Response puzzle: the burst check. It lowers its head and winds up a
+      // hit too big to shrug off — deal 9 through its hide THIS turn and the
+      // charge collapses into a stagger. Teaches "interrupt beats turtle".
+      Intent('charge', 34, 9),
+      Intent('attack', 19),
+    ],
+  ),
+  'cinder_urchin': EnemyDef(
+    'cinder_urchin',
+    'Cinder Urchin',
+    40,
+    fromLayer: 5,
+    pattern: [
+      // Response puzzle: the riposte. While bristling, every non-killing
+      // strike costs the delver 3 — the flurry that wins every other fight
+      // is the wrong answer here. One clean blow, or wait it out.
+      Intent('counter', 3),
+      Intent('attack', 22),
+    ],
+  ),
 
   // ---- elites ------------------------------------------------------------------
   'pyre_howler': EnemyDef(
@@ -437,6 +475,21 @@ const Map<String, EnemyDef> enemies = {
       Intent('attack_block', 25, 18),
       Intent('attack_block', 22, 20),
       Intent('attack', 30),
+    ],
+  ),
+  'magma_lancer': EnemyDef(
+    'magma_lancer',
+    'Magma Lancer',
+    62,
+    elite: true,
+    fromLayer: 6,
+    pattern: [
+      // The exam: both response puzzles back to back. Beat 1 punishes the
+      // flurry (riposte 4), beat 2 demands the burst (break 12 or eat 38),
+      // beat 3 is the familiar guarded swing to catch the exhausted pool.
+      Intent('counter', 4),
+      Intent('charge', 38, 12),
+      Intent('attack_block', 24, 16),
     ],
   ),
 

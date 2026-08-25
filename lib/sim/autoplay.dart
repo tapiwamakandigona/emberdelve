@@ -109,6 +109,75 @@ Map<String, Object?>? botCmd(
           return {'type': 'assign', 'die': i, 'action': 'attack'};
         }
       }
+      // v0.47.0 response puzzles — the bot reads the badge (the same floor a
+      // player who reads it gets):
+      //  * charge: attack while the break is still reachable with the dice
+      //    left; block once it is not.
+      //  * counter: spend ONE strike — the single biggest die — and block
+      //    with the rest, so ripostes cost at most one hit per turn.
+      final liveIntent = sim.enemy!['intent'] as Map;
+      final liveKind = liveIntent['kind'];
+      if (liveKind == 'charge') {
+        final need =
+            (liveIntent['threshold'] as int) -
+            (sim.enemy!['charge_taken'] as int? ?? 0);
+        var reachable = 0;
+        for (var i = 1; i <= rolled.length; i++) {
+          if (assigned['$i'] != null) continue;
+          final mods = resolveRunDie(
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
+          if (mods['block_only'] == true) continue;
+          reachable += attackValue(i);
+        }
+        for (var i = 1; i <= rolled.length; i++) {
+          if (assigned['$i'] != null) continue;
+          final mods = resolveRunDie(
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
+          final canAttack = mods['block_only'] != true;
+          final canBlock = mods['attack_only'] != true;
+          final action = (reachable >= need && canAttack) || !canBlock
+              ? 'attack'
+              : 'block';
+          return {'type': 'assign', 'die': i, 'action': action};
+        }
+        return {'type': 'end_turn'};
+      }
+      if (liveKind == 'counter') {
+        final struckAlready = assigned.values.contains('attack');
+        var bestDie = 0, bestVal = -1;
+        for (var i = 1; i <= rolled.length; i++) {
+          if (assigned['$i'] != null) continue;
+          final mods = resolveRunDie(
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
+          if (mods['block_only'] == true) continue;
+          final v = attackValue(i);
+          if (v > bestVal) {
+            bestVal = v;
+            bestDie = i;
+          }
+        }
+        for (var i = 1; i <= rolled.length; i++) {
+          if (assigned['$i'] != null) continue;
+          final mods = resolveRunDie(
+            sim.run,
+            (sim.player['dice'] as List)[i - 1] as String,
+          ).def.mods;
+          final canBlock = mods['attack_only'] != true;
+          if (!struckAlready && i == bestDie) {
+            return {'type': 'assign', 'die': i, 'action': 'attack'};
+          }
+          if (canBlock) return {'type': 'assign', 'die': i, 'action': 'block'};
+          // attack_only die with the strike already spent: swing anyway.
+          return {'type': 'assign', 'die': i, 'action': 'attack'};
+        }
+        return {'type': 'end_turn'};
+      }
       for (var i = 1; i <= rolled.length; i++) {
         if (assigned['$i'] == null) {
           final mods = resolveRunDie(

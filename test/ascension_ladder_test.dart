@@ -63,11 +63,15 @@ void main() {
     // 39->45 / relics 32->36): same cause, all four old pins re-rolled.
     // Re-hunted (kindler won 6/10, warden 4/6, gambler 6/10, ascetic
     // 6/10/20/40/66); four DISTINCT seeds kept.
+    // Re-pinned for v0.47.0 ("The Answered Blow", enemy pool 39->42): the
+    // pool growth re-rolled every seeded run. Re-hunted
+    // (tool/reanchor_v0470_probe_test.dart: kindler 6/10, warden 4/6,
+    // gambler 6/10, ascetic 6/10/66); four DISTINCT seeds kept.
     const seeds = {
       'kindler': 6,
       'warden': 4,
       'gambler': 10,
-      'ascetic': 20,
+      'ascetic': 66,
     };
     seeds.forEach((ch, seed) {
       final r = playRun(seed, character: ch, difficulty: 'hard', ascension: 20);

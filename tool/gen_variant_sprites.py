@@ -86,6 +86,13 @@ VARIANTS: dict[str, tuple[str, float, float, float, float]] = {
     "hearthless_king": ("ember_tyrant", 265.0, 0.70, 0.85, 0.24), # cold violet
     "ashglass_sentinel": ("kiln_golem", 160.0, 0.55, 1.10, 0.20), # pale glass-green
     "coal_seam_wyrm": ("cinder_crawler", -8.0, 1.20, 0.62, 0.30), # coal-and-ember
+    # --- v0.47.0 "The Answered Blow" ------------------------------------------
+    # Same rules. slag_brute hues taken: slate 200 (clinker), pale 40 (pumice).
+    # ember_beetle taken: grey-green 95 (scoria), cooled iron 215 (snail).
+    # forge_warden taken: brass 40 (bellows_knight).
+    "vent_ram": ("slag_brute", 70.0, 1.00, 0.95, 0.28),          # sulfur vent-green
+    "cinder_urchin": ("ember_beetle", 285.0, 0.95, 0.85, 0.28),  # cinder-bloom violet
+    "magma_lancer": ("forge_warden", -40.0, 1.25, 0.80, 0.30),   # deep magma crimson
 }
 
 

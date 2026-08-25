@@ -145,17 +145,35 @@ class _IntentBadge extends StatelessWidget {
         (Icons.shield, EmberColors.block, '${intent['amount']}'),
       if (kind == 'attack_block')
         (Icons.shield, EmberColors.block, '${intent['block']}'),
+      // v0.47.0 response puzzles: the badge STATES the answer. A charge reads
+      // as the hit plus the break number; a counter as the per-strike price;
+      // a stagger as the earned blank beat.
+      if (kind == 'charge') ...[
+        (Icons.flash_on, EmberColors.danger, '${intent['amount']}'),
+        (Icons.flash_off, EmberColors.ember, '${intent['threshold']}'),
+      ],
+      if (kind == 'counter')
+        (Icons.sync_alt, EmberColors.kindElite, '${intent['amount']}'),
+      if (kind == 'stagger') (Icons.hourglass_empty, EmberColors.textDim, '—'),
     ];
-    final border = kind == 'attack_block'
+    final border = kind == 'attack_block' || kind == 'counter'
         ? EmberColors.kindElite
         : kind == 'block'
         ? EmberColors.block
+        : kind == 'stagger'
+        ? EmberColors.textDim
         : EmberColors.danger;
     final spoken = switch (kind) {
       'attack' => 'attack for ${intent['amount']}',
       'block' => 'block ${intent['amount']}',
       'attack_block' =>
         'attack for ${intent['amount']} and block ${intent['block']}',
+      'charge' =>
+        'charging a ${intent['amount']} hit — deal ${intent['threshold']} '
+            'damage this turn to break it',
+      'counter' =>
+        'countering — each non-killing strike costs you ${intent['amount']}',
+      'stagger' => 'staggered — it will do nothing',
       _ => '$kind',
     };
     return Semantics(

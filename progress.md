@@ -1914,3 +1914,46 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   stagger), 3 new enemies (vent_ram, cinder_urchin, magma_lancer), design doc
   docs/improvements/v0.47.0-answered-blow-design.md. Sim + UI + bot landed in
   working tree; tests/gates next. Golden re-anchor expected (pool growth).
+
+## 2026-08-25T03:20Z — v0.47.0 "The Answered Blow" WIP (suite-green, pre-release)
+- Response-puzzle intents landed: `charge` (break threshold, raw across
+  difficulty; flips LIVE to 'stagger' via charge_broken + re-announced
+  intent_shown) and `counter` (per-strike riposte, block absorbs first,
+  kill resolves BEFORE the counter). Sim: lib/sim/combat.dart; enemy map
+  gains 'charge_taken' (reset per telegraph in end_turn).
+- 3 new enemies appended at band ends: vent_ram (charge 34/9, L5+),
+  cinder_urchin (counter 3, L5+), magma_lancer (elite exam, L6+). Sheets =
+  palette variants (tool/gen_variant_sprites.py, PROVENANCE rows added);
+  sprite_meta.json hand-appended (generator reindents the whole file — keep
+  hand-editing meta for minimal diffs). 3 codex entries (75→78).
+- UI: _IntentBadge chips + spoken text for charge/counter/stagger;
+  _explainIntent cases; stage sway on charge; tips onIntent counts charge;
+  choreography: charge_broken note, counter_struck pop/claws/defeat path,
+  enemy_staggered beat; run_trace counts counter_struck as hurt.
+- Bot reads the badges: break-if-reachable vs charge; ONE biggest-die strike
+  then block vs counter (lib/sim/autoplay.dart).
+- SIXTH golden re-anchor (pool 39→42; probe tool/reanchor_v0470_probe_test):
+  goldenV6 2043266176→111116111. Boss goldens: colossus 1144080449@20260728,
+  tyrant 1236716520@20260721, matriarch 2027004709@20260722, hierophant
+  111116111@20260723, bellows 1475540171@20260724, twins 338964903@20260725,
+  regent 1367915457@20260726 (anchor seed moved from 20260734 — reach
+  re-screen), king 648955842@20260743.
+- Pins re-hunted: kindler easy-loss 3→18 (6 test files + literal expects in
+  share_card L75/L209, retraced_road L73); tenth_rung proving seed 200→201
+  (lib/data/provings.dart); A20 ascetic 20→66 (others 6/4/10 survive);
+  rung-20 cap seed 6 survives. Peddler pins unchanged (loss 16, wins
+  {1,2,4,6,8}); ash_summit 912 survives.
+- GATES GREEN: analyze clean; suite 606/606 (9 new in
+  test/answered_blow_test.dart; overflow probes 35/35 inside suite);
+  BAND400 easy 89.0 / normal 62.75 / hard 39.75 — all in band.
+- STILL TO DO before tagging v0.47.0: (1) HARD1000 drift check
+  (tool/hard_1000_probe_test.dart; pre-drop 42.3%); (2) plate critique redo —
+  tool/answered_blow_plates_test.dart works but the anchored TOUR overlay
+  pollutes plates (set meta.tourSeenVersion = tourVersion in the test, cvd
+  pattern predates the tour) and at 320x568@1.3 the 2-chip intent badge
+  (charge AND pre-existing attack_block) clips the right screen edge —
+  judge/fix once plates are clean (Positioned top:-badgeLift in
+  combat/stage.dart has no horizontal clamp); (3) version already bumped
+  0.47.0+73 + news entry + notes docs/releases/v0.47.0.md (balance numbers
+  need filling in); (4) tag at release sha, dispatch CI, publish with
+  checksums (expect codes 73/1073/2073/4073).
