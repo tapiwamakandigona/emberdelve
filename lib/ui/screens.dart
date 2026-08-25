@@ -31,6 +31,7 @@ import '../game/seed_input.dart';
 import '../game/tips.dart';
 import '../game/trials.dart';
 import '../game/weekly.dart';
+import '../meta/achievements.dart' as ach;
 import '../meta/forge.dart';
 import '../meta/play_games_service.dart';
 import '../meta/update_service.dart';

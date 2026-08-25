@@ -408,6 +408,79 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.39.0 The Waymarks: the ledger's "so close"
+                          // resolver (nearestAchievements — tested since
+                          // v0.5.0, surfaced nowhere until now) names up to
+                          // two unearned marks the player has ALREADY
+                          // started. Bare counts only; zero-progress goals
+                          // are excluded, because a goal you have not started
+                          // is not a goal you are near. Shows after wins AND
+                          // losses — the counters banked either way, so the
+                          // fact is equally true (§Ethics: recognition facts,
+                          // no urgency, no reward, nothing sold; ignoring it
+                          // costs nothing).
+                          Builder(
+                            builder: (context) {
+                              final near = ach.nearestAchievements(
+                                c.meta,
+                                limit: 2,
+                              );
+                              if (near.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(top: Space.l),
+                                child: Panel(
+                                  key: const ValueKey('waymarks'),
+                                  color: EmberColors.raised,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'WITHIN REACH',
+                                        style: EmberText.micro,
+                                      ),
+                                      for (final def in near) ...[
+                                        const SizedBox(height: Space.m),
+                                        Row(
+                                          key: ValueKey('waymark-${def.id}'),
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    def.name,
+                                                    style: EmberText.body,
+                                                  ),
+                                                  Text(
+                                                    def.text,
+                                                    style: EmberText.bodyDim,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(width: Space.m),
+                                            Text(
+                                              '${ach.statValue(c.meta, def.stat, def.param)}'
+                                              ' of ${def.target}',
+                                              style: EmberText.value.copyWith(
+                                                color: EmberColors.gold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                           const Spacer(),
                           // Fast restart (backlog #8): straight into a new run — boon pick
                           // included — without a detour through the title.
