@@ -31,6 +31,11 @@ const List<TrackDef> gramophoneTracks = [
     hint: 'Meet a foe below.',
   ),
   TrackDef(
+    key: 'map_deep',
+    name: 'Deeper Still',
+    hint: 'Descend past the midpoint of a delve.',
+  ),
+  TrackDef(
     key: 'boss_combat',
     name: 'The Deep Crowned',
     hint: 'Stand before a crowned foe.',

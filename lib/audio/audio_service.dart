@@ -24,6 +24,7 @@ class AudioService {
   static const Map<String, String> musicPaths = {
     'title_menu': 'audio/music/title_menu.ogg',
     'map': 'audio/music/map.ogg',
+    'map_deep': 'audio/music/map_deep.ogg',
     'combat': 'audio/music/combat.ogg',
     'boss_combat': 'audio/music/boss_combat.ogg',
     'victory': 'audio/music/victory.ogg',
@@ -169,7 +170,16 @@ class AudioService {
   // -- Music ----------------------------------------------------------------
 
   /// Music key for a sim phase. `null`/idle = title.
-  static String? musicKeyForPhase(String? phase, {bool bossFight = false}) {
+  ///
+  /// [mapDepth] (0..1, first layer -> boss layer) darkens the map-family
+  /// theme past the delve's midpoint (v0.45.0 "The Deeper Song"): the same
+  /// depth signal the Deep Hum ambience follows, so sound and music agree
+  /// about how far down the delver stands.
+  static String? musicKeyForPhase(
+    String? phase, {
+    bool bossFight = false,
+    double mapDepth = 0,
+  }) {
     switch (phase) {
       case 'player_turn':
         return bossFight ? 'boss_combat' : 'combat';
@@ -183,7 +193,7 @@ class AudioService {
       case 'shop':
       case 'event':
       case 'rest':
-        return 'map';
+        return mapDepth >= 0.5 ? 'map_deep' : 'map';
       case 'run_won':
         return 'victory';
       case 'run_lost':
@@ -206,7 +216,7 @@ class AudioService {
     bool bossFight = false,
     double mapDepth = 0,
   }) async {
-    final key = musicKeyForPhase(phase, bossFight: bossFight);
+    final key = musicKeyForPhase(phase, bossFight: bossFight, mapDepth: mapDepth);
     if (phase == 'map') {
       setAmbience(true, level: mapAmbienceLevel(mapDepth));
     } else {

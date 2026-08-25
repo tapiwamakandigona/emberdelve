@@ -140,6 +140,7 @@ void main() {
     expect(find.text('Steel and Ember'), findsNothing);
     expect(find.text('The Climb Home'), findsNothing);
     expect(find.text('Win a delve.'), findsOneWidget);
-    expect(find.text('— — —'), findsNWidgets(4));
+    // v0.45.0: 7 tracks, 2 heard => 5 masked.
+    expect(find.text('— — —'), findsNWidgets(5));
   });
 }

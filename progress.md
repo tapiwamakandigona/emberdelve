@@ -1859,3 +1859,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   tool/retraced_visual_test.dart (loss at 360/412/320) reviewed clean;
   analyze clean. Bump 0.44.0+70; news entry; notes docs/releases/v0.44.0.md.
   Full suite + overflow sweep running.
+
+## 2026-08-25T06:55Z — v0.44.0 PUBLISHED; v0.45.0 "The Deeper Song" built
+- v0.44.0: CI 32797639272 green; verify.py 4/4 PIN-OK (70/1070/2070/4070);
+  AAB pin match; release live with 5 assets + sha256 table.
+- v0.45.0 "The Deeper Song": second map theme 'map_deep' ("Deeper Still",
+  KM "Ossuary 6 - Air" CC-BY, processed to −19 LUFS / TP −2.91 / OGG q4,
+  recipe in PROVENANCE.md) takes over at mapDepth >= 0.5 for all map-family
+  phases — same depth signal as the Deep Hum. Seventh Gramophone record,
+  hint "Descend past the midpoint of a delve."; CREDITS.md updated (CC-BY).
+  3 new tests (deeper_song_test.dart) green; gramophone_test masked-row pin
+  4->5; full suite 597/597; overflow 35/35; gramophone plates (360/412/800
+  + playing) reviewed clean; analyze clean. Bump 0.45.0+71; news entry;
+  notes docs/releases/v0.45.0.md. Expect codes 71/1071/2071/4071.

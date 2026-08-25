@@ -321,7 +321,8 @@ class GameController extends ChangeNotifier {
     // recorded here ('title_menu' is seeded in boot); saves only when the
     // set actually grows.
     if (sim != null) {
-      final key = AudioService.musicKeyForPhase(phase, bossFight: _bossFight);
+      final key = AudioService.musicKeyForPhase(phase,
+          bossFight: _bossFight, mapDepth: mapDepth);
       if (key != null && key != 'title_menu' && meta.heardTracks.add(key)) {
         MetaStore.save(meta);
       }

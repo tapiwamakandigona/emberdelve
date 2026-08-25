@@ -29,7 +29,7 @@ Fonts are credited separately in the repository (see assets/fonts).
 
 ### Music
 
-- **"Ossuary 1 - A Beginning", "Ossuary 2 - Turn", "Curse of the Scarab", "Five Armies"**
+- **"Ossuary 1 - A Beginning", "Ossuary 2 - Turn", "Ossuary 6 - Air", "Curse of the Scarab", "Five Armies"**
   Kevin MacLeod (incompetech.com)
   Licensed under Creative Commons: By Attribution 4.0
   https://creativecommons.org/licenses/by/4.0/
