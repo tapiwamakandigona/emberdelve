@@ -1,7 +1,8 @@
 # Emberdelve — App Store listing draft (iOS)
 
-Prepared 2026-08-22, matching the 0.7.0 feature set (same rule as the Play
-listing: do NOT mention 0.8–0.12 GitHub-only features). Screenshots:
+Prepared 2026-08-22, refreshed 2026-08-25 to the v0.34.0 feature set (matches
+Play production and the current iOS build off PR #91 — same codebase, same
+features). Do NOT claim features beyond the shipped v0.34.0 set. Screenshots:
 `docs/store/screenshots/ios/` — five 1290×2796 PNGs (iPhone 6.7", accepted for
 all iPhone slots), rendered from real screens via
 `tool/appstore_screenshots_test.dart` (rerun any time the UI changes).
@@ -29,19 +30,20 @@ Full game free, offline, zero ads. One honest unlock opens HARD + Ascension.
 
 ## Keywords (100 chars max, comma-separated, no spaces needed)
 
-dice,roguelike,roguelite,dungeon,turn based,deck builder,offline,rpg,tabletop,slice,strategy,solo
+dice,roguelike,roguelite,dungeon,turn based,dice builder,offline,rpg,tabletop,delve,strategy,solo
 
-*(97 chars. "slice" covers Dicey-Dungeons-adjacent "slice & dice" searches.)*
+*(97 chars. Uses "dice builder" (never "deck builder" — Emberdelve builds a
+dice pool, not a card deck; ASO honesty rule) and "delve" for the crawl term.)*
 
 ## Description (4000 chars max)
 
 Use the Play full description verbatim (`play-listing.md` → Full description,
-0.7.0 refresh). It is platform-neutral except one required tweak:
+v0.34.0 refresh). It is platform-neutral except one required tweak:
 
 - The FAIR BY DESIGN bullet "One honest one-time unlock (the Ember Forge)…"
   stays as-is — App Store allows referencing IAP by name.
 - Remove any sentence mentioning Google Play / Play Games if present in the
-  pasted revision (the 0.7.0 refresh has none — verified 2026-08-22).
+  pasted revision (the v0.34.0 refresh has none — re-verify at paste time).
 
 ## Support URL
 
