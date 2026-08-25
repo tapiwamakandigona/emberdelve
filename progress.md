@@ -2215,3 +2215,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates critiqued clean (tool/deepest_mark_visual_test.dart: deepest_win_360x640, deepest_loss_320x568 dignity plate). PLATE LESSON: SummaryScreen pumped directly needs a Material(color: EmberColors.bg) host or every Text paints the yellow missing-DefaultTextStyle underline; the line sits below the fold — scrollUntilVisible before snap.
 - Zero sim movement, zero save-format movement (bestFloor persisted since v0.5.0). pubspec 0.61.0+87.
 - itch.io same session: android channel butler-pushed to v0.59.0 (was stale at 0.45.0 — the "CI auto-sync" note was wrong, corrected in MARKETING-SYNC.md); devlog 1640696 posted; new password + API key stored Viktor-side.
+
+## 2026-08-25 — v0.62.0 "The Kept Fire" gates GREEN (push pending GitHub auth)
+- One improvement: title greets a 7+-days-away player with one warm line under the Gathered Hearth (key kept-fire-line): "N days since your last delve — the hearth kept its fire." Pure derived state from newest runHistory date (injectable clock keptFireLine helper); self-retiring on any banked run; silent for fresh/active/malformed. Scout: docs/improvements/v0.62.0-lead-scout.md (Helpshift 90-second re-entry window).
+- analyze clean; suite 680/680 (/work/temp/v0620_suite2.log; +6 test/kept_fire_test.dart incl. calendar-midnight pins). NEWS-COPY LESSON: the news ethics gate bans the WORD "streak" even in a denial ("no streaks were counted" failed) — write around banned vocabulary entirely.
+- Plates critiqued clean (tool/kept_fire_visual_test.dart: 23-day 360x640, 365-day 320x568 restraint, fresh negative).
+- OBSERVATION for a future lead: EmberLogotype edge-clips at 320dp width on the title (pre-existing, visible in kept_fire_320x568 plate) — candidate v0.63.0 fix.
+- Zero sim movement, zero save-format movement. pubspec 0.62.0+88.

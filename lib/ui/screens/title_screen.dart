@@ -124,6 +124,22 @@ class TitleScreen extends StatelessWidget {
                               // earned is visible the moment the game opens.
                               // One delver renders exactly as it always did.
                               _GatheredHearth(m, warm: warm, bright: bright),
+                              // v0.62.0 The Kept Fire: one warm line for a
+                              // player returning after a week or more away.
+                              // Pure derived state (newest runHistory date) —
+                              // it clears itself the moment a new run banks.
+                              // No streaks, no guilt, no ask (§Ethics).
+                              if (keptFireLine(m) != null) ...[
+                                const SizedBox(height: Space.m),
+                                Text(
+                                  keptFireLine(m)!,
+                                  key: const ValueKey('kept-fire-line'),
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                               const SizedBox(height: Space.xxl),
                               // Difficulty selector (v0.3.2): sticky, honest about the trade —
                               // easier fights pay fewer embers, harder fights pay more. The
@@ -782,4 +798,29 @@ class _HearthsidePost extends StatelessWidget {
       ),
     );
   }
+}
+
+/// v0.62.0 The Kept Fire: the returning-player line, or null when it has
+/// nothing honest to say. Shows only when the NEWEST remembered run is
+/// [keptFireDays] or more calendar days old — a fresh profile, an active
+/// player, or a malformed record all stay silent. Derived entirely from
+/// runHistory: banking any run makes the newest date today and the line
+/// retires itself. [now] is injectable for tests; production uses the
+/// wall clock.
+const int keptFireDays = 7;
+
+String? keptFireLine(MetaState m, {DateTime? now}) {
+  if (m.runHistory.isEmpty) return null;
+  final dateStr = m.runHistory.first['date'] as String?;
+  if (dateStr == null) return null;
+  final last = DateTime.tryParse(dateStr);
+  if (last == null) return null;
+  final today = now ?? DateTime.now();
+  final days = DateTime(
+    today.year,
+    today.month,
+    today.day,
+  ).difference(DateTime(last.year, last.month, last.day)).inDays;
+  if (days < keptFireDays) return null;
+  return '$days days since your last delve — the hearth kept its fire.';
 }
