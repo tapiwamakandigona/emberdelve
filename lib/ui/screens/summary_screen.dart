@@ -169,6 +169,23 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.61.0 The Deepest Mark: one quiet line when
+                          // THIS run stood deeper than any before it — shown
+                          // on wins and losses alike (a lost run can still be
+                          // the deepest; the record is the dignity). Pure
+                          // fact, no next-goal teaser (§Ethics).
+                          if (c.pendingDeepestFloor != null) ...[
+                            const SizedBox(height: Space.l),
+                            Text(
+                              'Floor ${c.pendingDeepestFloor} — the deepest '
+                              'you have delved.',
+                              key: const ValueKey('deepest-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                          ],
                           if (insight != null) ...[
                             const SizedBox(height: Space.l),
                             Panel(
@@ -295,9 +312,7 @@ class SummaryScreen extends StatelessWidget {
                                 difficulty:
                                     run['difficulty'] as String? ?? 'normal',
                                 ascension:
-                                    int.tryParse(
-                                      '${run['ascension'] ?? 0}',
-                                    ) ??
+                                    int.tryParse('${run['ascension'] ?? 0}') ??
                                     0,
                                 shortRoad:
                                     c.sim?.hasMutator('short_road') ?? false,
@@ -308,8 +323,7 @@ class SummaryScreen extends StatelessWidget {
                                 onTap: () async {
                                   await Clipboard.setData(
                                     ClipboardData(
-                                      text:
-                                          code ?? '${c.sim?.runSeed ?? ''}',
+                                      text: code ?? '${c.sim?.runSeed ?? ''}',
                                     ),
                                   );
                                   c.announce(

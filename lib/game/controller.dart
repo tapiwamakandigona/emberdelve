@@ -203,6 +203,14 @@ class GameController extends ChangeNotifier {
   /// (§Ethics — see docs/improvements/v0.32.0-open-rung-design.md).
   int? pendingRungOpened;
 
+  /// v0.61.0 The Deepest Mark: set when THIS run stood on a deeper layer
+  /// than any before it (bestFloor moved, win or loss), for one quiet
+  /// summary line. Gated on a PREVIOUS record existing (bestFloor > 0) —
+  /// a profile's first-ever run has nothing to compare against, and
+  /// announcing a trivial "record" would be noise, not recognition.
+  /// Transient like [pendingRankUp]; nothing persists for this.
+  int? pendingDeepestFloor;
+
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
   /// [boot], because [_bankRun] gates the daily record on it — a resumed
@@ -470,6 +478,7 @@ class GameController extends ChangeNotifier {
     pendingAchievements = const [];
     pendingRankUp = null;
     pendingRungOpened = null;
+    pendingDeepestFloor = null;
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -1169,7 +1178,12 @@ class GameController extends ChangeNotifier {
     // this run: the deepest layer stood on, a finished daily, a win with no
     // rest node visited, a win on hard, and the boss id that fell.
     final reached = floorReached;
-    if (reached > meta.bestFloor) meta.bestFloor = reached;
+    if (reached > meta.bestFloor) {
+      // v0.61.0 The Deepest Mark: announce only when a previous record
+      // existed to beat — never on a profile's first-ever run.
+      if (meta.bestFloor > 0) pendingDeepestFloor = reached;
+      meta.bestFloor = reached;
+    }
     if (dailyDate != null) meta.dailiesPlayed += 1;
     if (sim!.phase == 'run_won') {
       if (!_restedThisRun) meta.winsNoRest += 1;
