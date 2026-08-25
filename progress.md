@@ -2089,3 +2089,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   needs POSITIVE delta + explicit `scrollable: find.byType(Scrollable)
   .first`; and find.textContaining(' to ') collides with the row's
   "tap to copy its Delve Code" line — pin exact text instead.
+
+## 2026-08-25T14:40Z — v0.51.0 "The Obituary" PUBLISHED
+- CI 32811140909 (workflow_dispatch on tag v0.51.0) success; artifacts
+  aab 9550138101 / splits 9550136810 / apk 9550134926.
+- 4 APK pins PIN-OK, codes 77/1077/2077/4077; AAB signer pin matched
+  (031acb42…). Release live with 5 assets + sha256 table:
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.51.0
+- Staging /work/temp/v0510/rel (notes_final.md holds the checksum table).
