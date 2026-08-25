@@ -15,6 +15,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/ui/art.dart';
 import 'package:emberdelve/ui/ledger_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -120,6 +121,7 @@ GameController richController() {
   final c = GameController();
   final m = c.meta
     ..tutorialSeen = true
+    ..tourSeenVersion = tourVersion
     ..tipsSeen.addAll(ContextTips.all)
     ..embers = 214
     ..runsPlayed = 23
