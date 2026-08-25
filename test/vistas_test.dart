@@ -69,6 +69,7 @@ void main() {
             distinctFelled: 0,
             hardWins: 0,
             provingsCleared: 0,
+            bestFloor: 0,
           ),
           id == 'emberlight',
           reason: id,
@@ -81,6 +82,7 @@ void main() {
           distinctFelled: 0,
           hardWins: 0,
           provingsCleared: 0,
+          bestFloor: 0,
         ),
         isTrue,
       );
@@ -91,6 +93,7 @@ void main() {
           distinctFelled: 15,
           hardWins: 0,
           provingsCleared: 0,
+          bestFloor: 0,
         ),
         isTrue,
       );
@@ -101,6 +104,7 @@ void main() {
           distinctFelled: 14,
           hardWins: 9,
           provingsCleared: 0,
+          bestFloor: 0,
         ),
         isFalse,
       );
@@ -111,6 +115,7 @@ void main() {
           distinctFelled: 30,
           hardWins: 0,
           provingsCleared: 0,
+          bestFloor: 0,
         ),
         isFalse,
       );
@@ -121,6 +126,7 @@ void main() {
           distinctFelled: 0,
           hardWins: 1,
           provingsCleared: 0,
+          bestFloor: 0,
         ),
         isTrue,
       );
@@ -132,6 +138,7 @@ void main() {
           distinctFelled: 30,
           hardWins: 9,
           provingsCleared: 2,
+          bestFloor: 0,
         ),
         isFalse,
       );
@@ -142,6 +149,32 @@ void main() {
           distinctFelled: 0,
           hardWins: 0,
           provingsCleared: 3,
+          bestFloor: 0,
+        ),
+        isTrue,
+      );
+      // v0.64.0 deepshale: depth-fed, blind to every other counter; floor 8
+      // (one short of the true floor) stays locked, and the record counts
+      // stood-on layers won OR lost.
+      expect(
+        vistaUnlockedFor(
+          'deepshale',
+          runsWon: 99,
+          distinctFelled: 99,
+          hardWins: 99,
+          provingsCleared: 99,
+          bestFloor: 8,
+        ),
+        isFalse,
+      );
+      expect(
+        vistaUnlockedFor(
+          'deepshale',
+          runsWon: 0,
+          distinctFelled: 0,
+          hardWins: 0,
+          provingsCleared: 0,
+          bestFloor: 9,
         ),
         isTrue,
       );
@@ -152,6 +185,7 @@ void main() {
           distinctFelled: 99,
           hardWins: 99,
           provingsCleared: 99,
+          bestFloor: 0,
         ),
         isFalse,
       );
@@ -175,6 +209,12 @@ void main() {
       expect(c.vistaUnlocked('duskquartz'), isFalse);
       c.meta.provingsCleared.add('third_road');
       expect(c.vistaUnlocked('duskquartz'), isTrue);
+      // v0.64.0: deepshale flips on the real depth record, at exactly 9.
+      expect(c.vistaUnlocked('deepshale'), isFalse);
+      c.meta.bestFloor = 8;
+      expect(c.vistaUnlocked('deepshale'), isFalse);
+      c.meta.bestFloor = 9;
+      expect(c.vistaUnlocked('deepshale'), isTrue);
     });
   });
 

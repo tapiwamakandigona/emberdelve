@@ -133,15 +133,15 @@ Future<void> captureWardrobe(
     () => Future<void>.delayed(const Duration(milliseconds: 300)),
   );
   await tester.pump(const Duration(milliseconds: 400));
-  // v0.55.0: the shelf is 5 cards — scrolling to the last (duskquartz)
+  // v0.64.0: the shelf is 6 cards — scrolling to the last (deepshale)
   // evicts emberlight from the lazy list, so snap the shelf tail instead.
   await tester.scrollUntilVisible(
-    find.byKey(const ValueKey('vista-duskquartz')),
+    find.byKey(const ValueKey('vista-deepshale')),
     400,
     scrollable: find.byType(Scrollable).first,
     maxScrolls: 200,
   );
-  await tester.ensureVisible(find.byKey(const ValueKey('vista-duskquartz')));
+  await tester.ensureVisible(find.byKey(const ValueKey('vista-deepshale')));
   await tester.pump(const Duration(milliseconds: 400));
   await snap(tester, key, name);
   await tester.pumpWidget(const SizedBox.shrink());
@@ -172,6 +172,18 @@ void main() {
       c2,
       const Size(360, 640),
       'wardrobe_duskquartz_chosen_360x640',
+    );
+
+    // v0.64.0: deepshale earned via the real depth record, worn (CHOSEN);
+    // the shelf tail now ends on the new card.
+    final c3 = GameController();
+    c3.meta.bestFloor = 9;
+    c3.meta.selectedVista = 'deepshale';
+    await captureWardrobe(
+      tester,
+      c3,
+      const Size(360, 640),
+      'wardrobe_deepshale_chosen_360x640',
     );
     debugPrint('STAGE: vista plates done');
   });

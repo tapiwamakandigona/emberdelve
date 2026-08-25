@@ -46,6 +46,7 @@ const List<String> vistasOrder = [
   'verdigris',
   'bloodstone',
   'duskquartz', // v0.55.0 — append-LAST, same discipline as roster bits
+  'deepshale', // v0.64.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -98,11 +99,26 @@ const Map<String, VistaDef> vistas = {
     valMul: 0.96,
     wash: Color(0x3D2E1E4E),
   ),
+  // v0.64.0 The Deepshale — the first vista the depth record feeds, closing
+  // the arc The Deepest Mark (v0.61.0) opened: the summary names the record,
+  // this is what standing on the true floor leaves you. Also the first
+  // DESATURATING grade — every earlier vista raises color; the deep drains it.
+  'deepshale': VistaDef(
+    'deepshale',
+    'Deepshale',
+    'Slate from the true floor. Down here the rock forgets its color, '
+        'and what the fire touches is all there is.',
+    unlockLine: 'Stand on the ninth floor.',
+    hueDeg: -10,
+    satMul: 0.72,
+    valMul: 0.9,
+    wash: Color(0x40232830),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
 /// real, uncapped counters (MetaState.runsWon / enemyFelled distinct keys /
-/// hardWins / provingsCleared size). Derived at read time — nothing new is
+/// hardWins / provingsCleared size / bestFloor). Derived at read time — nothing new is
 /// persisted, so there is nothing to migrate or merge and the unlock can
 /// never lie (§Ethics).
 bool vistaUnlockedFor(
@@ -111,6 +127,7 @@ bool vistaUnlockedFor(
   required int distinctFelled,
   required int hardWins,
   required int provingsCleared,
+  required int bestFloor,
 }) {
   switch (id) {
     case 'emberlight':
@@ -123,6 +140,10 @@ bool vistaUnlockedFor(
       return hardWins >= 1;
     case 'duskquartz':
       return provingsCleared >= 3;
+    // v0.64.0: bestFloor counts the deepest 1-based layer STOOD ON, won or
+    // lost — a loss on the ninth floor earns the deep's colors too.
+    case 'deepshale':
+      return bestFloor >= 9;
     default:
       return false;
   }
