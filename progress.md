@@ -2192,3 +2192,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze clean; suite 664/664 (/work/temp/v0590_suite3.log; +4 test/proven_epithet_test.dart).
 - Plates critiqued clean: epithets_visual picker_proven_locked + picker_proven_worn (shelf tail, WORN mark) + 3 news plates.
 - Zero sim changes. pubspec 0.59.0+85.
+
+## 2026-08-25 — v0.58.0 PUBLISHED
+- CI run 32876420605 success. Version codes 84/1084/2084/4084. 4 APK pins PIN-OK; AAB cert pin matched.
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.58.0 — 5 signed assets; sha256 table appended.
+- v0.59.0 tagged, CI run 32877791422 dispatched (expect codes 85/1085/2085/4085).
