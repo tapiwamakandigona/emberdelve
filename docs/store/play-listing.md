@@ -1,18 +1,12 @@
 # Emberdelve — Google Play listing draft
 
-> **0.7.0 REFRESH (2026-08-16, ready to paste):** the copy below was updated to match the
-> build actually live on Play (0.7.0+33 "The Face Forge"). Features verified present in that
-> build's code (`git grep` at commit `3a199e5`): Face Forge tempering, Keystones, the Ledger
-> (achievements), the Codex, daily + weekly seeded delves. Do NOT mention 0.8–0.12 features
-> (floor trace shares, rotating daily trials, self-teaching tutorial, per-enemy records, New
-> Embers content) — those are GitHub-only builds not on Play yet.
-
-Draft copy for the Play Console listing (owner to review before submitting).
-Screenshots + feature graphic: first pass committed under
-`docs/store/screenshots/` (1080×1920 PNGs + 1024×500 graphic, rendered from
-real screens via `tool/store_screenshots_test.dart` — rerun any time the UI
-changes). Real-device captures can replace them later if preferred (that
-session also closes the real-device playthrough gate, features.json M1-3).
+> **0.34.0 REFRESH (2026-08-25, ready to paste):** copy updated to match the build actually
+> LIVE IN PRODUCTION on Play (0.34.0+60 "The Delver's Card", 177 countries). Every feature
+> below is traced to a shipped release note in `docs/releases/` — floor trace & Delver's Card
+> share (0.8/0.34), rotating daily trials (0.9), content drops (0.12/0.22), ranks (0.13),
+> TalkBack (0.19), balance-swept Ascension (0.20), Deep Hum (0.23), save codes (0.24), guided
+> onboarding (0.26/0.30), Wardrobe dyes (0.27), depth-graded strata (0.28), Codex 71 (0.31),
+> Gramophone (0.33). Console paste + IARC + data-safety forms are owner/Google-gated.
 
 ## App name (30 chars max)
 
@@ -25,60 +19,51 @@ Fair dice, real choices. A pocket dice roguelite with zero ads, played offline.
 *(78 chars. Live console currently shows "Fair dice roguelite. Build your pool, delve deep.
 No ads, no timers, no gacha." — either is fine; the line above leads with the promise.)*
 
-## Full description (4000 chars max) — 0.7.0 refresh
+## Full description (4000 chars max) — 0.34.0 refresh
 
 Descend into the delve, one roll at a time.
 
-Emberdelve is a single-player, turn-based dice roguelike built on one
-promise: every death is fair. Enemies always telegraph their next move, dice
-resolve by rules you can learn — no hidden modifiers, no rigged near-misses —
-and every run is a seeded dungeon delve, so the same choices always play out
-the same way.
+Emberdelve is a single-player, turn-based dice roguelike built on one promise: every death is fair. Enemies always telegraph their next move, dice resolve by rules you can learn — no hidden modifiers, no rigged near-misses — and every run is a seeded dungeon delve, so the same choices always play out the same way.
 
 BUILD YOUR POOL
-Draft, forge, and upgrade a pool of dice — keen edges, warding irons, lucky
-charms. Chase pairs, triples, and straights: combos turn a spare d4 into the
-best die on the table.
+Draft, forge, and upgrade a pool of dice — keen edges, warding irons, lucky charms. Chase pairs, triples, and straights: combos turn a spare d4 into the best die on the table.
 
 TEMPER A FACE
-Once per delve, mark one face of one die at a rest — Blade, Aegis, Surge, or
-Echo. A tempered die wears its mark in the tray, and it lights up when the
-roll lands. Your pool becomes YOUR pool.
+Once per delve, mark one face of one die — Blade, Aegis, Surge, or Echo. A tempered die wears its mark in the tray and lights up when the roll lands. Your pool becomes YOUR pool.
 
 CHOOSE A KEYSTONE
-After your first won fight, pick a run-shaping power (or decline): reward
-early strikes, carry unused block, pay for die variety. Every run gets a
-plan, not just a pile of dice.
+After your first won fight, pick a run-shaping power (or decline): reward early strikes, carry unused block, pay for die variety. Every run gets a plan, not just a pile of dice.
 
 PUSH YOUR LUCK
-One risky reroll per turn. Exact kills pay out bonus embers; overkill splashes
-to the next foe. Assigning a 4 instead of a 6 is a real decision, every turn.
+One risky reroll per turn. Exact kills pay out bonus embers; overkill splashes to the next foe. Assigning a 4 instead of a 6 is a real decision, every turn.
 
 CHOOSE YOUR PATH
-Branching maps with honest reward previews — see what an elite guards before
-you commit. Shops, forges, strange events, and a boss waiting at the bottom.
+Branching maps with honest reward previews — see what an elite guards before you commit. Shops, forges, strange events, and bosses holding the crowned deep. The rock itself changes as you descend, and a living soundscape deepens with it.
+
+CLIMB THE ASCENSION
+Twenty rungs of stacked challenge, each opened by winning the one below — and every rung is winnable by design: we sweep the whole ladder with a balance bot before we ship it.
 
 DIE FORWARD
-Death banks embers. Spend them on new dice, delvers, hearth colours, and dice
-skins. Pick a starting boon and delve again in seconds — 15 boons keep
-restarts fresh.
+Death banks embers. Spend them on new dice, delvers, dyes from the Wardrobe, hearth colours, and dice skins. Pick a starting boon and delve again in seconds.
+
+TELL THE TALE
+Every run ends in a shareable Delver's Card and a floor-by-floor trace made to be posted. A daily seeded delve is shared by everyone — with rotating trial days that declare one honest modifier — and a weekly delve raises the stakes.
 
 KEEP THE RECORD
-The Ledger tracks real feats — exact-kill streaks, boss clears, wins per
-delver. The Codex holds the lore of every enemy and relic you've met. A daily
-seeded delve shared by everyone, and a weekly delve with one declared
-modifier, give the long game a heartbeat.
+The Ledger opens with your rank — nine named tiers — and tracks real feats: exact-kill streaks, boss clears, wins per delver. The Codex holds the lore of all 71 enemies and relics you've met. The Gramophone keeps every track of the score, ready to replay.
+
+CARRY YOUR EMBER
+Your whole ledger travels as one line of text. New phone? Reinstall? Copy your save code, paste it, and everything comes home. No account, no server, no sign-in.
 
 FAIR BY DESIGN
 • Zero ads, plays fully offline — analytics only if you switch it on
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
-• Free forever: full runs, every delver, the daily and weekly
-• One honest one-time unlock (the Ember Forge) opens HARD and the
-  Ascension ladder — no subscriptions, no consumables, ever
+• Plays with TalkBack — the whole game works with Android's screen reader
+• Free forever: full runs, every delver, the daily and the weekly
+• One honest one-time unlock (the Ember Forge) opens HARD and the Ascension ladder — no subscriptions, no consumables, ever
 
-For fans of turn-based dice roguelikes and dungeon-crawl runs you can learn
-and beat.
+For fans of Dicey Dungeons and turn-based dice roguelites — dungeon-crawl runs you can learn and beat.
 
 Made for one-thumb portrait play. Delve in.
 
@@ -140,7 +125,9 @@ player opts in (`lib/telemetry/`). Two consequences for this listing:
 
 ## Data safety form
 
-- Collects no data, shares no data (see docs/store/privacy-policy.md).
+- Optional, off-by-default analytics only (Firebase, opt-in via Settings since
+  0.4.3): declare "App activity — analytics, optional, not linked to identity".
+  Otherwise collects no data, shares no data (see docs/store/privacy-policy.md).
   Purchases are processed entirely by Google Play Billing; the app stores
   only a local owns/doesn't-own flag and never sees payment details.
 - Privacy policy URL:
