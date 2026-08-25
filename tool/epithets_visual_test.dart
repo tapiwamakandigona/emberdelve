@@ -16,6 +16,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart' show FontLoader;
 
+import 'package:emberdelve/data/provings.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/share_card.dart';
@@ -103,8 +104,7 @@ Future<void> capturePicker(
     maxScrolls: 300,
   );
   if (backDrag > 0) {
-    await tester.drag(
-        find.byType(Scrollable).first, Offset(0, backDrag));
+    await tester.drag(find.byType(Scrollable).first, Offset(0, backDrag));
   }
   await tester.pump(const Duration(milliseconds: 400));
   await snap(tester, key, name, 2);
@@ -197,8 +197,33 @@ void main() {
     await capturePicker(tester, c, const Size(412, 915), 'picker_412x915');
     // Top of the section: the None card, the worn Delver card, and the
     // first locked card in one frame.
-    await capturePicker(tester, c, const Size(360, 640), 'picker_worn_top',
-        scrollTo: 'epithet-the_thorough', backDrag: 420);
+    await capturePicker(
+      tester,
+      c,
+      const Size(360, 640),
+      'picker_worn_top',
+      scrollTo: 'epithet-the_thorough',
+      backDrag: 420,
+    );
+    // v0.59.0 The Proven: the shelf tail — locked card with its unlock
+    // line, and the earned+worn state.
+    await capturePicker(
+      tester,
+      c,
+      const Size(360, 640),
+      'picker_proven_locked',
+      scrollTo: 'epithet-the_proven',
+    );
+    final c3 = GameController();
+    c3.meta.provingsCleared.addAll(provings.map((p) => p.id));
+    c3.meta.selectedEpithet = 'the_proven';
+    await capturePicker(
+      tester,
+      c3,
+      const Size(360, 640),
+      'picker_proven_worn',
+      scrollTo: 'epithet-the_proven',
+    );
 
     // Roster header carrying the worn title under the delver name.
     final c2 = GameController();

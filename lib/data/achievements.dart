@@ -78,6 +78,7 @@ const Set<String> achievementStats = {
   'themes_owned',
   'hard_wins',
   'delvers_cleared',
+  'provings_cleared', // v0.59.0 The Proven
 };
 
 const List<String> achievementsOrder = [

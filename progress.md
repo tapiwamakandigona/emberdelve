@@ -2186,3 +2186,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze --fatal-warnings clean; suite 660/660 (/work/temp/v0580_suite2.log; +4 test/remembered_fights_test.dart incl. panel-scoped negative pins for old records).
 - Plates critiqued clean: ledger_rows_360x640 + NEW ledger_rows_320x568 restraint check (worst case wraps 4 legible lines — fights token kept per scout condition) + 3 news plates. Plate scroll now targets recent-delves panel (newest fuller rows visible).
 - Zero sim changes → no sweep/golden re-anchor. pubspec 0.58.0+84.
+
+## 2026-08-25 — v0.59.0 "The Proven" gates GREEN
+- One improvement: tenth epithet the_proven ("Clear every proving.", stat provings_cleared = meta.provingsCleared.length, target 10 pinned == provings.length). Stat added to statValue AND achievementStats vocabulary (data-sanity + wiring pins caught both omissions — populate provingsCleared in achievements_test wiring fixture when adding stats).
+- analyze clean; suite 664/664 (/work/temp/v0590_suite3.log; +4 test/proven_epithet_test.dart).
+- Plates critiqued clean: epithets_visual picker_proven_locked + picker_proven_worn (shelf tail, WORN mark) + 3 news plates.
+- Zero sim changes. pubspec 0.59.0+85.
