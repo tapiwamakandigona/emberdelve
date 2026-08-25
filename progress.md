@@ -2032,3 +2032,25 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Key finding: any NEW relic resizes the shop offer pool => golden
   re-anchor; and the bot never spends relic `rerolls`. Kit v1 therefore
   uses existing relic loaded_pips + d6_steady, zero sim changes.
+
+## 2026-08-25T12:20Z — v0.50.0 "The Tinker" ALL GATES GREEN, tagging
+- Sixth delver: control archetype. 30 HP, [d6_steady,d6,d4], start relic
+  loaded_pips (EXISTING — new relics resize the shop offer pool => golden
+  re-anchor, so none added). Unlock 600 embers, appended LAST (index 5).
+- Data-only: zero sim changes, goldens byte-identical (suite proves).
+- 400-seed sweeps: 28HP 85.0/54.75/28.25 -> 29HP 85.25/56.25/29.25 ->
+  final 30HP 85.25/58.25/31.0, all in band; normal level with peddler 58.7.
+- Pins: easy 1..20 WWWWWWWWWWWWWWWWWLWW, normal WWLWLWLWWWWLWWLWWLLW;
+  test/tinker_test.dart pins seed 1 easy+normal win, 18 easy loss.
+- Sprite: characters/tinker.png = kindler palette variant (hue +192, sat
+  x0.55, val x0.92, floor 0.18 — muted steel blue, distinct from peddler
+  teal); PROVENANCE row added; gen_variant_sprites --check OK.
+- Pin Wrench painter added to weapons.dart (per-id switch).
+- Achievements: tinker_wins "Well Oiled", six_ways_down.
+- Suite 626/626; analyze clean; 10 plates x4 viewports critiqued clean
+  (tool/tinker_plates_test.dart KEPT). PLATE LESSON: pumpWidget with a new
+  controller REUSES GameRoot state (same runtimeType/position) — pump a
+  SizedBox between scenes; and runAsync-delay 400ms before the first snap
+  so sprite sheets decode (cold cache = spriteless washed plate).
+- peddler_test charactersOrder.last pin updated to indexOf==4 (the wire
+  format is the INDEX, not last-ness).

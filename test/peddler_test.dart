@@ -31,8 +31,9 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 void main() {
   test('definition and sim application match the card text exactly', () {
     final def = characters['peddler']!;
-    expect(charactersOrder.last, 'peddler',
-        reason: 'appended LAST so existing delve-code indexes stay stable');
+    expect(charactersOrder.indexOf('peddler'), 4,
+        reason: 'appended LAST in v0.40.0; the index is the delve-code wire '
+            'format and must never move (v0.50.0 grew the roster past it)');
     expect(def.maxHp, 31);
     expect(def.startDice, ['d6', 'd6', 'd4']);
     expect(def.startRelic, 'kiln_key');

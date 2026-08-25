@@ -93,6 +93,7 @@ const List<String> achievementsOrder = [
   'warden_wins', 'gambler_wins', 'ascetic_wins', 'kindler_wins',
   'full_roster', 'every_delver_clears',
   'peddler_wins', 'full_company', 'five_ways_down',
+  'tinker_wins', 'six_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -303,6 +304,21 @@ const Map<String, AchievementDef> achievements = {
     'Win a run with all five delvers.',
     stat: 'delvers_cleared',
     target: 5,
+  ),
+  'tinker_wins': AchievementDef(
+    'tinker_wins',
+    'Well Oiled',
+    'Win a run as the Tinker.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'tinker',
+  ),
+  'six_ways_down': AchievementDef(
+    'six_ways_down',
+    'Six Ways Down',
+    'Win a run with all six delvers.',
+    stat: 'delvers_cleared',
+    target: 6,
   ),
 
   // --- the bestiary -----------------------------------------------------

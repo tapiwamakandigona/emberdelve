@@ -37,6 +37,7 @@ const List<String> charactersOrder = [
   'gambler',
   'ascetic',
   'peddler',
+  'tinker',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -88,6 +89,23 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6', 'd6', 'd4'],
     startRelic: 'kiln_key',
     unlockEmbers: 450,
+  ),
+  // v0.50.0 The Tinker: the control archetype — the roster's variance runs
+  // from the Gambler (widest) to nothing at the narrow end until now. A
+  // Steady Ember (min 3) under Loaded Pips (min 2 on everything) gives the
+  // best floors in the roster, traded for the smallest pip ceiling (16 vs
+  // the Kindler's 18). 400-seed sweep: 85.25/58.25/31.0 — in band, normal
+  // level with the other skill delvers. Reuses an existing relic on purpose: adding a NEW relic
+  // resizes the shop offer pool and re-anchors every golden. Appended LAST
+  // so charactersOrder indexes (delve-code bits 31..34) stay stable.
+  'tinker': CharacterDef(
+    'tinker',
+    'The Tinker',
+    'Consistent. Steady dice under Loaded Pips — never a dead roll.',
+    maxHp: 30,
+    startDice: ['d6_steady', 'd6', 'd4'],
+    startRelic: 'loaded_pips',
+    unlockEmbers: 600,
   ),
 };
 
