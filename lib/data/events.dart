@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.25.0: 39 events).
+// data/events.dart — Emberdelve event deck (v0.46.0: 45 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -59,6 +59,10 @@ const List<String> eventsOrder = [
   // of the Hearthless King.
   'the_toppled_crown', 'soot_choir', 'the_bridge_keeper',
   'cinder_hermit', 'glowworm_hollow', 'the_pale_lode',
+  // v0.46.0 additions (appended at END; never reorder) — "The Delvers
+  // Before": the delve remembers everyone who walked it ahead of you.
+  'the_cold_camp', 'delvers_cairn', 'the_old_rope',
+  'rivals_ledger', 'the_left_lantern', 'the_first_delver',
 ];
 
 const Map<String, EventDef> events = {
@@ -547,6 +551,101 @@ const Map<String, EventDef> events = {
       }),
       OptionDef('Chip a nugget (+20 gold)', {'gold': 20}),
       OptionDef('Mark it and move on (+5 embers)', {'embers': 5}),
+    ],
+  ),
+
+  // v0.46.0 additions -------------------------------------------------------
+  // "The Delvers Before" — cold camps, cairns, a rival's ledger, a lantern
+  // left burning. Existing effect vocabulary only; no trade duplicates
+  // (cinder_hermit owns die-for-relic, gamblers_table owns the wager,
+  // last_delvers_pack owns the found pack).
+  'the_cold_camp': EventDef(
+    'the_cold_camp',
+    'The Cold Camp',
+    'A camp struck by no one: bedroll laid out, kettle on dead coals. '
+        'Whoever slept here left in the middle of meaning to stay.',
+    [
+      OptionDef('Strip the camp (+18 gold)', {'gold': 18}),
+      OptionDef('Use the bedroll (heal 25%)', {'heal_pct': 25}),
+      OptionDef('Rekindle it (-8 gold, +10 embers)', {
+        'gold': -8,
+        'embers': 10,
+      }),
+    ],
+  ),
+  'delvers_cairn': EventDef(
+    'delvers_cairn',
+    "The Delver's Cairn",
+    'Stones stacked hip-high, a die set on top like a name. The deep does '
+        'not bury its own; someone stopped and did it anyway.',
+    [
+      OptionDef('Add a stone (-10 gold, +12 embers)', {
+        'gold': -10,
+        'embers': 12,
+      }),
+      OptionDef('Take the grave-die (-8 hp, random die)', {
+        'hp': -8,
+        'gain_random_die': 3,
+      }),
+      OptionDef('Pass in silence', {}),
+    ],
+  ),
+  'the_old_rope': EventDef(
+    'the_old_rope',
+    'The Old Rope',
+    'A knotted line runs down a shaft too dark to read. The anchor is '
+        'rusted, the knots are good, and both facts are true at once.',
+    [
+      OptionDef('Climb down (-7 hp, +28 gold)', {
+        'hp': -7,
+        'gold': 28,
+      }),
+      OptionDef('Salvage the rope (+12 gold)', {'gold': 12}),
+      OptionDef('Take the long way', {}),
+    ],
+  ),
+  'rivals_ledger': EventDef(
+    'rivals_ledger',
+    "The Rival's Ledger",
+    'A tally-book in a careful hand: routes, prices, warnings. The last '
+        'entry stops mid-sentence, and you know her handwriting by now.',
+    [
+      OptionDef('Study her routes (-12 gold, +14 embers)', {
+        'gold': -12,
+        'embers': 14,
+      }),
+      OptionDef('Sell the maps (+22 gold)', {'gold': 22}),
+      OptionDef('Burn it kindly (heal 15%)', {'heal_pct': 15}),
+    ],
+  ),
+  'the_left_lantern': EventDef(
+    'the_left_lantern',
+    'The Left Lantern',
+    'A lantern hangs at a fork, trimmed and burning. Nobody is here. '
+        'Somebody meant there to be light anyway.',
+    [
+      OptionDef('Refill it (-20 gold, +4 max hp)', {
+        'gold': -20,
+        'max_hp': 4,
+      }),
+      OptionDef('Snuff it for the wick (+15 gold)', {'gold': 15}),
+      OptionDef('Leave it burning (+8 embers)', {
+        'embers': 8,
+      }),
+    ],
+  ),
+  'the_first_delver': EventDef(
+    'the_first_delver',
+    'The First Delver',
+    'A mural older than the mine: one figure, one lantern, one road drawn '
+        'down into the dark. The paint is soot. The soot is old.',
+    [
+      OptionDef('Study the mural (+8 embers)', {'embers': 8}),
+      OptionDef('Sell a sketch of it (+20 gold)', {'gold': 20}),
+      OptionDef('Restore it (-15 gold, +18 embers)', {
+        'gold': -15,
+        'embers': 18,
+      }),
     ],
   ),
 };

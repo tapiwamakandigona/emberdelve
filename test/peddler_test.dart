@@ -9,7 +9,7 @@
 //      appending kept indexes 0-3 stable, so every code already shared still
 //      decodes to the same delver.
 //   3. Bot viability pins (simVersion 7): seed 1 wins on easy AND normal,
-//      seed 5 loses on easy — the balance point sits with the Gambler and
+//      seed 16 loses on easy — the balance point sits with the Gambler and
 //      the Ascetic (sweep: 88.0/58.7/28.7 vs roster band 87-93/58-80/28-56).
 //   4. Character screen lists the Peddler with its real 450-ember price.
 import 'package:flutter/material.dart';
@@ -71,7 +71,7 @@ void main() {
     }
   });
 
-  test('bot viability pins: seed 1 wins easy and normal, seed 5 loses easy',
+  test('bot viability pins: seed 1 wins easy and normal, seed 16 loses easy',
       () {
     expect(
       playRun(1, character: 'peddler', difficulty: 'easy').sim.phase,
@@ -82,7 +82,7 @@ void main() {
       'run_won',
     );
     expect(
-      playRun(5, character: 'peddler', difficulty: 'easy').sim.phase,
+      playRun(16, character: 'peddler', difficulty: 'easy').sim.phase,
       'run_lost',
     );
   }, timeout: const Timeout(Duration(minutes: 5)));

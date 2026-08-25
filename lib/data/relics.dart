@@ -1,4 +1,4 @@
-// data/relics.dart — Emberdelve relic roster (v0.25.0: 32 relics).
+// data/relics.dart — Emberdelve relic roster (v0.46.0: 36 relics).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -66,6 +66,11 @@ const List<String> relicsOrder = [
   'ashglass_prism',
   'wyrmscale_cloak',
   'choir_censer',
+  // v0.46.0 additions (appended at END; never reorder)
+  'cairn_stone',
+  'rivals_compass',
+  'keepers_lantern',
+  'tally_chain',
 ];
 
 const Map<String, RelicDef> relics = {
@@ -262,6 +267,35 @@ const Map<String, RelicDef> relics = {
     'Choir Censer',
     'Won fights heal 2 and pay +3 gold.',
     {'heal_after_fight': 2, 'gold_bonus': 3},
+  ),
+
+  // v0.46.0 additions ---------------------------------------------------------
+  // "The Delvers Before" — relics left by earlier delvers. Multi-hook combos
+  // of existing lines per siege_hook/drowned_bell precedent; no min_roll or
+  // rerolls combos (compound too hard with loaded_pips / twin_eye).
+  'cairn_stone': RelicDef(
+    'cairn_stone',
+    'Cairn Stone',
+    '+5 max HP, and rests heal +2.',
+    {'max_hp': 5, 'rest_bonus': 2},
+  ),
+  'rivals_compass': RelicDef(
+    'rivals_compass',
+    "Rival's Compass",
+    'Won fights pay +4 gold, and shops charge 5% less.',
+    {'gold_bonus': 4, 'shop_discount': 5},
+  ),
+  'keepers_lantern': RelicDef(
+    'keepers_lantern',
+    "Keeper's Lantern",
+    'Attacks deal +2 against elites and bosses, and won fights heal 1.',
+    {'elite_damage': 2, 'heal_after_fight': 1},
+  ),
+  'tally_chain': RelicDef(
+    'tally_chain',
+    'Tally Chain',
+    'Max rolls pay +1 gold, and won fights pay +1 ember.',
+    {'on_max_gold': 1, 'ember_bonus': 1},
   ),
 };
 

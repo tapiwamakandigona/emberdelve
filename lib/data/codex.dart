@@ -425,6 +425,27 @@ final List<CodexEntryDef> codexEntries = [
     'The soot choir circles it when it swings. What they are paid in is '
         'unclear; what you are paid in is not.',
   ),
+  // v0.46.0 — "The Delvers Before" -----------------------------------------
+  _relic(
+    'cairn_stone',
+    'Taken from the top of a cairn, or meant for the top of one. Delvers '
+        'carry it so that, either way, the stone arrives.',
+  ),
+  _relic(
+    'rivals_compass',
+    'It does not point north. It points the way she went, which was always '
+        'the cheaper road, and she never once told you why.',
+  ),
+  _relic(
+    'keepers_lantern',
+    'Trimmed and refilled by every hand that carries it. The light is not '
+        'yours; you are only the keeper this far down.',
+  ),
+  _relic(
+    'tally_chain',
+    'One link for every delve someone came back from. It is longer than it '
+        'looks, and it is not finished.',
+  ),
 ];
 
 /// Lookup by namespaced id ('enemy:cinder_wisp' / 'relic:ember_ring').

@@ -245,6 +245,11 @@ class Art {
     'ember_moths': 'event_dust_cloud',
     'broken_cart': 'event_mine_wagon',
     'whispering_coals': 'event_coal_pile',
+    // v0.46.0 "The Delvers Before" (unlisted ids fall back to event_scroll)
+    'the_cold_camp': 'event_coal_pile',
+    'delvers_cairn': 'event_stone_tower',
+    'the_old_rope': 'event_cave_entrance',
+    'the_first_delver': 'event_mining',
   };
 
   static String eventIcon(String eventId) =>

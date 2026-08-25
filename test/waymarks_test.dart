@@ -14,7 +14,7 @@
 //      nothing is said).
 //
 // Seeds pinned by the offline bot hunt (kindler, boons, simVersion 7):
-// seed 1 wins on easy; seed 13 loses on easy.
+// seed 1 wins on easy; seed 3 loses on easy.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/achievements.dart';
@@ -110,12 +110,12 @@ void main() {
     );
     c.startRun(
       character: 'kindler',
-      seed: 13,
+      seed: 3,
       boons: true,
       difficulty: 'easy',
     );
     await playOut(tester, c);
-    expect(c.phase, 'run_lost', reason: 'seed 13 must lose on easy');
+    expect(c.phase, 'run_lost', reason: 'seed 3 must lose on easy');
     await expectWaymarksMatch(tester, c);
   });
 
