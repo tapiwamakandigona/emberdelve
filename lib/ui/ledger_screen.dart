@@ -25,6 +25,7 @@ import '../meta/meta.dart';
 import '../meta/rank.dart';
 import 'codex_screen.dart';
 import 'fx.dart';
+import 'share_card.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -195,7 +196,7 @@ class LedgerScreen extends StatelessWidget {
                                 color: EmberColors.line,
                                 height: Space.xl,
                               ),
-                            _historyRow(r),
+                            _historyRow(context, r),
                           ],
                         ],
                       ),
@@ -382,7 +383,7 @@ class LedgerScreen extends StatelessWidget {
     );
   }
 
-  Widget _historyRow(Map<String, Object?> r) {
+  Widget _historyRow(BuildContext context, Map<String, Object?> r) {
     final result = r['result'] as String? ?? 'lost';
     final won = result == 'won';
     final abandoned = result == 'abandoned';
@@ -440,6 +441,26 @@ class LedgerScreen extends StatelessWidget {
             ],
           ),
         ),
+        // v0.56.0 Card from the Ledger: any remembered win or loss can
+        // become a Delver's Card, days later — "let me show you the one
+        // that killed me" no longer dies with the summary screen. Walked-
+        // away runs have no ember and no grave, so they offer no card.
+        if (!abandoned)
+          IconButton(
+            key: ValueKey('history-card-${r['seed']}-${r['date']}'),
+            icon: const Icon(
+              Icons.ios_share,
+              size: 16,
+              color: EmberColors.textDim,
+            ),
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Delver\'s Card',
+            onPressed: () => showDelverCardSheet(
+              context,
+              c,
+              facts: DelverCardFacts.fromRecord(r),
+            ),
+          ),
         if (code != null)
           const Icon(Icons.copy, size: 14, color: EmberColors.textDim),
       ],
@@ -868,12 +889,16 @@ class _GramophoneSectionState extends State<_GramophoneSection> {
                   Text(
                     heard ? t.name : '— — —',
                     style: EmberText.body.copyWith(
-                      color: heard ? EmberColors.textPrimary : EmberColors.textDim,
+                      color: heard
+                          ? EmberColors.textPrimary
+                          : EmberColors.textDim,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    heard ? (playing ? 'Playing — tap to stop' : 'Tap to play') : t.hint,
+                    heard
+                        ? (playing ? 'Playing — tap to stop' : 'Tap to play')
+                        : t.hint,
                     style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
                 ],

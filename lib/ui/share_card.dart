@@ -20,10 +20,13 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../data/characters.dart';
+import '../data/enemies.dart';
 import '../data/epithets.dart';
 import '../game/controller.dart';
 import '../game/delve_code.dart';
+import '../game/obituary.dart' show epitaphLine;
 import '../game/run_trace.dart';
+import '../sim/run_layer.dart' show bossForSeed;
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -51,6 +54,11 @@ class DelverCardFacts {
   /// card-sized cut of the Obituary. '' when no story is available (facts
   /// built off a live controller always have one).
   final String epitaph;
+
+  /// v0.56.0 Card from the Ledger: run records don't bank a fights count,
+  /// so a remembered card OMITS the figure rather than invent a zero. Facts
+  /// built off a live controller always know it.
+  final bool fightsKnown;
   const DelverCardFacts({
     required this.won,
     required this.delverName,
@@ -63,7 +71,62 @@ class DelverCardFacts {
     required this.seed,
     this.delveCode = '',
     this.epitaph = '',
+    this.fightsKnown = true,
   });
+
+  /// v0.56.0 Card from the Ledger: facts from a REMEMBERED run record
+  /// (meta.runHistory) — so any of the last 30 delves can become a card,
+  /// not just the run that ended a second ago. Honesty budget per field:
+  /// everything stated comes straight off the record; what the record
+  /// never banked (fights won, floor trace, worn epithet) is OMITTED, not
+  /// invented. Only 'won'/'lost' records qualify — a walked-away run has
+  /// no ember and no grave, so callers skip 'abandoned'.
+  static DelverCardFacts fromRecord(Map<String, Object?> r) {
+    final won = (r['result'] as String? ?? 'lost') == 'won';
+    final charId = r['character'] as String? ?? defaultCharacter;
+    final delverName = characters[charId]?.name ?? charId;
+    final difficulty = r['difficulty'] as String? ?? 'normal';
+    final ascension = int.tryParse('${r['ascension'] ?? 0}') ?? 0;
+    final seed = int.tryParse('${r['seed'] ?? 0}') ?? 0;
+    // The boss is a pure function of the seed (The Rumor, v0.53.0) — but a
+    // seed-0 record (pre-v0.3.4 save) never banked one, so it stays quiet
+    // rather than name a boss the run may not have met.
+    final bossName = won && seed != 0
+        ? (enemies[bossForSeed(seed)]?.name ?? '')
+        : '';
+    // Losses since v0.51.0 bank their killer; older records simply lack the
+    // key and the epitaph degrades to its opener — floor included, honest.
+    final killerName = enemies[r['killed_by']]?.name ?? '';
+    return DelverCardFacts(
+      won: won,
+      delverName: delverName,
+      difficulty: difficulty,
+      ascension: ascension,
+      traceGridText: '',
+      embers: int.tryParse('${r['embers'] ?? 0}') ?? 0,
+      fightsWon: 0,
+      fightsKnown: false,
+      seed: seed,
+      delveCode:
+          encodeDelveCode(
+            seed: seed,
+            character: charId,
+            difficulty: difficulty,
+            ascension: ascension,
+            shortRoad: r['short'] == true,
+          ) ??
+          '',
+      epitaph: epitaphLine(
+        won: won,
+        delverName: delverName,
+        epithetTitle: '',
+        floor: int.tryParse('${r['floor'] ?? 0}') ?? 0,
+        killerName: killerName,
+        bossName: bossName,
+        seed: seed,
+      ),
+    );
+  }
 
   static DelverCardFacts fromController(GameController c) {
     final st = c.state!;
@@ -197,7 +260,10 @@ class DelverCard extends StatelessWidget {
                 style: EmberText.body.copyWith(height: 1.25, letterSpacing: 2),
               ),
             Text(
-              '${facts.embers} embers banked · ${facts.fightsWon} fights won',
+              facts.fightsKnown
+                  ? '${facts.embers} embers banked · '
+                        '${facts.fightsWon} fights won'
+                  : '${facts.embers} embers banked',
               textAlign: TextAlign.center,
               style: EmberText.micro.copyWith(color: EmberColors.textPrimary),
             ),
@@ -220,11 +286,16 @@ class DelverCard extends StatelessWidget {
   }
 }
 
-/// Opens the preview sheet from the summary screen. What the sheet shows is
-/// exactly what ships: the card sits in one RepaintBoundary and the Share
-/// button exports THAT boundary at 3x.
-Future<void> showDelverCardSheet(BuildContext context, GameController c) {
-  final facts = DelverCardFacts.fromController(c);
+/// Opens the preview sheet. What the sheet shows is exactly what ships: the
+/// card sits in one RepaintBoundary and the Share button exports THAT
+/// boundary at 3x. From the summary screen [facts] is omitted and built off
+/// the live controller; the Ledger (v0.56.0) passes record-built facts.
+Future<void> showDelverCardSheet(
+  BuildContext context,
+  GameController c, {
+  DelverCardFacts? facts,
+}) {
+  final f = facts ?? DelverCardFacts.fromController(c);
   final boundaryKey = GlobalKey();
   return showModalBottomSheet<void>(
     context: context,
@@ -246,10 +317,7 @@ Future<void> showDelverCardSheet(BuildContext context, GameController c) {
             Flexible(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: RepaintBoundary(
-                  key: boundaryKey,
-                  child: DelverCard(facts),
-                ),
+                child: RepaintBoundary(key: boundaryKey, child: DelverCard(f)),
               ),
             ),
             const SizedBox(height: Space.l),
@@ -267,7 +335,7 @@ Future<void> showDelverCardSheet(BuildContext context, GameController c) {
                   'Share',
                   dense: true,
                   key: const ValueKey('card-share'),
-                  onTap: () => _shareCard(boundaryKey, facts, c),
+                  onTap: () => _shareCard(boundaryKey, f, c),
                 ),
               ],
             ),
@@ -318,7 +386,9 @@ String _fallbackText(DelverCardFacts facts) => [
   '${facts.nameLine} · ${facts.modeLine}',
   if (facts.epitaph.isNotEmpty) facts.epitaph,
   if (facts.traceGridText.isNotEmpty) facts.traceGridText,
-  '${facts.embers} embers banked · ${facts.fightsWon} fights won',
+  facts.fightsKnown
+      ? '${facts.embers} embers banked · ${facts.fightsWon} fights won'
+      : '${facts.embers} embers banked',
   facts.challengeLine,
   'tsorostudios.itch.io/emberdelve',
 ].join('\n');
