@@ -2137,3 +2137,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - FOUND+FIXED pre-existing bug: the card overflowed 90px at 1.3x device text scale since v0.34.0 (worst realistic facts, baseline-proven with change reverted). Fix: MediaQuery.withNoTextScaling — the card is an exported image; canvas 420→480 for the epitaph under the wide test font (maps are 9 layers → 2 trace rows max; the honest worst case).
 - Zero sim changes; suite 642/642 ×2; analyze clean; 10 plates critiqued clean at 4 sizes (build/epitaph_plates, logs /work/temp/v0540_*).
 - PROCESS LESSON (logged in harness skill): repo-wide `dart format` on this checkout touches 82 legacy files — format ONLY touched files; and never `git checkout -- .` to undo it (wiped WIP once; recovered by full redo + suite rerun).
+
+## 2026-08-25T08:00Z — v0.54.0 "The Epitaph" PUBLISHED
+- CI 32821779277 (workflow_dispatch on tag) success; artifacts aab 9553781156 / splits 9553779661 / apk 9553777548.
+- 4 APK pins PIN-OK (codes 80/1080/2080/4080); AAB signer pin matched 031acb42…. Staging /work/temp/v0540/rel.
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.54.0 — 5 assets, sha256 table in notes (notes_final.md).
+- v0.55.0 lead scout (docs/improvements/v0.55.0-lead-scout.md) committed with this entry; leading candidate "Duskquartz" (fifth vista, provings-tied). Build already underway in-tree: VistaDef + resolver param + controller + truth-table/gate/picker tests green (13/13); plates rendering.
