@@ -1971,3 +1971,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - PLATE LESSON: never combatBegin() from the map phase for screenshots (the
   screen renders a broken hybrid) — walk to a real fight, then swap
   (c.state!['enemy'] as Map)['intent'] and tick with a benign apply.
+
+## 2026-08-25T07:15Z — v0.47.0 PUBLISHED
+- CI 32802870155 success. All 4 APKs PIN-OK (codes 73/1073/2073/4073),
+  AAB pin match. 5 assets + sha256 table live:
+  https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.47.0
+- v0.48.0 "The Iron Between" started during the CI wait: elites get their
+  own combat theme (KM "Volatile Reaction", -19.06 LUFS, TP -9.17, OGG q4)
+  as the eighth Gramophone record; _bossFight split into boss-only +
+  _eliteFight; boss music no longer plays for elites. WIP uncommitted.
