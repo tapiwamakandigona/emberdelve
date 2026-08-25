@@ -205,6 +205,15 @@ extension _CombatStageBand on _CombatScreenState {
                           // below, in a visibly different chip style.
                           Positioned(
                             top: -badgeLift,
+                            // v0.47.0 plate critique: the badge used to center
+                            // on the enemy box (sprite width), so any 2-chip
+                            // badge (attack_block, charge) escaped the screen's
+                            // right edge on 320px @1.3x text. Anchoring its
+                            // RIGHT edge Space.s inside the screen (the stack
+                            // sits Space.xl from it) keeps every width legible;
+                            // at 360px this lands within a few px of the old
+                            // centered position.
+                            right: -(Space.xl - Space.s),
                             child: KeyedSubtree(
                               key: TourAnchors.of(TourBeats.intent),
                               child: _IntentBadge(
