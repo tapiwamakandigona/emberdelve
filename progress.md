@@ -1806,3 +1806,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   87-93/58-80/28-56 (4th-die variant tested: 76% hard, rejected).
   4 new tests, suite 588/588, plates reviewed (card 360, combat 412).
   Bump 0.40.0+66, news entry, notes docs/releases/v0.40.0.md.
+
+## 2026-08-25T01:25Z — v0.41.0 built + tagged (v0.40.0 CI still running)
+- v0.41.0 "The Ninth Proving": full_purse — the Peddler on normal, seed 2
+  (bot-win proven, pinned by the CI winnability proof). Count pins 8→9;
+  provings intro copy made count-free (plate review caught "Eight named
+  delves" going stale beside "0 of 9 CLEARED" — counts live only in the
+  N-of-M header). Suite 588/588, plates reviewed incl. The Full Purse
+  card + requirement fact. Bump 0.41.0+67, news, notes v0.41.0.md.

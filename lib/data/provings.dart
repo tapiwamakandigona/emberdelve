@@ -68,6 +68,17 @@ const List<ProvingDef> provings = [
     character: 'ascetic',
     difficulty: 'normal',
   ),
+  // v0.41.0: the ninth proving, so every delver has a seat at the table.
+  // Seed 2 is bot-win proven for the peddler on normal (see the winnability
+  // test) — the gold engine has to carry a lean pouch the whole way down.
+  ProvingDef(
+    id: 'full_purse',
+    title: 'The Full Purse',
+    blurb: 'The Peddler on normal floors. Lean dice; the Kiln Key pays.',
+    seed: 2,
+    character: 'peddler',
+    difficulty: 'normal',
+  ),
   ProvingDef(
     id: 'fifth_rung',
     title: 'The Fifth Rung',

@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.40.0';
+const String currentAppVersion = '0.41.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.41.0',
+    title: 'The Ninth Proving',
+    lines: [
+      'The Provings grow by one: The Full Purse, the Peddler on normal '
+          'floors. Lean dice the whole way down; the Kiln Key pays for '
+          'the climb.',
+      'Every delver now has a seat at the table - nine exact delves, '
+          'each proven winnable before it earned a name. The mark is '
+          'still the whole prize. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.40.0',
     title: 'The Peddler',
