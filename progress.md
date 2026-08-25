@@ -1833,3 +1833,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.41.0 "The Ninth Proving" published: CI 32795084973 green, 4/4 PIN-OK
   (67/1067/2067/4067), AAB pin match, 5 assets + sha256 table.
 - v0.42.0 CI 32795983316 running; publish when green.
+
+## 2026-08-25T02:55Z — v0.43.0 The Remembered Delves (tagged)
+- Every RECENT DELVES row in the Ledger is tap-to-copy: rebuilds its Delve
+  Code from the record's seed/delver/difficulty/ascension; legacy seed-0
+  records show no affordance. Copy glyph + meta-line hint; announce on copy.
+- 1 new test (remembered_delves_test.dart, mocked clipboard channel); plates
+  tool/remembered_visual_test.dart (3 sizes) reviewed clean; overflow 35/35;
+  suite 591/591; analyze clean. Sim untouched.
+- Bump 0.43.0+69; news entry; notes docs/releases/v0.43.0.md.

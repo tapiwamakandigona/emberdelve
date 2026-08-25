@@ -9,6 +9,7 @@
 // teaser, and no achievement grants anything — they are recognition only, so
 // the list can never turn into a grind gate.
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/characters.dart';
@@ -17,6 +18,7 @@ import '../data/skins.dart';
 import '../data/tracks.dart';
 import '../data/themes.dart';
 import '../game/controller.dart';
+import '../game/delve_code.dart';
 import '../meta/achievements.dart' as ach;
 import '../meta/meta.dart';
 import '../meta/rank.dart';
@@ -401,7 +403,18 @@ class LedgerScreen extends StatelessWidget {
         : abandoned
         ? EmberColors.textDisabled
         : EmberColors.ember;
-    return Row(
+    // The Remembered Delves (v0.43.0): every remembered run carries enough
+    // to rebuild its Delve Code — seed, delver, difficulty, ascension — so
+    // any row can be shared or replayed, not just the run that ended last.
+    // Records that can't encode (seed 0 from a pre-v0.3.4 save) simply stay
+    // quiet rather than offer a code that would lie.
+    final code = encodeDelveCode(
+      seed: int.tryParse('${r['seed'] ?? 0}') ?? 0,
+      character: r['character'] as String? ?? defaultCharacter,
+      difficulty: diff,
+      ascension: int.tryParse('${r['ascension'] ?? 0}') ?? 0,
+    );
+    final row = Row(
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(width: Space.m),
@@ -412,13 +425,27 @@ class LedgerScreen extends StatelessWidget {
               Text('$ch — $outcome', style: EmberText.body),
               const SizedBox(height: 2),
               Text(
-                '${daily ? 'daily · ' : ''}$diff · ${r['date']}',
+                '${daily ? 'daily · ' : ''}$diff · ${r['date']}'
+                '${code == null ? '' : ' · tap to copy its Delve Code'}',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
             ],
           ),
         ),
+        if (code != null)
+          const Icon(Icons.copy, size: 14, color: EmberColors.textDim),
       ],
+    );
+    if (code == null) return row;
+    return GestureDetector(
+      key: ValueKey('history-code-$code'),
+      behavior: HitTestBehavior.opaque,
+      onTap: () async {
+        await Clipboard.setData(ClipboardData(text: code));
+        AudioService.instance?.playSfx('ui_confirm');
+        c.announce('Delve Code copied');
+      },
+      child: row,
     );
   }
 
