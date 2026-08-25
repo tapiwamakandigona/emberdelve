@@ -2164,3 +2164,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: test/ledger_card_test.dart (7 — truth table, degradations, worst-case canvas with Ashglass Sentinel two-clause epitaph + guard against silent degradation, ledger entry-point incl. abandoned-row absence); suite 650/650; analyze fatal-warnings clean.
 - Plates: build/ledger_card_plates (rows + remembered loss/win cards) + 3 news plates critiqued clean. LESSON: a wrong enemy id in test fixtures degrades the epitaph SILENTLY — pin the expected two-clause string in worst-case tests.
 - Zero sim changes; no sweep or golden re-anchor. Logs /work/temp/v0560_*.
+
+## 2026-08-25 — v0.56.0 PUBLISHED
+- CI run 32840148958 success (workflow_dispatch on tag v0.56.0). Version codes 82/1082/2082/4082.
+- Verified: 4 APK signer pins PIN-OK (versionName 0.56.0), AAB pkcs7 cert pin matched (031acb42…3a0d).
+- Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.56.0 — 5 signed assets; sha256 table appended to notes.
+- Content: Ledger rows (won/lost, not abandoned) get a share icon → Delver's Card rebuilt from the run record via DelverCardFacts.fromRecord; honesty-by-omission (fights/trace/epithet omitted when unknown).
