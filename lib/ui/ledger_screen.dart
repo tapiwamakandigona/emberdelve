@@ -13,6 +13,7 @@ import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/characters.dart';
+import '../data/epithets.dart';
 import '../data/codex.dart';
 import '../data/enemies.dart';
 import '../data/skins.dart';
@@ -388,6 +389,15 @@ class LedgerScreen extends StatelessWidget {
     final won = result == 'won';
     final abandoned = result == 'abandoned';
     final ch = characters[r['character']]?.name ?? '${r['character']}';
+    // v0.58.0 The Remembered Fights: fuller records (v0.57.0) bank the worn
+    // epithet and the fights count — the row states them when they exist.
+    // Old records lack the keys and render exactly as before.
+    final epithetTitle = epithets[r['epithet']]?.title;
+    final who = epithetTitle == null ? ch : '$ch, $epithetTitle';
+    final fights = r['fights'];
+    final fightsToken = fights is num
+        ? ' · ${fights.toInt()} ${fights == 1 ? 'fight' : 'fights'}'
+        : '';
     final diff = r['difficulty'] as String? ?? 'normal';
     final daily = r['daily'] == true;
     // v0.51.0 The Obituary: records now remember WHO ended a lost run.
@@ -431,10 +441,10 @@ class LedgerScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$ch — $outcome', style: EmberText.body),
+              Text('$who — $outcome', style: EmberText.body),
               const SizedBox(height: 2),
               Text(
-                '${daily ? 'daily · ' : ''}$diff · ${r['date']}'
+                '${daily ? 'daily · ' : ''}$diff · ${r['date']}$fightsToken'
                 '${code == null ? '' : ' · tap to copy its Delve Code'}',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),

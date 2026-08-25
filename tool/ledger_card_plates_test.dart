@@ -185,7 +185,7 @@ void main() {
     // Plate 1: the rows themselves — share icons on won/lost, none on the
     // walkaway.
     await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('history-card-77-2026-08-20')),
+      find.byKey(const ValueKey('recent-delves')),
       200,
       scrollable: find.byType(Scrollable).first,
     );
@@ -210,5 +210,26 @@ void main() {
     // Plate 5 (v0.57.0): FULLER win card — grid ends in the ember cell.
     await openCard(tester, 'history-card-20260721-2026-08-25');
     await snap(tester, 'fuller_win_card_360x640');
+  });
+
+  testWidgets('ledger rows at 320 — v0.58.0 restraint check', (tester) async {
+    // The scout's ship condition: epithet + fights tokens must read clean,
+    // not cluttered, at the narrowest supported width.
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    final c = seasoned();
+    await tester.pumpWidget(app(LedgerScreen(c)));
+    await tester.binding.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 300)),
+    );
+    await pumpFor(tester, 400);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('recent-delves')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await pumpFor(tester, 300);
+    await snap(tester, 'ledger_rows_320x568');
   });
 }
