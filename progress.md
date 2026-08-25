@@ -1828,3 +1828,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (1/2/3/5 delvers, 3 sizes) reviewed clean; overflow 35/35; suite 590/590;
   analyze clean; perf probe green (map drag 9.0 paints/frame). Sim untouched.
 - Bump 0.42.0+68; news entry; notes docs/releases/v0.42.0.md.
+
+## 2026-08-25T02:25Z — v0.41.0 PUBLISHED
+- v0.41.0 "The Ninth Proving" published: CI 32795084973 green, 4/4 PIN-OK
+  (67/1067/2067/4067), AAB pin match, 5 assets + sha256 table.
+- v0.42.0 CI 32795983316 running; publish when green.
