@@ -1842,3 +1842,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   tool/remembered_visual_test.dart (3 sizes) reviewed clean; overflow 35/35;
   suite 591/591; analyze clean. Sim untouched.
 - Bump 0.43.0+69; news entry; notes docs/releases/v0.43.0.md.
+
+## 2026-08-25T05:20Z — v0.42.0 "The Gathered Hearth" PUBLISHED
+- CI 32795983316 green; staged /work/temp/v0420; verify.py 4/4 PIN-OK (codes 68/1068/2068/4068); AAB pin match 031acb42…
+- Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.42.0 — 5 assets, sha256 table appended.
+- v0.43.0 CI 32796450867 still in_progress; publish next.
