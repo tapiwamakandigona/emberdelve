@@ -48,24 +48,51 @@ class BoonScreen extends StatelessWidget {
               child: ContentClamp(
                 child: Column(
                   children: [
-                    const SizedBox(height: Space.xl),
-                    Text('Choose a boon', style: EmberText.h1),
-                    const SizedBox(height: Space.xs),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-                      child: Text(
-                        'A blessing for this delve — or walk in unaided.',
-                        style: EmberText.bodyDim,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: Space.l),
+                    // Header scrolls WITH the cards (overflow sweep
+                    // 2026-08-25): with the rumor line added, the fixed
+                    // header overran 320px screens at 1.3x text — the probe
+                    // font wraps wider than shipped fonts, so the ListView
+                    // now owns everything between the top bar and the skip
+                    // button.
                     Expanded(
                       child: ListView(
                         padding: const EdgeInsets.symmetric(
                           horizontal: Space.l,
                         ),
                         children: [
+                          const SizedBox(height: Space.xl),
+                          Text(
+                            'Choose a boon',
+                            style: EmberText.h1,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: Space.xs),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Space.m,
+                            ),
+                            child: Text(
+                              'A blessing for this delve — or walk in unaided.',
+                              style: EmberText.bodyDim,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          // The Rumor (v0.53.0): the seed already chose the
+                          // boss (pure bossForSeed read — lib/game/rumor.dart),
+                          // so every delve opens with a named destination.
+                          const SizedBox(height: Space.xs),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Space.m,
+                            ),
+                            child: Text(
+                              rumorForSeed(c.sim!.runSeed),
+                              key: const ValueKey('rumor-line'),
+                              style: EmberText.bodyDim,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: Space.l),
                           for (var i = 0; i < boonIds.length; i++)
                             Padding(
                               padding: const EdgeInsets.only(bottom: Space.m),
@@ -165,14 +192,20 @@ class BoonScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  // Wrap, not Row (overflow sweep 2026-08-25): at 320px @
+                  // 1.3x text the inflexible RECOMMENDED chip starved the
+                  // title down to one letter per line; wrapping drops the
+                  // chip below the title instead. Wide layouts unchanged.
+                  Wrap(
+                    spacing: Space.s,
+                    runSpacing: 2,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Flexible(child: Text(def.name, style: EmberText.h2)),
+                      Text(def.name, style: EmberText.h2),
                       // Same chip the reward flip uses — one visual vocabulary
                       // for "the default pick" across both offer screens.
                       if (recommended)
                         Container(
-                          margin: const EdgeInsets.only(left: Space.s),
                           padding: const EdgeInsets.symmetric(
                             horizontal: Space.s,
                             vertical: 2,

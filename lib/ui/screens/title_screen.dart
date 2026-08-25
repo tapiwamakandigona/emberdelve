@@ -254,9 +254,9 @@ class TitleScreen extends StatelessWidget {
                                 key: const ValueKey('provings-button'),
                                 onPressed: () {
                                   AudioService.instance?.playSfx('ui_confirm');
-                                  Navigator.of(context).push(
-                                    emberRoute((_) => ProvingsScreen(c)),
-                                  );
+                                  Navigator.of(
+                                    context,
+                                  ).push(emberRoute((_) => ProvingsScreen(c)));
                                 },
                                 child: Text(
                                   'The Provings — '
@@ -341,25 +341,59 @@ class TitleScreen extends StatelessWidget {
       context: context,
       builder: (dialogCtx) => AlertDialog(
         backgroundColor: EmberColors.surface,
+        // Tighter inset than the 40px default (overflow sweep 2026-08-25):
+        // at 320px @ 1.3x text the narrow dialog pushed the rumor preview
+        // under the scroll fold, cutting the line in half visually.
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: Space.l,
+          vertical: Space.xl,
+        ),
         title: Text('Delve a seed', style: EmberText.h2),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'A seed decides the whole delve — map, offers, rolls. '
-              'Paste a Delve Code or a number from a run summary, or '
-              'type any word.',
-              style: EmberText.bodyDim,
-            ),
-            const SizedBox(height: Space.m),
-            TextField(
-              key: const ValueKey('seed-field'),
-              controller: input,
-              autofocus: true,
-              style: EmberText.body,
-              decoration: const InputDecoration(hintText: 'code, seed, or word'),
-            ),
-          ],
+        // Scrollable so the rumor preview (v0.53.0) never overflows the
+        // dialog on tight screens (320px @ 1.3x text scale — plate-proven).
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'A seed decides the whole delve — map, offers, rolls. '
+                'Paste a Delve Code or a number from a run summary, or '
+                'type any word.',
+                style: EmberText.bodyDim,
+              ),
+              const SizedBox(height: Space.m),
+              TextField(
+                key: const ValueKey('seed-field'),
+                controller: input,
+                autofocus: true,
+                style: EmberText.body,
+                decoration: const InputDecoration(
+                  hintText: 'code, seed, or word',
+                ),
+              ),
+              // The Rumor (v0.53.0): live, honest preview — the seed already
+              // chose the boss (pure bossForSeed read, lib/game/rumor.dart),
+              // so a shared code can say what waits at the bottom before the
+              // first die is rolled.
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: input,
+                builder: (_, v, _) {
+                  final seed =
+                      decodeDelveCode(v.text)?.seed ?? parseSeedInput(v.text);
+                  if (seed == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: Space.m),
+                    child: Text(
+                      rumorForSeed(seed),
+                      key: const ValueKey('rumor-preview'),
+                      style: EmberText.bodyDim,
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -510,12 +544,7 @@ class _GatheredHearth extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           for (final id in left) ...[
-            SpriteView(
-              id,
-              key: ValueKey('hearth-$id'),
-              height: h,
-              dye: dye,
-            ),
+            SpriteView(id, key: ValueKey('hearth-$id'), height: h, dye: dye),
             SizedBox(width: id == left.last ? Space.l : Space.s),
           ],
           CampFire(size: 40, warm: warm, bright: bright),
@@ -562,9 +591,7 @@ class _ShortRoadToggle extends StatelessWidget {
         decoration: BoxDecoration(
           color: EmberColors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: on ? EmberColors.ember : EmberColors.line,
-          ),
+          border: Border.all(color: on ? EmberColors.ember : EmberColors.line),
         ),
         child: Row(
           children: [
