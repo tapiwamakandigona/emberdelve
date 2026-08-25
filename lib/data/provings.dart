@@ -92,7 +92,9 @@ const List<ProvingDef> provings = [
     id: 'tenth_rung',
     title: 'The Tenth Rung',
     blurb: 'The Warden at Ascension 10. Halfway up, no shortcuts.',
-    seed: 200,
+    // v0.47.0: 200 -> 201 (enemy-pool growth re-rolled the seed; re-proven
+    // bot-winnable, same hunt discipline as ash_summit's 908 -> 912).
+    seed: 201,
     character: 'warden',
     difficulty: 'normal',
     ascension: 10,

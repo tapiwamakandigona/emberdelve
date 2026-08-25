@@ -80,8 +80,22 @@ void main() {
       expect(e.hp, greaterThan(0));
       expect(e.pattern.isNotEmpty, isTrue);
       for (final it in e.pattern) {
-        expect(['attack', 'block', 'attack_block'].contains(it.kind), isTrue);
+        // v0.47.0: charge + counter are the response-puzzle kinds ('stagger'
+        // is runtime-only — a broken charge — and never authored).
+        expect(
+          [
+            'attack',
+            'block',
+            'attack_block',
+            'charge',
+            'counter',
+          ].contains(it.kind),
+          isTrue,
+          reason: '$id: unknown intent kind ${it.kind}',
+        );
         expect(it.amount, greaterThanOrEqualTo(0));
+        // A charge must carry a reachable, positive break threshold.
+        if (it.kind == 'charge') expect(it.block, greaterThan(0));
       }
       if (e.boss) {
         bosses++;

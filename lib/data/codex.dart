@@ -154,6 +154,17 @@ final List<CodexEntryDef> codexEntries = [
     'It swims the black seams and surfaces on the beat. Miners set their '
         'shifts by wyrm-knock: one to strike, one to hide, forever.',
   ),
+  // v0.47.0 response puzzles
+  _enemy(
+    'vent_ram',
+    'It breathes the sour green of the deep vents and charges on the '
+        'exhale. Strike it hard mid-breath and the whole engine stalls.',
+  ),
+  _enemy(
+    'cinder_urchin',
+    'Every spine remembers the hand that touched it. The urchin does not '
+        'attack so much as invoice — one sting per blow, paid on receipt.',
+  ),
   // enemies — elite --------------------------------------------------------
   _enemy(
     'pyre_howler',
@@ -202,6 +213,13 @@ final List<CodexEntryDef> codexEntries = [
     'cinder_marshal',
     'The delve\'s garrison never disbanded; it just stopped being alive. '
         'The Marshal still drills, still inspects, still finds you wanting.',
+    cost: 20,
+  ),
+  // v0.47.0 response-puzzle elite
+  _enemy(
+    'magma_lancer',
+    'It fences by catechism: answer the riposte with one clean blow, '
+        'answer the charge with many, answer wrong and be corrected.',
     cost: 20,
   ),
   // enemies — bosses --------------------------------------------------------

@@ -176,7 +176,9 @@ extension _CombatStageBand on _CombatScreenState {
                                   // telegraphed — the badge gets body language.
                                   sway:
                                       intent['kind'] == 'attack' ||
-                                      intent['kind'] == 'attack_block',
+                                      intent['kind'] == 'attack_block' ||
+                                      // v0.47.0: a wind-up has body language.
+                                      intent['kind'] == 'charge',
                                 ),
                                 spriteHeight: enemyH,
                                 // Slight depth scale: the enemy stands a step

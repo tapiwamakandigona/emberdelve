@@ -42,6 +42,7 @@ Map<String, Object?> _intentEvent(Map<String, dynamic> enemy) {
     'kind': intent['kind'],
     'amount': intent['amount'],
     if (intent['kind'] == 'attack_block') 'block': intent['block'],
+    if (intent['kind'] == 'charge') 'threshold': intent['threshold'],
   };
 }
 
@@ -192,6 +193,11 @@ void combatBegin(
           'block': (it.block + ascAmount + diffAmount) < 0
               ? 0
               : it.block + ascAmount + diffAmount,
+        // v0.47.0 response puzzles: a charge's break threshold is a puzzle
+        // knob, not a damage number — it stays RAW across difficulty and
+        // ascension so the answer ("deal N to interrupt") never drifts out
+        // of a fresh pool's reach. The charge AMOUNT scales like any attack.
+        if (it.kind == 'charge') 'threshold': it.block < 1 ? 1 : it.block,
       },
   ];
   final enemy = <String, dynamic>{
@@ -204,6 +210,8 @@ void combatBegin(
     'elite': def.elite,
     'pattern': pattern,
     'pattern_index': 1,
+    // v0.47.0: dice damage dealt into a telegraphed charge this turn.
+    'charge_taken': 0,
   };
   enemy['intent'] = Map<String, Object?>.from(pattern[0]);
   sim.enemy = enemy;
@@ -670,6 +678,50 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
         }
       }
       _encounterWon(sim, events);
+    } else {
+      // v0.47.0 response puzzles — the enemy survived this strike.
+      final intent = enemy['intent'] as Map;
+      final ikind = intent['kind'];
+      if (ikind == 'charge') {
+        // Only HP damage from dice counts toward the break (block-absorbed
+        // damage does not; burn/thorns tick after intents resolve). The break
+        // flips the intent LIVE so the badge pays off instantly.
+        final taken = (enemy['charge_taken'] as int? ?? 0) + (value - absorbed);
+        enemy['charge_taken'] = taken;
+        if (taken >= (intent['threshold'] as int)) {
+          enemy['intent'] = <String, Object?>{'kind': 'stagger', 'amount': 0};
+          _push(events, {
+            'type': 'charge_broken',
+            'enemy': enemy['id'],
+            'taken': taken,
+          });
+          _push(events, _intentEvent(enemy));
+        }
+      } else if (ikind == 'counter') {
+        // Riposte: every non-killing strike costs the delver the shown
+        // amount. Player block absorbs first; a killing blow (handled above)
+        // resolves the win BEFORE the counter can answer.
+        final counter = intent['amount'] as int;
+        var blocked = counter;
+        final playerBlock = sim.player['block'] as int;
+        if (blocked > playerBlock) blocked = playerBlock;
+        final dmg = counter - blocked;
+        sim.player['block'] = playerBlock - blocked;
+        final hpAfterCounter = (sim.player['hp'] as int) - dmg;
+        sim.player['hp'] = hpAfterCounter < 0 ? 0 : hpAfterCounter;
+        _push(events, {
+          'type': 'counter_struck',
+          'enemy': enemy['id'],
+          'amount': counter,
+          'blocked': blocked,
+          'damage': dmg,
+          'player_hp': sim.player['hp'],
+        });
+        if ((sim.player['hp'] as int) <= 0) {
+          _encounterLost(sim, events);
+          return;
+        }
+      }
     }
   } else if (action == 'block') {
     final value = resolution.value;
@@ -713,7 +765,9 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   // Block actually consumed by the shown intent — Living Bastion carries half
   // of what the delver did NOT need.
   var blockSpent = 0;
-  if (kind == 'attack' || kind == 'attack_block') {
+  // v0.47.0: an UNBROKEN charge resolves exactly like an attack of its shown
+  // amount (blockable as normal). A broken one became 'stagger' mid-turn.
+  if (kind == 'attack' || kind == 'attack_block' || kind == 'charge') {
     final incoming = intent['amount'] as int;
     var blocked = incoming;
     final playerBlock = sim.player['block'] as int;
@@ -739,6 +793,7 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       enemy['block'] = (enemy['block'] as int) + (intent['block'] as int);
       ev['block'] = intent['block'];
     }
+    if (kind == 'charge') ev['charged'] = true;
     _push(events, ev);
     // Player death resolves BEFORE thorns and burn (v0.3.2 zombie-win fix):
     // the shown intent lands first, so a delver dropped to 0 by it is dead
@@ -771,7 +826,12 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       'amount': intent['amount'],
       'enemy_block': enemy['block'],
     });
+  } else if (kind == 'stagger') {
+    // v0.47.0: a broken charge — the enemy reels and does nothing.
+    _push(events, {'type': 'enemy_staggered', 'enemy': enemy['id']});
   }
+  // 'counter' resolves to nothing here by design: the ripostes during the
+  // player's turn WERE its action; the stance simply passes.
   // Burn DoT (triple ignite) ticks at end of the enemy's action: damage =
   // current stacks, then stacks decay by 1. Deterministic, no RNG.
   final burn = enemy['burn'] as int? ?? 0;
@@ -830,6 +890,7 @@ void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   enemy['intent'] = Map<String, Object?>.from(
     pattern[(enemy['pattern_index'] as int) - 1] as Map,
   );
+  enemy['charge_taken'] = 0; // v0.47.0: fresh break meter per telegraph
   _push(events, {'type': 'turn_started', 'turn': sim.turn});
   if (sim.player['free_reroll'] == true) {
     _push(events, {'type': 'free_reroll_granted'});

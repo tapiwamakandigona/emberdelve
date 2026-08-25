@@ -13,7 +13,7 @@
 //      false without a real seed.
 //
 // Seeds pinned by the offline bot hunt (kindler, boons, simVersion 7):
-// seed 1 wins on easy; seed 3 loses on easy.
+// seed 1 wins on easy; seed 18 loses on easy.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
@@ -54,9 +54,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
-    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     await playOut(tester, c);
-    expect(c.phase, 'run_lost', reason: 'seed 3 must lose on easy');
+    expect(c.phase, 'run_lost', reason: 'seed 18 must lose on easy');
     expect(c.canRetrace, isTrue);
 
     final button = find.byKey(const ValueKey('retrace-delve'));
@@ -70,7 +70,7 @@ void main() {
 
     // The retraced run IS the lost run's challenge: same seed, same delver,
     // same difficulty — and it is live again (no longer a terminal phase).
-    expect(c.runSeed, 3, reason: 'retrace must reuse the lost seed');
+    expect(c.runSeed, 18, reason: 'retrace must reuse the lost seed');
     expect(c.sim!.run!['character'], 'kindler');
     expect(c.sim!.run!['difficulty'], 'easy');
     expect(c.phase, isNot('run_lost'));
@@ -101,7 +101,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
-    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     await playOut(tester, c);
     expect(c.phase, 'run_lost');
     expect(c.canRetrace, isTrue, reason: 'baseline: a plain loss retraces');

@@ -12,7 +12,7 @@
 //      summary's loss voice stays recognition-only, spec §5).
 //
 // Seeds pinned by an offline bot hunt (kindler, boons): seed 1 wins on both
-// easy and normal; seed 3 loses on easy. Sim is deterministic (R1), so
+// easy and normal; seed 18 loses on easy. Sim is deterministic (R1), so
 // these stay stable until simVersion changes.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,9 +95,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
-    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     await playOut(tester, c);
-    expect(c.phase, 'run_lost', reason: 'seed 3 must lose on easy');
+    expect(c.phase, 'run_lost', reason: 'seed 18 must lose on easy');
     expect(find.byKey(const ValueKey('normal-nudge')), findsNothing);
   });
 }

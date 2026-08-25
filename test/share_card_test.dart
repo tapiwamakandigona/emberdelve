@@ -3,7 +3,7 @@
 //
 // Pins:
 //   1. Facts honesty: a seed-1 easy win builds a WIN card with the real
-//      embers/fights/seed; a seed-3 easy loss builds a LOSS card — loss
+//      embers/fights/seed; a seed-18 easy loss builds a LOSS card — loss
 //      cards are first-class (§Ethics honesty).
 //   2. Copy sweep: every string the card or its fallback text can emit
 //      passes the banned-word sweep.
@@ -67,12 +67,12 @@ void main() {
 
   test('a lost run builds an honest loss card (loss is first-class)', () {
     final c = GameController();
-    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     driveToTerminal(c);
     expect(c.phase, 'run_lost');
     final f = DelverCardFacts.fromController(c);
     expect(f.won, isFalse);
-    expect(f.seed, 3);
+    expect(f.seed, 18);
   });
 
   test('ascension shows on the mode line only when climbed', () {
@@ -180,7 +180,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
-    c.startRun(character: 'kindler', seed: 3, boons: true, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     driveToTerminal(c);
     expect(c.phase, 'run_lost');
     await pumpFor(tester, 2500);
@@ -206,7 +206,7 @@ void main() {
       r'DELVE-[0-9A-Z]{10}',
     ).firstMatch(clipped!)!.group(0)!;
     final challenge = decodeDelveCode(codeMatch)!;
-    expect(challenge.seed, 3);
+    expect(challenge.seed, 18);
     expect(challenge.character, 'kindler');
     expect(clipped, contains('the dark claimed me'));
     expect(clipped, contains('tsorostudios.itch.io/emberdelve'));

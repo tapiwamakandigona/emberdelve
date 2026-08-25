@@ -729,6 +729,61 @@
       ],
       "fps": 8,
       "scale": 3
+    },
+    {
+      "id": "vent_ram",
+      "source_base": "slag_brute (palette variant)",
+      "frame_w": 48,
+      "frame_h": 69,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        },
+        {
+          "state": "run",
+          "frames": 4,
+          "row": 1
+        }
+      ],
+      "fps": 8,
+      "scale": 3
+    },
+    {
+      "id": "cinder_urchin",
+      "source_base": "ember_beetle (palette variant)",
+      "frame_w": 48,
+      "frame_h": 48,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        }
+      ],
+      "fps": 8,
+      "scale": 3
+    },
+    {
+      "id": "magma_lancer",
+      "source_base": "forge_warden (palette variant)",
+      "frame_w": 48,
+      "frame_h": 69,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        },
+        {
+          "state": "run",
+          "frames": 4,
+          "row": 1
+        }
+      ],
+      "fps": 8,
+      "scale": 3
     }
   ],
   "characters": [

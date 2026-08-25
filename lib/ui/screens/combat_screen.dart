@@ -435,6 +435,10 @@ class _CombatScreenState extends State<CombatScreen> {
       'block' => 'NEXT MOVE: BLOCK ${intent['amount']} — AS SHOWN',
       'attack_block' =>
         'NEXT MOVE: ATTACK ${intent['amount']} + BLOCK ${intent['block']}',
+      'charge' =>
+        'CHARGING ${intent['amount']} — DEAL ${intent['threshold']} TO BREAK',
+      'counter' => 'COUNTERING — EACH STRIKE COSTS ${intent['amount']}',
+      'stagger' => 'STAGGERED — IT DOES NOTHING',
       _ => 'NEXT MOVE — RESOLVES AS SHOWN',
     };
     Haptics.light();
@@ -675,6 +679,47 @@ class _CombatScreenState extends State<CombatScreen> {
         onEnemy: true,
       );
     }
+    // v0.47.0 response puzzles: the break pays off loudly, the riposte
+    // stings visibly (both fire during the PLAYER's strike, so they join
+    // this choreography rather than the end-turn one).
+    if (_find(events, 'charge_broken') != null) {
+      _audio?.playSfx('block', volume: 0.7);
+      Haptics.medium();
+      _note(
+        'CHARGE BROKEN!',
+        color: EmberColors.ember,
+        icon: Icons.flash_off,
+        onEnemy: true,
+      );
+    }
+    final counter = _find(events, 'counter_struck');
+    if (counter != null) {
+      final cDmg = counter['damage'] as int? ?? 0;
+      _audio?.playSfx(cDmg <= 0 ? 'block' : 'player_hit', volume: 0.8);
+      Haptics.light();
+      _spawnPop(cDmg, onPlayer: true, blocked: cDmg <= 0);
+      if (cDmg > 0) {
+        _spawnFx(_FxKind.claws, onPlayer: true, color: EmberColors.danger);
+      } else {
+        _spawnFx(_FxKind.guard, onPlayer: true);
+      }
+      _note(
+        cDmg <= 0 ? 'RIPOSTE BLOCKED' : 'RIPOSTE $cDmg',
+        color: cDmg <= 0 ? EmberColors.block : EmberColors.danger,
+        icon: Icons.sync_alt,
+      );
+      if (_find(events, 'encounter_lost') != null) {
+        _audio?.playSfx('defeat');
+        Haptics.heavy();
+        _choreo(() {
+          _playerFlash = false;
+          _playerDying = true;
+        });
+        // Run-ending moment keeps its weight (mirrors the end-turn path).
+        await _sleep(const Duration(milliseconds: 800));
+        if (!mounted) return;
+      }
+    }
     if (_find(events, 'encounter_won') != null) {
       await _enemyDeath(events);
     } else {
@@ -810,6 +855,15 @@ class _CombatScreenState extends State<CombatScreen> {
     } else if (_find(events, 'enemy_blocked') != null) {
       _audio?.playSfx('block', volume: 0.5);
       _spawnFx(_FxKind.guard, onPlayer: false); // its shield visibly comes up
+    } else if (_find(events, 'enemy_staggered') != null) {
+      // v0.47.0: the broken charge fizzles — the payoff beat for the break.
+      _note(
+        'STAGGERED',
+        color: EmberColors.textDim,
+        icon: Icons.hourglass_empty,
+        onEnemy: true,
+      );
+      await _beat(const Duration(milliseconds: 350));
     }
     // Burn ticks after the enemy acts: flame call-out + damage pop reusing
     // the existing pop primitive (m4 contract §3).
