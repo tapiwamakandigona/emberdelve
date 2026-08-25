@@ -2202,3 +2202,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - CI run 32877791422 success. Version codes 85/1085/2085/4085. 4 APK pins PIN-OK; AAB cert pin matched.
 - Release https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.59.0 — 5 signed assets; sha256 table appended.
 - Next: v0.60.0 "The Delver's Tally" (picker cards state charWins/charRuns record; scout doc docs/improvements/v0.60.0-lead-scout.md) — WIP in flight, gates pending.
+
+## 2026-08-25 — v0.60.0 "The Delver's Tally" gates GREEN
+- Picker _charCard gains per-delver record line "N wins · M delves" from charRuns/charWins (Ledger roster vocabulary); fresh delvers show nothing; locked unchanged. Scout: docs/improvements/v0.60.0-lead-scout.md.
+- analyze clean; suite 668/668 (/work/temp/v0600_suite1.log; +4 test/delver_tally_test.dart).
+- Plates critiqued clean (tool/delver_tally_visual_test.dart: 360, 320 worst-case with the Well-Oiled + 4-digit tally, fresh-install negative).
+- Zero sim movement — no re-anchors.
