@@ -63,39 +63,96 @@ void main() {
       // Fresh profile: only emberlight.
       for (final id in vistasOrder) {
         expect(
-          vistaUnlockedFor(id, runsWon: 0, distinctFelled: 0, hardWins: 0),
+          vistaUnlockedFor(
+            id,
+            runsWon: 0,
+            distinctFelled: 0,
+            hardWins: 0,
+            provingsCleared: 0,
+          ),
           id == 'emberlight',
           reason: id,
         );
       }
       expect(
-        vistaUnlockedFor('moonveil',
-            runsWon: 1, distinctFelled: 0, hardWins: 0),
+        vistaUnlockedFor(
+          'moonveil',
+          runsWon: 1,
+          distinctFelled: 0,
+          hardWins: 0,
+          provingsCleared: 0,
+        ),
         isTrue,
       );
       expect(
-        vistaUnlockedFor('verdigris',
-            runsWon: 0, distinctFelled: 15, hardWins: 0),
+        vistaUnlockedFor(
+          'verdigris',
+          runsWon: 0,
+          distinctFelled: 15,
+          hardWins: 0,
+          provingsCleared: 0,
+        ),
         isTrue,
       );
       expect(
-        vistaUnlockedFor('verdigris',
-            runsWon: 9, distinctFelled: 14, hardWins: 9),
+        vistaUnlockedFor(
+          'verdigris',
+          runsWon: 9,
+          distinctFelled: 14,
+          hardWins: 9,
+          provingsCleared: 0,
+        ),
         isFalse,
       );
       expect(
-        vistaUnlockedFor('bloodstone',
-            runsWon: 5, distinctFelled: 30, hardWins: 0),
+        vistaUnlockedFor(
+          'bloodstone',
+          runsWon: 5,
+          distinctFelled: 30,
+          hardWins: 0,
+          provingsCleared: 0,
+        ),
         isFalse,
       );
       expect(
-        vistaUnlockedFor('bloodstone',
-            runsWon: 0, distinctFelled: 0, hardWins: 1),
+        vistaUnlockedFor(
+          'bloodstone',
+          runsWon: 0,
+          distinctFelled: 0,
+          hardWins: 1,
+          provingsCleared: 0,
+        ),
+        isTrue,
+      );
+      // v0.55.0 duskquartz: provings-fed, blind to every other counter.
+      expect(
+        vistaUnlockedFor(
+          'duskquartz',
+          runsWon: 9,
+          distinctFelled: 30,
+          hardWins: 9,
+          provingsCleared: 2,
+        ),
+        isFalse,
+      );
+      expect(
+        vistaUnlockedFor(
+          'duskquartz',
+          runsWon: 0,
+          distinctFelled: 0,
+          hardWins: 0,
+          provingsCleared: 3,
+        ),
         isTrue,
       );
       expect(
-        vistaUnlockedFor('nonsense',
-            runsWon: 99, distinctFelled: 99, hardWins: 99),
+        vistaUnlockedFor(
+          'nonsense',
+          runsWon: 99,
+          distinctFelled: 99,
+          hardWins: 99,
+          provingsCleared: 99,
+        ),
         isFalse,
       );
     });
@@ -112,6 +169,12 @@ void main() {
         c.meta.enemyFelled['enemy_$i'] = 1;
       }
       expect(c.vistaUnlocked('verdigris'), isTrue);
+      // v0.55.0: duskquartz flips with a real cleared set, at exactly 3.
+      expect(c.vistaUnlocked('duskquartz'), isFalse);
+      c.meta.provingsCleared.addAll({'first_ember', 'second_wind'});
+      expect(c.vistaUnlocked('duskquartz'), isFalse);
+      c.meta.provingsCleared.add('third_road');
+      expect(c.vistaUnlocked('duskquartz'), isTrue);
     });
   });
 
@@ -161,8 +224,9 @@ void main() {
       return c;
     }
 
-    testWidgets('locked vista shows milestone, tap does nothing',
-        (tester) async {
+    testWidgets('locked vista shows milestone, tap does nothing', (
+      tester,
+    ) async {
       final c = await pumpCharacterScreen(tester);
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('vista-moonveil')),
@@ -176,8 +240,25 @@ void main() {
       expect(c.meta.selectedVista, defaultVista);
     });
 
-    testWidgets('earned vista selects on tap and reads CHOSEN',
-        (tester) async {
+    testWidgets('locked duskquartz shows the provings milestone', (
+      tester,
+    ) async {
+      final c = await pumpCharacterScreen(tester);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('vista-duskquartz')),
+        400,
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('vista-duskquartz')),
+      );
+      await pumpFor(tester, 200);
+      expect(find.text('Clear 3 provings.'), findsWidgets);
+      await tester.tap(find.byKey(const ValueKey('vista-duskquartz')));
+      await pumpFor(tester, 200);
+      expect(c.meta.selectedVista, defaultVista);
+    });
+
+    testWidgets('earned vista selects on tap and reads CHOSEN', (tester) async {
       final c = GameController();
       c.meta.runsWon = 1; // earned before the screen builds
       await tester.pumpWidget(
@@ -201,8 +282,16 @@ void main() {
   group('ethics', () {
     test('vista copy carries no pressure language', () {
       const banned = [
-        'streak', 'expire', 'hurry', 'miss out', 'last chance',
-        'beat me', 'bet you', 'only today', "can't", 'loser',
+        'streak',
+        'expire',
+        'hurry',
+        'miss out',
+        'last chance',
+        'beat me',
+        'bet you',
+        'only today',
+        "can't",
+        'loser',
       ];
       for (final v in vistas.values) {
         final copy = '${v.name} ${v.text} ${v.unlockLine}'.toLowerCase();

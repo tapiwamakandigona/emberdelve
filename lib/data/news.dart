@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.54.0';
+const String currentAppVersion = '0.55.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.55.0',
+    title: 'The Duskquartz',
+    lines: [
+      'A fifth vista waits on the shelf: Duskquartz, where quartz veins '
+          'catch the last light and the delve keeps its own dusk. It is '
+          'the first vista the Provings feed - clear three and it is yours.',
+      'Palette only, like every vista - the delve does not grow a byte. '
+          'Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.54.0',
     title: 'The Epitaph',

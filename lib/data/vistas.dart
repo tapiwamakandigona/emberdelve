@@ -45,6 +45,7 @@ const List<String> vistasOrder = [
   'moonveil',
   'verdigris',
   'bloodstone',
+  'duskquartz', // v0.55.0 — append-LAST, same discipline as roster bits
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -84,17 +85,32 @@ const Map<String, VistaDef> vistas = {
     valMul: 0.93,
     wash: Color(0x45521A1E),
   ),
+  // v0.55.0 The Duskquartz — the first vista the Provings feed. Violet-gold
+  // dusk grade; unlock derives from meta.provingsCleared like every other
+  // vista counter, so the two systems finally touch.
+  'duskquartz': VistaDef(
+    'duskquartz',
+    'Duskquartz',
+    'Quartz veins catch the last light. The delve keeps its own dusk.',
+    unlockLine: 'Clear 3 provings.',
+    hueDeg: -95,
+    satMul: 1.35,
+    valMul: 0.96,
+    wash: Color(0x3D2E1E4E),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
 /// real, uncapped counters (MetaState.runsWon / enemyFelled distinct keys /
-/// hardWins). Derived at read time — nothing new is persisted, so there is
-/// nothing to migrate or merge and the unlock can never lie (§Ethics).
+/// hardWins / provingsCleared size). Derived at read time — nothing new is
+/// persisted, so there is nothing to migrate or merge and the unlock can
+/// never lie (§Ethics).
 bool vistaUnlockedFor(
   String id, {
   required int runsWon,
   required int distinctFelled,
   required int hardWins,
+  required int provingsCleared,
 }) {
   switch (id) {
     case 'emberlight':
@@ -105,6 +121,8 @@ bool vistaUnlockedFor(
       return distinctFelled >= 15;
     case 'bloodstone':
       return hardWins >= 1;
+    case 'duskquartz':
+      return provingsCleared >= 3;
     default:
       return false;
   }
