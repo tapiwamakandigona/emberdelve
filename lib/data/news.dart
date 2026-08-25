@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.53.0';
+const String currentAppVersion = '0.54.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.54.0',
+    title: 'The Epitaph',
+    lines: [
+      'The Delver\'s Card now carries your run\'s story under your name - '
+          'who came back up, or what ended the delve and where. The same '
+          'honest voice as the summary screen, cut to card size.',
+      'The card also stopped breaking on big-text devices - it renders '
+          'like the picture it is now. Thank you for playing, and for '
+          'every card that lands in a group chat.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.53.0',
     title: 'The Rumor',

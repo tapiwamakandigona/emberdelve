@@ -2131,3 +2131,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 4 APK pins PIN-OK (codes 79/1079/2079/4079); AAB signer pin matched. Staging /work/temp/v0530/rel.
 - Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.53.0 — 5 assets, sha256 table in notes (notes_final.md).
 - v0.54.0 "The Epitaph" underway in-tree: epitaphLine + delveEpitaphLine + card epitaph render/fallback; worst-case card gate FOUND pre-existing bug — the shipped card overflowed 90px at 1.3x device text scale since v0.34.0 (fix: MediaQuery.withNoTextScaling — the card is an exported image; + canvas 420→470 for the epitaph under the wide test font).
+
+## 2026-08-25T07:40Z — v0.54.0 "The Epitaph" gates GREEN
+- The Delver's Card carries the run's story: pure epitaphLine (lib/game/obituary.dart) + controller.delveEpitaphLine (same fact sources as delveStoryText) + card render (key card-epitaph, italic/dim under the name) + clipboard fallback.
+- FOUND+FIXED pre-existing bug: the card overflowed 90px at 1.3x device text scale since v0.34.0 (worst realistic facts, baseline-proven with change reverted). Fix: MediaQuery.withNoTextScaling — the card is an exported image; canvas 420→480 for the epitaph under the wide test font (maps are 9 layers → 2 trace rows max; the honest worst case).
+- Zero sim changes; suite 642/642 ×2; analyze clean; 10 plates critiqued clean at 4 sizes (build/epitaph_plates, logs /work/temp/v0540_*).
+- PROCESS LESSON (logged in harness skill): repo-wide `dart format` on this checkout touches 82 legacy files — format ONLY touched files; and never `git checkout -- .` to undo it (wiped WIP once; recovered by full redo + suite rerun).
