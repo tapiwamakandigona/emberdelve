@@ -2022,3 +2022,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Version 0.49.0+75; news entry; notes docs/releases/v0.49.0.md.
 - Next: commit, tag v0.49.0, dispatch CI, publish with checksums
   (expect codes 75/1075/2075/4075).
+
+## 2026-08-25T11:10Z — v0.49.0 "The Shorter Road" PUBLISHED
+- CI 32807034937 success (workflow_dispatch on tag 4cccecf).
+- All 4 APKs PIN-OK (codes 75/1075/2075/4075); AAB signer pin matches.
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.49.0
+  — 5 assets + SHA-256 table in notes.
+- v0.50.0 scout committed alongside: The Tinker (control archetype).
+  Key finding: any NEW relic resizes the shop offer pool => golden
+  re-anchor; and the bot never spends relic `rerolls`. Kit v1 therefore
+  uses existing relic loaded_pips + d6_steady, zero sim changes.
