@@ -46,9 +46,12 @@ class ProvingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: Space.s),
                   Text(
-                    'Eight named delves, each one exact — same floors, same '
-                    'offers, same rolls for every delver who takes it. All '
-                    'eight are proven winnable. Take them in any order; '
+                    // Count-free on purpose (v0.41.0 lesson: "eight" went
+                    // stale the moment a ninth was added — the header's
+                    // "N of M" states the count, so the prose never should).
+                    'Named delves, each one exact — same floors, same '
+                    'offers, same rolls for every delver who takes it. '
+                    'Every one is proven winnable. Take them in any order; '
                     'clearing one marks it here, and the mark is the prize.',
                     style: EmberText.bodyDim,
                   ),
