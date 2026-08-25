@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.47.0';
+const String currentAppVersion = '0.48.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.48.0',
+    title: 'The Iron Between',
+    lines: [
+      'Elite foes now carry their own battle theme - a harder drum between '
+          'the common fights and the crowned deep, so your ears know the '
+          'stakes before the first die lands.',
+      'It joins the Gramophone as the eighth record: cross blades with an '
+          'elite and it is yours to replay at the hearth. Thank you for '
+          'playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.47.0',
     title: 'The Answered Blow',
