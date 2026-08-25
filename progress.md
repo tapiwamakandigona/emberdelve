@@ -2068,3 +2068,24 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Groundwork verified: cloud_merge.dart L77 copies runHistory wholesale, so
   an additive killed_by key round-trips; runHistory cap 30, ledger renders
   Recent Delves via _historyRow; summary copy pattern = copy-daily-result.
+
+## 2026-08-25T13:55Z — v0.51.0 "The Obituary" built, all gates green
+- Run-end storytelling (scout doc candidate #1): summary screen tells the
+  finished run back in 2–3 honest sentences (pure obituaryText in
+  lib/game/obituary.dart, deterministic per run seed), plus a
+  "Copy delve story" plain-text button (copy-daily-result pattern);
+  run records gain additive killed_by on losses; Ledger Recent Delves
+  name the killer ("fell on floor 4 of 9 to Quench Hag").
+- Zero sim changes — goldens/sweeps/pins untouched by construction.
+  Verified: only combat can kill (events clamp HP to 1, run_layer.dart
+  ~L685), so a loss always holds its killer; cloud_merge carries
+  runHistory wholesale so killed_by round-trips.
+- Suite 633/633 (7 new in test/obituary_test.dart: 4 golden strings +
+  win/loss widget pins on seeds 1/18 + legacy-record row), analyze clean.
+- Plates: tool/obituary_plates_test.dart (KEPT) → build/obituary_plates/,
+  summary win/loss + ledger at 360x640, 412x915, 800x1280, 320x570@1.3x —
+  12 plates, critiqued clean, no overflow.
+- TEST LESSON (re-learned): Ledger is a lazy ListView — scrollUntilVisible
+  needs POSITIVE delta + explicit `scrollable: find.byType(Scrollable)
+  .first`; and find.textContaining(' to ') collides with the row's
+  "tap to copy its Delve Code" line — pin exact text instead.

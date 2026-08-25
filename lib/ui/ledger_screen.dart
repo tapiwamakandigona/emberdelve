@@ -14,6 +14,7 @@ import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/characters.dart';
 import '../data/codex.dart';
+import '../data/enemies.dart';
 import '../data/skins.dart';
 import '../data/tracks.dart';
 import '../data/themes.dart';
@@ -388,11 +389,15 @@ class LedgerScreen extends StatelessWidget {
     final ch = characters[r['character']]?.name ?? '${r['character']}';
     final diff = r['difficulty'] as String? ?? 'normal';
     final daily = r['daily'] == true;
+    // v0.51.0 The Obituary: records now remember WHO ended a lost run.
+    // Older records lack the key and render exactly as before.
+    final killer = enemies[r['killed_by']]?.name;
     final outcome = won
         ? 'Ember claimed'
         : abandoned
         ? 'walked away'
-        : 'fell on floor ${r['floor']} of ${r['floors']}';
+        : 'fell on floor ${r['floor']} of ${r['floors']}'
+              '${killer == null ? '' : ' to $killer'}';
     final icon = won
         ? Icons.emoji_events
         : abandoned
