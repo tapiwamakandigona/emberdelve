@@ -2120,3 +2120,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 4 APK signer pins PIN-OK (codes 78/1078/2078/4078); AAB pin matched 031acb42….
 - Release live: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.52.0 — 5 assets, sha256 table appended to notes.
 - v0.53.0 lead scout (docs/improvements/v0.53.0-lead-scout.md) committed with this entry; leading candidate "The Rumor".
+
+## 2026-08-25T06:55Z — v0.53.0 "The Rumor" gates GREEN
+- Pre-delve boss telegraph: rumorForSeed (lib/game/rumor.dart, pure bossForSeed read) on the boon pick (rumor-line) + live preview in the Delve a seed dialog (rumor-preview; code seed wins over raw text).
+- Overflow sweep fixes shipped with it: boon header now scrolls with the cards (fixed header overran 320@1.3x under the probe font); boon title Row→Wrap (RECOMMENDED chip starved the title to letter-per-line at 320@1.3x — pre-existing, plate-proven); seed dialog content scrollable + tighter insetPadding.
+- Zero sim changes; suite 636/636; analyze clean; 14 plates critiqued clean at 4 sizes (build/rumor_plates, logs /work/temp/v0530_*).

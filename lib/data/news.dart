@@ -23,10 +23,23 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.52.0';
+const String currentAppVersion = '0.53.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.53.0',
+    title: 'The Rumor',
+    lines: [
+      'Every delve now opens with a named destination: the boon pick tells '
+          'you which boss the seed has already chosen to wait at the bottom. '
+          'The seed decided it before your first roll - we just stopped '
+          'keeping the secret.',
+      'Type a seed or paste a Delve Code and the rumor shows before you '
+          'commit - so a shared code can promise a foe, not just a number. '
+          'Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.52.0',
     title: "The Tinker's Proving",
