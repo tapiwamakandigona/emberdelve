@@ -16,6 +16,10 @@
 //   bits 31..34  delver index into charactersOrder (4 bits)
 //   bits 35..36  difficulty (0 easy, 1 normal, 2 hard)
 //   bits 37..43  ascension (0..99)
+//   bit  44      Short Road (v0.49.0): 1 = six-layer Short Delve. Every
+//                pre-v0.49.0 code carries 0 here by construction, so old
+//                codes round-trip unchanged; an older build handed a short
+//                code simply ignores the bit (a classic delve, same seed).
 // plus a 5-bit checksum char (domain-hashed) so typos fail politely.
 // Crockford base32: no I/L/O/U — codes can't spell most slurs and survive
 // handwriting. Input is case-insensitive; hyphens/spaces are ignored.
@@ -29,11 +33,13 @@ class DelveChallenge {
   final String character; // id from charactersOrder
   final String difficulty; // 'easy' | 'normal' | 'hard'
   final int ascension;
+  final bool shortRoad; // v0.49.0: six-layer Short Delve format
   const DelveChallenge({
     required this.seed,
     required this.character,
     required this.difficulty,
     required this.ascension,
+    this.shortRoad = false,
   });
 }
 
@@ -49,6 +55,7 @@ String? encodeDelveCode({
   required String character,
   required String difficulty,
   required int ascension,
+  bool shortRoad = false,
 }) {
   final char = charactersOrder.indexOf(character);
   final diff = _difficulties.indexOf(difficulty);
@@ -57,6 +64,7 @@ String? encodeDelveCode({
   if (seed < 1 || seed > 0x7ffffffe) return null;
   final asc = ascension.clamp(0, 99);
   var bits = seed | (char << 31) | (diff << 35) | (asc << 37);
+  if (shortRoad) bits |= 1 << 44;
   final chars = List.filled(9, '');
   for (var i = 0; i < 9; i++) {
     chars[i] = _alphabet[bits & 31];
@@ -86,6 +94,7 @@ DelveChallenge? decodeDelveCode(String input) {
   final char = (bits >> 31) & 15;
   final diff = (bits >> 35) & 3;
   final asc = (bits >> 37) & 127;
+  final shortRoad = (bits >> 44) & 1 == 1;
   if (seed < 1 || seed > 0x7ffffffe) return null;
   if (char >= charactersOrder.length) return null;
   if (diff >= _difficulties.length) return null;
@@ -95,6 +104,7 @@ DelveChallenge? decodeDelveCode(String input) {
     character: charactersOrder[char],
     difficulty: _difficulties[diff],
     ascension: asc,
+    shortRoad: shortRoad,
   );
 }
 

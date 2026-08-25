@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.48.0';
+const String currentAppVersion = '0.49.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.49.0',
+    title: 'The Shorter Road',
+    lines: [
+      'A new way to delve: the Short Road runs six floors instead of nine - '
+          'a whole delve, elite and hearth and shop and boss, sized for a '
+          'shorter sit. Flip the toggle under the difficulty selector.',
+      'Rewards run deeper to fit the climb and the heaviest foes are tuned '
+          'to match. Delve Codes carry the format, so a shared short delve '
+          'is the same short delve. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.48.0',
     title: 'The Iron Between',

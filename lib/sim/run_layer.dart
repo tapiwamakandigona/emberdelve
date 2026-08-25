@@ -68,6 +68,14 @@ int _rollGold(Sim sim) => sim.rng['loot']!.range(12, 22);
 // Tier ceiling for reward/shop dice by map layer (keeps the early curve gentle).
 int _tierCeiling(int layer) => layer <= 3 ? 1 : (layer <= 6 ? 2 : 3);
 
+// v0.49.0 The Shorter Road: on the six-layer format the reward arc is
+// compressed to match the climb — dice offers and shop stock read the tier
+// ceiling three floors deep, so a short delve still walks the full
+// tier-1 -> tier-3 arc before its boss. Absent the mutator this is exactly
+// [_tierCeiling] (goldens and pinned seeds untouched by construction).
+int _offerCeiling(Sim sim, int layer) =>
+    _tierCeiling(sim.hasMutator('short_road') ? layer + 3 : layer);
+
 // Heal the player by `amount`, capped at max hp. Returns the actual heal.
 int _heal(Sim sim, int amount) {
   final p = sim.player;
@@ -154,7 +162,13 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (ch.startRelic != null) {
     _grantRelic(sim, ch.startRelic!, events);
   }
-  final map = generateMap(sim.rng['map']!);
+  // v0.49.0 The Shorter Road: the short_road mutator swaps in the 6-layer
+  // MapCfg at generation time. Same rng stream, same generator — absent the
+  // mutator this call is byte-identical to every release before it.
+  final map = generateMap(
+    sim.rng['map']!,
+    sim.hasMutator('short_road') ? shortRoadCfg : const MapCfg(),
+  );
   map['position'] = map['start'];
   map['visited'] = <int>[map['start'] as int];
   // P3 mutators reshape the map BEFORE reward telegraphs resolve, so the
@@ -288,7 +302,7 @@ void _resolveRewardTelegraphs(Sim sim, Map<String, Object?> map) {
     final kind = node['kind'];
     if (kind != 'fight' && kind != 'elite') continue;
     final layer = node['layer'] as int;
-    final ceiling = _tierCeiling(layer);
+    final ceiling = _offerCeiling(sim, layer);
     final pool = [
       for (final d in diceOrder)
         if (dice[d]!.tier <= ceiling) d,
@@ -487,7 +501,7 @@ void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 // ---- shop ------------------------------------------------------------------
 
 void _openShop(Sim sim, int layer, List<Map<String, Object?>> events) {
-  final ceiling = _tierCeiling(layer);
+  final ceiling = _offerCeiling(sim, layer);
   final loot = sim.rng['loot']!;
   final discount = relicSum(sim, 'shop_discount');
   int price(int base) => (base * (100 - discount)) ~/ 100;
@@ -759,6 +773,12 @@ void runPost(Sim sim, List<Map<String, Object?>> events) {
     // Gold + embers payouts with relic bonuses.
     var gold = _rollGold(sim) + relicSum(sim, 'gold_bonus');
     if (isBoss) gold += 30;
+    // v0.49.0 The Shorter Road: purses run heavier on the shorter climb —
+    // fight gold x1.5 (rounded), so roughly six floors of fights still fund
+    // the shop arc the build needs before the door. Gold is in-run only;
+    // ember payouts are untouched (fewer fights already pay fewer embers,
+    // stated plainly — no multipliers, spec §Ethics).
+    if (sim.hasMutator('short_road')) gold = (gold * 1.5).round();
     _gainGold(sim, gold, events, 'fight');
     var embers = _rollEmbers(sim) + relicSum(sim, 'ember_bonus');
     if (isBoss) embers += 40;
@@ -888,7 +908,7 @@ void _offerReward(
   // preview is honest. Fallback (never expected) keeps old behavior.
   var offers = (node['offers'] as List?)?.cast<String>().toList();
   if (offers == null || offers.isEmpty) {
-    final ceiling = _tierCeiling(layer);
+    final ceiling = _offerCeiling(sim, layer);
     final poolIds = [
       for (final id in diceOrder)
         if (dice[id]!.tier <= ceiling) id,

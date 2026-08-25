@@ -79,6 +79,7 @@ class DelverCardFacts {
             character: charId,
             difficulty: run['difficulty'] as String? ?? 'normal',
             ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
+            shortRoad: c.sim?.hasMutator('short_road') ?? false,
           ) ??
           '',
     );

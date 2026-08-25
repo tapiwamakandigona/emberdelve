@@ -61,6 +61,7 @@ const List<String> trialsOrder = [
   'lean_day',
   'light_step',
   'ember_hoard',
+  'short_day',
 ];
 
 const Map<String, TrialDef> trials = {
@@ -82,6 +83,13 @@ const Map<String, TrialDef> trials = {
     'Lean Day',
     'No shops on the map. What you find is all you get.',
     mutators: ['no_shops'],
+  ),
+  // v0.49.0 The Shorter Road.
+  'short_day': TrialDef(
+    'short_day',
+    'Short Day',
+    'The shared delve runs the Short Road — six floors instead of nine.',
+    mutators: ['short_road'],
   ),
   // Goal days — vanilla rules plus one declared bonus objective.
   'full_purse': TrialDef(

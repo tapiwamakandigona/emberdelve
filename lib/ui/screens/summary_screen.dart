@@ -299,6 +299,8 @@ class SummaryScreen extends StatelessWidget {
                                       '${run['ascension'] ?? 0}',
                                     ) ??
                                     0,
+                                shortRoad:
+                                    c.sim?.hasMutator('short_road') ?? false,
                               );
                               final label = code ?? 'Seed ${c.sim?.runSeed}';
                               return GestureDetector(
