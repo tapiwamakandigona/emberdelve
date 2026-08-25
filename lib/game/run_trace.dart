@@ -93,6 +93,26 @@ class RunTrace {
     t._hurt = raw['open_hurt'] == true;
     return t;
   }
+
+  /// v0.57.0 The Fuller Record: the closed trace as one tiny string —
+  /// 'c' per clean floor, 'h' per hurt floor ('' when empty). Run records
+  /// bank this so a remembered Delver's Card can repaint its grid. The
+  /// outcome is NOT encoded: the record's own `result` field already
+  /// holds it, and stating a fact twice invites disagreement.
+  String toCompact() => marks.map((m) => m == markHurt ? 'h' : 'c').join();
+
+  /// Rebuild a CLOSED trace from [toCompact] output plus the outcome the
+  /// record banked ('won' | 'lost' | null). Unknown characters are
+  /// dropped, never guessed.
+  static RunTrace fromCompact(String s, {String? outcome}) {
+    final t = RunTrace();
+    for (final ch in s.split('')) {
+      if (ch == 'c') t.marks.add(markClean);
+      if (ch == 'h') t.marks.add(markHurt);
+    }
+    if (outcome == 'won' || outcome == 'lost') t.outcome = outcome;
+    return t;
+  }
 }
 
 /// Render the finished trace as emoji rows, five floors per row:
@@ -112,7 +132,9 @@ String traceGrid(RunTrace trace) {
   }
   final rows = <String>[];
   for (var i = 0; i < cells.length; i += 5) {
-    rows.add(cells.sublist(i, i + 5 > cells.length ? cells.length : i + 5).join());
+    rows.add(
+      cells.sublist(i, i + 5 > cells.length ? cells.length : i + 5).join(),
+    );
   }
   return rows.join('\n');
 }
@@ -153,7 +175,9 @@ String seedChallengeText({
   // code packs delver + difficulty + ascension too, so the friend plays THIS
   // run, not one like it.
   final what = code.isEmpty ? 'seed $seed' : code;
-  final claim = code.isEmpty ? 'Same seed, same delve' : 'Same code, same delve';
+  final claim = code.isEmpty
+      ? 'Same seed, same delve'
+      : 'Same code, same delve';
   return [
     'Emberdelve — $what ($diff)',
     if (grid.isNotEmpty) grid,

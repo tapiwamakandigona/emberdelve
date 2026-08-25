@@ -123,6 +123,37 @@ GameController seasoned() {
     'embers': 63,
     'killed_by': 'ashglass_sentinel',
   });
+  // v0.57.0 The Fuller Record: two records banked WITH the new keys — the
+  // card must show grid + fights + worn epithet again.
+  c.meta.addRunRecord({
+    'date': '2026-08-25',
+    'character': 'gambler',
+    'difficulty': 'hard',
+    'ascension': 20,
+    'result': 'lost',
+    'floor': 8,
+    'floors': 9,
+    'seed': 999999999,
+    'embers': 9999,
+    'killed_by': 'ashglass_sentinel',
+    'fights': 99,
+    'trace': 'chchchchh',
+    'epithet': 'the_well_oiled',
+  });
+  c.meta.addRunRecord({
+    'date': '2026-08-25',
+    'character': 'peddler',
+    'difficulty': 'normal',
+    'ascension': 0,
+    'result': 'won',
+    'floor': 9,
+    'floors': 9,
+    'seed': 20260721,
+    'embers': 184,
+    'fights': 11,
+    'trace': 'ccchcchcc',
+    'epithet': 'the_delver',
+  });
   return c;
 }
 
@@ -168,5 +199,16 @@ void main() {
     // Plate 3: the remembered WIN card (boss named from the seed).
     await openCard(tester, 'history-card-20260728-2026-08-19');
     await snap(tester, 'remembered_win_card_360x640');
+    await tester.tap(find.byKey(const ValueKey('card-close')));
+    await pumpFor(tester, 500);
+    // Plate 4 (v0.57.0): FULLER loss card — worst case: longest
+    // name+epithet form, 2-row trace, fights line, two-clause epitaph.
+    await openCard(tester, 'history-card-999999999-2026-08-25');
+    await snap(tester, 'fuller_loss_card_360x640');
+    await tester.tap(find.byKey(const ValueKey('card-close')));
+    await pumpFor(tester, 500);
+    // Plate 5 (v0.57.0): FULLER win card — grid ends in the ember cell.
+    await openCard(tester, 'history-card-20260721-2026-08-25');
+    await snap(tester, 'fuller_win_card_360x640');
   });
 }

@@ -1261,6 +1261,15 @@ class GameController extends ChangeNotifier {
       // sim; the guard keeps an impossible enemy-less loss honest.
       if (result == 'lost' && sim?.enemy?['id'] is String)
         'killed_by': sim?.enemy?['id'],
+      // v0.57.0 The Fuller Record: bank what the remembered card (v0.56.0)
+      // had to omit — fights won, the floor trace, and the worn epithet —
+      // so cards built off NEW records regain full fidelity. Additive keys:
+      // old records (and cloud copies) simply lack them and the card keeps
+      // degrading by omission, exactly as shipped.
+      'fights': run?['fights_won'] as int? ?? 0,
+      if (runTrace.marks.isNotEmpty) 'trace': runTrace.toCompact(),
+      if (meta.selectedEpithet != defaultEpithet)
+        'epithet': meta.selectedEpithet,
     };
   }
 
