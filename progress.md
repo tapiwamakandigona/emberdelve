@@ -2229,3 +2229,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze clean; suite 682/682 (/work/temp/v0630_suite2.log; +2 test/fitted_name_test.dart — Ahem's 1em glyphs make the narrow case trigger without real fonts).
 - Plates: kept_fire re-render critiqued clean — 320x568 now shows the FULL wordmark with margins; 360x640 pixel-consistent.
 - Zero sim movement. pubspec 0.63.0+89.
+
+## 2026-08-25 — v0.64.0 "The Deepshale" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: sixth vista `deepshale`, the first fed by the depth record — unlock `bestFloor >= 9` ("Stand on the ninth floor.", win or loss). First DESATURATING vista: hueDeg -10, satMul 0.72, valMul 0.9, wash 0x40232830 (cold slate). Appended LAST to vistasOrder.
+- `vistaUnlockedFor` gained `required int bestFloor`; controller passes meta.bestFloor. Pure data+resolver change; zero sim/save-format movement.
+- Tests: truth-table cases (floor 8 locked / 9 unlocked, blind to wins/kills/provings) + controller-gate cases inside test/vistas_test.dart (13/13). Suite 682/682 (/work/temp/v0640_suite2.log). analyze clean.
+- Plates critiqued clean: bg_deepshale surface + depth-0.8 (strata still compounds), wardrobe locked/chosen at 360x640, no overflow. Scout: docs/improvements/v0.64.0-lead-scout.md.
+- ESCAPE LESSON: file_edit into Dart doubled `\\'` to `\\\\'` inside a single-quoted string (news.dart) — after editing Dart string literals via tools, re-run analyze before assuming the entry compiles.
+- pubspec 0.64.0+90; news 0.64.0 entry added.
