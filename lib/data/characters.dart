@@ -36,6 +36,7 @@ const List<String> charactersOrder = [
   'warden',
   'gambler',
   'ascetic',
+  'peddler',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -73,6 +74,20 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6', 'd6', 'd6_brand'],
     startRelic: 'whetstone',
     unlockEmbers: 320,
+  ),
+  // v0.40.0 The Peddler: the economy archetype the roster lacked. A weaker
+  // pouch than the Kindler (14 pips vs 18), traded for a Kiln Key — every won
+  // fight pays +8 gold, so the shops do the delver's forging. Appended
+  // LAST so charactersOrder indexes (delve-code bits 31..34, v0.37.0) stay
+  // stable for every code already shared.
+  'peddler': CharacterDef(
+    'peddler',
+    'The Peddler',
+    'Mercantile. Lean dice and a Kiln Key — every won fight pays well.',
+    maxHp: 31,
+    startDice: ['d6', 'd6', 'd4'],
+    startRelic: 'kiln_key',
+    unlockEmbers: 450,
   ),
 };
 

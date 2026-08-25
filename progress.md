@@ -1794,3 +1794,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   0.39.0+65, news entry, notes docs/releases/v0.39.0.md. Full suite
   running (/work/temp/v0390_release_test.log).
 - Next: tag v0.39.0 when suite green; scope v0.40.0.
+
+## 2026-08-25T01:00Z — v0.39.0 PUBLISHED, v0.40.0 built + tagged
+- v0.39.0 "The Waymarks" published: CI 32792792379 green, 4/4 PIN-OK
+  (65/1065/2065/4065), AAB pin match, checksums in notes.
+- v0.40.0 "The Peddler": fifth delver (economy archetype) — d6+d6+d4,
+  31 HP, Kiln Key, 450 embers, teal elf_m palette variant (PROVENANCE.md),
+  Coin Hook signature weapon, 3 new ledger marks; Full Hearth / Four Ways
+  Down reworded to stay honest at target 4 (never un-earn a mark).
+  Balance sweep 150 seeds x 3 diffs: peddler 88.0/58.7/28.7 vs band
+  87-93/58-80/28-56 (4th-die variant tested: 76% hard, rejected).
+  4 new tests, suite 588/588, plates reviewed (card 360, combat 412).
+  Bump 0.40.0+66, news entry, notes docs/releases/v0.40.0.md.
