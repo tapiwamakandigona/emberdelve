@@ -2150,3 +2150,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: truth table extended (2 vs 3 provings, blind to other counters), controller gate flips with a real cleared set, picker shows the locked milestone; suite 643/643; analyze clean.
 - Plates: 13 vista plates (build/vistas_visual — incl. duskquartz surface/deep + earned-CHOSEN wardrobe) + 3 news plates (build/news_visual) critiqued clean; plate tool fixed for the 5-card shelf (scroll target duskquartz, snap the shelf tail — emberlight gets evicted from the lazy list).
 - Zero sim changes; no sweep or golden re-anchor needed. Logs /work/temp/v0550_*.
+
+## 2026-08-25T09:00Z — v0.55.0 "The Duskquartz" PUBLISHED
+- CI 32824020713 success; artifacts aab 9554590222 / splits 9554588720 / apk 9554586584.
+- 4 APK pins PIN-OK (0.55.0, codes 81/1081/2081/4081); AAB signer pin matched.
+- Release: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.55.0 — 5 assets; sha256 table in notes (universal 563f0422… 70M, arm64 ac391103… 36M, armeabi def94ebc… 34M, x86_64 94cd282d… 37M, aab fcb89a79… 68M).
+- Next: v0.56.0 lead = Card from the Ledger (docs/improvements/v0.56.0-lead-scout.md).
