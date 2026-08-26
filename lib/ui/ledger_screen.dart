@@ -23,6 +23,8 @@ import '../game/controller.dart';
 import '../game/delve_code.dart';
 import '../meta/achievements.dart' as ach;
 import '../meta/meta.dart';
+import 'art.dart';
+import 'sprites.dart';
 import '../meta/rank.dart';
 import 'codex_screen.dart';
 import 'fx.dart';
@@ -595,27 +597,61 @@ class LedgerScreen extends StatelessWidget {
   Widget _delverRow(dynamic m, String id) {
     final ch = characters[id]!;
     final unlocked = m.isUnlocked(id) as bool;
-    // A named delver keeps their given name here too; locked delvers
-    // (and the unnamed) fall back to the roster name.
+    // v0.74.0 The Full Roster: an unlocked row speaks the delver's whole
+    // identity — dyed sprite, given name, worn title, charted depth. A
+    // named delver keeps their given name here too; locked delvers (and
+    // the unnamed) fall back to the roster name and the plain lock icon.
     final shownName = unlocked ? m.nameFor(id) as String : ch.name;
+    final title = unlocked ? epithets[m.epithetFor(id) as String]?.title : null;
     final runs = (m.charRuns[id] as int?) ?? 0;
     final wins = (m.charWins[id] as int?) ?? 0;
+    // Charted-depth honesty rule (v0.65.0): a zero floor is a pre-ledger
+    // save or an untouched delver — never shown as a guessed 'floor 0'.
+    final depth = (m.charBestFloor[id] as int?) ?? 0;
+    final tally = unlocked
+        ? '$wins ${wins == 1 ? 'win' : 'wins'} · '
+              '$runs ${runs == 1 ? 'delve' : 'delves'}'
+              '${depth > 0 ? ' · floor $depth' : ''}'
+        : 'locked';
     return Row(
       children: [
-        Icon(
-          unlocked ? Icons.person : Icons.lock,
-          color: unlocked ? EmberColors.textPrimary : EmberColors.textDisabled,
-          size: 20,
-        ),
+        if (unlocked)
+          SizedBox(
+            width: 28,
+            child: SpriteView(
+              id,
+              key: ValueKey('roster-delver-$id'),
+              height: 28,
+              animate: false,
+              bob: false,
+              dye: Art.dyeFilter(m.dyeFor(id) as String),
+            ),
+          )
+        else
+          const SizedBox(
+            width: 28,
+            child: Icon(Icons.lock, color: EmberColors.textDisabled, size: 20),
+          ),
         const SizedBox(width: Space.m),
         Expanded(
-          child: Text(
-            shownName,
-            style: EmberText.body.copyWith(
-              color: unlocked
-                  ? EmberColors.textPrimary
-                  : EmberColors.textDisabled,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                shownName,
+                style: EmberText.body.copyWith(
+                  color: unlocked
+                      ? EmberColors.textPrimary
+                      : EmberColors.textDisabled,
+                ),
+              ),
+              if (title != null)
+                Text(
+                  title,
+                  key: ValueKey('roster-title-$id'),
+                  style: EmberText.micro.copyWith(color: EmberColors.gold),
+                ),
+            ],
           ),
         ),
         const SizedBox(width: Space.s),
@@ -623,10 +659,7 @@ class LedgerScreen extends StatelessWidget {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
-              unlocked
-                  ? '$wins ${wins == 1 ? 'win' : 'wins'} · '
-                        '$runs ${runs == 1 ? 'delve' : 'delves'}'
-                  : 'locked',
+              tally,
               style: EmberText.label.copyWith(
                 color: unlocked
                     ? EmberColors.textDim

@@ -2328,3 +2328,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Rejected (scout): next-vista teaser (FOMO); toast/modal; title-screen ambush (needs seen-state);
   retroactive announcements.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.74.0 — The Full Roster (2026-08-26)
+- The ledger's DELVERS rows were the thinnest surface for the game's richest object. Now each
+  unlocked row: dyed sprite (key `roster-delver-<id>`, 28dp static), given name over worn title
+  (gold micro, key `roster-title-<id>`), tally gains '· floor N' (charted-depth honesty: omitted
+  at 0). Locked rows untouched. Balatro-stats-culture lead (scout v0.74.0).
+- ledger_screen.dart `_delverRow` + imports art.dart/sprites.dart. Pure read surface — no new
+  state, zero sim movement.
+- Tests +2 (test/full_roster_test.dart). Suite 729/729, analyze clean.
+- Plates build/full_roster_visual/ (roster 360+320, mixed named/dressed/charted/locked) critiqued
+  clean — two-line long names wrap gracefully, 320 tally scales.
+- pubspec 0.74.0+100; news 0.74.0; docs/releases/v0.74.0.md; scout docs/improvements/v0.74.0-lead-scout.md.
+- Rejected (scout): tap-through to picker; per-delver loss/streak counters (chronicle-stats
+  territory); bobbing sprites; dye named in text.
+- Release blocked on GitHub auth like v0.60.0+.
