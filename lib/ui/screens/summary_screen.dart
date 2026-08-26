@@ -174,6 +174,22 @@ class SummaryScreen extends StatelessWidget {
                           // on wins and losses alike (a lost run can still be
                           // the deepest; the record is the dignity). Pure
                           // fact, no next-goal teaser (§Ethics).
+                          // v0.68.0 The Earned Name: one quiet line per
+                          // epithet this run's banking earned. A fact about
+                          // a name already won — no button, no teaser; the
+                          // wardrobe holds the detail (rank-up restraint).
+                          for (final id in c.pendingEpithets) ...[
+                            const SizedBox(height: Space.l),
+                            Text(
+                              '\u201c${epithets[id]?.title}\u201d is yours '
+                              'to wear.',
+                              key: ValueKey('earned-name-$id'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                          ],
                           if (c.pendingDeepestFloor != null) ...[
                             const SizedBox(height: Space.l),
                             Text(
