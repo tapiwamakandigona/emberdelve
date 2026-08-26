@@ -672,10 +672,17 @@ class GameController extends ChangeNotifier {
     return statValue(meta, def.stat, def.param) >= def.target;
   }
 
-  void selectEpithet(String id) {
-    if (meta.selectedEpithet == id) return;
+  /// v0.66.0 The Dressed Delver: epithets are worn PER DELVER. The gate is
+  /// re-checked here (a stale UI can never select a locked epithet), and the
+  /// write always lands in charEpithet — even 'none' — so dressing a delver
+  /// overrides the legacy global fallback for that delver alone.
+  /// selectedEpithet is never written again; it survives as the fallback
+  /// for delvers the player has not dressed (MetaState.epithetFor).
+  void selectEpithet(String id, {required String forChar}) {
+    if (!meta.unlockedCharacters.contains(forChar)) return;
     if (id != defaultEpithet && !epithetUnlocked(id)) return;
-    meta.selectedEpithet = id;
+    if (meta.charEpithet[forChar] == id) return;
+    meta.charEpithet[forChar] = id;
     MetaStore.save(meta);
     notifyListeners();
   }
@@ -1259,9 +1266,13 @@ class GameController extends ChangeNotifier {
     required int embers,
   }) {
     final run = sim?.run;
+    final charId = run?['character'] as String? ?? defaultCharacter;
+    // v0.66.0: the record banks the title worn by the RUN's delver at bank
+    // time (epithetFor resolves their own dress, else the legacy fallback).
+    final worn = meta.epithetFor(charId);
     return {
       'date': dailyKey(DateTime.now()),
-      'character': run?['character'] as String? ?? defaultCharacter,
+      'character': charId,
       'difficulty': run?['difficulty'] as String? ?? 'normal',
       'ascension': run?['ascension'] as int? ?? 0,
       'result': result,
@@ -1287,8 +1298,7 @@ class GameController extends ChangeNotifier {
       // degrading by omission, exactly as shipped.
       'fights': run?['fights_won'] as int? ?? 0,
       if (runTrace.marks.isNotEmpty) 'trace': runTrace.toCompact(),
-      if (meta.selectedEpithet != defaultEpithet)
-        'epithet': meta.selectedEpithet,
+      if (worn != defaultEpithet) 'epithet': worn,
     };
   }
 
@@ -1307,7 +1317,7 @@ class GameController extends ChangeNotifier {
     return obituaryText(
       won: won,
       delverName: characters[charId]?.name ?? charId,
-      epithetTitle: epithets[meta.selectedEpithet]?.title ?? '',
+      epithetTitle: epithets[meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
       floor: floorReached,
@@ -1338,7 +1348,7 @@ class GameController extends ChangeNotifier {
     return epitaphLine(
       won: won,
       delverName: characters[charId]?.name ?? charId,
-      epithetTitle: epithets[meta.selectedEpithet]?.title ?? '',
+      epithetTitle: epithets[meta.epithetFor(charId)]?.title ?? '',
       floor: floorReached,
       killerName: won || killerId == null
           ? ''

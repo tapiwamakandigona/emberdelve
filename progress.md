@@ -2245,3 +2245,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: +7 test/charted_depth_test.dart (bank/isolation, never-lowers, round-trip, seeding incl. malformed record + explicit-key-no-reseed, merge MAX, both picker states). Suite 689/689 (/work/temp/v0650_suite3.log). analyze clean.
 - Zero sim movement. pubspec 0.65.0+91; news 0.65.0 entry (ethics-gate clean).
 - Plates (post-commit): tool/charted_depth_visual_test.dart → build/charted_depth_visual/ — 360x640 one-line tallies with floors; 320x568 worst case (999/1204/floor 9) wraps cleanly after the middot, no overflow; fresh shows no tally. Critiqued clean.
+
+## 2026-08-26 — v0.66.0 "The Dressed Delver" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: per-delver worn epithets — `MetaState.charEpithet` (map charId→epithet id; fromJson drops unknown ids) with resolver `epithetFor(charId)` falling back to legacy `selectedEpithet` (never written again, so old choices survive). Cloud merge takes the fresher side's map wholesale.
+- controller: `selectEpithet(id, {required forChar})` guards unlockedCharacters + epithetUnlocked; run records bank `'epithet'` via epithetFor. Story text, epitaph line, and share card all resolve per-delver.
+- character_screen: THE EPITHET section gains a delver chip row (keys `dress-<id>`, gated >1 unlocked delver, default target = last delved else first unlocked); epithet cards keyed; chosen state reads epithetFor(target). Caption: "Each delver wears their own. Earned by delving, never sold."
+- Tests: +8 test/dressed_delver_test.dart (guards, fallback, per-delver isolation, banking, merge, chip row gating/switching); 3 older tests re-pinned to epithetFor semantics. Suite 697/697 (/work/temp/v0660_full.log). analyze clean.
+- Plates: tool/dressed_delver_visual_test.dart → build/dressed_delver_visual/ — wardrobe 360x640 + 320x568 (chip row with Kindler chosen, shelf below, WORN travels with the target), picker with two delvers wearing different titles, fresh unchanged. Critiqued clean after two re-aims.
+- PLATE LESSON: to frame a mid-list widget, scrollUntilVisible then measure `tester.getTopLeft(...).dy` and drag by `(wantedY - dy)` — blind fixed-offset nudges overshoot.
+- Zero sim movement. pubspec 0.66.0+92; news 0.66.0 entry (ethics-gate clean); notes docs/releases/v0.66.0.md.

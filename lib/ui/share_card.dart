@@ -149,7 +149,7 @@ class DelverCardFacts {
     return DelverCardFacts(
       won: st['phase'] == 'run_won',
       delverName: characters[charId]?.name ?? charId,
-      epithetTitle: epithets[c.meta.selectedEpithet]?.title ?? '',
+      epithetTitle: epithets[c.meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
       traceGridText: c.runTrace.marks.isEmpty ? '' : traceGrid(c.runTrace),

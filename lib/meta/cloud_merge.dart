@@ -63,6 +63,9 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     activeDye: fresh.activeDye,
     selectedVista: fresh.selectedVista,
     selectedEpithet: fresh.selectedEpithet,
+    // v0.66.0: per-delver dress is a cosmetic SELECTION, so the fresher
+    // side wins wholesale — same convention as selectedEpithet/activeDye.
+    charEpithet: Map.of(fresh.charEpithet),
     preferredDifficulty: fresh.preferredDifficulty,
     preferShortRoad: fresh.preferShortRoad,
     lastDailyDate: fresh.lastDailyDate,

@@ -10,6 +10,73 @@ class CharacterScreen extends StatefulWidget {
 
 class _CharacterScreenState extends State<CharacterScreen> {
   int ascension = 0;
+  // v0.66.0 The Dressed Delver: which delver THE EPITHET shelf dresses.
+  // Defaults to the last delved (their record is freshest in mind), else
+  // the first unlocked. Screen-local — the dress itself persists in meta.
+  String? dressTarget;
+
+  String _defaultDressTarget(MetaState m) {
+    final last = m.runHistory.isNotEmpty
+        ? m.runHistory.first['character'] as String?
+        : null;
+    if (last != null && m.isUnlocked(last)) return last;
+    return charactersOrder.firstWhere(
+      m.isUnlocked,
+      orElse: () => defaultCharacter,
+    );
+  }
+
+  /// Pill row naming who the epithet taps below will dress. Hidden by the
+  /// caller when only one delver is unlocked (nothing to choose between).
+  Widget _dressChipRow(BuildContext context, MetaState m) {
+    final target = dressTarget ?? _defaultDressTarget(m);
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final id in charactersOrder)
+            if (m.isUnlocked(id))
+              Padding(
+                padding: const EdgeInsets.only(right: Space.s),
+                child: GestureDetector(
+                  key: ValueKey('dress-$id'),
+                  onTap: () {
+                    if (target == id) return;
+                    AudioService.instance?.playSfx('ui_tap');
+                    setState(() => dressTarget = id);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Space.m,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: target == id
+                          ? EmberColors.raised
+                          : EmberColors.surface,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: target == id
+                            ? EmberColors.ember
+                            : EmberColors.line,
+                      ),
+                    ),
+                    child: Text(
+                      characters[id]!.name,
+                      style: EmberText.micro.copyWith(
+                        color: target == id
+                            ? EmberColors.textPrimary
+                            : EmberColors.textDim,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.c;
@@ -85,6 +152,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
               // name; carried onto the shareable Delver's Card.
               Text('THE EPITHET', style: EmberText.micro),
               const SizedBox(height: Space.s),
+              // v0.66.0 The Dressed Delver: titles are worn per delver —
+              // the pills name who the taps below dress. Hidden with one
+              // delver unlocked (the shelf reads exactly as it always has).
+              if (m.unlockedCharacters.length > 1) ...[
+                _dressChipRow(context, m),
+                const SizedBox(height: Space.m),
+              ],
               _epithetNoneCard(context),
               const SizedBox(height: Space.m),
               for (final id in epithetsOrder) ...[
@@ -93,9 +167,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
               ],
               const SizedBox(height: Space.s),
               Text(
-                'An epithet is worn under your delver\'s name — on this '
-                'screen, on the summary, and on any card you share. Earned '
-                'by delving, never sold.',
+                'An epithet is worn under a delver\'s name — on this '
+                'screen, on the summary, and on any card you share. Each '
+                'delver wears their own. Earned by delving, never sold.',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
@@ -204,13 +278,14 @@ class _CharacterScreenState extends State<CharacterScreen> {
   /// The bare option: no epithet at all. Always selectable.
   Widget _epithetNoneCard(BuildContext context) {
     final c = widget.c;
-    final chosen = c.meta.selectedEpithet == defaultEpithet;
+    final target = dressTarget ?? _defaultDressTarget(c.meta);
+    final chosen = c.meta.epithetFor(target) == defaultEpithet;
     return GestureDetector(
       key: const ValueKey('epithet-none'),
       onTap: () {
         if (chosen) return;
         AudioService.instance?.playSfx('ui_tap');
-        c.selectEpithet(defaultEpithet);
+        c.selectEpithet(defaultEpithet, forChar: target);
         setState(() {});
       },
       child: Panel(
@@ -250,14 +325,15 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final c = widget.c;
     final e = epithets[id]!;
     final unlocked = c.epithetUnlocked(id);
-    final chosen = c.meta.selectedEpithet == id;
+    final target = dressTarget ?? _defaultDressTarget(c.meta);
+    final chosen = c.meta.epithetFor(target) == id;
     return GestureDetector(
       key: ValueKey('epithet-$id'),
       onTap: () {
         if (chosen) return;
         if (unlocked) {
           AudioService.instance?.playSfx('ui_tap');
-          c.selectEpithet(id);
+          c.selectEpithet(id, forChar: target);
         } else {
           AudioService.instance?.playSfx('ui_back');
         }
@@ -561,9 +637,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
                       Text(def.name, style: EmberText.h2),
                       // v0.36.0: the worn epithet, under each unlocked
                       // delver's name (a title is worn, not window-shopped).
-                      if (unlocked && epithets[c.meta.selectedEpithet] != null)
+                      // v0.66.0: THEIR OWN title — each delver resolves
+                      // through epithetFor (own dress, else legacy global).
+                      if (unlocked && epithets[c.meta.epithetFor(id)] != null)
                         Text(
-                          epithets[c.meta.selectedEpithet]!.title,
+                          epithets[c.meta.epithetFor(id)]!.title,
                           style: EmberText.micro.copyWith(
                             color: EmberColors.gold,
                           ),

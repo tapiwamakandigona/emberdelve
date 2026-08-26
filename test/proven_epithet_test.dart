@@ -42,12 +42,12 @@ void main() {
     final all = provings.map((p) => p.id).toList();
     c.meta.provingsCleared.addAll(all.take(provings.length - 1));
     expect(c.epithetUnlocked('the_proven'), isFalse);
-    c.selectEpithet('the_proven');
-    expect(c.meta.selectedEpithet, isNot('the_proven'));
+    c.selectEpithet('the_proven', forChar: 'kindler');
+    expect(c.meta.epithetFor('kindler'), isNot('the_proven'));
     c.meta.provingsCleared.add(all.last);
     expect(c.epithetUnlocked('the_proven'), isTrue);
-    c.selectEpithet('the_proven');
-    expect(c.meta.selectedEpithet, 'the_proven');
+    c.selectEpithet('the_proven', forChar: 'kindler');
+    expect(c.meta.epithetFor('kindler'), 'the_proven');
   });
 
   testWidgets('the shelf renders the Proven last with its honest line', (
