@@ -2362,3 +2362,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Rejected (scout): per-phase playlists (authored tension); ember price on pinning
   (paywall-shaped); shuffle; new track content (size).
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.76.0 — The New Song (2026-08-26)
+
+- One improvement: the run that first hears a track is TOLD at the summary — newly heard music
+  was the last silent earn (evidence: Overbaked 2026 "each run leaves something behind";
+  reviewer loves the soundtrack; v0.75.0 pinning finally has its discovery moment).
+- controller `runNewTracks` (run-scoped set, 'title_menu' never — seeded, not earned), recorded
+  at the same site that banks lifetime heardTracks; autosave side channel 'run_new_tracks'
+  (absent when empty) restored at boot; cleared by startRun and endToTitle.
+- summary_screen `new-song-line` (micro/dim, beside firsts-line): 1 name quoted, 2 joined,
+  3+ collapse to '"X" and N more join the Gramophone.' Helpers newSongNames (shelf order) +
+  newSongLine. Import of tracks.dart goes in screens.dart (summary is a part file).
+- Zero new assets, zero sim movement.
+- Tests +5 (test/new_song_test.dart). Suite 739/739, analyze clean. TEST LESSONS: widget tests
+  that driveToTerminal must use GameController() with NO saveDirOverride and NO boot() — real
+  IO never completes in the fake-async zone, and autosaves aimed at the setUp temp dir race
+  teardown's delete (flaky 'Directory not empty'). Also: `dart format test/*.dart` reformats
+  ~30 legacy files — format ONLY named touched files, revert churn per-file, never `checkout -- .`.
+- Plates build/new_song_visual/ (summary 360+320, collapsed line quiet, unclipped) critiqued clean.
+- pubspec 0.76.0+102; news 0.76.0; docs/releases/v0.76.0.md; scout docs/improvements/v0.76.0-lead-scout.md.
+- Rejected (scout): line-per-track (shouts); mid-run toast; "go pin it" CTA (nudge); gold styling
+  (firsts-grade fact, not a capability unlock).
+- Release blocked on GitHub auth like v0.60.0+.

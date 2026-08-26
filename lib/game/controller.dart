@@ -175,6 +175,12 @@ class GameController extends ChangeNotifier {
   // killed-and-resumed run keeps its firsts honest.
   final Set<String> runFirstMet = {};
   final Set<String> runFirstFelled = {};
+
+  /// v0.76.0 The New Song: music keys FIRST heard during this run, so the
+  /// summary can say so once (key 'new-song-line'). Run-scoped; persisted
+  /// beside the snapshot ('run_new_tracks') so a resumed run still gets its
+  /// line. Never contains 'title_menu' (seeded at boot, not earned).
+  final Set<String> runNewTracks = {};
   bool _restedThisRun = false;
 
   /// v0.8.0 spoiler-free floor trace for share text. Per-run scratch like
@@ -313,6 +319,13 @@ class GameController extends ChangeNotifier {
               ((firsts['felled'] as List?) ?? const []).whereType<String>(),
             );
           }
+          // v0.76.0: songs first heard by this run ride the same side
+          // channel — a resumed run keeps its line, pre-fix saves start
+          // clean.
+          runNewTracks.clear();
+          runNewTracks.addAll(
+            ((snap['run_new_tracks'] as List?) ?? const []).whereType<String>(),
+          );
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -364,6 +377,10 @@ class GameController extends ChangeNotifier {
         mapDepth: mapDepth,
       );
       if (key != null && key != 'title_menu' && meta.heardTracks.add(key)) {
+        // v0.76.0 The New Song: remember which songs THIS run earned so the
+        // summary can say so once. A lost side channel only ever costs the
+        // line — the heard-track fact itself is already banked above.
+        runNewTracks.add(key);
         MetaStore.save(meta);
       }
     }
@@ -426,6 +443,11 @@ class GameController extends ChangeNotifier {
         'felled': runFirstFelled.toList()..sort(),
       };
     }
+    // v0.76.0: absent when none, so a run that earns no new song writes
+    // pre-0.76.0-identical bytes.
+    if (runNewTracks.isNotEmpty) {
+      snapMap['run_new_tracks'] = runNewTracks.toList()..sort();
+    }
     if (dailyDate != null || weeklyIndex != null) {
       snapMap['run_labels'] = {
         if (dailyDate != null) 'daily': dailyDate,
@@ -484,6 +506,7 @@ class GameController extends ChangeNotifier {
     _restedThisRun = false;
     runFirstMet.clear();
     runFirstFelled.clear();
+    runNewTracks.clear();
     // v0.8.0: every fresh run traces from floor zero — a stale trace must
     // never leak a previous run's floors into this run's share text.
     runTrace = RunTrace();
@@ -1077,6 +1100,7 @@ class GameController extends ChangeNotifier {
     _restedThisRun = false;
     runFirstMet.clear();
     runFirstFelled.clear();
+    runNewTracks.clear();
     notifyListeners();
     _syncAudio();
   }
