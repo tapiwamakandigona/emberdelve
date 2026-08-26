@@ -2550,3 +2550,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   no re-credit). Suite 760/760, analyze clean. No layout change → no new plates.
 - pubspec 0.84.0+110; news 0.84.0; docs/releases/v0.84.0.md.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.85.0 — The Narrow Climb (2026-08-26)
+
+- One improvement: won summaries that ended inside the existing low-HP danger
+  rule (HP*10 <= max*3, the rule that darkens combat music since v0.23.0) close
+  with one dim line: 'A narrow climb home — N HP standing.' Key `narrow-climb`,
+  placed between settled-score and the insight panel. Helper narrowClimbLine(c)
+  in summary_screen (reads c.state: phase run_won + player hp/max_hp; null on
+  losses, comfortable wins, missing snapshot). Echoes the victory track "The
+  Climb Home". Near-miss memory = the run players retell; stated at the only
+  honest moment, nothing persisted.
+- Scout rejected: showing final HP on every win (flat stat); a second "close"
+  threshold (danger rule owns the word); persisting narrowness into _runRecord.
+- Tests +3 (test/narrow_climb_test.dart: boundary-inclusive 9/30 fires, 10/30
+  null, loss null — playOut pure controller, then mutate sim.player hp).
+- Plates tool/narrow_climb_visual_test.dart (cloned from new_song template,
+  firstWin() forces hp 1/30): clean 360x640 + 320x568, single line both widths.
+- Suite 763/763, analyze clean. pubspec 0.85.0+111; news 0.85.0;
+  docs/releases/v0.85.0.md. Release blocked on GitHub auth like v0.60.0+.
