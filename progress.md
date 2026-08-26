@@ -2511,3 +2511,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   part-of, not importable).
 - pubspec 0.82.0+108; news 0.82.0; docs/releases/v0.82.0.md.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.83.0 — The Depth Gauge (2026-08-26)
+
+- One improvement: the map hint caption opens with the live depth — 'Floor N of M ·
+  Tap a glowing node to descend · Pool: X dice · Y relics'. Mid-run depth was stated
+  NOWHERE (players counted node rows); found by asking what navigation fact the hint
+  line omits. Surveying trilogy complete: Sounding Line (chart) / Plumb Line (record) /
+  Depth Gauge (live reading). Pure read of curLayer + layers, same numbers as the
+  record and the lantern.
+- Scout rejected: 'new depth' suffix past the record (lantern says it spatially);
+  TopBar floor chip in all phases (shared-chrome blast radius, separate release if
+  ever); shortening the descend hint (only first-delve text instruction).
+- Tests +1 (test/depth_gauge_test.dart). Suite 758/758, analyze clean. Plates
+  build/depth_gauge_visual/ clean both widths (wraps to two centered micro lines).
+- pubspec 0.83.0+109; news 0.83.0; docs/releases/v0.83.0.md.
+- Release blocked on GitHub auth like v0.60.0+.

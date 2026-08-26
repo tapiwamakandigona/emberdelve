@@ -207,7 +207,10 @@ class _MapScreenState extends State<MapScreen>
             Padding(
               padding: const EdgeInsets.all(Space.l),
               child: Text(
-                'Tap a glowing node to descend · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
+                // v0.83.0 The Depth Gauge: the live depth, stated where the
+                // descent is chosen — same layer numbers the run record and
+                // the lantern (v0.82.0) already use.
+                'Floor $curLayer of $layers · Tap a glowing node to descend · Pool: ${(st['player'] as Map)['dice'].length} dice · ${(run['relics'] as List).length} relics',
                 style: EmberText.micro,
                 textAlign: TextAlign.center,
               ),
