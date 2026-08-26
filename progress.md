@@ -2451,3 +2451,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - pubspec 0.79.0+105; news 0.79.0; docs/releases/v0.79.0.md; scout rejected fire-every-
   fell (noise), reopening scores (see-saw treadmill), ember reward (farming), taunt copy.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.80.0 — The Plumb Line (2026-08-26)
+
+- One improvement: Ledger LIFETIME panel states the lifetime deepest floor —
+  'Deepest floor N' (key 'plumb-line', Icons.south, ember), gated bestFloor > 0.
+  bestFloor was banked, gated Deepshale, fed an achievement, fired deepest-line — but
+  no surface ever STATED the number. Sounding line = relative; plumb line = absolute.
+- Row placed after Best ascension, before Exact kills. Tests +2 (test/plumb_line_test.dart).
+  Suite 751/751, analyze clean. Plates build/plumb_line_visual/ (from old_foe template,
+  bestFloor 14) clean both widths.
+- pubspec 0.80.0+106; news 0.80.0; docs/releases/v0.80.0.md; scout rejected per-difficulty
+  rows (padding), 'of N floors' denominator (lies for short/daily), title-screen restate.
+- Release blocked on GitHub auth like v0.60.0+.
