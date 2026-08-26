@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.83.0';
+const String currentAppVersion = '0.84.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.84.0',
+    title: 'The Song Credit',
+    lines: [
+      'The first time a song ever plays, its name appears — once, at the '
+          'moment you hear it.',
+      'Eight songs, eight credits, a lifetime.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.83.0',
     title: 'The Depth Gauge',

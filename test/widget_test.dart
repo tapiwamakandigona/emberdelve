@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/data/tracks.dart';
 import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/sim.dart';
 import 'package:emberdelve/ui/fx.dart';
@@ -96,6 +97,9 @@ void main() {
     tester,
   ) async {
     final c = GameController();
+    // v0.84.0: pre-hear the catalog so the once-ever song-credit toast
+    // cannot float over the buttons this test taps.
+    c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
@@ -142,6 +146,9 @@ void main() {
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
     c.meta.tipsSeen.addAll(ContextTips.all);
+    // v0.84.0: pre-hear the catalog so the once-ever song-credit toast
+    // cannot float over the buttons this test taps.
+    c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );

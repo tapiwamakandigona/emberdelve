@@ -20,6 +20,7 @@ import '../data/dice.dart';
 import 'tips.dart';
 import 'tour.dart';
 import '../data/relics.dart';
+import '../data/tracks.dart';
 import '../data/enemies.dart';
 import '../meta/achievements.dart';
 import '../meta/forge.dart';
@@ -390,6 +391,13 @@ class GameController extends ChangeNotifier {
         // summary can say so once. A lost side channel only ever costs the
         // line — the heard-track fact itself is already banked above.
         runNewTracks.add(key);
+        // v0.84.0 The Song Credit: name the song at the only moment the
+        // name can bind to the music — its first hearing ever. Once per
+        // track per profile (guarded by the add above); the catalog
+        // resolves the name so a retired key is never credited. The
+        // summary's grouped new-song line (v0.76.0) still banks the run.
+        final credit = trackByKey(key)?.name;
+        if (credit != null) flash = '"$credit" — first hearing';
         MetaStore.save(meta);
       }
     }

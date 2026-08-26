@@ -2527,3 +2527,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   build/depth_gauge_visual/ clean both widths (wraps to two centered micro lines).
 - pubspec 0.83.0+109; news 0.83.0; docs/releases/v0.83.0.md.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.84.0 — The Song Credit (2026-08-26)
+
+- One improvement: the first time a track ever plays, the flash toast names it —
+  '"Deeper Still" — first hearing'. Hooked exactly on meta.heardTracks.add(key)
+  returning true in the controller's heard-track block (so once per track per
+  profile, max 8 toasts a lifetime); name resolves via new trackByKey() in
+  lib/data/tracks.dart (never credit a ghost key). Rides existing showFlash
+  snackbar (TalkBack live region free). Reviewer anchor: "the music is 9/10" —
+  the best-reviewed asset now introduces itself at the only moment a name can
+  bind to the music.
+- Scout rejected: persistent now-playing chip (standing chrome, transient fact);
+  crediting every hearing (noise); ♪ glyph (font-coverage risk).
+- SONG-CREDIT TEST LESSON: the once-ever credit snackbar floats over bottom
+  buttons for 1.4s in widget tests driving FRESH profiles into combat — 4 tests
+  broke (widget_test boon+reroll, tour_test fresh-profile, temper_ui _atRest).
+  Fix idiom = same as tutorialSeen/tipsSeen suppression: pre-hear the catalog
+  `c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key])`.
+  Future fresh-profile widget tests that tap bottom-edge UI should seed this.
+- Tests +2 (test/song_credit_test.dart, pure controller: first credit at map,
+  no re-credit). Suite 760/760, analyze clean. No layout change → no new plates.
+- pubspec 0.84.0+110; news 0.84.0; docs/releases/v0.84.0.md.
+- Release blocked on GitHub auth like v0.60.0+.

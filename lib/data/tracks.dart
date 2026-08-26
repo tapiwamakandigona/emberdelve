@@ -15,21 +15,9 @@ class TrackDef {
 }
 
 const List<TrackDef> gramophoneTracks = [
-  TrackDef(
-    key: 'title_menu',
-    name: 'Hearthside',
-    hint: 'Heard at the hearth.',
-  ),
-  TrackDef(
-    key: 'map',
-    name: 'Into the Delve',
-    hint: 'Begin a delve.',
-  ),
-  TrackDef(
-    key: 'combat',
-    name: 'Steel and Ember',
-    hint: 'Meet a foe below.',
-  ),
+  TrackDef(key: 'title_menu', name: 'Hearthside', hint: 'Heard at the hearth.'),
+  TrackDef(key: 'map', name: 'Into the Delve', hint: 'Begin a delve.'),
+  TrackDef(key: 'combat', name: 'Steel and Ember', hint: 'Meet a foe below.'),
   TrackDef(
     key: 'combat_elite',
     name: 'Iron Between',
@@ -45,14 +33,19 @@ const List<TrackDef> gramophoneTracks = [
     name: 'The Deep Crowned',
     hint: 'Stand before a crowned foe.',
   ),
-  TrackDef(
-    key: 'victory',
-    name: 'The Climb Home',
-    hint: 'Win a delve.',
-  ),
+  TrackDef(key: 'victory', name: 'The Climb Home', hint: 'Win a delve.'),
   TrackDef(
     key: 'defeat',
     name: 'Ashes, Gently',
     hint: 'The fire keeps this one for when a delve ends early.',
   ),
 ];
+
+/// Catalog lookup by AudioService key; null for retired/unknown keys so a
+/// caller can refuse to name a ghost (v0.84.0 The Song Credit).
+TrackDef? trackByKey(String key) {
+  for (final t in gramophoneTracks) {
+    if (t.key == key) return t;
+  }
+  return null;
+}
