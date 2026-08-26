@@ -140,6 +140,27 @@ class TitleScreen extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                 ),
                               ],
+                              // v0.71.0 The First Words: the premise, told
+                              // once — only a profile with no ended run
+                              // sees it (the review that asked "what's a
+                              // delve" never could again). §Ethics: states
+                              // the fiction, asks nothing.
+                              if (firstWordsLine(m) != null) ...[
+                                const SizedBox(height: Space.m),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: Space.l,
+                                  ),
+                                  child: Text(
+                                    firstWordsLine(m)!,
+                                    key: const ValueKey('first-words'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: Space.xxl),
                               // Difficulty selector (v0.3.2): sticky, honest about the trade —
                               // easier fights pay fewer embers, harder fights pay more. The
@@ -815,6 +836,19 @@ class _HearthsidePost extends StatelessWidget {
 /// retires itself. [now] is injectable for tests; production uses the
 /// wall clock.
 const int keptFireDays = 7;
+
+/// v0.71.0 The First Words: a fresh profile's title tells the PREMISE —
+/// a player review finished easy mode "still not understanding what's a
+/// delve" (the tour teaches HOW, nothing said WHAT). Shown only while no
+/// run has ever ended; the first banked run retires it forever. Pure
+/// derived state, no save field — same self-clearing pattern as
+/// [keptFireLine], and the two can never collide (kept-fire needs a
+/// remembered run).
+String? firstWordsLine(MetaState m) {
+  if (m.runHistory.isNotEmpty || m.runsPlayed > 0) return null;
+  return 'The delve is the dark below the hearth — floor under floor '
+      'of it. Go down with your dice, come back with the Ember.';
+}
 
 String? keptFireLine(MetaState m, {DateTime? now}) {
   if (m.runHistory.isEmpty) return null;

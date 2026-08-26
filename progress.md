@@ -2284,3 +2284,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: +3 test/pictured_card_test.dart (facts bank charId+dye, fromRecord meta/no-meta, widget shows sprite + both old icons gone). Suite 714/714 (/work/temp/v0700_full.log). analyze clean.
 - PLATE HARNESS FIXES (tool/share_card_visual_test.dart): (1) first card plate rendered a BLANK sprite slot — decode race; runAsync 400ms delay before snap (established sprite-plate lesson now applies to DelverCard too). (2) STALE SEED: card_loss/sheet_loss used seed 13, which WINS since the v0.47.0 re-anchor — the "loss" plates had silently been wins; re-pinned to 18. Trace-grid NO GLYPH tofu on plates = harness-only emoji-font gap (🟩🟨🔥 render fine on device), pre-existing, left alone.
 - Zero sim movement. pubspec 0.70.0+96; news 0.70.0 entry; notes docs/releases/v0.70.0.md; scout docs/improvements/v0.70.0-lead-scout.md. Plates build/share_card_visual/ critiqued clean on re-render.
+
+## v0.71.0 — The First Words (2026-08-26)
+- Player review: "I still don't understand what's a delve" — tour teaches HOW, nothing stated the PREMISE.
+- `firstWordsLine(MetaState)` beside keptFireLine in title_screen.dart: one micro line on a fresh title
+  (`runHistory.isEmpty && runsPlayed == 0`), gone forever after the first banked run. Key `first-words`.
+  Cannot collide with kept-fire. No save-format or sim movement.
+- Tests +3 (test/first_words_test.dart; endToTitle in widget test needs remount around it — direct
+  endToTitle while SummaryScreen mounted throws null-check on state). Suite 717/717. analyze clean.
+- Plates build/first_words_visual/ (fresh 360/320 wrap, played 360 absent) critiqued clean.
+- pubspec 0.71.0+97; news 0.71.0; docs/releases/v0.71.0.md; scout docs/improvements/v0.71.0-lead-scout.md.
+- Release blocked on GitHub auth like v0.60.0+.
