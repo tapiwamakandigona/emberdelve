@@ -2589,3 +2589,28 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   wraps to two centered lines.
 - Suite 767/767, analyze clean. pubspec 0.86.0+112; news 0.86.0;
   docs/releases/v0.86.0.md. Release blocked on GitHub auth like v0.60.0+.
+
+## v0.87.0 — The Guttering Foe (2026-08-26)
+
+- One improvement: the enemy HP bar gutters when the foe is inside the 30%
+  rule — fill turns EmberColors.gold (player's good-news colour) and caption
+  reads 'ENEMY HP · NEARLY SPENT · TURN N' (enemy_panel.dart). StatBar's
+  semantics speak the label, so TalkBack hears the tell free. The most
+  tactically valuable fact in the fight, visible while the player can act.
+- Rule centralized: top-level `inTheRed(int hp, int maxHp)` in controller.dart
+  (alive && hp*10 <= max*3); _inDanger + narrowClimbLine + lastThreadLine
+  refactored onto it (behaviour-identical) — four voices, one definition,
+  drift risk retired.
+- OVERFLOW LESSON: the longer caption pushed combat 1px over at 320x568 in
+  overflow_probe (1.3x text). Fix in StatBar itself: caption wrapped in
+  FittedBox(scaleDown, centerLeft, maxLines 1) — captions are one line by
+  design; scale, never wrap. All bars benefit.
+- Scout rejected: pulsing/flame animation (hot-path motion + reduce-motion
+  players lose the tell); "one more hit" math (would sometimes lie);
+  player-side bar mirror (music+vignette already tell it).
+- Tests +3 (test/guttering_foe_test.dart: inTheRed boundary pins incl. dead
+  ≠ close; gold+caption widget drive; healthy-foe red drive). Plates
+  tool/guttering_foe_visual_test.dart (pure walk to fight, force 9/30,
+  turn 12): clean 360x640 + 320x568, re-snapped after FittedBox fix.
+- Suite 770/770, analyze clean. pubspec 0.87.0+113; news 0.87.0;
+  docs/releases/v0.87.0.md. Release blocked on GitHub auth like v0.60.0+.

@@ -69,12 +69,20 @@ extension _CombatEnemyPanelBand on _CombatScreenState {
                 ],
               ),
               const SizedBox(height: Space.s),
+              // v0.87.0 The Guttering Foe: inside the shared 30% rule the
+              // bar turns gold — the player's good-news colour — and the
+              // caption says so. StatBar's semantics speak the label, so
+              // screen readers hear the tell for free.
               StatBar(
                 value: enemyHp,
                 max: enemy['max_hp'] as int,
                 block: enemy['block'] as int? ?? 0,
-                color: EmberColors.danger,
-                label: 'ENEMY HP · TURN ${h.turn}',
+                color: inTheRed(enemyHp, enemy['max_hp'] as int)
+                    ? EmberColors.gold
+                    : EmberColors.danger,
+                label: inTheRed(enemyHp, enemy['max_hp'] as int)
+                    ? 'ENEMY HP · NEARLY SPENT · TURN ${h.turn}'
+                    : 'ENEMY HP · TURN ${h.turn}',
               ),
             ],
           ),
