@@ -39,12 +39,29 @@ class SummaryScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           const Spacer(),
-                          Icon(
-                            won
-                                ? Icons.emoji_events
-                                : Icons.local_fire_department,
-                            size: 56,
-                            color: won ? EmberColors.gold : EmberColors.ember,
+                          // v0.69.0 The Standing Delver: the run's OWN
+                          // delver stands where a generic trophy/flame
+                          // stood — in their worn dye, breathing on a win,
+                          // still on a loss (stillness is the dignity).
+                          // Same 56dp slot as the old icon, so rhythm and
+                          // short-screen behavior never shift.
+                          Builder(
+                            builder: (context) {
+                              final charId =
+                                  run['character'] as String? ??
+                                  defaultCharacter;
+                              return Opacity(
+                                opacity: won ? 1 : 0.55,
+                                child: SpriteView(
+                                  charId,
+                                  key: const ValueKey('summary-delver'),
+                                  height: 56,
+                                  animate: false,
+                                  bob: won,
+                                  dye: Art.dyeFilter(c.meta.dyeFor(charId)),
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(height: Space.m),
                           Text(
@@ -65,6 +82,28 @@ class SummaryScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(height: Space.s),
+                          // The delver's name with their worn title — the
+                          // picker's voice, on the screen where the run's
+                          // identity pays off.
+                          Builder(
+                            builder: (context) {
+                              final charId =
+                                  run['character'] as String? ??
+                                  defaultCharacter;
+                              final name = characters[charId]?.name ?? charId;
+                              final title =
+                                  epithets[c.meta.epithetFor(charId)]?.title;
+                              return Text(
+                                title == null ? name : '$name, $title',
+                                key: const ValueKey('summary-delver-name'),
+                                textAlign: TextAlign.center,
+                                style: EmberText.body.copyWith(
+                                  color: EmberColors.textDim,
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(height: Space.xl),
                           Panel(
