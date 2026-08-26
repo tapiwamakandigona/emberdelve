@@ -66,6 +66,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     // v0.66.0: per-delver dress is a cosmetic SELECTION, so the fresher
     // side wins wholesale — same convention as selectedEpithet/activeDye.
     charEpithet: Map.of(fresh.charEpithet),
+    charName: Map.of(fresh.charName),
     charDye: Map.of(fresh.charDye),
     preferredDifficulty: fresh.preferredDifficulty,
     preferShortRoad: fresh.preferShortRoad,

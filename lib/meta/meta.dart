@@ -82,6 +82,12 @@ class MetaState {
   // player dresses that delver differently. selectedEpithet is never
   // written after v0.66.0; it survives purely as this fallback.
   Map<String, String> charEpithet;
+
+  /// v0.72.0: the name a given delver was GIVEN by the player — their own
+  /// when they have one, else the delver's true name from the roster.
+  /// Same contract as charEpithet/charDye: absent key = default; the
+  /// built-in name is never overwritten.
+  Map<String, String> charName;
   // v0.67.0 The Dyed Delver — per-delver worn dye (delver id → dye id).
   // Same contract as charEpithet: an absent key falls back to the legacy
   // global activeDye, which is never written after v0.67.0. OWNERSHIP stays
@@ -191,6 +197,7 @@ class MetaState {
     this.selectedVista = defaultVista,
     this.selectedEpithet = defaultEpithet,
     Map<String, String>? charEpithet,
+    Map<String, String>? charName,
     Map<String, String>? charDye,
     Set<String>? ownedCodex,
     this.lastDailyDate,
@@ -230,6 +237,7 @@ class MetaState {
        charWins = charWins ?? {},
        charBestFloor = charBestFloor ?? {},
        charEpithet = charEpithet ?? {},
+       charName = charName ?? {},
        charDye = charDye ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
@@ -270,6 +278,7 @@ class MetaState {
     if (selectedVista != defaultVista) 'selectedVista': selectedVista,
     if (selectedEpithet != defaultEpithet) 'selectedEpithet': selectedEpithet,
     if (charEpithet.isNotEmpty) 'charEpithet': charEpithet,
+    if (charName.isNotEmpty) 'charName': charName,
     if (charDye.isNotEmpty) 'charDye': charDye,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
@@ -319,6 +328,34 @@ class MetaState {
   /// have one, else the legacy global selection. EVERY read surface
   /// (picker, summary, share card, run-record banking) goes through this.
   String epithetFor(String charId) => charEpithet[charId] ?? selectedEpithet;
+
+  /// v0.72.0: the name a given delver answers to — the player's gift when
+  /// one was given, else the roster name. EVERY surface that speaks OF a
+  /// delver (picker, summary, ledger, card banking) goes through this.
+  String nameFor(String charId) =>
+      charName[charId] ?? characters[charId]?.name ?? charId;
+
+  /// Pure name hygiene: trim, collapse inner whitespace, strip control
+  /// characters, clamp to 16 chars. Empty result means "no name given".
+  static String sanitizeGivenName(String raw) {
+    final cleaned = raw
+        .replaceAll(RegExp(r'[\u0000-\u001f\u007f]'), '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    return cleaned.length > 16 ? cleaned.substring(0, 16).trim() : cleaned;
+  }
+
+  static Map<String, String> _nameMap(Object? v) {
+    if (v is! Map) return {};
+    final out = <String, String>{};
+    v.forEach((k, val) {
+      if (val is String && characters.containsKey('$k')) {
+        final name = sanitizeGivenName(val);
+        if (name.isNotEmpty) out['$k'] = name;
+      }
+    });
+    return out;
+  }
 
   /// v0.67.0: the dye a given delver wears — their own choice when they
   /// have one, else the legacy global selection. EVERY sprite-painting
@@ -409,6 +446,7 @@ class MetaState {
     // v0.66.0: unknown delver ids and unknown epithet ids are dropped on
     // decode (same hygiene as the selection fallbacks above).
     charEpithet: _epithetMap(j['charEpithet']),
+    charName: _nameMap(j['charName']),
     charDye: _dyeMap(j['charDye']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String

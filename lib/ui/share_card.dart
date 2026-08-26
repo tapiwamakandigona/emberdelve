@@ -95,7 +95,8 @@ class DelverCardFacts {
   static DelverCardFacts fromRecord(Map<String, Object?> r, {MetaState? meta}) {
     final won = (r['result'] as String? ?? 'lost') == 'won';
     final charId = r['character'] as String? ?? defaultCharacter;
-    final delverName = characters[charId]?.name ?? charId;
+    final delverName =
+        meta?.nameFor(charId) ?? characters[charId]?.name ?? charId;
     final difficulty = r['difficulty'] as String? ?? 'normal';
     final ascension = int.tryParse('${r['ascension'] ?? 0}') ?? 0;
     final seed = int.tryParse('${r['seed'] ?? 0}') ?? 0;
@@ -163,7 +164,7 @@ class DelverCardFacts {
     final charId = run['character'] as String? ?? defaultCharacter;
     return DelverCardFacts(
       won: st['phase'] == 'run_won',
-      delverName: characters[charId]?.name ?? charId,
+      delverName: c.meta.nameFor(charId),
       charId: charId,
       dyeId: c.meta.dyeFor(charId),
       epithetTitle: epithets[c.meta.epithetFor(charId)]?.title ?? '',

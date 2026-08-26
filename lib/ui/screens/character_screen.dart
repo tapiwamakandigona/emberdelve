@@ -26,6 +26,60 @@ class _CharacterScreenState extends State<CharacterScreen> {
     );
   }
 
+  /// v0.72.0 The Given Name: name (or un-name) a delver. Empty field =
+  /// restore the true name — reversible, free, no confirmation drama.
+  void _promptName(BuildContext context, String id) {
+    final c = widget.c;
+    final trueName = characters[id]!.name;
+    final given = c.meta.charName[id];
+    final input = TextEditingController(text: given ?? '');
+    showDialog<void>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: EmberColors.surface,
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: Space.l,
+          vertical: Space.xl,
+        ),
+        title: Text('Name this delver', style: EmberText.h2),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Theirs by birth: $trueName. Leave the field empty to '
+              'give it back.',
+              style: EmberText.bodyDim,
+            ),
+            const SizedBox(height: Space.m),
+            TextField(
+              key: const ValueKey('name-field'),
+              controller: input,
+              autofocus: true,
+              maxLength: 16,
+              style: EmberText.body,
+              decoration: InputDecoration(hintText: trueName),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: Text('Cancel', style: EmberText.bodyDim),
+          ),
+          TextButton(
+            key: const ValueKey('name-save'),
+            onPressed: () {
+              c.setDelverName(id, input.text);
+              Navigator.of(dialogCtx).pop();
+              setState(() {});
+            },
+            child: Text('Keep', style: EmberText.body),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Pill row naming who the epithet taps below will dress. Hidden by the
   /// caller when only one delver is unlocked (nothing to choose between).
   Widget _dressChipRow(
@@ -66,7 +120,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                       ),
                     ),
                     child: Text(
-                      characters[id]!.name,
+                      m.nameFor(id),
                       style: EmberText.micro.copyWith(
                         color: target == id
                             ? EmberColors.textPrimary
@@ -650,7 +704,42 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(def.name, style: EmberText.h2),
+                      // v0.72.0 The Given Name: an unlocked delver's name
+                      // is the player's to give. Tap to name; clearing the
+                      // field restores the true name. Locked delvers keep
+                      // their roster name untouchable.
+                      if (!unlocked)
+                        Text(def.name, style: EmberText.h2)
+                      else
+                        InkWell(
+                          key: ValueKey('name-edit-$id'),
+                          onTap: () => _promptName(context, id),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Fit, don't clip: a full 16-char given name
+                              // scales down slightly rather than losing its
+                              // tail to an ellipsis (the logotype lesson).
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    c.meta.nameFor(id),
+                                    style: EmberText.h2,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: Space.s),
+                              const Icon(
+                                Icons.edit,
+                                size: 14,
+                                color: EmberColors.textDim,
+                              ),
+                            ],
+                          ),
+                        ),
                       // v0.36.0: the worn epithet, under each unlocked
                       // delver's name (a title is worn, not window-shopped).
                       // v0.66.0: THEIR OWN title — each delver resolves

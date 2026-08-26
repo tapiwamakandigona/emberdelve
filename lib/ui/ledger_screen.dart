@@ -388,7 +388,7 @@ class LedgerScreen extends StatelessWidget {
     final result = r['result'] as String? ?? 'lost';
     final won = result == 'won';
     final abandoned = result == 'abandoned';
-    final ch = characters[r['character']]?.name ?? '${r['character']}';
+    final ch = c.meta.nameFor('${r['character']}');
     // v0.58.0 The Remembered Fights: fuller records (v0.57.0) bank the worn
     // epithet and the fights count — the row states them when they exist.
     // Old records lack the keys and render exactly as before.
@@ -595,6 +595,9 @@ class LedgerScreen extends StatelessWidget {
   Widget _delverRow(dynamic m, String id) {
     final ch = characters[id]!;
     final unlocked = m.isUnlocked(id) as bool;
+    // A named delver keeps their given name here too; locked delvers
+    // (and the unnamed) fall back to the roster name.
+    final shownName = unlocked ? m.nameFor(id) as String : ch.name;
     final runs = (m.charRuns[id] as int?) ?? 0;
     final wins = (m.charWins[id] as int?) ?? 0;
     return Row(
@@ -607,7 +610,7 @@ class LedgerScreen extends StatelessWidget {
         const SizedBox(width: Space.m),
         Expanded(
           child: Text(
-            ch.name,
+            shownName,
             style: EmberText.body.copyWith(
               color: unlocked
                   ? EmberColors.textPrimary
