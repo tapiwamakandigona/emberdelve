@@ -634,9 +634,14 @@ class GameController extends ChangeNotifier {
     return ok;
   }
 
-  void setActiveDye(String id) {
-    if (!meta.ownedDyes.contains(id) || meta.activeDye == id) return;
-    meta.activeDye = id;
+  // v0.67.0 The Dyed Delver: dyes are worn per delver. Ownership stays
+  // global; legacy activeDye is never written again (it survives purely as
+  // the dyeFor fallback for pre-v0.67.0 choices).
+  void setActiveDye(String id, {required String forChar}) {
+    if (!meta.ownedDyes.contains(id)) return;
+    if (!meta.unlockedCharacters.contains(forChar)) return;
+    if (meta.dyeFor(forChar) == id) return;
+    meta.charDye[forChar] = id;
     MetaStore.save(meta);
     notifyListeners();
   }

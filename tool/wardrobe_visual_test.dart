@@ -118,7 +118,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byKey(const ValueKey('dye-emberwash')));
     await tester.pump(const Duration(milliseconds: 300));
-    expect(c.meta.activeDye, 'emberwash', reason: 'dye must be worn');
+    expect(c.meta.dyeFor('kindler'), 'emberwash', reason: 'dye must be worn');
     key = GlobalKey();
     await pumpChar(key);
     await shoot(tester, key, 'portraits_emberwash');

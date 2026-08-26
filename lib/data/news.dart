@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.66.0';
+const String currentAppVersion = '0.67.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.67.0',
+    title: 'The Dyed Delver',
+    lines: [
+      'Dyes are now worn per delver too. Buy a dye once with embers and '
+          'any delver may wear it - the Kindler in Emberwash, the Warden '
+          'in Frostveil - each keeps their own coat on every screen.',
+      'The hearth shows it best: your delvers gather around the fire, '
+          'each in the color you chose for them. Pure cosmetics, real '
+          'prices up front, as always. Thank you for playing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.66.0',
     title: 'The Dressed Delver',

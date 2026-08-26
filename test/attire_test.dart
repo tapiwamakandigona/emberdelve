@@ -192,7 +192,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('dye-emberwash')));
     await tester.pump(const Duration(milliseconds: 200));
     expect(c.meta.ownedDyes, contains('emberwash'));
-    expect(c.meta.activeDye, 'emberwash');
+    // v0.67.0: wearing is per delver — a fresh profile dresses the kindler.
+    expect(c.meta.dyeFor('kindler'), 'emberwash');
+    expect(c.meta.activeDye, defaultDye, reason: 'legacy field never written');
     expect(c.meta.embers, 10);
     expect(find.text('WORN'), findsOneWidget);
     // A dye the purse cannot cover is refused and nothing changes.
@@ -206,7 +208,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('dye-frostveil')));
     await tester.pump(const Duration(milliseconds: 200));
     expect(c.meta.ownedDyes.contains('frostveil'), isFalse);
-    expect(c.meta.activeDye, 'emberwash');
+    expect(c.meta.dyeFor('kindler'), 'emberwash');
     expect(c.meta.embers, 10);
   });
 }

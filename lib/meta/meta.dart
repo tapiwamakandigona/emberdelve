@@ -82,6 +82,12 @@ class MetaState {
   // player dresses that delver differently. selectedEpithet is never
   // written after v0.66.0; it survives purely as this fallback.
   Map<String, String> charEpithet;
+  // v0.67.0 The Dyed Delver — per-delver worn dye (delver id → dye id).
+  // Same contract as charEpithet: an absent key falls back to the legacy
+  // global activeDye, which is never written after v0.67.0. OWNERSHIP stays
+  // global (ownedDyes) — embers buy a dye once and every delver may wear it;
+  // only the wearing is per-delver.
+  Map<String, String> charDye;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -185,6 +191,7 @@ class MetaState {
     this.selectedVista = defaultVista,
     this.selectedEpithet = defaultEpithet,
     Map<String, String>? charEpithet,
+    Map<String, String>? charDye,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -223,6 +230,7 @@ class MetaState {
        charWins = charWins ?? {},
        charBestFloor = charBestFloor ?? {},
        charEpithet = charEpithet ?? {},
+       charDye = charDye ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedDyes = ownedDyes ?? {defaultDye},
@@ -262,6 +270,7 @@ class MetaState {
     if (selectedVista != defaultVista) 'selectedVista': selectedVista,
     if (selectedEpithet != defaultEpithet) 'selectedEpithet': selectedEpithet,
     if (charEpithet.isNotEmpty) 'charEpithet': charEpithet,
+    if (charDye.isNotEmpty) 'charDye': charDye,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -310,6 +319,24 @@ class MetaState {
   /// have one, else the legacy global selection. EVERY read surface
   /// (picker, summary, share card, run-record banking) goes through this.
   String epithetFor(String charId) => charEpithet[charId] ?? selectedEpithet;
+
+  /// v0.67.0: the dye a given delver wears — their own choice when they
+  /// have one, else the legacy global selection. EVERY sprite-painting
+  /// surface (stage, map, picker, hearth, swatches) goes through this.
+  String dyeFor(String charId) => charDye[charId] ?? activeDye;
+
+  static Map<String, String> _dyeMap(Object? v) {
+    if (v is! Map) return {};
+    final out = <String, String>{};
+    v.forEach((k, val) {
+      if (val is String &&
+          characters.containsKey('$k') &&
+          delverDyes.containsKey(val)) {
+        out['$k'] = val;
+      }
+    });
+    return out;
+  }
 
   static Map<String, String> _epithetMap(Object? v) {
     if (v is! Map) return {};
@@ -382,6 +409,7 @@ class MetaState {
     // v0.66.0: unknown delver ids and unknown epithet ids are dropped on
     // decode (same hygiene as the selection fallbacks above).
     charEpithet: _epithetMap(j['charEpithet']),
+    charDye: _dyeMap(j['charDye']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

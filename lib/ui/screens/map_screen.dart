@@ -247,7 +247,7 @@ class _MapScreenState extends State<MapScreen>
                 characterId,
                 height: 30,
                 animate: false,
-                dye: Art.dyeFilter(widget.c.meta.activeDye),
+                dye: Art.dyeFilter(widget.c.meta.dyeFor(characterId)),
               ),
               Container(
                 width: 14,

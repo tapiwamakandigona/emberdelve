@@ -28,7 +28,11 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   /// Pill row naming who the epithet taps below will dress. Hidden by the
   /// caller when only one delver is unlocked (nothing to choose between).
-  Widget _dressChipRow(BuildContext context, MetaState m) {
+  Widget _dressChipRow(
+    BuildContext context,
+    MetaState m, {
+    String keyPrefix = 'dress',
+  }) {
     final target = dressTarget ?? _defaultDressTarget(m);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -39,7 +43,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: Space.s),
                 child: GestureDetector(
-                  key: ValueKey('dress-$id'),
+                  key: ValueKey('$keyPrefix-$id'),
                   onTap: () {
                     if (target == id) return;
                     AudioService.instance?.playSfx('ui_tap');
@@ -122,14 +126,23 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 ],
               ),
               const SizedBox(height: Space.s),
+              // v0.67.0 The Dyed Delver: dyes are worn per delver. Same
+              // pills as THE EPITHET, same shared target — one delver is
+              // being dressed on this screen.
+              if (m.unlockedCharacters.length > 1) ...[
+                _dressChipRow(context, m, keyPrefix: 'dye-dress'),
+                const SizedBox(height: Space.m),
+              ],
               for (final id in delverDyesOrder) ...[
                 _dyeCard(context, id),
                 const SizedBox(height: Space.m),
               ],
               const SizedBox(height: Space.s),
               Text(
-                'Dyes recolor your delver everywhere they appear. '
-                'Pure cosmetics — the delve itself never changes.',
+                'Dyes recolor a delver everywhere they appear, and each '
+                'delver keeps their own. Bought once with embers, worn by '
+                'any of them. Pure cosmetics — the delve itself never '
+                'changes.',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
@@ -477,7 +490,8 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final d = delverDyes[id]!;
     final m = c.meta;
     final owned = m.ownedDyes.contains(id);
-    final active = m.activeDye == id;
+    final target = dressTarget ?? _defaultDressTarget(m);
+    final active = m.dyeFor(target) == id;
     final affordable = m.embers >= d.costEmbers;
     return GestureDetector(
       key: ValueKey('dye-$id'),
@@ -485,9 +499,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
         if (active) return;
         if (owned) {
           AudioService.instance?.playSfx('ui_tap');
-          c.setActiveDye(id);
+          c.setActiveDye(id, forChar: target);
         } else if (c.buyDye(id)) {
-          c.setActiveDye(id);
+          c.setActiveDye(id, forChar: target);
         } else {
           AudioService.instance?.playSfx('ui_back');
         }
@@ -503,7 +517,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
               child: FittedBox(
                 fit: BoxFit.contain,
                 child: SpriteView(
-                  defaultCharacter,
+                  // v0.67.0: the swatch is the delver being dressed, wearing
+                  // this dye — what you see is exactly what they'll paint.
+                  target,
                   height: 40,
                   animate: false,
                   dye: Art.dyeFilter(id),
@@ -614,7 +630,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                           id,
                           height: 56,
                           animate: false,
-                          dye: Art.dyeFilter(c.meta.activeDye),
+                          dye: Art.dyeFilter(c.meta.dyeFor(id)),
                         ),
                         Positioned(
                           right: 0,

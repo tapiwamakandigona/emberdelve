@@ -2254,3 +2254,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates: tool/dressed_delver_visual_test.dart → build/dressed_delver_visual/ — wardrobe 360x640 + 320x568 (chip row with Kindler chosen, shelf below, WORN travels with the target), picker with two delvers wearing different titles, fresh unchanged. Critiqued clean after two re-aims.
 - PLATE LESSON: to frame a mid-list widget, scrollUntilVisible then measure `tester.getTopLeft(...).dy` and drag by `(wantedY - dy)` — blind fixed-offset nudges overshoot.
 - Zero sim movement. pubspec 0.66.0+92; news 0.66.0 entry (ethics-gate clean); notes docs/releases/v0.66.0.md.
+
+## 2026-08-26 — v0.67.0 "The Dyed Delver" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: per-delver worn dyes — the last global wardrobe choice. `MetaState.charDye` + `dyeFor(charId)` (legacy activeDye = fallback, never written again), `_dyeMap` decode validator, fresher-side cloud merge. OWNERSHIP stays global (embers buy once, everyone may wear) — only the wearing is per-delver.
+- `setActiveDye(id, {required forChar})` guards ownedDyes + unlockedCharacters. Render sites → dyeFor: combat stage (_characterId), map marker, picker card (per id), dye swatch (now paints the DRESS TARGET, not defaultCharacter), title hearth (each delver in their own coat — the visible payoff).
+- THE WARDROBE gains the v0.66.0 chip row (shared dressTarget, keyPrefix 'dye-dress-' to dodge duplicate-key collisions with the epithet row).
+- Tests: +6 test/dyed_delver_test.dart (resolver/guards/round-trip/merge/chip gating + isolation); attire_test + tool/wardrobe_visual_test re-pinned to dyeFor. Suite 703/703 (/work/temp/v0670_full.log). analyze clean.
+- Plates: tool/dyed_delver_visual_test.dart → build/dyed_delver_visual/ — rack 360x640 + 320x568 (chip row, target-painted swatches, WORN vs OWNED per delver), hearth with mixed coats, picker per-delver. Critiqued clean first render (the measured-drag framing lesson from v0.66.0 paid off immediately).
+- Zero sim movement. pubspec 0.67.0+93; news 0.67.0 entry (ethics-gate clean); notes docs/releases/v0.67.0.md; scout docs/improvements/v0.67.0-lead-scout.md.
