@@ -211,6 +211,13 @@ class GameController extends ChangeNotifier {
   /// Transient like [pendingRankUp]; nothing persists for this.
   int? pendingDeepestFloor;
 
+  /// v0.68.0 The Earned Name: epithets this run's banking unlocked, in
+  /// epithetsOrder. Announced once on the summary — a fact about a name
+  /// already earned, never a next-goal teaser (§Ethics). Transient like
+  /// [pendingRankUp]; the diff lives inside one bank pass, so nothing
+  /// persists and nothing can double-fire.
+  List<String> pendingEpithets = const [];
+
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
   /// [boot], because [_bankRun] gates the daily record on it — a resumed
@@ -479,6 +486,7 @@ class GameController extends ChangeNotifier {
     pendingRankUp = null;
     pendingRungOpened = null;
     pendingDeepestFloor = null;
+    pendingEpithets = const [];
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -1124,6 +1132,8 @@ class GameController extends ChangeNotifier {
     // v0.13.0 Delver's Rank: rank is derived, so a rank-up is just the tier
     // before banking vs after. Snapshot BEFORE any counter moves.
     final rankBefore = rankFor(meta);
+    // v0.68.0 The Earned Name: names held before this run's banking.
+    final epithetsBefore = epithetsOrder.where(epithetUnlocked).toSet();
     meta.embers += banked;
     meta.lifetimeEmbers += banked;
     meta.runsPlayed += 1;
@@ -1240,6 +1250,10 @@ class GameController extends ChangeNotifier {
     // breath as the result. Derived state — nothing persists for this.
     final rankAfter = rankFor(meta);
     if (rankAfter.marks > rankBefore.marks) pendingRankUp = rankAfter;
+    // v0.68.0 The Earned Name: announce each name this run's banking earned.
+    pendingEpithets = epithetsOrder
+        .where((id) => !epithetsBefore.contains(id) && epithetUnlocked(id))
+        .toList();
     // In-app review ask (REVENUE ASK #1): one quiet ask, ever, at a moment
     // of earned pride — 2nd+ win or a won daily/weekly, never while the
     // tour runs. Stamps meta.reviewAsked; the save below persists it.

@@ -2262,3 +2262,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: +6 test/dyed_delver_test.dart (resolver/guards/round-trip/merge/chip gating + isolation); attire_test + tool/wardrobe_visual_test re-pinned to dyeFor. Suite 703/703 (/work/temp/v0670_full.log). analyze clean.
 - Plates: tool/dyed_delver_visual_test.dart → build/dyed_delver_visual/ — rack 360x640 + 320x568 (chip row, target-painted swatches, WORN vs OWNED per delver), hearth with mixed coats, picker per-delver. Critiqued clean first render (the measured-drag framing lesson from v0.66.0 paid off immediately).
 - Zero sim movement. pubspec 0.67.0+93; news 0.67.0 entry (ethics-gate clean); notes docs/releases/v0.67.0.md; scout docs/improvements/v0.67.0-lead-scout.md.
+
+## 2026-08-26 — v0.68.0 "The Earned Name" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: epithet unlocks were SILENT — every other banked milestone announces on the summary (achievements, rank, rungs, depth) but earning a NAME said nothing. Now: one quiet gold line per earned title, key `earned-name-<id>`, win or loss alike ('"the Delver" is yours to wear.').
+- `GameController.pendingEpithets` — epithetsBefore snapshot beside rankBefore in _bankRun, diffed after counters bank; pendingRankUp lifecycle (cleared on startRun, transient, can't double-fire). Multi-announce works: a first no-rest win earns the_delver AND the_unresting — two stacked lines, verified on plate.
+- ETHICS: scouted-and-REJECTED the "nearest mark" almost-there teaser — v0.61.0 deepest-line comment pins the stance ("pure fact, no next-goal teaser"). An earned name is a fact.
+- Tests: +5 test/earned_name_test.dart (first-win announce + startRun clear, no re-announce, LOSS earns the_thorough on 10th ended run, widget exact-text + silence). Suite 708/708 (/work/temp/v0680_full.log). analyze clean.
+- Plates: tool/earned_name_visual_test.dart → build/earned_name_visual/ — win 360x640 (double announce), loss 320x568 (the_thorough on a loss). Critiqued clean first render.
+- Zero sim movement. pubspec 0.68.0+94; news 0.68.0 entry (ethics-gate clean); notes docs/releases/v0.68.0.md; scout docs/improvements/v0.68.0-lead-scout.md.
