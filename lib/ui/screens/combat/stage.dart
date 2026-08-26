@@ -123,7 +123,9 @@ extension _CombatStageBand on _CombatScreenState {
                               bob: true, // LFP-4a: the stage always breathes
                               // v0.27.0: the delver wears their dye into
                               // the fight; enemies are never tinted.
-                              dye: Art.dyeFilter(widget.c.meta.activeDye),
+                              dye: Art.dyeFilter(
+                                widget.c.meta.dyeFor(_characterId),
+                              ),
                             ),
                             spriteHeight: heroH,
                             lungeToward: 1,

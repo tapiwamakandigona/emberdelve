@@ -551,7 +551,9 @@ class _GatheredHearth extends StatelessWidget {
         : unlocked.length == 3
         ? 64.0
         : 58.0;
-    final dye = Art.dyeFilter(m.activeDye);
+    // v0.67.0: each hearth delver wears their own dye — the title fire is
+    // where per-delver coats become visible at a glance.
+    ColorFilter? dyeFor(String id) => Art.dyeFilter(m.dyeFor(id));
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Row(
@@ -560,7 +562,12 @@ class _GatheredHearth extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           for (final id in left) ...[
-            SpriteView(id, key: ValueKey('hearth-$id'), height: h, dye: dye),
+            SpriteView(
+              id,
+              key: ValueKey('hearth-$id'),
+              height: h,
+              dye: dyeFor(id),
+            ),
             SizedBox(width: id == left.last ? Space.l : Space.s),
           ],
           CampFire(size: 40, warm: warm, bright: bright),
@@ -571,7 +578,7 @@ class _GatheredHearth extends StatelessWidget {
               key: ValueKey('hearth-$id'),
               height: h,
               flipX: true,
-              dye: dye,
+              dye: dyeFor(id),
             ),
           ],
         ],
