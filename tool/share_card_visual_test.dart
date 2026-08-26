@@ -62,8 +62,12 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
   }
 }
 
-Future<void> save(WidgetTester tester, GlobalKey key, String name,
-    double ratio) async {
+Future<void> save(
+  WidgetTester tester,
+  GlobalKey key,
+  String name,
+  double ratio,
+) async {
   final boundary =
       key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
   final image = await tester.binding.runAsync(
@@ -78,7 +82,10 @@ Future<void> save(WidgetTester tester, GlobalKey key, String name,
 }
 
 Future<void> cardPlate(
-    WidgetTester tester, DelverCardFacts facts, String name) async {
+  WidgetTester tester,
+  DelverCardFacts facts,
+  String name,
+) async {
   tester.view.physicalSize = const Size(360, 440) * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
@@ -96,13 +103,24 @@ Future<void> cardPlate(
     ),
   );
   await tester.pump(const Duration(milliseconds: 400));
+  // v0.70.0: the delver sprite decodes asynchronously — give it real
+  // async time (runAsync) before the snap, or the first plate renders
+  // a blank slot (the established sprite-plate lesson).
+  await tester.binding.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 400)),
+  );
+  await tester.pump(const Duration(milliseconds: 100));
   await save(tester, key, name, 3);
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
 }
 
 Future<void> sheetPlate(
-    WidgetTester tester, Size logical, String name, int seed) async {
+  WidgetTester tester,
+  Size logical,
+  String name,
+  int seed,
+) async {
   tester.view.physicalSize = logical * 2;
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
@@ -125,8 +143,10 @@ Future<void> sheetPlate(
   driveToTerminal(c);
   await pumpFor(tester, 2500);
   await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('share-delve-card')), 200,
-      maxScrolls: 200);
+    find.byKey(const ValueKey('share-delve-card')),
+    200,
+    maxScrolls: 200,
+  );
   await tester.tap(find.byKey(const ValueKey('share-delve-card')));
   await pumpFor(tester, 800);
   await save(tester, key, name, 2);
@@ -140,20 +160,41 @@ void main() {
 
     // The exported artifact itself, win and loss, real drives.
     final win = GameController();
-    win.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
+    // v0.70.0 The Pictured Card: dye + title the delver so the plate
+    // proves the portrait carries the worn coat.
+    win.meta.ownedDyes.add('emberwash');
+    win.meta.charDye['kindler'] = 'emberwash';
+    win.meta
+      ..runsWon = 1
+      ..charEpithet['kindler'] = 'the_delver';
+    win.startRun(
+      character: 'kindler',
+      seed: 1,
+      boons: true,
+      difficulty: 'easy',
+    );
     driveToTerminal(win);
     await cardPlate(tester, DelverCardFacts.fromController(win), 'card_win_3x');
 
     final loss = GameController();
+    // Seed 18 is the pinned kindler easy LOSS (13 wins since the v0.47.0
+    // re-anchor — the old plate silently showed a second win).
     loss.startRun(
-        character: 'kindler', seed: 13, boons: true, difficulty: 'easy');
+      character: 'kindler',
+      seed: 18,
+      boons: true,
+      difficulty: 'easy',
+    );
     driveToTerminal(loss);
     await cardPlate(
-        tester, DelverCardFacts.fromController(loss), 'card_loss_3x');
+      tester,
+      DelverCardFacts.fromController(loss),
+      'card_loss_3x',
+    );
 
     // The preview sheet over the summary.
     await sheetPlate(tester, const Size(360, 640), 'sheet_win_360x640', 1);
-    await sheetPlate(tester, const Size(412, 915), 'sheet_loss_412x915', 13);
+    await sheetPlate(tester, const Size(412, 915), 'sheet_loss_412x915', 18);
     debugPrint('STAGE: share card plates done');
   });
 }
