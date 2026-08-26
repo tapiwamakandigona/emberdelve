@@ -50,7 +50,16 @@ void main() {
     dir = await Directory.systemTemp.createTemp('deepest_mark_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    // Drain-then-retry charter (run_trace_test precedent): unawaited saves
+    // racing the recursive delete throw "Directory not empty" (errno 39).
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('a first-ever run moves bestFloor but announces nothing', () async {

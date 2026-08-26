@@ -2629,3 +2629,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - 0.88.0+114. Notes docs/releases/v0.88.0.md. Zero sim movement. LESSON:
   news ethics gate bans substrings — 'closer' trips the 'loser' ban; reworded
   to 'nearer'.
+
+## v0.89.0 — The Counted Rest (2026-08-26)
+- The rest button prints the exact outcome — 'Rest — heal 9 HP (21 to 30)' —
+  instead of 'heal 30%'. Number from new pure sim reader
+  `restHealPreview(Sim)` beside runRest in sim/run_layer.dart (base
+  ⌊max·3/10⌋ + rest_bonus relics, overheal-capped): one source of truth,
+  parity-tested against the real command. Bedroll/Hearth Kettle finally
+  visible at the fire. Full-HP branch unchanged.
+- LESSON (plates): Cinzel has no U+2192 — an arrow in button text draws
+  tofu; use words. NBSPs bind '(21 to 30)' so narrow wraps break before the
+  paren group, never inside it.
+- Fixed flaky deepest_mark_test teardown (errno 39) with the drain-retry
+  charter from run_trace_test.
+- Tests +4 (test/rest_preview_test.dart; new pinned seed: kindler easy 3 =
+  bot walk reaches rest at 3/30). Suite 779/779. Plates
+  tool/rest_preview_visual_test.dart (360x640; 320x568 with Bedroll,
+  longest wording) clean. 0.89.0+115. Notes docs/releases/v0.89.0.md.
+  Zero sim movement (read-only function addition; goldens untouched).
