@@ -270,6 +270,20 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.85.0 The Narrow Climb: a won run that ended
+                          // inside the danger rule says so — quiet, factual,
+                          // absent when the win was comfortable.
+                          if (narrowClimbLine(c) case final line?) ...[
+                            const SizedBox(height: Space.s),
+                            Text(
+                              line,
+                              key: const ValueKey('narrow-climb'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                          ],
                           if (insight != null) ...[
                             const SizedBox(height: Space.l),
                             Panel(
@@ -959,6 +973,21 @@ String newSongLine(List<String> names) {
     return '"${names[0]}" and "${names[1]}" join the Gramophone.';
   }
   return '"${names.first}" and ${names.length - 1} more join the Gramophone.';
+}
+
+/// v0.85.0 The Narrow Climb: how close a won run ran — stated only when the
+/// existing low-HP danger rule (HP at or under 30% of max, the same rule
+/// that darkens the combat music) held at the final blow. Null on losses,
+/// comfortable wins, or when the player snapshot is missing.
+String? narrowClimbLine(GameController c) {
+  final st = c.state;
+  if (st == null || st['phase'] != 'run_won') return null;
+  final p = st['player'] as Map?;
+  if (p == null) return null;
+  final hp = p['hp'] as int? ?? 0;
+  final maxHp = p['max_hp'] as int? ?? 1;
+  if (hp <= 0 || hp * 10 > maxHp * 3) return null;
+  return 'A narrow climb home — $hp HP standing.';
 }
 
 /// v0.79.0 The Settled Score: the gold line for the run that felled the
