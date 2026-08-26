@@ -2237,3 +2237,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates critiqued clean: bg_deepshale surface + depth-0.8 (strata still compounds), wardrobe locked/chosen at 360x640, no overflow. Scout: docs/improvements/v0.64.0-lead-scout.md.
 - ESCAPE LESSON: file_edit into Dart doubled `\\'` to `\\\\'` inside a single-quoted string (news.dart) — after editing Dart string literals via tools, re-run analyze before assuming the entry compiles.
 - pubspec 0.64.0+90; news 0.64.0 entry added.
+
+## 2026-08-26 — v0.65.0 "The Charted Depth" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: per-delver depth records — `MetaState.charBestFloor` (deepest 1-based layer per character, won or lost), banked in _bankRun beside bestFloor, cloud merge per-key MAX (_maxMap), picker tally gains "· floor N" (v0.60.0 exact-text pins stay green because fresh metas chart nothing).
+- Pre-v0.65.0 saves seed from runHistory per-character max (same honesty rule as bestFloor's v0.5.0 seeding); a save WITH the key never re-seeds; empty map emits no JSON key.
+- save_transfer full-fat fixture extended with charBestFloor {'kindler': 9} — an absent key is re-seeded on decode (correct, but not byte-identical), so the full-fat state must carry it.
+- Tests: +7 test/charted_depth_test.dart (bank/isolation, never-lowers, round-trip, seeding incl. malformed record + explicit-key-no-reseed, merge MAX, both picker states). Suite 689/689 (/work/temp/v0650_suite3.log). analyze clean.
+- Zero sim movement. pubspec 0.65.0+91; news 0.65.0 entry (ethics-gate clean).

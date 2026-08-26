@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.64.0';
+const String currentAppVersion = '0.65.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.65.0',
+    title: 'The Charted Depth',
+    lines: [
+      'The delver picker now charts each character\'s deepest floor '
+          'beside their tally - "5 wins - 12 delves - floor 6" - read '
+          'straight from the ledger, never estimated.',
+      'Older profiles chart what their run history can prove, and '
+          'nothing more. A delver with no provable depth shows the '
+          'plain tally: no guessed floors, ever.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.64.0',
     title: 'The Deepshale',

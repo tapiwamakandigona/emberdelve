@@ -120,6 +120,12 @@ class MetaState {
   // v0.38.0 The Provings — ids of curated challenge delves cleared.
   Set<String> provingsCleared;
   int bestFloor; // deepest 1-based layer ever reached, won or lost
+  // v0.65.0 The Charted Depth: the same fact as bestFloor, charted per
+  // delver — deepest 1-based layer this character ever stood on, won or
+  // lost. Banked in GameController._bankRun beside bestFloor; older saves
+  // seed it from runHistory (provable, never invented). Cloud merge:
+  // per-key MAX, same convention as charRuns/charWins.
+  Map<String, int> charBestFloor;
   int dailiesPlayed; // Daily Delves FINISHED (abandoning counts for nothing)
   int winsNoRest; // runs won without visiting a single rest node
   int hardWins; // runs won on hard
@@ -189,6 +195,7 @@ class MetaState {
     Set<String>? seenAchievements,
     Set<String>? provingsCleared,
     this.bestFloor = 0,
+    Map<String, int>? charBestFloor,
     this.dailiesPlayed = 0,
     this.winsNoRest = 0,
     this.hardWins = 0,
@@ -207,6 +214,7 @@ class MetaState {
        unlockedCharacters = unlocked ?? {defaultCharacter},
        charRuns = charRuns ?? {},
        charWins = charWins ?? {},
+       charBestFloor = charBestFloor ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedDyes = ownedDyes ?? {defaultDye},
@@ -263,6 +271,7 @@ class MetaState {
       'seenAchievements': seenAchievements.toList(),
     if (provingsCleared.isNotEmpty) 'provingsCleared': provingsCleared.toList(),
     if (bestFloor > 0) 'bestFloor': bestFloor,
+    if (charBestFloor.isNotEmpty) 'charBestFloor': charBestFloor,
     if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
     if (winsNoRest > 0) 'winsNoRest': winsNoRest,
     if (hardWins > 0) 'hardWins': hardWins,
@@ -373,6 +382,12 @@ class MetaState {
     bestFloor:
         j['bestFloor'] as int? ??
         _deepestFloorIn((j['runHistory'] as List?) ?? const []),
+    // v0.65.0: pre-charted saves seed the per-delver depths from the run
+    // history — the deepest floor we can actually PROVE per character
+    // (same honesty rule as bestFloor above).
+    charBestFloor: j['charBestFloor'] != null
+        ? _intMap(j['charBestFloor'])
+        : _charDeepestIn((j['runHistory'] as List?) ?? const []),
     dailiesPlayed:
         j['dailiesPlayed'] as int? ??
         // A pre-v0.5.0 profile with a recorded daily has provably finished
@@ -400,6 +415,20 @@ class MetaState {
       if (f is int && f > best) best = f;
     }
     return best;
+  }
+
+  // v0.65.0 The Charted Depth: per-character deepest floor provable from
+  // the run history (used only to seed charBestFloor on pre-v0.65.0 saves).
+  static Map<String, int> _charDeepestIn(List raw) {
+    final out = <String, int>{};
+    for (final r in raw) {
+      if (r is! Map) continue;
+      final ch = r['character'];
+      final f = r['floor'];
+      if (ch is! String || f is! int) continue;
+      if (f > (out[ch] ?? 0)) out[ch] = f;
+    }
+    return out;
   }
 
   /// First-run on-ramp (v0.3.3): a brand-new profile that has never touched
