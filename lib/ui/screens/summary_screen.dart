@@ -388,6 +388,21 @@ class SummaryScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Space.s),
                           ],
+                          // v0.88.0 The Coming Vista: the proximal goal,
+                          // stated only at the moment it moved. Real
+                          // numbers from live counters; the picker holds
+                          // the door (§Ethics).
+                          if (comingVistaLine(c) != null) ...[
+                            Text(
+                              comingVistaLine(c)!,
+                              key: const ValueKey('coming-vista'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
                           // v0.32.0 (retention hook #7): an earned rung.
                           // Shown only when THIS win raised bestAscension
                           // AND the profile owns the Forge — a free
@@ -992,6 +1007,37 @@ String newSongLine(List<String> names) {
 /// v0.86.0 The Foe's Last Thread: the loss-side mirror of the Narrow Climb —
 /// stated only when the killer itself stood inside the same 30% rule. Null
 /// on wins, on losses to a healthy foe, or when the killer cannot be named.
+/// v0.88.0 The Coming Vista: when THIS run moved a counter feeding a
+/// still-locked vista, name the nearest one with the real numbers. Movement
+/// is read from existing transients (runFirstFelled, pendingDeepestFloor) —
+/// a summary where nothing moved says nothing. Nearest = highest fraction,
+/// ties to vista order. Binary gates (Moonveil, Bloodstone) are excluded:
+/// 0-of-1 is a demand, not progress. Pure read, zero persistence (§Ethics).
+String? comingVistaLine(GameController c) {
+  final st = c.state;
+  if (st == null) return null;
+  final phase = st['phase'];
+  if (phase != 'run_won' && phase != 'run_lost') return null;
+  final lines = <(double, String)>[];
+  if (c.runFirstFelled.isNotEmpty && !c.vistaUnlocked('verdigris')) {
+    final n = c.meta.enemyFelled.length;
+    lines.add((
+      n / 15,
+      'The Verdigris vista waits — $n of 15 different foes felled.',
+    ));
+  }
+  if (c.pendingDeepestFloor != null && !c.vistaUnlocked('deepshale')) {
+    final n = c.meta.bestFloor;
+    lines.add((
+      n / 9,
+      'The Deepshale vista waits — deepest floor\u00A0$n\u00A0of\u00A09.',
+    ));
+  }
+  if (lines.isEmpty) return null;
+  lines.sort((a, b) => b.$1.compareTo(a.$1));
+  return lines.first.$2;
+}
+
 String? lastThreadLine(GameController c) {
   final st = c.state;
   if (st == null || st['phase'] != 'run_lost') return null;
