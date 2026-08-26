@@ -2343,3 +2343,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Rejected (scout): tap-through to picker; per-delver loss/streak counters (chronicle-stats
   territory); bobbing sprites; dye named in text.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.75.0 — The Hearth Song (2026-08-26)
+- The soundtrack ("music is 9/10") becomes wearable: a heard Gramophone track can be pinned as
+  the hearth's music. Heard rows gain a hearth mark (`hearth-song-<key>`), gold = current song;
+  tapping gold gives it back to Hearthside. Delve themes (map/combat/boss/stings) untouched.
+- meta.dart `hearthTrack` ('' default, omitted from save at default); cloud fresher-wholesale.
+  controller `setHearthSong` (heard+known keys only) + `hearthSongKey` honesty resolver (stale
+  merge value falls back silently, never erased). audio_service `musicKeyForPhase`/`syncPhase`
+  gain optional `hearthSong`; only the title-family default case uses it. Gramophone preview
+  stop/dispose return to the chosen song; pinning mid-preview keeps row icons truthful.
+- Zero new assets (size unchanged — user watches APK size). Zero sim movement.
+- Tests +5 (test/hearth_song_test.dart). Suite 734/734, analyze clean. TEST LESSON: after
+  scrollUntilVisible a row at the viewport's bottom edge misses taps — drag a further -250 first.
+- Plates build/hearth_song_visual/ (gramophone 360+320, pinned gold row framed lower third)
+  critiqued clean.
+- pubspec 0.75.0+101; news 0.75.0; docs/releases/v0.75.0.md; scout docs/improvements/v0.75.0-lead-scout.md.
+- Rejected (scout): per-phase playlists (authored tension); ember price on pinning
+  (paywall-shaped); shuffle; new track content (size).
+- Release blocked on GitHub auth like v0.60.0+.

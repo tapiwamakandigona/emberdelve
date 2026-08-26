@@ -180,11 +180,16 @@ class AudioService {
   /// [eliteFight] (v0.48.0 "The Iron Between") gives elite fights their own
   /// theme between the regular combat piece and the crowned-boss piece; a
   /// crowned foe always outranks it.
+  /// [hearthSong] (v0.75.0 "The Hearth Song") replaces the default title
+  /// theme with the player's pinned Gramophone track. Callers pass an
+  /// already-resolved key (GameController.hearthSongKey owns the honesty
+  /// fallback); null keeps the built-in Hearthside.
   static String? musicKeyForPhase(
     String? phase, {
     bool bossFight = false,
     bool eliteFight = false,
     double mapDepth = 0,
+    String? hearthSong,
   }) {
     switch (phase) {
       case 'player_turn':
@@ -206,7 +211,7 @@ class AudioService {
       case 'run_lost':
         return 'defeat';
       default:
-        return 'title_menu';
+        return hearthSong ?? 'title_menu';
     }
   }
 
@@ -223,9 +228,15 @@ class AudioService {
     bool bossFight = false,
     bool eliteFight = false,
     double mapDepth = 0,
+    String? hearthSong,
   }) async {
-    final key = musicKeyForPhase(phase,
-        bossFight: bossFight, eliteFight: eliteFight, mapDepth: mapDepth);
+    final key = musicKeyForPhase(
+      phase,
+      bossFight: bossFight,
+      eliteFight: eliteFight,
+      mapDepth: mapDepth,
+      hearthSong: hearthSong,
+    );
     if (phase == 'map') {
       setAmbience(true, level: mapAmbienceLevel(mapDepth));
     } else {

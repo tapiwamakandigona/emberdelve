@@ -369,6 +369,7 @@ class LedgerScreen extends StatelessWidget {
                   _GramophoneSection(
                     key: const ValueKey('gramophone-section'),
                     heard: m.heardTracks,
+                    c: c,
                   ),
                   const SizedBox(height: Space.s),
                   Text(
@@ -867,7 +868,11 @@ class LedgerScreen extends StatelessWidget {
 /// only reads it.
 class _GramophoneSection extends StatefulWidget {
   final Set<String> heard;
-  const _GramophoneSection({super.key, required this.heard});
+
+  /// v0.75.0 The Hearth Song: the controller owns which pinned track is
+  /// honest to play (hearthSongKey) and the write path (setHearthSong).
+  final GameController c;
+  const _GramophoneSection({super.key, required this.heard, required this.c});
 
   @override
   State<_GramophoneSection> createState() => _GramophoneSectionState();
@@ -881,9 +886,27 @@ class _GramophoneSectionState extends State<_GramophoneSection> {
     // Hand the speakers back to the hearth. playMusic dedupes on key, so
     // this is a no-op when nothing was previewed.
     if (_playing != null) {
-      AudioService.instance?.playMusic('title_menu');
+      AudioService.instance?.playMusic(widget.c.hearthSongKey);
     }
     super.dispose();
+  }
+
+  /// Pin [key] as the hearth's song; pinning the current song (or the
+  /// default Hearthside) gives the song back.
+  void _pin(String key) {
+    final current = widget.c.hearthSongKey;
+    setState(() {
+      widget.c.setHearthSong(
+        (key == current || key == 'title_menu') ? '' : key,
+      );
+      // setHearthSong re-syncs the speakers to the new song, which ends
+      // any preview that was playing something else — keep the row icons
+      // truthful about what is actually sounding.
+      if (_playing != null && _playing != widget.c.hearthSongKey) {
+        _playing = null;
+      }
+    });
+    AudioService.instance?.playSfx('ui_tap');
   }
 
   void _toggle(String key) {
@@ -891,7 +914,7 @@ class _GramophoneSectionState extends State<_GramophoneSection> {
     setState(() {
       if (_playing == key) {
         _playing = null;
-        audio?.playMusic('title_menu');
+        audio?.playMusic(widget.c.hearthSongKey);
       } else {
         _playing = key;
         audio?.playSfx('ui_tap');
@@ -956,6 +979,27 @@ class _GramophoneSectionState extends State<_GramophoneSection> {
                 color: EmberColors.textDim,
                 size: 18,
               ),
+            if (heard) ...[
+              const SizedBox(width: Space.s),
+              // v0.75.0 The Hearth Song: pin this track as the hearth's
+              // music. The current song's mark burns gold (Hearthside
+              // carries it by default); tapping the gold mark gives the
+              // song back to Hearthside.
+              InkWell(
+                key: ValueKey('hearth-song-${t.key}'),
+                onTap: () => _pin(t.key),
+                child: Padding(
+                  padding: const EdgeInsets.all(Space.xs),
+                  child: Icon(
+                    Icons.fireplace,
+                    color: widget.c.hearthSongKey == t.key
+                        ? EmberColors.gold
+                        : EmberColors.textDisabled,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
