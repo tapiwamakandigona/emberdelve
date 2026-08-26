@@ -3,6 +3,7 @@
 // that renders the pool survives a run-local custom die.
 import 'package:emberdelve/data/events.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/data/tracks.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/temper_sheet.dart';
 import 'package:emberdelve/ui/theme.dart';
@@ -22,6 +23,9 @@ GameController _atRest() {
   final c = GameController();
   c.meta.tutorialSeen = true;
   c.meta.tipsSeen.addAll(ContextTips.all);
+  // v0.84.0: pre-hear the catalog so the once-ever song-credit toast
+  // cannot float over the buttons this test taps.
+  c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
   c.startRun(character: 'kindler', seed: 5, boons: false);
   // Drive straight to a rest node rather than hoping the seed offers one.
   c.sim!.phase = 'rest';

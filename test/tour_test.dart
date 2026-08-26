@@ -5,6 +5,7 @@
 // cloud-merge max — the "everyone sees v2 once, including veterans" rule.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/data/tracks.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
@@ -151,6 +152,9 @@ void main() {
       tester,
     ) async {
       final c = GameController(); // tourSeenVersion 0 → tour must run
+      // v0.84.0: pre-hear the catalog so the once-ever song-credit toast
+      // cannot float over the buttons this test taps.
+      c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
       );
@@ -184,9 +188,7 @@ void main() {
       expect(find.text('SKIP'), findsNothing);
     });
 
-    testWidgets('stamped profile: no tour, tips run as before', (
-      tester,
-    ) async {
+    testWidgets('stamped profile: no tour, tips run as before', (tester) async {
       final c = GameController();
       c.meta.tourSeenVersion = tourVersion;
       c.tour = TourDirector(seenVersion: tourVersion);
