@@ -413,6 +413,17 @@ void runChooseReward(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 
 // ---- rest + forge ----------------------------------------------------------
 
+/// v0.89.0: what `rest` would heal right now — the exact arithmetic of
+/// [runRest] + `_heal` with no mutation, so the rest button can print the
+/// real number instead of asking the player to do percentage math.
+int restHealPreview(Sim sim) {
+  final hp = sim.player['hp'] as int, maxHp = sim.player['max_hp'] as int;
+  var h = (maxHp * 3) ~/ 10 + relicSum(sim, 'rest_bonus');
+  if (hp + h > maxHp) h = maxHp - hp;
+  if (h < 0) h = 0;
+  return h;
+}
+
 void runRest(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (sim.phase != 'rest') return _invalid(events, 'not_rest_phase');
   final base = ((sim.player['max_hp'] as int) * 3) ~/ 10;

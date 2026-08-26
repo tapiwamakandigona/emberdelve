@@ -15,6 +15,10 @@ class RestScreen extends StatelessWidget {
     }
     // v0.3.1 F9: never offer a heal that heals nothing.
     final fullHp = (player['hp'] as int) >= (player['max_hp'] as int);
+    // v0.89.0: the button prints the exact outcome — sim's own arithmetic
+    // (base + rest_bonus relics, capped at max), so it can never lie.
+    final hp = player['hp'] as int;
+    final heal = c.sim == null ? 0 : restHealPreview(c.sim!);
     // v7: one temper per run. Once spent, the option disappears rather than
     // sitting there greyed out asking to be re-read every rest.
     final canTemper = (run?['tempers_used'] as int? ?? 0) < 1;
@@ -55,7 +59,10 @@ class RestScreen extends StatelessWidget {
                           // a disabled button here soft-locked the run (found in play
                           // session 2026-07-24). The sim's `rest` command is safe at full
                           // HP: it heals 0 and moves to the map.
-                          fullHp ? 'Move on — fully rested' : 'Rest — heal 30%',
+                          fullHp
+                              ? 'Move on — fully rested'
+                              : 'Rest — heal $heal HP '
+                                    '($hp\u00A0to\u00A0${hp + heal})',
                           primary: !fullHp,
                           icon: fullHp
                               ? Icons.arrow_forward

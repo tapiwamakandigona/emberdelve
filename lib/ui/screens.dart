@@ -41,6 +41,7 @@ import '../meta/update_service.dart';
 import '../sim/assignment.dart';
 import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
+import '../sim/run_layer.dart' show restHealPreview;
 import 'forge_sheet.dart';
 import 'art.dart';
 import 'build_identity.dart';
