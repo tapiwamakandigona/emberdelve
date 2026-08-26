@@ -2464,3 +2464,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - pubspec 0.80.0+106; news 0.80.0; docs/releases/v0.80.0.md; scout rejected per-difficulty
   rows (padding), 'of N floors' denominator (lies for short/daily), title-screen restate.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.81.0 — The Retraced Page (2026-08-26)
+
+- One improvement: every rememberable Ledger row gains a replay mark (IconButton
+  Icons.replay, key 'history-retrace-<seed>-<date>', tooltip 'Delve this again') —
+  tap → popUntil(isFirst) → startRun with the RECORD's character/seed/difficulty/
+  ascension/short flag. The summary's strongest loop (delveAgain/retraceDelve) no
+  longer dies with the summary screen; replaying a remembered run was copy → back
+  out → seed dialog → paste. UI-only; controller untouched.
+- Gated exactly like the code: legacy seed-0 rows show no retrace (and no copy).
+  Difficulty/ascension ride clampRunParams like pasted codes — a hard/A2 record on
+  a Forge-less profile clamps VISIBLY; the record is a memory, not a key. Retraced
+  daily = free run (badge belongs to the day, not the seed). Short records rebuild
+  the SAME six-layer road (r['short'] rides along).
+- Tests +3 (test/retraced_page_test.dart; hard/A2 case sets forgeUnlocked +
+  bestAscension — CLAMP LESSON: fresh test profiles clamp hard→normal and A→0).
+  Suite 754/754, analyze clean. Plates build/retraced_page_visual/ (3-row history:
+  short win + daily hard loss w/ epithet+fights + legacy seed-0) clean both widths;
+  legacy row correctly shows card-only.
+- pubspec 0.81.0+107; news 0.81.0; docs/releases/v0.81.0.md; scout rejected
+  bottom-sheet action menu (buries v0.43 tap-to-copy contract), confirm dialog
+  (friction theater), hiding retrace on abandoned rows (they banked a seed).
+- Release blocked on GitHub auth like v0.60.0+.

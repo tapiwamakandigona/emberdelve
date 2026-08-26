@@ -533,6 +533,33 @@ class LedgerScreen extends StatelessWidget {
               facts: DelverCardFacts.fromRecord(r, meta: c.meta),
             ),
           ),
+        // v0.81.0 The Retraced Page: the road back. Any row that can
+        // rebuild its code can also just START that delve — same seed,
+        // same delver, same difficulty, same map length. Legacy seed-0
+        // rows stay quiet, same gate as the code.
+        if (code != null)
+          IconButton(
+            key: ValueKey('history-retrace-${r['seed']}-${r['date']}'),
+            icon: const Icon(
+              Icons.replay,
+              size: 16,
+              color: EmberColors.textDim,
+            ),
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Delve this again',
+            onPressed: () {
+              AudioService.instance?.playSfx('ui_confirm');
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              c.startRun(
+                character: r['character'] as String? ?? defaultCharacter,
+                seed: int.tryParse('${r['seed'] ?? 0}') ?? 0,
+                difficulty: diff,
+                ascension: int.tryParse('${r['ascension'] ?? 0}') ?? 0,
+                boons: true,
+                shortRoad: r['short'] == true,
+              );
+            },
+          ),
         if (code != null)
           const Icon(Icons.copy, size: 14, color: EmberColors.textDim),
       ],
