@@ -151,6 +151,26 @@ class _MapScreenState extends State<MapScreen>
                                 ),
                               ),
                             ),
+                            // v0.82.0 The Farthest Lantern: the lifetime
+                            // deepest floor, drawn where it matters — a thin
+                            // gold rule between charted ground and new depth.
+                            // Pure meta read; banks only at run end, so the
+                            // line holds still all run. A record beyond this
+                            // map's floors (short road after a long career)
+                            // has no line to draw.
+                            if (c.meta.bestFloor > 0 &&
+                                c.meta.bestFloor < layers)
+                              IgnorePointer(
+                                child: RepaintBoundary(
+                                  child: CustomPaint(
+                                    key: const ValueKey('plumb-mark'),
+                                    size: Size(cns.maxWidth, h),
+                                    painter: _FarthestLanternPainter(
+                                      c.meta.bestFloor,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             for (final e in nodes.entries)
                               _nodeWidget(
                                 context,
@@ -643,6 +663,49 @@ class _MapScenePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _MapScenePainter old) =>
       old.position != position || old.curLayer != curLayer;
+}
+
+/// v0.82.0 The Farthest Lantern: one dashed gold rule at the boundary
+/// between the lifetime deepest floor and the floor beyond, captioned with
+/// the record. Repaint-isolated from the scene painter — the scene repaints
+/// on every move; this repaints only if the record itself changes.
+class _FarthestLanternPainter extends CustomPainter {
+  final int bestFloor;
+  _FarthestLanternPainter(this.bestFloor);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Top edge of the record floor's band == bottom edge of the band beyond
+    // (same row math as the fog-of-war rects above).
+    final y = size.height - (bestFloor - 1) * _MapScreenState._rowH - 68;
+    final line = Paint()
+      ..color = EmberColors.gold.withValues(alpha: 0.40)
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+    var x = 8.0;
+    while (x < size.width - 8) {
+      canvas.drawLine(Offset(x, y), Offset(x + 6, y), line);
+      x += 12;
+    }
+    final tp = TextPainter(
+      text: TextSpan(
+        text: 'YOUR DEEPEST · FLOOR $bestFloor',
+        style: const TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 9,
+          letterSpacing: 1.2,
+          fontWeight: FontWeight.w600,
+          color: Color(0xB3E8C24A), // gold at ~0.7
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(size.width - tp.width - 12, y - tp.height - 3));
+  }
+
+  @override
+  bool shouldRepaint(covariant _FarthestLanternPainter old) =>
+      old.bestFloor != bestFloor;
 }
 
 // ---------------------------------------------------------------------------

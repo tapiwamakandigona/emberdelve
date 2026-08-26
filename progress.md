@@ -2487,3 +2487,27 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   bottom-sheet action menu (buries v0.43 tap-to-copy contract), confirm dialog
   (friction theater), hiding retrace on abandoned rows (they banked a seed).
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.82.0 — The Farthest Lantern (2026-08-26)
+
+- One improvement: the map paints the lifetime deepest floor IN the delve — one thin
+  gold dashed rule at the boundary between bestFloor and the floor beyond, caption
+  'YOUR DEEPEST · FLOOR N' right-aligned above (racing-game PB marker, made native).
+  Separate keyed CustomPaint 'plumb-mark' (IgnorePointer + RepaintBoundary) layered
+  over fog, under nodes; _FarthestLanternPainter(bestFloor); repaint only if record
+  changes (scene painter repaints per move — kept isolated). Row math mirrors fog
+  rects: boundary y = h - (bestFloor-1)*_rowH - 68.
+- Gates: bestFloor > 0 && bestFloor < layers (fresh profile: nothing; record beyond a
+  short road's six floors: nothing — whole map is charted ground). bestFloor banks at
+  run END, so the line holds still all run; passing it = walking beyond it. No toast,
+  no glow — standing information (scout rejected announce-on-cross as missable noise,
+  and a depth-vs-record HUD chip as clutter).
+- Tests +3 (test/farthest_lantern_test.dart — GameRoot pump, startRun boons:false
+  lands straight on map). Suite 757/757, analyze clean.
+- Plates build/farthest_lantern_visual/ clean both widths — PLATE LESSON reconfirmed:
+  map plates MUST suppress tour/tutorial/tips (tutorialSeen + tourSeenVersion +
+  tipsSeen.addAll(ContextTips.all)) or 'THIS IS A DELVE' covers the scene. GameRoot
+  import in tests/tools is package:emberdelve/ui/screens.dart (game_root.dart is a
+  part-of, not importable).
+- pubspec 0.82.0+108; news 0.82.0; docs/releases/v0.82.0.md.
+- Release blocked on GitHub auth like v0.60.0+.
