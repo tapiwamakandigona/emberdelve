@@ -1047,22 +1047,3 @@ class _GramophoneSectionState extends State<_GramophoneSection> {
     );
   }
 }
-
-/// v0.78.0 The Old Foe: the enemy that has ended more of the player's
-/// delves than any other, read from [MetaState.enemyFellTo]. Named flatly —
-/// the Ledger states, never goads. Two falls make a foe (one is bad luck);
-/// unknown ids (retired content) are skipped rather than crashed on; ties
-/// resolve to enemies authoring order so the answer never flickers.
-({String id, int falls})? oldFoe(MetaState m) {
-  String? bestId;
-  var best = 0;
-  for (final id in enemiesOrder) {
-    final n = m.enemyFellTo[id] ?? 0;
-    if (n > best) {
-      best = n;
-      bestId = id;
-    }
-  }
-  if (bestId == null || best < 2) return null;
-  return (id: bestId, falls: best);
-}

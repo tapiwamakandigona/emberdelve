@@ -181,6 +181,13 @@ class GameController extends ChangeNotifier {
   /// beside the snapshot ('run_new_tracks') so a resumed run still gets its
   /// line. Never contains 'title_menu' (seeded at boot, not earned).
   final Set<String> runNewTracks = {};
+
+  /// v0.79.0 The Settled Score: set when THIS run felled the reigning old
+  /// foe for the first time ever (meta.settledFoes gates the once). The
+  /// summary reads it (key 'settled-score'); persisted beside the snapshot
+  /// ('settled_foe') so a resumed run keeps its line. Cleared on new run
+  /// and on returning to title.
+  String? pendingSettledFoe;
   bool _restedThisRun = false;
 
   /// v0.8.0 spoiler-free floor trace for share text. Per-run scratch like
@@ -326,6 +333,8 @@ class GameController extends ChangeNotifier {
           runNewTracks.addAll(
             ((snap['run_new_tracks'] as List?) ?? const []).whereType<String>(),
           );
+          // v0.79.0: the settled-score flag rides the same side channel.
+          pendingSettledFoe = snap['settled_foe'] as String?;
         } else {
           // Stale (older SIM_VERSION) or already-finished save: clear it so
           // the player lands on the title and starts fresh — no error wall.
@@ -448,6 +457,8 @@ class GameController extends ChangeNotifier {
     if (runNewTracks.isNotEmpty) {
       snapMap['run_new_tracks'] = runNewTracks.toList()..sort();
     }
+    // v0.79.0: absent when unset — same pre-identical-bytes rule.
+    if (pendingSettledFoe != null) snapMap['settled_foe'] = pendingSettledFoe;
     if (dailyDate != null || weeklyIndex != null) {
       snapMap['run_labels'] = {
         if (dailyDate != null) 'daily': dailyDate,
@@ -507,6 +518,7 @@ class GameController extends ChangeNotifier {
     runFirstMet.clear();
     runFirstFelled.clear();
     runNewTracks.clear();
+    pendingSettledFoe = null;
     // v0.8.0: every fresh run traces from floor zero — a stale trace must
     // never leak a previous run's floors into this run's share text.
     runTrace = RunTrace();
@@ -1101,6 +1113,7 @@ class GameController extends ChangeNotifier {
     runFirstMet.clear();
     runFirstFelled.clear();
     runNewTracks.clear();
+    pendingSettledFoe = null;
     notifyListeners();
     _syncAudio();
   }
@@ -1189,6 +1202,16 @@ class GameController extends ChangeNotifier {
         runFirstFelled.add(felledId);
       }
       meta.enemyFelled[felledId] = (meta.enemyFelled[felledId] ?? 0) + 1;
+      // v0.79.0 The Settled Score: felling the reigning old foe settles its
+      // score — once per foe, ever. A payoff, not a treadmill: the score
+      // never reopens, and no ember rides on it (§Ethics).
+      final foe = oldFoe(meta);
+      if (foe != null &&
+          foe.id == felledId &&
+          !meta.settledFoes.contains(felledId)) {
+        meta.settledFoes.add(felledId);
+        pendingSettledFoe = felledId;
+      }
     }
     meta.exactStreak = exact ? meta.exactStreak + 1 : 0;
     if (meta.exactStreak > meta.bestExactStreak) {
