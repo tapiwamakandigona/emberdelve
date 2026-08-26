@@ -2270,3 +2270,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Tests: +5 test/earned_name_test.dart (first-win announce + startRun clear, no re-announce, LOSS earns the_thorough on 10th ended run, widget exact-text + silence). Suite 708/708 (/work/temp/v0680_full.log). analyze clean.
 - Plates: tool/earned_name_visual_test.dart → build/earned_name_visual/ — win 360x640 (double announce), loss 320x568 (the_thorough on a loss). Critiqued clean first render.
 - Zero sim movement. pubspec 0.68.0+94; news 0.68.0 entry (ethics-gate clean); notes docs/releases/v0.68.0.md; scout docs/improvements/v0.68.0-lead-scout.md.
+
+## 2026-08-26 — v0.69.0 "The Standing Delver" (committed, gates GREEN, awaiting GitHub auth to tag/CI/release)
+- One improvement: the summary never showed WHO delved — a generic trophy/flame stood where the delver should. Now the run's own delver stands above the headline in their worn dye (SpriteView, bob on wins, still + 0.55 opacity on losses), with one name line below: 'The Kindler, the Unburnt' (epithetFor; bare name when undressed). Keys `summary-delver` / `summary-delver-name`. Same 56dp slot as the old icon — rhythm unchanged.
+- Identity arc payoff (v0.66→v0.68) on the most-seen emotional screen; retry-after-loss retention rides on the summary feeling personal (Antihero 80.5% stat).
+- Tests: +3 test/standing_delver_test.dart (bare name on fresh win, per-delver title joins name, loss still shows both). Suite 711/711 (/work/temp/v0690_full.log). analyze clean.
+- Plates: tool/standing_delver_visual_test.dart → build/standing_delver_visual/ — win 360x640 (dyed + titled), loss 320x568 (dimmed, bare name). Critiqued clean first render.
+- Zero sim movement. pubspec 0.69.0+95; news 0.69.0 entry (ethics-gate clean); notes docs/releases/v0.69.0.md; scout docs/improvements/v0.69.0-lead-scout.md.
