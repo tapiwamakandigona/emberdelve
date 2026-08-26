@@ -2569,3 +2569,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   firstWin() forces hp 1/30): clean 360x640 + 320x568, single line both widths.
 - Suite 763/763, analyze clean. pubspec 0.85.0+111; news 0.85.0;
   docs/releases/v0.85.0.md. Release blocked on GitHub auth like v0.60.0+.
+
+## v0.86.0 — The Foe's Last Thread (2026-08-26)
+
+- One improvement: LOST summaries whose killer itself stood inside the 30%
+  rule (hp*10 <= max*3) close with one dim line: 'The <Name> hung by a thread
+  — N HP standing.' Key `last-thread`, placed directly above the narrow-climb
+  block (renders above the tip panel, right over Delve Again/Retrace — the
+  one-more-run moment). Helper lastThreadLine(c) in summary_screen reads
+  c.state enemy (terminal sim keeps the killer — same fact killed_by banks);
+  name via enemies map, ghost ids never named. Mirror of v0.85.0: same rule,
+  foe's side. "I almost had it" as fact, not nudge.
+- Scout rejected: killer HP on every loss (deflating big numbers); "one blow
+  from falling" wording (overpromises at 30% of a boss); boss-special
+  threshold (second definition of "close").
+- Tests +4 (test/last_thread_test.dart: 9/30 fires, 10/30 null, win null,
+  unknown id null). Plates tool/last_thread_visual_test.dart (loss seed 18,
+  restraint plate wears cinder_hierophant 18/60): clean 360x640 + 320x568,
+  wraps to two centered lines.
+- Suite 767/767, analyze clean. pubspec 0.86.0+112; news 0.86.0;
+  docs/releases/v0.86.0.md. Release blocked on GitHub auth like v0.60.0+.

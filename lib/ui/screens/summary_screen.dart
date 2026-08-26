@@ -270,6 +270,20 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.86.0 The Foe's Last Thread: the loss that
+                          // fell one good turn short says so — the mirror of
+                          // the Narrow Climb, same 30% rule, foe's side.
+                          if (lastThreadLine(c) case final line?) ...[
+                            const SizedBox(height: Space.s),
+                            Text(
+                              line,
+                              key: const ValueKey('last-thread'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                          ],
                           // v0.85.0 The Narrow Climb: a won run that ended
                           // inside the danger rule says so — quiet, factual,
                           // absent when the win was comfortable.
@@ -973,6 +987,22 @@ String newSongLine(List<String> names) {
     return '"${names[0]}" and "${names[1]}" join the Gramophone.';
   }
   return '"${names.first}" and ${names.length - 1} more join the Gramophone.';
+}
+
+/// v0.86.0 The Foe's Last Thread: the loss-side mirror of the Narrow Climb —
+/// stated only when the killer itself stood inside the same 30% rule. Null
+/// on wins, on losses to a healthy foe, or when the killer cannot be named.
+String? lastThreadLine(GameController c) {
+  final st = c.state;
+  if (st == null || st['phase'] != 'run_lost') return null;
+  final e = st['enemy'] as Map?;
+  if (e == null) return null;
+  final name = enemies[e['id']]?.name;
+  if (name == null) return null;
+  final hp = e['hp'] as int? ?? 0;
+  final maxHp = e['max_hp'] as int? ?? 1;
+  if (hp <= 0 || hp * 10 > maxHp * 3) return null;
+  return 'The $name hung by a thread — $hp HP standing.';
 }
 
 /// v0.85.0 The Narrow Climb: how close a won run ran — stated only when the
