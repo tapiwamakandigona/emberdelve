@@ -2295,3 +2295,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plates build/first_words_visual/ (fresh 360/320 wrap, played 360 absent) critiqued clean.
 - pubspec 0.71.0+97; news 0.71.0; docs/releases/v0.71.0.md; scout docs/improvements/v0.71.0-lead-scout.md.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.72.0 — The Given Name (2026-08-26)
+- Player review: "You could add character customisation" — completes the identity arc
+  (charted → dressed → dyed → NAMED). Tap-to-name every unlocked delver on the picker.
+- MetaState: `charName` map + `nameFor(charId)` resolver + `sanitizeGivenName` (strip
+  control chars, collapse ws, clamp 16). fromJson `_nameMap` drops unknown ids, re-sanitizes.
+  cloud_merge: fresher wholesale. Controller: `setDelverName` (unlocked-only, empty=give back).
+- Read surfaces → nameFor: summary header, ledger `_historyRow` + `_delverRow` (stats roster),
+  share card (both factories),
+  dress-chip labels, obituary/epitaph banking. Locked delvers untouchable.
+- Picker UI: InkWell `name-edit-<id>` (FittedBox scaleDown — a 16-char name FITS at 320,
+  never ellipsizes; logotype lesson) + `_promptName` dialog (`name-field`, `name-save`,
+  maxLength 16, "Theirs by birth: … Leave the field empty to give it back.").
+- Tests +6 (test/given_name_test.dart). LESSON: pumpAndSettle spins forever on an autofocused
+  TextField's cursor blink — use bounded pumps around dialogs. Suite 723/723, analyze clean.
+- Plates build/given_name_visual/ (named picker 360+320, dialog 360) critiqued clean after
+  FittedBox fix. Zero sim movement. pubspec 0.72.0+98; news 0.72.0; docs/releases/v0.72.0.md;
+  scout docs/improvements/v0.72.0-lead-scout.md.
+- Release blocked on GitHub auth like v0.60.0+.

@@ -92,7 +92,7 @@ class SummaryScreen extends StatelessWidget {
                               final charId =
                                   run['character'] as String? ??
                                   defaultCharacter;
-                              final name = characters[charId]?.name ?? charId;
+                              final name = c.meta.nameFor(charId);
                               final title =
                                   epithets[c.meta.epithetFor(charId)]?.title;
                               return Text(

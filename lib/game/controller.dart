@@ -700,6 +700,22 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// v0.72.0 The Given Name: name (or un-name) an unlocked delver. The
+  /// sanitizer lives on MetaState so tests and cloud-restore share it.
+  void setDelverName(String charId, String raw) {
+    if (!meta.unlockedCharacters.contains(charId)) return;
+    final name = MetaState.sanitizeGivenName(raw);
+    if (name.isEmpty) {
+      if (!meta.charName.containsKey(charId)) return;
+      meta.charName.remove(charId);
+    } else {
+      if (meta.charName[charId] == name) return;
+      meta.charName[charId] = name;
+    }
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
   bool buyCodexEntry(String id) {
     final ok = meta.tryBuyCodex(id);
     if (ok) {
@@ -1335,7 +1351,7 @@ class GameController extends ChangeNotifier {
     final killerId = sim!.enemy?['id'] as String?;
     return obituaryText(
       won: won,
-      delverName: characters[charId]?.name ?? charId,
+      delverName: meta.nameFor(charId),
       epithetTitle: epithets[meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
@@ -1366,7 +1382,7 @@ class GameController extends ChangeNotifier {
     final killerId = sim!.enemy?['id'] as String?;
     return epitaphLine(
       won: won,
-      delverName: characters[charId]?.name ?? charId,
+      delverName: meta.nameFor(charId),
       epithetTitle: epithets[meta.epithetFor(charId)]?.title ?? '',
       floor: floorReached,
       killerName: won || killerId == null
