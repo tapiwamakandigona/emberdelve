@@ -49,7 +49,16 @@ void main() {
   });
   tearDown(() async {
     MetaStore.dirOverride = null;
-    await dir.delete(recursive: true);
+    // Retry: a controller autosave can still be landing when the test body
+    // ends (same race enemy_record_test guards against — errno 39).
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('a first win records the run\'s new tracks, title_menu never', () async {

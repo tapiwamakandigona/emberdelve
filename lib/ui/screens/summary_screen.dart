@@ -256,6 +256,20 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.79.0 The Settled Score: the run that finally
+                          // fells the old foe gets one gold line. Once per
+                          // foe, ever — a payoff, not a treadmill.
+                          if (settledScoreLine(c) case final line?) ...[
+                            const SizedBox(height: Space.l),
+                            Text(
+                              line,
+                              key: const ValueKey('settled-score'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                          ],
                           if (insight != null) ...[
                             const SizedBox(height: Space.l),
                             Panel(
@@ -945,4 +959,15 @@ String newSongLine(List<String> names) {
     return '"${names[0]}" and "${names[1]}" join the Gramophone.';
   }
   return '"${names.first}" and ${names.length - 1} more join the Gramophone.';
+}
+
+/// v0.79.0 The Settled Score: the gold line for the run that felled the
+/// reigning old foe. Null when this run settled nothing, or the foe id no
+/// longer resolves (retired content) — the summary never names a ghost.
+String? settledScoreLine(GameController c) {
+  final id = c.pendingSettledFoe;
+  if (id == null) return null;
+  final name = enemies[id]?.name;
+  if (name == null) return null;
+  return 'The score with the $name is settled.';
 }

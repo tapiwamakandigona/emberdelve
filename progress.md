@@ -2428,3 +2428,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Scouted follow-up lead v0.79.0: "The Settled Score" — summary line when a run fells
   the current old foe (needs per-run felled-set plumbing; check recordCombatStats).
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.79.0 — The Settled Score (2026-08-26)
+
+- One improvement: the run that finally fells the reigning old foe gets one gold summary
+  line — 'The score with the <Name> is settled.' (key 'settled-score'). Closes the loop
+  v0.78.0 opened: named score → settled score. Once per foe, EVER — a payoff that resets
+  is a treadmill; the score never reopens and nothing rides on it (no embers, no badge).
+- oldFoe MOVED ledger_screen.dart → meta/meta.dart (controller needs it; meta already
+  imports data/*; old_foe_test untouched, resolves via its meta import). MetaState gains
+  Set<String> settledFoes (sorted-list JSON, omitted empty, cloud merge union).
+- Controller: transient pendingSettledFoe set at felled-record site in recordCombatStats
+  (gate: felledId == oldFoe(meta).id && !settledFoes.contains); autosave side channel
+  'settled_foe' + boot restore (run_new_tracks pattern); cleared startRun + endToTitle.
+- summary_screen EOF helper settledScoreLine(c) — never names a retired id; line placed
+  after deepest-line, before insight.
+- Tests +4 (test/settled_score_test.dart, enemy_record-style temp-dir setUp). Suite
+  749/749, analyze clean. FLAKE FIXED: test/new_song_test.dart teardown single delete →
+  standard 10×50ms retry loop (errno 39 race, same guard as enemy_record_test).
+- Plates build/settled_score_visual/ (Wick Widow 360 / Smoke Stalker 320) clean; plate
+  harness seeds foe + sets pendingSettledFoe directly (mechanics covered by tests).
+- pubspec 0.79.0+105; news 0.79.0; docs/releases/v0.79.0.md; scout rejected fire-every-
+  fell (noise), reopening scores (see-saw treadmill), ember reward (farming), taunt copy.
+- Release blocked on GitHub auth like v0.60.0+.

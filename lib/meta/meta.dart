@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../data/characters.dart';
+import '../data/enemies.dart';
 import '../game/tips.dart' show ContextTips;
 import '../data/codex.dart';
 import '../data/attire.dart';
@@ -167,6 +168,10 @@ class MetaState {
   // AudioService.musicPaths). 'title_menu' is seeded on load — every profile
   // has heard the hearth. Cloud merge: union, like every other collection.
   Set<String> heardTracks;
+
+  /// v0.79.0 The Settled Score: foe ids whose score has been settled — the
+  /// player felled the reigning old foe. Once per foe, ever; never reopened.
+  Set<String> settledFoes;
   // In-app review prompt (see lib/meta/review_service.dart): true once the
   // Play review flow has been REQUESTED on this profile. One ask, ever —
   // version bumps never reset it. Cloud merge: sticky OR, so a profile that
@@ -232,6 +237,7 @@ class MetaState {
     Map<String, int>? enemyFellTo,
     this.lastSeenNewsVersion = '',
     Set<String>? heardTracks,
+    Set<String>? settledFoes,
     this.reviewAsked = false,
     Set<String>? redeemedCodes,
   }) : runHistory = runHistory ?? [],
@@ -254,7 +260,8 @@ class MetaState {
        enemyMet = enemyMet ?? {},
        enemyFelled = enemyFelled ?? {},
        enemyFellTo = enemyFellTo ?? {},
-       heardTracks = heardTracks ?? {};
+       heardTracks = heardTracks ?? {},
+       settledFoes = settledFoes ?? {};
 
   Map<String, Object?> toJson() => {
     'schema': metaSchemaVersion,
@@ -316,6 +323,7 @@ class MetaState {
     if (lastSeenNewsVersion.isNotEmpty)
       'lastSeenNewsVersion': lastSeenNewsVersion,
     if (heardTracks.isNotEmpty) 'heardTracks': (heardTracks.toList()..sort()),
+    if (settledFoes.isNotEmpty) 'settledFoes': (settledFoes.toList()..sort()),
     if (reviewAsked) 'reviewAsked': true,
     if (redeemedCodes.isNotEmpty)
       'redeemedCodes': (redeemedCodes.toList()..sort()),
@@ -505,6 +513,7 @@ class MetaState {
     enemyFellTo: _intMap(j['enemyFellTo']),
     lastSeenNewsVersion: j['lastSeenNewsVersion'] as String? ?? '',
     heardTracks: ((j['heardTracks'] as List?)?.cast<String>().toSet()) ?? {},
+    settledFoes: ((j['settledFoes'] as List?)?.cast<String>().toSet()) ?? {},
     reviewAsked: j['reviewAsked'] as bool? ?? false,
     redeemedCodes:
         ((j['redeemedCodes'] as List?)?.cast<String>().toSet()) ?? {},
@@ -703,4 +712,23 @@ class MetaStore {
     });
     return _writeQueue;
   }
+}
+
+/// v0.78.0 The Old Foe (moved here in v0.79.0 — the controller needs it): the enemy that has ended more of the player's
+/// delves than any other, read from [MetaState.enemyFellTo]. Named flatly —
+/// the Ledger states, never goads. Two falls make a foe (one is bad luck);
+/// unknown ids (retired content) are skipped rather than crashed on; ties
+/// resolve to enemies authoring order so the answer never flickers.
+({String id, int falls})? oldFoe(MetaState m) {
+  String? bestId;
+  var best = 0;
+  for (final id in enemiesOrder) {
+    final n = m.enemyFellTo[id] ?? 0;
+    if (n > best) {
+      best = n;
+      bestId = id;
+    }
+  }
+  if (bestId == null || best < 2) return null;
+  return (id: bestId, falls: best);
 }
