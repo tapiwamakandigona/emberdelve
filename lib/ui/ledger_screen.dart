@@ -143,6 +143,24 @@ class LedgerScreen extends StatelessWidget {
                           'Best ascension',
                           '${m.bestAscension}',
                         ),
+                        // v0.80.0 The Plumb Line: the lifetime deepest floor,
+                        // stated absolutely — the sounding line above draws
+                        // the relative arc; this is the number.
+                        if (m.bestFloor > 0) ...[
+                          const Divider(
+                            color: EmberColors.line,
+                            height: Space.xl,
+                          ),
+                          KeyedSubtree(
+                            key: const ValueKey('plumb-line'),
+                            child: _row(
+                              Icons.south,
+                              EmberColors.ember,
+                              'Deepest floor',
+                              '${m.bestFloor}',
+                            ),
+                          ),
+                        ],
                         const Divider(
                           color: EmberColors.line,
                           height: Space.xl,
