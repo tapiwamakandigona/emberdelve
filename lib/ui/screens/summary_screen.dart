@@ -312,6 +312,21 @@ class SummaryScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: Space.s),
                           ],
+                          // v0.76.0 The New Song: tracks first heard this
+                          // run join the Gramophone — ONE quiet line however
+                          // many arrived, so a first delve's four new songs
+                          // never shout down its result.
+                          if (newSongNames(c).isNotEmpty) ...[
+                            Text(
+                              newSongLine(newSongNames(c)),
+                              key: const ValueKey('new-song-line'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                            const SizedBox(height: Space.s),
+                          ],
                           // v0.31.0 (retention hook #6): the codex pull. The
                           // moment the record grows is the only honest moment
                           // to name the collection — one factual line, shown
@@ -912,4 +927,22 @@ String? _firstsLine(GameController c) {
       'First felling: ${names(c.runFirstFelled)}',
   ];
   return parts.isEmpty ? null : parts.join('\n');
+}
+
+/// v0.76.0 The New Song: display names of the tracks FIRST heard this run,
+/// in Gramophone shelf order. Names resolve through tracks.dart so a rename
+/// can never leave the line lying (the firsts-line rule).
+List<String> newSongNames(GameController c) => [
+  for (final t in gramophoneTracks)
+    if (c.runNewTracks.contains(t.key)) t.name,
+];
+
+/// One line no matter how many songs a run earned — a first delve can earn
+/// four at once, and four lines would shout.
+String newSongLine(List<String> names) {
+  if (names.length == 1) return '"${names.first}" joins the Gramophone.';
+  if (names.length == 2) {
+    return '"${names[0]}" and "${names[1]}" join the Gramophone.';
+  }
+  return '"${names.first}" and ${names.length - 1} more join the Gramophone.';
 }
