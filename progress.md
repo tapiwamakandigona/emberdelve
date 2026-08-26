@@ -2244,3 +2244,4 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - save_transfer full-fat fixture extended with charBestFloor {'kindler': 9} — an absent key is re-seeded on decode (correct, but not byte-identical), so the full-fat state must carry it.
 - Tests: +7 test/charted_depth_test.dart (bank/isolation, never-lowers, round-trip, seeding incl. malformed record + explicit-key-no-reseed, merge MAX, both picker states). Suite 689/689 (/work/temp/v0650_suite3.log). analyze clean.
 - Zero sim movement. pubspec 0.65.0+91; news 0.65.0 entry (ethics-gate clean).
+- Plates (post-commit): tool/charted_depth_visual_test.dart → build/charted_depth_visual/ — 360x640 one-line tallies with floors; 320x568 worst case (999/1204/floor 9) wraps cleanly after the middot, no overflow; fresh shows no tally. Critiqued clean.
