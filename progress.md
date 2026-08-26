@@ -2408,3 +2408,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   overlay (nudge-shaped); tappable bars (rows below already open runs); lifetime chart
   beyond the 30-run window (new persistence, padding-shaped).
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.78.0 — The Old Foe (2026-08-26)
+
+- One improvement: the Ledger's LIFETIME panel names the old foe — the enemy that has
+  ended more delves than any other, with its tally ('Wick Widow ×7'). enemyFellTo was
+  banked since v0.3 and read per-entry by the codex but never aggregated; the nemesis
+  hook (a standing personal score) now exists with zero goading: a statement, no errand,
+  no reward, no taunt.
+- oldFoe(MetaState) pure helper at ledger_screen.dart EOF: iterate enemiesOrder
+  (deterministic; ties never flicker), strict-greater max, threshold 2 falls ("one is
+  bad luck"), unknown/retired ids skipped. Row keyed 'old-foe' (KeyedSubtree over _row,
+  Icons.dangerous, textDim), gated `if (oldFoe(m) case final foe?)`.
+- Zero new assets, zero sim movement. Tests +3 (test/old_foe_test.dart). Suite 745/745,
+  analyze clean. Plates build/old_foe_visual/ (360 ×7 / 320 longest-name ×23) clean —
+  value FittedBox scale-down held at 320.
+- pubspec 0.78.0+104; news 0.78.0; docs/releases/v0.78.0.md; scout doc rejected taunt
+  copy/revenge CTA, felled-leaderboard ("shame table"), threshold 3.
+- Scouted follow-up lead v0.79.0: "The Settled Score" — summary line when a run fells
+  the current old foe (needs per-run felled-set plumbing; check recordCombatStats).
+- Release blocked on GitHub auth like v0.60.0+.
