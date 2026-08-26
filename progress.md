@@ -2314,3 +2314,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   FittedBox fix. Zero sim movement. pubspec 0.72.0+98; news 0.72.0; docs/releases/v0.72.0.md;
   scout docs/improvements/v0.72.0-lead-scout.md.
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.73.0 — The Opened Vista (2026-08-26)
+- Symmetry gap: v0.68.0 announces earned epithets, but vista unlocks (the reviewer's
+  "backgrounds") happened in silence. Now one gold summary line per vista a bank pass opens.
+- Controller: transient `pendingVistas` (shape of pendingEpithets) — snapshot
+  `vistasOrder.where(vistaUnlocked)` before banking, diff after, cleared in resetRun.
+  Summary: `opened-vista-<id>` lines, 'The <Name> vista stands open.', before deepest-line.
+- Tests +4 (test/opened_vista_test.dart). Suite 727/727, analyze clean. Zero sim movement.
+- Plates build/opened_vista_visual/ (first-win 360+320) critiqued clean — seed-1 first win
+  fires BOTH Moonveil and Deepshale (reaches floor 9), proving the multi-line stack at 320.
+- pubspec 0.73.0+99; news 0.73.0; docs/releases/v0.73.0.md; scout docs/improvements/v0.73.0-lead-scout.md.
+- Rejected (scout): next-vista teaser (FOMO); toast/modal; title-screen ambush (needs seen-state);
+  retroactive announcements.
+- Release blocked on GitHub auth like v0.60.0+.
