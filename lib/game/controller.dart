@@ -41,6 +41,12 @@ import 'trials.dart';
 import 'run_trace.dart';
 import 'weekly.dart';
 
+/// THE definition of "close": alive, with HP at or under 30% of max. One
+/// rule, four voices — the danger music (v0.23.0), the Narrow Climb
+/// (v0.85.0), the Foe's Last Thread (v0.86.0), and the guttering enemy bar
+/// (v0.87.0) all call this, so they can never disagree.
+bool inTheRed(int hp, int maxHp) => hp > 0 && hp * 10 <= maxHp * 3;
+
 class GameController extends ChangeNotifier {
   Sim? sim;
   MetaState meta = MetaState();
@@ -425,9 +431,7 @@ class GameController extends ChangeNotifier {
     if (phase != 'player_turn') return false;
     final p = sim?.player;
     if (p == null) return false;
-    final hp = p['hp'] as int? ?? 0;
-    final maxHp = p['max_hp'] as int? ?? 1;
-    return hp * 10 <= maxHp * 3;
+    return inTheRed(p['hp'] as int? ?? 0, p['max_hp'] as int? ?? 1);
   }
 
   String? get phase => sim?.phase;

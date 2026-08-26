@@ -438,7 +438,14 @@ class _StatBarState extends State<StatBar> {
             ),
           ),
           const SizedBox(height: Space.xs),
-          Text(widget.label, style: EmberText.micro),
+          // Captions are one line by design; scale down rather than wrap so
+          // a long tell (v0.87.0 'NEARLY SPENT') can never nudge the combat
+          // column into overflow at narrow widths or large text scales.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(widget.label, style: EmberText.micro, maxLines: 1),
+          ),
         ],
       ),
     );

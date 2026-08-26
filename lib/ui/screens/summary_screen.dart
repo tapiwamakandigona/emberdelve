@@ -1000,8 +1000,7 @@ String? lastThreadLine(GameController c) {
   final name = enemies[e['id']]?.name;
   if (name == null) return null;
   final hp = e['hp'] as int? ?? 0;
-  final maxHp = e['max_hp'] as int? ?? 1;
-  if (hp <= 0 || hp * 10 > maxHp * 3) return null;
+  if (!inTheRed(hp, e['max_hp'] as int? ?? 1)) return null;
   return 'The $name hung by a thread — $hp HP standing.';
 }
 
@@ -1015,8 +1014,7 @@ String? narrowClimbLine(GameController c) {
   final p = st['player'] as Map?;
   if (p == null) return null;
   final hp = p['hp'] as int? ?? 0;
-  final maxHp = p['max_hp'] as int? ?? 1;
-  if (hp <= 0 || hp * 10 > maxHp * 3) return null;
+  if (!inTheRed(hp, p['max_hp'] as int? ?? 1)) return null;
   return 'A narrow climb home — $hp HP standing.';
 }
 
