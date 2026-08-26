@@ -88,6 +88,12 @@ class MetaState {
   /// Same contract as charEpithet/charDye: absent key = default; the
   /// built-in name is never overwritten.
   Map<String, String> charName;
+
+  /// v0.75.0 The Hearth Song: a heard Gramophone track pinned as the
+  /// hearth's music. '' = the default Hearthside. HONESTY at read time:
+  /// resolvers fall back to the default whenever this key is unheard or
+  /// unknown, so a merge can never smuggle an unearned song onto the hearth.
+  String hearthTrack;
   // v0.67.0 The Dyed Delver — per-delver worn dye (delver id → dye id).
   // Same contract as charEpithet: an absent key falls back to the legacy
   // global activeDye, which is never written after v0.67.0. OWNERSHIP stays
@@ -190,6 +196,7 @@ class MetaState {
     this.bestExactStreak = 0,
     Set<String>? ownedThemes,
     this.activeTheme = defaultTheme,
+    this.hearthTrack = '',
     Set<String>? ownedDieSkins,
     this.activeDieSkin = defaultDieSkin,
     Set<String>? ownedDyes,
@@ -279,6 +286,7 @@ class MetaState {
     if (selectedEpithet != defaultEpithet) 'selectedEpithet': selectedEpithet,
     if (charEpithet.isNotEmpty) 'charEpithet': charEpithet,
     if (charName.isNotEmpty) 'charName': charName,
+    if (hearthTrack.isNotEmpty) 'hearthTrack': hearthTrack,
     if (charDye.isNotEmpty) 'charDye': charDye,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
@@ -447,6 +455,7 @@ class MetaState {
     // decode (same hygiene as the selection fallbacks above).
     charEpithet: _epithetMap(j['charEpithet']),
     charName: _nameMap(j['charName']),
+    hearthTrack: j['hearthTrack'] as String? ?? '',
     charDye: _dyeMap(j['charDye']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String

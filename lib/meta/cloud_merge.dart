@@ -67,6 +67,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     // side wins wholesale — same convention as selectedEpithet/activeDye.
     charEpithet: Map.of(fresh.charEpithet),
     charName: Map.of(fresh.charName),
+    hearthTrack: fresh.hearthTrack,
     charDye: Map.of(fresh.charDye),
     preferredDifficulty: fresh.preferredDifficulty,
     preferShortRoad: fresh.preferShortRoad,

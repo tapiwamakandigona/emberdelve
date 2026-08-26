@@ -347,6 +347,7 @@ class GameController extends ChangeNotifier {
       bossFight: _bossFight,
       eliteFight: _eliteFight,
       mapDepth: mapDepth,
+      hearthSong: hearthSongKey,
     );
     audio?.setDanger(_inDanger);
     // v0.33.0 Gramophone: record which tracks this profile has heard. The
@@ -704,6 +705,33 @@ class GameController extends ChangeNotifier {
     if (meta.charEpithet[forChar] == id) return;
     meta.charEpithet[forChar] = id;
     MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  /// v0.75.0 The Hearth Song: the track the hearth actually plays — the
+  /// player's pinned song when it is still an earned, known key, else the
+  /// default Hearthside. Honesty at read time: a stale cloud value or a
+  /// removed track never sounds.
+  String get hearthSongKey {
+    final t = meta.hearthTrack;
+    if (t.isEmpty) return 'title_menu';
+    if (!meta.heardTracks.contains(t)) return 'title_menu';
+    if (!AudioService.musicPaths.containsKey(t)) return 'title_menu';
+    return t;
+  }
+
+  /// Pin a heard track as the hearth's song ('' gives the song back).
+  /// Heard tracks only — the Gramophone's own unlock rule.
+  void setHearthSong(String key) {
+    if (key.isNotEmpty &&
+        (!meta.heardTracks.contains(key) ||
+            !AudioService.musicPaths.containsKey(key))) {
+      return;
+    }
+    if (meta.hearthTrack == key) return;
+    meta.hearthTrack = key;
+    MetaStore.save(meta);
+    _syncAudio();
     notifyListeners();
   }
 
