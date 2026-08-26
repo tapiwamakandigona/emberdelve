@@ -468,7 +468,7 @@ class LedgerScreen extends StatelessWidget {
             onPressed: () => showDelverCardSheet(
               context,
               c,
-              facts: DelverCardFacts.fromRecord(r),
+              facts: DelverCardFacts.fromRecord(r, meta: c.meta),
             ),
           ),
         if (code != null)

@@ -19,6 +19,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../data/attire.dart' show defaultDye;
 import '../data/characters.dart';
 import '../data/enemies.dart';
 import '../data/epithets.dart';
@@ -27,6 +28,9 @@ import '../game/delve_code.dart';
 import '../game/obituary.dart' show epitaphLine;
 import '../game/run_trace.dart';
 import '../sim/run_layer.dart' show bossForSeed;
+import '../meta/meta.dart' show MetaState;
+import 'art.dart';
+import 'sprites.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -35,6 +39,11 @@ import 'widgets.dart';
 class DelverCardFacts {
   final bool won;
   final String delverName;
+
+  /// v0.70.0 The Pictured Card: the delver's sprite id and worn dye — the
+  /// card stays a pure function of facts, so tests can pin the portrait.
+  final String charId;
+  final String dyeId;
 
   /// The worn epithet's title ('' when none) — v0.36.0 The Epithets.
   final String epithetTitle;
@@ -62,6 +71,8 @@ class DelverCardFacts {
   const DelverCardFacts({
     required this.won,
     required this.delverName,
+    this.charId = defaultCharacter,
+    this.dyeId = defaultDye,
     this.epithetTitle = '',
     required this.difficulty,
     required this.ascension,
@@ -81,7 +92,7 @@ class DelverCardFacts {
   /// never banked (fights won, floor trace, worn epithet) is OMITTED, not
   /// invented. Only 'won'/'lost' records qualify — a walked-away run has
   /// no ember and no grave, so callers skip 'abandoned'.
-  static DelverCardFacts fromRecord(Map<String, Object?> r) {
+  static DelverCardFacts fromRecord(Map<String, Object?> r, {MetaState? meta}) {
     final won = (r['result'] as String? ?? 'lost') == 'won';
     final charId = r['character'] as String? ?? defaultCharacter;
     final delverName = characters[charId]?.name ?? charId;
@@ -107,6 +118,10 @@ class DelverCardFacts {
     return DelverCardFacts(
       won: won,
       delverName: delverName,
+      charId: charId,
+      // Portraiture, not history: the delver's CURRENT coat, exactly as
+      // the picker paints them (dyes were never banked per run).
+      dyeId: meta?.dyeFor(charId) ?? defaultDye,
       epithetTitle: epithetTitle,
       difficulty: difficulty,
       ascension: ascension,
@@ -149,6 +164,8 @@ class DelverCardFacts {
     return DelverCardFacts(
       won: st['phase'] == 'run_won',
       delverName: characters[charId]?.name ?? charId,
+      charId: charId,
+      dyeId: c.meta.dyeFor(charId),
       epithetTitle: epithets[c.meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
@@ -229,10 +246,16 @@ class DelverCard extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-            Icon(
-              facts.won ? Icons.emoji_events : Icons.local_fire_department,
-              size: 40,
-              color: accent,
+            // v0.70.0 The Pictured Card: the delver stands on their own
+            // card, in their worn dye — the shared artifact is SOMEONE'S
+            // run, not a template. Full opacity on losses too: the export
+            // is a poster, and a dimmed sprite reads as a rendering bug.
+            SpriteView(
+              facts.charId,
+              key: const ValueKey('card-delver'),
+              height: 44,
+              animate: false,
+              dye: Art.dyeFilter(facts.dyeId),
             ),
             Text(
               facts.won ? 'The Ember is yours' : 'The dark claims you',
