@@ -229,6 +229,21 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          // v0.73.0 The Opened Vista: one gold line per
+                          // vista this run's banking opened. A fact about
+                          // colors already earned — no button, no teaser;
+                          // the delver screen holds the swatch (§Ethics).
+                          for (final id in c.pendingVistas) ...[
+                            const SizedBox(height: Space.l),
+                            Text(
+                              'The ${vistas[id]?.name} vista stands open.',
+                              key: ValueKey('opened-vista-$id'),
+                              textAlign: TextAlign.center,
+                              style: EmberText.body.copyWith(
+                                color: EmberColors.gold,
+                              ),
+                            ),
+                          ],
                           if (c.pendingDeepestFloor != null) ...[
                             const SizedBox(height: Space.l),
                             Text(

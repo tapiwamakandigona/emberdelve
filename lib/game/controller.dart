@@ -218,6 +218,12 @@ class GameController extends ChangeNotifier {
   /// persists and nothing can double-fire.
   List<String> pendingEpithets = const [];
 
+  /// v0.73.0 The Opened Vista: vistas this run's banking opened, in
+  /// vistasOrder. Same derived-diff shape as [pendingEpithets] — a fact
+  /// about colors already earned, never a next-goal teaser (§Ethics).
+  /// Transient; the diff lives inside one bank pass.
+  List<String> pendingVistas = const [];
+
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
   /// [boot], because [_bankRun] gates the daily record on it — a resumed
@@ -487,6 +493,7 @@ class GameController extends ChangeNotifier {
     pendingRungOpened = null;
     pendingDeepestFloor = null;
     pendingEpithets = const [];
+    pendingVistas = const [];
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -1150,6 +1157,8 @@ class GameController extends ChangeNotifier {
     final rankBefore = rankFor(meta);
     // v0.68.0 The Earned Name: names held before this run's banking.
     final epithetsBefore = epithetsOrder.where(epithetUnlocked).toSet();
+    // v0.73.0 The Opened Vista: colors held before this run's banking.
+    final vistasBefore = vistasOrder.where(vistaUnlocked).toSet();
     meta.embers += banked;
     meta.lifetimeEmbers += banked;
     meta.runsPlayed += 1;
@@ -1269,6 +1278,10 @@ class GameController extends ChangeNotifier {
     // v0.68.0 The Earned Name: announce each name this run's banking earned.
     pendingEpithets = epithetsOrder
         .where((id) => !epithetsBefore.contains(id) && epithetUnlocked(id))
+        .toList();
+    // v0.73.0 The Opened Vista: announce each vista this banking opened.
+    pendingVistas = vistasOrder
+        .where((id) => !vistasBefore.contains(id) && vistaUnlocked(id))
         .toList();
     // In-app review ask (REVENUE ASK #1): one quiet ask, ever, at a moment
     // of earned pride — 2nd+ win or a won daily/weekly, never while the
