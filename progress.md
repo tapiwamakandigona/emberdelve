@@ -2614,3 +2614,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   turn 12): clean 360x640 + 320x568, re-snapped after FittedBox fix.
 - Suite 770/770, analyze clean. pubspec 0.87.0+113; news 0.87.0;
   docs/releases/v0.87.0.md. Release blocked on GitHub auth like v0.60.0+.
+
+## v0.88.0 — The Coming Vista (2026-08-26)
+- Run summaries now name the nearest still-locked progressive vista with real
+  numbers — ONLY when this run moved its counter (Verdigris felled-count via
+  runFirstFelled, Deepshale depth via pendingDeepestFloor). Helper
+  `comingVistaLine(GameController)` in summary_screen.dart; row key
+  `coming-vista` after codex-pull, before rung-open. Binary gates excluded
+  (0-of-1 is a demand); nearest = highest fraction; pure read, no persistence.
+- NBSPs bind 'floor 7 of 9.' so the centered micro line never orphans a word.
+- Tests +5 (test/coming_vista_test.dart; new pinned seed kindler easy 22 =
+  loss, 2 distinct felled, deepest floor 7). Suite 775/775. Plates
+  tool/coming_vista_visual_test.dart (depth 360x640, felled 320x568) clean.
+- 0.88.0+114. Notes docs/releases/v0.88.0.md. Zero sim movement. LESSON:
+  news ethics gate bans substrings — 'closer' trips the 'loser' ban; reworded
+  to 'nearer'.
