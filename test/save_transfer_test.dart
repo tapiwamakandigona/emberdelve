@@ -62,6 +62,10 @@ MetaState fullFat({bool forge = true}) {
     bossesBeaten: {'ashen_colossus', 'ember_tyrant', 'hearthless_king'},
     seenAchievements: {'first_ember', 'boss_slayer'},
     bestFloor: 9,
+    // v0.65.0 The Charted Depth — a full-fat state carries the per-delver
+    // depths too (an absent key would be re-seeded from runHistory on
+    // decode, which is correct but not byte-identical).
+    charBestFloor: {'kindler': 9},
     dailiesPlayed: 23,
     winsNoRest: 4,
     hardWins: 18,
@@ -79,10 +83,16 @@ void main() {
     expect(out, isNotNull);
     final a = src.toJson()..remove('forgeUnlocked');
     final b = out!.toJson();
-    expect(out.forgeUnlocked, isFalse,
-        reason: 'the purchase must not travel in a pasteable code');
-    expect(jsonEncode(b), jsonEncode(a),
-        reason: 'everything else survives byte-for-byte');
+    expect(
+      out.forgeUnlocked,
+      isFalse,
+      reason: 'the purchase must not travel in a pasteable code',
+    );
+    expect(
+      jsonEncode(b),
+      jsonEncode(a),
+      reason: 'everything else survives byte-for-byte',
+    );
   });
 
   test('encode is deterministic for the same state', () {
@@ -102,17 +112,25 @@ void main() {
     final code = encodeSaveCode(fullFat());
     // Flip one payload character (avoid the dots and the prefix).
     final i = code.indexOf('.') + 5;
-    final flipped = code.replaceRange(
-        i, i + 1, code[i] == 'A' ? 'B' : 'A');
+    final flipped = code.replaceRange(i, i + 1, code[i] == 'A' ? 'B' : 'A');
     expect(decodeSaveCode(flipped), isNull, reason: 'checksum catches a flip');
-    expect(decodeSaveCode(code.substring(0, code.length - 3)), isNull,
-        reason: 'truncation');
-    expect(decodeSaveCode('EMBER9${code.substring(6)}'), isNull,
-        reason: 'unknown prefix');
+    expect(
+      decodeSaveCode(code.substring(0, code.length - 3)),
+      isNull,
+      reason: 'truncation',
+    );
+    expect(
+      decodeSaveCode('EMBER9${code.substring(6)}'),
+      isNull,
+      reason: 'unknown prefix',
+    );
     expect(decodeSaveCode(''), isNull);
     expect(decodeSaveCode('not a save code at all'), isNull);
-    expect(decodeSaveCode('EMBER1.aGVsbG8.deadbeefdeadbeef'), isNull,
-        reason: 'valid-shaped but wrong checksum/payload');
+    expect(
+      decodeSaveCode('EMBER1.aGVsbG8.deadbeefdeadbeef'),
+      isNull,
+      reason: 'valid-shaped but wrong checksum/payload',
+    );
   });
 
   test('a hand-built code carrying forgeUnlocked still cannot grant it', () {
@@ -120,34 +138,43 @@ void main() {
     // decoder strips the field before fromJson ever sees it.
     final j = fullFat(forge: true).toJson(); // includes forgeUnlocked: true
     final payload = gzip.encode(utf8.encode(jsonEncode(j)));
-    final code = '$saveCodePrefix.${base64UrlEncode(payload)}'
+    final code =
+        '$saveCodePrefix.${base64UrlEncode(payload)}'
         '.${fnv1a64Hex(payload)}';
     final out = decodeSaveCode(code);
     expect(out, isNotNull);
     expect(out!.forgeUnlocked, isFalse);
   });
 
-  test('import merge never revokes a local unlock or loses local progress',
-      () {
+  test('import merge never revokes a local unlock or loses local progress', () {
     // Local: fresher, forge owned. Imported: an OLD export from before.
     final local = fullFat(forge: true);
-    final imported = decodeSaveCode(encodeSaveCode(MetaState(
-      embers: 10,
-      runsPlayed: 5,
-      runsWon: 1,
-      lifetimeEmbers: 50,
-      unlocked: {'kindler', 'ember_witch_old'},
-    )))!;
+    final imported = decodeSaveCode(
+      encodeSaveCode(
+        MetaState(
+          embers: 10,
+          runsPlayed: 5,
+          runsWon: 1,
+          lifetimeEmbers: 50,
+          unlocked: {'kindler', 'ember_witch_old'},
+        ),
+      ),
+    )!;
     final merged = mergeMetaStates(local, imported);
     expect(merged.forgeUnlocked, isTrue, reason: 'OR — never revoked');
     expect(merged.embers, local.embers, reason: 'fresher side spendables');
     expect(merged.runsPlayed, local.runsPlayed, reason: 'MAX counters');
     expect(merged.lifetimeEmbers, local.lifetimeEmbers);
-    expect(merged.unlockedCharacters,
-        containsAll({...local.unlockedCharacters, 'ember_witch_old'}),
-        reason: 'UNION — earned anywhere stays earned');
-    expect(merged.runHistory, local.runHistory,
-        reason: 'fresher side history kept wholesale');
+    expect(
+      merged.unlockedCharacters,
+      containsAll({...local.unlockedCharacters, 'ember_witch_old'}),
+      reason: 'UNION — earned anywhere stays earned',
+    );
+    expect(
+      merged.runHistory,
+      local.runHistory,
+      reason: 'fresher side history kept wholesale',
+    );
   });
 
   test('a full-fat code stays clipboard-small (< 4 KB)', () {

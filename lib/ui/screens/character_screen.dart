@@ -498,8 +498,15 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final runs = m.charRuns[id] ?? 0;
     if (runs <= 0) return null;
     final wins = m.charWins[id] ?? 0;
-    return '$wins ${wins == 1 ? 'win' : 'wins'} · '
+    final base =
+        '$wins ${wins == 1 ? 'win' : 'wins'} · '
         '$runs ${runs == 1 ? 'delve' : 'delves'}';
+    // v0.65.0 The Charted Depth: this delver's deepest floor, appended to
+    // the tally when one exists. Older profiles seed it from the run
+    // history on load; a delver with runs but no provable depth (a
+    // pre-ledger save) shows the tally alone — never a guessed floor.
+    final depth = m.charBestFloor[id] ?? 0;
+    return depth > 0 ? '$base · floor $depth' : base;
   }
 
   Widget _charCard(BuildContext context, String id) {

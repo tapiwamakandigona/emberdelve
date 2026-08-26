@@ -1185,6 +1185,10 @@ class GameController extends ChangeNotifier {
       if (meta.bestFloor > 0) pendingDeepestFloor = reached;
       meta.bestFloor = reached;
     }
+    // v0.65.0 The Charted Depth: the same fact, charted per delver.
+    if (reached > (meta.charBestFloor[char] ?? 0)) {
+      meta.charBestFloor[char] = reached;
+    }
     if (dailyDate != null) meta.dailiesPlayed += 1;
     if (sim!.phase == 'run_won') {
       if (!_restedThisRun) meta.winsNoRest += 1;

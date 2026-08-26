@@ -112,6 +112,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     hardWins: local.hardWins > cloud.hardWins ? local.hardWins : cloud.hardWins,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),
+    charBestFloor: _maxMap(local.charBestFloor, cloud.charBestFloor),
     enemyMet: _maxMap(local.enemyMet, cloud.enemyMet),
     enemyFelled: _maxMap(local.enemyFelled, cloud.enemyFelled),
     enemyFellTo: _maxMap(local.enemyFellTo, cloud.enemyFellTo),
