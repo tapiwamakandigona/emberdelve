@@ -2385,3 +2385,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Rejected (scout): line-per-track (shouts); mid-run toast; "go pin it" CTA (nudge); gold styling
   (firsts-grade fact, not a capability unlock).
 - Release blocked on GitHub auth like v0.60.0+.
+
+## v0.77.0 — The Sounding Line (2026-08-26)
+
+- One improvement: the Ledger DRAWS the depth of the remembered delves — bars above
+  RECENT DELVES, oldest→newest, height = floor over the window's deepest, wins ember /
+  losses dim / abandoned dimmer. Mastery made glanceable is the retention surface with
+  no dark pattern: it states only what already happened (runHistory cap 30, every bar real).
+- lib/ui/sounding_line.dart: soundingBars() pure mapping (newest-first storage →
+  oldest-first drawing; legacy floorless records draw a 2px baseline stub, never invented;
+  unknown results read as losses) + SoundingLine CustomPainter (width-aware slot/bar
+  sizing inside paint(size), per LAYOUT lesson). Ledger gate runHistory.length >= 2
+  ("two records make a line"), key 'sounding-line', quiet micro caption.
+- Zero new assets, zero sim movement.
+- Tests +3 (test/sounding_line_test.dart). Suite 742/742, analyze clean. TEST LESSON
+  (reconfirmed): seeding two history records with the SAME seed+date duplicates
+  'history-code-…' ValueKeys in the rows below and crashes the pump — vary seeds.
+- Plates build/sounding_line_visual/ (360+320, varied 14-run arc incl. legacy stub and
+  abandoned run) critiqued clean.
+- pubspec 0.77.0+103; news 0.77.0; docs/releases/v0.77.0.md; scout docs/improvements/v0.77.0-lead-scout.md.
+- Rejected (scout): trend commentary (game never grades the player); best-floor goal
+  overlay (nudge-shaped); tappable bars (rows below already open runs); lifetime chart
+  beyond the 30-run window (new persistence, padding-shaped).
+- Release blocked on GitHub auth like v0.60.0+.

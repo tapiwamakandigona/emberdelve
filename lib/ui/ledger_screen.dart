@@ -24,6 +24,7 @@ import '../game/delve_code.dart';
 import '../meta/achievements.dart' as ach;
 import '../meta/meta.dart';
 import 'art.dart';
+import 'sounding_line.dart';
 import 'sprites.dart';
 import '../meta/rank.dart';
 import 'codex_screen.dart';
@@ -188,6 +189,29 @@ class LedgerScreen extends StatelessWidget {
                     const SizedBox(height: Space.xl),
                     Text('RECENT DELVES', style: EmberText.micro),
                     const SizedBox(height: Space.s),
+                    // v0.77.0 The Sounding Line: the depth of the remembered
+                    // delves, drawn — oldest left, newest right, wins in
+                    // ember. Two records make a line; one stays a row.
+                    if (m.runHistory.length >= 2) ...[
+                      Panel(
+                        key: const ValueKey('sounding-line'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SoundingLine(bars: soundingBars(m.runHistory)),
+                            const SizedBox(height: Space.s),
+                            Text(
+                              'Each bar a remembered delve, oldest to newest '
+                              '— its height, the floor it reached.',
+                              style: EmberText.micro.copyWith(
+                                color: EmberColors.textDim,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: Space.s),
+                    ],
                     Panel(
                       key: const ValueKey('recent-delves'),
                       child: Column(
