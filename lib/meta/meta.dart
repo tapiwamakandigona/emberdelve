@@ -76,6 +76,12 @@ class MetaState {
   // unlocks (data/epithets.dart via the Ledger's statValue), so only the
   // SELECTION persists.
   String selectedEpithet;
+  // v0.66.0 The Dressed Delver — per-delver worn title (delver id →
+  // epithet id). An absent key falls back to the legacy global selection,
+  // so a pre-v0.66.0 choice keeps being honored on every delver until the
+  // player dresses that delver differently. selectedEpithet is never
+  // written after v0.66.0; it survives purely as this fallback.
+  Map<String, String> charEpithet;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -178,6 +184,7 @@ class MetaState {
     this.activeDye = defaultDye,
     this.selectedVista = defaultVista,
     this.selectedEpithet = defaultEpithet,
+    Map<String, String>? charEpithet,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -215,6 +222,7 @@ class MetaState {
        charRuns = charRuns ?? {},
        charWins = charWins ?? {},
        charBestFloor = charBestFloor ?? {},
+       charEpithet = charEpithet ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedDyes = ownedDyes ?? {defaultDye},
@@ -253,6 +261,7 @@ class MetaState {
     if (activeDye != defaultDye) 'activeDye': activeDye,
     if (selectedVista != defaultVista) 'selectedVista': selectedVista,
     if (selectedEpithet != defaultEpithet) 'selectedEpithet': selectedEpithet,
+    if (charEpithet.isNotEmpty) 'charEpithet': charEpithet,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -296,6 +305,24 @@ class MetaState {
 
   static Map<String, int> _intMap(Object? v) =>
       (v as Map?)?.map((k, n) => MapEntry('$k', (n as num).toInt())) ?? {};
+
+  /// v0.66.0: the title a given delver wears — their own choice when they
+  /// have one, else the legacy global selection. EVERY read surface
+  /// (picker, summary, share card, run-record banking) goes through this.
+  String epithetFor(String charId) => charEpithet[charId] ?? selectedEpithet;
+
+  static Map<String, String> _epithetMap(Object? v) {
+    if (v is! Map) return {};
+    final out = <String, String>{};
+    v.forEach((k, val) {
+      if (val is String &&
+          characters.containsKey('$k') &&
+          epithets.containsKey(val)) {
+        out['$k'] = val;
+      }
+    });
+    return out;
+  }
 
   factory MetaState.fromJson(Map<String, dynamic> j) => MetaState(
     embers: j['embers'] as int? ?? 0,
@@ -352,6 +379,9 @@ class MetaState {
     selectedEpithet: epithets.containsKey(j['selectedEpithet'])
         ? j['selectedEpithet'] as String
         : defaultEpithet,
+    // v0.66.0: unknown delver ids and unknown epithet ids are dropped on
+    // decode (same hygiene as the selection fallbacks above).
+    charEpithet: _epithetMap(j['charEpithet']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

@@ -113,7 +113,7 @@ Future<void> epithetPlate(WidgetTester tester, String suffix) async {
   await tester.pump();
   final c = seasoned();
   c.meta.charWins['tinker'] = 1;
-  c.selectEpithet('the_well_oiled');
+  c.meta.selectedEpithet = 'the_well_oiled';
   await tester.pumpWidget(app(CharacterScreen(c)));
   await tester.binding.runAsync(
     () => Future<void>.delayed(const Duration(milliseconds: 300)),

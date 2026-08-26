@@ -36,8 +36,11 @@ void main() {
     test('every epithet uses a legal Ledger stat and a coherent id', () {
       expect(epithetsOrder.toSet(), epithets.keys.toSet());
       for (final e in epithets.values) {
-        expect(achievementStats.contains(e.stat), isTrue,
-            reason: '${e.id}: unknown stat "${e.stat}"');
+        expect(
+          achievementStats.contains(e.stat),
+          isTrue,
+          reason: '${e.id}: unknown stat "${e.stat}"',
+        );
         expect(e.target, greaterThanOrEqualTo(1), reason: e.id);
         expect(epithets[e.id]!.id, e.id);
         expect(e.title, isNotEmpty);
@@ -96,20 +99,24 @@ void main() {
   });
 
   group('selection', () {
-    test('selectEpithet rejects locked and unknown, accepts earned and none',
-        () {
-      final c = GameController();
-      c.selectEpithet('the_delver'); // locked
-      expect(c.meta.selectedEpithet, defaultEpithet);
-      c.selectEpithet('nonsense');
-      expect(c.meta.selectedEpithet, defaultEpithet);
-      c.meta.runsWon = 1;
-      c.selectEpithet('the_delver');
-      expect(c.meta.selectedEpithet, 'the_delver');
-      // Taking the title off is always legal.
-      c.selectEpithet(defaultEpithet);
-      expect(c.meta.selectedEpithet, defaultEpithet);
-    });
+    test(
+      'selectEpithet rejects locked and unknown, accepts earned and none',
+      () {
+        final c = GameController();
+        c.selectEpithet('the_delver', forChar: 'kindler'); // locked
+        expect(c.meta.epithetFor('kindler'), defaultEpithet);
+        c.selectEpithet('nonsense', forChar: 'kindler');
+        expect(c.meta.epithetFor('kindler'), defaultEpithet);
+        c.meta.runsWon = 1;
+        c.selectEpithet('the_delver', forChar: 'kindler');
+        expect(c.meta.epithetFor('kindler'), 'the_delver');
+        // v0.66.0: the dress is the delver's own — nobody else's changes.
+        expect(c.meta.epithetFor('warden'), defaultEpithet);
+        // Taking the title off is always legal.
+        c.selectEpithet(defaultEpithet, forChar: 'kindler');
+        expect(c.meta.epithetFor('kindler'), defaultEpithet);
+      },
+    );
 
     test('JSON round-trip: default is compact, choice survives', () {
       final m = MetaState();
@@ -136,8 +143,9 @@ void main() {
   });
 
   group('picker', () {
-    testWidgets('locked epithet shows milestone, tap does nothing',
-        (tester) async {
+    testWidgets('locked epithet shows milestone, tap does nothing', (
+      tester,
+    ) async {
       final c = GameController();
       await tester.pumpWidget(
         MaterialApp(theme: buildEmberTheme(), home: CharacterScreen(c)),
@@ -147,8 +155,9 @@ void main() {
         find.byKey(const ValueKey('epithet-the_delver')),
         400,
       );
-      await tester
-          .ensureVisible(find.byKey(const ValueKey('epithet-the_delver')));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('epithet-the_delver')),
+      );
       await pumpFor(tester, 200);
       expect(find.text('Win a delve.'), findsWidgets);
       await tester.tap(find.byKey(const ValueKey('epithet-the_delver')));
@@ -167,12 +176,15 @@ void main() {
         find.byKey(const ValueKey('epithet-the_delver')),
         400,
       );
-      await tester
-          .ensureVisible(find.byKey(const ValueKey('epithet-the_delver')));
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('epithet-the_delver')),
+      );
       await pumpFor(tester, 200);
       await tester.tap(find.byKey(const ValueKey('epithet-the_delver')));
       await pumpFor(tester, 200);
-      expect(c.meta.selectedEpithet, 'the_delver');
+      // v0.66.0: the tap dresses the delver (kindler is the only one
+      // unlocked, so no chip row and the target defaults to them).
+      expect(c.meta.epithetFor('kindler'), 'the_delver');
       // The on-screen card now carries the marker.
       expect(find.text('WORN'), findsOneWidget);
     });
@@ -193,7 +205,7 @@ void main() {
       await pumpFor(tester, 200);
       await tester.tap(find.byKey(const ValueKey('epithet-none')));
       await pumpFor(tester, 200);
-      expect(c.meta.selectedEpithet, defaultEpithet);
+      expect(c.meta.epithetFor('kindler'), defaultEpithet);
     });
   });
 
@@ -228,8 +240,16 @@ void main() {
   group('ethics', () {
     test('epithet copy carries no pressure language', () {
       const banned = [
-        'streak', 'expire', 'hurry', 'miss out', 'last chance',
-        'beat me', 'bet you', 'only today', "can't", 'loser',
+        'streak',
+        'expire',
+        'hurry',
+        'miss out',
+        'last chance',
+        'beat me',
+        'bet you',
+        'only today',
+        "can't",
+        'loser',
       ];
       for (final e in epithets.values) {
         final copy = '${e.title} ${e.unlockLine}'.toLowerCase();
