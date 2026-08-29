@@ -52,16 +52,16 @@ void main() {
   test('a finished weekly banks its mark and its rule', () {
     final c = GameController();
     c.startWeeklyRun();
-    final expected = weeklyMutatorFor(weekIndexForDate(DateTime.now()));
-    expect(c.weeklyMutator, expected);
+    final rule = weeklyRuleFor(weekIndexForDate(DateTime.now()));
+    expect(c.weeklyMutator, rule.mutators.join('+'));
     driveToTerminal(c);
     final r = c.meta.runHistory.first;
     expect(r['weekly'], isTrue);
-    expect(r['mutators'], [expected]);
+    expect(r['mutators'], rule.mutators);
     // short_road is not among the banked mutators even on a short week —
     // it encodes, and banks as 'short'.
     expect((r['mutators'] as List).contains('short_road'), isFalse);
-    expect(r['short'], expected == 'short_road' ? isTrue : isNull);
+    expect(r['short'], rule.mutators.contains('short_road') ? isTrue : isNull);
   });
 
   test('a plain run banks neither key', () {

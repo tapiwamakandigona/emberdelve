@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.110.0';
+const String currentAppVersion = '0.111.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.111.0',
+    title: 'The Doubled Week',
+    lines: [
+      'One week per cycle the Weekly deals a named pair: Cold Quarter '
+          '\u2014 no shops and no rests, declared up front.',
+      'Same charter as every weekly: one shared delve for everyone, '
+          'and a missed week is simply a missed week.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.110.0',
     title: 'The Named Company',

@@ -252,17 +252,25 @@ void main() {
       expect(weeklyKey(idx), equals('Week of 2026-08-10'));
     });
 
-    test('weeklyMutatorFor is deterministic and stays in the catalog', () {
-      for (var idx = -5; idx < 20; idx++) {
-        final id = weeklyMutatorFor(idx);
-        expect(isKnownMutator(id), isTrue);
-        expect(weeklyMutatorFor(idx), equals(id));
+    test('weeklyRuleFor is deterministic and stays in the catalog', () {
+      for (var idx = -7; idx < 20; idx++) {
+        final rule = weeklyRuleFor(idx);
+        expect(rule.mutators, isNotEmpty);
+        for (final id in rule.mutators) {
+          expect(isKnownMutator(id), isTrue);
+        }
+        expect(weeklyRuleFor(idx).mutators, equals(rule.mutators));
+        expect(weeklyRuleFor(idx).name, equals(rule.name));
       }
-      // The rotation cycles through the whole catalog.
-      final seen = {
-        for (var i = 0; i < mutatorsOrder.length; i++) weeklyMutatorFor(i),
-      };
-      expect(seen, equals(mutatorsOrder.toSet()));
+      // The rotation walks the whole catalog in order, then the doubled
+      // week (v0.111.0) closes the cycle.
+      for (var i = 0; i < mutatorsOrder.length; i++) {
+        expect(weeklyRuleFor(i).mutators, [mutatorsOrder[i]]);
+      }
+      expect(
+        weeklyRuleFor(mutatorsOrder.length).mutators,
+        doubledWeek.mutators,
+      );
     });
 
     test('recap and share strings are honest (no streak/expiry language)', () {

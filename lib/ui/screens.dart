@@ -15,7 +15,6 @@ import '../data/codex.dart';
 import '../data/enemies.dart';
 import '../data/dice.dart';
 import '../data/events.dart';
-import '../data/mutators.dart';
 import '../data/news.dart';
 import '../data/relics.dart';
 import '../data/themes.dart';

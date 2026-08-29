@@ -59,7 +59,7 @@ class _TopBar extends StatelessWidget {
           // always in view during the run, not just on the title screen.
           if (c.weeklyMutator != null) ...[
             Text(
-              'WEEKLY · ${mutatorDef(c.weeklyMutator!).name}',
+              'WEEKLY · ${weeklyRuleName(c.weeklyMutator!)}',
               style: EmberText.micro.copyWith(color: EmberColors.gold),
             ),
             const SizedBox(width: Space.m),

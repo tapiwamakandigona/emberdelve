@@ -2882,3 +2882,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   3 tests; plates 360/320 approved. Suite 852/852. 0.110.0+136.
   Deferred: 'double week' composed rules (weeklyMutator is a
   single-String label through saves/top-bar/share — own release).
+
+## v0.111.0 — The Doubled Week (2026-08-29)
+- Sixth Weekly rotation slot: one week per cycle deals a declared,
+  named PAIR — Cold Quarter (no_shops + no_rests), picked by bot
+  sweep (102/150 kindler/normal; both all_d4 pairs ~37/150,
+  rejected as unfair for a normal-pinned shared challenge).
+  WeeklyRuleDef layer: singles keep reading the mutator catalog;
+  only the composed slot authors its name. Label stays ONE string
+  ('+'-joined) in saves/meta — weekly_mutator key unchanged, old
+  saves parse as the 1-element case, no migration. startWeeklyRun
+  gains test-only clock (startDailyRun precedent) — this is what
+  made the top-bar plate deterministic. comingRuleLine + share text
+  rule-aware. Cycle 5→6 shift accepted (v0.106.0 precedent).
+  LESSON: the news ethics gate bans SUBSTRINGS in negation too —
+  "no streaks" trips "streak"; write around the word entirely.
+  6 tests; plates 360/320 approved. Suite 858/858. 0.111.0+137.
