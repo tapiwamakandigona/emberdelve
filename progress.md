@@ -2758,3 +2758,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   color only, no new copy (caption drafted and cut). Plates: 3x cards
   in all four wash families side by side, all lines legible. Suite
   814/814. 0.99.0+125.
+
+## v0.100.0 — The Second Cycle (2026-08-29)
+- Ten new hearth tales (arc pass 2: one tale per delver, then world
+  texture; append-only charter, ethics-swept). Caught and fixed my own
+  v0.98.0 design bug: gating Hearthgold on hearthTales.length would
+  have RE-LOCKED earned vistas when the list grew — milestone now
+  FROZEN at hearthgoldTales = 10, unlock line updated ('Hear the
+  fire's first ten tales.'), regression test pins grown-list vs
+  frozen gate. Coming Vista tease counts against the frozen milestone.
+  Longest-tale plate re-cut, fits at 320. Suite 814/814. 0.100.0+126.

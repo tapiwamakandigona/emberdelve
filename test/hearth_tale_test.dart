@@ -70,6 +70,9 @@ void main() {
       'loser',
     ];
     expect(hearthTales.length, greaterThanOrEqualTo(8));
+    // v0.100.0 The Second Cycle: the list outgrew the frozen Hearthgold
+    // milestone, and the wrap follows the FULL list.
+    expect(hearthTales.length, 2 * hearthgoldTales);
     for (final tale in hearthTales) {
       expect(tale.trim(), isNotEmpty);
       expect(tale.length, lessThanOrEqualTo(200), reason: tale);

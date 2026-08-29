@@ -87,7 +87,7 @@ void quietMeta(GameController c) {
 GameController hearthgoldRun() {
   final c = GameController();
   quietMeta(c);
-  c.meta.hearthTalesHeard = hearthTales.length;
+  c.meta.hearthTalesHeard = hearthgoldTales;
   c.selectVista('hearthgold');
   c.startRun(character: 'kindler', seed: 1, difficulty: 'easy');
   return c;
@@ -100,7 +100,7 @@ GameController shelfMeta({required bool unlocked}) {
   c.meta
     ..runsWon = 3
     ..bestFloor = 6
-    ..hearthTalesHeard = unlocked ? hearthTales.length : 4;
+    ..hearthTalesHeard = unlocked ? hearthgoldTales : 4;
   if (unlocked) c.selectVista('hearthgold');
   return c;
 }

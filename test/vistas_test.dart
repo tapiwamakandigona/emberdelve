@@ -189,9 +189,9 @@ void main() {
         ),
         isTrue,
       );
-      // v0.98.0 hearthgold: tale-fed, blind to every other counter; one
-      // short of the full cycle stays locked, and the gate follows
-      // hearthTales.length so new tales raise it honestly.
+      // v0.98.0 hearthgold, corrected v0.100.0: tale-fed, blind to every
+      // other counter; the milestone is FROZEN at the first cycle so a
+      // grown tale list can never re-lock an earned vista.
       expect(
         vistaUnlockedFor(
           'hearthgold',
@@ -200,7 +200,7 @@ void main() {
           hardWins: 99,
           provingsCleared: 99,
           bestFloor: 99,
-          talesHeard: hearthTales.length - 1,
+          talesHeard: hearthgoldTales - 1,
         ),
         isFalse,
       );
@@ -212,7 +212,22 @@ void main() {
           hardWins: 0,
           provingsCleared: 0,
           bestFloor: 0,
-          talesHeard: hearthTales.length,
+          talesHeard: hearthgoldTales,
+        ),
+        isTrue,
+      );
+      // The regression the freeze prevents: the tale list has GROWN past
+      // the milestone, and first-cycle listeners stay unlocked.
+      expect(hearthTales.length, greaterThan(hearthgoldTales));
+      expect(
+        vistaUnlockedFor(
+          'hearthgold',
+          runsWon: 0,
+          distinctFelled: 0,
+          hardWins: 0,
+          provingsCleared: 0,
+          bestFloor: 0,
+          talesHeard: hearthgoldTales,
         ),
         isTrue,
       );

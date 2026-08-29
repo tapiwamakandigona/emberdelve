@@ -70,10 +70,10 @@ void main() {
     expect(
       comingVistaLine(c),
       'The Hearthgold vista waits — '
-      '2\u00A0of\u00A0${hearthTales.length} tales heard.',
+      '2\u00A0of\u00A0$hearthgoldTales tales heard.',
     );
-    // Unlocked = no line: the full cycle heard leaves nothing to tease.
-    c.meta.hearthTalesHeard = hearthTales.length;
+    // Unlocked = no line: the first cycle heard leaves nothing to tease.
+    c.meta.hearthTalesHeard = hearthgoldTales;
     expect(comingVistaLine(c), isNull);
   });
 
