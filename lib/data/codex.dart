@@ -8,11 +8,14 @@
 // relic effects) stays visible in play for free; the Codex sells the story.
 //
 // Entry ids are namespaced ('enemy:<id>' / 'relic:<id>' / 'place:<id>' /
-// 'delver:<id>', v0.110.0) so MetaState can keep ownership in one flat set
-// without collisions. Enemy, relic, and delver names are NOT stored here —
-// the UI reads them from enemies.dart / relics.dart / characters.dart, so a
-// rename there can never leave the Codex lying. Places (v0.104.0 The Delve
-// Itself) exist only here, so [placeNames] is theirs.
+// 'delver:<id>' v0.110.0 / 'die:<id>' v0.116.0) so MetaState can keep
+// ownership in one flat set without collisions. Enemy, relic, delver, and
+// die names are NOT stored here — the UI reads them from enemies.dart /
+// relics.dart / characters.dart / dice.dart, so a rename there can never
+// leave the Codex lying. Places (v0.104.0 The Delve Itself) exist only
+// here, so [placeNames] is theirs. Dice lore covers the five BASE CUTS
+// only (d4/d6/d8/d10/d12) — one story per shape of hearth-brick; the
+// tempered variants are those cuts re-promised, not new stone.
 //
 // Prices: common enemies 15, elites 20, bosses 30, relics 20, places 10,
 // delvers 15 — the world's own words are the cheapest words in the book,
@@ -42,6 +45,8 @@ CodexEntryDef _place(String refId, String text) =>
     CodexEntryDef('place:$refId', 'place', refId, text, costEmbers: 10);
 CodexEntryDef _delver(String refId, String text) =>
     CodexEntryDef('delver:$refId', 'delver', refId, text, costEmbers: 15);
+CodexEntryDef _die(String refId, String text) =>
+    CodexEntryDef('die:$refId', 'die', refId, text, costEmbers: 15);
 
 /// Display names for 'place' entries — places exist only in the Codex, so
 /// the name lives beside the lore. Append-only, like every catalog.
@@ -582,6 +587,40 @@ final List<CodexEntryDef> codexEntries = [
     'tally_chain',
     'One link for every delve someone came back from. It is longer than it '
         'looks, and it is not finished.',
+  ),
+  // the dice (v0.116.0 The Spoken Dice) — the five base cuts, shallow to
+  // deep. One story per shape; the tempered variants are these same cuts
+  // re-promised at the forge, so the shapes carry all the lore.
+  _die(
+    'd4',
+    'The smallest promise a delver can carry: four faces, none of them '
+        'far apart. A flint shard will not save you, and it will not lie '
+        'to you either. Plenty start with nothing else and get home.',
+  ),
+  _die(
+    'd6',
+    'The honest middle of every pool. Six faces cut true from '
+        'hearth-brick, fed on ember-light, worn round at the corners by '
+        'delvers who rolled it when it mattered. When the tales say '
+        '\'a die\', they mean this one.',
+  ),
+  _die(
+    'd8',
+    'Coal from below the third floor takes a harder edge. An eight keeps '
+        'its promises bigger and its silences longer — a delver learns to '
+        'plan for both ends of it.',
+  ),
+  _die(
+    'd10',
+    'Cut from the heart of a dead forge, and it remembers the work. Ten '
+        'faces is enough range to win a fight or lose one all by itself; '
+        'the smiths call that honesty, not risk.',
+  ),
+  _die(
+    'd12',
+    'The deep\'s own stone, still warm when it is carved. Twelve faces '
+        'hold the biggest words a die can say, and the delve listens when '
+        'they land. Nobody carries one by accident.',
   ),
 ];
 

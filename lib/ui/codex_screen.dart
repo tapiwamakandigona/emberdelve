@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
 import '../data/codex.dart';
+import '../data/dice.dart';
 import '../data/enemies.dart';
 import '../data/relics.dart';
 import '../game/controller.dart';
@@ -53,6 +54,11 @@ class CodexScreen extends StatelessWidget {
                   .toList();
               final relicEntries = codexEntries
                   .where((e) => e.kind == 'relic')
+                  .toList();
+              // v0.116.0 The Spoken Dice: the five base cuts, last — the
+              // tools of the trade close the book.
+              final dieEntries = codexEntries
+                  .where((e) => e.kind == 'die')
                   .toList();
               return ListView(
                 padding: const EdgeInsets.all(Space.l),
@@ -115,6 +121,13 @@ class CodexScreen extends StatelessWidget {
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
+                  const SizedBox(height: Space.l),
+                  Text('THE DICE', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in dieEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
                 ],
               );
             },
@@ -127,6 +140,7 @@ class CodexScreen extends StatelessWidget {
   String _entryName(CodexEntryDef e) => switch (e.kind) {
     'enemy' => enemies[e.refId]?.name ?? e.refId,
     'delver' => characterDef(e.refId).name,
+    'die' => dice[e.refId]?.name ?? e.refId,
     'relic' => relics[e.refId]?.name ?? e.refId,
     _ => placeNames[e.refId] ?? e.refId,
   };
@@ -134,6 +148,7 @@ class CodexScreen extends StatelessWidget {
   String _entryTag(CodexEntryDef e) {
     if (e.kind == 'place') return 'place';
     if (e.kind == 'delver') return 'delver';
+    if (e.kind == 'die') return 'die';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';
