@@ -44,7 +44,14 @@ void main() {
     dir = await Directory.systemTemp.createTemp('opened_vista_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('a first win opens the Moonveil; startRun clears the list', () async {

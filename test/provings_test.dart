@@ -80,8 +80,16 @@ void main() {
           .join(' ')
           .toLowerCase();
       for (final banned in [
-        'streak', 'expire', 'hurry', 'miss out', 'last chance', 'beat me',
-        'bet you', 'only today', "can't", 'loser',
+        'streak',
+        'expire',
+        'hurry',
+        'miss out',
+        'last chance',
+        'beat me',
+        'bet you',
+        'only today',
+        "can't",
+        'loser',
       ]) {
         expect(all.contains(banned), isFalse, reason: 'found "$banned"');
       }
@@ -100,7 +108,14 @@ void main() {
     });
 
     tearDown(() async {
-      await dir.delete(recursive: true);
+      for (var i = 0; i < 10; i++) {
+        try {
+          await dir.delete(recursive: true);
+          break;
+        } on FileSystemException {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      }
     });
 
     test('winning the exact run marks the proving cleared', () async {
@@ -162,10 +177,7 @@ void main() {
         scrollable: find.byType(Scrollable).first,
         maxScrolls: 60,
       );
-      expect(
-        find.textContaining('Needs The Warden'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Needs The Warden'), findsOneWidget);
       // ...and The First Flame (kindler, easy) is startable.
       expect(
         find.byKey(const ValueKey('proving-start-first_flame')),

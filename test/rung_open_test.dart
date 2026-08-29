@@ -49,24 +49,43 @@ void main() {
     dir = await Directory.systemTemp.createTemp('rung_open_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
-  test('frontier win opens a rung and startRun clears the announcement',
-      () async {
-    final c = GameController(saveDirOverride: dir.path);
-    await c.boot();
-    c.meta.forgeUnlocked = true;
-    c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
-    driveToTerminal(c);
-    expect(c.phase, 'run_won', reason: 'seed 1 must win on easy');
-    expect(c.meta.bestAscension, 1);
-    expect(c.pendingRungOpened, 1);
-    // Same lifecycle as pendingRankUp: the next run must not inherit it.
-    c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
-    expect(c.pendingRungOpened, isNull);
-    await c.flushSaves();
-  });
+  test(
+    'frontier win opens a rung and startRun clears the announcement',
+    () async {
+      final c = GameController(saveDirOverride: dir.path);
+      await c.boot();
+      c.meta.forgeUnlocked = true;
+      c.startRun(
+        character: 'kindler',
+        seed: 1,
+        boons: true,
+        difficulty: 'easy',
+      );
+      driveToTerminal(c);
+      expect(c.phase, 'run_won', reason: 'seed 1 must win on easy');
+      expect(c.meta.bestAscension, 1);
+      expect(c.pendingRungOpened, 1);
+      // Same lifecycle as pendingRankUp: the next run must not inherit it.
+      c.startRun(
+        character: 'kindler',
+        seed: 1,
+        boons: true,
+        difficulty: 'easy',
+      );
+      expect(c.pendingRungOpened, isNull);
+      await c.flushSaves();
+    },
+  );
 
   test('a win below the frontier announces nothing', () async {
     final c = GameController(saveDirOverride: dir.path);
