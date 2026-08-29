@@ -67,18 +67,19 @@ void main() {
     // pool growth re-rolled every seeded run. Re-hunted
     // (tool/reanchor_v0470_probe_test.dart: kindler 6/10, warden 4/6,
     // gambler 6/10, ascetic 6/10/66); four DISTINCT seeds kept.
-    const seeds = {
-      'kindler': 6,
-      'warden': 4,
-      'gambler': 10,
-      'ascetic': 66,
-    };
+    // Re-pinned for v0.114.0 ("The Cold Tales" content drop, events
+    // 50->53): the deck growth re-rolled every seeded run. Re-hunted
+    // (tool/reanchor_v1140_probe_test.dart: kindler 20/39/40, warden
+    // 4/14/20, gambler 20/40/65, ascetic 39/65/110); four DISTINCT seeds
+    // kept.
+    const seeds = {'kindler': 20, 'warden': 4, 'gambler': 40, 'ascetic': 39};
     seeds.forEach((ch, seed) {
       final r = playRun(seed, character: ch, difficulty: 'hard', ascension: 20);
       expect(
         r.sim.phase,
         'run_won',
-        reason: '$ch seed $seed no longer wins at A20 — the ladder may be '
+        reason:
+            '$ch seed $seed no longer wins at A20 — the ladder may be '
             'dead again; re-run the sweep and seed hunt',
       );
     });

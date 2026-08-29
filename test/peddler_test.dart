@@ -9,7 +9,7 @@
 //      appending kept indexes 0-3 stable, so every code already shared still
 //      decodes to the same delver.
 //   3. Bot viability pins (simVersion 7): seed 1 wins on easy AND normal,
-//      seed 16 loses on easy — the balance point sits with the Gambler and
+//      seed 13 loses on easy — the balance point sits with the Gambler and
 //      the Ascetic (sweep: 88.0/58.7/28.7 vs roster band 87-93/58-80/28-56).
 //   4. Character screen lists the Peddler with its real 450-ember price.
 import 'package:flutter/material.dart';
@@ -31,9 +31,13 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 void main() {
   test('definition and sim application match the card text exactly', () {
     final def = characters['peddler']!;
-    expect(charactersOrder.indexOf('peddler'), 4,
-        reason: 'appended LAST in v0.40.0; the index is the delve-code wire '
-            'format and must never move (v0.50.0 grew the roster past it)');
+    expect(
+      charactersOrder.indexOf('peddler'),
+      4,
+      reason:
+          'appended LAST in v0.40.0; the index is the delve-code wire '
+          'format and must never move (v0.50.0 grew the roster past it)',
+    );
     expect(def.maxHp, 31);
     expect(def.startDice, ['d6', 'd6', 'd4']);
     expect(def.startRelic, 'kiln_key');
@@ -42,10 +46,11 @@ void main() {
     final c = GameController();
     c.startRun(character: 'peddler', seed: 1, boons: false);
     expect(c.sim!.player['max_hp'], 31);
-    expect(
-      (c.sim!.player['dice'] as List).whereType<String>().toList(),
-      ['d6', 'd6', 'd4'],
-    );
+    expect((c.sim!.player['dice'] as List).whereType<String>().toList(), [
+      'd6',
+      'd6',
+      'd4',
+    ]);
     expect(
       (c.sim!.run!['relics'] as List).cast<String>(),
       contains('kiln_key'),
@@ -72,21 +77,26 @@ void main() {
     }
   });
 
-  test('bot viability pins: seed 1 wins easy and normal, seed 16 loses easy',
-      () {
-    expect(
-      playRun(1, character: 'peddler', difficulty: 'easy').sim.phase,
-      'run_won',
-    );
-    expect(
-      playRun(1, character: 'peddler', difficulty: 'normal').sim.phase,
-      'run_won',
-    );
-    expect(
-      playRun(16, character: 'peddler', difficulty: 'easy').sim.phase,
-      'run_lost',
-    );
-  }, timeout: const Timeout(Duration(minutes: 5)));
+  // v0.114.0 re-anchor: seed 16 easy flipped to a win when the event deck
+  // grew; seed 13 loses (probe-proven, tool/reanchor_v1140_probe_test.dart).
+  test(
+    'bot viability pins: seed 1 wins easy and normal, seed 13 loses easy',
+    () {
+      expect(
+        playRun(1, character: 'peddler', difficulty: 'easy').sim.phase,
+        'run_won',
+      );
+      expect(
+        playRun(1, character: 'peddler', difficulty: 'normal').sim.phase,
+        'run_won',
+      );
+      expect(
+        playRun(13, character: 'peddler', difficulty: 'easy').sim.phase,
+        'run_lost',
+      );
+    },
+    timeout: const Timeout(Duration(minutes: 5)),
+  );
 
   testWidgets('character screen lists the Peddler at its real price', (
     tester,

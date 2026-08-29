@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.46.0: 45 events).
+// data/events.dart — Emberdelve event deck (v0.114.0: 53 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -63,6 +63,10 @@ const List<String> eventsOrder = [
   // Before": the delve remembers everyone who walked it ahead of you.
   'the_cold_camp', 'delvers_cairn', 'the_old_rope',
   'rivals_ledger', 'the_left_lantern', 'the_first_delver',
+  // v0.114.0 additions (appended at END; never reorder) — "The Cold
+  // Tales": the winter the doubled week (v0.111.0) put into the stone,
+  // findable in any run.
+  'the_frozen_stall', 'the_wintered_die', 'the_meltwater_pool',
 ];
 
 const Map<String, EventDef> events = {
@@ -501,10 +505,7 @@ const Map<String, EventDef> events = {
         'gold': -15,
         'embers': 12,
       }),
-      OptionDef('Force the crossing (-7 hp, +25 gold)', {
-        'hp': -7,
-        'gold': 25,
-      }),
+      OptionDef('Force the crossing (-7 hp, +25 gold)', {'hp': -7, 'gold': 25}),
       OptionDef('Turn back quietly', {}),
     ],
   ),
@@ -596,10 +597,7 @@ const Map<String, EventDef> events = {
     'A knotted line runs down a shaft too dark to read. The anchor is '
         'rusted, the knots are good, and both facts are true at once.',
     [
-      OptionDef('Climb down (-7 hp, +28 gold)', {
-        'hp': -7,
-        'gold': 28,
-      }),
+      OptionDef('Climb down (-7 hp, +28 gold)', {'hp': -7, 'gold': 28}),
       OptionDef('Salvage the rope (+12 gold)', {'gold': 12}),
       OptionDef('Take the long way', {}),
     ],
@@ -624,14 +622,9 @@ const Map<String, EventDef> events = {
     'A lantern hangs at a fork, trimmed and burning. Nobody is here. '
         'Somebody meant there to be light anyway.',
     [
-      OptionDef('Refill it (-20 gold, +4 max hp)', {
-        'gold': -20,
-        'max_hp': 4,
-      }),
+      OptionDef('Refill it (-20 gold, +4 max hp)', {'gold': -20, 'max_hp': 4}),
       OptionDef('Snuff it for the wick (+15 gold)', {'gold': 15}),
-      OptionDef('Leave it burning (+8 embers)', {
-        'embers': 8,
-      }),
+      OptionDef('Leave it burning (+8 embers)', {'embers': 8}),
     ],
   ),
   'the_first_delver': EventDef(
@@ -646,6 +639,46 @@ const Map<String, EventDef> events = {
         'gold': -15,
         'embers': 18,
       }),
+    ],
+  ),
+  // v0.114.0 — The Cold Tales -------------------------------------------
+  'the_frozen_stall': EventDef(
+    'the_frozen_stall',
+    'The Frozen Stall',
+    'A peddler\'s stall sealed under a skin of ice, wares still priced. '
+        'The cold came through this quarter once and did not haggle.',
+    [
+      OptionDef('Break the ice (-6 hp, +26 gold)', {'hp': -6, 'gold': 26}),
+      OptionDef('Thaw it gently (-10 gold, +12 embers)', {
+        'gold': -10,
+        'embers': 12,
+      }),
+      OptionDef('Leave it sealed', {}),
+    ],
+  ),
+  'the_wintered_die': EventDef(
+    'the_wintered_die',
+    'The Wintered Die',
+    'A die sits in clear ice like a fly in amber, mid-roll forever. '
+        'Whatever it was about to promise, the cold kept it.',
+    [
+      OptionDef('Crack it free (-8 hp, random die)', {
+        'hp': -8,
+        'gain_random_die': 3,
+      }),
+      OptionDef('Sell the curiosity (+20 gold)', {'gold': 20}),
+      OptionDef('Leave it wintering', {}),
+    ],
+  ),
+  'the_meltwater_pool': EventDef(
+    'the_meltwater_pool',
+    'The Meltwater Pool',
+    'Ice from somewhere far above drips into a black pool, one coin-bright '
+        'ring at a time. It tastes like altitude and patience.',
+    [
+      OptionDef('Drink deep (heal 30%)', {'heal_pct': 30}),
+      OptionDef('Fish out the coins (-4 hp, +16 gold)', {'hp': -4, 'gold': 16}),
+      OptionDef('Move on', {}),
     ],
   ),
 };

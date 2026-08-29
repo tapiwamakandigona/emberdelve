@@ -25,7 +25,9 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 }
 
 /// Pure-controller walk (bot-driven) until the run stands at a rest fire.
-GameController atRest({int seed = 3}) {
+// v0.114.0 re-anchor: seed 3's bot path now loses before resting
+// (event deck 50->53 re-rolled it); seed 6 rests, probe-proven.
+GameController atRest({int seed = 6}) {
   final c = GameController();
   c.meta
     ..tutorialSeen = true

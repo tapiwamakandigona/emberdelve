@@ -13,7 +13,7 @@
 //      so the line would be a soft upsell (§Ethics, v0.32.0 design doc).
 //   6. Rung-20 cap: a win at the top re-clamps to 20 and announces nothing.
 //
-// Seeds: 1 wins on easy (kindler, boons); 18 loses on easy; kindler seed 6
+// Seeds: 1 wins on easy (kindler, boons); 18 loses on easy; kindler seed 20
 // wins at hard A20 (pinned by tool/asc_seed_hunt_test.dart, playRun defaults
 // boons+keystones — driveToTerminal's botCmd defaults match).
 import 'dart:io';
@@ -116,15 +116,16 @@ void main() {
     await c.boot();
     c.meta.forgeUnlocked = true;
     c.meta.bestAscension = 20;
+    // v0.114.0 re-anchor: seed 6 A20 re-rolled to a loss; seed 20 wins.
     c.startRun(
       character: 'kindler',
-      seed: 6,
+      seed: 20,
       boons: true,
       difficulty: 'hard',
       ascension: 20,
     );
     driveToTerminal(c);
-    expect(c.phase, 'run_won', reason: 'kindler seed 6 is a pinned A20 win');
+    expect(c.phase, 'run_won', reason: 'kindler seed 20 is a pinned A20 win');
     expect(c.meta.bestAscension, 20, reason: 'no rung 21 may ever mint');
     expect(c.pendingRungOpened, isNull);
     await c.flushSaves();

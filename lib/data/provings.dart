@@ -107,7 +107,9 @@ const List<ProvingDef> provings = [
     blurb:
         'The Kindler under Flint Week rules: every die rolls as a d4. '
         'Small, sharp, and mean.',
-    seed: 6,
+    // v0.114.0: seed 6 stopped being bot-winnable when the event deck grew
+    // (The Cold Tales re-anchor); re-hunted under the same rule, seed 10.
+    seed: 10,
     character: 'kindler',
     difficulty: 'normal',
     mutators: ['all_d4'],
