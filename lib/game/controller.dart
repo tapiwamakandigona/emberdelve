@@ -916,7 +916,16 @@ class GameController extends ChangeNotifier {
     Duration? terminalHold,
   }) {
     if (sim == null) return const [];
+    // v0.96.0 The Hearth Tale: the tale on screen is indexed by
+    // hearthTalesHeard, so it must advance exactly when a hollow is LEFT
+    // (rest, forge, or temper all exit) — never on invalid commands, and
+    // never twice for one visit however the run is saved and resumed.
+    final wasResting = sim!.phase == 'rest';
     final events = sim!.apply(cmd);
+    if (wasResting && sim!.phase != 'rest') {
+      meta.hearthTalesHeard++;
+      MetaStore.save(meta);
+    }
     _handleFlash(events);
     recordCombatStats(events);
     // v0.8.0 share trace: observed BEFORE _bankRun/_autosave so a terminal

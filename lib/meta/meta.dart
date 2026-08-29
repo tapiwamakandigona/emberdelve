@@ -154,6 +154,9 @@ class MetaState {
   int dailiesPlayed; // Daily Delves FINISHED (abandoning counts for nothing)
   int winsNoRest; // runs won without visiting a single rest node
   int hardWins; // runs won on hard
+  // v0.96.0 The Hearth Tale: rest-fire hollows left, lifetime. Indexes
+  // the fixed tale sequence in lib/data/tales.dart. Monotonic, MAX-merged.
+  int hearthTalesHeard;
   // v0.11.0 Delver's Ledger — per-enemy record, keyed by enemy id. All
   // event-derived in GameController.recordCombatStats, never estimated.
   // Cloud merge: per-key MAX (same convention as charRuns/charWins).
@@ -232,6 +235,7 @@ class MetaState {
     this.dailiesPlayed = 0,
     this.winsNoRest = 0,
     this.hardWins = 0,
+    this.hearthTalesHeard = 0,
     Map<String, int>? enemyMet,
     Map<String, int>? enemyFelled,
     Map<String, int>? enemyFellTo,
@@ -317,6 +321,7 @@ class MetaState {
     if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
     if (winsNoRest > 0) 'winsNoRest': winsNoRest,
     if (hardWins > 0) 'hardWins': hardWins,
+    if (hearthTalesHeard > 0) 'hearthTalesHeard': hearthTalesHeard,
     if (enemyMet.isNotEmpty) 'enemyMet': enemyMet,
     if (enemyFelled.isNotEmpty) 'enemyFelled': enemyFelled,
     if (enemyFellTo.isNotEmpty) 'enemyFellTo': enemyFellTo,
@@ -508,6 +513,7 @@ class MetaState {
         ((j['lastDailyDate'] is String) ? 1 : 0),
     winsNoRest: j['winsNoRest'] as int? ?? 0,
     hardWins: j['hardWins'] as int? ?? 0,
+    hearthTalesHeard: j['hearthTalesHeard'] as int? ?? 0,
     enemyMet: _intMap(j['enemyMet']),
     enemyFelled: _intMap(j['enemyFelled']),
     enemyFellTo: _intMap(j['enemyFellTo']),

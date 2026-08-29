@@ -2719,3 +2719,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   alone. Zero new assets, zero sim movement. One map extension in
   lib/ui/art.dart + test/known_relic_test.dart charter pins. Suite
   798/798. 0.95.0+121. Satchel plates re-cut: all 5 rows distinct.
+
+## v0.96.0 — The Hearth Tale (2026-08-29)
+- The "what's a delve" answer as a drip, not a card: every rest fire
+  tells one short tale of the world, fixed ten-tale arc, lifetime index
+  (MetaState.hearthTalesHeard, MAX-merged, key omitted at 0). Advance
+  rule in apply(): phase left 'rest' — single mutation path, never on
+  invalid commands. lib/data/tales.dart pure indexer. Suite 804/804.
+  0.96.0+122. Plates: fresh first tale 360x640; longest tale forced at
+  320x568 wraps clean (tool/hearth_tale_visual_test.dart).

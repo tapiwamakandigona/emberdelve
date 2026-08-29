@@ -116,6 +116,9 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
         ? local.winsNoRest
         : cloud.winsNoRest,
     hardWins: local.hardWins > cloud.hardWins ? local.hardWins : cloud.hardWins,
+    hearthTalesHeard: local.hearthTalesHeard > cloud.hearthTalesHeard
+        ? local.hearthTalesHeard
+        : cloud.hearthTalesHeard,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),
     charBestFloor: _maxMap(local.charBestFloor, cloud.charBestFloor),
