@@ -2673,3 +2673,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   test/ onto the drain-retry charter (errno 39 flake struck deep_hum this
   run, deepest_mark last run — now impossible suite-wide). Suite 784/784.
   0.91.0+117.
+
+## v0.92.0 — The Counted Draught (2026-08-29)
+- Event options rewrite their 'heal N%' token to the counted heal at
+  render time: 'Pray quietly (heal 7 HP)'; combined labels rewrite the
+  token only; full HP reads 'heals nothing'. No percentage left anywhere
+  in healing UI. Helper `countedOptionLabel(c, OptionDef)` in
+  event_screen.dart calling healPreview with runEventChoose's formula.
+- PARITY IDIOM (new): force a live mid-run sim to any event —
+  `c.sim!.phase = 'event'; c.sim!.event = 'ember_shrine';` then apply
+  event_choose normally. Pinned: ember_shrine option 2 = heal_pct 25.
+- Tests +4. Suite 788/788. Plates tool/counted_draught_visual_test.dart
+  (360 counted, 320 full-HP wording). 0.92.0+118. Zero sim movement.
+- LESSON: when cloning a plate tool, update the header comment block too —
+  v0.91's clone kept ration paths in comments and broke the v0.92 clone's
+  regex anchors (caught immediately; both repaired).

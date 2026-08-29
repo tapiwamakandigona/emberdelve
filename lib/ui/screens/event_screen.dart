@@ -1,6 +1,23 @@
 // lib/ui/screens/event_screen.dart — part of screens.dart (see library header there).
 part of '../screens.dart';
 
+/// v0.92.0 The Counted Draught: rewrite the 'heal N%' token in an event
+/// option label to the counted heal — the sim's own arithmetic
+/// (runEventChoose: max_hp*pct~/100 through `_heal`'s overheal cap) via
+/// [healPreview], so the third healing station stops asking for percentage
+/// math. Full HP reads 'heals nothing'. Labels without the token pass
+/// through unchanged; data files stay difficulty-agnostic prose.
+String countedOptionLabel(GameController c, OptionDef o) {
+  final pct = (o.effects['heal_pct'] as int?) ?? 0;
+  final sim = c.sim;
+  if (pct <= 0 || sim == null) return o.label;
+  final h = healPreview(sim, (sim.player['max_hp'] as int) * pct ~/ 100);
+  return o.label.replaceFirst(
+    RegExp(r'heal \d+%'),
+    h == 0 ? 'heals nothing' : 'heal $h HP',
+  );
+}
+
 class EventScreen extends StatelessWidget {
   final GameController c;
   const EventScreen(this.c, {super.key});
@@ -62,7 +79,7 @@ class EventScreen extends StatelessWidget {
                     child: SizedBox(
                       width: double.infinity,
                       child: EmberButton(
-                        def.options[i].label,
+                        countedOptionLabel(c, def.options[i]),
                         // Options the sim would reject render DISABLED instead of
                         // inviting a tap that only spawns a "Not enough gold" toast
                         // (2026-07-24: a 0-gold peddler showed a glowing primary

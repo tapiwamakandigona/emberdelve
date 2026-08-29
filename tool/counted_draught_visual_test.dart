@@ -1,12 +1,14 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
-// tool/legible_stall_visual_test.dart — manual visual-critique plates for
-// v0.91.0 "The Legible Stall". Not part of CI.
+// tool/counted_draught_visual_test.dart — manual visual-critique plates for
+// v0.92.0 "The Counted Draught". Not part of CI.
 //
-//   flutter test tool/legible_stall_visual_test.dart
+//   flutter test tool/counted_draught_visual_test.dart
 //
-// Plates (build/legible_stall_visual/):
-//   • legible_stall_360x640 / _320x568 / _600x900 — the restructured slot
-//     rows: title one line (never mid-word), description full width.
+// Plates (build/counted_draught_visual/):
+//   • counted_draught_360x640 — Ember Shrine at 17/30: 'Pray quietly
+//     (heal 7 HP)'.
+//   • counted_draught_320x568 — restraint plate: full HP, 'Pray quietly
+//     (heals nothing)' at the narrowest width.
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -24,7 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const outDir = 'build/legible_stall_visual';
+const outDir = 'build/counted_draught_visual';
 
 Future<void> loadRealFonts() async {
   Future<ByteData> asset(String path) async =>
@@ -88,18 +90,25 @@ GameController atShop({int seed = 7}) {
   return c;
 }
 
-Future<void> captureShop(
+GameController atEvent({bool fullHp = false}) {
+  final c = atShop(); // live sim, hp 17/30
+  if (fullHp) c.sim!.player['hp'] = c.sim!.player['max_hp'];
+  c.sim!.phase = 'event';
+  c.sim!.event = 'ember_shrine';
+  return c;
+}
+
+Future<void> captureEvent(
   WidgetTester tester,
   Size logical,
   String name, {
-  int seed = 7,
-  required String healText,
+  bool fullHp = false,
 }) async {
   tester.view.physicalSize = logical * 2;
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
   final key = GlobalKey();
-  final c = atShop(seed: seed);
+  final c = atEvent(fullHp: fullHp);
   await tester.pumpWidget(
     RepaintBoundary(
       key: key,
@@ -119,12 +128,6 @@ Future<void> captureShop(
   for (var i = 0; i < 12; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
-  await tester.scrollUntilVisible(
-    find.text(healText),
-    200,
-    scrollable: find.byType(Scrollable).first,
-  );
-  await tester.pump(const Duration(milliseconds: 200));
   await snap(tester, key, name, 2);
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
@@ -133,26 +136,14 @@ Future<void> captureShop(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('legible stall plates', (tester) async {
+  testWidgets('counted draught plates', (tester) async {
     await loadRealFonts();
-    await captureShop(
-      tester,
-      const Size(600, 900),
-      'legible_stall_600x900',
-      healText: 'Heal 7 HP (17\u00A0to\u00A024)',
-    );
-    await captureShop(
-      tester,
-      const Size(360, 640),
-      'legible_stall_360x640',
-      healText: 'Heal 7 HP (17\u00A0to\u00A024)',
-    );
-    await captureShop(
+    await captureEvent(tester, const Size(360, 640), 'counted_draught_360x640');
+    await captureEvent(
       tester,
       const Size(320, 568),
-      'legible_stall_320x568',
-      seed: 20,
-      healText: 'Heal 3 HP (31\u00A0to\u00A034)',
+      'counted_draught_320x568',
+      fullHp: true,
     );
   });
 }

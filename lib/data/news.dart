@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.91.0';
+const String currentAppVersion = '0.92.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.92.0',
+    title: 'The Counted Draught',
+    lines: [
+      'Event choices that heal now say exactly how much — the last '
+          'percentage in the delve is gone.',
+      'A heal that would do nothing says so before you pick it.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.91.0',
     title: 'The Legible Stall',
