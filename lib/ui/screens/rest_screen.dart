@@ -49,6 +49,22 @@ class RestScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
+                    const SizedBox(height: Space.xl),
+                    // v0.96.0 The Hearth Tale: one short tale of the world per
+                    // hollow, in a fixed lifetime sequence (lib/data/tales.dart)
+                    // — the "what's a delve" answer as a drip, not a card.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+                      child: Text(
+                        '\u201C${hearthTale(c.meta.hearthTalesHeard)}\u201D',
+                        key: const ValueKey('hearth-tale'),
+                        style: EmberText.bodyDim.copyWith(
+                          fontStyle: FontStyle.italic,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.all(Space.l),
