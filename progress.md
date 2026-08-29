@@ -2833,3 +2833,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   relaxed to a frozen-index pin (order is append-only). 3 tests, no
   new UI surface (catalog flows through plated surfaces). Suite
   838/838. 0.106.0+132.
+
+## v0.107.0 — The Unwritten Feats (2026-08-29)
+- Seven new Ledger feats (50 total) for the systems that grew after
+  the catalog stopped at provings (v0.59.0): weekly (1/10), codex
+  (10/40 — fixed targets, catalog-BOUNDED by test, never
+  length-bound; all_three_bosses taught that), tales (10), settled
+  score (1), twenty distinct foes. 5 new stats in the vocabulary;
+  distinct_felled junk-proofed through the enemies catalog. Two
+  guard tests did their job (wired-counter fixture + waymarks
+  max-out both demanded lines for the new stats). Recognition only,
+  no ember grants. Suite 842/842. 0.107.0+133.

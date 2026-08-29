@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.106.0';
+const String currentAppVersion = '0.107.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.107.0',
+    title: 'The Unwritten Feats',
+    lines: [
+      'Seven new feats in the Ledger for the systems that grew after '
+          'it: weeklies, the Codex, hearth tales, settled scores, and '
+          'the breadth of the bestiary.',
+      'Recognition only, as ever \u2014 counted from what you already '
+          'did, granting nothing but the mark.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.106.0',
     title: 'The Cold Camps',

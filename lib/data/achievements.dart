@@ -79,6 +79,12 @@ const Set<String> achievementStats = {
   'hard_wins',
   'delvers_cleared',
   'provings_cleared', // v0.59.0 The Proven
+  // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
+  'weeklies_played',
+  'codex_unsealed',
+  'tales_heard',
+  'foes_settled',
+  'distinct_felled',
 };
 
 const List<String> achievementsOrder = [
@@ -106,6 +112,12 @@ const List<String> achievementsOrder = [
   // --- the endgame (Forge territory) -------------------------------------
   'hard_clear', 'hard_five', 'ascension_three', 'ascension_ten',
   'ascension_twenty',
+  // --- the unwritten feats (v0.107.0): the systems that grew after --------
+  'weekly_first', 'weekly_ten',
+  'codex_ten', 'codex_forty',
+  'tales_ten',
+  'score_settled',
+  'twenty_names',
 ];
 
 const Map<String, AchievementDef> achievements = {
@@ -437,6 +449,60 @@ const Map<String, AchievementDef> achievements = {
     'Top of the Ladder',
     'Reach ascension 20 — the last rung there is.',
     stat: 'best_ascension',
+    target: 20,
+  ),
+
+  // --- the unwritten feats (v0.107.0) -------------------------------------
+  // The weekly, the codex, the tales, the settled scores and the bestiary's
+  // breadth all bank real counters — these give them the recognition the
+  // older systems already had. Recognition only, as ever: no power.
+  'weekly_first': AchievementDef(
+    'weekly_first',
+    'The Shared Seed',
+    'Finish a Weekly Delve.',
+    stat: 'weeklies_played',
+    target: 1,
+  ),
+  'weekly_ten': AchievementDef(
+    'weekly_ten',
+    'Ten Mondays',
+    'Finish 10 Weekly Delves.',
+    stat: 'weeklies_played',
+    target: 10,
+  ),
+  'codex_ten': AchievementDef(
+    'codex_ten',
+    'The Open Book',
+    'Unseal 10 Codex entries.',
+    stat: 'codex_unsealed',
+    target: 10,
+  ),
+  'codex_forty': AchievementDef(
+    'codex_forty',
+    'The Deep Library',
+    'Unseal 40 Codex entries.',
+    stat: 'codex_unsealed',
+    target: 40,
+  ),
+  'tales_ten': AchievementDef(
+    'tales_ten',
+    'Fireside Regular',
+    'Hear 10 hearth tales at rests.',
+    stat: 'tales_heard',
+    target: 10,
+  ),
+  'score_settled': AchievementDef(
+    'score_settled',
+    'The Settled Score',
+    'Fell a foe that had felled you twice.',
+    stat: 'foes_settled',
+    target: 1,
+  ),
+  'twenty_names': AchievementDef(
+    'twenty_names',
+    'Twenty Names',
+    'Fell 20 different foes.',
+    stat: 'distinct_felled',
     target: 20,
   ),
 };

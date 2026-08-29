@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/achievements.dart';
 import 'package:emberdelve/data/characters.dart';
+import 'package:emberdelve/data/codex.dart';
+import 'package:emberdelve/data/enemies.dart';
 import 'package:emberdelve/data/themes.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/meta/achievements.dart' as ach;
@@ -68,10 +70,7 @@ Future<void> expectWaymarksMatch(WidgetTester tester, GameController c) async {
     expect(row, findsOneWidget, reason: 'row for ${def.id}');
     final count = ach.statValue(c.meta, def.stat, def.param);
     expect(
-      find.descendant(
-        of: row,
-        matching: find.text('$count of ${def.target}'),
-      ),
+      find.descendant(of: row, matching: find.text('$count of ${def.target}')),
       findsOneWidget,
       reason: '${def.id} must show the real banked count',
     );
@@ -108,12 +107,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );
-    c.startRun(
-      character: 'kindler',
-      seed: 18,
-      boons: true,
-      difficulty: 'easy',
-    );
+    c.startRun(character: 'kindler', seed: 18, boons: true, difficulty: 'easy');
     await playOut(tester, c);
     expect(c.phase, 'run_lost', reason: 'seed 18 must lose on easy');
     await expectWaymarksMatch(tester, c);
@@ -150,6 +144,12 @@ void main() {
       'ashfall_twins',
     ]);
     m.ownedThemes.addAll(hearthThemes.keys);
+    // v0.107.0 The Unwritten Feats
+    m.weekliesPlayed = 999;
+    m.ownedCodex.addAll([for (final e in codexEntries) e.id]);
+    m.hearthTalesHeard = 999;
+    m.settledFoes.add('quench_hag');
+    m.enemyFelled.addAll({for (final id in enemies.keys) id: 9});
     // Keep the earned-toast choreography out of the summary.
     m.seenAchievements.addAll(achievementsOrder);
     for (final id in achievementsOrder) {

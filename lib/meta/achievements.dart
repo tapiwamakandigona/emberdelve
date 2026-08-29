@@ -9,6 +9,7 @@
 // [progress] can only ever show what the player actually did.
 import '../data/achievements.dart';
 import '../data/characters.dart';
+import '../data/enemies.dart';
 import 'meta.dart';
 
 /// Current value of [stat] for [m]. Unknown stats return 0 rather than throwing:
@@ -48,6 +49,21 @@ int statValue(MetaState m, String stat, [String? param]) {
     case 'provings_cleared':
       // v0.59.0 The Proven: distinct provings cleared (Set, junk-proof).
       return m.provingsCleared.length;
+    // v0.107.0 The Unwritten Feats — same honesty contract: real banked
+    // counters only, junk-proofed against hand-edited saves where a
+    // catalog exists to check against.
+    case 'weeklies_played':
+      return m.weekliesPlayed;
+    case 'codex_unsealed':
+      return m.ownedCodex.length;
+    case 'tales_heard':
+      return m.hearthTalesHeard;
+    case 'foes_settled':
+      return m.settledFoes.length;
+    case 'distinct_felled':
+      // Distinct REAL enemies felled: junk enemyFelled keys can never
+      // inflate this past the bestiary (delvers_cleared precedent).
+      return enemies.keys.where((id) => (m.enemyFelled[id] ?? 0) > 0).length;
     case 'delvers_cleared':
       // Distinct ROSTER characters with a win: junk charWins keys from a
       // hand-edited save can never inflate this past the real roster.
