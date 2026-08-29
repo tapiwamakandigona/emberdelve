@@ -2810,3 +2810,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   now scrolls below the new shelf. 4 tests; plates 360/320 approved.
   Suite 832/832. 0.104.0+130. Queued lead closed: summary trace
   stays emoji by charter (display IS the paste).
+
+## v0.105.0 — The Delver's Line (2026-08-29)
+- One delver's Ledger page gains a lifetime line under the chips
+  ('Lifetime: 128 delves · 33 won · best floor 9') read from the
+  UNCAPPED charRuns/charWins/charBestFloor counters — a tally of the
+  30-cap remembered list would eventually lie; this cannot. Hidden
+  on 'All delvers'; best floor omitted at 0; singulars spelled out.
+  Pure helper delverLifetimeLine (soundingBars precedent). Closes the
+  v0.101.0 queued lead on honest terms (no telemetry to 'prove use'
+  by charter — honesty was the deciding test instead). 3 tests;
+  plates 360/320 approved. Suite 835/835. 0.105.0+131.
