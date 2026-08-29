@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.99.0';
+const String currentAppVersion = '0.100.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.100.0',
+    title: 'The Second Cycle',
+    lines: [
+      'Ten new hearth tales: the fire\'s second pass sits with each '
+          'delver in turn, then returns to what the delve keeps.',
+      'The Hearthgold stays a first-cycle milestone \u2014 earned is '
+          'earned.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.99.0',
     title: 'The Colored Card',

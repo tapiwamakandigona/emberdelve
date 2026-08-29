@@ -17,7 +17,7 @@
 
 import 'dart:ui' show Color;
 
-import 'tales.dart' show hearthTales;
+import 'tales.dart' show hearthgoldTales;
 
 class VistaDef {
   final String id;
@@ -127,7 +127,7 @@ const Map<String, VistaDef> vistas = {
     'Hearthgold',
     'The fire\'s own color, carried into the stone. Walls that have '
         'heard every tale hold the light a little longer.',
-    unlockLine: 'Hear every tale the fire tells.',
+    unlockLine: 'Hear the fire\'s first ten tales.',
     hueDeg: 6,
     satMul: 1.12,
     valMul: 1.08,
@@ -164,10 +164,11 @@ bool vistaUnlockedFor(
     // lost — a loss on the ninth floor earns the deep's colors too.
     case 'deepshale':
       return bestFloor >= 9;
-    // v0.98.0: the full cycle of hearth tales, however many the fire
-    // learns to tell — the gate follows the data, so it can never lie.
+    // v0.98.0, corrected v0.100.0: the FIRST cycle of hearth tales. The
+    // gate briefly followed hearthTales.length, but a derived unlock that
+    // tracks a growing list re-locks earned vistas — milestones freeze.
     case 'hearthgold':
-      return talesHeard >= hearthTales.length;
+      return talesHeard >= hearthgoldTales;
     default:
       return false;
   }

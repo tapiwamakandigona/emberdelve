@@ -1036,7 +1036,7 @@ String? comingVistaLine(GameController c) {
   // v0.98.0: rests taken this run are movement toward the Hearthgold.
   if (c.runTalesHeard > 0 && !c.vistaUnlocked('hearthgold')) {
     final n = c.meta.hearthTalesHeard;
-    final total = hearthTales.length;
+    final total = hearthgoldTales;
     lines.add((
       n / total,
       'The Hearthgold vista waits — $n\u00A0of\u00A0$total tales heard.',
