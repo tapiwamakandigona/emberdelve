@@ -112,6 +112,9 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     weekliesPlayed: local.weekliesPlayed > cloud.weekliesPlayed
         ? local.weekliesPlayed
         : cloud.weekliesPlayed,
+    doubledWins: local.doubledWins > cloud.doubledWins
+        ? local.doubledWins
+        : cloud.doubledWins,
     winsNoRest: local.winsNoRest > cloud.winsNoRest
         ? local.winsNoRest
         : cloud.winsNoRest,

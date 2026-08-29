@@ -121,6 +121,10 @@ class MetaState {
   int lastWeeklyFloors;
   String lastWeeklyMutator;
   int weekliesPlayed; // Weekly Delves FINISHED (abandoning counts for nothing)
+  // v0.112.0 The Frostvein: weeklies WON on a doubled week. Monotonic — a
+  // derived gate that could re-lock froze hearthgold once (v0.100.0); a
+  // counter that only climbs can never take a vista back.
+  int doubledWins;
   // v0.3.4 run history (review note #4): one small record per ENDED run
   // (won/lost/abandoned), newest first, capped — enough for a ledger page
   // and per-run seed replay, small enough to never bloat the save.
@@ -225,6 +229,7 @@ class MetaState {
     this.lastWeeklyFloors = 0,
     this.lastWeeklyMutator = '',
     this.weekliesPlayed = 0,
+    this.doubledWins = 0,
     List<Map<String, Object?>>? runHistory,
     this.forgeUnlocked = false,
     Set<String>? bossesBeaten,
@@ -310,6 +315,7 @@ class MetaState {
     if (lastWeeklyKey != null) 'lastWeeklyFloors': lastWeeklyFloors,
     if (lastWeeklyKey != null) 'lastWeeklyMutator': lastWeeklyMutator,
     if (weekliesPlayed > 0) 'weekliesPlayed': weekliesPlayed,
+    if (doubledWins > 0) 'doubledWins': doubledWins,
     if (runHistory.isNotEmpty) 'runHistory': runHistory,
     if (forgeUnlocked) 'forgeUnlocked': true,
     if (bossesBeaten.isNotEmpty) 'bossesBeaten': bossesBeaten.toList(),
@@ -484,6 +490,7 @@ class MetaState {
     lastWeeklyFloors: j['lastWeeklyFloors'] as int? ?? 0,
     lastWeeklyMutator: j['lastWeeklyMutator'] as String? ?? '',
     weekliesPlayed: j['weekliesPlayed'] as int? ?? 0,
+    doubledWins: j['doubledWins'] as int? ?? 0,
     runHistory: ((j['runHistory'] as List?) ?? const [])
         .whereType<Map>()
         .map((r) => r.map((k, v) => MapEntry('$k', v as Object?)))

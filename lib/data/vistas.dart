@@ -50,6 +50,7 @@ const List<String> vistasOrder = [
   'duskquartz', // v0.55.0 — append-LAST, same discipline as roster bits
   'deepshale', // v0.64.0 — append-LAST
   'hearthgold', // v0.98.0 — append-LAST
+  'frostvein', // v0.112.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -133,6 +134,22 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.08,
     wash: Color(0x2EB07B2A),
   ),
+  // v0.112.0 The Frostvein — the first vista the Weekly feeds, earned on
+  // the rotation's hardest sit (the doubled week, v0.111.0). The first PALE
+  // grade: frost drains color the way the deep does, but it brightens —
+  // ice-blue veins in white-lit rock, nothing like moonveil's saturated
+  // night or deepshale's warm dark.
+  'frostvein': VistaDef(
+    'frostvein',
+    'Frostvein',
+    'Rock that has wintered. The cold got into the stone the week the '
+        'shops closed and the camps went dark, and it never quite left.',
+    unlockLine: 'Claim the Ember on a doubled week.',
+    hueDeg: -150,
+    satMul: 0.62,
+    valMul: 1.08,
+    wash: Color(0x478FB6C9),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -148,6 +165,7 @@ bool vistaUnlockedFor(
   required int provingsCleared,
   required int bestFloor,
   required int talesHeard,
+  required int doubledWins,
 }) {
   switch (id) {
     case 'emberlight':
@@ -169,6 +187,10 @@ bool vistaUnlockedFor(
     // tracks a growing list re-locks earned vistas — milestones freeze.
     case 'hearthgold':
       return talesHeard >= hearthgoldTales;
+    // v0.112.0: fed by the monotonic doubled-week win counter — a shared
+    // challenge won under the paired rule, never derivable, never re-locks.
+    case 'frostvein':
+      return doubledWins >= 1;
     default:
       return false;
   }

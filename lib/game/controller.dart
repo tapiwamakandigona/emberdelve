@@ -725,6 +725,7 @@ class GameController extends ChangeNotifier {
     provingsCleared: meta.provingsCleared.length,
     bestFloor: meta.bestFloor,
     talesHeard: meta.hearthTalesHeard,
+    doubledWins: meta.doubledWins,
   );
 
   void selectVista(String id) {
@@ -1333,6 +1334,11 @@ class GameController extends ChangeNotifier {
       meta.lastWeeklyFloors = (sim!.map?['layers'] as int?) ?? 0;
       meta.lastWeeklyMutator = weeklyMutator ?? '';
       meta.weekliesPlayed += 1;
+      // v0.112.0 The Frostvein: a WON doubled week (the label holds a
+      // '+'-joined pair) climbs the vista counter. Monotonic on purpose.
+      if (sim!.phase == 'run_won' && (weeklyMutator ?? '').contains('+')) {
+        meta.doubledWins += 1;
+      }
     }
     // v0.5.0 Delver's Ledger counters. All banked from what actually happened
     // this run: the deepest layer stood on, a finished daily, a win with no

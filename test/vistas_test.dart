@@ -72,6 +72,7 @@ void main() {
             provingsCleared: 0,
             bestFloor: 0,
             talesHeard: 0,
+            doubledWins: 0,
           ),
           id == 'emberlight',
           reason: id,
@@ -86,6 +87,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -98,6 +100,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -110,6 +113,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isFalse,
       );
@@ -122,6 +126,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isFalse,
       );
@@ -134,6 +139,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -147,6 +153,7 @@ void main() {
           provingsCleared: 2,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isFalse,
       );
@@ -159,6 +166,7 @@ void main() {
           provingsCleared: 3,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -174,6 +182,7 @@ void main() {
           provingsCleared: 99,
           bestFloor: 8,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isFalse,
       );
@@ -186,6 +195,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 9,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -201,6 +211,7 @@ void main() {
           provingsCleared: 99,
           bestFloor: 99,
           talesHeard: hearthgoldTales - 1,
+          doubledWins: 0,
         ),
         isFalse,
       );
@@ -213,6 +224,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: hearthgoldTales,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -228,6 +240,7 @@ void main() {
           provingsCleared: 0,
           bestFloor: 0,
           talesHeard: hearthgoldTales,
+          doubledWins: 0,
         ),
         isTrue,
       );
@@ -240,6 +253,7 @@ void main() {
           provingsCleared: 99,
           bestFloor: 0,
           talesHeard: 0,
+          doubledWins: 0,
         ),
         isFalse,
       );

@@ -25,7 +25,9 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 void driveToTerminal(GameController c) {
   var guard = 0;
   while (c.phase != 'run_won' && c.phase != 'run_lost' && guard++ < 4000) {
-    final cmd = botCmd(c.sim!, mutators: [c.weeklyMutator ?? '']);
+    // The stored label is '+'-joined on a doubled week (v0.111.0) — split
+    // it back into real ids before handing it to the bot.
+    final cmd = botCmd(c.sim!, mutators: (c.weeklyMutator ?? '').split('+'));
     if (cmd == null) break;
     c.apply(cmd);
   }
