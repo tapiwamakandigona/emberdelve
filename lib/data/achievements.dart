@@ -82,6 +82,7 @@ const Set<String> achievementStats = {
   // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
   'weeklies_played',
   'codex_unsealed',
+  'doubled_wins', // v0.113.0 The Cold Honors
   'tales_heard',
   'foes_settled',
   'distinct_felled',
@@ -118,6 +119,8 @@ const List<String> achievementsOrder = [
   'tales_ten',
   'score_settled',
   'twenty_names',
+  // --- the cold honors (v0.113.0): the doubled week's recognition ---------
+  'first_winter', 'thrice_wintered',
 ];
 
 const Map<String, AchievementDef> achievements = {
@@ -497,6 +500,23 @@ const Map<String, AchievementDef> achievements = {
     'Fell a foe that had felled you twice.',
     stat: 'foes_settled',
     target: 1,
+  ),
+  // v0.113.0 The Cold Honors — recognition for the rotation's hardest sit
+  // (the doubled week, v0.111.0). Reads the same monotonic counter that
+  // feeds the Frostvein vista; recognition only, grants nothing (§Ethics).
+  'first_winter': AchievementDef(
+    'first_winter',
+    'The First Winter',
+    'Claim the Ember on a doubled week.',
+    stat: 'doubled_wins',
+    target: 1,
+  ),
+  'thrice_wintered': AchievementDef(
+    'thrice_wintered',
+    'Thrice Wintered',
+    'Claim the Ember on three doubled weeks.',
+    stat: 'doubled_wins',
+    target: 3,
   ),
   'twenty_names': AchievementDef(
     'twenty_names',

@@ -168,6 +168,8 @@ void main() {
     m.provingsCleared.add('first_flame'); // v0.59.0 provings_cleared
     // v0.107.0 The Unwritten Feats
     m.weekliesPlayed = 2;
+    // v0.113.0 The Cold Honors
+    m.doubledWins = 1;
     m.ownedCodex.add('place:the_delve');
     m.hearthTalesHeard = 1;
     m.settledFoes.add('quench_hag');
