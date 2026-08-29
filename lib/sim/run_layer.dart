@@ -274,6 +274,7 @@ void runChooseBoon(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 //
 //   elites_only  every regular fight -> elite (each combat can drop a rare).
 //   no_shops     every shop -> fight (removes the map's only gold sink).
+//   no_rests     every rest -> fight (Cold Camps: heal by shop/event/relic).
 //
 // Unknown mutator ids are ignored here (forward-compatible with the catalog).
 void _applyMapMutators(Sim sim, Map<String, Object?> map) {
@@ -281,6 +282,7 @@ void _applyMapMutators(Sim sim, Map<String, Object?> map) {
   final count = nodes.length;
   final elitesOnly = sim.hasMutator('elites_only');
   final noShops = sim.hasMutator('no_shops');
+  final noRests = sim.hasMutator('no_rests');
   // Walk in numeric id order for determinism; skip start (1) and boss (last).
   // Two independent passes in one loop so the mutators compose: a shop first
   // becomes a fight (no_shops), and that fight can then become an elite
@@ -288,6 +290,7 @@ void _applyMapMutators(Sim sim, Map<String, Object?> map) {
   // them orthogonal means a future "double week" needs no new code.
   for (var id = 2; id <= count - 1; id++) {
     final node = nodes['$id']!;
+    if (noRests && node['kind'] == 'rest') node['kind'] = 'fight';
     if (noShops && node['kind'] == 'shop') node['kind'] = 'fight';
     if (elitesOnly && node['kind'] == 'fight') node['kind'] = 'elite';
   }
