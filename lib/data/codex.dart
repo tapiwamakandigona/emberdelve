@@ -7,16 +7,19 @@
 // hides rules knowledge behind a paywall. Everything mechanical (intents,
 // relic effects) stays visible in play for free; the Codex sells the story.
 //
-// Entry ids are namespaced ('enemy:<id>' / 'relic:<id>') so MetaState can
-// keep ownership in one flat set without collisions. Names are NOT stored
-// here — the UI reads them from enemies.dart / relics.dart, so a rename
-// there can never leave the Codex lying.
+// Entry ids are namespaced ('enemy:<id>' / 'relic:<id>' / 'place:<id>') so
+// MetaState can keep ownership in one flat set without collisions. Enemy and
+// relic names are NOT stored here — the UI reads them from enemies.dart /
+// relics.dart, so a rename there can never leave the Codex lying. Places
+// (v0.104.0 The Delve Itself) exist only here, so [placeNames] is theirs.
 //
-// Prices: common enemies 15, elites 20, bosses 30, relics 20.
+// Prices: common enemies 15, elites 20, bosses 30, relics 20, places 10 —
+// the world's own words are the cheapest words in the book, because
+// 'what is a delve?' is the first question a new delver actually asks.
 
 class CodexEntryDef {
   final String id; // 'enemy:cinder_wisp' / 'relic:ember_ring'
-  final String kind; // 'enemy' | 'relic'
+  final String kind; // 'enemy' | 'relic' | 'place'
   final String refId; // key into enemies / relics
   final String text; // the lore, unlocked on purchase
   final int costEmbers;
@@ -33,9 +36,78 @@ CodexEntryDef _enemy(String refId, String text, {int cost = 15}) =>
     CodexEntryDef('enemy:$refId', 'enemy', refId, text, costEmbers: cost);
 CodexEntryDef _relic(String refId, String text) =>
     CodexEntryDef('relic:$refId', 'relic', refId, text, costEmbers: 20);
+CodexEntryDef _place(String refId, String text) =>
+    CodexEntryDef('place:$refId', 'place', refId, text, costEmbers: 10);
 
-/// Authoring order — enemies shallow-to-deep, then relics by shop grouping.
+/// Display names for 'place' entries — places exist only in the Codex, so
+/// the name lives beside the lore. Append-only, like every catalog.
+const Map<String, String> placeNames = {
+  'the_delve': 'The Delve',
+  'the_ember': 'The Ember',
+  'the_hearth': 'The Hearth',
+  'the_depths': 'The Depths',
+  'the_dice': 'The Dice',
+  'the_forge': 'The Forge',
+  'the_provings': 'The Provings',
+  'the_vistas': 'The Vistas',
+};
+
+/// Authoring order — the world first (a new delver's questions in the order
+/// they get asked), then enemies shallow-to-deep, then relics by shop
+/// grouping.
 final List<CodexEntryDef> codexEntries = [
+  // the world -------------------------------------------------------------
+  _place(
+    'the_delve',
+    'A delve is a walk down into the dark with a light you have to feed. '
+        'Floor under floor under floor, and at the bottom, the Ember. Some '
+        'come back. What they carried up is written in the Ledger; what '
+        'they left is not.',
+  ),
+  _place(
+    'the_ember',
+    'The old fires died, all but one, and it went deep to sulk. Every '
+        'spark a delver pockets on the way down is a word of its name. '
+        'Claim it and it climbs the stairs with you, warm as a grudge '
+        'forgiven.',
+  ),
+  _place(
+    'the_hearth',
+    'The room at the top of the stairs. The kettle is always on, the '
+        'chairs do not match, and nobody asks how far you got until you '
+        'have eaten. Tales are told here, one per rest, in order.',
+  ),
+  _place(
+    'the_depths',
+    'Delvers count floors the way sailors count weather — out loud, to '
+        'stay honest. Past the ninth the maps stop agreeing with each '
+        'other, which the mapmakers insist is the floors\' fault.',
+  ),
+  _place(
+    'the_dice',
+    'A delver\'s dice are cut from hearth-brick and fed on ember-light. '
+        'They are not luck. They are a bag of small promises, and every '
+        'roll is one of them being kept or broken.',
+  ),
+  _place(
+    'the_forge',
+    'Between floors there is sometimes an anvil that was not there for '
+        'the last delver. The smith takes no ember and gives no name. '
+        'Hand over a die and it comes back heavier in exactly one way.',
+  ),
+  _place(
+    'the_provings',
+    'Set delves with set rules, kept by the Hearth so delvers can measure '
+        'themselves against something that holds still. Clearing one '
+        'proves the delver; the delve itself was never in doubt.',
+  ),
+  _place(
+    'the_vistas',
+    'What the Hearth\'s one window looks out on. The view does not change '
+        'because the world changed — it changes because the delver did. '
+        'Earn a vista and the window admits it.',
+  ),
+
   // enemies — common -----------------------------------------------------
   _enemy(
     'cinder_wisp',

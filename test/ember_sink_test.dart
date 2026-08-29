@@ -260,6 +260,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     // Locked: lore hidden, price shown.
     expect(find.text(entry.text), findsNothing);
+    // v0.104.0: THE WORLD shelf sits above the enemies, so scroll the
+    // first enemy card into view before tapping it.
+    await tester.scrollUntilVisible(
+      find.byKey(ValueKey('codex-${entry.id}')),
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byKey(ValueKey('codex-${entry.id}')));
     await tester.pump(const Duration(milliseconds: 400));
     expect(c.meta.ownedCodex, contains(entry.id));
@@ -270,6 +278,12 @@ void main() {
       reason: 'paid lore must be readable immediately',
     );
     // Broke now: a second locked entry refuses without touching the purse.
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('codex-enemy:ash_rat')),
+      400,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byKey(const ValueKey('codex-enemy:ash_rat')));
     await tester.pump(const Duration(milliseconds: 400));
     expect(c.meta.ownedCodex, hasLength(1));
