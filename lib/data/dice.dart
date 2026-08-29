@@ -33,6 +33,21 @@ class DieDef {
   });
 }
 
+/// v0.97.0 The Counted Forge: one honest sentence of facts per die —
+/// 'd8 · +2 attack · attack only'. Shared by the reward picker and the
+/// forge rows so the same die never reads two different ways.
+String dieFacts(DieDef d) {
+  final parts = <String>['d${d.size}'];
+  final m = d.mods;
+  if (m['attack_bonus'] != null) parts.add('+${m['attack_bonus']} attack');
+  if (m['block_bonus'] != null) parts.add('+${m['block_bonus']} block');
+  if (m['min_value'] != null) parts.add('min ${m['min_value']}');
+  if (m['on_max_bonus'] != null) parts.add('+${m['on_max_bonus']} on max');
+  if (m['attack_only'] == true) parts.add('attack only');
+  if (m['block_only'] == true) parts.add('block only');
+  return parts.join(' · ');
+}
+
 const List<String> diceOrder = [
   // tier 1 — d4 utility
   'd4', 'd4_spark', 'd4_guard', 'd4_lucky',

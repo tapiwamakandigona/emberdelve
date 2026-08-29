@@ -309,7 +309,7 @@ class _FlipCardState extends State<_FlipCard>
               ),
               const SizedBox(height: Space.xs),
               Text(
-                _dieDesc(def),
+                dieFacts(def),
                 textAlign: TextAlign.center,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
@@ -321,18 +321,6 @@ class _FlipCardState extends State<_FlipCard>
       ),
     );
   }
-}
-
-String _dieDesc(DieDef d) {
-  final parts = <String>['d${d.size}'];
-  final m = d.mods;
-  if (m['attack_bonus'] != null) parts.add('+${m['attack_bonus']} attack');
-  if (m['block_bonus'] != null) parts.add('+${m['block_bonus']} block');
-  if (m['min_value'] != null) parts.add('min ${m['min_value']}');
-  if (m['on_max_bonus'] != null) parts.add('+${m['on_max_bonus']} on max');
-  if (m['attack_only'] == true) parts.add('attack only');
-  if (m['block_only'] == true) parts.add('block only');
-  return parts.join(' · ');
 }
 
 // ---------------------------------------------------------------------------

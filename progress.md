@@ -2728,3 +2728,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   invalid commands. lib/data/tales.dart pure indexer. Suite 804/804.
   0.96.0+122. Plates: fresh first tale 360x640; longest tale forced at
   320x568 wraps clean (tool/hearth_tale_visual_test.dart).
+
+## v0.97.0 — The Counted Forge (2026-08-29)
+- Honest-numbers arc reaches the forge: rows with a modded die on
+  either side print dieFacts before → after ('d6 · +1 attack → d8 ·
+  +1 attack'); plain size-only forges stay quiet (chips already count
+  it). _dieDesc promoted to public dieFacts in lib/data/dice.dart;
+  reward/shop/boon repointed — one die vocabulary everywhere. Mods-key
+  exhaustiveness sweep pinned. Suite 808/808. 0.97.0+123. Plates:
+  360x800 mixed pool (keen row counted, plain row quiet); 320x568
+  longest wording wraps two lines clean.

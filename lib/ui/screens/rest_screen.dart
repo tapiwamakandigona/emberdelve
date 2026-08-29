@@ -168,6 +168,21 @@ class RestScreen extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: EmberText.label,
           ),
+          // v0.97.0 The Counted Forge: when either side carries mods, the
+          // row states what actually changes — the same dieFacts sentence
+          // the reward/shop/boon pickers use, before and after. Plain
+          // size-only forges stay quiet: the chips' own d-labels already
+          // count that, and restating it three times is noise.
+          if (def.mods.isNotEmpty || dieDef(into).mods.isNotEmpty) ...[
+            const SizedBox(height: Space.xs),
+            Text(
+              '${dieFacts(def)}  →  ${dieFacts(dieDef(into))}',
+              key: ValueKey('forge-facts-$index'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: EmberText.micro,
+            ),
+          ],
         ],
       ),
     );

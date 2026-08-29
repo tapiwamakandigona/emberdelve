@@ -69,7 +69,7 @@ class ShopScreen extends StatelessWidget {
     Widget lead;
     if (kind == 'die') {
       title = dieDef(id).name;
-      desc = _dieDesc(dieDef(id));
+      desc = dieFacts(dieDef(id));
       lead = DieChip(id, skin: c.meta.activeDieSkin);
     } else if (kind == 'relic') {
       title = relicDef(id).name;
