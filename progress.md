@@ -2647,3 +2647,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   tool/rest_preview_visual_test.dart (360x640; 320x568 with Bedroll,
   longest wording) clean. 0.89.0+115. Notes docs/releases/v0.89.0.md.
   Zero sim movement (read-only function addition; goldens untouched).
+
+## v0.90.0 — The Counted Ration (2026-08-29)
+- Shop Field Rations now print the real heal — overheal cap counted:
+  'Heal 7 HP (17 to 24)'; at full HP 'Fully rested — heals nothing'. New
+  pure sim reader `healPreview(Sim, amount)` mirrors `_heal` exactly;
+  restHealPreview refactored onto it (one cap, one source of truth). SOLD
+  rows keep the historic plain label.
+- Parity tests incl. a NATURAL overheal cap. New pinned shop seeds
+  (kindler easy, bot walk): 7 = 17/30 gold 98 uncapped; 20 = 31/34 amt 8
+  caps to 3, gold 43; 6 = 30/30 full. Tests +5. Suite 784/784. Plates
+  tool/ration_visual_test.dart clean for the feature. 0.90.0+116.
+- DEFECT FOUND ON PLATES (pre-existing, queued v0.91): at 320px the slot
+  TITLE breaks mid-word ('FIELD RATION / S') beside the price button.
+- Zero sim movement (read-only function addition; goldens untouched).

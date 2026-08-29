@@ -82,7 +82,21 @@ class ShopScreen extends StatelessWidget {
       );
     } else {
       title = 'Field Rations';
-      desc = 'Heal ${slot['amount']} HP';
+      // v0.90.0 The Counted Ration: unsold rations print the real heal —
+      // the sim's own overheal cap — not the nominal amount. SOLD rows keep
+      // the historic label; a bought ration must not relabel itself from
+      // the player's new HP. NBSPs bind the paren group (v0.89 lesson).
+      final amount = slot['amount'] as int;
+      final live = !sold && c.sim != null;
+      final heal = live ? healPreview(c.sim!, amount) : amount;
+      if (!live) {
+        desc = 'Heal $amount HP';
+      } else if (heal == 0) {
+        desc = 'Fully rested — heals nothing';
+      } else {
+        final hp = c.sim!.player['hp'] as int;
+        desc = 'Heal $heal HP ($hp\u00A0to\u00A0${hp + heal})';
+      }
       lead = const Icon(Icons.healing, color: EmberColors.success, size: 40);
     }
     return Opacity(
