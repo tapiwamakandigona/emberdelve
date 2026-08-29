@@ -166,6 +166,12 @@ void main() {
     m.charWins['kindler'] = 6;
     m.bossesBeaten.add('ember_tyrant');
     m.provingsCleared.add('first_flame'); // v0.59.0 provings_cleared
+    // v0.107.0 The Unwritten Feats
+    m.weekliesPlayed = 2;
+    m.ownedCodex.add('place:the_delve');
+    m.hearthTalesHeard = 1;
+    m.settledFoes.add('quench_hag');
+    m.enemyFelled['cinder_wisp'] = 1;
     for (final stat in achievementStats) {
       final param = stat == 'char_wins' ? 'kindler' : null;
       expect(
