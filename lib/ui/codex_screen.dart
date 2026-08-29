@@ -6,6 +6,7 @@
 // sealed, so a locked entry is a known quantity, never a gacha tease.
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
+import '../data/characters.dart';
 import '../data/codex.dart';
 import '../data/enemies.dart';
 import '../data/relics.dart';
@@ -41,6 +42,11 @@ class CodexScreen extends StatelessWidget {
               // 'what is a delve?' is answered at the top of the book.
               final placeEntries = codexEntries
                   .where((e) => e.kind == 'place')
+                  .toList();
+              // v0.110.0 The Named Company: the delvers' own stories, right
+              // after the world — who the company are is the second question.
+              final delverEntries = codexEntries
+                  .where((e) => e.kind == 'delver')
                   .toList();
               final enemyEntries = codexEntries
                   .where((e) => e.kind == 'enemy')
@@ -89,6 +95,13 @@ class CodexScreen extends StatelessWidget {
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
+                  Text('THE COMPANY', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in delverEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const SizedBox(height: Space.l),
                   Text('ENEMIES', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in enemyEntries) ...[
@@ -113,12 +126,14 @@ class CodexScreen extends StatelessWidget {
 
   String _entryName(CodexEntryDef e) => switch (e.kind) {
     'enemy' => enemies[e.refId]?.name ?? e.refId,
+    'delver' => characterDef(e.refId).name,
     'relic' => relics[e.refId]?.name ?? e.refId,
     _ => placeNames[e.refId] ?? e.refId,
   };
 
   String _entryTag(CodexEntryDef e) {
     if (e.kind == 'place') return 'place';
+    if (e.kind == 'delver') return 'delver';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';

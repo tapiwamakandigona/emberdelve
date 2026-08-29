@@ -7,15 +7,17 @@
 // hides rules knowledge behind a paywall. Everything mechanical (intents,
 // relic effects) stays visible in play for free; the Codex sells the story.
 //
-// Entry ids are namespaced ('enemy:<id>' / 'relic:<id>' / 'place:<id>') so
-// MetaState can keep ownership in one flat set without collisions. Enemy and
-// relic names are NOT stored here — the UI reads them from enemies.dart /
-// relics.dart, so a rename there can never leave the Codex lying. Places
-// (v0.104.0 The Delve Itself) exist only here, so [placeNames] is theirs.
+// Entry ids are namespaced ('enemy:<id>' / 'relic:<id>' / 'place:<id>' /
+// 'delver:<id>', v0.110.0) so MetaState can keep ownership in one flat set
+// without collisions. Enemy, relic, and delver names are NOT stored here —
+// the UI reads them from enemies.dart / relics.dart / characters.dart, so a
+// rename there can never leave the Codex lying. Places (v0.104.0 The Delve
+// Itself) exist only here, so [placeNames] is theirs.
 //
-// Prices: common enemies 15, elites 20, bosses 30, relics 20, places 10 —
-// the world's own words are the cheapest words in the book, because
-// 'what is a delve?' is the first question a new delver actually asks.
+// Prices: common enemies 15, elites 20, bosses 30, relics 20, places 10,
+// delvers 15 — the world's own words are the cheapest words in the book,
+// because 'what is a delve?' is the first question a new delver actually
+// asks; who the company are is the second.
 
 class CodexEntryDef {
   final String id; // 'enemy:cinder_wisp' / 'relic:ember_ring'
@@ -38,6 +40,8 @@ CodexEntryDef _relic(String refId, String text) =>
     CodexEntryDef('relic:$refId', 'relic', refId, text, costEmbers: 20);
 CodexEntryDef _place(String refId, String text) =>
     CodexEntryDef('place:$refId', 'place', refId, text, costEmbers: 10);
+CodexEntryDef _delver(String refId, String text) =>
+    CodexEntryDef('delver:$refId', 'delver', refId, text, costEmbers: 15);
 
 /// Display names for 'place' entries — places exist only in the Codex, so
 /// the name lives beside the lore. Append-only, like every catalog.
@@ -106,6 +110,49 @@ final List<CodexEntryDef> codexEntries = [
     'What the Hearth\'s one window looks out on. The view does not change '
         'because the world changed — it changes because the delver did. '
         'Earn a vista and the window admits it.',
+  ),
+
+  // the company (v0.110.0 The Named Company) — one entry per delver, in
+  // roster order. Flavor only: kits and numbers stay on the picker, free.
+  _delver(
+    'kindler',
+    'First down the stairs, every time, and not because anyone asked. A '
+        'kindler\'s trade is plain: carry fire into a place that eats '
+        'fire, and keep smiling while it haggles. Three honest dice, one '
+        'stubborn habit of coming home.',
+  ),
+  _delver(
+    'warden',
+    'Wardens take one oath and keep it with their whole body: the delver '
+        'behind you climbs out, whatever the stairs decide about you. The '
+        'scale mail is borrowed. The patience is not.',
+  ),
+  _delver(
+    'gambler',
+    'Cut their luck die thin on purpose — a fair die tells you nothing '
+        'about yourself. The Hearth keeps a jar of what the gambler owes '
+        'it, and the gambler keeps a jar of what the delve owes them. '
+        'Neither jar has ever been emptied.',
+  ),
+  _delver(
+    'ascetic',
+    'Owns a brand iron, a whetstone, and no second shirt. The ascetic '
+        'went down once with everything and came up with nothing but an '
+        'opinion: weight is a debt the deep collects. Now they carry only '
+        'edges.',
+  ),
+  _delver(
+    'peddler',
+    'Knows the price of every floor and pays none of them full. The '
+        'peddler\'s kiln key opens no door in the delve — it opens the '
+        'shops, which the peddler will tell you is the same thing said '
+        'politely.',
+  ),
+  _delver(
+    'tinker',
+    'The tinker does not trust a die they have not taken apart. Every '
+        'forge between floors knows them by their knock, and the smith — '
+        'who takes no ember and gives no name — has twice almost smiled.',
   ),
 
   // enemies — common -----------------------------------------------------
