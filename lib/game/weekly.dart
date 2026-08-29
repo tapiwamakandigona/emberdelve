@@ -2,9 +2,11 @@
 // strings (P3). Pure functions, no Flutter imports, fully testable.
 //
 // A Weekly Delve is a shared-seed challenge that rotates every 7 days and
-// carries ONE declared modifier (data/mutators.dart). Like the Daily Delve
-// it has NO streaks and NO expiry pressure (spec §Ethics): a missed week is
-// simply a missed week, so none of the strings below may imply otherwise.
+// carries a declared rule: ONE modifier (data/mutators.dart) for most weeks,
+// and — one week per cycle (v0.111.0 The Doubled Week) — a declared, named
+// PAIR. Like the Daily Delve it has NO streaks and NO expiry pressure (spec
+// §Ethics): a missed week is simply a missed week, so none of the strings
+// below may imply otherwise.
 //
 // Week math is Monday-aligned and DateTime-free at the seed boundary: the
 // sim's weeklySeed(int) takes a plain integer index, and this file is the one
@@ -63,15 +65,57 @@ String weeklyKey(int index) {
   return 'Week of ${md[0]}-$m-$d';
 }
 
-/// The mutator id declared for a given week. Deterministic pure function of
-/// the week index over [mutatorsOrder], so every player sees the same rule
-/// for the same week and the rotation is stable across devices and reboots.
-String weeklyMutatorFor(int index) {
+/// A named weekly rule: the singles read name and blurb straight from the
+/// mutator catalog (a rename there can never lie here); the doubled slot
+/// authors its own, because a pair deserves one name on the card.
+class WeeklyRuleDef {
+  final String name;
+  final String blurb;
+  final List<String> mutators;
+  const WeeklyRuleDef(this.name, this.blurb, this.mutators);
+}
+
+/// The Doubled Week (v0.111.0): the one composed slot in the rotation.
+/// Pair vetted by bot sweep before shipping — see the release notes.
+const WeeklyRuleDef doubledWeek = WeeklyRuleDef(
+  'Cold Quarter',
+  'No shops and no rests \u2014 every camp is a fight, gold buys nothing, '
+      'and healing comes only from events and what you carry.',
+  ['no_shops', 'no_rests'],
+);
+
+/// The rule declared for a given week: the singles in [mutatorsOrder], then
+/// [doubledWeek] closes the cycle. Deterministic pure function of the week
+/// index, so every player sees the same rule for the same week and the
+/// rotation is stable across devices and reboots.
+WeeklyRuleDef weeklyRuleFor(int index) {
   // Non-negative modulo (week indices are positive for any real date, but
   // stay total anyway rather than trust the caller).
-  final n = mutatorsOrder.length;
+  final n = mutatorsOrder.length + 1;
   final i = ((index % n) + n) % n;
-  return mutatorsOrder[i];
+  if (i == n - 1) return doubledWeek;
+  final m = mutatorDef(mutatorsOrder[i]);
+  return WeeklyRuleDef(m.name, m.blurb, [m.id]);
+}
+
+/// Display name for a stored weekly rule label — single mutator ids as-is
+/// from the catalog, '+'-joined pairs by their authored name when they match
+/// the doubled slot, catalog names joined otherwise. Total: unknown input
+/// falls back to 'Delve' rather than throwing at a save from the future.
+String weeklyRuleName(String stored) {
+  final ids = stored.split('+');
+  if (ids.length == 1) {
+    return isKnownMutator(stored) ? mutatorDef(stored).name : 'Delve';
+  }
+  if (ids.toSet().length == doubledWeek.mutators.toSet().length &&
+      ids.toSet().containsAll(doubledWeek.mutators)) {
+    return doubledWeek.name;
+  }
+  final known = [
+    for (final id in ids)
+      if (isKnownMutator(id)) mutatorDef(id).name,
+  ];
+  return known.isEmpty ? 'Delve' : known.join(' + ');
 }
 
 /// One-line recap under the title-screen Weekly Delve button, shown once the
@@ -94,7 +138,7 @@ String weeklyShareText({
   required int floors,
   String grid = '',
 }) {
-  final name = isKnownMutator(mutatorId) ? mutatorDef(mutatorId).name : 'Delve';
+  final name = weeklyRuleName(mutatorId);
   final line = won
       ? '🔥 Claimed the Ember — floor $floors of $floors'
       : '🕯️ Fell on floor $floor of $floors';
@@ -111,7 +155,5 @@ String weeklyShareText({
 /// v0.109.0 The Coming Rule: next Monday's declared modifier, stated as a
 /// fact for players who already played this week. Pure over the rotation —
 /// the same appointment for everyone, no countdown, no pressure (§Ethics).
-String comingRuleLine(int thisWeekIndex) {
-  final next = mutatorDef(weeklyMutatorFor(thisWeekIndex + 1));
-  return 'Next Monday: ${next.name}';
-}
+String comingRuleLine(int thisWeekIndex) =>
+    'Next Monday: ${weeklyRuleFor(thisWeekIndex + 1).name}';

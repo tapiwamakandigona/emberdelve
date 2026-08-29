@@ -17,9 +17,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('comingRuleLine names next week\'s actual rule, deterministically', () {
-    for (var idx = 0; idx < 12; idx++) {
+    for (var idx = 0; idx < 14; idx++) {
       final line = comingRuleLine(idx);
-      final next = mutatorDef(weeklyMutatorFor(idx + 1));
+      final next = weeklyRuleFor(idx + 1);
       expect(line, 'Next Monday: ${next.name}');
       expect(comingRuleLine(idx), equals(line));
     }

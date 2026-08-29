@@ -835,14 +835,16 @@ class GameController extends ChangeNotifier {
     );
   }
 
-  /// Weekly Delve: everyone plays the same seed AND the same declared
-  /// modifier for the current Monday-aligned week (spec §Ethics — a shared
-  /// challenge, no streaks, no expiry). The modifier is picked deterministic-
-  /// ally from the week index, so the whole player base sees the same rule.
-  void startWeeklyRun({String? character}) {
-    final now = DateTime.now();
+  /// Weekly Delve: everyone plays the same seed AND the same declared rule
+  /// for the current Monday-aligned week (spec §Ethics — a shared challenge,
+  /// no streaks, no expiry). The rule — one modifier most weeks, a named
+  /// pair on the doubled week (v0.111.0) — is picked deterministically from
+  /// the week index, so the whole player base sees the same rule.
+  /// [clock] is test-only, same as [startDailyRun].
+  void startWeeklyRun({String? character, DateTime? clock}) {
+    final now = clock ?? DateTime.now();
     final index = weekIndexForDate(now);
-    final mutator = weeklyMutatorFor(index);
+    final rule = weeklyRuleFor(index);
     // The seed MUST be pinned to the week (bug-hunt 2026-08-11): weeklySeed
     // existed and was unit-tested but was never wired in here, so every
     // player got a random clock seed — "one shared delve" was only sharing
@@ -851,11 +853,13 @@ class GameController extends ChangeNotifier {
       character: character,
       seed: weeklySeed(index),
       boons: true,
-      mutators: [mutator],
+      mutators: rule.mutators,
     );
     // startRun clears the weekly labels, so stamp them AFTER it returns.
+    // The label stores ids '+'-joined — old saves (single id) parse the
+    // same way through weeklyRuleName, so no save migration is needed.
     weeklyIndex = index;
-    weeklyMutator = mutator;
+    weeklyMutator = rule.mutators.join('+');
   }
 
   /// Fast restart from the death/victory ledger: a new run (fresh seed) with

@@ -526,12 +526,10 @@ class TitleScreen extends StatelessWidget {
   static int _thisWeek() => weekIndexForDate(DateTime.now());
 
   /// Display name of this week's declared modifier, e.g. "Flint Week".
-  static String _weeklyModifierName() =>
-      mutatorDef(weeklyMutatorFor(_thisWeek())).name;
+  static String _weeklyModifierName() => weeklyRuleFor(_thisWeek()).name;
 
   /// One-line description of this week's modifier, shown under the button.
-  static String _weeklyModifierBlurb() =>
-      mutatorDef(weeklyMutatorFor(_thisWeek())).blurb;
+  static String _weeklyModifierBlurb() => weeklyRuleFor(_thisWeek()).blurb;
 
   /// Today's Trial line under the Daily Delve button (v0.9.0): the trial
   /// name, its rule, and — on a goal day — the ember bonus, stated as a
