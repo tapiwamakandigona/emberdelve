@@ -2710,3 +2710,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (pinned). Data-only, zero sim movement. Suite 795/795. 0.94.0+120.
 - Plates tool/deep_wardrobe_visual_test.dart (scroll-to-card idiom:
   scrollUntilVisible + drag target to y=120, canonical for shelf plates).
+
+## v0.95.0 — The Known Relic (2026-08-29)
+- All 36 relics now carry a deliberate icon (14 shared the fallback
+  lantern; evidence from v0.93.0 satchel plates). Curated reuse cap 2,
+  thematically-distant pairs (wyrmscale_cloak moved off iron_scale's
+  shield to relic_fire_tail mid-curation). Lantern = cinder_lantern
+  alone. Zero new assets, zero sim movement. One map extension in
+  lib/ui/art.dart + test/known_relic_test.dart charter pins. Suite
+  798/798. 0.95.0+121. Satchel plates re-cut: all 5 rows distinct.
