@@ -413,16 +413,24 @@ void runChooseReward(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 
 // ---- rest + forge ----------------------------------------------------------
 
-/// v0.89.0: what `rest` would heal right now — the exact arithmetic of
-/// [runRest] + `_heal` with no mutation, so the rest button can print the
-/// real number instead of asking the player to do percentage math.
-int restHealPreview(Sim sim) {
+/// v0.90.0: what healing [amount] would actually restore right now — the
+/// exact overheal cap of `_heal` with no mutation, never negative. Every UI
+/// promise of a heal must come from here so it cannot drift from the sim.
+int healPreview(Sim sim, int amount) {
   final hp = sim.player['hp'] as int, maxHp = sim.player['max_hp'] as int;
-  var h = (maxHp * 3) ~/ 10 + relicSum(sim, 'rest_bonus');
+  var h = amount;
   if (hp + h > maxHp) h = maxHp - hp;
   if (h < 0) h = 0;
   return h;
 }
+
+/// v0.89.0: what `rest` would heal right now — the exact arithmetic of
+/// [runRest] + `_heal` with no mutation, so the rest button can print the
+/// real number instead of asking the player to do percentage math.
+int restHealPreview(Sim sim) => healPreview(
+  sim,
+  (sim.player['max_hp'] as int) * 3 ~/ 10 + relicSum(sim, 'rest_bonus'),
+);
 
 void runRest(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (sim.phase != 'rest') return _invalid(events, 'not_rest_phase');
