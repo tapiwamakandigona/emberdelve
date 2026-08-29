@@ -217,6 +217,92 @@ class DelverCardFacts {
 /// The card itself: fixed 340×480 logical canvas (420 before v0.54.0 — the
 /// epitaph bought 60px), hearth palette, bundled fonts only — a pure
 /// function of [facts] so tests can pin every line.
+/// v0.102.0: the emoji trace grid ('🟩🟨…\n…') parsed back to cell codes —
+/// 'c' clean, 'h' hurt, 'f' fell, 'w' Ember claimed. Records bank the emoji
+/// string (v0.57.0), so the card parses rather than re-deriving; unknown
+/// runes are dropped, never guessed (fromCompact precedent).
+List<List<String>> traceCells(String gridText) => [
+  for (final row in gridText.split('\n'))
+    if (row.isNotEmpty)
+      [
+        for (final r in row.runes)
+          if (r == 0x1F7E9)
+            'c'
+          else if (r == 0x1F7E8)
+            'h'
+          else if (r == 0x1F7E5)
+            'f'
+          else if (r == 0x1F525)
+            'w',
+      ],
+];
+
+/// The floor trace, painted: one rounded cell per floor, five per row —
+/// clean in green, hurt in gold, the fall in red, the claimed Ember in
+/// ember with a gold ring. Deterministic on every platform, unlike emoji.
+class PaintedTrace extends StatelessWidget {
+  final String gridText;
+  const PaintedTrace(this.gridText, {super.key});
+
+  static const _fill = {
+    'c': EmberColors.success,
+    'h': EmberColors.gold,
+    'f': EmberColors.danger,
+    'w': EmberColors.ember,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = traceCells(gridText);
+    final cells = [for (final r in rows) ...r];
+    // The outcome cell REPLACED its floor's clean/hurt mark (traceGrid),
+    // so per-floor counts cannot be recovered here — the label states
+    // only what the grid truly knows: length and outcome.
+    final outcome = cells.contains('w')
+        ? ', the Ember claimed'
+        : cells.contains('f')
+        ? ', the delver fell'
+        : '';
+    return Semantics(
+      label: 'Floor trace: ${cells.length} floors$outcome.',
+      child: ExcludeSemantics(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final (i, row) in rows.indexed)
+              Padding(
+                padding: EdgeInsets.only(top: i == 0 ? 0 : 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final (j, cell) in row.indexed)
+                      Padding(
+                        padding: EdgeInsets.only(left: j == 0 ? 0 : 4),
+                        child: Container(
+                          width: 13,
+                          height: 13,
+                          decoration: BoxDecoration(
+                            color: _fill[cell],
+                            borderRadius: BorderRadius.circular(3.5),
+                            border: cell == 'w'
+                                ? Border.all(
+                                    color: EmberColors.gold,
+                                    width: 1.5,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DelverCard extends StatelessWidget {
   final DelverCardFacts facts;
   const DelverCard(this.facts, {super.key});
@@ -318,14 +404,16 @@ class DelverCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                  // v0.102.0 The Painted Trace: the card paints its own
+                  // floor grid. Emoji squares render with whatever emoji
+                  // font the device vendor ships — the one artifact built
+                  // to leave the game must not change face per platform.
+                  // The share TEXT keeps the emoji grid: text has no
+                  // painter, and emoji is honest there.
                   if (facts.traceGridText.isNotEmpty)
-                    Text(
+                    PaintedTrace(
                       facts.traceGridText,
-                      textAlign: TextAlign.center,
-                      style: EmberText.body.copyWith(
-                        height: 1.25,
-                        letterSpacing: 2,
-                      ),
+                      key: const ValueKey('card-trace-grid'),
                     ),
                   Text(
                     facts.fightsKnown

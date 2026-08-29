@@ -2777,3 +2777,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   design — never persisted (test pins toJson). LedgerScreen now
   stateful. 5 new tests; plates all/warden/320-wrap approved. Suite
   819/819. 0.101.0+127.
+
+## v0.102.0 — The Painted Trace (2026-08-29)
+- The Delver's Card paints its own floor grid (PaintedTrace widget,
+  key 'card-trace-grid'): rounded cells, clean green / hurt gold /
+  fall red / Ember ember+gold ring — deterministic on every platform
+  instead of vendor emoji. Parses the banked emoji string (public
+  traceCells; unknown runes dropped). Share TEXT keeps emoji (no
+  painter in text). Honest semantics: floors + outcome only (outcome
+  cell overwrote its floor's mark). Card plates re-cut across all four
+  washes. TEST LESSON: dispose ensureSemantics() handle IN the test
+  body — addTearDown runs after end-of-test verification. Suite
+  824/824. 0.102.0+128.
