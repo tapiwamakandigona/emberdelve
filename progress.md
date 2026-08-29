@@ -2738,3 +2738,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   exhaustiveness sweep pinned. Suite 808/808. 0.97.0+123. Plates:
   360x800 mixed pool (keen row counted, plain row quiet); 320x568
   longest wording wraps two lines clean.
+
+## v0.98.0 — The Hearthgold (2026-08-29)
+- Seventh vista, fed by the hearth-tale arc: hear every tale the fire
+  tells (gate follows hearthTales.length, never a stale literal) and
+  the delve wears the fire's gold — the first BRIGHTENING grade
+  (hue +6°, sat ×1.12, val ×1.08). Verified distinct against a
+  same-seed Emberlight control plate (mean pixel diff 5.5), not by
+  eye alone. New transient runTalesHeard lets the Coming Vista line
+  count tales honestly (only when this run moved it). Suite 809/809.
+  0.98.0+124. Plates: gilded map vs control, locked card at 320,
+  worn card.
