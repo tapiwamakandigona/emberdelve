@@ -2821,3 +2821,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   v0.101.0 queued lead on honest terms (no telemetry to 'prove use'
   by charter — honesty was the deciding test instead). 3 tests;
   plates 360/320 approved. Suite 835/835. 0.105.0+131.
+
+## v0.106.0 — The Cold Camps (2026-08-29)
+- Fifth Weekly rule: no_rests ('Cold Camps') — every rest node
+  becomes a fight; heal only by shop, event, or what you carry.
+  Pure rng-free relabel like its siblings, composes in the same
+  one-loop pass (rest→fight→elite). 150-seed sweep: 97/150 plain vs
+  99/150 no_rests for the bot (fight embers offset lost healing);
+  humans rest more, so it lands mid-ladder. Rotation now repeats
+  every 5 weeks instead of 4. shorter_road_test's '.last' pin
+  relaxed to a frozen-index pin (order is append-only). 3 tests, no
+  new UI surface (catalog flows through plated surfaces). Suite
+  838/838. 0.106.0+132.

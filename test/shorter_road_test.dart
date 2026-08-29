@@ -49,7 +49,10 @@ void main() {
   group('catalog and trial wiring', () {
     test('short_road is a known mutator, appended to the order', () {
       expect(isKnownMutator('short_road'), isTrue);
-      expect(mutatorsOrder.last, equals('short_road'));
+      // Position, not .last: the order is append-only, so short_road's
+      // index is frozen forever even as the catalog grows (v0.106.0
+      // appended no_rests after it).
+      expect(mutatorsOrder[3], equals('short_road'));
       expect(mutatorDef('short_road').name, equals('Short Road'));
       expect(mutatorDef('short_road').blurb, isNotEmpty);
     });

@@ -29,6 +29,7 @@ const List<String> mutatorsOrder = [
   'elites_only',
   'no_shops',
   'short_road',
+  'no_rests',
 ];
 
 const Map<String, MutatorDef> mutators = {
@@ -46,6 +47,12 @@ const Map<String, MutatorDef> mutators = {
     'no_shops',
     'No Quarter',
     'No shops on the map. What you find is all you get — no gold to spend your way out of trouble.',
+  ),
+  'no_rests': MutatorDef(
+    'no_rests',
+    'Cold Camps',
+    'No rests on the map \u2014 every camp is a fight instead. Healing '
+        'comes only from shops, events, and what you carry.',
   ),
   'short_road': MutatorDef(
     'short_road',
