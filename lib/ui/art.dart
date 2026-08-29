@@ -222,6 +222,24 @@ class Art {
     'haggler_tongue': 'relic_locked_chest',
     'blood_ruby': 'relic_heart_bottle',
     'ember_heartstone': 'relic_fire_bowl',
+    // v0.95.0 The Known Relic: the 14 relics that shared the fallback
+    // lantern each get a deliberate icon. Constraint (test-pinned): no
+    // icon serves more than two relics, and reuse pairs are chosen so
+    // the two effects read nothing alike.
+    'cinder_lantern': 'relic_lantern',
+    'serpent_fang': 'relic_fire_breath',
+    'pumice_plate': 'relic_metal_bar',
+    'hearth_kettle': 'relic_fire_bowl',
+    'siege_hook': 'relic_anvil',
+    'kings_ransom': 'relic_crown',
+    'drowned_bell': 'relic_gem_pendant',
+    'ashglass_prism': 'relic_fire_gem',
+    'wyrmscale_cloak': 'relic_fire_tail',
+    'choir_censer': 'relic_candelabra',
+    'cairn_stone': 'relic_rune_stone',
+    'rivals_compass': 'relic_ring',
+    'keepers_lantern': 'relic_candle_flame',
+    'tally_chain': 'relic_skeleton_key',
   };
 
   static String relicIcon(String relicId) =>
