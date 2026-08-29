@@ -82,8 +82,11 @@ void main() {
     final delveY = tester
         .getTopLeft(find.byKey(const ValueKey('codex-place:the_delve')))
         .dy;
+    // v0.110.0: find the first enemy by kind, not by index — the company
+    // section now sits between the world and the enemies.
+    final firstEnemy = codexEntries.firstWhere((e) => e.kind == 'enemy');
     final firstEnemyY = tester
-        .getTopLeft(find.byKey(ValueKey('codex-${codexEntries[8].id}')))
+        .getTopLeft(find.byKey(ValueKey('codex-${firstEnemy.id}')))
         .dy;
     expect(delveY, lessThan(firstEnemyY));
   });

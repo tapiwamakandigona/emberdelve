@@ -2869,3 +2869,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   rotation, no countdown (comingVistaLine v0.88.0 precedent).
   3 tests incl. honesty sweep + gating; plates 360/320 approved.
   Suite 849/849. 0.109.0+135.
+
+## v0.110.0 — The Named Company (2026-08-29)
+- The Codex gains THE COMPANY: one story per roster delver, in
+  roster order, 15 embers, between THE WORLD and ENEMIES — the
+  second question a new delver asks (8/23 review loved the
+  characters; v0.104.0 answered the world). Kind 'delver' rides the
+  v0.104.0 generic-kind seam; names read from characters.dart (the
+  anti-lying rule, third application); each story encodes the
+  delver's mechanical truth without paywalling rules. 92 entries.
+  delve_itself_test's codexEntries[8] index pin made kind-robust.
+  3 tests; plates 360/320 approved. Suite 852/852. 0.110.0+136.
+  Deferred: 'double week' composed rules (weeklyMutator is a
+  single-String label through saves/top-bar/share — own release).
