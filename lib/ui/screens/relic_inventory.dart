@@ -51,32 +51,49 @@ void showRelicInventory(BuildContext context, GameController c) {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: owned.length,
-                  separatorBuilder: (_, _) => const Divider(
-                    color: EmberColors.line,
-                    height: Space.l,
-                  ),
+                  separatorBuilder: (_, _) =>
+                      const Divider(color: EmberColors.line, height: Space.l),
                   itemBuilder: (_, i) {
                     final def = relics[owned[i]];
                     if (def == null) return const SizedBox.shrink();
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // v0.93.0 The Pictured Satchel: rows lead with the
+                    // relic's icon — recognition built at the shop carries
+                    // into the one place the player reviews what they own.
+                    return Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(def.name, style: EmberText.label),
-                            ),
-                            if (owned[i] == startRelic)
-                              Text(
-                                'STARTING',
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.gold,
-                                ),
-                              ),
-                          ],
+                        Image.asset(
+                          Art.relicIcon(owned[i]),
+                          width: 36,
+                          height: 36,
+                          filterQuality: FilterQuality.medium,
                         ),
-                        const SizedBox(height: 2),
-                        Text(def.text, style: EmberText.bodyDim),
+                        const SizedBox(width: Space.m),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      def.name,
+                                      style: EmberText.label,
+                                    ),
+                                  ),
+                                  if (owned[i] == startRelic)
+                                    Text(
+                                      'STARTING',
+                                      style: EmberText.micro.copyWith(
+                                        color: EmberColors.gold,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(def.text, style: EmberText.bodyDim),
+                            ],
+                          ),
+                        ),
                       ],
                     );
                   },

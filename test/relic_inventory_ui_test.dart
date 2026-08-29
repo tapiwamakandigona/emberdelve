@@ -4,6 +4,7 @@
 // character's starting relic is tagged. Effects were previously invisible
 // mid-run (itch feedback, 0.26.0 devlog).
 import 'package:emberdelve/data/relics.dart';
+import 'package:emberdelve/ui/art.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -44,6 +45,8 @@ void main() {
     expect(find.text(relics['iron_scale']!.name), findsOneWidget);
     expect(find.text(relics['iron_scale']!.text), findsOneWidget);
     expect(find.text('STARTING'), findsOneWidget);
+    // v0.93.0 The Pictured Satchel: the row leads with the relic's icon.
+    expect(find.image(AssetImage(Art.relicIcon('iron_scale'))), findsOneWidget);
 
     // Close returns to the run untouched.
     await tester.tap(find.text('Close'));
@@ -82,9 +85,6 @@ void main() {
 
     expect(find.text('RELICS · 0'), findsOneWidget);
     expect(find.text('STARTING'), findsNothing);
-    expect(
-      find.textContaining('No relics yet'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('No relics yet'), findsOneWidget);
   });
 }

@@ -2688,3 +2688,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - LESSON: when cloning a plate tool, update the header comment block too —
   v0.91's clone kept ration paths in comments and broke the v0.92 clone's
   regex anchors (caught immediately; both repaired).
+
+## v0.93.0 — The Pictured Satchel (2026-08-29)
+- In-run relic inventory rows lead with the relic's 36px icon, centered
+  across name + effect — shop-built recognition now carries into the
+  satchel. Row restructure only; zero sim movement. Suite 788/788.
+  0.93.0+119.
+- FOUND (queued lead): relicIcons map gap — cairn_stone + choir_censer
+  share the fallback lantern in shop AND satchel; distinct art wanted.
+- PLATE LESSON: dialog asset icons must build-THEN-runAsync(600ms)-THEN
+  repaint; a delay before the first post-tap pump decodes nothing.
+- NEWS LESSON: ethics gate also pins entry length 2–4 lines (news_test
+  L50) — a 1-line entry fails the suite, not just banned words.
