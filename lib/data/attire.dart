@@ -49,6 +49,8 @@ const List<String> delverDyesOrder = [
   'duskrose',
   'palewisp',
   'wyrmshade',
+  'emberheart', // v0.94.0 The Deep Wardrobe
+  'glowmere', // v0.94.0 The Deep Wardrobe
 ];
 
 const Map<String, DelverDyeDef> delverDyes = {
@@ -117,5 +119,25 @@ const Map<String, DelverDyeDef> delverDyes = {
     costEmbers: 400,
     hueDeg: 265,
     satMul: 0.95,
+  ),
+  // v0.94.0 The Deep Wardrobe: two hue gaps closed after the plate audit —
+  // no red on the shelf (duskrose reads pink) and no teal at all.
+  'emberheart': DelverDyeDef(
+    'emberheart',
+    'Emberheart',
+    'Twice through the forge-water; the red of the coal\'s own heart.',
+    costEmbers: 480,
+    hueDeg: -18,
+    satMul: 1.25,
+    valMul: 0.97,
+  ),
+  'glowmere': DelverDyeDef(
+    'glowmere',
+    'Glowmere',
+    'Drawn from the still pools where the delve-light gathers.',
+    costEmbers: 560,
+    hueDeg: 160,
+    satMul: 0.9,
+    valMul: 1.05,
   ),
 };
