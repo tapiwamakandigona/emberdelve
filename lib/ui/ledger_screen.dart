@@ -16,6 +16,7 @@ import '../data/characters.dart';
 import '../data/epithets.dart';
 import '../data/codex.dart';
 import '../data/enemies.dart';
+import '../data/mutators.dart';
 import '../data/skins.dart';
 import '../data/tracks.dart';
 import '../data/themes.dart';
@@ -550,6 +551,13 @@ class _LedgerScreenState extends State<LedgerScreen> {
         : '';
     final diff = r['difficulty'] as String? ?? 'normal';
     final daily = r['daily'] == true;
+    // v0.103.0 The Marked Week: weekly records wear their mark and state
+    // their rule by name. Old records lack the keys and render as before.
+    final weekly = r['weekly'] == true;
+    final modded = [
+      for (final m in (r['mutators'] as List?)?.cast<String>() ?? const [])
+        if (mutators.containsKey(m)) mutators[m]!.name,
+    ];
     // v0.51.0 The Obituary: records now remember WHO ended a lost run.
     // Older records lack the key and render exactly as before.
     final killer = enemies[r['killed_by']]?.name;
@@ -573,16 +581,21 @@ class _LedgerScreenState extends State<LedgerScreen> {
     // to rebuild its Delve Code — seed, delver, difficulty, ascension — so
     // any row can be shared or replayed, not just the run that ended last.
     // Records that can't encode (seed 0 from a pre-v0.3.4 save) simply stay
-    // quiet rather than offer a code that would lie.
-    final code = encodeDelveCode(
-      seed: int.tryParse('${r['seed'] ?? 0}') ?? 0,
-      character: r['character'] as String? ?? defaultCharacter,
-      difficulty: diff,
-      ascension: int.tryParse('${r['ascension'] ?? 0}') ?? 0,
-      // v0.49.0: a remembered short run rebuilds a SHORT code — the code
-      // must reproduce the same six-layer map, never one like it.
-      shortRoad: r['short'] == true,
-    );
+    // quiet rather than offer a code that would lie. Same gate for modded
+    // runs (v0.103.0): a Delve Code cannot encode a weekly's or trial
+    // day's rule, so code and retrace would rebuild a DIFFERENT run —
+    // they stay quiet, and the row states the rule instead.
+    final code = modded.isNotEmpty
+        ? null
+        : encodeDelveCode(
+            seed: int.tryParse('${r['seed'] ?? 0}') ?? 0,
+            character: r['character'] as String? ?? defaultCharacter,
+            difficulty: diff,
+            ascension: int.tryParse('${r['ascension'] ?? 0}') ?? 0,
+            // v0.49.0: a remembered short run rebuilds a SHORT code — the code
+            // must reproduce the same six-layer map, never one like it.
+            shortRoad: r['short'] == true,
+          );
     final row = Row(
       children: [
         Icon(icon, color: color, size: 20),
@@ -594,7 +607,9 @@ class _LedgerScreenState extends State<LedgerScreen> {
               Text('$who — $outcome', style: EmberText.body),
               const SizedBox(height: 2),
               Text(
-                '${daily ? 'daily · ' : ''}$diff · ${r['date']}$fightsToken'
+                '${daily ? 'daily · ' : ''}${weekly ? 'weekly · ' : ''}'
+                '${modded.isEmpty ? '' : '${modded.join(' · ')} · '}'
+                '$diff · ${r['date']}$fightsToken'
                 '${code == null ? '' : ' · tap to copy its Delve Code'}',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
