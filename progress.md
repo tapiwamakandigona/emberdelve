@@ -2898,3 +2898,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   LESSON: the news ethics gate bans SUBSTRINGS in negation too —
   "no streaks" trips "streak"; write around the word entirely.
   6 tests; plates 360/320 approved. Suite 858/858. 0.111.0+137.
+
+## v0.112.0 — The Frostvein (2026-08-29)
+- Eighth vista, first the Weekly feeds: claim the Ember on a doubled
+  week. New monotonic meta.doubledWins (persisted only >0 — old
+  saves byte-identical; cloud merge max; hearthgold re-lock lesson).
+  Banking keys off the label containing '+' (what the run actually
+  ran under). vistasOrder append-LAST; resolver gains required
+  doubledWins (14 test call sites patched). Grade tuned by plate
+  critique: first pass too timid vs emberlight control — landed
+  hue -150 / sat 0.62 / val 1.08 / wash 0x478FB6C9 (first PALE
+  grade). LATENT BUG FIXED: marked_week_test passed the raw
+  '+'-joined weekly label to botCmd as one id — harmless until the
+  first real doubled week, which is Monday 2026-08-31. Hunted
+  bot-winnable doubled Monday for the test: 2026-02-02. 5 tests;
+  4 plates approved. Suite 863/863. 0.112.0+138.

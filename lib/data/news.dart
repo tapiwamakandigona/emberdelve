@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.111.0';
+const String currentAppVersion = '0.112.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.112.0',
+    title: 'The Frostvein',
+    lines: [
+      'An eighth vista: Frostvein \u2014 pale, wintered stone, the '
+          'first vista the Weekly feeds.',
+      'Earned by claiming the Ember on a doubled week. Cosmetic as '
+          'ever \u2014 earned by delving, never sold.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.111.0',
     title: 'The Doubled Week',
