@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.93.0';
+const String currentAppVersion = '0.94.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.94.0',
+    title: 'The Deep Wardrobe',
+    lines: [
+      'Two new dyes hang on the rack \u2014 Emberheart, red as the '
+          'coal\u2019s own heart, and Glowmere, drawn from the still pools.',
+      'Three new titles wait to be earned: the Deepdrawn, the Measured, '
+          'and the Six-Handed. Real feats, as ever \u2014 never sold.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.93.0',
     title: 'The Pictured Satchel',

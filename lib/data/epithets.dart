@@ -49,6 +49,11 @@ const List<String> epithetsOrder = [
   'the_unburnt',
   'the_highborne',
   'the_well_oiled',
+  // v0.94.0 The Deep Wardrobe — new titles slot BEFORE the Proven: the
+  // Provings summit stays the last word (pinned by proven_epithet_test).
+  'the_deepdrawn',
+  'the_measured',
+  'the_six_handed',
   'the_proven', // v0.59.0 — append-LAST rule
 ];
 
@@ -116,6 +121,31 @@ const Map<String, EpithetDef> epithets = {
     stat: 'char_wins',
     target: 1,
     param: 'tinker',
+  ),
+  // v0.94.0 The Deep Wardrobe: three more real feats, same honesty
+  // contract — every one reads a banked Ledger counter.
+  'the_deepdrawn': EpithetDef(
+    'the_deepdrawn',
+    'the Deepdrawn',
+    unlockLine: 'Reach the ninth floor.',
+    stat: 'best_floor',
+    target: 9,
+  ),
+  'the_measured': EpithetDef(
+    'the_measured',
+    'the Measured',
+    unlockLine: 'End five fights in a row on exactly the damage needed.',
+    stat: 'best_exact_streak',
+    target: 5,
+  ),
+  // Target must equal characters.length — pinned by test so a future
+  // seventh delver can never silently orphan the unlock line's promise.
+  'the_six_handed': EpithetDef(
+    'the_six_handed',
+    'the Six-Handed',
+    unlockLine: 'Win a delve with every delver.',
+    stat: 'delvers_cleared',
+    target: 6,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never

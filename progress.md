@@ -2700,3 +2700,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   repaint; a delay before the first post-tap pump decodes nothing.
 - NEWS LESSON: ethics gate also pins entry length 2–4 lines (news_test
   L50) — a 1-line entry fails the suite, not just banned words.
+
+## v0.94.0 — The Deep Wardrobe (2026-08-29)
+- Wardrobe expansion answering the reviewer's customisation ask: 2 new
+  dyes closing plate-audited hue gaps (Emberheart crimson 480, Glowmere
+  teal 560) + 3 new earned titles on real Ledger stats (the Deepdrawn
+  best_floor 9, the Measured best_exact_streak 5, the Six-Handed
+  delvers_cleared == roster, junk-key-proof). the_proven stays LAST
+  (pinned). Data-only, zero sim movement. Suite 795/795. 0.94.0+120.
+- Plates tool/deep_wardrobe_visual_test.dart (scroll-to-card idiom:
+  scrollUntilVisible + drag target to y=120, canonical for shelf plates).
