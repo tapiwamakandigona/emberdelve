@@ -2966,3 +2966,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   dress pills AND the CHOSEN card in one frame — bind a vista that
   sits near the shelf top (moonveil), don't scroll the pills away.
   6 tests; 3 plates approved. Suite 877/877. 0.115.0+141.
+
+## v0.116.0 — The Spoken Dice (2026-08-29)
+- Codex closes on THE DICE: five entries, one per BASE CUT
+  (d4/d6/d8/d10/d12 — Flint Shard/Ember Die/Deep Coal/Forge Core/
+  Molten Core), 15 embers, appended after relics. 97 entries.
+  Partial-by-design: variants are the cuts re-promised at the forge,
+  so no diceOrder coverage guard — exact-list pin + mod-free pin
+  instead. Names from the dice catalog (anti-lying, 4th
+  application). Zero sim surface — codex growth chosen deliberately
+  after v0.114.0's re-anchor bill. PLATE LESSON: deep sections in a
+  97-entry ListView need scroll budget 600×maxScrolls 400 (clone
+  default 200×40 dies as "Bad state: No element"). 4 tests; plates
+  360/320 approved. Suite 881/881. 0.116.0+142.
