@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
+import '../data/mutators.dart';
 import '../data/provings.dart';
 import '../game/controller.dart';
 import '../game/delve_code.dart';
@@ -101,17 +102,24 @@ class _ProvingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cleared = c.meta.provingsCleared.contains(p.id);
     final req = _requirement();
-    final code = encodeDelveCode(
-      seed: p.seed,
-      character: p.character,
-      difficulty: p.difficulty,
-      ascension: p.ascension,
-    );
+    // A modded proving shows no Delve Code: a code cannot carry rules,
+    // and one that replayed the run without them would be a lie
+    // (v0.103.0 refusal precedent).
+    final code = p.mutators.isEmpty
+        ? encodeDelveCode(
+            seed: p.seed,
+            character: p.character,
+            difficulty: p.difficulty,
+            ascension: p.ascension,
+          )
+        : null;
     final diffLabel = p.difficulty[0].toUpperCase() + p.difficulty.substring(1);
     final metaLine = [
       characterDef(p.character).name,
       diffLabel,
       if (p.ascension > 0) 'Ascension ${p.ascension}',
+      // The rule is part of the delve; the card states it plainly.
+      for (final m in p.mutators) mutatorDef(m).name,
     ].join(' · ');
     return Panel(
       child: Column(
@@ -120,9 +128,7 @@ class _ProvingCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(p.title, style: EmberText.h2),
-              ),
+              Expanded(child: Text(p.title, style: EmberText.h2)),
               if (cleared)
                 Padding(
                   padding: const EdgeInsets.only(left: Space.s),
@@ -174,6 +180,7 @@ class _ProvingCard extends StatelessWidget {
                     difficulty: p.difficulty,
                     ascension: p.ascension,
                     boons: true,
+                    mutators: p.mutators,
                   );
                 },
               ),

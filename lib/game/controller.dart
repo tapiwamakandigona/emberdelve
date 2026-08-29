@@ -1291,7 +1291,11 @@ class GameController extends ChangeNotifier {
           if (p.seed == sim!.runSeed &&
               p.character == char &&
               p.difficulty == (run['difficulty'] as String? ?? 'normal') &&
-              p.ascension == asc) {
+              p.ascension == asc &&
+              // v0.108.0 The Proven Rules: the rules are part of the name.
+              // A modded run of an unmodded proving's seed clears nothing,
+              // and vice versa — the mark means the exact delve was walked.
+              setEquals(sim!.mutators, p.mutators.toSet())) {
             meta.provingsCleared.add(p.id);
           }
         }

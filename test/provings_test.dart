@@ -32,15 +32,18 @@ void driveToTerminal(GameController c) {
 
 void main() {
   group('data integrity', () {
-    test('ten provings, unique ids, valid params, all encodable', () {
-      expect(provings.length, 10);
-      expect(provings.map((p) => p.id).toSet().length, 10);
+    test('twelve provings, unique ids, valid params, encodable', () {
+      expect(provings.length, 12);
+      expect(provings.map((p) => p.id).toSet().length, 12);
       for (final p in provings) {
         expect(characters.containsKey(p.character), isTrue, reason: p.id);
         expect(['easy', 'normal', 'hard'], contains(p.difficulty));
         expect(p.ascension, inInclusiveRange(0, 20));
         expect(p.title, isNotEmpty);
         expect(p.blurb, isNotEmpty);
+        // v0.108.0: a modded proving has no code — a Delve Code cannot
+        // carry rules, so only unmodded provings assert one.
+        if (p.mutators.isNotEmpty) continue;
         final code = encodeDelveCode(
           seed: p.seed,
           character: p.character,
@@ -65,6 +68,8 @@ void main() {
           character: p.character,
           difficulty: p.difficulty,
           ascension: p.ascension,
+          // v0.108.0: the proof must walk the proving's ACTUAL rules.
+          mutators: p.mutators,
         );
         expect(
           r.sim.phase,
@@ -168,7 +173,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('The First Flame'), findsOneWidget);
-      expect(find.textContaining('0 of 10'), findsOneWidget);
+      expect(find.textContaining('0 of 12'), findsOneWidget);
       // Fresh meta: only the kindler is unlocked and hard is forge-gated,
       // so The Shield Oath (warden) states its delver requirement...
       await tester.scrollUntilVisible(
@@ -206,7 +211,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('CLEARED'), findsOneWidget);
-      expect(find.textContaining('1 of 10'), findsOneWidget);
+      expect(find.textContaining('1 of 12'), findsOneWidget);
       expect(find.text('Delve it again'), findsOneWidget);
     });
   });
