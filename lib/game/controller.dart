@@ -739,6 +739,28 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // v0.115.0 The Delver's Window: vistas are worn per delver, same shape as
+  // setActiveDye. Unlocks stay global and derived; legacy selectedVista is
+  // never written again by the picker (it survives as the vistaFor
+  // fallback for pre-v0.115.0 choices). The unlock gate is re-checked here.
+  void setVistaFor(String id, {required String forChar}) {
+    if (!vistas.containsKey(id)) return;
+    if (!meta.unlockedCharacters.contains(forChar)) return;
+    if (!vistaUnlocked(id)) return;
+    if (meta.vistaFor(forChar) == id) return;
+    meta.charVista[forChar] = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  /// The vista the CURRENT run paints: the run delver's own binding, the
+  /// global selection when they have none, and the global selection again
+  /// when no run is live (title, ledger).
+  String get activeRunVista {
+    final ch = sim?.run?['character'] as String?;
+    return ch != null ? meta.vistaFor(ch) : meta.selectedVista;
+  }
+
   // v0.36.0 The Epithets — worn title. Unlocks derive from the Ledger's
   // banked counters via statValue, so the gate is re-checked here (a stale
   // UI can never select a locked epithet). '' = take the title off.

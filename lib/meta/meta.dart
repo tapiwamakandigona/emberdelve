@@ -101,6 +101,10 @@ class MetaState {
   // global (ownedDyes) — embers buy a dye once and every delver may wear it;
   // only the wearing is per-delver.
   Map<String, String> charDye;
+  // v0.115.0 The Delver's Window: the vista a given delver runs under —
+  // their own binding when they have one, else the legacy global selection.
+  // Same contract as charDye: absent key = default.
+  Map<String, String> charVista;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -218,6 +222,7 @@ class MetaState {
     Map<String, String>? charEpithet,
     Map<String, String>? charName,
     Map<String, String>? charDye,
+    Map<String, String>? charVista,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -261,6 +266,7 @@ class MetaState {
        charEpithet = charEpithet ?? {},
        charName = charName ?? {},
        charDye = charDye ?? {},
+       charVista = charVista ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedDyes = ownedDyes ?? {defaultDye},
@@ -304,6 +310,7 @@ class MetaState {
     if (charName.isNotEmpty) 'charName': charName,
     if (hearthTrack.isNotEmpty) 'hearthTrack': hearthTrack,
     if (charDye.isNotEmpty) 'charDye': charDye,
+    if (charVista.isNotEmpty) 'charVista': charVista,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -388,6 +395,25 @@ class MetaState {
   /// have one, else the legacy global selection. EVERY sprite-painting
   /// surface (stage, map, picker, hearth, swatches) goes through this.
   String dyeFor(String charId) => charDye[charId] ?? activeDye;
+
+  /// v0.115.0: the vista a given delver runs under — their own binding when
+  /// they have one, else the legacy global selection. Every vista-painting
+  /// surface with a delver in hand (map grade/wash, cards) goes through
+  /// this; delver-less surfaces keep reading [selectedVista].
+  String vistaFor(String charId) => charVista[charId] ?? selectedVista;
+
+  static Map<String, String> _vistaMap(Object? v) {
+    if (v is! Map) return {};
+    final out = <String, String>{};
+    v.forEach((k, val) {
+      if (val is String &&
+          characters.containsKey('$k') &&
+          vistas.containsKey(val)) {
+        out['$k'] = val;
+      }
+    });
+    return out;
+  }
 
   static Map<String, String> _dyeMap(Object? v) {
     if (v is! Map) return {};
@@ -476,6 +502,7 @@ class MetaState {
     charName: _nameMap(j['charName']),
     hearthTrack: j['hearthTrack'] as String? ?? '',
     charDye: _dyeMap(j['charDye']),
+    charVista: _vistaMap(j['charVista']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

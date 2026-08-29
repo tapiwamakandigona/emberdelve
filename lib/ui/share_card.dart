@@ -130,7 +130,7 @@ class DelverCardFacts {
       // Portraiture, not history: the delver's CURRENT coat, exactly as
       // the picker paints them (dyes were never banked per run).
       dyeId: meta?.dyeFor(charId) ?? defaultDye,
-      vistaId: meta?.selectedVista ?? defaultVista,
+      vistaId: meta?.vistaFor(charId) ?? defaultVista,
       epithetTitle: epithetTitle,
       difficulty: difficulty,
       ascension: ascension,
@@ -175,7 +175,7 @@ class DelverCardFacts {
       delverName: c.meta.nameFor(charId),
       charId: charId,
       dyeId: c.meta.dyeFor(charId),
-      vistaId: c.meta.selectedVista,
+      vistaId: c.meta.vistaFor(charId),
       epithetTitle: epithets[c.meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,

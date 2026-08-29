@@ -2950,3 +2950,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   DIVERGES from controller idiom — hunt walk seeds with
   GameController+startRun, never bare Sim(s)+botCmd. Suite 871/871.
   0.114.0+140.
+
+## v0.115.0 — The Delver's Window (2026-08-29)
+- Vistas worn per delver: meta.charVista + vistaFor (charDye idiom,
+  3rd per-delver wardrobe map), junk-proof fromJson, fresh-wins
+  merge; controller setVistaFor (unlock gate re-checked, locked
+  delver refused) + activeRunVista getter (run delver's window,
+  global when no run) — game_root and BOTH DelverCardFacts
+  constructors go through it ("portraiture, not history"). Picker
+  _vistaCard binds to dressTarget; vista dress pills ('vista-dress-
+  <id>') hidden with one delver unlocked. Legacy selectedVista never
+  written by the picker again (survives as fallback). vistas_test
+  picker pin updated (tap now writes charVista, not selectedVista).
+  PLATE-FRAMING LESSON: a per-delver binding plate must show the
+  dress pills AND the CHOSEN card in one frame — bind a vista that
+  sits near the shelf top (moonveil), don't scroll the pills away.
+  6 tests; 3 plates approved. Suite 877/877. 0.115.0+141.
