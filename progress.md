@@ -2749,3 +2749,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   count tales honestly (only when this run moved it). Suite 809/809.
   0.98.0+124. Plates: gilded map vs control, locked card at 320,
   worn card.
+
+## v0.99.0 — The Colored Card (2026-08-29)
+- The Delver's Card keeps the delve's light: the selected vista's own
+  wash (Art.backgroundWash at depth 0) paints the card background.
+  Emberlight = alpha-0 identity, card byte-identical for players who
+  never chose. Current-vista-not-banked follows the dye precedent;
+  color only, no new copy (caption drafted and cut). Plates: 3x cards
+  in all four wash families side by side, all lines legible. Suite
+  814/814. 0.99.0+125.

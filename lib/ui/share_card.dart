@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../data/attire.dart' show defaultDye;
+import '../data/vistas.dart' show defaultVista;
 import '../data/characters.dart';
 import '../data/enemies.dart';
 import '../data/epithets.dart';
@@ -68,6 +69,11 @@ class DelverCardFacts {
   /// so a remembered card OMITS the figure rather than invent a zero. Facts
   /// built off a live controller always know it.
   final bool fightsKnown;
+
+  /// v0.99.0 The Colored Card: the vista the player has the delve wearing —
+  /// the card keeps the delve's light. Portraiture, not history, exactly
+  /// like [dyeId]: vistas were never banked per run.
+  final String vistaId;
   const DelverCardFacts({
     required this.won,
     required this.delverName,
@@ -83,6 +89,7 @@ class DelverCardFacts {
     this.delveCode = '',
     this.epitaph = '',
     this.fightsKnown = true,
+    this.vistaId = defaultVista,
   });
 
   /// v0.56.0 Card from the Ledger: facts from a REMEMBERED run record
@@ -123,6 +130,7 @@ class DelverCardFacts {
       // Portraiture, not history: the delver's CURRENT coat, exactly as
       // the picker paints them (dyes were never banked per run).
       dyeId: meta?.dyeFor(charId) ?? defaultDye,
+      vistaId: meta?.selectedVista ?? defaultVista,
       epithetTitle: epithetTitle,
       difficulty: difficulty,
       ascension: ascension,
@@ -167,6 +175,7 @@ class DelverCardFacts {
       delverName: c.meta.nameFor(charId),
       charId: charId,
       dyeId: c.meta.dyeFor(charId),
+      vistaId: c.meta.selectedVista,
       epithetTitle: epithets[c.meta.epithetFor(charId)]?.title ?? '',
       difficulty: run['difficulty'] as String? ?? 'normal',
       ascension: int.tryParse('${run['ascension'] ?? 0}') ?? 0,
@@ -223,6 +232,7 @@ class DelverCard extends StatelessWidget {
       child: Container(
         width: 340,
         height: 480,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
@@ -232,89 +242,114 @@ class DelverCard extends StatelessWidget {
           border: Border.all(color: accent.withValues(alpha: 0.55), width: 2),
           borderRadius: BorderRadius.circular(14),
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: Space.xl,
-          vertical: Space.l,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
           children: [
-            Text(
-              'EMBERDELVE',
-              style: EmberText.h2.copyWith(
-                color: EmberColors.textDim,
-                letterSpacing: 4,
-                fontSize: 15,
+            // v0.99.0 The Colored Card: the same translucent breath the
+            // delve wears (Art.backgroundWash at depth 0 = the pure vista
+            // wash) under the facts — Emberlight stays byte-identical.
+            Positioned.fill(
+              child: ColoredBox(
+                key: const ValueKey('card-vista-wash'),
+                color: Art.backgroundWash(0, facts.vistaId),
               ),
             ),
-            // v0.70.0 The Pictured Card: the delver stands on their own
-            // card, in their worn dye — the shared artifact is SOMEONE'S
-            // run, not a template. Full opacity on losses too: the export
-            // is a poster, and a dimmed sprite reads as a rendering bug.
-            SpriteView(
-              facts.charId,
-              key: const ValueKey('card-delver'),
-              height: 44,
-              animate: false,
-              dye: Art.dyeFilter(facts.dyeId),
-            ),
-            Text(
-              facts.won ? 'The Ember is yours' : 'The dark claims you',
-              textAlign: TextAlign.center,
-              style: EmberText.h1.copyWith(
-                fontSize: 21,
-                color: facts.won ? EmberColors.gold : EmberColors.textPrimary,
-                shadows: [
-                  Shadow(color: accent.withValues(alpha: 0.5), blurRadius: 14),
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Space.xl,
+                vertical: Space.l,
               ),
-            ),
-            Text(
-              '${facts.nameLine} · ${facts.modeLine}',
-              textAlign: TextAlign.center,
-              style: EmberText.body.copyWith(color: EmberColors.textDim),
-            ),
-            // v0.54.0 The Epitaph: the story under the name — italic, dim,
-            // the narrative voice the numbers below can't carry.
-            if (facts.epitaph.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Space.s),
-                child: Text(
-                  facts.epitaph,
-                  key: const ValueKey('card-epitaph'),
-                  textAlign: TextAlign.center,
-                  style: EmberText.label.copyWith(
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.italic,
-                    color: EmberColors.textDim,
-                    height: 1.35,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'EMBERDELVE',
+                    style: EmberText.h2.copyWith(
+                      color: EmberColors.textDim,
+                      letterSpacing: 4,
+                      fontSize: 15,
+                    ),
                   ),
-                ),
-              ),
-            if (facts.traceGridText.isNotEmpty)
-              Text(
-                facts.traceGridText,
-                textAlign: TextAlign.center,
-                style: EmberText.body.copyWith(height: 1.25, letterSpacing: 2),
-              ),
-            Text(
-              facts.fightsKnown
-                  ? '${facts.embers} embers banked · '
-                        '${facts.fightsWon} fights won'
-                  : '${facts.embers} embers banked',
-              textAlign: TextAlign.center,
-              style: EmberText.micro.copyWith(color: EmberColors.textPrimary),
-            ),
-            Text(
-              facts.challengeLine,
-              textAlign: TextAlign.center,
-              style: EmberText.micro.copyWith(color: EmberColors.textDim),
-            ),
-            Text(
-              'tsorostudios.itch.io/emberdelve',
-              style: EmberText.micro.copyWith(
-                color: accent.withValues(alpha: 0.85),
-                letterSpacing: 1,
+                  // v0.70.0 The Pictured Card: the delver stands on their own
+                  // card, in their worn dye — the shared artifact is SOMEONE'S
+                  // run, not a template. Full opacity on losses too: the export
+                  // is a poster, and a dimmed sprite reads as a rendering bug.
+                  SpriteView(
+                    facts.charId,
+                    key: const ValueKey('card-delver'),
+                    height: 44,
+                    animate: false,
+                    dye: Art.dyeFilter(facts.dyeId),
+                  ),
+                  Text(
+                    facts.won ? 'The Ember is yours' : 'The dark claims you',
+                    textAlign: TextAlign.center,
+                    style: EmberText.h1.copyWith(
+                      fontSize: 21,
+                      color: facts.won
+                          ? EmberColors.gold
+                          : EmberColors.textPrimary,
+                      shadows: [
+                        Shadow(
+                          color: accent.withValues(alpha: 0.5),
+                          blurRadius: 14,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${facts.nameLine} · ${facts.modeLine}',
+                    textAlign: TextAlign.center,
+                    style: EmberText.body.copyWith(color: EmberColors.textDim),
+                  ),
+                  // v0.54.0 The Epitaph: the story under the name — italic, dim,
+                  // the narrative voice the numbers below can't carry.
+                  if (facts.epitaph.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.s),
+                      child: Text(
+                        facts.epitaph,
+                        key: const ValueKey('card-epitaph'),
+                        textAlign: TextAlign.center,
+                        style: EmberText.label.copyWith(
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.italic,
+                          color: EmberColors.textDim,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                  if (facts.traceGridText.isNotEmpty)
+                    Text(
+                      facts.traceGridText,
+                      textAlign: TextAlign.center,
+                      style: EmberText.body.copyWith(
+                        height: 1.25,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  Text(
+                    facts.fightsKnown
+                        ? '${facts.embers} embers banked · '
+                              '${facts.fightsWon} fights won'
+                        : '${facts.embers} embers banked',
+                    textAlign: TextAlign.center,
+                    style: EmberText.micro.copyWith(
+                      color: EmberColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    facts.challengeLine,
+                    textAlign: TextAlign.center,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                  Text(
+                    'tsorostudios.itch.io/emberdelve',
+                    style: EmberText.micro.copyWith(
+                      color: accent.withValues(alpha: 0.85),
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
