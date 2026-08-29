@@ -34,6 +34,21 @@ import 'share_card.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
+/// v0.105.0 The Delver's Line — one delver's lifetime, read from the
+/// UNCAPPED counters (charRuns/charWins/charBestFloor), never from the
+/// 30-record remembered list. Singular/plural spelled out; best floor
+/// only once one is on record. Pure and top-level so tests read it raw.
+String delverLifetimeLine(MetaState m, String charId) {
+  final runs = m.charRuns[charId] ?? 0;
+  final wins = m.charWins[charId] ?? 0;
+  final best = m.charBestFloor[charId] ?? 0;
+  final delves = runs == 1 ? '1\u00A0delve' : '$runs\u00A0delves';
+  final won = wins == 1 ? '1\u00A0won' : '$wins\u00A0won';
+  return best > 0
+      ? 'Lifetime: $delves \u00b7 $won \u00b7 best floor\u00A0$best'
+      : 'Lifetime: $delves \u00b7 $won';
+}
+
 class LedgerScreen extends StatefulWidget {
   final GameController c;
   const LedgerScreen(this.c, {super.key});
@@ -262,6 +277,20 @@ class _LedgerScreenState extends State<LedgerScreen> {
                             ),
                         ],
                       ),
+                      // v0.105.0 The Delver's Line: one delver's page adds
+                      // a lifetime line from the uncapped counters — the
+                      // remembered list forgets past 30, these never do. A
+                      // tally of the page itself would lie; this cannot.
+                      if (_delverPage.isNotEmpty) ...[
+                        const SizedBox(height: Space.s),
+                        Text(
+                          key: const ValueKey('delver-lifetime'),
+                          delverLifetimeLine(m, _delverPage),
+                          style: EmberText.micro.copyWith(
+                            color: EmberColors.textDim,
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: Space.s),
                     ],
                     // v0.77.0 The Sounding Line: the depth of the remembered
