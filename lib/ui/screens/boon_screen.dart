@@ -174,7 +174,7 @@ class BoonScreen extends StatelessWidget {
             '+${e['max_hp']}',
           );
     final bits = <String>[
-      if (dieId != null) _dieDesc(dieDef(dieId)),
+      if (dieId != null) dieFacts(dieDef(dieId)),
       if (dieId == null && e['gold'] != null) '+${e['gold']} gold now',
       if (dieId != null && e['gold'] != null) '+${e['gold']} gold',
       if (e['max_hp'] != null) '+${e['max_hp']} max HP',
