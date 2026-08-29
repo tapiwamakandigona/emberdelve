@@ -2927,3 +2927,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   profile (its reason string names the fix). 3 tests; plates 360/320
   approved (First Winter EARNED, Thrice Wintered 1/3). Suite
   866/866. 0.113.0+139.
+
+## v0.114.0 — The Cold Tales (2026-08-29)
+- Three winter events appended at deck END (50→53): the_frozen_stall,
+  the_wintered_die, the_meltwater_pool — the doubled week's cold told
+  in marginalia, amount bands copied from the v0.46.0 batch. 5 tests
+  (per-option effect parity vs event_choose, heal cap, 1-hp floor,
+  honesty); plates approved (event body scrolls at 320 — pre-existing
+  SingleChildScrollView, nothing clipped). LESSON: dice pool is
+  sim.player['dice'], NOT run!['dice'].
+- SEVENTH GOLDEN RE-ANCHOR (deck growth re-rolls the unseen-event
+  pick; v0.25/v0.46 precedent). Probe tool/reanchor_v1140_probe_test
+  .dart (kept; prints goldens measured twice, proving winnability +
+  re-hunt, pins, walk seeds, A20 hunts). goldenV6 111116111→456904381;
+  boss goldens re-measured (pyre_matriarch byte-identical, no event
+  before boss); flint_proving re-seeded 6→10 (only proving killed;
+  clears stored by id, untouched); kindler rest-walk 3→6 (seed 3 now
+  LOSES; rest seeds 6/8/9); full-HP shop seed 6→10 (shop states:
+  7=17/30 gold 125, full-HP 10/13/19); peddler easy-loss 16→13,
+  normal wins 1..8 = [1,2,4,6]; kindler A20 6→20; ladder pins
+  kindler 20 / warden 4 / gambler 40 / ascetic 39. RAW-SIM WALK
+  DIVERGES from controller idiom — hunt walk seeds with
+  GameController+startRun, never bare Sim(s)+botCmd. Suite 871/871.
+  0.114.0+140.

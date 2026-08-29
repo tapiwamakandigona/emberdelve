@@ -77,7 +77,14 @@ import 'package:emberdelve/sim/autoplay.dart';
 // offering, the documented v0.12.0/v0.22.0 cause). SIXTH re-anchor; reach
 // re-proven per anchor seed with tool/reanchor_v0470_probe_test.dart.
 // Old value: 2043266176.
-const int goldenV6 = 111116111;
+//
+// v0.114.0 re-anchor (2026-08-29, "The Cold Tales" content drop): events
+// 50 -> 53 (appended at END; content-as-data, zero logic). Deck growth
+// changes the unseen-event pick, so seeded runs re-hash — the documented
+// v0.25.0/v0.46.0 cause. SEVENTH re-anchor; reach re-proven per anchor
+// seed with tool/reanchor_v1140_probe_test.dart, every hash measured
+// twice. Old value: 111116111.
+const int goldenV6 = 456904381;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -176,15 +183,27 @@ const Map<int, String> bossAnchorSeeds = {
 //   ashfall_twins      1238512999 ->  338964903
 //   slag_regent        2127043565 -> 1367915457 (@ 20260726)
 //   hearthless_king    1841674163 ->  648955842
+// v0.114.0 re-anchor (2026-08-29), old -> new, same anchor seeds (all
+// re-proven to reach their boss; pyre_matriarch's run is byte-identical —
+// its path draws no event before the boss, so the deck growth cannot
+// touch it):
+//   ashen_colossus     1144080449 -> 1125538006
+//   ember_tyrant       1236716520 ->  237383715
+//   pyre_matriarch     2027004709 -> 2027004709 (unchanged)
+//   cinder_hierophant   111116111 ->  456904381
+//   the_bellows        1475540171 -> 1234096192
+//   ashfall_twins       338964903 -> 2101382001
+//   slag_regent        1367915457 ->  331996761
+//   hearthless_king     648955842 -> 1367526445
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 1144080449,
-  'ember_tyrant': 1236716520,
+  'ashen_colossus': 1125538006,
+  'ember_tyrant': 237383715,
   'pyre_matriarch': 2027004709,
-  'cinder_hierophant': 111116111,
-  'the_bellows': 1475540171,
-  'ashfall_twins': 338964903,
-  'slag_regent': 1367915457,
-  'hearthless_king': 648955842,
+  'cinder_hierophant': 456904381,
+  'the_bellows': 1234096192,
+  'ashfall_twins': 2101382001,
+  'slag_regent': 331996761,
+  'hearthless_king': 1367526445,
 };
 
 void main() {
