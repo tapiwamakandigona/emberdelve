@@ -2768,3 +2768,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   fire's first ten tales.'), regression test pins grown-list vs
   frozen gate. Coming Vista tease counts against the frozen milestone.
   Longest-tale plate re-cut, fits at 320. Suite 814/814. 0.100.0+126.
+
+## v0.101.0 — The Delver's Page (2026-08-29)
+- RECENT DELVES gains pages when the remembered delves span more than
+  one delver: 'All delvers' + one chip per delver WITH records (given
+  names on chips; no empty/teaser pages). Sounding line redraws from
+  the open page (two-record gate applies per page). Ephemeral by
+  design — never persisted (test pins toJson). LedgerScreen now
+  stateful. 5 new tests; plates all/warden/320-wrap approved. Suite
+  819/819. 0.101.0+127.
