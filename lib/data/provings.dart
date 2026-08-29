@@ -23,6 +23,12 @@ class ProvingDef {
   final String difficulty; // easy | normal | hard
   final int ascension;
 
+  /// v0.108.0 The Proven Rules: declared run modifiers (mutators.dart ids),
+  /// stated plainly on the card. A modded proving shows no Delve Code — a
+  /// code cannot carry rules (delve_code.dart), and a code that reproduced
+  /// an unmodded run would be a lie.
+  final List<String> mutators;
+
   const ProvingDef({
     required this.id,
     required this.title,
@@ -31,6 +37,7 @@ class ProvingDef {
     required this.character,
     required this.difficulty,
     this.ascension = 0,
+    this.mutators = const [],
   });
 }
 
@@ -89,6 +96,32 @@ const List<ProvingDef> provings = [
     seed: 131,
     character: 'tinker',
     difficulty: 'normal',
+  ),
+  // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
+  // moves on every Monday; these two stand still so a rule can be taken
+  // deliberately, not just when the calendar deals it. Seeds bot-win
+  // proven WITH the rule applied (tool hunt, 2026-08-29).
+  ProvingDef(
+    id: 'flint_proving',
+    title: 'The Flint Proving',
+    blurb:
+        'The Kindler under Flint Week rules: every die rolls as a d4. '
+        'Small, sharp, and mean.',
+    seed: 6,
+    character: 'kindler',
+    difficulty: 'normal',
+    mutators: ['all_d4'],
+  ),
+  ProvingDef(
+    id: 'cold_proving',
+    title: 'The Cold Proving',
+    blurb:
+        'The Warden under Cold Camps rules: no rests on the map. What '
+        'you carry is what you keep.',
+    seed: 2,
+    character: 'warden',
+    difficulty: 'normal',
+    mutators: ['no_rests'],
   ),
   ProvingDef(
     id: 'fifth_rung',

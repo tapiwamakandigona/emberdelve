@@ -2844,3 +2844,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   guard tests did their job (wired-counter fixture + waymarks
   max-out both demanded lines for the new stats). Recognition only,
   no ember grants. Suite 842/842. 0.107.0+133.
+
+## v0.108.0 — The Proven Rules (2026-08-29)
+- Two mutator provings keep the weekly's rules standing: the Flint
+  Proving (kindler, all_d4, seed 6) and the Cold Proving (warden,
+  no_rests, seed 2) — both seeds hunted WITH the rule applied.
+  ProvingDef gains `mutators`; the card states the rule in its meta
+  line and shows NO Delve Code (codes can't carry rules — v0.103.0
+  refusal, third application). FOUND + FIXED latent honesty bug:
+  the clear-match ignored mutators, so a modded run of an unmodded
+  proving's exact seed would have cleared it — unreachable before,
+  load-bearing now (setEquals). Winnability proof now walks each
+  proving's actual rules. the_proven epithet target 10→12 (pin did
+  its job). 4 tests; plates 360/320 approved. Suite 846/846.
+  0.108.0+134.
