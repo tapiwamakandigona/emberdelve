@@ -2799,3 +2799,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   the card. Old records render as before (additive keys). 4 tests
   incl. live startWeeklyRun walk; plates 360 + 320 longest-line
   approved. Suite 828/828. 0.103.0+129.
+
+## v0.104.0 — The Delve Itself (2026-08-29)
+- Codex gains kind 'place': eight world entries (The Delve, Ember,
+  Hearth, Depths, Dice, Forge, Provings, Vistas) shelved FIRST under
+  THE WORLD, cheapest in the book at 10 embers — a review's verbatim
+  "I still don't understand what's a delve" answered at the top of
+  the book. placeNames map lives in codex.dart. Counts/pull/meter
+  include the shelf automatically (86 entries). ember_sink sale test
+  now scrolls below the new shelf. 4 tests; plates 360/320 approved.
+  Suite 832/832. 0.104.0+130. Queued lead closed: summary trace
+  stays emoji by charter (display IS the paste).

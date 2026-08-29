@@ -37,6 +37,11 @@ class CodexScreen extends StatelessWidget {
             animation: c,
             builder: (context, _) {
               final m = c.meta;
+              // v0.104.0 The Delve Itself: the world's own words, first —
+              // 'what is a delve?' is answered at the top of the book.
+              final placeEntries = codexEntries
+                  .where((e) => e.kind == 'place')
+                  .toList();
               final enemyEntries = codexEntries
                   .where((e) => e.kind == 'enemy')
                   .toList();
@@ -77,6 +82,13 @@ class CodexScreen extends StatelessWidget {
                     style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
                   const SizedBox(height: Space.xl),
+                  Text('THE WORLD', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in placeEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const SizedBox(height: Space.l),
                   Text('ENEMIES', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in enemyEntries) ...[
@@ -99,11 +111,14 @@ class CodexScreen extends StatelessWidget {
     );
   }
 
-  String _entryName(CodexEntryDef e) => e.kind == 'enemy'
-      ? (enemies[e.refId]?.name ?? e.refId)
-      : (relics[e.refId]?.name ?? e.refId);
+  String _entryName(CodexEntryDef e) => switch (e.kind) {
+    'enemy' => enemies[e.refId]?.name ?? e.refId,
+    'relic' => relics[e.refId]?.name ?? e.refId,
+    _ => placeNames[e.refId] ?? e.refId,
+  };
 
   String _entryTag(CodexEntryDef e) {
+    if (e.kind == 'place') return 'place';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';
