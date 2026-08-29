@@ -33,9 +33,21 @@ import 'share_card.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-class LedgerScreen extends StatelessWidget {
+class LedgerScreen extends StatefulWidget {
   final GameController c;
   const LedgerScreen(this.c, {super.key});
+
+  @override
+  State<LedgerScreen> createState() => _LedgerScreenState();
+}
+
+class _LedgerScreenState extends State<LedgerScreen> {
+  GameController get c => widget.c;
+
+  // v0.101.0 The Delver's Page: which delver's delves the RECENT DELVES
+  // section shows. Ephemeral by design — an open page is not progress, so
+  // it is never saved. '' = every delver.
+  String _delverPage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -224,16 +236,43 @@ class LedgerScreen extends StatelessWidget {
                     const SizedBox(height: Space.xl),
                     Text('RECENT DELVES', style: EmberText.micro),
                     const SizedBox(height: Space.s),
+                    // v0.101.0 The Delver's Page: when the remembered delves
+                    // belong to more than one delver, the section gains
+                    // pages — all delves, or one delver's. Pure reading aid:
+                    // no record is hidden for good, nothing is persisted.
+                    if (_delversRemembered(m).length >= 2) ...[
+                      Wrap(
+                        key: const ValueKey('delver-pages'),
+                        spacing: Space.s,
+                        runSpacing: Space.s,
+                        children: [
+                          _pageChip(
+                            key: const ValueKey('delver-page-all'),
+                            label: 'All delvers',
+                            selected: _delverPage.isEmpty,
+                            onTap: () => setState(() => _delverPage = ''),
+                          ),
+                          for (final id in _delversRemembered(m))
+                            _pageChip(
+                              key: ValueKey('delver-page-$id'),
+                              label: m.nameFor(id),
+                              selected: _delverPage == id,
+                              onTap: () => setState(() => _delverPage = id),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: Space.s),
+                    ],
                     // v0.77.0 The Sounding Line: the depth of the remembered
                     // delves, drawn — oldest left, newest right, wins in
                     // ember. Two records make a line; one stays a row.
-                    if (m.runHistory.length >= 2) ...[
+                    if (_pageHistory(m).length >= 2) ...[
                       Panel(
                         key: const ValueKey('sounding-line'),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SoundingLine(bars: soundingBars(m.runHistory)),
+                            SoundingLine(bars: soundingBars(_pageHistory(m))),
                             const SizedBox(height: Space.s),
                             Text(
                               'Each bar a remembered delve, oldest to newest '
@@ -251,8 +290,9 @@ class LedgerScreen extends StatelessWidget {
                       key: const ValueKey('recent-delves'),
                       child: Column(
                         children: [
-                          for (final (i, r)
-                              in m.runHistory.take(10).toList().indexed) ...[
+                          for (final (i, r) in _pageHistory(
+                            m,
+                          ).take(10).toList().indexed) ...[
                             if (i > 0)
                               const Divider(
                                 color: EmberColors.line,
@@ -440,6 +480,54 @@ class LedgerScreen extends StatelessWidget {
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The delvers with remembered delves, in roster order — the pages the
+  /// ledger can open to. Derived from real records only.
+  List<String> _delversRemembered(MetaState m) => [
+    for (final id in charactersOrder)
+      if (m.runHistory.any((r) => '${r['character']}' == id)) id,
+  ];
+
+  /// The remembered delves on the open page: every record, or one
+  /// delver's. Order untouched — newest first, exactly as banked.
+  List<Map<String, Object?>> _pageHistory(MetaState m) => _delverPage.isEmpty
+      ? m.runHistory
+      : [
+          for (final r in m.runHistory)
+            if ('${r['character']}' == _delverPage) r,
+        ];
+
+  Widget _pageChip({
+    required Key key,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      key: key,
+      color: selected ? EmberColors.raised : Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Space.l),
+        side: BorderSide(color: selected ? EmberColors.gold : EmberColors.line),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(Space.l),
+        onTap: () {
+          AudioService.instance?.playSfx('ui_tap');
+          onTap();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Space.m, vertical: 6),
+          child: Text(
+            label,
+            style: EmberText.label.copyWith(
+              color: selected ? EmberColors.gold : EmberColors.textDim,
+            ),
           ),
         ),
       ),
