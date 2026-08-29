@@ -1413,6 +1413,14 @@ class GameController extends ChangeNotifier {
     _clearSave();
   }
 
+  /// The run's declared mutators minus short_road — the rules a Delve Code
+  /// cannot encode. Read from the sim's own set (where start_run put them),
+  /// sorted so the banked list is deterministic.
+  List<String> get _moddedMutators => [
+    for (final m in sim?.mutators ?? const <String>{})
+      if (m != 'short_road') m,
+  ]..sort();
+
   Map<String, Object?> _runRecord({
     required String result,
     required int embers,
@@ -1433,9 +1441,17 @@ class GameController extends ChangeNotifier {
       'seed': sim?.runSeed ?? 0,
       'embers': embers,
       if (dailyDate != null) 'daily': true,
+      // v0.103.0 The Marked Week: a weekly's record wears its mark, like
+      // the daily's. Additive — old records simply lack the key.
+      if (weeklyIndex != null) 'weekly': true,
       // The Shorter Road: remembered so the Ledger can rebuild an honest
       // Delve Code — a short run's code must reproduce a short map.
       if (sim?.hasMutator('short_road') ?? false) 'short': true,
+      // v0.103.0: bank the run's declared mutators (weekly rule, trial-day
+      // rule) so the Ledger can state them — and can refuse to offer a
+      // Delve Code that a code cannot encode. short_road is excluded: it
+      // IS encodable and already banks as 'short'.
+      if (_moddedMutators.isNotEmpty) 'mutators': _moddedMutators,
       // v0.51.0 The Obituary: remember WHO ended a lost run. Additive — old
       // records (and cloud copies; cloud_merge carries runHistory wholesale)
       // simply lack the key. Only combat can kill (events clamp HP to 1,

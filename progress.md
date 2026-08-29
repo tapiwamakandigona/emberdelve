@@ -2789,3 +2789,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   washes. TEST LESSON: dispose ensureSemantics() handle IN the test
   body — addTearDown runs after end-of-test verification. Suite
   824/824. 0.102.0+128.
+
+## v0.103.0 — The Marked Week (2026-08-29)
+- Run records bank 'weekly': true + the run's declared mutators
+  (controller _moddedMutators = sim.mutators minus short_road,
+  sorted). Ledger row states the rule by name ('weekly · Flint Week ·
+  …'); modded rows offer NO Delve Code and NO retrace (a code cannot
+  carry the rule — seed-0 "code that would lie" precedent) but keep
+  the card. Old records render as before (additive keys). 4 tests
+  incl. live startWeeklyRun walk; plates 360 + 320 longest-line
+  approved. Suite 828/828. 0.103.0+129.
