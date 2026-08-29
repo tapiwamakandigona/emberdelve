@@ -270,6 +270,19 @@ class TitleScreen extends StatelessWidget {
                                   style: EmberText.micro,
                                   textAlign: TextAlign.center,
                                 ),
+                                // The Coming Rule (v0.109.0): next Monday's
+                                // modifier, a fact of the rotation shown only
+                                // once this week is played. An appointment,
+                                // not a nag — no countdown (§Ethics).
+                                const SizedBox(height: Space.xs),
+                                Text(
+                                  comingRuleLine(_thisWeek()),
+                                  key: const ValueKey('weekly-coming-rule'),
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
                               const SizedBox(height: Space.m),
                               SizedBox(
