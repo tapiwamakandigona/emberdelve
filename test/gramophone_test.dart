@@ -52,34 +52,51 @@ void main() {
     dir = await Directory.systemTemp.createTemp('gramophone_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
-  test('catalog matches AudioService.musicPaths and copy is charter-clean',
-      () {
+  test('catalog matches AudioService.musicPaths and copy is charter-clean', () {
     final catalogKeys = gramophoneTracks.map((t) => t.key).toSet();
-    expect(catalogKeys, AudioService.musicPaths.keys.toSet(),
-        reason: 'every music track is in the Gramophone, nothing invented');
-    expect(gramophoneTracks.length, AudioService.musicPaths.length,
-        reason: 'no duplicate keys');
+    expect(
+      catalogKeys,
+      AudioService.musicPaths.keys.toSet(),
+      reason: 'every music track is in the Gramophone, nothing invented',
+    );
+    expect(
+      gramophoneTracks.length,
+      AudioService.musicPaths.length,
+      reason: 'no duplicate keys',
+    );
     for (final t in gramophoneTracks) {
       final copy = '${t.name} ${t.hint}'.toLowerCase();
       for (final w in bannedWords) {
-        expect(copy.contains(w), isFalse,
-            reason: 'banned word "$w" in track copy for ${t.key}');
+        expect(
+          copy.contains(w),
+          isFalse,
+          reason: 'banned word "$w" in track copy for ${t.key}',
+        );
       }
     }
   });
 
   test('heardTracks round-trips; legacy JSON decodes to empty', () {
     final m = MetaState(heardTracks: {'title_menu', 'map', 'victory'});
-    final back = MetaState.fromJson(
-        Map<String, dynamic>.from(m.toJson()));
+    final back = MetaState.fromJson(Map<String, dynamic>.from(m.toJson()));
     expect(back.heardTracks, {'title_menu', 'map', 'victory'});
     // Legacy save: no heardTracks key at all.
     final legacy = MetaState.fromJson({'embers': 5, 'runsPlayed': 3});
-    expect(legacy.heardTracks, isEmpty,
-        reason: 'boot(), not fromJson, seeds the hearth');
+    expect(
+      legacy.heardTracks,
+      isEmpty,
+      reason: 'boot(), not fromJson, seeds the hearth',
+    );
     // Empty set stays omitted so pre-v0.33 saves stay byte-identical.
     expect(MetaState().toJson().containsKey('heardTracks'), isFalse);
   });
@@ -120,20 +137,22 @@ void main() {
     expect(merged.heardTracks, {'title_menu', 'map', 'victory'});
   });
 
-  testWidgets('Ledger hides unheard tracks and names heard ones',
-      (tester) async {
+  testWidgets('Ledger hides unheard tracks and names heard ones', (
+    tester,
+  ) async {
     final c = GameController();
     c.meta.heardTracks.addAll({'title_menu', 'map'});
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: LedgerScreen(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
+    );
     await tester.pump();
     final list = find.byType(ListView);
     // Heard: named.
-    await tester.scrollUntilVisible(find.text('Hearthside'), 400,
-        scrollable: find.descendant(
-            of: list, matching: find.byType(Scrollable)));
+    await tester.scrollUntilVisible(
+      find.text('Hearthside'),
+      400,
+      scrollable: find.descendant(of: list, matching: find.byType(Scrollable)),
+    );
     expect(find.text('Hearthside'), findsOneWidget);
     expect(find.text('Into the Delve'), findsOneWidget);
     // Unheard: masked, hint visible.

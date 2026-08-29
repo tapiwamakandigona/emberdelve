@@ -2661,3 +2661,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - DEFECT FOUND ON PLATES (pre-existing, queued v0.91): at 320px the slot
   TITLE breaks mid-word ('FIELD RATION / S') beside the price button.
 - Zero sim movement (read-only function addition; goldens untouched).
+
+## v0.91.0 — The Legible Stall (2026-08-29)
+- Shop slot restructure: lead · title · price across the top, description
+  full panel width below. Titles never break mid-word — FittedBox
+  scaleDown one-line rule (v0.87 precedent). Found by v0.90's own plates
+  ('FIELD RATION / S' at 320px; relic texts wrapping every two words).
+- Plates 320x568 / 360x640 / 600x900 tablet clamp all clean
+  (tool/legible_stall_visual_test.dart). No sim movement, no copy change.
+- SUITE HYGIENE: swept ALL 18 remaining unguarded temp-dir deletes in
+  test/ onto the drain-retry charter (errno 39 flake struck deep_hum this
+  run, deepest_mark last run — now impossible suite-wide). Suite 784/784.
+  0.91.0+117.

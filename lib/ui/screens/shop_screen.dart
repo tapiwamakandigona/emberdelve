@@ -99,34 +99,44 @@ class ShopScreen extends StatelessWidget {
       }
       lead = const Icon(Icons.healing, color: EmberColors.success, size: 40);
     }
+    // v0.91.0 The Legible Stall: the old single-row layout squeezed title
+    // and description into ~40% of the panel — titles broke mid-word at
+    // 320px ('FIELD RATION / S') and relic texts wrapped every two words.
+    // Now the top row carries lead · title · price and the description
+    // spans the full panel width below. FittedBox keeps a title one line,
+    // scaling down instead of ever breaking a name (StatBar precedent).
     return Opacity(
       opacity: sold ? 0.4 : 1,
       child: Panel(
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: 64, child: Center(child: lead)),
-            const SizedBox(width: Space.m),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: EmberText.h2),
-                  const SizedBox(height: Space.xs),
-                  Text(desc, style: EmberText.bodyDim),
-                ],
-              ),
-            ),
-            const SizedBox(width: Space.s),
-            sold
-                ? Text('SOLD', style: EmberText.micro)
-                : EmberButton(
-                    '$price',
-                    // A coin, not an abstract dot (wordiness pass 2026-07-24).
-                    icon: Icons.paid,
-                    onTap: afford
-                        ? () => c.apply({'type': 'buy', 'slot': index})
-                        : null,
+            Row(
+              children: [
+                SizedBox(width: 64, child: Center(child: lead)),
+                const SizedBox(width: Space.m),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(title, style: EmberText.h2),
                   ),
+                ),
+                const SizedBox(width: Space.s),
+                sold
+                    ? Text('SOLD', style: EmberText.micro)
+                    : EmberButton(
+                        '$price',
+                        // A coin, not an abstract dot (wordiness 2026-07-24).
+                        icon: Icons.paid,
+                        onTap: afford
+                            ? () => c.apply({'type': 'buy', 'slot': index})
+                            : null,
+                      ),
+              ],
+            ),
+            const SizedBox(height: Space.s),
+            Text(desc, style: EmberText.bodyDim),
           ],
         ),
       ),

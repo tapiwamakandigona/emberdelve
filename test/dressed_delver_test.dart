@@ -48,7 +48,14 @@ void main() {
     dir = await Directory.systemTemp.createTemp('dressed_delver_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('resolver: own dress, else the legacy fallback, else none', () {

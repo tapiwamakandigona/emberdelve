@@ -57,7 +57,10 @@ void main() {
 
   test('compareVersions orders numerically, empty first', () {
     expect(compareVersions('0.15.0', '0.14.0'), greaterThan(0));
-    expect(compareVersions('0.9.0', '0.15.0'), lessThan(0)); // not lexicographic
+    expect(
+      compareVersions('0.9.0', '0.15.0'),
+      lessThan(0),
+    ); // not lexicographic
     expect(compareVersions('0.15.0', '0.15.0'), 0);
     expect(compareVersions('', '0.13.0'), lessThan(0));
     expect(compareVersions('1.0', '1.0.0'), 0);
@@ -65,9 +68,7 @@ void main() {
 
   test('meta round-trips lastSeenNewsVersion (absent => never seen)', () {
     final m = MetaState()..lastSeenNewsVersion = '0.15.0';
-    final back = MetaState.fromJson(
-      m.toJson().cast<String, dynamic>(),
-    );
+    final back = MetaState.fromJson(m.toJson().cast<String, dynamic>());
     expect(back.lastSeenNewsVersion, '0.15.0');
     expect(MetaState.fromJson(const {}).lastSeenNewsVersion, '');
   });
@@ -82,24 +83,34 @@ void main() {
     expect(mergeMetaStates(b, blank).lastSeenNewsVersion, '0.15.0');
   });
 
-  test('boot stamps fresh installs silently, leaves veterans unstamped', () async {
-    final dir = await Directory.systemTemp.createTemp('ed_news_fresh');
-    addTearDown(() async {
-      MetaStore.dirOverride = null;
-      await dir.delete(recursive: true);
-    });
-    MetaStore.dirOverride = dir.path;
+  test(
+    'boot stamps fresh installs silently, leaves veterans unstamped',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('ed_news_fresh');
+      addTearDown(() async {
+        MetaStore.dirOverride = null;
+        for (var i = 0; i < 10; i++) {
+          try {
+            await dir.delete(recursive: true);
+            break;
+          } on FileSystemException {
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+          }
+        }
+      });
+      MetaStore.dirOverride = dir.path;
 
-    // Fresh install: no meta file at all -> stamped, no note ever shows.
-    final fresh = GameController(saveDirOverride: dir.path);
-    await fresh.boot();
-    expect(fresh.meta.lastSeenNewsVersion, currentAppVersion);
+      // Fresh install: no meta file at all -> stamped, no note ever shows.
+      final fresh = GameController(saveDirOverride: dir.path);
+      await fresh.boot();
+      expect(fresh.meta.lastSeenNewsVersion, currentAppVersion);
 
-    // Veteran profile from before v0.15.0: runs played, no field -> stays
-    // '' so the title shows the note exactly once.
-    await MetaStore.save(MetaState()..runsPlayed = 12);
-    final vet = GameController(saveDirOverride: dir.path);
-    await vet.boot();
-    expect(vet.meta.lastSeenNewsVersion, '');
-  });
+      // Veteran profile from before v0.15.0: runs played, no field -> stays
+      // '' so the title shows the note exactly once.
+      await MetaStore.save(MetaState()..runsPlayed = 12);
+      final vet = GameController(saveDirOverride: dir.path);
+      await vet.boot();
+      expect(vet.meta.lastSeenNewsVersion, '');
+    },
+  );
 }

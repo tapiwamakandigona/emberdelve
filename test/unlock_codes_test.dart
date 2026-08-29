@@ -34,12 +34,12 @@ Future<(String code, String publicKeyHex)> mintTestCode({
 }) async {
   final algo = Ed25519();
   final kp = await algo.newKeyPair();
-  final payload = utf8.encode(jsonEncode({'d': date, 'n': nonce, 'p': product}));
+  final payload = utf8.encode(
+    jsonEncode({'d': date, 'n': nonce, 'p': product}),
+  );
   final sig = await algo.sign(payload, keyPair: kp);
   final pub = await kp.extractPublicKey();
-  final hex = pub.bytes
-      .map((b) => b.toRadixString(16).padLeft(2, '0'))
-      .join();
+  final hex = pub.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   final code =
       'EMBR1.${base64Url.encode(payload).replaceAll('=', '')}.${base64Url.encode(sig.bytes).replaceAll('=', '')}';
   return (code, hex);
@@ -108,16 +108,20 @@ void main() {
     });
     tearDown(() async {
       MetaStore.dirOverride = null;
-      await tmp.delete(recursive: true);
+      for (var i = 0; i < 10; i++) {
+        try {
+          await tmp.delete(recursive: true);
+          break;
+        } on FileSystemException {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      }
     });
 
     test('the blocklisted example never grants', () async {
       final c = GameController();
       await c.boot();
-      expect(
-        await c.redeemUnlockCode(specCode),
-        UnlockRedeemResult.blocked,
-      );
+      expect(await c.redeemUnlockCode(specCode), UnlockRedeemResult.blocked);
       expect(c.meta.forgeUnlocked, isFalse);
       expect(c.meta.redeemedCodes, isEmpty);
     });

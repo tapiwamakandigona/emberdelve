@@ -57,7 +57,14 @@ void main() {
 
     tearDown(() {
       MetaStore.dirOverride = null;
-      dir.deleteSync(recursive: true);
+      for (var i = 0; i < 10; i++) {
+        try {
+          dir.deleteSync(recursive: true);
+          break;
+        } on FileSystemException {
+          sleep(const Duration(milliseconds: 50));
+        }
+      }
     });
 
     test('no run -> depth 0', () {

@@ -38,28 +38,53 @@ void main() {
     dir = await Directory.systemTemp.createTemp('deeper_song_test');
   });
   tearDown(() async {
-    await dir.delete(recursive: true);
+    for (var i = 0; i < 10; i++) {
+      try {
+        await dir.delete(recursive: true);
+        break;
+      } on FileSystemException {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
   });
 
   test('map-family phases darken at the midpoint; nothing else does', () {
     const mapFamily = ['boon', 'map', 'reward', 'shop', 'event', 'rest'];
     for (final phase in mapFamily) {
-      expect(AudioService.musicKeyForPhase(phase), 'map',
-          reason: '$phase with no depth stays shallow');
-      expect(AudioService.musicKeyForPhase(phase, mapDepth: 0.49), 'map',
-          reason: '$phase just above the midpoint stays shallow');
-      expect(AudioService.musicKeyForPhase(phase, mapDepth: 0.5), 'map_deep',
-          reason: '$phase at the midpoint darkens');
-      expect(AudioService.musicKeyForPhase(phase, mapDepth: 1.0), 'map_deep',
-          reason: '$phase on the boss layer darkens');
+      expect(
+        AudioService.musicKeyForPhase(phase),
+        'map',
+        reason: '$phase with no depth stays shallow',
+      );
+      expect(
+        AudioService.musicKeyForPhase(phase, mapDepth: 0.49),
+        'map',
+        reason: '$phase just above the midpoint stays shallow',
+      );
+      expect(
+        AudioService.musicKeyForPhase(phase, mapDepth: 0.5),
+        'map_deep',
+        reason: '$phase at the midpoint darkens',
+      );
+      expect(
+        AudioService.musicKeyForPhase(phase, mapDepth: 1.0),
+        'map_deep',
+        reason: '$phase on the boss layer darkens',
+      );
     }
     // Depth never touches the non-map keys.
-    expect(AudioService.musicKeyForPhase('player_turn', mapDepth: 1.0),
-        'combat');
     expect(
-        AudioService.musicKeyForPhase('player_turn',
-            bossFight: true, mapDepth: 1.0),
-        'boss_combat');
+      AudioService.musicKeyForPhase('player_turn', mapDepth: 1.0),
+      'combat',
+    );
+    expect(
+      AudioService.musicKeyForPhase(
+        'player_turn',
+        bossFight: true,
+        mapDepth: 1.0,
+      ),
+      'boss_combat',
+    );
     expect(AudioService.musicKeyForPhase('run_won', mapDepth: 1.0), 'victory');
     expect(AudioService.musicKeyForPhase('run_lost', mapDepth: 1.0), 'defeat');
     expect(AudioService.musicKeyForPhase(null, mapDepth: 1.0), 'title_menu');
@@ -69,21 +94,29 @@ void main() {
     final path = AudioService.musicPaths['map_deep'];
     expect(path, 'audio/music/map_deep.ogg');
     final data = await rootBundle.load('assets/$path');
-    expect(data.lengthInBytes, greaterThan(100 * 1024),
-        reason: 'the deep song is a real track, not a placeholder');
+    expect(
+      data.lengthInBytes,
+      greaterThan(100 * 1024),
+      reason: 'the deep song is a real track, not a placeholder',
+    );
   });
 
-  test('a won run walks past the midpoint and records the deep song',
-      () async {
+  test('a won run walks past the midpoint and records the deep song', () async {
     final c = GameController(saveDirOverride: dir.path);
     await c.boot();
     c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
     driveToTerminal(c);
     expect(c.phase, 'run_won', reason: 'seed 1 must win on easy');
-    expect(c.meta.heardTracks, contains('map_deep'),
-        reason: 'the road to the boss crosses the midpoint');
-    expect(c.meta.heardTracks, containsAll({'map', 'combat', 'victory'}),
-        reason: 'the shallow records still land first');
+    expect(
+      c.meta.heardTracks,
+      contains('map_deep'),
+      reason: 'the road to the boss crosses the midpoint',
+    );
+    expect(
+      c.meta.heardTracks,
+      containsAll({'map', 'combat', 'victory'}),
+      reason: 'the shallow records still land first',
+    );
     await c.flushSaves();
   });
 }
