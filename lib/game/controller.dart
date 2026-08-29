@@ -244,6 +244,11 @@ class GameController extends ChangeNotifier {
   /// Transient; the diff lives inside one bank pass.
   List<String> pendingVistas = const [];
 
+  /// v0.98.0 The Hearthgold: hollows left (tales heard) during THIS run —
+  /// the movement signal [comingVistaLine] needs, mirroring
+  /// [runFirstFelled]. Transient; cleared on every run start.
+  int runTalesHeard = 0;
+
   /// 'YYYY-MM-DD' while the current run is a Daily Delve; null otherwise.
   /// Persisted alongside the sim snapshot ('run_labels') and restored by
   /// [boot], because [_bankRun] gates the daily record on it — a resumed
@@ -542,6 +547,7 @@ class GameController extends ChangeNotifier {
     pendingDeepestFloor = null;
     pendingEpithets = const [];
     pendingVistas = const [];
+    runTalesHeard = 0;
     dailyDate = daily;
     // Weekly badge/banking labels are set by [startWeeklyRun]; any other
     // entry point (normal, daily, restart) clears them so a fresh run never
@@ -718,6 +724,7 @@ class GameController extends ChangeNotifier {
     hardWins: meta.hardWins,
     provingsCleared: meta.provingsCleared.length,
     bestFloor: meta.bestFloor,
+    talesHeard: meta.hearthTalesHeard,
   );
 
   void selectVista(String id) {
@@ -924,6 +931,7 @@ class GameController extends ChangeNotifier {
     final events = sim!.apply(cmd);
     if (wasResting && sim!.phase != 'rest') {
       meta.hearthTalesHeard++;
+      runTalesHeard++;
       MetaStore.save(meta);
     }
     _handleFlash(events);

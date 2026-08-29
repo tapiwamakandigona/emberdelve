@@ -17,6 +17,8 @@
 
 import 'dart:ui' show Color;
 
+import 'tales.dart' show hearthTales;
+
 class VistaDef {
   final String id;
   final String name;
@@ -47,6 +49,7 @@ const List<String> vistasOrder = [
   'bloodstone',
   'duskquartz', // v0.55.0 — append-LAST, same discipline as roster bits
   'deepshale', // v0.64.0 — append-LAST
+  'hearthgold', // v0.98.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -114,6 +117,22 @@ const Map<String, VistaDef> vistas = {
     valMul: 0.9,
     wash: Color(0x40232830),
   ),
+  // v0.98.0 The Hearthgold — the first vista the hearth-tale arc feeds
+  // (hearthTalesHeard, v0.96.0), and the first BRIGHTENING grade: every
+  // earlier vista tints or drains; the fire's color gilds. Earned by
+  // sitting with the fire through its whole cycle of tales — the delve
+  // rewards listening the same way it rewards depth.
+  'hearthgold': VistaDef(
+    'hearthgold',
+    'Hearthgold',
+    'The fire\'s own color, carried into the stone. Walls that have '
+        'heard every tale hold the light a little longer.',
+    unlockLine: 'Hear every tale the fire tells.',
+    hueDeg: 6,
+    satMul: 1.12,
+    valMul: 1.08,
+    wash: Color(0x2EB07B2A),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -128,6 +147,7 @@ bool vistaUnlockedFor(
   required int hardWins,
   required int provingsCleared,
   required int bestFloor,
+  required int talesHeard,
 }) {
   switch (id) {
     case 'emberlight':
@@ -144,6 +164,10 @@ bool vistaUnlockedFor(
     // lost — a loss on the ninth floor earns the deep's colors too.
     case 'deepshale':
       return bestFloor >= 9;
+    // v0.98.0: the full cycle of hearth tales, however many the fire
+    // learns to tell — the gate follows the data, so it can never lie.
+    case 'hearthgold':
+      return talesHeard >= hearthTales.length;
     default:
       return false;
   }

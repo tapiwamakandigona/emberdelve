@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/vistas.dart';
+import 'package:emberdelve/data/tales.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
@@ -70,6 +71,7 @@ void main() {
             hardWins: 0,
             provingsCleared: 0,
             bestFloor: 0,
+            talesHeard: 0,
           ),
           id == 'emberlight',
           reason: id,
@@ -83,6 +85,7 @@ void main() {
           hardWins: 0,
           provingsCleared: 0,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isTrue,
       );
@@ -94,6 +97,7 @@ void main() {
           hardWins: 0,
           provingsCleared: 0,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isTrue,
       );
@@ -105,6 +109,7 @@ void main() {
           hardWins: 9,
           provingsCleared: 0,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isFalse,
       );
@@ -116,6 +121,7 @@ void main() {
           hardWins: 0,
           provingsCleared: 0,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isFalse,
       );
@@ -127,6 +133,7 @@ void main() {
           hardWins: 1,
           provingsCleared: 0,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isTrue,
       );
@@ -139,6 +146,7 @@ void main() {
           hardWins: 9,
           provingsCleared: 2,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isFalse,
       );
@@ -150,6 +158,7 @@ void main() {
           hardWins: 0,
           provingsCleared: 3,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isTrue,
       );
@@ -164,6 +173,7 @@ void main() {
           hardWins: 99,
           provingsCleared: 99,
           bestFloor: 8,
+          talesHeard: 0,
         ),
         isFalse,
       );
@@ -175,6 +185,34 @@ void main() {
           hardWins: 0,
           provingsCleared: 0,
           bestFloor: 9,
+          talesHeard: 0,
+        ),
+        isTrue,
+      );
+      // v0.98.0 hearthgold: tale-fed, blind to every other counter; one
+      // short of the full cycle stays locked, and the gate follows
+      // hearthTales.length so new tales raise it honestly.
+      expect(
+        vistaUnlockedFor(
+          'hearthgold',
+          runsWon: 99,
+          distinctFelled: 99,
+          hardWins: 99,
+          provingsCleared: 99,
+          bestFloor: 99,
+          talesHeard: hearthTales.length - 1,
+        ),
+        isFalse,
+      );
+      expect(
+        vistaUnlockedFor(
+          'hearthgold',
+          runsWon: 0,
+          distinctFelled: 0,
+          hardWins: 0,
+          provingsCleared: 0,
+          bestFloor: 0,
+          talesHeard: hearthTales.length,
         ),
         isTrue,
       );
@@ -186,6 +224,7 @@ void main() {
           hardWins: 99,
           provingsCleared: 99,
           bestFloor: 0,
+          talesHeard: 0,
         ),
         isFalse,
       );

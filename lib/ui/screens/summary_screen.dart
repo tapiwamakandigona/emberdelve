@@ -1033,6 +1033,15 @@ String? comingVistaLine(GameController c) {
       'The Deepshale vista waits — deepest floor\u00A0$n\u00A0of\u00A09.',
     ));
   }
+  // v0.98.0: rests taken this run are movement toward the Hearthgold.
+  if (c.runTalesHeard > 0 && !c.vistaUnlocked('hearthgold')) {
+    final n = c.meta.hearthTalesHeard;
+    final total = hearthTales.length;
+    lines.add((
+      n / total,
+      'The Hearthgold vista waits — $n\u00A0of\u00A0$total tales heard.',
+    ));
+  }
   if (lines.isEmpty) return null;
   lines.sort((a, b) => b.$1.compareTo(a.$1));
   return lines.first.$2;

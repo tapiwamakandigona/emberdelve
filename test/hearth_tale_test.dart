@@ -82,6 +82,7 @@ void main() {
   test('leaving the hollow advances the arc exactly once', () {
     final c = atRest();
     expect(c.meta.hearthTalesHeard, 0);
+    expect(c.runTalesHeard, 0);
     // An invalid command keeps the phase and must NOT advance the tale.
     c.apply({'type': 'attack'});
     expect(c.phase, 'rest');
@@ -89,6 +90,8 @@ void main() {
     c.apply({'type': 'rest'});
     expect(c.phase, isNot('rest'));
     expect(c.meta.hearthTalesHeard, 1);
+    // v0.98.0: the per-run movement transient advances in the same breath.
+    expect(c.runTalesHeard, 1);
   });
 
   test('cloud merge keeps the deeper arc (monotonic MAX)', () {

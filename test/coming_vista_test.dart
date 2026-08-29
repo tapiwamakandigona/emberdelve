@@ -8,6 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/sim/autoplay.dart';
+import 'package:emberdelve/data/tales.dart';
 import 'package:emberdelve/ui/screens.dart';
 
 void playOut(GameController c) {
@@ -52,6 +53,28 @@ void main() {
       comingVistaLine(c),
       'The Deepshale vista waits — deepest floor\u00A07\u00A0of\u00A09.',
     );
+  });
+
+  test('tales heard this run name the Hearthgold with real numbers', () {
+    final c = GameController();
+    c.startRun(character: 'kindler', seed: 1, difficulty: 'easy');
+    playOut(c);
+    expect(c.phase, 'run_won');
+    // Silence the competing movers: verdigris unlocked drops its line.
+    for (var i = 0; i < 15; i++) {
+      c.meta.enemyFelled['foe_$i'] = 1;
+    }
+    expect(c.pendingDeepestFloor, isNull); // v0.61.0 first-run guard
+    c.runTalesHeard = 2;
+    c.meta.hearthTalesHeard = 2;
+    expect(
+      comingVistaLine(c),
+      'The Hearthgold vista waits — '
+      '2\u00A0of\u00A0${hearthTales.length} tales heard.',
+    );
+    // Unlocked = no line: the full cycle heard leaves nothing to tease.
+    c.meta.hearthTalesHeard = hearthTales.length;
+    expect(comingVistaLine(c), isNull);
   });
 
   test('a run that moved nothing says nothing', () {
