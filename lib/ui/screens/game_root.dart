@@ -138,8 +138,9 @@ class _GameRootState extends State<GameRoot> {
               // descend (depth 0 = identity, so the title never grades).
               // v0.35.0 The Vistas: player-selected grade composed with
               // the strata depth grade in a single matrix.
-              grade: Art.backgroundGrade(c.mapDepth, c.meta.selectedVista),
-              wash: Art.backgroundWash(c.mapDepth, c.meta.selectedVista),
+              // v0.115.0: the delve wears the RUN DELVER's vista.
+              grade: Art.backgroundGrade(c.mapDepth, c.activeRunVista),
+              wash: Art.backgroundWash(c.mapDepth, c.activeRunVista),
               child: SafeArea(
                 child: KeyedSubtree(
                   key: ValueKey(phase ?? 'title'),

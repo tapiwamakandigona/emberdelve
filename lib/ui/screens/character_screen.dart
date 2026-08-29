@@ -204,14 +204,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
               // (the other half of the wardrobe ask: 'change backgrounds').
               Text('THE VISTA', style: EmberText.micro),
               const SizedBox(height: Space.s),
+              // v0.115.0 The Delver's Window: vistas are worn per delver —
+              // the pills name who the taps below dress. Hidden with one
+              // delver unlocked (the shelf reads exactly as it always has).
+              if (m.unlockedCharacters.length > 1) ...[
+                _dressChipRow(context, m, keyPrefix: 'vista-dress'),
+                const SizedBox(height: Space.m),
+              ],
               for (final id in vistasOrder) ...[
                 _vistaCard(context, id),
                 const SizedBox(height: Space.m),
               ],
               const SizedBox(height: Space.s),
               Text(
-                'Vistas repaint the delve itself — every layer, in the light '
-                'you choose. Earned by delving, never sold.',
+                'Vistas repaint the delve itself — every layer, in the '
+                'light each delver chooses. Earned by delving, never sold.',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
@@ -453,7 +460,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final c = widget.c;
     final v = vistas[id]!;
     final unlocked = c.vistaUnlocked(id);
-    final chosen = c.meta.selectedVista == id;
+    // v0.115.0 The Delver's Window: vistas are worn per delver, bound to
+    // the delver being dressed — same target the dyes and epithets use.
+    final target = dressTarget ?? _defaultDressTarget(c.meta);
+    final chosen = c.meta.vistaFor(target) == id;
     final grade = Art.backgroundGrade(0, id);
     Widget swatch = Image.asset(
       'assets/images/backgrounds/bg_map.png',
@@ -472,7 +482,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         if (chosen) return;
         if (unlocked) {
           AudioService.instance?.playSfx('ui_tap');
-          c.selectVista(id);
+          c.setVistaFor(id, forChar: target);
         } else {
           AudioService.instance?.playSfx('ui_back');
         }

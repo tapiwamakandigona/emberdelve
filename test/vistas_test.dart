@@ -381,7 +381,11 @@ void main() {
       await pumpFor(tester, 200);
       await tester.tap(find.byKey(const ValueKey('vista-moonveil')));
       await pumpFor(tester, 200);
-      expect(c.meta.selectedVista, 'moonveil');
+      // v0.115.0 The Delver's Window: the tap binds the vista to the delver
+      // being dressed (the kindler on a fresh profile); the legacy global
+      // selection is never written again by the picker.
+      expect(c.meta.charVista['kindler'], 'moonveil');
+      expect(c.meta.vistaFor('kindler'), 'moonveil');
       // The moonveil card (on screen) now carries the marker.
       expect(find.text('CHOSEN'), findsOneWidget);
     });
