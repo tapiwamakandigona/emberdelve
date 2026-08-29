@@ -2913,3 +2913,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   first real doubled week, which is Monday 2026-08-31. Hunted
   bot-winnable doubled Monday for the test: 2026-02-02. 5 tests;
   4 plates approved. Suite 863/863. 0.112.0+138.
+
+## v0.113.0 — The Cold Honors (2026-08-29)
+- Two achievements on meta.doubledWins (same counter as Frostvein —
+  one truth, two readers): first_winter (target 1), thrice_wintered
+  (target 3; doubled weeks are 1-per-6-week-cycle, so 3 ≈ 4 months —
+  a ten-target would be pressure disguised as recognition). 52
+  achievements total. Stat 'doubled_wins' + statValue case. Arc
+  complete before the FIRST REAL doubled week: Monday 2026-08-31.
+  GUARD-TEST MAP for new achievementStats (all three fire):
+  achievements_test 'every stat is wired' maxed profile,
+  unwritten_feats bounds, waymarks_test 'everything earned' maxed
+  profile (its reason string names the fix). 3 tests; plates 360/320
+  approved (First Winter EARNED, Thrice Wintered 1/3). Suite
+  866/866. 0.113.0+139.

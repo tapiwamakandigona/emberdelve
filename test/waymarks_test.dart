@@ -146,6 +146,8 @@ void main() {
     m.ownedThemes.addAll(hearthThemes.keys);
     // v0.107.0 The Unwritten Feats
     m.weekliesPlayed = 999;
+    // v0.113.0 The Cold Honors
+    m.doubledWins = 999;
     m.ownedCodex.addAll([for (final e in codexEntries) e.id]);
     m.hearthTalesHeard = 999;
     m.settledFoes.add('quench_hag');

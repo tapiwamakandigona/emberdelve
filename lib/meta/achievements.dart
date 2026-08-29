@@ -60,6 +60,11 @@ int statValue(MetaState m, String stat, [String? param]) {
       return m.hearthTalesHeard;
     case 'foes_settled':
       return m.settledFoes.length;
+    // v0.113.0 The Cold Honors: weeklies WON on a doubled week — the same
+    // monotonic counter the Frostvein vista reads (banked in controller
+    // weekly banking, never derivable, never re-locks).
+    case 'doubled_wins':
+      return m.doubledWins;
     case 'distinct_felled':
       // Distinct REAL enemies felled: junk enemyFelled keys can never
       // inflate this past the bestiary (delvers_cleared precedent).
