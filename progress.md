@@ -2858,3 +2858,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   proving's actual rules. the_proven epithet target 10→12 (pin did
   its job). 4 tests; plates 360/320 approved. Suite 846/846.
   0.108.0+134.
+
+## v0.109.0 — The Coming Rule (2026-08-29)
+- The title weekly card now states next Monday's rule beneath the
+  recap — 'Next Monday: No Quarter' — but ONLY once this week has
+  been played (same guard as the recap; a tease for the engaged,
+  never a demand on the new). Pure `comingRuleLine(weekIndex)` in
+  weekly.dart (`weeklyMutatorFor(index + 1)`); Text key
+  'weekly-coming-rule'. Honest appointment mechanic: a fact of the
+  rotation, no countdown (comingVistaLine v0.88.0 precedent).
+  3 tests incl. honesty sweep + gating; plates 360/320 approved.
+  Suite 849/849. 0.109.0+135.

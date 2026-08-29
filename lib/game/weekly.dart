@@ -107,3 +107,11 @@ String weeklyShareText({
     'One shared delve — same seed and modifier for everyone.',
   ].join('\n');
 }
+
+/// v0.109.0 The Coming Rule: next Monday's declared modifier, stated as a
+/// fact for players who already played this week. Pure over the rotation —
+/// the same appointment for everyone, no countdown, no pressure (§Ethics).
+String comingRuleLine(int thisWeekIndex) {
+  final next = mutatorDef(weeklyMutatorFor(thisWeekIndex + 1));
+  return 'Next Monday: ${next.name}';
+}

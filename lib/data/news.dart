@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.108.0';
+const String currentAppVersion = '0.109.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.109.0',
+    title: 'The Coming Rule',
+    lines: [
+      'Once this week\'s Weekly Delve is played, the title screen '
+          'states next Monday\'s rule beneath the recap.',
+      'An appointment, not a nag: a fact of the rotation, with no '
+          'countdown and no pressure.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.108.0',
     title: 'The Proven Rules',
