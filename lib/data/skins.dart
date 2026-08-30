@@ -44,6 +44,8 @@ const List<String> dieSkinsOrder = [
   'obsidian',
   'tempered', // v0.128.0 The Smith's Shelf
   'runeglass', // v0.128.0 The Smith's Shelf
+  'verdigris', // v0.144.0 The Peddler's Shelf
+  'coppervein', // v0.144.0 The Peddler's Shelf
 ];
 
 const Map<String, DieSkinDef> dieSkins = {
@@ -121,6 +123,26 @@ const Map<String, DieSkinDef> dieSkins = {
     costEmbers: 550,
     bodyArgb: 0xFFC2A8DE,
     inkArgb: 0xFF2E1E44,
+  ),
+  // v0.144.0 The Peddler's Shelf: the hue audit's last two open slots —
+  // no green and no copper anywhere on the dice.
+  'verdigris': DieSkinDef(
+    'verdigris',
+    'Verdigris',
+    'Old copper gone green, the way the peddler\u2019s oldest coins '
+        'have. Spent a hundred times and never once refused.',
+    costEmbers: 600,
+    bodyArgb: 0xFF9CC8A8,
+    inkArgb: 0xFF143224,
+  ),
+  'coppervein': DieSkinDef(
+    'coppervein',
+    'Coppervein',
+    'Raw copper from the cold seams under Frostvein, still bright '
+        'where the pick bit. The peddler weighs it and says nothing.',
+    costEmbers: 650,
+    bodyArgb: 0xFFC9885A,
+    inkArgb: 0xFF33160A,
   ),
 };
 
