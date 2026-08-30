@@ -119,7 +119,7 @@ class _TemperSheetState extends State<TemperSheet> {
                                       child: DieChip(
                                         pool[i],
                                         run: run,
-                                        skin: c.meta.activeDieSkin,
+                                        skin: c.activeRunSkin,
                                         selected: selected,
                                       ),
                                     ),

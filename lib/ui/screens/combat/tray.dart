@@ -52,7 +52,7 @@ extension _CombatTrayBand on _CombatScreenState {
                             chipScale,
                             DieChip(
                               dice0[i - 1],
-                              skin: widget.c.meta.activeDieSkin,
+                              skin: widget.c.activeRunSkin,
                               run: widget.c.state?['run'] as Map?,
                               value: rolled != null ? rolled[i - 1] : null,
                               assigned: assigned['$i'] != null,

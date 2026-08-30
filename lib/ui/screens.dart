@@ -9,6 +9,7 @@ import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import '../audio/audio_service.dart';
 import '../data/achievements.dart';
 import '../data/attire.dart';
+import '../data/skins.dart';
 import '../data/boons.dart';
 import '../data/characters.dart';
 import '../data/codex.dart';

@@ -1,0 +1,212 @@
+// tool/delvers_dice_visual_test.dart — manual visual-critique plates
+// for v0.138.0 "The Delver's Dice": the picker's THE DICE section with
+// the warden dressed in Tempered (WORN) and other owned skins listed.
+// Not part of CI.
+//
+//   flutter test tool/delvers_dice_visual_test.dart
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/services.dart' show FontLoader;
+
+import 'package:emberdelve/data/news.dart';
+import 'package:emberdelve/data/tracks.dart';
+import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tour.dart' show tourVersion;
+import 'package:emberdelve/game/tips.dart';
+import 'package:emberdelve/ui/screens.dart';
+import 'package:emberdelve/ui/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+const outDir = 'build/delvers_dice_visual';
+
+Future<void> loadRealFonts() async {
+  Future<ByteData> asset(String path) async =>
+      ByteData.sublistView(File(path).readAsBytesSync());
+  final cinzel = FontLoader('Cinzel')
+    ..addFont(asset('assets/fonts/Cinzel-Variable.ttf'));
+  final inter = FontLoader('Inter')
+    ..addFont(asset('assets/fonts/Inter-Regular.ttf'));
+  await cinzel.load();
+  await inter.load();
+  final flutterRoot = Platform.environment['FLUTTER_ROOT'];
+  if (flutterRoot != null) {
+    final f = File(
+      '$flutterRoot/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf',
+    );
+    if (f.existsSync()) {
+      final icons = FontLoader('MaterialIcons')
+        ..addFont(Future.value(ByteData.sublistView(f.readAsBytesSync())));
+      await icons.load();
+    }
+  }
+}
+
+Future<void> snap(
+  WidgetTester tester,
+  GlobalKey key,
+  String name,
+  double ratio,
+) async {
+  final boundary =
+      key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+  final image = await tester.binding.runAsync(
+    () => boundary.toImage(pixelRatio: ratio),
+  );
+  final bytes = await tester.binding.runAsync(
+    () => image!.toByteData(format: ui.ImageByteFormat.png),
+  );
+  File('$outDir/$name.png')
+    ..createSync(recursive: true)
+    ..writeAsBytesSync(bytes!.buffer.asUint8List());
+}
+
+void quietMeta(GameController c) {
+  c.meta
+    ..tutorialSeen = true
+    ..tourSeenVersion = tourVersion
+    ..tipsSeen.addAll(ContextTips.all)
+    ..lastSeenNewsVersion = currentAppVersion;
+  c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
+  c.meta.ownedDieSkins.addAll({'tempered', 'runeglass'});
+  c.meta.charSkin['warden'] = 'tempered';
+}
+
+/// A warden run wearing the warden's OWN window (deepshale bound per
+/// delver, earned honestly via the bestFloor milestone); the global
+/// selection stays emberlight, which is exactly the point.
+GameController windowRun() {
+  final c = GameController();
+  quietMeta(c);
+  c.meta
+    ..bestFloor = 9
+    ..unlockedCharacters.add('warden');
+  c.setVistaFor('deepshale', forChar: 'warden');
+  c.startRun(character: 'warden', seed: 1, difficulty: 'easy');
+  return c;
+}
+
+/// The vista shelf: locked (mid-cycle) or unlocked-and-worn.
+GameController shelfMeta() {
+  final c = GameController();
+  quietMeta(c);
+  c.meta
+    ..runsWon = 3
+    ..unlockedCharacters.add('warden');
+  // Moonveil sits second on the shelf, so the dress pills, the header, and
+  // the warden's CHOSEN card share one frame.
+  c.setVistaFor('moonveil', forChar: 'warden');
+  return c;
+}
+
+Future<void> captureMap(
+  WidgetTester tester,
+  GameController c,
+  Size logical,
+  String name,
+) async {
+  tester.view.physicalSize = logical * 2;
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  final key = GlobalKey();
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: key,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: buildEmberTheme(),
+        home: MediaQuery(
+          data: MediaQueryData(size: logical),
+          child: GameRoot(c),
+        ),
+      ),
+    ),
+  );
+  await tester.binding.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 400)),
+  );
+  for (var t = 0; t < 1200; t += 50) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  await snap(tester, key, name, 2);
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump();
+}
+
+Future<void> captureShelf(
+  WidgetTester tester,
+  GameController c,
+  Size logical,
+  String name,
+) async {
+  tester.view.physicalSize = logical * 2;
+  tester.view.devicePixelRatio = 2;
+  addTearDown(tester.view.reset);
+  final key = GlobalKey();
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: key,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: buildEmberTheme(),
+        home: MediaQuery(
+          data: MediaQueryData(size: logical),
+          child: CharacterScreen(c),
+        ),
+      ),
+    ),
+  );
+  await tester.binding.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 400)),
+  );
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.scrollUntilVisible(
+    find.byKey(const ValueKey('skin-dress-warden')),
+    400,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.tap(find.byKey(const ValueKey('skin-dress-warden')));
+  await tester.pump(const Duration(milliseconds: 200));
+  await tester.pump(const Duration(milliseconds: 100));
+  final top = tester
+      .getTopLeft(find.byKey(const ValueKey('skin-dress-warden')))
+      .dy;
+  await tester.drag(
+    find.byType(Scrollable).first,
+    Offset(0, 120 - top),
+    warnIfMissed: false,
+  );
+  await tester.pump(const Duration(milliseconds: 200));
+  await snap(tester, key, name, 2);
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump();
+}
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('delvers window plates', (tester) async {
+    await loadRealFonts();
+    await captureMap(
+      tester,
+      windowRun(),
+      const Size(360, 800),
+      'window_map_360x800',
+    );
+    await captureShelf(
+      tester,
+      shelfMeta(),
+      const Size(360, 640),
+      'dice_shelf_360x640',
+    );
+    await captureShelf(
+      tester,
+      shelfMeta(),
+      const Size(320, 568),
+      'dice_shelf_320x568',
+    );
+  });
+}

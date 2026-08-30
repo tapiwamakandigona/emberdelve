@@ -222,6 +222,27 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
+              // v0.138.0 The Delver's Dice: skins worn per delver — the
+              // ledger shelf still buys and sets the global fallback; this
+              // row binds an owned skin to the delver being dressed.
+              Text('THE DICE', style: EmberText.micro),
+              const SizedBox(height: Space.s),
+              if (m.unlockedCharacters.length > 1) ...[
+                _dressChipRow(context, m, keyPrefix: 'skin-dress'),
+                const SizedBox(height: Space.m),
+              ],
+              for (final id in dieSkinsOrder)
+                if (id == defaultDieSkin || m.ownedDieSkins.contains(id)) ...[
+                  _skinCard(context, id),
+                  const SizedBox(height: Space.m),
+                ],
+              const SizedBox(height: Space.s),
+              Text(
+                'Each delver rolls their own set. New skins are bought on '
+                'the Ledger shelf; owned ones are worn here.',
+                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+              ),
+              const SizedBox(height: Space.l),
               // v0.36.0 The Epithets — earned titles worn under the delver's
               // name; carried onto the shareable Delver's Card.
               Text('THE EPITHET', style: EmberText.micro),
@@ -449,6 +470,48 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 Icons.lock_outline,
                 color: EmberColors.textDim,
                 size: 16,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// v0.138.0: same contract as _vistaCard, owned skins only (buying
+  /// stays on the Ledger shelf). Swatch is the skin itself on a DieChip.
+  Widget _skinCard(BuildContext context, String id) {
+    final c = widget.c;
+    final def = dieSkinDef(id);
+    final target = dressTarget ?? _defaultDressTarget(c.meta);
+    final chosen = c.meta.skinFor(target) == id;
+    return GestureDetector(
+      key: ValueKey('charskin-$id'),
+      onTap: () {
+        if (chosen) return;
+        AudioService.instance?.playSfx('ui_tap');
+        c.setSkinFor(id, forChar: target);
+        setState(() {});
+      },
+      child: Panel(
+        color: chosen ? EmberColors.raised : EmberColors.surface,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 40,
+              height: 44,
+              // FittedBox: the chip renders at its natural size and is
+              // scaled to the swatch slot (a hard box overflows by 22px).
+              child: FittedBox(child: DieChip('d6', skin: id)),
+            ),
+            const SizedBox(width: Space.m),
+            Expanded(child: Text(def.name, style: EmberText.body)),
+            if (chosen)
+              Text(
+                'WORN',
+                style: EmberText.micro.copyWith(
+                  color: EmberColors.ember,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
           ],
         ),

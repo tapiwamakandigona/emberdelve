@@ -3356,3 +3356,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   silently go stale when a knob moves.
 - 3 tests; plates approved (tale + counted temper copy agree on
   one screen). Suite 962/962. 0.137.0+163.
+
+## v0.138.0 — The Delver's Dice (2026-08-30)
+- meta.charSkin: die skins per delver (charVista shape, 3rd
+  application; activeDieSkin = fallback + ledger shelf's global;
+  fresh-copy merge). controller setSkinFor + activeRunSkin
+  (activeRunVista's twin) feeding ALL 6 in-run DieChip sites
+  (tray/rest/reward/boons/shop-lead/temper-sheet). Picker gains
+  THE DICE section (owned skins, dress pills 'skin-dress-*',
+  cards 'charskin-*'); buying stays on the shelf (one purchase
+  path). LOADER LESSON: _vistaMap validates against the VISTA
+  catalog — a copied loader silently drops every entry of another
+  catalog; write _skinMap (persistence test caught it).
+- PART-OF LESSON: character_screen.dart is `part of screens.dart`
+  — imports go in the LIBRARY file; a failed grep in a && chain
+  silently skipped my patch script once (check outputs, not just
+  exit).
+- PLATE CATCH: hard-boxed DieChip 40x44 overflowed 22px with real
+  fonts → FittedBox. First-capture chips render dim (cold decode
+  cache) — known artifact, judge the second plate.
+- 4 tests; plates approved. Suite 966/966. 0.138.0+164.

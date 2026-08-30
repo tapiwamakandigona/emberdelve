@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../audio/audio_service.dart';
 import '../data/characters.dart';
+import '../data/skins.dart' show defaultDieSkin;
 import '../data/news.dart';
 import '../data/vistas.dart';
 import '../data/epithets.dart';
@@ -761,6 +762,24 @@ class GameController extends ChangeNotifier {
   String get activeRunVista {
     final ch = sim?.run?['character'] as String?;
     return ch != null ? meta.vistaFor(ch) : meta.selectedVista;
+  }
+
+  /// v0.138.0 The Delver's Dice: same shape as setVistaFor. The ledger
+  /// shelf still writes activeDieSkin (the global fallback); this binds a
+  /// skin to one delver. Ownership gate re-checked here.
+  void setSkinFor(String id, {required String forChar}) {
+    if (!meta.unlockedCharacters.contains(forChar)) return;
+    if (id != defaultDieSkin && !meta.ownedDieSkins.contains(id)) return;
+    if (meta.skinFor(forChar) == id) return;
+    meta.charSkin[forChar] = id;
+    MetaStore.save(meta);
+    notifyListeners();
+  }
+
+  /// The skin the CURRENT run's dice wear (activeRunVista's twin).
+  String get activeRunSkin {
+    final ch = sim?.run?['character'] as String?;
+    return ch != null ? meta.skinFor(ch) : meta.activeDieSkin;
   }
 
   // v0.36.0 The Epithets — worn title. Unlocks derive from the Ledger's
