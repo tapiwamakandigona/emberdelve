@@ -726,6 +726,7 @@ class GameController extends ChangeNotifier {
     bestFloor: meta.bestFloor,
     talesHeard: meta.hearthTalesHeard,
     doubledWins: meta.doubledWins,
+    tempersSet: meta.tempersSet,
   );
 
   void selectVista(String id) {

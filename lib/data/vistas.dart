@@ -51,6 +51,7 @@ const List<String> vistasOrder = [
   'deepshale', // v0.64.0 — append-LAST
   'hearthgold', // v0.98.0 — append-LAST
   'frostvein', // v0.112.0 — append-LAST
+  'forgelight', // v0.126.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -150,6 +151,24 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.08,
     wash: Color(0x478FB6C9),
   ),
+  // v0.126.0 The Forgelight — the temper arc's vista (fed by the same
+  // monotonic tempersSet the Tempered Hand honors read). The first HOT
+  // grade: not hearthgold's amber comfort but working-forge heat — redder,
+  // richer, the stone lit from below.
+  'forgelight': VistaDef(
+    'forgelight',
+    'Forgelight',
+    'Stone that remembers the anvil. Ten marks on ten faces, and the '
+        'walls started holding the glow the way a smithy does.',
+    unlockLine: 'Temper ten die faces.',
+    // Grade strengthened after plate critique (first pass -18/1.3/1.04/0x3B
+    // was near-invisible against the identity control — the frostvein
+    // 'too timid' lesson repeats): the delve must clearly burn.
+    hueDeg: -25,
+    satMul: 1.5,
+    valMul: 1.12,
+    wash: Color(0x66E8571F),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -166,6 +185,7 @@ bool vistaUnlockedFor(
   required int bestFloor,
   required int talesHeard,
   required int doubledWins,
+  required int tempersSet,
 }) {
   switch (id) {
     case 'emberlight':
@@ -191,6 +211,10 @@ bool vistaUnlockedFor(
     // challenge won under the paired rule, never derivable, never re-locks.
     case 'frostvein':
       return doubledWins >= 1;
+    // v0.126.0: fed by the monotonic lifetime temper counter (v0.125.0) —
+    // banked win or lose, never derivable, never re-locks.
+    case 'forgelight':
+      return tempersSet >= 10;
     default:
       return false;
   }

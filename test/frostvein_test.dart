@@ -28,8 +28,11 @@ void driveToTerminal(GameController c) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('frostvein is catalogued last and gated only by doubled wins', () {
-    expect(vistasOrder.last, 'frostvein');
+  test('frostvein holds its append slot, gated only by doubled wins', () {
+    // v0.126.0: forgelight appended after it — the contract was always the
+    // INDEX (append-order stability), not literal last place (the tinker
+    // 'last' pin lesson, v0.118.0).
+    expect(vistasOrder.indexOf('frostvein'), 7);
     expect(vistas['frostvein'], isNotNull);
     bool unlocked(int wins) => vistaUnlockedFor(
       'frostvein',
@@ -40,6 +43,7 @@ void main() {
       bestFloor: 99,
       talesHeard: 99,
       doubledWins: wins,
+      tempersSet: 0,
     );
     expect(unlocked(0), isFalse, reason: 'blind to every other counter');
     expect(unlocked(1), isTrue);

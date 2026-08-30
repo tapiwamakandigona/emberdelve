@@ -73,6 +73,7 @@ void main() {
             bestFloor: 0,
             talesHeard: 0,
             doubledWins: 0,
+            tempersSet: 0,
           ),
           id == 'emberlight',
           reason: id,
@@ -88,6 +89,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -101,6 +103,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -114,6 +117,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );
@@ -127,6 +131,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );
@@ -140,6 +145,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -154,6 +160,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );
@@ -167,6 +174,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -183,6 +191,7 @@ void main() {
           bestFloor: 8,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );
@@ -196,6 +205,7 @@ void main() {
           bestFloor: 9,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -212,6 +222,7 @@ void main() {
           bestFloor: 99,
           talesHeard: hearthgoldTales - 1,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );
@@ -225,6 +236,7 @@ void main() {
           bestFloor: 0,
           talesHeard: hearthgoldTales,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -241,6 +253,7 @@ void main() {
           bestFloor: 0,
           talesHeard: hearthgoldTales,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isTrue,
       );
@@ -254,6 +267,7 @@ void main() {
           bestFloor: 0,
           talesHeard: 0,
           doubledWins: 0,
+          tempersSet: 0,
         ),
         isFalse,
       );

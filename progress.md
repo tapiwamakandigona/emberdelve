@@ -3152,3 +3152,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   BOTH forge honors in one frame (v0.115.0 rule applied to the
   achievements list — tune the fraction, not the scroll).
 - 4 tests; plates approved. Suite 916/916. 0.125.0+151.
+
+## v0.126.0 — The Forgelight (2026-08-30)
+- NINTH vista, temper arc act three (mechanic v0.124 → honors
+  v0.125 → window v0.126; the first-class-mechanic pattern: weekly
+  got frostvein, tales got hearthgold). tempersSet >= 10 (vista at
+  10, badge at 25 — two waymark beats on one road). Grade hue -25 /
+  sat 1.5 / val 1.12 / wash 0x66E8571F.
+- GRADE DOCTRINE (second 'too timid' first pass in a row): open
+  color grades at least as bold as frostvein's finals and tune DOWN
+  if plates shout — first passes at 'safe' values are invisible
+  against the identity control.
+- vistaUnlockedFor +required tempersSet (16 call sites, scripted
+  regex patch on 'doubledWins: N,' lines). frostvein_test 'last'
+  pin → INDEX pin (second occurrence of the tinker 'last' contract
+  bug — the pin is append-order stability, not final position).
+- LANE MAP: keystones REJECTED as a content lane — the golden bot
+  draws keystone offers against keystonesOrder, so growth re-rolls
+  every anchor. Open lanes: temper runes, meta layer, cosmetics.
+- 4 tests; plates approved after one strengthening. Suite 920/920.
+  0.126.0+152.
