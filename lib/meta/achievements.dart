@@ -10,6 +10,7 @@
 import '../data/achievements.dart';
 import '../game/weekly.dart' show legalRuleLabels;
 import '../sim/run_dice.dart' show faceRunes;
+import '../data/themes.dart' show hearthThemes;
 import '../data/characters.dart';
 import '../data/enemies.dart';
 import 'meta.dart';
@@ -45,7 +46,8 @@ int statValue(MetaState m, String stat, [String? param]) {
     case 'wins_no_rest':
       return m.winsNoRest;
     case 'themes_owned':
-      return m.ownedThemes.length;
+      // v0.140.0: junk-proof — only colours the live shelf sells count.
+      return m.ownedThemes.where(hearthThemes.containsKey).length;
     case 'hard_wins':
       return m.hardWins;
     case 'provings_cleared':

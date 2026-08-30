@@ -416,12 +416,16 @@ const Map<String, AchievementDef> achievements = {
     stat: 'lifetime_embers',
     target: 5000,
   ),
+  // v0.140.0 honesty fix: 'every hearth colour' had target 4 since
+  // v0.3.3 while the shelf grew to 12 in v0.4.3 — a shipped lie caught
+  // by the re-pricing audit. Promise wording moves with the catalog
+  // (pinned to hearthThemesOrder.length by test).
   'hearth_keeper': AchievementDef(
     'hearth_keeper',
     'Hearth Keeper',
     'Own every hearth colour.',
     stat: 'themes_owned',
-    target: 4,
+    target: 14,
   ),
 
   // --- discipline -------------------------------------------------------
