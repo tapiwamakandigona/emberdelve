@@ -186,6 +186,18 @@ const List<ProvingDef> provings = [
     difficulty: 'normal',
     ascension: 10,
   ),
+  // v0.143.0 The Fifteenth Rung: the gap between the Tenth Rung and the
+  // A20 badge, closed. Seed bot-win proven (hunt 2026-08-30: A15 wins
+  // 14/20/24/34/36/39; 14 picked, unused across the list).
+  ProvingDef(
+    id: 'fifteenth_rung',
+    title: 'The Fifteenth Rung',
+    blurb: 'The Kindler at Ascension 15. Thin air; every mistake costs.',
+    seed: 14,
+    character: 'kindler',
+    difficulty: 'normal',
+    ascension: 15,
+  ),
   ProvingDef(
     id: 'high_stakes',
     title: 'The High Stakes',
