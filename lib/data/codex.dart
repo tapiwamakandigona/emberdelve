@@ -51,6 +51,10 @@ CodexEntryDef _die(String refId, String text) =>
 // like places (the calendar is world, not tool).
 CodexEntryDef _rule(String refId, String text) =>
     CodexEntryDef('rule:$refId', 'rule', refId, text, costEmbers: 10);
+// v0.142.0 The Written Marks: the anvil's own words — priced like dice
+// (the marks are tools of the trade). Names resolve via runeName().
+CodexEntryDef _runeEntry(String refId, String text) =>
+    CodexEntryDef('rune:$refId', 'rune', refId, text, costEmbers: 15);
 
 /// Display names for 'rule' entries. Five ids mirror lib/data/mutators.dart
 /// (asserted by test); 'cold_quarter' is the doubled week's own name.
@@ -688,6 +692,44 @@ final List<CodexEntryDef> codexEntries = [
     'Once a rotation the delve deals two rules at once: no shops, no '
         'rests. The wardens named it the Cold Quarter and the name '
         'stuck, the way frost does.',
+  ),
+  // the marks (v0.142.0) — the anvil's own words --------------------------
+  _runeEntry(
+    'blade',
+    'The first rune anyone asks for, and the one the smith respects '
+        'least. An edge is honest work, the smith allows — but any '
+        'delve will teach you that hitting harder is the smallest of '
+        'your problems.',
+  ),
+  _runeEntry(
+    'aegis',
+    'Wardens swear by it and the smith swears by wardens. A guard '
+        'worked into a face holds like a wall holds: not always, but '
+        'exactly when it said it would.',
+  ),
+  _runeEntry(
+    'surge',
+    'A roll given back is a decision given back. The gamblers call '
+        'surge the only honest luck in the delve, because it is not '
+        'luck at all.',
+  ),
+  _runeEntry(
+    'echo',
+    'The mark that pays forward: strike, and the guard after it '
+        'stands taller; guard, and the strike after it lands harder. '
+        'The smith calls it teaching a die to remember.',
+  ),
+  _runeEntry(
+    'mend',
+    'One breath of warmth on the face that earned it. The old hands '
+        'say mend wins no fights — it just keeps you standing through '
+        'the ones you were losing.',
+  ),
+  _runeEntry(
+    'gilt',
+    'Gold off a die face, small and steady. The peddler claims the '
+        'gilt rune was their idea, and the smith has never denied it '
+        'loudly enough to settle the matter.',
   ),
 ];
 
