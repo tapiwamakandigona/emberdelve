@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.125.0';
+const String currentAppVersion = '0.126.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.126.0',
+    title: 'The Forgelight',
+    lines: [
+      'A ninth vista: Forgelight \u2014 the delve lit from below, the '
+          'way a smithy holds its glow.',
+      'Earned at ten tempered faces, the forge arc\u2019s own window. '
+          'Earned by delving, never sold.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.125.0',
     title: 'The Tempered Hand',
