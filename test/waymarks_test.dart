@@ -132,6 +132,7 @@ void main() {
     m.winsNoRest = 999;
     m.hardWins = 999;
     m.tempersSet = 999;
+    m.runesTempered.addAll({'blade', 'aegis', 'surge', 'echo', 'mend', 'gilt'});
     m.weeklyRulesWon.addAll({
       'all_d4',
       'elites_only',

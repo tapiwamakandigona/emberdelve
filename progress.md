@@ -3270,3 +3270,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   change), shop tempering (dilutes the hollow). Balance: ~1 extra
   trigger per few fights; knob is the cap if sweeps drift.
 - 4 tests; plates approved. Suite 944/944. 0.132.0+158.
+
+## v0.133.0 — The Six Marks (2026-08-30)
+- meta.runesTempered Set: every rune ever tempered, banked at run
+  end WIN OR LOSE beside tempersSet (sim records the rune per
+  temper in run['runes_tempered']; sim stays meta-free; bot never
+  tempers → goldens byte-identical). Junk-proof at BOTH ends
+  (faceRunes filter at write AND read — v0.127 idiom). Union
+  merge. Badges third_mark (3) + six_marks (target pinned to live
+  faceRunes.length, promise wording). 64 achievements.
+- A11Y AUDIT NOTE: combat is already fully spoken (DieChip has
+  rich Semantics: name/size/rolled/tempered rune/spent-for-N/
+  selected; verbs+map nodes labeled) — the a11y lane is COMPLETE,
+  don't re-scout it.
+- Run HISTORY also already exists (v0.3.4 addRunRecord) — struck
+  from lead list; check progress.md/grep before scouting 'new'
+  meta features.
+- Rejected: 'the Marked' epithet (the_tempered owns temper
+  identity; variety is accumulation → badge, not title).
+- 4 tests; guard-map profiles serviced; plates approved. Suite
+  948/948. 0.133.0+159.

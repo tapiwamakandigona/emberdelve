@@ -1388,6 +1388,11 @@ class GameController extends ChangeNotifier {
     if (dailyDate != null) meta.dailiesPlayed += 1;
     // v0.125.0 The Tempered Hand: forge work banks win or lose.
     meta.tempersSet += (run['tempers_used'] as int? ?? 0);
+    // v0.133.0 The Six Marks: which runes, banked the same way. Only ids
+    // the live rune set knows can enter the bank (junk-proof at write).
+    for (final r in (run['runes_tempered'] as List? ?? const [])) {
+      if (r is String && faceRunes.contains(r)) meta.runesTempered.add(r);
+    }
     if (sim!.phase == 'run_won') {
       if (!_restedThisRun) meta.winsNoRest += 1;
       if ((run['difficulty'] as String? ?? 'normal') == 'hard') {
