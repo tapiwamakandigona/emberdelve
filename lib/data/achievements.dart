@@ -102,6 +102,7 @@ const List<String> achievementsOrder = [
   'full_roster', 'every_delver_clears',
   'peddler_wins', 'full_company', 'five_ways_down',
   'tinker_wins', 'six_ways_down',
+  'flintwright_wins', 'seven_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -335,6 +336,24 @@ const Map<String, AchievementDef> achievements = {
     'Win a run with all six delvers.',
     stat: 'delvers_cleared',
     target: 6,
+  ),
+  // v0.119.0 The Seventh Way — the flintwright's chapter of the roster
+  // arc. six_ways_down stays at 6: it honored a real feat when six was
+  // the whole roster, and earned recognition never re-prices (§Ethics).
+  'flintwright_wins': AchievementDef(
+    'flintwright_wins',
+    'Knapped Sharp',
+    'Win a run as the Flintwright.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'flintwright',
+  ),
+  'seven_ways_down': AchievementDef(
+    'seven_ways_down',
+    'Seven Ways Down',
+    'Win a run with all seven delvers.',
+    stat: 'delvers_cleared',
+    target: 7,
   ),
 
   // --- the bestiary -----------------------------------------------------

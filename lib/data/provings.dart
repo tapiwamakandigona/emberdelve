@@ -97,6 +97,19 @@ const List<ProvingDef> provings = [
     character: 'tinker',
     difficulty: 'normal',
   ),
+  // v0.119.0 The Seventh Way: the flintwright's own proving — four shards
+  // on normal floors. Seed bot-win proven (hunt 2026-08-30: wins 1/2/4/9;
+  // 9 picked for seed variety across the list).
+  ProvingDef(
+    id: 'flintwrights_proving',
+    title: "The Flintwright's Proving",
+    blurb:
+        'The Flintwright on normal floors. Four small dice — the swarm '
+        'does the work, if you let it.',
+    seed: 9,
+    character: 'flintwright',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
