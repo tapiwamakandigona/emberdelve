@@ -44,6 +44,11 @@ class EmberButton extends StatefulWidget {
 
   /// Compact vertical padding for short screens (combat action zone).
   final bool dense;
+
+  /// v0.122.0 The Spoken Delve: what a screen reader says, when the drawn
+  /// label alone would be cryptic (the shop's bare-number price button).
+  /// Null = speak [label], as ever.
+  final String? semanticLabel;
   const EmberButton(
     this.label, {
     super.key,
@@ -53,6 +58,7 @@ class EmberButton extends StatefulWidget {
     this.ghost = false,
     this.icon,
     this.dense = false,
+    this.semanticLabel,
   });
 
   @override
@@ -89,7 +95,7 @@ class _EmberButtonState extends State<EmberButton> {
     return Semantics(
       button: true,
       enabled: enabled,
-      label: widget.label,
+      label: widget.semanticLabel ?? widget.label,
       onTap: enabled ? handleTap : null,
       excludeSemantics: true,
       child: GestureDetector(

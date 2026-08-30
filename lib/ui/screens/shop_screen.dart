@@ -129,6 +129,12 @@ class ShopScreen extends StatelessWidget {
                         '$price',
                         // A coin, not an abstract dot (wordiness 2026-07-24).
                         icon: Icons.paid,
+                        // v0.122.0 The Spoken Delve: the drawn button is a
+                        // bare number beside a legible panel — name the
+                        // deed, the price, and a shortfall for TalkBack.
+                        semanticLabel: afford
+                            ? 'Buy $title for $price gold'
+                            : '$title, $price gold, not enough gold',
                         onTap: afford
                             ? () => c.apply({'type': 'buy', 'slot': index})
                             : null,

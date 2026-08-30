@@ -196,20 +196,33 @@ class _FlipCardState extends State<_FlipCard>
           final angle = math.pi * (1.0 - v);
           final showFace = v > 0.5;
           final flipped = _t.isCompleted;
-          return GestureDetector(
-            onTap: flipped && !_picked
-                ? () {
-                    _picked = true; // double-tap guard until the phase moves on
-                    Haptics.light();
-                    widget.onPick();
-                  }
-                : null,
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0012) // perspective
-                ..rotateY(angle),
-              child: showFace ? face : back,
+          // v0.122.0 The Spoken Delve: the flip is pure paint to a screen
+          // reader — name the card in both states, and only call it a
+          // button once it can actually be taken.
+          final def = dieDef(widget.dieId);
+          return Semantics(
+            label: flipped
+                ? 'Take the ${def.name}, a d${def.size}'
+                      '${widget.recommended ? ', the recommended pick' : ''}'
+                : 'A reward card, still face down',
+            button: flipped && !_picked,
+            excludeSemantics: true,
+            child: GestureDetector(
+              onTap: flipped && !_picked
+                  ? () {
+                      _picked =
+                          true; // double-tap guard until the phase moves on
+                      Haptics.light();
+                      widget.onPick();
+                    }
+                  : null,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.0012) // perspective
+                  ..rotateY(angle),
+                child: showFace ? face : back,
+              ),
             ),
           );
         },

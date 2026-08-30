@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 
 import '../audio/audio_service.dart';
+import '../data/dice.dart' show dieDef;
 import '../game/controller.dart';
 import '../sim/run_dice.dart';
 import 'theme.dart';
@@ -94,23 +95,33 @@ class _TemperSheetState extends State<TemperSheet> {
                               const SizedBox(width: Space.s),
                           itemBuilder: (context, i) {
                             final selected = die == i + 1;
-                            return GestureDetector(
-                              key: ValueKey('temper-die-${i + 1}'),
-                              onTap: () => setState(() {
-                                _die = i + 1;
-                                _face = null;
-                              }),
-                              child: Opacity(
-                                opacity: selected || die == null ? 1 : 0.45,
-                                child: SizedBox(
-                                  width: 60,
-                                  child: FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: DieChip(
-                                      pool[i],
-                                      run: run,
-                                      skin: c.meta.activeDieSkin,
-                                      selected: selected,
+                            // v0.122.0 The Spoken Delve: the picker rows
+                            // are pure paint to a screen reader — name each
+                            // die, face, and rune, and say what is chosen.
+                            return Semantics(
+                              label:
+                                  'Die ${i + 1}, ${dieDef(pool[i]).name}'
+                                  '${selected ? ', chosen' : ''}',
+                              button: true,
+                              excludeSemantics: true,
+                              child: GestureDetector(
+                                key: ValueKey('temper-die-${i + 1}'),
+                                onTap: () => setState(() {
+                                  _die = i + 1;
+                                  _face = null;
+                                }),
+                                child: Opacity(
+                                  opacity: selected || die == null ? 1 : 0.45,
+                                  child: SizedBox(
+                                    width: 60,
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: DieChip(
+                                        pool[i],
+                                        run: run,
+                                        skin: c.meta.activeDieSkin,
+                                        selected: selected,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -187,24 +198,29 @@ class _TemperSheetState extends State<TemperSheet> {
     required String label,
     required bool selected,
     required VoidCallback onTap,
-  }) => GestureDetector(
-    key: key,
-    onTap: onTap,
-    child: Container(
-      width: 40,
-      height: 36,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: selected ? EmberColors.ember : EmberColors.raised,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: selected ? EmberColors.ember : EmberColors.line,
+  }) => Semantics(
+    label: 'Face $label${selected ? ', chosen' : ''}',
+    button: true,
+    excludeSemantics: true,
+    child: GestureDetector(
+      key: key,
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 36,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? EmberColors.ember : EmberColors.raised,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: selected ? EmberColors.ember : EmberColors.line,
+          ),
         ),
-      ),
-      child: Text(
-        label,
-        style: EmberText.body.copyWith(
-          color: selected ? const Color(0xFF17110A) : EmberColors.textPrimary,
+        child: Text(
+          label,
+          style: EmberText.body.copyWith(
+            color: selected ? const Color(0xFF17110A) : EmberColors.textPrimary,
+          ),
         ),
       ),
     ),
@@ -212,40 +228,47 @@ class _TemperSheetState extends State<TemperSheet> {
 
   Widget _runeRow(String rune) {
     final selected = _rune == rune;
-    return GestureDetector(
-      key: ValueKey('temper-rune-$rune'),
-      onTap: () => setState(() => _rune = rune),
-      child: Container(
-        padding: const EdgeInsets.all(Space.m),
-        decoration: BoxDecoration(
-          color: selected ? EmberColors.raised : EmberColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? EmberColors.ember : EmberColors.line,
+    return Semantics(
+      label:
+          '${runeName(rune)}${selected ? ', chosen' : ''}. '
+          '${runeBlurb(rune)}',
+      button: true,
+      excludeSemantics: true,
+      child: GestureDetector(
+        key: ValueKey('temper-rune-$rune'),
+        onTap: () => setState(() => _rune = rune),
+        child: Container(
+          padding: const EdgeInsets.all(Space.m),
+          decoration: BoxDecoration(
+            color: selected ? EmberColors.raised : EmberColors.surface,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: selected ? EmberColors.ember : EmberColors.line,
+            ),
           ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              selected
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_unchecked,
-              size: 18,
-              color: selected ? EmberColors.ember : EmberColors.textDim,
-            ),
-            const SizedBox(width: Space.m),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(runeName(rune), style: EmberText.body),
-                  const SizedBox(height: 2),
-                  Text(runeBlurb(rune), style: EmberText.bodyDim),
-                ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                selected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                size: 18,
+                color: selected ? EmberColors.ember : EmberColors.textDim,
               ),
-            ),
-          ],
+              const SizedBox(width: Space.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(runeName(rune), style: EmberText.body),
+                    const SizedBox(height: 2),
+                    Text(runeBlurb(rune), style: EmberText.bodyDim),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
