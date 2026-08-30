@@ -3524,3 +3524,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   thing (v0.131 lesson, news edition). news_test caught it.
 - No plates (same title widget as all 8 trials; tool reads real
   clock). 3 tests. Suite 996/996. 0.147.0+173.
+
+## v0.148.0 — The Taught Fire (2026-08-30)
+- Fair-death pillar taught the anvil at last: mid line (go temper
+  — 'a mark on one face pays every floor after it') + late line
+  (Aegis vs elite openers). Insight pick draws loot stream AT
+  run_lost — nothing rolls after death, goldens safe (verified).
+- CATALOG PIN insights never had: every death line held to the
+  ethics banned-word charter (taught_fire_test), mid line's claim
+  proven against the sim (mark lives in run state). Insights also
+  have per-boss buckets (boss_<id>) — bucket pins must allow them.
+- 3 tests; no plates (text-only lines in existing death screen).
+  Suite 999/999. 0.148.0+174.
