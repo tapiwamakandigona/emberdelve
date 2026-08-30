@@ -3052,3 +3052,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - hearth_tale pin 2×→3× hearthgoldTales. Plates (rest fire quoting
   doubled-week tale @360, winter tale @320) approved. Suite
   892/892. 0.120.0+146.
+
+## v0.121.0 — The Waymark Line (2026-08-30)
+- Title screen names the single nearest unearned achievement with
+  real clamped counts ('Next waymark: Thrice Down — 2 of 3'), tap →
+  Ledger. The nearestAchievements resolver (tested since v0.5.0,
+  summary-only since the waymarks panel) promoted to where session
+  intent forms — the hook every big roguelite fronts (Hades
+  prophecies, StS climb counter), done in Emberdelve's register:
+  one dim TextButton with the provings count and 'Delve a seed',
+  no badge, no pulse.
+- FRESH-PROFILE LESSON (found by the test, kept as the pin): a new
+  MetaState is NOT progress-free — the default hearth theme counts
+  toward Full Hearth, so ungated the line would point brand-new
+  players at an ember-spending goal on first boot. Fix = runsPlayed
+  gate in waymarkLine (no goal before the first delve), not a
+  special case for owned-by-default stats. waymarkLine(m) lives in
+  lib/meta/achievements.dart (screens.dart imports it as `ach.`).
+- 5 tests; plates approved. Suite 897/897. 0.121.0+147.
