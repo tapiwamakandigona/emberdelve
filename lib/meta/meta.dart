@@ -109,6 +109,11 @@ class MetaState {
   // their own binding when they have one, else the legacy global selection.
   // Same contract as charDye: absent key = default.
   Map<String, String> charVista;
+
+  /// v0.138.0 The Delver's Dice: die skin worn PER DELVER, same shape as
+  /// charVista. activeDieSkin survives as the fallback for delvers the
+  /// player has not dressed (and for the ledger shelf's global choice).
+  Map<String, String> charSkin;
   Set<String> ownedCodex; // namespaced ids: 'enemy:<id>' / 'relic:<id>'
   // v0.3.4 Daily Delve record (review note #3): remember the most recent
   // daily played so the title shows an honest recap and the summary offers a
@@ -240,6 +245,7 @@ class MetaState {
     Map<String, String>? charName,
     Map<String, String>? charDye,
     Map<String, String>? charVista,
+    Map<String, String>? charSkin,
     Set<String>? ownedCodex,
     this.lastDailyDate,
     this.lastDailyWon = false,
@@ -290,6 +296,7 @@ class MetaState {
        charName = charName ?? {},
        charDye = charDye ?? {},
        charVista = charVista ?? {},
+       charSkin = charSkin ?? {},
        ownedThemes = ownedThemes ?? {defaultTheme},
        ownedDieSkins = ownedDieSkins ?? {defaultDieSkin},
        ownedDyes = ownedDyes ?? {defaultDye},
@@ -335,6 +342,7 @@ class MetaState {
     if (hearthTrack.isNotEmpty) 'hearthTrack': hearthTrack,
     if (charDye.isNotEmpty) 'charDye': charDye,
     if (charVista.isNotEmpty) 'charVista': charVista,
+    if (charSkin.isNotEmpty) 'charSkin': charSkin,
     if (ownedCodex.isNotEmpty) 'ownedCodex': ownedCodex.toList(),
     if (lastDailyDate != null) 'lastDailyDate': lastDailyDate,
     if (lastDailyDate != null) 'lastDailyWon': lastDailyWon,
@@ -428,6 +436,21 @@ class MetaState {
   /// surface with a delver in hand (map grade/wash, cards) goes through
   /// this; delver-less surfaces keep reading [selectedVista].
   String vistaFor(String charId) => charVista[charId] ?? selectedVista;
+  String skinFor(String charId) => charSkin[charId] ?? activeDieSkin;
+
+  /// v0.138.0: charSkin's loader — same junk filter, skin catalog.
+  static Map<String, String> _skinMap(Object? v) {
+    if (v is! Map) return {};
+    final out = <String, String>{};
+    v.forEach((k, val) {
+      if (val is String &&
+          characters.containsKey('$k') &&
+          dieSkins.containsKey(val)) {
+        out['$k'] = val;
+      }
+    });
+    return out;
+  }
 
   static Map<String, String> _vistaMap(Object? v) {
     if (v is! Map) return {};
@@ -531,6 +554,7 @@ class MetaState {
     hearthTrack: j['hearthTrack'] as String? ?? '',
     charDye: _dyeMap(j['charDye']),
     charVista: _vistaMap(j['charVista']),
+    charSkin: _skinMap(j['charSkin']),
     activeDye: delverDyes.containsKey(j['activeDye'])
         ? j['activeDye'] as String
         : defaultDye,

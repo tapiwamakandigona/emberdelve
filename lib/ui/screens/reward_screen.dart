@@ -70,7 +70,7 @@ class _RewardScreenState extends State<RewardScreen> {
                               _FlipCard(
                                 key: ValueKey('reward-${offers[i]}-$i'),
                                 dieId: offers[i],
-                                skin: c.meta.activeDieSkin,
+                                skin: c.activeRunSkin,
                                 recommended: i == recIdx,
                                 width: w,
                                 height: h,

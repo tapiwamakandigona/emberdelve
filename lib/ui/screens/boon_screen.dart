@@ -146,7 +146,7 @@ class BoonScreen extends StatelessWidget {
             height: 64,
             child: FittedBox(
               fit: BoxFit.contain,
-              child: DieChip(dieId, skin: c.meta.activeDieSkin),
+              child: DieChip(dieId, skin: c.activeRunSkin),
             ),
           )
         : e.containsKey('gold')

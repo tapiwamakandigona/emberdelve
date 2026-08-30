@@ -70,6 +70,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     hearthTrack: fresh.hearthTrack,
     charDye: Map.of(fresh.charDye),
     charVista: Map.of(fresh.charVista),
+    charSkin: Map.of(fresh.charSkin),
     preferredDifficulty: fresh.preferredDifficulty,
     preferShortRoad: fresh.preferShortRoad,
     lastDailyDate: fresh.lastDailyDate,
