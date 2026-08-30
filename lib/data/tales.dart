@@ -32,9 +32,9 @@ const List<String> hearthTales = [
   // v0.120.0 honesty edit: the roster grew (flintwright, v0.118.0). The
   // sequence contract is about ORDER, not frozen text — position 5 must
   // never state a count the picker disproves one screen away.
-  'Eight keep this fire now. Kindler, warden, gambler, ascetic, '
-      'peddler, tinker, flintwright, runesmith — the delve answers each '
-      'differently.',
+  'Nine keep this fire now. Kindler, warden, gambler, ascetic, '
+      'peddler, tinker, flintwright, runesmith, bearer — the delve '
+      'answers each differently.',
   'The relics you find were not lost. They were left — by delvers '
       'who wanted the next one through to go further.',
   'Every fire on the way down is borrowed from the hearth above. '
@@ -117,7 +117,7 @@ const List<String> hearthTales = [
   'The provings are delves that never change \u2014 same seed, same '
       'road \u2014 so a delver can be measured against the delve '
       'instead of against the dice.',
-  'Eight chairs at this fire now, and the delve answers each one '
+  'Nine chairs at this fire now, and the delve answers each one '
       'differently. That is the whole game, if you ask the fire.',
 ];
 

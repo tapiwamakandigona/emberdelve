@@ -50,6 +50,8 @@ const List<String> charactersOrder = [
   'flintwright',
   // v0.135.0 — append-LAST.
   'runesmith',
+  // v0.145.0 — append-LAST.
+  'bearer',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -147,6 +149,24 @@ const Map<String, CharacterDef> characters = {
       {'die': 3, 'face': 8, 'rune': 'surge'},
     ],
     unlockEmbers: 900,
+  ),
+  // v0.145.0 The Bearer — the ninth delver, the GIANT: the flintwright's
+  // exact opposite pole. TWO dice only, one of them the biggest starting
+  // die in any kit (a d10 on floor one). Fewest rolls, grandest promises,
+  // and every temper mark lands on half the pouch. Pure data (existing
+  // dice only) — no re-anchor. HP is the tuning knob (sweeps in
+  // docs/improvements/v0.145.0).
+  'bearer': CharacterDef(
+    'bearer',
+    'The Bearer',
+    'The giant: TWO dice, one a Molten Core — few rolls, grand promises.',
+    maxHp: 36,
+    startDice: ['d12', 'd8'],
+    startRelic: 'iron_scale',
+    startTempers: [
+      {'die': 1, 'face': 12, 'rune': 'echo'},
+    ],
+    unlockEmbers: 1050,
   ),
 };
 

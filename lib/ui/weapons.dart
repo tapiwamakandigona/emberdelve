@@ -118,6 +118,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.60,
     swingAngle: 1.85,
   ),
+  // Giant (v0.145.0): a stone maul — two hands, one promise. The longest
+  // reach in the roster (the bearer swings wide and slow, like their
+  // dice: few and grand), cold granite accent to match the sheet.
+  'bearer': WeaponDef(
+    'stone_maul',
+    'Stone Maul',
+    accent: Color(0xFF9AA3B0),
+    reach: 0.62,
+    idleAngle: 0.28,
+    raiseAngle: -1.45,
+    swingAngle: 1.95,
+  ),
   // Swarm (v0.118.0): a short knapping pick — the tool that makes shards.
   // Stubby reach (the flintwright fights close, like their dice: small and
   // many), flint-tan accent to match the sheet's palette.

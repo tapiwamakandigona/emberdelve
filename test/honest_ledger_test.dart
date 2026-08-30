@@ -59,6 +59,33 @@ void main() {
     }
   });
 
+  test('frozen counted honors never wear promise wording', () {
+    // v0.145.0: the ways-down milestones froze their targets when the
+    // roster outgrew them (v0.136 doctrine) but kept saying 'all N
+    // delvers' — true at shipping, a lie ever after. Frozen honors
+    // describe a count; only live-targeted honors may say all/every.
+    for (final id in [
+      'five_ways_down',
+      'six_ways_down',
+      'seven_ways_down',
+      'eight_ways_down',
+      'full_roster',
+      'every_delver_clears',
+    ]) {
+      final text = achievements[id]!.text.toLowerCase();
+      expect(
+        text.contains('all '),
+        isFalse,
+        reason: "$id is frozen — its copy must not claim 'all'",
+      );
+      expect(
+        text.contains('every '),
+        isFalse,
+        reason: "$id is frozen — its copy must not claim 'every'",
+      );
+    }
+  });
+
   test('historical counted honors keep their earned prices', () {
     // Fixed-count names never re-price (the other half of the doctrine).
     expect(achievements['five_ways_down']!.target, 5);
