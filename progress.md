@@ -3252,3 +3252,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   below fold) — a pin asserting a CARD must scroll to the card,
   not its section header.
 - 4 tests; plates approved. Suite 940/940. 0.131.0+157.
+
+## v0.132.0 — The Second Mark (2026-08-30)
+- TEMPER DEPTH MOVE: cap 1→2 tempers per delve (one-line sim
+  change in runTemperFace; 6 picks → 21 pairings). Anchor review
+  BEFORE writing: golden bot tempers at most once by ==0 policy
+  (tempers-on walks unchanged), cap raises are replay-permissive,
+  simVersion stays 7, goldens byte-identical in the release run.
+- Rest copy counts marks ('Two marks a delve.' / 'One mark left.'
+  / option disappears at both spent — v7 rule); anvil button and
+  sheet say the same words. Widget test walks all three states.
+- PLATE CATCH (grep lesson): the anvil BUTTON still said 'once per
+  delve' beside the new counted copy — greps for changed words
+  missed it ('once' vs 'one'). Grep the CONCEPT's neighbors ('per
+  delve'), not only the words you edited. Plates caught the lie.
+- Rejected depth alternatives (scout): rune tiers (save-format
+  change), shop tempering (dilutes the hollow). Balance: ~1 extra
+  trigger per few fights; knob is the cap if sweeps drift.
+- 4 tests; plates approved. Suite 944/944. 0.132.0+158.

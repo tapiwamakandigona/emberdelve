@@ -129,8 +129,11 @@ void main() {
   testWidgets('the temper option disappears once the run has spent it', (
     tester,
   ) async {
+    // v0.132.0 The Second Mark: 'spent' now means BOTH marks.
     final c = _atRest();
     c.apply({'type': 'temper_face', 'die': 1, 'face': 2, 'rune': 'aegis'});
+    c.sim!.phase = 'rest';
+    c.apply({'type': 'temper_face', 'die': 2, 'face': 2, 'rune': 'blade'});
     c.sim!.phase = 'rest';
 
     await tester.pumpWidget(

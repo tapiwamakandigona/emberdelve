@@ -485,7 +485,10 @@ void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (idx is! int || idx < 1 || idx > pool.length) {
     return _invalid(events, 'no_such_die');
   }
-  if ((sim.run!['tempers_used'] as int? ?? 0) >= 1) {
+  // v0.132.0 The Second Mark: two tempers per delve (was one, v7..v0.131).
+  // Cap raises are replay-permissive: no recorded stream loses meaning, and
+  // the golden bot tempers at most once by its own policy.
+  if ((sim.run!['tempers_used'] as int? ?? 0) >= 2) {
     return _invalid(events, 'temper_used');
   }
   final rune = cmd['rune'];
