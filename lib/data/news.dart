@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.134.0';
+const String currentAppVersion = '0.135.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.135.0',
+    title: 'The Runesmith',
+    lines: [
+      'An eighth delver: the Runesmith arrives with Surge already '
+          'worked into a Deep Coal \u2014 lean at 26 HP, and the anvil '
+          'answers them first.',
+      '900 embers at the fire. The eighth chair is earned.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.134.0',
     title: 'The Runemark',

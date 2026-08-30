@@ -32,8 +32,9 @@ const List<String> hearthTales = [
   // v0.120.0 honesty edit: the roster grew (flintwright, v0.118.0). The
   // sequence contract is about ORDER, not frozen text — position 5 must
   // never state a count the picker disproves one screen away.
-  'Seven keep this fire now. Kindler, warden, gambler, ascetic, '
-      'peddler, tinker, flintwright — the delve answers each differently.',
+  'Eight keep this fire now. Kindler, warden, gambler, ascetic, '
+      'peddler, tinker, flintwright, runesmith — the delve answers each '
+      'differently.',
   'The relics you find were not lost. They were left — by delvers '
       'who wanted the next one through to go further.',
   'Every fire on the way down is borrowed from the hearth above. '

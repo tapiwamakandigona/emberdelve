@@ -469,7 +469,8 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    target: 7,
+    // v0.135.0: moved with the roster (promise wording).
+    target: 8,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

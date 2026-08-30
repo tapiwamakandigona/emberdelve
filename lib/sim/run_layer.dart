@@ -159,6 +159,24 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'keystones': <String>[],
   };
   sim.turnsTotal = 0;
+  // v0.135.0 The Runesmith: marks worked before the first floor — pure
+  // data application, no RNG, no counters (the smith's work, not the
+  // player's: tempers_used and runes_tempered stay untouched, so the
+  // temper cap and the Six Marks bank are the player's alone).
+  for (final t in ch.startTempers) {
+    final idx = t['die'] as int;
+    final pool = sim.player['dice'] as List;
+    if (idx < 1 || idx > pool.length) continue;
+    final next = sim.run!['next_custom_die'] as int;
+    final customId = 'custom_$next';
+    (sim.run!['custom_dice'] as Map)[customId] = {
+      'base': pool[idx - 1],
+      'face': t['face'],
+      'rune': t['rune'],
+    };
+    pool[idx - 1] = customId;
+    sim.run!['next_custom_die'] = next + 1;
+  }
   if (ch.startRelic != null) {
     _grantRelic(sim, ch.startRelic!, events);
   }
