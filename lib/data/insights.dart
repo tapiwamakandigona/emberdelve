@@ -22,9 +22,15 @@ const Map<String, List<String>> insights = {
     'Rest before an elite, not after — you choose the fight, so choose it healthy.',
     'Spend gold: a shop die now beats a hoard of coins on the boss floor.',
     'Skip a reward that dilutes your pool — fewer, stronger dice roll better.',
+    // v0.148.0 The Taught Fire: the anvil finally speaks at death.
+    'The anvil at a rest fire is not a detour. A mark on one face pays '
+        'every floor after it.',
     'Relics stack. Two small blocks each turn outlast one big swing.',
   ],
   'late': [
+    // v0.148.0 The Taught Fire.
+    'An Aegis mark on a big face turns an elite\u2019s opener into a '
+        'plan instead of a surprise.',
     'Forge duplicates upward at rests; a d8 floor beats three shaky d6s.',
     'Elites telegraph a cycle — count to their big hit and block exactly then.',
     'Save an attack die for the turn the enemy drops its guard.',
