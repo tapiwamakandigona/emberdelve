@@ -31,12 +31,18 @@ class ContextTips {
   static const intentFair = 'intent_fair';
   static const combosPay = 'combos_pay';
   static const blockFades = 'block_fades';
+
+  /// v0.139.0 The Shown Anvil: the first rest fire with the anvil
+  /// available — the temper system's only front door, previously
+  /// explained nowhere before the sheet itself.
+  static const firstAnvil = 'first_anvil';
   static const List<String> all = [
     whatsADelve,
     rollSpend,
     intentFair,
     combosPay,
     blockFades,
+    firstAnvil,
   ];
 }
 
@@ -63,6 +69,12 @@ class TipDirector {
 
   /// First-ever fight begins. Returns the tip to show, or null.
   String? onFightStart() => _fire(ContextTips.rollSpend);
+
+  /// v0.139.0: the first rest fire where a temper is still available.
+  /// The caller passes canTemper so a spent-anvil rest never teaches a
+  /// button that is not on screen.
+  String? onRestArrival({required bool canTemper}) =>
+      canTemper ? _fire(ContextTips.firstAnvil) : null;
 
   /// A batch of sim events was processed after a command.
   String? onEvents(List<Map<String, Object?>> events) {

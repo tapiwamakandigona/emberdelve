@@ -145,6 +145,16 @@ class _ContextTip extends StatelessWidget {
           'Either way the delve ends there — and the next one starts fresh.',
       Alignment.center,
     ),
+    ContextTips.firstAnvil: (
+      Icons.auto_awesome,
+      'THE SMITH IS IN',
+      'This fire can temper a die: pick one face and mark it with a '
+          'rune \u2014 an edge, a guard, a reroll, an echo, a mend, or '
+          'gold. The mark pays every time that face is rolled and '
+          'spent, for the whole delve. Two marks a delve; resting '
+          'costs neither.',
+      Alignment.center,
+    ),
     ContextTips.rollSpend: (
       Icons.casino,
       'ROLL, THEN SPEND',

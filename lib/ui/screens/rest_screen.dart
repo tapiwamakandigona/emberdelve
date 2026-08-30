@@ -1,9 +1,28 @@
 // lib/ui/screens/rest_screen.dart — part of screens.dart (see library header there).
 part of '../screens.dart';
 
-class RestScreen extends StatelessWidget {
+class RestScreen extends StatefulWidget {
   final GameController c;
   const RestScreen(this.c, {super.key});
+  @override
+  State<RestScreen> createState() => _RestScreenState();
+}
+
+class _RestScreenState extends State<RestScreen> {
+  GameController get c => widget.c;
+
+  @override
+  void initState() {
+    super.initState();
+    // v0.139.0 The Shown Anvil: first contact with a live anvil defines
+    // the temper system (map_screen's onMapArrival idiom). canTemper is
+    // re-derived here so a spent anvil never teaches an absent button.
+    final run = c.state?['run'] as Map?;
+    c.tipDirector.onRestArrival(
+      canTemper: (run?['tempers_used'] as int? ?? 0) < 2,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final player = c.state!['player'] as Map;
@@ -132,6 +151,11 @@ class RestScreen extends StatelessWidget {
             ),
           ],
         ),
+        if (c.tipDirector.active != null)
+          _ContextTip(
+            id: c.tipDirector.active!,
+            onDismiss: () => setState(c.dismissTip),
+          ),
       ],
     );
   }

@@ -3376,3 +3376,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   fonts → FittedBox. First-capture chips render dim (cold decode
   cache) — known artifact, judge the second plate.
 - 4 tests; plates approved. Suite 966/966. 0.138.0+164.
+
+## v0.139.0 — The Shown Anvil (2026-08-30)
+- SIXTH CONTEXT TIP first_anvil: fires at the first rest with a
+  LIVE anvil (caller passes canTemper — never teach an absent
+  button), names all six runes in one sentence, states the
+  two-mark limit. v0.10.0 rules hold (one card, once ever, no
+  wall). RestScreen → stateful (map_screen onMapArrival idiom) to
+  fire + host _ContextTip. tips_test allSeen deck pin updated.
+- ONBOARDING AUDIT NOTE: tip deck was frozen at v0.10's five
+  combat cards; teach-at-the-menu-moment beats teach-after-
+  commitment for systems whose payoff is invisible until tried.
+  Weekly tip REJECTED (title block self-labeled + forge-gated).
+- TWO FALSE SCOUTS this release (summary waymark, reduce-motion —
+  both existed): ALWAYS grep the feature area before scouting;
+  the ledger already has LIFETIME/WITHIN REACH/RECENT DELVES.
+- 4 tests; plates approved. Suite 970/970. 0.139.0+165.
