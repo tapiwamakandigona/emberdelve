@@ -78,6 +78,7 @@ const Set<String> achievementStats = {
   'themes_owned',
   'hard_wins',
   'delvers_crowned',
+  'tempers_set',
   'delvers_cleared',
   'provings_cleared', // v0.59.0 The Proven
   // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
@@ -114,6 +115,7 @@ const List<String> achievementsOrder = [
   'daily_first', 'daily_ten', 'daily_thirty',
   // --- the endgame (Forge territory) -------------------------------------
   'hard_clear', 'hard_five', 'three_crowns', 'crowned_company',
+  'first_temper', 'well_tempered',
   'ascension_three', 'ascension_ten',
   'ascension_twenty',
   // --- the unwritten feats (v0.107.0): the systems that grew after --------
@@ -464,6 +466,21 @@ const Map<String, AchievementDef> achievements = {
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
     target: 7,
+  ),
+  // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
+  'first_temper': AchievementDef(
+    'first_temper',
+    'The Marked Face',
+    'Temper a die face.',
+    stat: 'tempers_set',
+    target: 1,
+  ),
+  'well_tempered': AchievementDef(
+    'well_tempered',
+    'Well Tempered',
+    'Temper 25 die faces across your delves.',
+    stat: 'tempers_set',
+    target: 25,
   ),
   'hard_five': AchievementDef(
     'hard_five',

@@ -1377,6 +1377,8 @@ class GameController extends ChangeNotifier {
       meta.charBestFloor[char] = reached;
     }
     if (dailyDate != null) meta.dailiesPlayed += 1;
+    // v0.125.0 The Tempered Hand: forge work banks win or lose.
+    meta.tempersSet += (run['tempers_used'] as int? ?? 0);
     if (sim!.phase == 'run_won') {
       if (!_restedThisRun) meta.winsNoRest += 1;
       if ((run['difficulty'] as String? ?? 'normal') == 'hard') {

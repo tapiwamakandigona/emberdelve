@@ -3134,3 +3134,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   fonts) before touching product code.
 - 6 tests; plates approved (five-rune sheet scrolls at 320, commit
   pinned). Suite 912/912. 0.124.0+150.
+
+## v0.125.0 — The Tempered Hand (2026-08-30)
+- meta.tempersSet: lifetime faces tempered — banked at run end from
+  run['tempers_used'] beside dailiesPlayed (OUTSIDE the win gate:
+  wins AND losses, charRuns precedent — spent forge work, not an
+  outcome). Persist when >0; cloud merge MAX. Sim stays meta-free
+  (bank from run fields at run end, never increment at the
+  command). + The Marked Face (1) / Well Tempered (25). 58
+  achievements.
+- TEST-PIN LESSON: kindler easy seed 13 loses AND rests on the
+  pure bot walk (hunted; 18/3/5 never rest) — but a mid-run temper
+  sways the remaining walk (mend heals), so the banking pin accepts
+  EITHER terminal. Pin the contract (banking site is outside the
+  win gate), not the accident (which terminal this walk hits).
+- Plate framing: profile tempersSet=10 so the progress sort keeps
+  BOTH forge honors in one frame (v0.115.0 rule applied to the
+  achievements list — tune the fraction, not the scroll).
+- 4 tests; plates approved. Suite 916/916. 0.125.0+151.

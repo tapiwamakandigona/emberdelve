@@ -166,6 +166,8 @@ void main() {
     m.charWins['kindler'] = 6;
     // v0.123.0 The Crowned Company
     m.charHardWins['kindler'] = 1;
+    // v0.125.0 The Tempered Hand
+    m.tempersSet = 1;
     m.bossesBeaten.add('ember_tyrant');
     m.provingsCleared.add('first_flame'); // v0.59.0 provings_cleared
     // v0.107.0 The Unwritten Feats
