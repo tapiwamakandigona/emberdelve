@@ -57,18 +57,28 @@ void main() {
       for (final t in trials.values) {
         final isMutatorDay = t.mutators.isNotEmpty;
         final isGoalDay = t.goalId.isNotEmpty;
-        expect(isMutatorDay ^ isGoalDay, isTrue,
-            reason: '${t.id} must be mutator day XOR goal day');
+        expect(
+          isMutatorDay ^ isGoalDay,
+          isTrue,
+          reason: '${t.id} must be mutator day XOR goal day',
+        );
         if (isMutatorDay) {
           for (final m in t.mutators) {
-            expect(isKnownMutator(m), isTrue,
-                reason: '${t.id} names unknown mutator $m — the sim would '
-                    'silently ignore it and the declared rule would be a lie');
+            expect(
+              isKnownMutator(m),
+              isTrue,
+              reason:
+                  '${t.id} names unknown mutator $m — the sim would '
+                  'silently ignore it and the declared rule would be a lie',
+            );
           }
           expect(t.emberBonus, 0, reason: 'mutator days pay nothing extra');
         } else {
-          expect(t.emberBonus, greaterThan(0),
-              reason: 'goal day ${t.id} must pay a real bonus');
+          expect(
+            t.emberBonus,
+            greaterThan(0),
+            reason: 'goal day ${t.id} must pay a real bonus',
+          );
           expect(t.goalParam, greaterThan(0));
           // The predicate must be one the judge knows TODAY: a met fixture
           // below proves each id; this guards a typo'd id in the catalog.
@@ -77,9 +87,13 @@ void main() {
             'fights_at_least',
             'embers_at_least',
             'clean_floors_at_least',
+            'tempers_at_least', // v0.147.0 The Marked Day
           };
-          expect(known.contains(t.goalId), isTrue,
-              reason: '${t.id} declares unknown goal ${t.goalId}');
+          expect(
+            known.contains(t.goalId),
+            isTrue,
+            reason: '${t.id} declares unknown goal ${t.goalId}',
+          );
         }
         expect(t.name, isNotEmpty);
         expect(t.blurb, isNotEmpty);
@@ -95,15 +109,21 @@ void main() {
       while (d.isBefore(end)) {
         final t = trialForDate(d.year, d.month, d.day);
         expect(trials.containsKey(t.id), isTrue);
-        expect(trialForDate(d.year, d.month, d.day).id, t.id,
-            reason: 'same date must always yield the same trial');
+        expect(
+          trialForDate(d.year, d.month, d.day).id,
+          t.id,
+          reason: 'same date must always yield the same trial',
+        );
         counts[t.id] = (counts[t.id] ?? 0) + 1;
         d = d.add(const Duration(days: 1));
       }
       // 1096 days over 7 trials ≈ 156 each; DJB2 mod 7 is rough, not exact.
       for (final id in trialsOrder) {
-        expect(counts[id] ?? 0, greaterThan(80),
-            reason: '$id appears too rarely — rotation is skewed');
+        expect(
+          counts[id] ?? 0,
+          greaterThan(80),
+          reason: '$id appears too rarely — rotation is skewed',
+        );
       }
     });
 
@@ -114,19 +134,26 @@ void main() {
       var prev = trialsOrder.indexOf(trialForDate(2026, 1, 1).id);
       for (var i = 0; i < 60; i++) {
         d = d.add(const Duration(days: 1));
-        final cur = trialsOrder.indexOf(trialForDate(d.year, d.month, d.day).id);
+        final cur = trialsOrder.indexOf(
+          trialForDate(d.year, d.month, d.day).id,
+        );
         deltas.add((cur - prev) % trialsOrder.length);
         prev = cur;
       }
-      expect(deltas.length, greaterThan(1),
-          reason: 'rotation collapsed into a constant stride');
+      expect(
+        deltas.length,
+        greaterThan(1),
+        reason: 'rotation collapsed into a constant stride',
+      );
     });
 
     test('trialForDailyKey mirrors trialForDate and rejects garbage', () {
-      expect(trialForDailyKey('2026-08-16')!.id,
-          trialForDate(2026, 8, 16).id);
-      expect(trialForDailyKey('2026-8-16')!.id, trialForDate(2026, 8, 16).id,
-          reason: 'unpadded key still parses (int.tryParse)');
+      expect(trialForDailyKey('2026-08-16')!.id, trialForDate(2026, 8, 16).id);
+      expect(
+        trialForDailyKey('2026-8-16')!.id,
+        trialForDate(2026, 8, 16).id,
+        reason: 'unpadded key still parses (int.tryParse)',
+      );
       expect(trialForDailyKey(''), isNull);
       expect(trialForDailyKey('not-a-date'), isNull);
       expect(trialForDailyKey('2026-13-01'), isNull);
@@ -142,48 +169,92 @@ void main() {
     }
 
     test('gold_at_least judges final gold', () {
-      final t = const TrialDef('x', 'X', 'x',
-          goalId: 'gold_at_least', goalParam: 40, emberBonus: 1);
+      final t = const TrialDef(
+        'x',
+        'X',
+        'x',
+        goalId: 'gold_at_least',
+        goalParam: 40,
+        emberBonus: 1,
+      );
       expect(trialGoalMet(t, {'gold': 40}, RunTrace()), isTrue);
       expect(trialGoalMet(t, {'gold': 39}, RunTrace()), isFalse);
-      expect(trialGoalMet(t, {}, RunTrace()), isFalse,
-          reason: 'missing field is 0, never a throw');
+      expect(
+        trialGoalMet(t, {}, RunTrace()),
+        isFalse,
+        reason: 'missing field is 0, never a throw',
+      );
     });
 
     test('fights_at_least judges fights won', () {
-      final t = const TrialDef('x', 'X', 'x',
-          goalId: 'fights_at_least', goalParam: 4, emberBonus: 1);
+      final t = const TrialDef(
+        'x',
+        'X',
+        'x',
+        goalId: 'fights_at_least',
+        goalParam: 4,
+        emberBonus: 1,
+      );
       expect(trialGoalMet(t, {'fights_won': 5}, RunTrace()), isTrue);
       expect(trialGoalMet(t, {'fights_won': 3}, RunTrace()), isFalse);
     });
 
     test('embers_at_least judges run embers', () {
-      final t = const TrialDef('x', 'X', 'x',
-          goalId: 'embers_at_least', goalParam: 60, emberBonus: 1);
+      final t = const TrialDef(
+        'x',
+        'X',
+        'x',
+        goalId: 'embers_at_least',
+        goalParam: 60,
+        emberBonus: 1,
+      );
       expect(trialGoalMet(t, {'embers': 61}, RunTrace()), isTrue);
       expect(trialGoalMet(t, {'embers': 59}, RunTrace()), isFalse);
     });
 
     test('clean_floors_at_least counts untouched floors from the trace', () {
-      final t = const TrialDef('x', 'X', 'x',
-          goalId: 'clean_floors_at_least', goalParam: 3, emberBonus: 1);
+      final t = const TrialDef(
+        'x',
+        'X',
+        'x',
+        goalId: 'clean_floors_at_least',
+        goalParam: 3,
+        emberBonus: 1,
+      );
       expect(
-          trialGoalMet(
-              t, {}, traceWith([markClean, markHurt, markClean, markClean])),
-          isTrue);
-      expect(trialGoalMet(t, {}, traceWith([markClean, markHurt, markClean])),
-          isFalse);
+        trialGoalMet(
+          t,
+          {},
+          traceWith([markClean, markHurt, markClean, markClean]),
+        ),
+        isTrue,
+      );
+      expect(
+        trialGoalMet(t, {}, traceWith([markClean, markHurt, markClean])),
+        isFalse,
+      );
     });
 
     test('mutator days and unknown goal ids are silently false', () {
       expect(
-          trialGoalMet(trialDef('flint_day'), {'gold': 999}, RunTrace()),
-          isFalse);
-      final future = const TrialDef('f', 'F', 'f',
-          goalId: 'goal_from_the_future', goalParam: 1, emberBonus: 5);
-      expect(trialGoalMet(future, {'gold': 999}, RunTrace()), isFalse,
-          reason: 'an old build handed a future goal pays nothing, '
-              'never crashes');
+        trialGoalMet(trialDef('flint_day'), {'gold': 999}, RunTrace()),
+        isFalse,
+      );
+      final future = const TrialDef(
+        'f',
+        'F',
+        'f',
+        goalId: 'goal_from_the_future',
+        goalParam: 1,
+        emberBonus: 5,
+      );
+      expect(
+        trialGoalMet(future, {'gold': 999}, RunTrace()),
+        isFalse,
+        reason:
+            'an old build handed a future goal pays nothing, '
+            'never crashes',
+      );
     });
   });
 
@@ -205,8 +276,11 @@ void main() {
       for (final t in trials.values) {
         final copy = '${t.name} ${t.blurb}'.toLowerCase();
         for (final word in banned) {
-          expect(copy.contains(word), isFalse,
-              reason: '"$word" in trial ${t.id}');
+          expect(
+            copy.contains(word),
+            isFalse,
+            reason: '"$word" in trial ${t.id}',
+          );
         }
       }
     });
@@ -229,8 +303,11 @@ void main() {
         floor: 9,
         floors: 9,
       );
-      expect(without.split('\n').first, 'Emberdelve Daily 2026-08-16',
-          reason: 'no trial -> header byte-identical to the old format');
+      expect(
+        without.split('\n').first,
+        'Emberdelve Daily 2026-08-16',
+        reason: 'no trial -> header byte-identical to the old format',
+      );
     });
   });
 
@@ -258,52 +335,64 @@ void main() {
 
     test('a mutator day applies its mutator to the daily run', () async {
       final clock = findDate(2026, (t) => t.mutators.isNotEmpty);
-      final trial =
-          trialForDate(clock.year, clock.month, clock.day);
+      final trial = trialForDate(clock.year, clock.month, clock.day);
       final c = GameController(saveDirOverride: dir.path);
       await c.boot();
       c.startDailyRun(character: 'kindler', clock: clock);
       for (final m in trial.mutators) {
-        expect(c.sim!.mutators.contains(m), isTrue,
-            reason: 'daily run must carry declared mutator $m');
+        expect(
+          c.sim!.mutators.contains(m),
+          isTrue,
+          reason: 'daily run must carry declared mutator $m',
+        );
       }
-      expect(c.dailyTrial!.id, trial.id,
-          reason: 'controller re-derives the trial from the date label');
+      expect(
+        c.dailyTrial!.id,
+        trial.id,
+        reason: 'controller re-derives the trial from the date label',
+      );
       expect(c.dailyTrialBonus, 0, reason: 'mutator day never pays a bonus');
       driveToTerminal(c);
       expect(c.dailyTrialBonus, 0);
       await c.flushSaves();
     });
 
-    test('a goal day banks its bonus exactly once and the getter agrees',
-        () async {
-      final clock = findDate(2026, (t) => t.goalId.isNotEmpty);
-      final c = GameController(saveDirOverride: dir.path);
-      await c.boot();
-      final embersBefore = c.meta.embers;
-      final lifetimeBefore = c.meta.lifetimeEmbers;
-      c.startDailyRun(character: 'kindler', clock: clock);
-      expect(c.sim!.mutators, isEmpty,
-          reason: 'goal day is vanilla rules');
-      expect(c.dailyTrialBonus, 0, reason: 'mid-run: nothing judged yet');
-      driveToTerminal(c);
-      final banked = c.sim!.run?['embers'] as int? ?? 0;
-      final bonus = c.dailyTrialBonus; // 0 when missed, emberBonus when met
-      expect(c.meta.embers, embersBefore + banked + bonus,
-          reason: 'bank = run embers + trial bonus, nothing else');
-      expect(c.meta.lifetimeEmbers, lifetimeBefore + banked + bonus);
-      if (bonus > 0) {
-        expect(bonus, c.dailyTrial!.emberBonus);
-      }
-      // Idempotence: booting a fresh controller over the same store must not
-      // re-bank anything (the terminal save was cleared at bank time).
-      await c.flushSaves();
-      final c2 = GameController(saveDirOverride: dir.path);
-      await c2.boot();
-      expect(c2.meta.embers, embersBefore + banked + bonus,
-          reason: 'resume after a banked daily must never double-pay');
-      await c2.flushSaves();
-    });
+    test(
+      'a goal day banks its bonus exactly once and the getter agrees',
+      () async {
+        final clock = findDate(2026, (t) => t.goalId.isNotEmpty);
+        final c = GameController(saveDirOverride: dir.path);
+        await c.boot();
+        final embersBefore = c.meta.embers;
+        final lifetimeBefore = c.meta.lifetimeEmbers;
+        c.startDailyRun(character: 'kindler', clock: clock);
+        expect(c.sim!.mutators, isEmpty, reason: 'goal day is vanilla rules');
+        expect(c.dailyTrialBonus, 0, reason: 'mid-run: nothing judged yet');
+        driveToTerminal(c);
+        final banked = c.sim!.run?['embers'] as int? ?? 0;
+        final bonus = c.dailyTrialBonus; // 0 when missed, emberBonus when met
+        expect(
+          c.meta.embers,
+          embersBefore + banked + bonus,
+          reason: 'bank = run embers + trial bonus, nothing else',
+        );
+        expect(c.meta.lifetimeEmbers, lifetimeBefore + banked + bonus);
+        if (bonus > 0) {
+          expect(bonus, c.dailyTrial!.emberBonus);
+        }
+        // Idempotence: booting a fresh controller over the same store must not
+        // re-bank anything (the terminal save was cleared at bank time).
+        await c.flushSaves();
+        final c2 = GameController(saveDirOverride: dir.path);
+        await c2.boot();
+        expect(
+          c2.meta.embers,
+          embersBefore + banked + bonus,
+          reason: 'resume after a banked daily must never double-pay',
+        );
+        await c2.flushSaves();
+      },
+    );
 
     test('finished daily share text carries the trial name', () async {
       final clock = findDate(2026, (t) => t.goalId.isNotEmpty);
@@ -314,8 +403,11 @@ void main() {
       driveToTerminal(c);
       final share = c.dailyResultShareText;
       expect(share, isNotNull);
-      expect(share, contains('· ${trial.name}'),
-          reason: 'shared result must carry the rule it was played under');
+      expect(
+        share,
+        contains('· ${trial.name}'),
+        reason: 'shared result must carry the rule it was played under',
+      );
       await c.flushSaves();
     });
   });

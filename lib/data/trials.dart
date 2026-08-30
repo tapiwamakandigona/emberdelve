@@ -62,6 +62,9 @@ const List<String> trialsOrder = [
   'light_step',
   'ember_hoard',
   'short_day',
+  // v0.147.0 — append-LAST (the rotation is a hash over the list; append
+  // keeps the change one modulus, not a reshuffle of authored order).
+  'marked_day',
 ];
 
 const Map<String, TrialDef> trials = {
@@ -122,6 +125,16 @@ const Map<String, TrialDef> trials = {
     'Gather 60 or more embers in the delve.',
     goalId: 'embers_at_least',
     goalParam: 60,
+    emberBonus: 15,
+  ),
+  // v0.147.0 The Marked Day: the temper arc's day (goal kind
+  // 'tempers_at_least', judged from the run's own counter).
+  'marked_day': TrialDef(
+    'marked_day',
+    'The Marked Day',
+    'Temper at least one die face at a rest fire.',
+    goalId: 'tempers_at_least',
+    goalParam: 1,
     emberBonus: 15,
   ),
 };

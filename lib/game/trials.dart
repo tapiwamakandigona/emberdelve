@@ -58,8 +58,11 @@ bool trialGoalMet(TrialDef trial, Map<String, Object?> run, RunTrace trace) {
     case 'embers_at_least':
       return ((run['embers'] as int?) ?? 0) >= trial.goalParam;
     case 'clean_floors_at_least':
-      return trace.marks.where((m) => m == markClean).length >=
-          trial.goalParam;
+      return trace.marks.where((m) => m == markClean).length >= trial.goalParam;
+    // v0.147.0 The Marked Day: the temper arc's first trial. Pure
+    // observation of the run's own counter — the sim stays sealed.
+    case 'tempers_at_least':
+      return ((run['tempers_used'] as int?) ?? 0) >= trial.goalParam;
     default:
       return false;
   }
