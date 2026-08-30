@@ -131,6 +131,7 @@ void main() {
     m.dailiesPlayed = 999;
     m.winsNoRest = 999;
     m.hardWins = 999;
+    m.tempersSet = 999;
     for (final id in characters.keys) {
       m.charWins[id] = 999;
       m.charHardWins[id] = 999;

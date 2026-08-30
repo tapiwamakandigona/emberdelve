@@ -129,6 +129,10 @@ class MetaState {
   int lastWeeklyFloors;
   String lastWeeklyMutator;
   int weekliesPlayed; // Weekly Delves FINISHED (abandoning counts for nothing)
+  // v0.125.0 The Tempered Hand: faces tempered across the lifetime — banked
+  // at run end from the run's own tempers_used (wins AND losses; the forge
+  // work was real either way). Monotonic; cloud merge MAX.
+  int tempersSet;
   // v0.112.0 The Frostvein: weeklies WON on a doubled week. Monotonic — a
   // derived gate that could re-lock froze hearthgold once (v0.100.0); a
   // counter that only climbs can never take a vista back.
@@ -239,6 +243,7 @@ class MetaState {
     this.lastWeeklyFloors = 0,
     this.lastWeeklyMutator = '',
     this.weekliesPlayed = 0,
+    this.tempersSet = 0,
     this.doubledWins = 0,
     List<Map<String, Object?>>? runHistory,
     this.forgeUnlocked = false,
@@ -329,6 +334,7 @@ class MetaState {
     if (lastWeeklyKey != null) 'lastWeeklyFloors': lastWeeklyFloors,
     if (lastWeeklyKey != null) 'lastWeeklyMutator': lastWeeklyMutator,
     if (weekliesPlayed > 0) 'weekliesPlayed': weekliesPlayed,
+    if (tempersSet > 0) 'tempersSet': tempersSet,
     if (doubledWins > 0) 'doubledWins': doubledWins,
     if (runHistory.isNotEmpty) 'runHistory': runHistory,
     if (forgeUnlocked) 'forgeUnlocked': true,
@@ -525,6 +531,7 @@ class MetaState {
     lastWeeklyFloors: j['lastWeeklyFloors'] as int? ?? 0,
     lastWeeklyMutator: j['lastWeeklyMutator'] as String? ?? '',
     weekliesPlayed: j['weekliesPlayed'] as int? ?? 0,
+    tempersSet: j['tempersSet'] as int? ?? 0,
     doubledWins: j['doubledWins'] as int? ?? 0,
     runHistory: ((j['runHistory'] as List?) ?? const [])
         .whereType<Map>()

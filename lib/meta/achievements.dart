@@ -52,6 +52,8 @@ int statValue(MetaState m, String stat, [String? param]) {
     // v0.107.0 The Unwritten Feats — same honesty contract: real banked
     // counters only, junk-proofed against hand-edited saves where a
     // catalog exists to check against.
+    case 'tempers_set':
+      return m.tempersSet;
     case 'weeklies_played':
       return m.weekliesPlayed;
     case 'codex_unsealed':
