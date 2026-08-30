@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.139.0';
+const String currentAppVersion = '0.140.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.140.0',
+    title: 'The Kept Hearth',
+    lines: [
+      'Two new hearth colours: Anvilglow, red-hot iron \u2014 and '
+          'Runefire, a violet flame that burns in marks.',
+      'Hearth Keeper now honestly asks for all fourteen.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.139.0',
     title: 'The Shown Anvil',

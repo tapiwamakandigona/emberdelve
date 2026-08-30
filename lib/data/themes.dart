@@ -35,6 +35,9 @@ const List<String> hearthThemesOrder = [
   // the hearth stays a chase deep into the macro loop. Order = price order.
   'ashrose', 'verdigris', 'stormglass', 'moonpale',
   'duskwine', 'saltflame', 'sunflare', 'voidcoal',
+  // v0.140.0 The Kept Hearth — the session's two arcs, on the hearth:
+  // anvil-orange and rune-violet. Order = price order, ladder ascends.
+  'anvilglow', 'runefire',
 ];
 
 const Map<String, HearthThemeDef> hearthThemes = {
@@ -133,6 +136,24 @@ const Map<String, HearthThemeDef> hearthThemes = {
     costEmbers: 400,
     warmArgb: 0xFF16121E,
     brightArgb: 0xFF5A4A8A,
+  ),
+  'anvilglow': HearthThemeDef(
+    'anvilglow',
+    'Anvilglow',
+    'Forge-orange off hot iron; the smith\u2019s own light.',
+    // Plate critique: the first pass read identical to Emberglow — a
+    // 440-ember colour must visibly differ. Red-hot iron, not campfire.
+    costEmbers: 440,
+    warmArgb: 0xFF8A1206,
+    brightArgb: 0xFFFF6A1A,
+  ),
+  'runefire': HearthThemeDef(
+    'runefire',
+    'Runefire',
+    'A violet flame that burns in marks, not tongues.',
+    costEmbers: 480,
+    warmArgb: 0xFF2E1E44,
+    brightArgb: 0xFFB98AE8,
   ),
 };
 

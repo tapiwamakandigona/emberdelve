@@ -3392,3 +3392,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   both existed): ALWAYS grep the feature area before scouting;
   the ledger already has LIFETIME/WITHIN REACH/RECENT DELVES.
 - 4 tests; plates approved. Suite 970/970. 0.139.0+165.
+
+## v0.140.0 — The Kept Hearth (2026-08-30)
+- HONESTY BUG FOUND BY AUDIT: hearth_keeper 'Own every hearth
+  colour' froze at target 4 (v0.3.3) while the shelf sold 12
+  since v0.4.3 — five months shipped-lying. Predates the
+  re-pricing doctrine; fixed by MOVING the target (promise
+  wording, pinned to hearthThemesOrder.length) + junk-proof
+  reader (v0.127 idiom = house style for every catalog stat).
+  AUDIT RULE: when touching any shelf, read its badge's target
+  against the live catalog FIRST.
+- Two colours: anvilglow 440 (re-graded after plate critique —
+  first pass read IDENTICAL to default Emberglow; paid colours
+  must visibly differ from free ones, compare against the
+  DEFAULT control not just each other), runefire 480 (violet,
+  approved first pass). 14 colours; ladder non-descending
+  (historical frostfire/witchlight 60/60 tie never re-prices —
+  guard is >= overall, strict pins for new).
+- 4 tests; plates approved. Suite 974/974. 0.140.0+166.
