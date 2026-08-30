@@ -24,13 +24,17 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('the Proven remains last; the new titles sit just before it', () {
-    expect(epithetsOrder.last, 'the_proven');
-    final tail = epithetsOrder.sublist(epithetsOrder.length - 4);
-    expect(tail, [
+    expect(
+      epithetsOrder.last,
+      'the_proven',
+      reason: 'the Provings summit stays the last word — real contract',
+    );
+    // v0.129.0: the_tempered/the_weathered slotted before the Proven; the
+    // wardrobe titles keep their append INDICES (the 'last' pin lesson).
+    expect(epithetsOrder.sublist(9, 12), [
       'the_deepdrawn',
       'the_measured',
       'the_six_handed',
-      'the_proven',
     ]);
   });
 

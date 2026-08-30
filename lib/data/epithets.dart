@@ -54,6 +54,9 @@ const List<String> epithetsOrder = [
   'the_deepdrawn',
   'the_measured',
   'the_six_handed',
+  // v0.129.0 The Earned Titles — same rule: before the Proven.
+  'the_tempered',
+  'the_weathered',
   'the_proven', // v0.59.0 — append-LAST rule
 ];
 
@@ -154,6 +157,25 @@ const Map<String, EpithetDef> epithets = {
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never
   // silently orphan the unlock line's promise.
+  // v0.129.0 The Earned Titles: tonight's two arcs, wearable. The
+  // Tempered shares the forgelight vista's rung (ten faces — one milestone,
+  // three rewards: vista, badge road, title). The Weathered is PROMISE-
+  // worded ('every rule'), so its target tracks the live rotation
+  // (§Re-pricing doctrine) — pinned to legalRuleLabels().length.
+  'the_tempered': EpithetDef(
+    'the_tempered',
+    'the Tempered',
+    unlockLine: 'Temper ten die faces.',
+    stat: 'tempers_set',
+    target: 10,
+  ),
+  'the_weathered': EpithetDef(
+    'the_weathered',
+    'the Weathered',
+    unlockLine: 'Win a Weekly under every rule in the rotation.',
+    stat: 'weekly_rules_won',
+    target: 6,
+  ),
   'the_proven': EpithetDef(
     'the_proven',
     'the Proven',

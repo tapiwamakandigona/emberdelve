@@ -3208,3 +3208,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   with zero new test code (the payoff of guard-style tests).
   Plates: forgesoot worn 360/320 + skins shelf (tempered LIT,
   runeglass priced). Suite 927/927. 0.128.0+154.
+
+## v0.129.0 — The Earned Titles (2026-08-30)
+- Epithets the_tempered (tempers_set 10 — the forgelight rung: one
+  milestone, three rewards) + the_weathered (weekly_rules_won,
+  target pinned to legalRuleLabels().length — promise wording,
+  count-free name per the Many-Handed doctrine). 15 epithets.
+  Slotted BEFORE the_proven; its 'last' pin is a REAL contract
+  (the summit closes the shelf by design) — contrast the three
+  catalog 'last' pins fixed this session. Zero new resolver code
+  (epithets read statValue — v0.127 junk-proofing inherited free).
+- REWARD-TIER DOCTRINE: titles mark ARRIVAL (vista's rung), badges
+  mark ACCUMULATION (the long road) — don't put a title at the
+  badge's far end. deep_wardrobe tail pin → index pins.
+- 4 tests; plates approved. Suite 931/931. 0.129.0+155.
