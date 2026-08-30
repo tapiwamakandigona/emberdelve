@@ -3172,3 +3172,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   every anchor. Open lanes: temper runes, meta layer, cosmetics.
 - 4 tests; plates approved after one strengthening. Suite 920/920.
   0.126.0+152.
+
+## v0.127.0 — The Full Rotation (2026-08-30)
+- meta.weeklyRulesWon: canonical rule labels (sorted '+'-joined
+  ids) banked on WON weeklies beside doubledWins; junk-proof via
+  legalRuleLabels() derived from the LIVE rotation (a 7th rule
+  counts the moment it can be dealt; full_rotation's promise-worded
+  target pinned to the live count). canonicalRuleLabel +
+  legalRuleLabels live in lib/game/weekly.dart and feed banking,
+  stat, and title line — one source, three surfaces, can't
+  disagree. Union merge; persist when non-empty.
+- Title weekly block gains 'Rules taken: N of 6' (waymark-line
+  rule: hidden at zero; junk labels never inflate — UI pin proves
+  it). + Rule Taken (1) / The Full Rotation (6). 60 achievements.
+- COLLECTION AUDIT NOTE: every repeatable mode now feeds a
+  collection (enemies→codex, provings→Proven, delvers→Seven Ways,
+  tempers→forge arc, weekly rules→Full Rotation). Dailies remain
+  record-only BY CHARTER (no history/streaks — §Ethics).
+- End-to-end pin rides the 2026-02-02 doubled Monday bot-win
+  (banks exactly {'no_rests+no_shops'}). 7 tests; plates approved.
+  Suite 927/927. 0.127.0+153.

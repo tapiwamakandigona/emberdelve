@@ -283,6 +283,24 @@ class TitleScreen extends StatelessWidget {
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
+                                // v0.127.0 The Full Rotation: the collection
+                                // fact, shown only once it exists (the
+                                // waymark-line rule: no homework at zero).
+                                if (m.weeklyRulesWon
+                                    .where(legalRuleLabels().contains)
+                                    .isNotEmpty) ...[
+                                  const SizedBox(height: Space.xs),
+                                  Text(
+                                    'Rules taken: '
+                                    '${m.weeklyRulesWon.where(legalRuleLabels().contains).length}'
+                                    ' of ${legalRuleLabels().length}',
+                                    key: const ValueKey('weekly-rules-taken'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ],
                               const SizedBox(height: Space.m),
                               SizedBox(

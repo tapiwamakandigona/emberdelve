@@ -1362,6 +1362,14 @@ class GameController extends ChangeNotifier {
       if (sim!.phase == 'run_won' && (weeklyMutator ?? '').contains('+')) {
         meta.doubledWins += 1;
       }
+      // v0.127.0 The Full Rotation: the rule this win was taken under,
+      // banked canonically. Only labels the rotation can deal count.
+      if (sim!.phase == 'run_won' && (weeklyMutator ?? '').isNotEmpty) {
+        final label = canonicalRuleLabel(weeklyMutator!);
+        if (legalRuleLabels().contains(label)) {
+          meta.weeklyRulesWon.add(label);
+        }
+      }
     }
     // v0.5.0 Delver's Ledger counters. All banked from what actually happened
     // this run: the deepest layer stood on, a finished daily, a win with no
