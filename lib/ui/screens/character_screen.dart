@@ -661,8 +661,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
     // the tally when one exists. Older profiles seed it from the run
     // history on load; a delver with runs but no provable depth (a
     // pre-ledger save) shows the tally alone — never a guessed floor.
+    // v0.123.0 The Crowned Company: hard wins join the tally the same way
+    // depth did — only when one exists, never a guessed zero.
+    final crowns = m.charHardWins[id] ?? 0;
+    final crowned = crowns > 0 ? '$base · $crowns hard' : base;
     final depth = m.charBestFloor[id] ?? 0;
-    return depth > 0 ? '$base · floor $depth' : base;
+    return depth > 0 ? '$crowned · floor $depth' : crowned;
   }
 
   Widget _charCard(BuildContext context, String id) {

@@ -77,6 +77,7 @@ const Set<String> achievementStats = {
   'wins_no_rest',
   'themes_owned',
   'hard_wins',
+  'delvers_crowned',
   'delvers_cleared',
   'provings_cleared', // v0.59.0 The Proven
   // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
@@ -112,7 +113,8 @@ const List<String> achievementsOrder = [
   // --- the daily ---------------------------------------------------------
   'daily_first', 'daily_ten', 'daily_thirty',
   // --- the endgame (Forge territory) -------------------------------------
-  'hard_clear', 'hard_five', 'ascension_three', 'ascension_ten',
+  'hard_clear', 'hard_five', 'three_crowns', 'crowned_company',
+  'ascension_three', 'ascension_ten',
   'ascension_twenty',
   // --- the unwritten feats (v0.107.0): the systems that grew after --------
   'weekly_first', 'weekly_ten',
@@ -444,6 +446,24 @@ const Map<String, AchievementDef> achievements = {
     'Win a run on hard.',
     stat: 'hard_wins',
     target: 1,
+  ),
+  // v0.123.0 The Crowned Company: hard mastery charted per delver. The
+  // company achievement is PROMISE-worded ('every delver'), so its target
+  // tracks the live roster and the name stays count-free (§Re-pricing
+  // doctrine, v0.119.0).
+  'three_crowns': AchievementDef(
+    'three_crowns',
+    'Three Crowns',
+    'Win on hard with 3 different delvers.',
+    stat: 'delvers_crowned',
+    target: 3,
+  ),
+  'crowned_company': AchievementDef(
+    'crowned_company',
+    'The Crowned Company',
+    'Win on hard with every delver.',
+    stat: 'delvers_crowned',
+    target: 7,
   ),
   'hard_five': AchievementDef(
     'hard_five',

@@ -1381,6 +1381,8 @@ class GameController extends ChangeNotifier {
       if (!_restedThisRun) meta.winsNoRest += 1;
       if ((run['difficulty'] as String? ?? 'normal') == 'hard') {
         meta.hardWins += 1;
+        // v0.123.0 The Crowned Company: the same win, charted per delver.
+        meta.charHardWins[char] = (meta.charHardWins[char] ?? 0) + 1;
       }
       // The encounter in progress at a win is the boss by construction. Guard
       // on the roster anyway so a future enemy id can never poison the set.

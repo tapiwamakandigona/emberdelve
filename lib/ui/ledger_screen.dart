@@ -827,9 +827,12 @@ class _LedgerScreenState extends State<LedgerScreen> {
     // Charted-depth honesty rule (v0.65.0): a zero floor is a pre-ledger
     // save or an untouched delver — never shown as a guessed 'floor 0'.
     final depth = (m.charBestFloor[id] as int?) ?? 0;
+    // v0.123.0 The Crowned Company: hard wins, shown only once one exists.
+    final crowns = (m.charHardWins[id] as int?) ?? 0;
     final tally = unlocked
         ? '$wins ${wins == 1 ? 'win' : 'wins'} · '
               '$runs ${runs == 1 ? 'delve' : 'delves'}'
+              '${crowns > 0 ? ' · $crowns hard' : ''}'
               '${depth > 0 ? ' · floor $depth' : ''}'
         : 'locked';
     return Row(
