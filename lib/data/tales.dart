@@ -90,6 +90,35 @@ const List<String> hearthTales = [
       'anyway. That is not bravery, the wardens say — it is practice.',
   'The third telling of a tale is the one that sticks. Ask the fire; '
       'it has been counting.',
+  // v0.137.0 The Fourth Cycle: ten more — this pass sits with the anvil
+  // and the calendar, the arcs the delve grew after the third telling.
+  // Same charter: every line states one fact the game can prove.
+  'The smith at these fires takes no ember and gives no name. Ask '
+      'for a mark instead \u2014 two a delve is the smith\u2019s limit, '
+      'and the smith does not bend it.',
+  'Six runes come off that anvil: a blade\u2019s edge, an aegis\u2019s '
+      'hold, a surge returned, an echo passed on, a mend, a little '
+      'gold. The delve honors whoever has worked all six.',
+  'The runesmith went down before the company had a name for going '
+      'down, and came back marked. The smith has never once said '
+      'whether they taught the runesmith, or the other way round.',
+  'Every Monday the delve deals a rule \u2014 flint dice, elite '
+      'floors, shut shops, a short road, cold camps. Take all of them '
+      'once and you will have seen the whole rotation.',
+  'Once a rotation the delve deals two rules at once. The wardens '
+      'call that week the Cold Quarter, and they pack for it.',
+  'The Codex seals nothing that matters: every record is free. What '
+      'costs embers is only the deep\u2019s own words about itself.',
+  'Some walls hold their color \u2014 moon-blue, frost-pale, forge-'
+      'orange, rune-violet. A vista is the delve remembering how you '
+      'earned its light.',
+  'A tempered face pays on the roll it was made for and on no other. '
+      'The anvil does not do luck; it does promises.',
+  'The provings are delves that never change \u2014 same seed, same '
+      'road \u2014 so a delver can be measured against the delve '
+      'instead of against the dice.',
+  'Eight chairs at this fire now, and the delve answers each one '
+      'differently. That is the whole game, if you ask the fire.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.
