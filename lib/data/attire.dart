@@ -51,6 +51,7 @@ const List<String> delverDyesOrder = [
   'wyrmshade',
   'emberheart', // v0.94.0 The Deep Wardrobe
   'glowmere', // v0.94.0 The Deep Wardrobe
+  'forgesoot', // v0.128.0 The Smith's Shelf
 ];
 
 const Map<String, DelverDyeDef> delverDyes = {
@@ -139,5 +140,17 @@ const Map<String, DelverDyeDef> delverDyes = {
     hueDeg: 160,
     satMul: 0.9,
     valMul: 1.05,
+  ),
+  // v0.128.0 The Smith's Shelf: the plate audit's remaining gap — nothing
+  // DARK on the shelf (every dye brightens or recolors; none smolders).
+  'forgesoot': DelverDyeDef(
+    'forgesoot',
+    'Forgesoot',
+    'Cloth that worked the bellows. The soot never washes out; the '
+        'warmth never quite leaves.',
+    costEmbers: 640,
+    hueDeg: 8,
+    satMul: 0.7,
+    valMul: 0.8,
   ),
 };
