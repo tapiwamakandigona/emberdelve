@@ -3508,3 +3508,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   default maxScrolls 50 — honors releases lengthen the ledger
   above the shelves; budget now 200.
 - 3 tests; plates approved. Suite 993/993. 0.146.0+172.
+
+## v0.147.0 — The Marked Day (2026-08-30)
+- Trial rotation coverage audit: the anvil (signature mechanic,
+  two delvers + a vista built on it) had no day. Added marked_day
+  goal day (temper >= 1, 15 embers) + NEW goal kind
+  tempers_at_least (one switch case reading the run's own counter
+  — sealed sim held). Append-LAST on rotation (one modulus, not a
+  reshuffle). trials_test known-goals set updated.
+- FORWARD-COMPAT PINNED: marked_day_test proves the judge's
+  default arm (unknown goal id = silence, not crash) — the
+  charter's promise now has a test.
+- BANNED-LIST BITE #2: my news line 'nothing expires' contains
+  'expire' — the substring list is absolute EVEN when denying the
+  thing (v0.131 lesson, news edition). news_test caught it.
+- No plates (same title widget as all 8 trials; tool reads real
+  clock). 3 tests. Suite 996/996. 0.147.0+173.
