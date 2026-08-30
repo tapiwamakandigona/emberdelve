@@ -52,6 +52,7 @@ const List<String> vistasOrder = [
   'hearthgold', // v0.98.0 — append-LAST
   'frostvein', // v0.112.0 — append-LAST
   'forgelight', // v0.126.0 — append-LAST
+  'runemark', // v0.134.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -169,6 +170,22 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.12,
     wash: Color(0x66E8571F),
   ),
+  // v0.134.0 The Runemark — the Six Marks summit (every rune worked at
+  // least once, v0.133.0), and the first VIOLET grade: runeglass light,
+  // cool and arcane where forgelight burns. Opened BOLD per the grade
+  // doctrine (frostvein/forgelight both shipped 'too timid' first passes).
+  'runemark': VistaDef(
+    'runemark',
+    'Runemark',
+    'Six runes, each worked into stone at least once. The walls keep '
+        'the marks the way glass keeps light \u2014 cold, violet, and '
+        'patient.',
+    unlockLine: 'Temper every rune the anvil offers.',
+    hueDeg: 155,
+    satMul: 1.35,
+    valMul: 1.06,
+    wash: Color(0x5C7B4FC0),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -186,6 +203,7 @@ bool vistaUnlockedFor(
   required int talesHeard,
   required int doubledWins,
   required int tempersSet,
+  required int runesMarked,
 }) {
   switch (id) {
     case 'emberlight':
@@ -215,6 +233,11 @@ bool vistaUnlockedFor(
     // banked win or lose, never derivable, never re-locks.
     case 'forgelight':
       return tempersSet >= 10;
+    // v0.134.0: the distinct-rune count (junk-proofed at the reader,
+    // v0.133.0). FROZEN at six — a gate that tracked the live rune set
+    // would re-lock earned vistas if the anvil ever grows (v0.100 lesson).
+    case 'runemark':
+      return runesMarked >= 6;
     default:
       return false;
   }
