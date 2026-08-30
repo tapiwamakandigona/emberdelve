@@ -126,6 +126,7 @@ void main() {
         ContextTips.rollSpend,
         ContextTips.intentFair,
         ContextTips.combosPay,
+        ContextTips.firstAnvil, // v0.139.0 joined the deck
       });
       expect(d.onIntent({'kind': 'attack', 'amount': 6}), isNotNull);
       expect(d.dismiss(), isTrue);
@@ -176,16 +177,12 @@ void main() {
       final local = MetaState(tipsSeen: {ContextTips.rollSpend});
       final cloud = MetaState(tipsSeen: {ContextTips.combosPay});
       final merged = mergeMetaStates(local, cloud);
-      expect(
-        merged.tipsSeen,
-        {ContextTips.rollSpend, ContextTips.combosPay},
-      );
+      expect(merged.tipsSeen, {ContextTips.rollSpend, ContextTips.combosPay});
     });
   });
 
   group('GameController', () {
-    test('dismissTip persists via the shared set and sets the legacy flag',
-        () {
+    test('dismissTip persists via the shared set and sets the legacy flag', () {
       final c = GameController();
       c.meta.tipsSeen.addAll(
         ContextTips.all.where((t) => t != ContextTips.rollSpend),
@@ -200,62 +197,62 @@ void main() {
   });
 
   testWidgets(
-      'every tip card fits the smallest supported screen at 1.3x text', (
-    tester,
-  ) async {
-    // DEMAND overflow sweep: 320x568 at 1.3x — a RenderFlex overflow throws
-    // in tests, so pumping each card here IS the assertion.
-    tester.view.physicalSize =
-        const Size(320, 568) * tester.view.devicePixelRatio;
-    addTearDown(tester.view.resetPhysicalSize);
+    'every tip card fits the smallest supported screen at 1.3x text',
+    (tester) async {
+      // DEMAND overflow sweep: 320x568 at 1.3x — a RenderFlex overflow throws
+      // in tests, so pumping each card here IS the assertion.
+      tester.view.physicalSize =
+          const Size(320, 568) * tester.view.devicePixelRatio;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    final c = GameController();
-    c.meta.tourSeenVersion = tourVersion; // tips-in-isolation (see above)
-    c.tour = TourDirector(seenVersion: tourVersion);
-    Widget app() => MaterialApp(
-      theme: buildEmberTheme(),
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: const TextScaler.linear(1.3)),
-        child: child!,
-      ),
-      home: GameRoot(c),
-    );
-    await tester.pumpWidget(app());
-    c.startRun(character: 'kindler', seed: 1);
-    await pumpFor(tester, 700);
-    final map = c.state!['map'] as Map;
-    final edges = (map['edges'] as Map).cast<String, List>();
-    var guard = 0;
-    while (c.phase == 'map' && guard++ < 10) {
-      final position = (c.state!['map'] as Map)['position'] as int;
-      final next = (edges['$position'] as List).cast<int>().first;
-      c.apply({'type': 'choose_node', 'node': next});
+      final c = GameController();
+      c.meta.tourSeenVersion = tourVersion; // tips-in-isolation (see above)
+      c.tour = TourDirector(seenVersion: tourVersion);
+      Widget app() => MaterialApp(
+        theme: buildEmberTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.3)),
+          child: child!,
+        ),
+        home: GameRoot(c),
+      );
+      await tester.pumpWidget(app());
+      c.startRun(character: 'kindler', seed: 1);
       await pumpFor(tester, 700);
-      if (c.phase == 'reward') c.apply({'type': 'choose_reward', 'index': 0});
-      if (c.phase == 'rest') c.apply({'type': 'rest'});
-      if (c.phase == 'shop') c.apply({'type': 'leave_shop'});
-      if (c.phase == 'event') c.apply({'type': 'event_choose', 'option': 1});
-      await pumpFor(tester, 700);
-    }
-    if (c.phase != 'player_turn') return;
-    await pumpFor(tester, 2200);
+      final map = c.state!['map'] as Map;
+      final edges = (map['edges'] as Map).cast<String, List>();
+      var guard = 0;
+      while (c.phase == 'map' && guard++ < 10) {
+        final position = (c.state!['map'] as Map)['position'] as int;
+        final next = (edges['$position'] as List).cast<int>().first;
+        c.apply({'type': 'choose_node', 'node': next});
+        await pumpFor(tester, 700);
+        if (c.phase == 'reward') c.apply({'type': 'choose_reward', 'index': 0});
+        if (c.phase == 'rest') c.apply({'type': 'rest'});
+        if (c.phase == 'shop') c.apply({'type': 'leave_shop'});
+        if (c.phase == 'event') c.apply({'type': 'event_choose', 'option': 1});
+        await pumpFor(tester, 700);
+      }
+      if (c.phase != 'player_turn') return;
+      await pumpFor(tester, 2200);
 
-    // Direct field pokes don't notify, and the combat screen is scope-cached
-    // (game_root's _scoped) — but its build reads MediaQuery.sizeOf, so a
-    // 1-px height jiggle forces the rebuild. Both heights stay "short".
-    var h = 568.0;
-    for (final id in ContextTips.all) {
-      c.tipDirector.active = id;
-      h = h == 568.0 ? 567.0 : 568.0;
-      tester.view.physicalSize = Size(320, h) * tester.view.devicePixelRatio;
-      await pumpFor(tester, 300);
-      expect(find.byKey(Key('tip-$id')), findsOneWidget);
-      c.tipDirector.active = null;
-    }
-    await pumpFor(tester, 800); // drain animations before teardown
-  });
+      // Direct field pokes don't notify, and the combat screen is scope-cached
+      // (game_root's _scoped) — but its build reads MediaQuery.sizeOf, so a
+      // 1-px height jiggle forces the rebuild. Both heights stay "short".
+      var h = 568.0;
+      for (final id in ContextTips.all) {
+        c.tipDirector.active = id;
+        h = h == 568.0 ? 567.0 : 568.0;
+        tester.view.physicalSize = Size(320, h) * tester.view.devicePixelRatio;
+        await pumpFor(tester, 300);
+        expect(find.byKey(Key('tip-$id')), findsOneWidget);
+        c.tipDirector.active = null;
+      }
+      await pumpFor(tester, 800); // drain animations before teardown
+    },
+  );
 
   testWidgets('first fight: roll_spend tip shows, the old wall does not', (
     tester,

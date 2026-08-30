@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.138.0';
+const String currentAppVersion = '0.139.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.139.0',
+    title: 'The Shown Anvil',
+    lines: [
+      'New delvers now meet the smith properly: one card, at the '
+          'first fire where a temper waits, naming all six runes.',
+      'Once ever, dismissed with a tap \u2014 the usual rules.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.138.0',
     title: 'The Delver\u2019s Dice',
