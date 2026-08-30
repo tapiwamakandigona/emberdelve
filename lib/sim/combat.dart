@@ -765,6 +765,23 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     };
     _push(events, {'type': 'echo_armed', 'die': die, 'other_action': other});
   }
+  // v0.124.0 The Mender's Mark: the mend rune heals 1 after its assignment
+  // resolves — capped at max hp, and a full delver simply banks nothing
+  // (the counted-heal honesty rule: never a phantom gain).
+  if (resolution.rune == 'mend') {
+    final hp = sim.player['hp'] as int;
+    final maxHp = sim.player['max_hp'] as int;
+    final healed = (hp + 1).clamp(0, maxHp) - hp;
+    if (healed > 0) {
+      sim.player['hp'] = hp + healed;
+      _push(events, {
+        'type': 'player_healed',
+        'amount': healed,
+        'source': 'mend_rune',
+        'hp': sim.player['hp'],
+      });
+    }
+  }
 }
 
 void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {

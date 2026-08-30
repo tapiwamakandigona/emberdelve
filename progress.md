@@ -3112,3 +3112,25 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   run['difficulty'] inside a difficulty hunt.
 - 5 tests; plates approved (four-part tally wraps at 320). Suite
   906/906. 0.123.0+149.
+
+## v0.124.0 — The Mender's Mark (2026-08-30)
+- FIFTH TEMPER RUNE 'mend': on the natural tempered face, assigning
+  the die (either verb) mends 1 HP, capped, counted-heal honesty
+  (no gain → no event). First new combat mechanic since the Face
+  Forge — and ZERO re-anchor by construction: the golden bot's
+  temper policy is OFF (v7 rule), so the temper system is the open
+  gameplay-content lane (relics/events/enemies all re-roll
+  published promises — v0.123.0 audit). Rune wiring checklist:
+  faceRunes set (run_layer validates 'unknown_rune' against it) +
+  runeName + runeBlurb + temper_sheet offer list + assignment.dart
+  trigger + combat.dart payoff (echo precedent: pays AFTER the
+  assignment, outside value math).
+- PLATE-FONT LESSON (cost ~40 min): a cloned plate tool without
+  loadRealFonts renders Ahem squares ~2x taller — faked a 172px
+  rest-screen overflow at 320 and I nearly 'fixed' a healthy
+  screen. The original temper tool never loaded fonts (its 412/360
+  probes just happened to fit). EVERY plate tool must
+  loadRealFonts; verify a plate-found failure is real (probe WITH
+  fonts) before touching product code.
+- 6 tests; plates approved (five-rune sheet scrolls at 320, commit
+  pinned). Suite 912/912. 0.124.0+150.
