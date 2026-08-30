@@ -135,6 +135,10 @@ AssignmentResolution resolveAssignment({
     } else if (rune == 'echo') {
       // Echo pays by arming the opposite verb, not by raising this value.
       triggeredRune = rune;
+    } else if (rune == 'mend') {
+      // v0.124.0 Mend pays in HP after the assignment resolves (combat
+      // layer), not by raising this value — echo precedent.
+      triggeredRune = rune;
     }
   }
   value += runeBonus;

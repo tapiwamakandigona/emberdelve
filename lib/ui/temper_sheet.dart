@@ -154,7 +154,13 @@ class _TemperSheetState extends State<TemperSheet> {
 
                       Text('3 · WHICH RUNE', style: EmberText.micro),
                       const SizedBox(height: Space.s),
-                      for (final rune in ['blade', 'aegis', 'surge', 'echo'])
+                      for (final rune in [
+                        'blade',
+                        'aegis',
+                        'surge',
+                        'echo',
+                        'mend',
+                      ])
                         Padding(
                           padding: const EdgeInsets.only(bottom: Space.s),
                           child: _runeRow(rune),
