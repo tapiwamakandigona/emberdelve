@@ -2979,3 +2979,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   97-entry ListView need scroll budget 600×maxScrolls 400 (clone
   default 200×40 dies as "Bad state: No element"). 4 tests; plates
   360/320 approved. Suite 881/881. 0.116.0+142.
+
+## v0.117.0 — The Winter Proving (2026-08-29)
+- 13th proving: the PEDDLER under Cold Quarter (no_shops+no_rests) —
+  the merchant with nowhere to spend; the doubled week held still so
+  the rotation peak can be practiced any day (the ethics answer to
+  FOMO: nothing is exclusive to the appointment). Seed 4 (variety;
+  peddler pair wins 1/2/4, kindler also 1/2/4 — pick was flavor).
+  Inserted after cold_proving; ash_summit stays last. the_proven
+  12→13; provings_test pins 12→13, '0 of 13'/'1 of 13'. Set-equality
+  clear-match proven vs half-pair. LESSON: pair maps are all fights —
+  driveToTerminal guard 4000, not 400. PLATE-META LESSON: proving
+  plates need the proving's DELVER unlocked in meta or the start
+  button never renders. 3 tests; plates approved (code suppressed,
+  both rule names in meta line). Suite 884/884. 0.117.0+143.
