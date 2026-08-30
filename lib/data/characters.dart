@@ -38,6 +38,8 @@ const List<String> charactersOrder = [
   'ascetic',
   'peddler',
   'tinker',
+  // v0.118.0 — append-LAST, same discipline as every roster bit.
+  'flintwright',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -106,6 +108,19 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6_steady', 'd6', 'd4'],
     startRelic: 'loaded_pips',
     unlockEmbers: 600,
+  ),
+  // v0.118.0 The Flintwright: the SWARM archetype — the only delver who
+  // starts with FOUR dice, and none of them grand. More rolls, smaller
+  // promises, twice the forge futures. Pure data (existing dice only), so
+  // seeded runs for every other delver are untouched — no re-anchor.
+  // Balance swept before shipping; hp is the tuning knob (see release notes).
+  'flintwright': CharacterDef(
+    'flintwright',
+    'The Flintwright',
+    'The swarm: FOUR small dice, 24 HP — shards and chips, nothing grand.',
+    maxHp: 24,
+    startDice: ['d4', 'd4', 'd4_spark', 'd4_guard'],
+    unlockEmbers: 750,
   ),
 };
 

@@ -719,7 +719,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
                       // field restores the true name. Locked delvers keep
                       // their roster name untouchable.
                       if (!unlocked)
-                        Text(def.name, style: EmberText.h2)
+                        // Fit, don't wrap: 'The Flintwright' (v0.118.0) is
+                        // the first roster name long enough to break
+                        // mid-word at 320 dp — same rule as given names.
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(def.name, style: EmberText.h2),
+                        )
                       else
                         InkWell(
                           key: ValueKey('name-edit-$id'),

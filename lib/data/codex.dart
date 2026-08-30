@@ -159,6 +159,14 @@ final List<CodexEntryDef> codexEntries = [
         'forge between floors knows them by their knock, and the smith — '
         'who takes no ember and gives no name — has twice almost smiled.',
   ),
+  // v0.118.0: the seventh chair at the fire.
+  _delver(
+    'flintwright',
+    'Cuts shards where other delvers carry stones, and carries four of '
+        'them, because a pocketful of small promises has never once been '
+        'a single broken one. The company laughed until the counting '
+        'started.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

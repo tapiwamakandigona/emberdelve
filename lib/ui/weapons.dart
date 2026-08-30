@@ -107,6 +107,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.55,
     swingAngle: 1.8,
   ),
+  // Swarm (v0.118.0): a short knapping pick — the tool that makes shards.
+  // Stubby reach (the flintwright fights close, like their dice: small and
+  // many), flint-tan accent to match the sheet's palette.
+  'flintwright': WeaponDef(
+    'knapping_pick',
+    'Knapping Pick',
+    accent: Color(0xFFC9B98F),
+    reach: 0.42,
+    idleAngle: 0.40,
+    raiseAngle: -1.70,
+    swingAngle: 1.95,
+  ),
 };
 
 WeaponDef weaponFor(String characterId) =>

@@ -35,22 +35,32 @@ Future<void> pumpFor(WidgetTester tester, int ms) async {
 void main() {
   test('definition and sim application match the card text exactly', () {
     final def = characters['tinker']!;
-    expect(charactersOrder.last, 'tinker',
-        reason: 'appended LAST so existing delve-code indexes stay stable');
+    // v0.118.0: the flintwright is appended after; the tinker's INDEX is
+    // the stability contract (delve-code bits 31..34), not last place.
+    expect(
+      charactersOrder.indexOf('tinker'),
+      5,
+      reason: 'index 5 so existing delve-code indexes stay stable',
+    );
     expect(def.maxHp, 30);
     expect(def.startDice, ['d6_steady', 'd6', 'd4']);
-    expect(def.startRelic, 'loaded_pips',
-        reason: 'an EXISTING relic on purpose — a new relic would resize the '
-            'shop offer pool and re-anchor every golden');
+    expect(
+      def.startRelic,
+      'loaded_pips',
+      reason:
+          'an EXISTING relic on purpose — a new relic would resize the '
+          'shop offer pool and re-anchor every golden',
+    );
     expect(def.unlockEmbers, 600);
 
     final c = GameController();
     c.startRun(character: 'tinker', seed: 1, boons: false);
     expect(c.sim!.player['max_hp'], 30);
-    expect(
-      (c.sim!.player['dice'] as List).whereType<String>().toList(),
-      ['d6_steady', 'd6', 'd4'],
-    );
+    expect((c.sim!.player['dice'] as List).whereType<String>().toList(), [
+      'd6_steady',
+      'd6',
+      'd4',
+    ]);
     expect(
       (c.sim!.run!['relics'] as List).cast<String>(),
       contains('loaded_pips'),
@@ -72,27 +82,35 @@ void main() {
     expect(back.seed, 42);
     // Pre-v0.50.0 indexes unchanged: a code minted before the roster grew
     // still names the same delver.
-    for (final (i, id)
-        in ['kindler', 'warden', 'gambler', 'ascetic', 'peddler'].indexed) {
+    for (final (i, id) in [
+      'kindler',
+      'warden',
+      'gambler',
+      'ascetic',
+      'peddler',
+    ].indexed) {
       expect(charactersOrder.indexOf(id), i);
     }
   });
 
-  test('bot viability pins: seed 1 wins easy and normal, seed 18 loses easy',
-      () {
-    expect(
-      playRun(1, character: 'tinker', difficulty: 'easy').sim.phase,
-      'run_won',
-    );
-    expect(
-      playRun(1, character: 'tinker', difficulty: 'normal').sim.phase,
-      'run_won',
-    );
-    expect(
-      playRun(18, character: 'tinker', difficulty: 'easy').sim.phase,
-      'run_lost',
-    );
-  }, timeout: const Timeout(Duration(minutes: 5)));
+  test(
+    'bot viability pins: seed 1 wins easy and normal, seed 18 loses easy',
+    () {
+      expect(
+        playRun(1, character: 'tinker', difficulty: 'easy').sim.phase,
+        'run_won',
+      );
+      expect(
+        playRun(1, character: 'tinker', difficulty: 'normal').sim.phase,
+        'run_won',
+      );
+      expect(
+        playRun(18, character: 'tinker', difficulty: 'easy').sim.phase,
+        'run_lost',
+      );
+    },
+    timeout: const Timeout(Duration(minutes: 5)),
+  );
 
   test('roster achievements grew with the roster', () {
     final tw = achievements['tinker_wins']!;
