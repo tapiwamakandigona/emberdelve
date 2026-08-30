@@ -60,6 +60,14 @@ void main() {
       maxScrolls: 400,
     );
     expect(find.text('THE DICE'), findsOneWidget);
+    // v0.131.0: THE RULES sits above; scroll on to the first die card
+    // (the header can land at the viewport edge with the card below it).
+    await tester.scrollUntilVisible(
+      find.text('Ember Die'),
+      400,
+      scrollable: scrollable,
+      maxScrolls: 40,
+    );
     expect(find.text('Ember Die'), findsOneWidget);
   });
 

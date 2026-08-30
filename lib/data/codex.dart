@@ -47,6 +47,21 @@ CodexEntryDef _delver(String refId, String text) =>
     CodexEntryDef('delver:$refId', 'delver', refId, text, costEmbers: 15);
 CodexEntryDef _die(String refId, String text) =>
     CodexEntryDef('die:$refId', 'die', refId, text, costEmbers: 15);
+// v0.131.0 The Written Rules: the weekly calendar's own words — priced
+// like places (the calendar is world, not tool).
+CodexEntryDef _rule(String refId, String text) =>
+    CodexEntryDef('rule:$refId', 'rule', refId, text, costEmbers: 10);
+
+/// Display names for 'rule' entries. Five ids mirror lib/data/mutators.dart
+/// (asserted by test); 'cold_quarter' is the doubled week's own name.
+const Map<String, String> ruleNames = {
+  'all_d4': 'Flint Week',
+  'elites_only': 'Elite Gauntlet',
+  'no_shops': 'No Quarter',
+  'short_road': 'Short Road',
+  'no_rests': 'Cold Camps',
+  'cold_quarter': 'Cold Quarter',
+};
 
 /// Display names for 'place' entries — places exist only in the Codex, so
 /// the name lives beside the lore. Append-only, like every catalog.
@@ -629,6 +644,43 @@ final List<CodexEntryDef> codexEntries = [
     'The deep\'s own stone, still warm when it is carved. Twelve faces '
         'hold the biggest words a die can say, and the delve listens when '
         'they land. Nobody carries one by accident.',
+  ),
+  // the rules (v0.131.0) — the weekly calendar's own words -----------------
+  _rule(
+    'all_d4',
+    'The first Monday the delve dealt it, the smiths laughed. By the '
+        'third floor nobody was laughing: a d4 keeps every edge a die '
+        'ever earned and none of its reach.',
+  ),
+  _rule(
+    'elites_only',
+    'A week when the delve fields its captains and no one else. The '
+        'old hands pack for it like a war: harder road going down, '
+        'richer bags coming home.',
+  ),
+  _rule(
+    'no_shops',
+    'The peddler calls it his week off. Everyone else calls it what it '
+        'is: seven floors where gold is just a heavy way to count what '
+        'you cannot buy.',
+  ),
+  _rule(
+    'short_road',
+    'Six floors, cut clean. The delve does not shrink so much as '
+        'quicken; the deep foes arrive early, tuned to meet a shorter '
+        'blade.',
+  ),
+  _rule(
+    'no_rests',
+    'The week the camps go dark. Every hollow that should have held a '
+        'fire holds something waiting instead, and healing is a thing '
+        'you carry, not a place you find.',
+  ),
+  _rule(
+    'cold_quarter',
+    'Once a rotation the delve deals two rules at once: no shops, no '
+        'rests. The wardens named it the Cold Quarter and the name '
+        'stuck, the way frost does.',
   ),
 ];
 
