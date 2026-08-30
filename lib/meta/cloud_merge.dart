@@ -143,6 +143,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     seenAchievements: {...local.seenAchievements, ...cloud.seenAchievements},
     provingsCleared: {...local.provingsCleared, ...cloud.provingsCleared},
     weeklyRulesWon: {...local.weeklyRulesWon, ...cloud.weeklyRulesWon},
+    runesTempered: {...local.runesTempered, ...cloud.runesTempered},
     heardTracks: {...local.heardTracks, ...cloud.heardTracks},
     settledFoes: {...local.settledFoes, ...cloud.settledFoes},
     tipsSeen: {...local.tipsSeen, ...cloud.tipsSeen},

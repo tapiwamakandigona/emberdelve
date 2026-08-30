@@ -170,6 +170,8 @@ void main() {
     m.tempersSet = 1;
     // v0.127.0 The Full Rotation
     m.weeklyRulesWon.add('all_d4');
+    // v0.133.0 The Six Marks
+    m.runesTempered.add('blade');
     m.bossesBeaten.add('ember_tyrant');
     m.provingsCleared.add('first_flame'); // v0.59.0 provings_cleared
     // v0.107.0 The Unwritten Feats

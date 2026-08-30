@@ -512,6 +512,11 @@ void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   removeOrphanCustomDie(sim.run, current);
   sim.run!['next_custom_die'] = next + 1;
   sim.run!['tempers_used'] = (sim.run!['tempers_used'] as int? ?? 0) + 1;
+  // v0.133.0 The Six Marks: the rune itself, recorded for the meta bank.
+  // A die later lost still counts — the forge work happened.
+  final marked = sim.run!['runes_tempered'] as List? ?? [];
+  marked.add(rune);
+  sim.run!['runes_tempered'] = marked;
   _push(events, {
     'type': 'face_tempered',
     'die': idx,

@@ -9,6 +9,7 @@
 // [progress] can only ever show what the player actually did.
 import '../data/achievements.dart';
 import '../game/weekly.dart' show legalRuleLabels;
+import '../sim/run_dice.dart' show faceRunes;
 import '../data/characters.dart';
 import '../data/enemies.dart';
 import 'meta.dart';
@@ -58,6 +59,9 @@ int statValue(MetaState m, String stat, [String? param]) {
     case 'weekly_rules_won':
       // Junk-proof: only labels the live rotation can deal are counted.
       return m.weeklyRulesWon.where(legalRuleLabels().contains).length;
+    case 'runes_tempered':
+      // Junk-proof: only runes the live anvil offers are counted.
+      return m.runesTempered.where(faceRunes.contains).length;
     case 'weeklies_played':
       return m.weekliesPlayed;
     case 'codex_unsealed':

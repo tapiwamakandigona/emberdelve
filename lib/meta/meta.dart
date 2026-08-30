@@ -163,6 +163,11 @@ class MetaState {
   // v0.127.0 The Full Rotation: canonical rule labels this profile has WON
   // a Weekly under (sorted '+'-joined ids). Union on merge; never shrinks.
   Set<String> weeklyRulesWon;
+
+  /// v0.133.0 The Six Marks: every rune ever tempered onto a face, banked
+  /// at run end win or lose (forge work counts like tempersSet). Junk-proof
+  /// at the reader: only ids in faceRunes are ever counted.
+  Set<String> runesTempered;
   int bestFloor; // deepest 1-based layer ever reached, won or lost
   // v0.65.0 The Charted Depth: the same fact as bestFloor, charted per
   // delver — deepest 1-based layer this character ever stood on, won or
@@ -254,6 +259,7 @@ class MetaState {
     Set<String>? seenAchievements,
     Set<String>? provingsCleared,
     Set<String>? weeklyRulesWon,
+    Set<String>? runesTempered,
     this.bestFloor = 0,
     Map<String, int>? charBestFloor,
     this.dailiesPlayed = 0,
@@ -274,6 +280,7 @@ class MetaState {
        seenAchievements = seenAchievements ?? {},
        provingsCleared = provingsCleared ?? {},
        weeklyRulesWon = weeklyRulesWon ?? {},
+       runesTempered = runesTempered ?? {},
        unlockedCharacters = unlocked ?? {defaultCharacter},
        charRuns = charRuns ?? {},
        charWins = charWins ?? {},
@@ -348,6 +355,7 @@ class MetaState {
       'seenAchievements': seenAchievements.toList(),
     if (provingsCleared.isNotEmpty) 'provingsCleared': provingsCleared.toList(),
     if (weeklyRulesWon.isNotEmpty) 'weeklyRulesWon': weeklyRulesWon.toList(),
+    if (runesTempered.isNotEmpty) 'runesTempered': runesTempered.toList(),
     if (bestFloor > 0) 'bestFloor': bestFloor,
     if (charBestFloor.isNotEmpty) 'charBestFloor': charBestFloor,
     if (dailiesPlayed > 0) 'dailiesPlayed': dailiesPlayed,
@@ -551,6 +559,8 @@ class MetaState {
         ((j['provingsCleared'] as List?)?.cast<String>().toSet()) ?? {},
     weeklyRulesWon:
         ((j['weeklyRulesWon'] as List?)?.cast<String>().toSet()) ?? {},
+    runesTempered:
+        ((j['runesTempered'] as List?)?.cast<String>().toSet()) ?? {},
     // Pre-v0.5.0 saves have no bestFloor. Seeding it from the run history
     // (the deepest floor we can actually prove) is honest; inventing a
     // number from runsPlayed would not be.

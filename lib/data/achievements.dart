@@ -80,6 +80,7 @@ const Set<String> achievementStats = {
   'delvers_crowned',
   'tempers_set',
   'weekly_rules_won',
+  'runes_tempered',
   'delvers_cleared',
   'provings_cleared', // v0.59.0 The Proven
   // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
@@ -118,6 +119,7 @@ const List<String> achievementsOrder = [
   'hard_clear', 'hard_five', 'three_crowns', 'crowned_company',
   'first_temper', 'well_tempered',
   'rule_taken', 'full_rotation',
+  'third_mark', 'six_marks',
   'ascension_three', 'ascension_ten',
   'ascension_twenty',
   // --- the unwritten feats (v0.107.0): the systems that grew after --------
@@ -499,6 +501,23 @@ const Map<String, AchievementDef> achievements = {
     'The Full Rotation',
     'Win a Weekly under every rule in the rotation.',
     stat: 'weekly_rules_won',
+    target: 6,
+  ),
+  // v0.133.0 The Six Marks: the temper collection arc, mirroring the
+  // Weekly's (v0.127). The full honor is PROMISE-worded ('every rune'),
+  // so its target tracks the live rune set — pinned by test.
+  'third_mark': AchievementDef(
+    'third_mark',
+    'The Third Mark',
+    'Temper three different runes across your delves.',
+    stat: 'runes_tempered',
+    target: 3,
+  ),
+  'six_marks': AchievementDef(
+    'six_marks',
+    'The Six Marks',
+    'Temper every rune the anvil offers.',
+    stat: 'runes_tempered',
     target: 6,
   ),
   'hard_five': AchievementDef(
