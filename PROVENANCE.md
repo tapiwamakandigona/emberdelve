@@ -205,3 +205,4 @@ SFX q4–5), 44.1 kHz, SFX mono / music stereo. All music decodes with peak ≤
 - **CC BY 4.0**: https://creativecommons.org/licenses/by/4.0/ — redistribution permitted with attribution.
 
 No Sonniss/GDC content was used (royalty-free but not openly redistributable — unsuitable for a public repo).
+| characters/flintwright.png | characters/warden.png (this repo) | 0x72 (base `knight_m`) | https://0x72.itch.io/dungeontileset-ii | CC0 1.0 Universal (Creative Commons Zero) — https://creativecommons.org/publicdomain/zero/1.0/ | 2026-08-30 | Palette variant of the bundled warden sheet (HSV remap: hue +35°, sat ×0.45, val ×0.88, sat floor 0.14 — muted flint grey-tan), generated for v0.118.0 The Flintwright; geometry identical to source (idle(4f), run(4f), hit(1f)). Warden chosen as source so the silhouette differs from the tinker (a kindler variant). |

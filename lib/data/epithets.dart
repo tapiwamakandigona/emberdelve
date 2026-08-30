@@ -140,12 +140,16 @@ const Map<String, EpithetDef> epithets = {
   ),
   // Target must equal characters.length — pinned by test so a future
   // seventh delver can never silently orphan the unlock line's promise.
+  // v0.118.0: the roster grew to seven, and the deep_wardrobe pin holds
+  // this target to the LIVE roster count by design ('every delver' must
+  // stay true). Display name went count-free so the next delver never
+  // forces a rename; the id — the save contract — is untouched.
   'the_six_handed': EpithetDef(
     'the_six_handed',
-    'the Six-Handed',
+    'the Many-Handed',
     unlockLine: 'Win a delve with every delver.',
     stat: 'delvers_cleared',
-    target: 6,
+    target: 7,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never

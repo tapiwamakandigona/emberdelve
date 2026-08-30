@@ -57,6 +57,10 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    // v0.118.0: the roster section above grew a row — pin the button fully
+    // on-screen before tapping (a clipped tap silently does nothing).
+    await tester.ensureVisible(btn);
+    await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(btn, warnIfMissed: false);
     await pumpFor(tester, 300);
 
@@ -85,6 +89,10 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    // v0.118.0: the roster section above grew a row — pin the button fully
+    // on-screen before tapping (a clipped tap silently does nothing).
+    await tester.ensureVisible(btn);
+    await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(btn, warnIfMissed: false);
     await pumpFor(tester, 300);
 

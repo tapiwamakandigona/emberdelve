@@ -2993,3 +2993,30 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   plates need the proving's DELVER unlocked in meta or the start
   button never renders. 3 tests; plates approved (code suppressed,
   both rule names in meta line). Suite 884/884. 0.117.0+143.
+
+## v0.118.0 — The Flintwright (2026-08-30)
+- SEVENTH DELVER, the swarm archetype: only delver with FOUR dice
+  (d4×2, d4_spark, d4_guard), 24 HP, NO relic (a new relic would
+  resize the shop pool and re-anchor every golden — tinker
+  precedent), 750 embers. Balance: 400-seed sweeps, HP the only
+  knob: 28 HP → 90.5/65.5/41.25 (too strong); 24 HP →
+  87.5/57.25/34.25 (in band vs tinker 85.25/58.25/31.0). Viability
+  pins: seed 1 wins easy+normal, 3 loses easy. ZERO re-anchor —
+  other delvers' seeded runs byte-identical.
+- Sprite: HSV palette variant of WARDEN sheet (hue +35°, sat ×0.45,
+  val ×0.88, floor 0.14 — flint grey-tan; warden not kindler so the
+  silhouette differs from tinker). tool kept: gen method in
+  PROVENANCE.md row. Weapon: knapping_pick (short reach 0.42).
+  Codex delver story added (named_company pin demands one per
+  roster delver).
+- ROSTER-GROWTH FALLOUT MAP (all three fire): tinker_test 'last'
+  pin (contract is INDEX, rewrote to indexOf==5); deep_wardrobe
+  the_six_handed target == characters.length — display name went
+  count-free ('the Many-Handed', id unchanged = save contract, next
+  delver never forces a rename); retraced_page taps (roster section
+  grew a row → ensureVisible before tap). Also: locked-card titles
+  now FittedBox ('The Flintwright' broke mid-word at 320).
+- PLATE LESSON: sprite-sheet plates need a WARMUP capture (per-path
+  decode cache cold on first pump — first plate renders an empty
+  sprite slot). 5 tests; plates approved. Suite 889/889.
+  0.118.0+144.
