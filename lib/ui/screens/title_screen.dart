@@ -317,6 +317,31 @@ class TitleScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              // The Waymark Line (v0.121.0): the nearest
+                              // unearned honor, named before the run — the
+                              // summary's WITHIN REACH panel, promoted to
+                              // where session intent forms. Hidden entirely
+                              // until some real progress exists; tap opens
+                              // the Ledger where the full list lives.
+                              if (ach.waymarkLine(m) != null)
+                                TextButton(
+                                  key: const ValueKey('waymark-line'),
+                                  onPressed: () {
+                                    AudioService.instance?.playSfx(
+                                      'ui_confirm',
+                                    );
+                                    Navigator.of(
+                                      context,
+                                    ).push(emberRoute((_) => LedgerScreen(c)));
+                                  },
+                                  child: Text(
+                                    ach.waymarkLine(m)!,
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
                               // shared seed IS a shared delve. Small, out of the main flow.
                               TextButton(

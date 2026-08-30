@@ -137,3 +137,23 @@ List<AchievementDef> nearestAchievements(MetaState m, {int limit = 3}) {
   });
   return open.length <= limit ? open : open.sublist(0, limit);
 }
+
+/// v0.121.0 The Waymark Line: the title screen's quiet pointer at the one
+/// unearned achievement closest to done — "Next waymark: Knapped Sharp —
+/// 0 of 1". Reuses [nearestAchievements] wholesale, so the §Ethics contract
+/// is inherited: zero-progress goals are excluded (a fresh install sees NO
+/// line — the game never assigns homework), counts are the real counters
+/// clamped to the target, and the line is a recognition fact, not a nag.
+/// Returns null when nothing is in reach — and always before the first
+/// delve: a fresh profile technically has progress (the default hearth
+/// theme counts toward Full Hearth), and pointing a new player at an
+/// ember-spending goal before they have even played once is exactly the
+/// homework-on-boot this line must never be.
+String? waymarkLine(MetaState m) {
+  if (m.runsPlayed <= 0) return null;
+  final near = nearestAchievements(m, limit: 1);
+  if (near.isEmpty) return null;
+  final def = near.first;
+  final v = statValue(m, def.stat, def.param).clamp(0, def.target);
+  return 'Next waymark: ${def.name} \u2014 $v of ${def.target}';
+}
