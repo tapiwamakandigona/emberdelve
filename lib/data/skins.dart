@@ -42,6 +42,8 @@ const List<String> dieSkinsOrder = [
   'gilded',
   'bloodstone',
   'obsidian',
+  'tempered', // v0.128.0 The Smith's Shelf
+  'runeglass', // v0.128.0 The Smith's Shelf
 ];
 
 const Map<String, DieSkinDef> dieSkins = {
@@ -100,6 +102,25 @@ const Map<String, DieSkinDef> dieSkins = {
     costEmbers: 400,
     bodyArgb: 0xFF585868,
     inkArgb: 0xFFE8E0D0,
+  ),
+  // v0.128.0 The Smith's Shelf: the hue audit's two open slots — no steel
+  // (cool grey-blue) and no violet anywhere on the dice.
+  'tempered': DieSkinDef(
+    'tempered',
+    'Tempered',
+    'Quenched steel, still faintly blue where the heat bit deepest.',
+    costEmbers: 500,
+    bodyArgb: 0xFFA8BCCE,
+    inkArgb: 0xFF1E2A3A,
+  ),
+  'runeglass': DieSkinDef(
+    'runeglass',
+    'Runeglass',
+    'Violet glass the smiths pour over a finished temper. It hums, '
+        'a little.',
+    costEmbers: 550,
+    bodyArgb: 0xFFC2A8DE,
+    inkArgb: 0xFF2E1E44,
   ),
 };
 

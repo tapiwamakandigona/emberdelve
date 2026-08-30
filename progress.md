@@ -3192,3 +3192,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - End-to-end pin rides the 2026-02-02 doubled Monday bot-win
   (banks exactly {'no_rests+no_shops'}). 7 tests; plates approved.
   Suite 927/927. 0.127.0+153.
+
+## v0.128.0 — The Smith's Shelf (2026-08-30)
+- Cosmetics batch on the forge theme (sink lane; wardrobe frozen
+  since v0.94.0): Forgesoot dye 640 (the missing DARK dye — the
+  attire coherence guard's valMul>=0.8 legibility band held the
+  first draft at 0.78 up, respect the band), Tempered 500 + 
+  Runeglass 550 die skins (hue audit's open slots: steel, violet).
+  11 dyes / 9 skins, ladders ascending (guard-enforced).
+- 'LAST' PIN BUG, THIRD OCCURRENCE: deep_wardrobe dye last-two pin
+  → index pins (tinker v0.118, frostvein v0.126, shelf v0.128).
+  When growing ANY catalog, grep tests for `.last` and `sublist(`
+  pins on that catalog FIRST.
+- Generic coherence/price/ethics guards covered the new entries
+  with zero new test code (the payoff of guard-style tests).
+  Plates: forgesoot worn 360/320 + skins shelf (tempered LIT,
+  runeglass priced). Suite 927/927. 0.128.0+154.

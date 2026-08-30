@@ -69,10 +69,11 @@ void main() {
   });
 
   test('new dyes keep the ascending-price shelf and really recolor', () {
-    expect(delverDyesOrder.sublist(delverDyesOrder.length - 2), [
-      'emberheart',
-      'glowmere',
-    ]);
+    // v0.128.0: forgesoot appended — the contract is the INDEX (append-
+    // order stability), not final position (the 'last' pin lesson, third
+    // occurrence: tinker v0.118, frostvein v0.126, and now the shelf).
+    expect(delverDyesOrder.indexOf('emberheart'), 8);
+    expect(delverDyesOrder.indexOf('glowmere'), 9);
     var last = -1;
     for (final id in delverDyesOrder) {
       final d = delverDyes[id]!;
