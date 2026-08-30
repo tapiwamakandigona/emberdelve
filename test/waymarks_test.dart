@@ -132,6 +132,14 @@ void main() {
     m.winsNoRest = 999;
     m.hardWins = 999;
     m.tempersSet = 999;
+    m.weeklyRulesWon.addAll({
+      'all_d4',
+      'elites_only',
+      'no_shops',
+      'short_road',
+      'no_rests',
+      'no_rests+no_shops',
+    });
     for (final id in characters.keys) {
       m.charWins[id] = 999;
       m.charHardWins[id] = 999;

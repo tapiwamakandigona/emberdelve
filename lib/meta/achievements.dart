@@ -8,6 +8,7 @@
 // There is no padding, no head start, and no decay — a progress bar built from
 // [progress] can only ever show what the player actually did.
 import '../data/achievements.dart';
+import '../game/weekly.dart' show legalRuleLabels;
 import '../data/characters.dart';
 import '../data/enemies.dart';
 import 'meta.dart';
@@ -54,6 +55,9 @@ int statValue(MetaState m, String stat, [String? param]) {
     // catalog exists to check against.
     case 'tempers_set':
       return m.tempersSet;
+    case 'weekly_rules_won':
+      // Junk-proof: only labels the live rotation can deal are counted.
+      return m.weeklyRulesWon.where(legalRuleLabels().contains).length;
     case 'weeklies_played':
       return m.weekliesPlayed;
     case 'codex_unsealed':

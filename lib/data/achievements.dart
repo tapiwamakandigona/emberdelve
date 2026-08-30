@@ -79,6 +79,7 @@ const Set<String> achievementStats = {
   'hard_wins',
   'delvers_crowned',
   'tempers_set',
+  'weekly_rules_won',
   'delvers_cleared',
   'provings_cleared', // v0.59.0 The Proven
   // v0.107.0 The Unwritten Feats — the systems that grew after the ledger.
@@ -116,6 +117,7 @@ const List<String> achievementsOrder = [
   // --- the endgame (Forge territory) -------------------------------------
   'hard_clear', 'hard_five', 'three_crowns', 'crowned_company',
   'first_temper', 'well_tempered',
+  'rule_taken', 'full_rotation',
   'ascension_three', 'ascension_ten',
   'ascension_twenty',
   // --- the unwritten feats (v0.107.0): the systems that grew after --------
@@ -481,6 +483,23 @@ const Map<String, AchievementDef> achievements = {
     'Temper 25 die faces across your delves.',
     stat: 'tempers_set',
     target: 25,
+  ),
+  // v0.127.0 The Full Rotation: the Weekly's collection arc. The full
+  // honor is PROMISE-worded ('every rule'), so its target tracks the live
+  // rotation (§Re-pricing doctrine) — pinned to the legal-label count.
+  'rule_taken': AchievementDef(
+    'rule_taken',
+    'Rule Taken',
+    'Win a Weekly Delve under any rule.',
+    stat: 'weekly_rules_won',
+    target: 1,
+  ),
+  'full_rotation': AchievementDef(
+    'full_rotation',
+    'The Full Rotation',
+    'Win a Weekly under every rule in the rotation.',
+    stat: 'weekly_rules_won',
+    target: 6,
   ),
   'hard_five': AchievementDef(
     'hard_five',

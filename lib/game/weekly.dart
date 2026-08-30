@@ -84,6 +84,18 @@ const WeeklyRuleDef doubledWeek = WeeklyRuleDef(
   ['no_shops', 'no_rests'],
 );
 
+/// v0.127.0 The Full Rotation: the canonical banked form of a weekly rule
+/// label — ids sorted and '+'-joined, so 'no_rests+no_shops' and
+/// 'no_shops+no_rests' are one rule. The legal set is derived from the
+/// live rotation: junk labels from a hand-edited save can never count.
+String canonicalRuleLabel(String label) => (label.split('+')..sort()).join('+');
+
+/// Every label the current rotation can actually deal, canonicalized.
+Set<String> legalRuleLabels() => {
+  for (final id in mutatorsOrder) id,
+  canonicalRuleLabel(doubledWeek.mutators.join('+')),
+};
+
 /// The rule declared for a given week: the singles in [mutatorsOrder], then
 /// [doubledWeek] closes the cycle. Deterministic pure function of the week
 /// index, so every player sees the same rule for the same week and the
