@@ -3438,3 +3438,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   system has pages (world/delvers/enemies/relics/rules/runes/
   dice) — the codex-growth lane is a maintenance lane now.
 - 3 tests; plates approved. Suite 980/980. 0.142.0+168.
+
+## v0.143.0 — The Fifteenth Rung (2026-08-30)
+- LADDER AUDIT: honors run A3/10/20, provings ran A5/A10 then
+  nothing until the Ash Summit's A15-hard finale — five rungs of
+  silence on normal. Closed: fifteenth_rung (kindler, normal,
+  A15, seed 14; hunt found 14/20/24/34/36/39 winnable in first
+  40 — A15 normal is hard but fair, which the proving certifies).
+  Sits after tenth_rung (climb order); ash_summit keeps the last
+  word. the_proven 15 → 16 (promise doctrine); provings pins 16.
+- REJECTED: an A20 proving — the summit badge owns 20 already.
+- TOOL LESSON: rung proving plates need forgeUnlocked AND
+  bestAscension — locked provings render 'proving-req-' not
+  'proving-start-' (maxAscensionFor rides the Forge).
+- 3 tests; plates approved. Suite 983/983. 0.143.0+169.
