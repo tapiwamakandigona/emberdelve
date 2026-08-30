@@ -3329,3 +3329,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   955/955. 0.135.0+161. Next: runesmith proving + Knapped-Sharp-
   style badges (the v0.119 pattern) — 'Eight Ways Down' badge new
   name at 8 per re-pricing doctrine.
+
+## v0.136.0 — The Eighth Way (2026-08-30)
+- Runesmith's proving (seed 5 normal, no rules; unused-seed
+  variety rule; blurb doubles as the kit's strategy hint; card
+  code DELVE-500000E100 = 8th char index proof). 15 provings;
+  the_proven → 15 (real contract). Badges runesmith_wins
+  'Rune-Sharp' + eight_ways_down (8); seven_ways_down stays 7.
+  66 achievements. provings_test count pins 14→15 (3 sites);
+  generic guards covered the rest free.
+- v0.119 PATTERN CONFIRMED as the standing recipe: delver release
+  (sweep-heavy) then roster-arc release (proving+honors) — keep
+  them separate for reviewable diffs and their own seed hunts.
+- 4 tests; plates approved. Suite 959/959. 0.136.0+162.

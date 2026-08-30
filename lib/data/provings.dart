@@ -110,6 +110,19 @@ const List<ProvingDef> provings = [
     character: 'flintwright',
     difficulty: 'normal',
   ),
+  // v0.136.0 The Eighth Way: the runesmith's own proving. Seed bot-win
+  // proven (sweep probe 2026-08-30: normal wins 1/2/4/5/6; 5 picked for
+  // seed variety across the list).
+  ProvingDef(
+    id: 'runesmiths_proving',
+    title: "The Runesmith's Proving",
+    blurb:
+        'The Runesmith on normal floors. One mark comes worked; make '
+        'the second and third count.',
+    seed: 5,
+    character: 'runesmith',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
