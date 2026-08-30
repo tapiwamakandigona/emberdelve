@@ -182,6 +182,13 @@ final List<CodexEntryDef> codexEntries = [
         'a single broken one. The company laughed until the counting '
         'started.',
   ),
+  // v0.135.0: the eighth chair.
+  _delver(
+    'runesmith',
+    'The smith at the rest fires takes no ember and gives no name — but '
+        'someone taught the smith. The runesmith went down before the '
+        'company had a name for going down, and came back marked.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(
@@ -661,7 +668,7 @@ final List<CodexEntryDef> codexEntries = [
   _rule(
     'no_shops',
     'The peddler calls it his week off. Everyone else calls it what it '
-        'is: seven floors where gold is just a heavy way to count what '
+        'is: nine floors where gold is just a heavy way to count what '
         'you cannot buy.',
   ),
   _rule(

@@ -18,6 +18,13 @@ class CharacterDef {
   final List<String> startDice;
   final String? startRelic;
   final int unlockEmbers;
+
+  /// v0.135.0 The Runesmith: marks worked before the first floor. Each
+  /// entry is {die: 1-based index into startDice, face: natural face,
+  /// rune: faceRunes id}, applied deterministically by run_layer at
+  /// start_run. These are the SMITH'S marks, not the player's — they do
+  /// not count toward tempers_used, runes_tempered, or the temper cap.
+  final List<Map<String, Object>> startTempers;
   const CharacterDef(
     this.id,
     this.name,
@@ -26,6 +33,7 @@ class CharacterDef {
     required this.startDice,
     this.startRelic,
     this.unlockEmbers = 0,
+    this.startTempers = const [],
   });
 }
 
@@ -40,6 +48,8 @@ const List<String> charactersOrder = [
   'tinker',
   // v0.118.0 — append-LAST, same discipline as every roster bit.
   'flintwright',
+  // v0.135.0 — append-LAST.
+  'runesmith',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -121,6 +131,22 @@ const Map<String, CharacterDef> characters = {
     maxHp: 24,
     startDice: ['d4', 'd4', 'd4_spark', 'd4_guard'],
     unlockEmbers: 750,
+  ),
+  // v0.135.0 The Runesmith — the eighth delver, the temper specialist:
+  // arrives with one mark already worked (surge on the d8's own top face).
+  // HP is the balance knob (sweeps in docs/improvements/v0.135.0): the
+  // free mark is real tempo, so the runesmith runs lean.
+  'runesmith': CharacterDef(
+    'runesmith',
+    'The Runesmith',
+    'Arrives marked: a Deep Coal with Surge already worked into its 8. '
+        'Lean, and the anvil answers them first.',
+    maxHp: 26,
+    startDice: ['d6', 'd6', 'd8'],
+    startTempers: [
+      {'die': 3, 'face': 8, 'rune': 'surge'},
+    ],
+    unlockEmbers: 900,
   ),
 };
 

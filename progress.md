@@ -3305,3 +3305,27 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - PLATE-CLONE FILENAME lesson again: capture-name strings are
   longer tokens than the id — need their own rename pass.
 - 3 tests; plates approved. Suite 951/951. 0.134.0+160.
+
+## v0.135.0 — The Runesmith (2026-08-30)
+- EIGHTH DELVER, temper specialist: 26 HP, ['d6','d6','d8'],
+  Deep Coal arrives with SURGE worked into its 8. NEW SCHEMA
+  CharacterDef.startTempers (list of {die,face,rune}, applied
+  deterministically in run_layer startRun; smith's work ≠ player's
+  work: cap and Six Marks bank untouched — pinned). unlockEmbers
+  900. Weapon rune_chisel 0xFFB9A6D9 reach 0.46. Sprite: tinker
+  sheet HSV hue+80/sat×0.72/val×0.92/floor 0.12 (runeglass violet;
+  first try +160 gave ROSE — check the source sheet's base hue
+  before picking a shift). PROVENANCE + sprite_meta rows.
+- Sweep (400 seeds, HP 26): 90.00/65.50/42.50 vs kindler
+  89.75/67.25/41.50 — in band FIRST setting. Prior for delver #9:
+  ~2 HP per meaningful kit advantage. Pins: seed 1 wins easy+
+  normal, 3 loses easy. ZERO re-anchor (appended last).
+- ROSTER FALLOUT (v0.118 map, all fired): charactersOrder 'last'
+  pin → index (FIFTH catalog); the_six_handed + crowned_company
+  7→8 (promise), seven_ways_down stays 7 (fixed-count); tale 5
+  'Eight keep this fire'; codex eighth chair; copy grep also
+  caught v0.131 no_shops lore 'seven floors' → nine (delve is 9).
+- 4 tests; plates approved (warmup + card 2 widths). Suite
+  955/955. 0.135.0+161. Next: runesmith proving + Knapped-Sharp-
+  style badges (the v0.119 pattern) — 'Eight Ways Down' badge new
+  name at 8 per re-pricing doctrine.

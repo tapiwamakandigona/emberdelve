@@ -18,11 +18,9 @@ void main() {
 
   test('definition and sim application match the card text exactly', () {
     final def = characters['flintwright']!;
-    expect(
-      charactersOrder.last,
-      'flintwright',
-      reason: 'appended LAST so existing delve-code indexes stay stable',
-    );
+    // v0.135.0: runesmith appended — index pin, not 'last' (the lesson,
+    // fifth catalog). The index IS the delve-code contract.
+    expect(charactersOrder.indexOf('flintwright'), 6);
     expect(def.maxHp, 24);
     expect(def.startDice, [
       'd4',

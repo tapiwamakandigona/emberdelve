@@ -107,6 +107,17 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.55,
     swingAngle: 1.8,
   ),
+  // Marked (v0.135.0): a rune chisel — the tool that works the marks.
+  // Short, precise reach; runeglass-violet accent to match the sheet.
+  'runesmith': WeaponDef(
+    'rune_chisel',
+    'Rune Chisel',
+    accent: Color(0xFFB9A6D9),
+    reach: 0.46,
+    idleAngle: 0.34,
+    raiseAngle: -1.60,
+    swingAngle: 1.85,
+  ),
   // Swarm (v0.118.0): a short knapping pick — the tool that makes shards.
   // Stubby reach (the flintwright fights close, like their dice: small and
   // many), flint-tan accent to match the sheet's palette.
