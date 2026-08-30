@@ -3342,3 +3342,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (sweep-heavy) then roster-arc release (proving+honors) — keep
   them separate for reviewable diffs and their own seed hunts.
 - 4 tests; plates approved. Suite 959/959. 0.136.0+162.
+
+## v0.137.0 — The Fourth Cycle (2026-08-30)
+- Ten new hearth tales (40 total, 4 cycles): the anvil + calendar
+  pass (smith's two-mark limit, six runes, runesmith, rotation,
+  Cold Quarter, free records, vistas, tempered promise, provings,
+  eighth chair). hearthgold frozen at cycle 1 (v0.100 rule).
+  hearth_tale pin 3×→4×.
+- MIRROR-ASSERT EXTENDED TO PROSE: fourth_cycle_test proves the
+  'two a delve' tale against the sim's actual refusal, 'six runes'
+  against faceRunes, 'eight chairs' against the roster — a prose
+  CLAIM gets pinned to the constant it cites, so copy can never
+  silently go stale when a knob moves.
+- 3 tests; plates approved (tale + counted temper copy agree on
+  one screen). Suite 962/962. 0.137.0+163.
