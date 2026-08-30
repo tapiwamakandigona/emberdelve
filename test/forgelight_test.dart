@@ -8,9 +8,9 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('forgelight stands last with an honest unlock line', () {
-    expect(vistasOrder.last, 'forgelight');
-    expect(vistasOrder.length, 9);
+  test('forgelight keeps its slot with an honest unlock line', () {
+    // v0.134.0: runemark appended — index pin, not 'last' (the lesson).
+    expect(vistasOrder.indexOf('forgelight'), 8);
     final def = vistas['forgelight']!;
     expect(def.unlockLine, 'Temper ten die faces.');
     expect(
@@ -31,6 +31,7 @@ void main() {
       talesHeard: 0,
       doubledWins: 0,
       tempersSet: tempers,
+      runesMarked: 0,
     );
     expect(at(9), isFalse);
     expect(at(10), isTrue);

@@ -727,6 +727,7 @@ class GameController extends ChangeNotifier {
     talesHeard: meta.hearthTalesHeard,
     doubledWins: meta.doubledWins,
     tempersSet: meta.tempersSet,
+    runesMarked: meta.runesTempered.where(faceRunes.contains).length,
   );
 
   void selectVista(String id) {

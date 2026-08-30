@@ -3290,3 +3290,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   identity; variety is accumulation → badge, not title).
 - 4 tests; guard-map profiles serviced; plates approved. Suite
   948/948. 0.133.0+159.
+
+## v0.134.0 — The Runemark (2026-08-30)
+- TENTH VISTA: runesTempered summit (all six runes worked). First
+  VIOLET grade (hue +155/sat 1.35/val 1.06/wash 0x5C7B4FC0) —
+  runeglass established violet as the rune color (v0.128); opened
+  BOLD, plates approved first pass (grade doctrine finally paid).
+- GATE-VS-BADGE SPLIT DOCTRINE: vista gate FROZEN at 6 (v0.100
+  re-lock lesson), six_marks badge target MOVES with faceRunes
+  (promise doctrine) — both honest simultaneously.
+- vistaUnlockedFor +runesMarked (17 sites, scripted regex on
+  'tempersSet: N,' — v0.126 pattern). 'LAST' PIN BUG FOURTH
+  OCCURRENCE: forgelight_test vistasOrder.last → index pin.
+- PLATE-CLONE FILENAME lesson again: capture-name strings are
+  longer tokens than the id — need their own rename pass.
+- 3 tests; plates approved. Suite 951/951. 0.134.0+160.

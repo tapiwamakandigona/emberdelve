@@ -74,6 +74,7 @@ void main() {
             talesHeard: 0,
             doubledWins: 0,
             tempersSet: 0,
+            runesMarked: 0,
           ),
           id == 'emberlight',
           reason: id,
@@ -90,6 +91,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -104,6 +106,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -118,6 +121,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
@@ -132,6 +136,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
@@ -146,6 +151,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -161,6 +167,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
@@ -175,6 +182,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -192,6 +200,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
@@ -206,6 +215,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -223,6 +233,7 @@ void main() {
           talesHeard: hearthgoldTales - 1,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
@@ -237,6 +248,7 @@ void main() {
           talesHeard: hearthgoldTales,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -254,6 +266,7 @@ void main() {
           talesHeard: hearthgoldTales,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isTrue,
       );
@@ -268,6 +281,7 @@ void main() {
           talesHeard: 0,
           doubledWins: 0,
           tempersSet: 0,
+          runesMarked: 0,
         ),
         isFalse,
       );
