@@ -78,8 +78,8 @@ class _TemperSheetState extends State<TemperSheet> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Mark one face of one die with a rune. One temper per delve, '
-                        'and it lasts the whole run.',
+                        'Mark one face of one die with a rune. Two tempers '
+                        'a delve, and each lasts the whole run.',
                         style: EmberText.bodyDim,
                       ),
                       const SizedBox(height: Space.l),

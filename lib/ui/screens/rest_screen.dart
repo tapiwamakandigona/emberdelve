@@ -19,9 +19,10 @@ class RestScreen extends StatelessWidget {
     // (base + rest_bonus relics, capped at max), so it can never lie.
     final hp = player['hp'] as int;
     final heal = c.sim == null ? 0 : restHealPreview(c.sim!);
-    // v7: one temper per run. Once spent, the option disappears rather than
-    // sitting there greyed out asking to be re-read every rest.
-    final canTemper = (run?['tempers_used'] as int? ?? 0) < 1;
+    // v0.132.0 The Second Mark: two tempers per delve. Once both are spent
+    // the option disappears rather than sitting there greyed out (v7 rule).
+    final tempersUsed = run?['tempers_used'] as int? ?? 0;
+    final canTemper = tempersUsed < 2;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -42,7 +43,8 @@ class RestScreen extends StatelessWidget {
                       child: Text(
                         canTemper
                             ? 'Rest to heal, forge a die into something stronger, or '
-                                  'temper one face. One only.'
+                                  'temper one face. '
+                                  '${tempersUsed == 0 ? 'Two marks a delve.' : 'One mark left.'}'
                             : 'Rest to heal, or forge a die into something stronger. '
                                   'One only.',
                         style: EmberText.bodyDim,
@@ -95,7 +97,9 @@ class RestScreen extends StatelessWidget {
                         child: SizedBox(
                           width: double.infinity,
                           child: EmberButton(
-                            'Temper a face — once per delve',
+                            tempersUsed == 0
+                                ? 'Temper a face — two per delve'
+                                : 'Temper a face — one mark left',
                             key: const ValueKey('rest-temper'),
                             icon: Icons.auto_awesome,
                             onTap: () => showTemperSheet(context, c),

@@ -109,19 +109,24 @@ void main() {
       expect(die.rune, 'echo');
     });
 
-    test('one-per-run cap rejects a second temper without mutation', () {
+    test('two-per-run cap: second temper lands, third refuses unchanged', () {
+      // v0.132.0 The Second Mark: the cap is two.
       final sim = _atRest(12);
       sim.apply(_temper(sim));
       sim.phase = 'rest';
+      sim.apply(_temper(sim, die: 2, rune: 'aegis'));
+      sim.phase = 'rest';
+      expect(sim.run!['tempers_used'], 2);
+      expect(sim.run!['custom_dice'], hasLength(2));
       final before = sim.stateHash();
-      final events = sim.apply(_temper(sim, die: 2, rune: 'aegis'));
+      final events = sim.apply(_temper(sim, die: 3, rune: 'surge'));
       expect(events.single, {
         'type': 'invalid_command',
         'reason': 'temper_used',
       });
       expect(sim.stateHash(), before);
-      expect(sim.run!['custom_dice'], hasLength(1));
-      expect(sim.run!['next_custom_die'], 2);
+      expect(sim.run!['custom_dice'], hasLength(2));
+      expect(sim.run!['next_custom_die'], 3);
     });
 
     test('size forge preserves custom identity, face and rune', () {
