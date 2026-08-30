@@ -3070,3 +3070,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   special case for owned-by-default stats. waymarkLine(m) lives in
   lib/meta/achievements.dart (screens.dart imports it as `ach.`).
 - 5 tests; plates approved. Suite 897/897. 0.121.0+147.
+
+## v0.122.0 — The Spoken Delve (2026-08-30)
+- A11y: the run's CHOICE surfaces spoke nothing (combat tray spoke
+  since v0.44.0 — a TalkBack player could fight but never pick).
+  Now: reward flip cards ('Take the Ember Die, a d6, the
+  recommended pick' / 'A reward card, still face down', button only
+  when takeable), boon cards (one node: name+recommended+effects),
+  temper sheet (dice/faces/runes with chosen state), shop buy
+  button ('Buy Ash Aegis for 36 gold' / '..., not enough gold' —
+  was a bare '36'). Labels read the same defs as the paint. Zero
+  visual change, zero re-anchor.
+- EmberButton grew semanticLabel (overrides label in its existing
+  merged node). SEMANTICS LESSON: never wrap EmberButton in outer
+  Semantics(excludeSemantics:true) — swallows its onTap action and
+  the node merges into the surrounding panel. Override INSIDE the
+  widget that owns the action. Audit idiom: grep -c "Semantics("
+  per screen; debug = walk rootSemanticsNode printing labels.
+- Test idioms: ensureSemantics() + find.bySemanticsLabel; boon
+  offers = startRun(boons:true) then state['boons']; reward offers
+  = state['offers']. 4 tests. Suite 901/901. 0.122.0+148.

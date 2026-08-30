@@ -180,56 +180,66 @@ class BoonScreen extends StatelessWidget {
       if (e['max_hp'] != null) '+${e['max_hp']} max HP',
       if (e['embers'] != null) '+${e['embers']} embers banked',
     ];
-    return GestureDetector(
-      key: ValueKey('boon-$index'),
-      onTap: () => c.apply({'type': 'choose_boon', 'index': index}),
-      child: Panel(
-        child: Row(
-          children: [
-            SizedBox(width: 56, child: Center(child: lead)),
-            const SizedBox(width: Space.m),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Wrap, not Row (overflow sweep 2026-08-25): at 320px @
-                  // 1.3x text the inflexible RECOMMENDED chip starved the
-                  // title down to one letter per line; wrapping drops the
-                  // chip below the title instead. Wide layouts unchanged.
-                  Wrap(
-                    spacing: Space.s,
-                    runSpacing: 2,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(def.name, style: EmberText.h2),
-                      // Same chip the reward flip uses — one visual vocabulary
-                      // for "the default pick" across both offer screens.
-                      if (recommended)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Space.s,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: EmberColors.ember,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'RECOMMENDED',
-                            maxLines: 1,
-                            style: EmberText.micro.copyWith(
-                              color: const Color(0xFF17110A),
+    // v0.122.0 The Spoken Delve: the whole card is the tap target, so the
+    // whole card is one spoken button — name, recommendation, effects.
+    return Semantics(
+      label:
+          '${def.name}'
+          '${recommended ? ', the recommended pick' : ''}. '
+          '${bits.join(', ')}',
+      button: true,
+      excludeSemantics: true,
+      child: GestureDetector(
+        key: ValueKey('boon-$index'),
+        onTap: () => c.apply({'type': 'choose_boon', 'index': index}),
+        child: Panel(
+          child: Row(
+            children: [
+              SizedBox(width: 56, child: Center(child: lead)),
+              const SizedBox(width: Space.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Wrap, not Row (overflow sweep 2026-08-25): at 320px @
+                    // 1.3x text the inflexible RECOMMENDED chip starved the
+                    // title down to one letter per line; wrapping drops the
+                    // chip below the title instead. Wide layouts unchanged.
+                    Wrap(
+                      spacing: Space.s,
+                      runSpacing: 2,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(def.name, style: EmberText.h2),
+                        // Same chip the reward flip uses — one visual vocabulary
+                        // for "the default pick" across both offer screens.
+                        if (recommended)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Space.s,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: EmberColors.ember,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'RECOMMENDED',
+                              maxLines: 1,
+                              style: EmberText.micro.copyWith(
+                                color: const Color(0xFF17110A),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.xs),
-                  Text(bits.join(' · '), style: EmberText.bodyDim),
-                ],
+                      ],
+                    ),
+                    const SizedBox(height: Space.xs),
+                    Text(bits.join(' · '), style: EmberText.bodyDim),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
