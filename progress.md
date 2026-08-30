@@ -3432,7 +3432,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   the smith's voice, each answering 'why pick this rune' — the
   question the Shown Anvil card opens). 15 embers (dice price —
   marks are tools; v0.131 pricing rule). THE MARKS section between
-  rules and dice. Codex 110 → 116. refIds mirror faceRunes, names
+  rules and dice. Codex 105 → 111 (corrected in v0.144 — first
+  write said 110→116, a count never checked against the live
+  list; the ledger plate caught it). refIds mirror faceRunes, names
   via runeName() (mirror-assert). v0.131's card-scroll pin held
   against this growth. Codex coverage now COMPLETE: every named
   system has pages (world/delvers/enemies/relics/rules/runes/
@@ -3452,3 +3454,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   bestAscension — locked provings render 'proving-req-' not
   'proving-start-' (maxAscensionFor rides the Forge).
 - 3 tests; plates approved. Suite 983/983. 0.143.0+169.
+
+## v0.144.0 — The Peddler's Shelf (2026-08-30)
+- Two dice skins close the v0.128 hue audit's last slots: verdigris
+  600 (green — muted so pips stay legible) + coppervein 650 (copper
+  — pulled browner than embertide on purpose; plates judged them
+  apart). 11 skins; ladder climbs 550→600→650.
+- NEW LADDER GUARD: peddlers_shelf_test pins the skin shelf
+  non-descending (v0.140's theme-shelf idiom, now on skins too).
+- DOC HONESTY CATCH: v0.142's notes said codex 110→116; live list
+  says 105→111 (the ledger plate's own Codex card exposed it).
+  RULE: counts in prose must be READ from the catalog at writing
+  time, never recalled from memory or prior notes.
+- 3 tests; plates approved (warmup discipline held). Suite
+  986/986. 0.144.0+170.
