@@ -3410,3 +3410,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (historical frostfire/witchlight 60/60 tie never re-prices —
   guard is >= overall, strict pins for new).
 - 4 tests; plates approved. Suite 974/974. 0.140.0+166.
+
+## v0.141.0 — The Honest Ledger (2026-08-30)
+- PROMISE AUDIT SWEEP (after v0.140's find; rot is never alone):
+  TWO more shipped lies — all_three_bosses 'all six bosses' with
+  EIGHT in the bestiary (had rotted+re-priced once before, per its
+  own id), full_company 'all five delvers' with eight at the fire.
+  Both → count-free copy + live targets (8/8).
+- THE CLASS IS PINNED: honest_ledger_test asserts all 8 promise
+  honors against their live catalogs + forbids number words in
+  promise copy + freezes the historical counted honors. Catalog
+  growth now FAILS CI until promises move — doctrine enforced,
+  not remembered.
+- TEST-DATA LESSON: waymarks' hand-copied six-boss list HID the
+  bestiary lie from the test meant to catch it — maxed profiles
+  must DERIVE fills from live catalogs, never copy them.
+- 3 tests; no plates (data-only). Suite 977/977. 0.141.0+167.

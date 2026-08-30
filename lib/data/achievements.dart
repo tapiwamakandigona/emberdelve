@@ -317,12 +317,15 @@ const Map<String, AchievementDef> achievements = {
     target: 1,
     param: 'peddler',
   ),
+  // v0.141.0 honesty fix: 'ALL five' is promise wording (contrast Full
+  // Hearth's plain 'four' — a milestone, which stays). Count-free text,
+  // target pinned to the live roster.
   'full_company': AchievementDef(
     'full_company',
     'Full Company',
-    'Unlock all five delvers.',
+    'Unlock every delver.',
     stat: 'chars_unlocked',
-    target: 5,
+    target: 8,
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
@@ -393,12 +396,17 @@ const Map<String, AchievementDef> achievements = {
   // v0.5.0 fix: the bestiary grew to six bosses in the same release this
   // shipped in, so "all three" was stale on arrival. Id kept (it lives in
   // players' seenAchievements sets); target/text follow the real roster.
+  // v0.141.0 honesty fix: said 'all six bosses' while the bestiary holds
+  // eight (grew v0.98/v0.112). The name was always count-free — the text
+  // goes count-free too, and the target tracks the live catalog (pinned).
+  // The id's own history ('all_three_bosses') shows it was re-priced once
+  // before the doctrine existed and then forgotten again.
   'all_three_bosses': AchievementDef(
     'all_three_bosses',
     'The Whole Bestiary',
-    'Beat all six bosses at least once each.',
+    'Beat every boss in the bestiary at least once.',
     stat: 'bosses_beaten',
-    target: 6,
+    target: 8,
   ),
 
   // --- the hoard --------------------------------------------------------

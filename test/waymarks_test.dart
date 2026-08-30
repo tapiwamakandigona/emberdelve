@@ -146,13 +146,11 @@ void main() {
       m.charHardWins[id] = 999;
       m.unlockedCharacters.add(id);
     }
+    // v0.141.0: derived from the live bestiary — a hand list froze at six
+    // and hid the Whole Bestiary lie from this very test.
     m.bossesBeaten.addAll([
-      'ember_tyrant',
-      'ashen_colossus',
-      'pyre_matriarch',
-      'cinder_hierophant',
-      'the_bellows',
-      'ashfall_twins',
+      for (final e in enemies.entries)
+        if (e.value.boss) e.key,
     ]);
     m.ownedThemes.addAll(hearthThemes.keys);
     // v0.107.0 The Unwritten Feats
