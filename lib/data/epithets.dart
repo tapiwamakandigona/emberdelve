@@ -155,6 +155,6 @@ const Map<String, EpithetDef> epithets = {
     'the Proven',
     unlockLine: 'Clear every proving.',
     stat: 'provings_cleared',
-    target: 12, // v0.108.0: two proven-rules provings joined the list
+    target: 13, // v0.117.0: the winter proving joined the list
   ),
 };

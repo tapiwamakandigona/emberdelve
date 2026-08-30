@@ -125,6 +125,21 @@ const List<ProvingDef> provings = [
     difficulty: 'normal',
     mutators: ['no_rests'],
   ),
+  // v0.117.0 The Winter Proving — the doubled week's pair as a set delve,
+  // and a joke with teeth: the PEDDLER under Cold Quarter, the merchant
+  // with nowhere to spend. Seed hunted WITH the pair applied (bot wins
+  // 1/2/4; 4 picked for seed variety across the list).
+  ProvingDef(
+    id: 'winter_proving',
+    title: 'The Winter Proving',
+    blurb:
+        'The Peddler under Cold Quarter rules: no shops and no rests. '
+        'A merchant\'s fortune, and nowhere to spend it.',
+    seed: 4,
+    character: 'peddler',
+    difficulty: 'normal',
+    mutators: ['no_shops', 'no_rests'],
+  ),
   ProvingDef(
     id: 'fifth_rung',
     title: 'The Fifth Rung',
