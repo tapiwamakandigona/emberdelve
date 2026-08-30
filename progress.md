@@ -3426,3 +3426,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   bestiary lie from the test meant to catch it — maxed profiles
   must DERIVE fills from live catalogs, never copy them.
 - 3 tests; no plates (data-only). Suite 977/977. 0.141.0+167.
+
+## v0.142.0 — The Written Marks (2026-08-30)
+- Codex SEVENTH KIND 'rune': six pages (one per temper rune, in
+  the smith's voice, each answering 'why pick this rune' — the
+  question the Shown Anvil card opens). 15 embers (dice price —
+  marks are tools; v0.131 pricing rule). THE MARKS section between
+  rules and dice. Codex 110 → 116. refIds mirror faceRunes, names
+  via runeName() (mirror-assert). v0.131's card-scroll pin held
+  against this growth. Codex coverage now COMPLETE: every named
+  system has pages (world/delvers/enemies/relics/rules/runes/
+  dice) — the codex-growth lane is a maintenance lane now.
+- 3 tests; plates approved. Suite 980/980. 0.142.0+168.

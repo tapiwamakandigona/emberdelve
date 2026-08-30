@@ -10,6 +10,7 @@ import '../data/characters.dart';
 import '../data/codex.dart';
 import '../data/dice.dart';
 import '../data/enemies.dart';
+import '../sim/run_dice.dart' show runeName;
 import '../data/relics.dart';
 import '../game/controller.dart';
 import 'theme.dart';
@@ -64,6 +65,11 @@ class CodexScreen extends StatelessWidget {
               // between the relics and the dice.
               final ruleEntries = codexEntries
                   .where((e) => e.kind == 'rule')
+                  .toList();
+              // v0.142.0 The Written Marks: the anvil's words, between the
+              // rules and the dice that wear them.
+              final runeEntries = codexEntries
+                  .where((e) => e.kind == 'rune')
                   .toList();
               return ListView(
                 padding: const EdgeInsets.all(Space.l),
@@ -134,6 +140,13 @@ class CodexScreen extends StatelessWidget {
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
+                  Text('THE MARKS', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in runeEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const SizedBox(height: Space.l),
                   Text('THE DICE', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in dieEntries) ...[
@@ -154,6 +167,7 @@ class CodexScreen extends StatelessWidget {
     'delver' => characterDef(e.refId).name,
     'die' => dice[e.refId]?.name ?? e.refId,
     'rule' => ruleNames[e.refId] ?? e.refId,
+    'rune' => runeName(e.refId),
     'relic' => relics[e.refId]?.name ?? e.refId,
     _ => placeNames[e.refId] ?? e.refId,
   };
@@ -163,6 +177,7 @@ class CodexScreen extends StatelessWidget {
     if (e.kind == 'delver') return 'delver';
     if (e.kind == 'die') return 'die';
     if (e.kind == 'rule') return 'rule';
+    if (e.kind == 'rune') return 'rune';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';
