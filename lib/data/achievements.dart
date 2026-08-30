@@ -107,6 +107,7 @@ const List<String> achievementsOrder = [
   'peddler_wins', 'full_company', 'five_ways_down',
   'tinker_wins', 'six_ways_down',
   'flintwright_wins', 'seven_ways_down',
+  'runesmith_wins', 'eight_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -362,6 +363,23 @@ const Map<String, AchievementDef> achievements = {
     'Win a run with all seven delvers.',
     stat: 'delvers_cleared',
     target: 7,
+  ),
+  // v0.136.0 The Eighth Way (the v0.119 pattern: the char win, then the
+  // roster count under a NEW name — historical honors never re-price).
+  'runesmith_wins': AchievementDef(
+    'runesmith_wins',
+    'Rune-Sharp',
+    'Win a delve with the Runesmith.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'runesmith',
+  ),
+  'eight_ways_down': AchievementDef(
+    'eight_ways_down',
+    'Eight Ways Down',
+    'Win a run with all eight delvers.',
+    stat: 'delvers_cleared',
+    target: 8,
   ),
 
   // --- the bestiary -----------------------------------------------------
