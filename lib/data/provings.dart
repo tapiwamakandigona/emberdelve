@@ -123,6 +123,19 @@ const List<ProvingDef> provings = [
     character: 'runesmith',
     difficulty: 'normal',
   ),
+  // v0.146.0 The Ninth Way: the bearer's own delve. Seed bot-win proven
+  // (hunt 2026-08-30: bearer normal wins 8/16/17/19/20; 8 picked, unused
+  // across the list). Blurb doubles as the kit's strategy hint.
+  ProvingDef(
+    id: 'bearers_proving',
+    title: "The Bearer's Proving",
+    blurb:
+        'The Bearer on normal floors. Two dice carry everything — let '
+        'the Echo teach the little one.',
+    seed: 8,
+    character: 'bearer',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
