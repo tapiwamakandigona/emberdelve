@@ -3034,3 +3034,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Many-Handed', v0.118.0). Proving plate doubles as delve-code
   round-trip proof (DELVE-900000C10Y). 3 tests; plates approved.
   Suite 892/892. 0.119.0+145.
+
+## v0.120.0 — The Third Cycle (2026-08-30)
+- 10 new hearth tales (30 total, three cycles of ten, order
+  unchanged): the fire catches up with the winter arc — doubled
+  week, frostvein winter, flintwright, codex, cold camps, provings,
+  vista shelf, dice family, no-quarter floors, the telling itself.
+  Each states one in-game-verifiable fact: the drip doubles as a
+  feature tour (the 2026-08-23 review's real ask). Hearthgold stays
+  frozen at cycle one. Zero sim surface, zero re-anchor (the
+  v0.114.0 cost lesson steering content growth to the meta layer).
+- HONESTY EDIT: tale 5 'Six keep this fire now' → seven, all named.
+  Doctrine: the tale sequence contract is ORDER, not frozen text —
+  a fixed position must never state a count the picker disproves.
+  Roster-growth fallout map gains a 4th entry: grep tales/copy for
+  roster counts when charactersOrder grows.
+- hearth_tale pin 2×→3× hearthgoldTales. Plates (rest fire quoting
+  doubled-week tale @360, winter tale @320) approved. Suite
+  892/892. 0.120.0+146.

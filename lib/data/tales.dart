@@ -29,8 +29,11 @@ const List<String> hearthTales = [
       'its ash, and no two delves find them the same.',
   'Embers are the deep paying its debts. Carry them home and the '
       'hearth burns brighter for everyone.',
-  'Six keep this fire now. Kindler, warden, gambler, ascetic, '
-      'peddler, tinker — the delve answers each of them differently.',
+  // v0.120.0 honesty edit: the roster grew (flintwright, v0.118.0). The
+  // sequence contract is about ORDER, not frozen text — position 5 must
+  // never state a count the picker disproves one screen away.
+  'Seven keep this fire now. Kindler, warden, gambler, ascetic, '
+      'peddler, tinker, flintwright — the delve answers each differently.',
   'The relics you find were not lost. They were left — by delvers '
       'who wanted the next one through to go further.',
   'Every fire on the way down is borrowed from the hearth above. '
@@ -63,6 +66,29 @@ const List<String> hearthTales = [
       'it walks in you — that is what the old ones mean by delving.',
   'The fire has told these tales before and will tell them again. '
       'A story is a coal: it keeps by being passed along.',
+  // v0.120.0 The Third Cycle — what the deep remembers: the winter that
+  // came through, the seventh chair, the book the hearth keeps. Append
+  // only, as chartered.
+  'One week in six, the delve deals two rules at once. The old hands '
+      'call it the doubled week, and they plan their rests around it.',
+  'A winter came through the delve once and never fully left. Where '
+      'it settled, the stone still holds the pale light.',
+  'The flintwright joined the fire last, with four dice and no '
+      'apology. The counting has gone their way more often than not.',
+  'The hearth keeps a book of everything felled, found, and walked. '
+      'Embers open its pages; delving writes them.',
+  'Cold camps are fights wearing a rest\'s clothes. The delve is not '
+      'cruel about it — it says so on the way down.',
+  'A proving is a delve that holds still. The delve does not mind '
+      'being measured; it minds being guessed at.',
+  'Every vista in the hearth window was carried up by somebody. The '
+      'view is a trophy shelf, if you know how to read it.',
+  'The dice in your bag were all cut from the same brick, whatever '
+      'their size. Family, the smiths call a pool like that.',
+  'Some floors have no shops and no mercy, and delvers walk them '
+      'anyway. That is not bravery, the wardens say — it is practice.',
+  'The third telling of a tale is the one that sticks. Ask the fire; '
+      'it has been counting.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.
