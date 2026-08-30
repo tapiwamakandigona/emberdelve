@@ -3020,3 +3020,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   decode cache cold on first pump — first plate renders an empty
   sprite slot). 5 tests; plates approved. Suite 889/889.
   0.118.0+144.
+
+## v0.119.0 — The Seventh Way (2026-08-30)
+- Flintwright's proving (seed 9, normal, no mutators — character
+  provings chapter, after tinkers_proving; 14 provings; the_proven
+  13→14) + Knapped Sharp (char_wins flintwright) + Seven Ways Down
+  (delvers_cleared 7). 54 achievements. RE-PRICING DOCTRINE settled:
+  fixed-count BADGE names stay at their historical count
+  (six_ways_down stays 6 — re-locking earned recognition is the
+  hearthgold bug in achievement form) and the new count gets a NEW
+  name; PROMISE-worded unlocks ('every delver') move with the roster
+  and get count-free display names (the_six_handed → 'the
+  Many-Handed', v0.118.0). Proving plate doubles as delve-code
+  round-trip proof (DELVE-900000C10Y). 3 tests; plates approved.
+  Suite 892/892. 0.119.0+145.
