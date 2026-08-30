@@ -3222,3 +3222,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   mark ACCUMULATION (the long road) — don't put a title at the
   badge's far end. deep_wardrobe tail pin → index pins.
 - 4 tests; plates approved. Suite 931/931. 0.129.0+155.
+
+## v0.130.0 — The Gilded Face (2026-08-30)
+- SIXTH TEMPER RUNE 'gilt': natural tempered face pays 2 gold on
+  assignment, either verb (mid-combat gold = the on_max_gold
+  'incidental economy' exception; uncapped — gold has no cap
+  anywhere, consistency beats caution). The economy axis was the
+  open slot: the shop-loop archetype had no anvil reason. 2g ≈
+  mend's 1 HP in EV. The v0.124 wiring checklist held exactly
+  (6 files, zero surprises, goldens byte-identical).
+- RUNE AXES NOW FULL (damage/defense/rolls/tempo/sustain/economy):
+  next temper release should be a DEPTH move (second temper, rune
+  upgrades) — but second-temper changes botCmd-visible state →
+  anchor review FIRST.
+- 5 tests; plates approved. Suite 936/936. 0.130.0+156.

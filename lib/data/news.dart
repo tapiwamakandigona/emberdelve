@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.129.0';
+const String currentAppVersion = '0.130.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.130.0',
+    title: 'The Gilded Face',
+    lines: [
+      'A sixth temper rune: Gilt \u2014 on that face, the assignment '
+          'pays 2 gold, attack or block alike.',
+      'The economy temper. Six runes, six ways to mark a die.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.129.0',
     title: 'The Earned Titles',
