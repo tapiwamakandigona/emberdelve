@@ -3236,3 +3236,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   upgrades) — but second-temper changes botCmd-visible state →
   anchor review FIRST.
 - 5 tests; plates approved. Suite 936/936. 0.130.0+156.
+
+## v0.131.0 — The Written Rules (2026-08-30)
+- Codex SIXTH KIND 'rule': six pages on the weekly calendar (five
+  singles + cold_quarter), 10 embers each (place-priced — the
+  calendar is world), THE RULES section between relics and dice.
+  Codex 98 → 104. Names mirror-asserted against mutatorDef/
+  doubledWeek (a rename can never fork the book). Rotation arc
+  complete: play (v0.111) → collect (v0.127) → wear (v0.129) →
+  read (v0.131).
+- Honesty sweep CAUGHT my own draft: 'hurry' in short_road lore —
+  the banned list is absolute, even in world prose. Reworded.
+- GEOMETRY-PIN LESSON: spoken_dice's THE-DICE pin broke when six
+  rule cards shifted list geometry (header at viewport edge, card
+  below fold) — a pin asserting a CARD must scroll to the card,
+  not its section header.
+- 4 tests; plates approved. Suite 940/940. 0.131.0+157.

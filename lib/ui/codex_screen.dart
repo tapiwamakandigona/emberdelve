@@ -60,6 +60,11 @@ class CodexScreen extends StatelessWidget {
               final dieEntries = codexEntries
                   .where((e) => e.kind == 'die')
                   .toList();
+              // v0.131.0 The Written Rules: the weekly calendar's words,
+              // between the relics and the dice.
+              final ruleEntries = codexEntries
+                  .where((e) => e.kind == 'rule')
+                  .toList();
               return ListView(
                 padding: const EdgeInsets.all(Space.l),
                 children: [
@@ -122,6 +127,13 @@ class CodexScreen extends StatelessWidget {
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
+                  Text('THE RULES', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
+                  for (final e in ruleEntries) ...[
+                    _entryCard(context, e),
+                    const SizedBox(height: Space.m),
+                  ],
+                  const SizedBox(height: Space.l),
                   Text('THE DICE', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in dieEntries) ...[
@@ -141,6 +153,7 @@ class CodexScreen extends StatelessWidget {
     'enemy' => enemies[e.refId]?.name ?? e.refId,
     'delver' => characterDef(e.refId).name,
     'die' => dice[e.refId]?.name ?? e.refId,
+    'rule' => ruleNames[e.refId] ?? e.refId,
     'relic' => relics[e.refId]?.name ?? e.refId,
     _ => placeNames[e.refId] ?? e.refId,
   };
@@ -149,6 +162,7 @@ class CodexScreen extends StatelessWidget {
     if (e.kind == 'place') return 'place';
     if (e.kind == 'delver') return 'delver';
     if (e.kind == 'die') return 'die';
+    if (e.kind == 'rule') return 'rule';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';
