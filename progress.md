@@ -3494,3 +3494,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   names in copy must be READ from the dice catalog.
 - Relics live at sim.run['relics'], NOT sim.player.
 - 3 tests + probe tool kept. Suite 990/990. 0.145.0+171.
+
+## v0.146.0 — The Ninth Way (2026-08-30)
+- Bearer roster arc completes (v0.119 pattern, THIRD use — it's a
+  standing recipe now): bearers_proving (normal, seed 8; hunt wins
+  8/16/17/19/20; blurb = kit strategy 'let the Echo teach the
+  little one'), bearer_wins 'Stone-Shouldered', nine_ways_down 9
+  (eight_ways_down frozen at 8). Provings 17; the_proven 17;
+  pins updated (4 provings_test sites + eighth_way_test).
+- REMEMBER THE ORDER LIST: new achievements need achievementsOrder
+  too (order-matches-map test catches it).
+- LEDGER SCROLL BUDGET: ember_sink's skin-card walk outgrew
+  default maxScrolls 50 — honors releases lengthen the ledger
+  above the shelves; budget now 200.
+- 3 tests; plates approved. Suite 993/993. 0.146.0+172.

@@ -226,6 +226,9 @@ void main() {
         find.byKey(ValueKey('skin-$id')),
         200,
         scrollable: find.byType(Scrollable).first,
+        // v0.146.0: the ledger grew past the default 50-scroll budget
+        // (every honors release lengthens the list above the shelves).
+        maxScrolls: 200,
       );
       expect(
         find.byKey(ValueKey('skin-$id')),
