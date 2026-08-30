@@ -3468,3 +3468,29 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   time, never recalled from memory or prior notes.
 - 3 tests; plates approved (warmup discipline held). Suite
   986/986. 0.144.0+170.
+
+## v0.145.0 — The Bearer (2026-08-30)
+- NINTH DELVER, the GIANT (flintwright's opposite pole): TWO dice
+  ['d12','d8'], iron_scale (tinker reuse precedent), startTempers
+  echo on the 12 (echo TEACHES the other die — coverage is what
+  two dice lack), 36 HP, 1050 embers. Pure data — no re-anchor.
+- SWEEP STORY (400 seeds vs kindler 89.75/67.25/41.50): d10+d6@30
+  74.5/14.5/5.75 → d12+d8@30 81.25/33.25/12.75 → +relic+echo@34
+  90.75/65/37.5 → @36 91.75/67.50/39.50 SHIPPED. NEW PRIOR: a
+  lost DIE costs ~30 winrate points on normal — dice-count is an
+  order beyond the ~2-HP-per-advantage rule.
+- HONESTY CATCH (class): all four ways-down milestones still said
+  'all N delvers' — true at shipping, lies since. Reworded 'N
+  different delvers'; honest_ledger now PINS frozen honors never
+  claim all/every. Promise honors moved to 9 (full_company,
+  crowned_company, the Many-Handed).
+- Fallout serviced: tales 5+40 'Nine keep/Nine chairs' + bearer
+  named; codex 9th delver page (112); stone_maul weapon (reach
+  0.62, roster's longest); sprite warden-HSV +210/×0.38/×0.90
+  cold granite + PROVENANCE + sprite_meta rows.
+- PLATE CATCHES: clone tool scrolled by DISPLAY NAME ('The
+  Runesmith') — capture-name lesson extends to find.text targets;
+  card copy said 'Deep Ember' vs catalog's Molten Core — die
+  names in copy must be READ from the dice catalog.
+- Relics live at sim.run['relics'], NOT sim.player.
+- 3 tests + probe tool kept. Suite 990/990. 0.145.0+171.

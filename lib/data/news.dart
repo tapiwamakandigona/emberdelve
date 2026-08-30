@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.144.0';
+const String currentAppVersion = '0.145.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.145.0',
+    title: 'The Bearer',
+    lines: [
+      'A ninth chair at the fire: the Bearer — the giant. TWO dice, '
+          'one a Molten Core, an Iron Scale, and the smith\u2019s Echo '
+          'already worked into the 12.',
+      'Few rolls, grand promises. 1050 embers at the Ledger.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.144.0',
     title: 'The Peddler\u2019s Shelf',

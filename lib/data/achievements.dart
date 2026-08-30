@@ -325,12 +325,12 @@ const Map<String, AchievementDef> achievements = {
     'Full Company',
     'Unlock every delver.',
     stat: 'chars_unlocked',
-    target: 8,
+    target: 9, // v0.145.0: the bearer joins (promise doctrine)
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
     'Five Ways Down',
-    'Win a run with all five delvers.',
+    'Win a run with five different delvers.',
     stat: 'delvers_cleared',
     target: 5,
   ),
@@ -345,7 +345,7 @@ const Map<String, AchievementDef> achievements = {
   'six_ways_down': AchievementDef(
     'six_ways_down',
     'Six Ways Down',
-    'Win a run with all six delvers.',
+    'Win a run with six different delvers.',
     stat: 'delvers_cleared',
     target: 6,
   ),
@@ -363,7 +363,7 @@ const Map<String, AchievementDef> achievements = {
   'seven_ways_down': AchievementDef(
     'seven_ways_down',
     'Seven Ways Down',
-    'Win a run with all seven delvers.',
+    'Win a run with seven different delvers.',
     stat: 'delvers_cleared',
     target: 7,
   ),
@@ -380,7 +380,7 @@ const Map<String, AchievementDef> achievements = {
   'eight_ways_down': AchievementDef(
     'eight_ways_down',
     'Eight Ways Down',
-    'Win a run with all eight delvers.',
+    'Win a run with eight different delvers.',
     stat: 'delvers_cleared',
     target: 8,
   ),
@@ -499,8 +499,8 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // v0.135.0: moved with the roster (promise wording).
-    target: 8,
+    // v0.145.0: moved with the roster (promise wording).
+    target: 9,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

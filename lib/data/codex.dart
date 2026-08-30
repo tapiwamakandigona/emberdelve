@@ -193,6 +193,13 @@ final List<CodexEntryDef> codexEntries = [
         'someone taught the smith. The runesmith went down before the '
         'company had a name for going down, and came back marked.',
   ),
+  _delver(
+    'bearer',
+    'The bearer carries the company\u2019s heaviest die and asks for '
+        'nothing else. Two hands, two dice, one promise — when the big '
+        'face lands, the floor remembers it. The ninth chair is wider '
+        'than the others. Nobody jokes about it twice.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(
