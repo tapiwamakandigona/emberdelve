@@ -73,6 +73,11 @@ int statValue(MetaState m, String stat, [String? param]) {
       // Distinct ROSTER characters with a win: junk charWins keys from a
       // hand-edited save can never inflate this past the real roster.
       return characters.keys.where((id) => (m.charWins[id] ?? 0) > 0).length;
+    case 'delvers_crowned':
+      // v0.123.0: the same junk-proof rule for hard-mode wins per delver.
+      return characters.keys
+          .where((id) => (m.charHardWins[id] ?? 0) > 0)
+          .length;
     default:
       return 0;
   }

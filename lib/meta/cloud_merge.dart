@@ -125,6 +125,7 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
         : cloud.hearthTalesHeard,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),
+    charHardWins: _maxMap(local.charHardWins, cloud.charHardWins),
     charBestFloor: _maxMap(local.charBestFloor, cloud.charBestFloor),
     enemyMet: _maxMap(local.enemyMet, cloud.enemyMet),
     enemyFelled: _maxMap(local.enemyFelled, cloud.enemyFelled),

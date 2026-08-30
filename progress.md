@@ -3090,3 +3090,25 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Test idioms: ensureSemantics() + find.bySemanticsLabel; boon
   offers = startRun(boons:true) then state['boons']; reward offers
   = state['offers']. 4 tests. Suite 901/901. 0.122.0+148.
+
+## v0.123.0 — The Crowned Company (2026-08-30)
+- Per-delver hard-mode mastery: meta.charHardWins (banked beside
+  charWins on hard wins only; persisted when non-empty; cloud merge
+  per-key MAX — counters use _maxMap, only PREFERENCE maps like
+  charDye use the fresh-copy block). NO backfill: the global
+  hardWins can't attribute wins honestly, crowns count from here.
+  Tallies (picker + ledger roster) gain ' · N hard' between wins
+  and floor, shown only when > 0 (charted-depth no-guessing rule).
+- delvers_crowned stat (junk-proof distinct roster count) + Three
+  Crowns (3, fixed badge) + The Crowned Company (promise-worded →
+  target == characters.length, pinned). 56 achievements. Guard-test
+  map: achievementStats set + achievements_test wired-stat profile
+  + waymarks maxed profile all needed the new counter (as mapped).
+- SEED-HUNT LESSON (add to v0.114.0's): a difficulty hunt on a
+  fresh profile is SILENTLY CLAMPED to normal by clampRunParams
+  (hard rides forgeUnlocked — retraced_page idiom). Two-trap chain:
+  playRun hard 1/2/4 → controller free-profile "hard" 10/20/28
+  (actually normal!) → controller Forge hard 20/39. ALWAYS assert
+  run['difficulty'] inside a difficulty hunt.
+- 5 tests; plates approved (four-part tally wraps at 320). Suite
+  906/906. 0.123.0+149.

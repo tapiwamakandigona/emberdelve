@@ -133,6 +133,7 @@ void main() {
     m.hardWins = 999;
     for (final id in characters.keys) {
       m.charWins[id] = 999;
+      m.charHardWins[id] = 999;
       m.unlockedCharacters.add(id);
     }
     m.bossesBeaten.addAll([

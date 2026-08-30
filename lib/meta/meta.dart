@@ -54,6 +54,10 @@ class MetaState {
   // per-character runs/wins, lifetime embers banked, exact-kill counters.
   Map<String, int> charRuns;
   Map<String, int> charWins;
+  // v0.123.0 The Crowned Company: hard-mode wins charted per delver — the
+  // same honesty contract as charWins (real counters, banked at run end,
+  // cloud merge per-key MAX). Empty until a hard win; absent key = 0.
+  Map<String, int> charHardWins;
   int lifetimeEmbers;
   int exactKills;
   int exactStreak; // current consecutive fights ended with an exact kill
@@ -206,6 +210,7 @@ class MetaState {
     this.preferShortRoad = false,
     Map<String, int>? charRuns,
     Map<String, int>? charWins,
+    Map<String, int>? charHardWins,
     this.lifetimeEmbers = 0,
     this.exactKills = 0,
     this.exactStreak = 0,
@@ -262,6 +267,7 @@ class MetaState {
        unlockedCharacters = unlocked ?? {defaultCharacter},
        charRuns = charRuns ?? {},
        charWins = charWins ?? {},
+       charHardWins = charHardWins ?? {},
        charBestFloor = charBestFloor ?? {},
        charEpithet = charEpithet ?? {},
        charName = charName ?? {},
@@ -293,6 +299,7 @@ class MetaState {
     if (preferShortRoad) 'preferShortRoad': true,
     'charRuns': charRuns,
     'charWins': charWins,
+    if (charHardWins.isNotEmpty) 'charHardWins': charHardWins,
     'lifetimeEmbers': lifetimeEmbers,
     'exactKills': exactKills,
     'exactStreak': exactStreak,
@@ -469,6 +476,7 @@ class MetaState {
     preferShortRoad: j['preferShortRoad'] as bool? ?? false,
     charRuns: _intMap(j['charRuns']),
     charWins: _intMap(j['charWins']),
+    charHardWins: _intMap(j['charHardWins']),
     lifetimeEmbers: j['lifetimeEmbers'] as int? ?? 0,
     exactKills: j['exactKills'] as int? ?? 0,
     exactStreak: j['exactStreak'] as int? ?? 0,
