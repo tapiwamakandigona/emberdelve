@@ -160,6 +160,7 @@ class _TemperSheetState extends State<TemperSheet> {
                         'surge',
                         'echo',
                         'mend',
+                        'gilt',
                       ])
                         Padding(
                           padding: const EdgeInsets.only(bottom: Space.s),

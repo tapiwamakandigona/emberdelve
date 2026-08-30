@@ -477,7 +477,7 @@ void runForge(Sim sim, Map cmd, List<Map<String, Object?>> events) {
 }
 
 /// cmd: `{ type:"temper_face", die:1-based, face:natural face,
-///          rune:"blade"|"aegis"|"surge"|"echo"|"mend" }`
+///          rune:"blade"|"aegis"|"surge"|"echo"|"mend"|"gilt" }`
 void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (sim.phase != 'rest') return _invalid(events, 'not_rest_phase');
   final pool = sim.player['dice'] as List;

@@ -139,6 +139,11 @@ AssignmentResolution resolveAssignment({
       // v0.124.0 Mend pays in HP after the assignment resolves (combat
       // layer), not by raising this value — echo precedent.
       triggeredRune = rune;
+    } else if (rune == 'gilt') {
+      // v0.130.0 Gilt pays 2 gold after the assignment resolves — the
+      // on_max_gold precedent makes mid-combat gold legal (incidental
+      // economy, not a phase/reward).
+      triggeredRune = rune;
     }
   }
   value += runeBonus;

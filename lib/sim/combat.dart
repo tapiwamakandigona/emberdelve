@@ -782,6 +782,18 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       });
     }
   }
+  // v0.130.0 The Gilded Face: gilt pays 2 gold on its natural face — the
+  // on_max_gold exception extended (incidental economy, uncapped like
+  // every other gold source, announced honestly).
+  if (resolution.rune == 'gilt' && sim.run != null) {
+    sim.run!['gold'] = (sim.run!['gold'] as int) + 2;
+    _push(events, {
+      'type': 'gold_gained',
+      'amount': 2,
+      'source': 'gilt_rune',
+      'total': sim.run!['gold'],
+    });
+  }
 }
 
 void combatEndTurn(Sim sim, Map cmd, List<Map<String, Object?>> events) {

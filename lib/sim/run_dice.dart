@@ -9,7 +9,14 @@ import '../data/dice.dart';
 // v0.124.0: 'mend' joins the vocabulary. New runes append here AND in the
 // temper sheet's offer list; the sim validates temper commands against
 // this set (run_layer 'unknown_rune').
-const Set<String> faceRunes = {'blade', 'aegis', 'surge', 'echo', 'mend'};
+const Set<String> faceRunes = {
+  'blade',
+  'aegis',
+  'surge',
+  'echo',
+  'mend',
+  'gilt',
+};
 
 class RunDie {
   final String id;
@@ -67,6 +74,7 @@ String runeName(String? rune) => switch (rune) {
   'surge' => 'Surge',
   'echo' => 'Echo',
   'mend' => 'Mend',
+  'gilt' => 'Gilt',
   _ => 'Rune',
 };
 
@@ -78,5 +86,6 @@ String runeBlurb(String rune) => switch (rune) {
   'surge' => 'On that face, you get a reroll back. Once per die each turn.',
   'echo' => 'On that face, your next opposite action gains +1.',
   'mend' => 'On that face, mend 1 HP. A full delver mends nothing.',
+  'gilt' => 'On that face, the assignment pays 2 gold.',
   _ => '',
 };
