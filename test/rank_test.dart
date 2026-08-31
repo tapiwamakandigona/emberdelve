@@ -99,10 +99,7 @@ void main() {
       final at = _profile(wins: t.marks ~/ 3, met: t.marks % 3);
       expect(rankMarks(at), t.marks);
       expect(rankFor(at).id, t.id, reason: 'at ${t.marks} marks -> ${t.id}');
-      final under = _profile(
-        wins: (t.marks - 1) ~/ 3,
-        met: (t.marks - 1) % 3,
-      );
+      final under = _profile(wins: (t.marks - 1) ~/ 3, met: (t.marks - 1) % 3);
       expect(rankMarks(under), t.marks - 1);
       expect(
         rankFor(under).id,
@@ -114,8 +111,9 @@ void main() {
 
   test('a long, honest climb tops the ladder', () {
     // A veteran profile: hundreds of wins, full bestiary, full codex.
+    // v0.149.0: the ladder grew a tenth tier; the veteran grew with it.
     final m = _profile(
-      wins: 300,
+      wins: 500,
       bosses: 6,
       felled: 35,
       met: 35,
