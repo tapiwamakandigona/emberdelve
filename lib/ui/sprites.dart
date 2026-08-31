@@ -50,6 +50,11 @@ class SpriteMeta {
   static SpriteMeta? _cached;
   static Future<SpriteMeta>? _loading;
 
+  /// Synchronous cache read (v0.177.0 The Banked Coals): non-null once
+  /// [load] has completed. Lets SpriteView commit warm sheets without a
+  /// frame of empty box.
+  static SpriteMeta? get cachedOrNull => _cached;
+
   static Future<SpriteMeta> load() {
     if (_cached != null) return Future.value(_cached);
     return _loading ??= rootBundle
@@ -94,6 +99,26 @@ class SpriteMeta {
 // Decoded sheet images, cached per asset path.
 final Map<String, ui.Image> _imageCache = {};
 final Map<String, Future<ui.Image>> _imageLoading = {};
+
+/// v0.177.0 The Banked Coals: decode every bundled sheet into the cache.
+/// ~99 KB of pixel-art PNG on disk; a few MB decoded. Called once after
+/// the first frame so the title paints instantly and everything after —
+/// picker cards, map nodes, first combat — renders its sprite on its
+/// FIRST frame instead of popping in a decode later.
+Future<void> warmSpriteSheets() async {
+  final meta = await SpriteMeta.load();
+  await Future.wait([
+    for (final def in meta.enemies.values) _loadSheetImage(def.assetPath),
+    for (final def in meta.characters.values)
+      _loadSheetImage(def.assetPath),
+  ]);
+}
+
+@visibleForTesting
+bool debugSpriteSheetCached(String id) {
+  final def = SpriteMeta.cachedOrNull?.sheet(id);
+  return def != null && _imageCache.containsKey(def.assetPath);
+}
 
 Future<ui.Image> _loadSheetImage(String assetPath) {
   final hit = _imageCache[assetPath];
@@ -220,6 +245,31 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   Future<void> _load() async {
     final gen = ++_loadGen;
     final id = widget.spriteId;
+    // v0.177.0 The Banked Coals: warm-cache fast path. When the meta and
+    // the sheet are already decoded, commit synchronously — no setState
+    // needed (initState runs before the first build; didUpdateWidget is
+    // already inside a rebuild) and no empty-box frame is ever shown.
+    final warmMeta = SpriteMeta.cachedOrNull;
+    if (warmMeta != null) {
+      final def = warmMeta.sheet(id);
+      final img = def == null ? null : _imageCache[def.assetPath];
+      if (def != null && img != null) {
+        final row = def.row(widget.state) ?? def.row('idle');
+        _def = def;
+        _row = row;
+        _img = img;
+        if (widget.animate && row != null && row.frames > 1) {
+          _ctrl = AnimationController(
+            vsync: this,
+            duration: Duration(
+              milliseconds: (row.frames * 1000 / def.fps).round(),
+            ),
+          )..repeat();
+          _rebuildDriver();
+        }
+        return;
+      }
+    }
     try {
       final meta = await SpriteMeta.load();
       final def = meta.sheet(id);
@@ -246,6 +296,11 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
             milliseconds: (row.frames * 1000 / def.fps).round(),
           ),
         )..repeat();
+        // v0.177.0 fix: the driver was built in initState, BEFORE this
+        // controller existed, and never rebuilt — so the frame loop ticked
+        // into a painter that never repainted. Anywhere without the bob
+        // ticker (title hearth, map nodes, codex cards) froze on frame 0.
+        _rebuildDriver();
       }
     } catch (_) {
       /* missing asset: renders empty box, never crashes */

@@ -3951,3 +3951,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   22→23 in provings_test (×2 + '0 of 23'/'1 of 23') + eighth_way_test.
   New test/fifteenth_way_test.dart. Suite 1090/1090 first try, analyze
   clean. v0.119 pattern, ninth use.
+
+## v0.177.0 The Banked Coals (2026-08-31)
+- REAL BUG (found by perf/animation directive audit): SpriteView's
+  _repaintDriver was built in initState BEFORE the frame-loop controller
+  existed and never rebuilt — multi-frame idles froze on frame 0
+  wherever bob/sway were off (title hearth, map nodes, codex, picker
+  portraits). Combat masked it via the bob _life ticker. Fix: call
+  _rebuildDriver() after _ctrl creation (both paths). REVERT-CHECKED:
+  test red on pre-fix code.
+- warmSpriteSheets() decodes all sheets post-first-frame (GameRoot
+  initState addPostFrameCallback); SpriteView sync fast path commits
+  cached sheets in initState with NO setState (initState precedes first
+  build; didUpdateWidget is already in a rebuild) — no empty-box frame.
+  debugSpriteSheetCached for tests. test/banked_coals_test.dart (3);
+  CustomPainter EXTENDS Listenable — painter.addListener observes the
+  repaint wiring directly in widget tests.
+- Suite 1093/1093, analyze clean. 0.177.0+203.

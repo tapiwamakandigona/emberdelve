@@ -12,6 +12,17 @@ class GameRoot extends StatefulWidget {
 class _GameRootState extends State<GameRoot> {
   GameController get c => widget.c;
 
+  @override
+  void initState() {
+    super.initState();
+    // v0.177.0 The Banked Coals: decode all sprite sheets right after the
+    // first frame — the title paints instantly, and every later sprite
+    // (picker, map, first combat) renders on its first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      warmSpriteSheets();
+    });
+  }
+
   // TalkBack (v0.19.0): speak phase changes ("Map", "Combat: Ash Thrall")
   // so a screen-reader player always knows where the delve took them.
   // Announced at most once per phase transition; silent for sighted play.

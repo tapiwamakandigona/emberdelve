@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.176.0';
+const String currentAppVersion = '0.177.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.177.0',
+    title: 'The Banked Coals',
+    lines: [
+      'Every sprite sheet is banked warm at launch \u2014 delver '
+          'cards, map marks, and first combats now draw on their '
+          'first frame.',
+      'And a mended fire: idle animations at the hearth and on the '
+          'map had frozen still. They breathe again.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.176.0',
     title: 'The Fifteenth Way',
