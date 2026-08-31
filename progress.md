@@ -678,3 +678,16 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   (AKP-7a precedent). Probe: 28 s, 1 death, all seeds. Suite 397+1 skipped,
   analyze clean. Look pass phone+desktop at both changed sites (4/4).
 - Checkpoint: checkpoints/16-alpha13-fire-toll-relief.md.
+
+## v1.0.0-alpha.14+26 — Vault Break-Out (2026-08-31)
+- One improvement: w2_l3 flips from TIMEOUT on all 4 probe seeds (bot pinned
+  177 s at col 91) to COMPLETED 26 s all seeds. The loot vault at 86-92
+  broke the established `B.X.B` grammar (cracked walls BOTH sides) and
+  shipped `B.cXc.#` — breakable entry, solid exit, solid roof: break in,
+  loot, trapped. Fix: right wall (92,14)+(92,15) '#' -> 'B'. New permanent
+  gate test/secret_vault_test.dart (12 tests): every secret chest's first
+  2-tall lateral barrier within 8 tiles must be breakable, both sides —
+  VERIFIED red on old geometry (flags exactly w2_l3 X@(89,15)), green on
+  new. Suite 409+1 skipped, analyze clean. Look pass phone+desktop at the
+  vault site.
+- Checkpoint: checkpoints/17-alpha14-vault-break-out.md.
