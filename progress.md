@@ -3633,3 +3633,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   known-goals set grew the id. 3 tests. Suite pending full run.
 2026-08-31 v0.153.0 ARTIFACTS ATTACHED: CI run 33399481843 success; 4×APK PIN-OK versionName 0.153.0 + AAB pin match; renamed standard names, uploaded to v0.153.0 release, sha256 table appended. .last-PIN BIT AGAIN in v0.154: marked_day_test pinned trialsOrder.last — retired to INDEX pin 8. The append-to-order-list grep for `.last` pins is MANDATORY, not advisory.
 2026-08-31 v0.154.0 ARTIFACTS ATTACHED: CI run 33401229453 success; 4×APK PIN-OK versionName 0.154.0 code 4180 + AAB pin match; renamed standard names, uploaded to v0.154.0 release, sha256 table appended. Suite note corrected: full run landed 1016/1016 green before the release commit. Releases fully current through v0.154.0 with signed artifacts on latest.
+
+## v0.155.0 — The Deep Mark (2026-08-31)
+- Rune tiers, the dedicated release the v0.154 scout demanded. Same
+  die+face+rune tempers again = deepen IN PLACE to tier 2 (no new
+  custom id; still spends a temper, still banks Six Marks; tier-2
+  repeat rejects 'already_deep'). OPTIONAL 'tier' save key: absent
+  = 1 (old saves byte-identical), present must be 1|2 else throw.
+- Deep payoffs one step more: blade/aegis +3, echo arms 2, mend 2,
+  gilt 3, surge twice/die/turn (contains() generalised to count
+  capped at tier — tier 1 identical). AssignmentResolution grew
+  runeTier; combat payoff sites read it. face_tempered event now
+  declares tier (1|2) — face_forge event pin updated. Forge keeps
+  tier. UI: DieChip mark wears '+' when deep, a11y says 'Blade II'
+  (runeTierName/runeDeepBlurb in run_dice.dart); temper sheet shows
+  a deepen hint on marked dice, button says Deepen/'already deep'.
+- LESSON: sim invalid events are type 'invalid_command', not
+  'invalid'. Injected custom_1 test fixtures must also bump
+  next_custom_die or the next mint collides. 8 tests
+  (deep_mark_test). Suite 1024/1024. 0.155.0+181.

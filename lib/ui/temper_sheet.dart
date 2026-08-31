@@ -45,8 +45,19 @@ class _TemperSheetState extends State<TemperSheet> {
     final run = c.state!['run'] as Map?;
     final pool = ((c.state!['player'] as Map)['dice'] as List).cast<String>();
     final die = _die;
-    final size = die == null ? 0 : resolveRunDie(run, pool[die - 1]).def.size;
-    final ready = die != null && _face != null && _rune != null;
+    final resolved = die == null ? null : resolveRunDie(run, pool[die - 1]);
+    final size = resolved?.def.size ?? 0;
+    // v0.155.0 The Deep Mark: picking the same face and rune a die already
+    // bears deepens the mark instead of re-writing it. The sheet says so
+    // before the commit, and a mark that is already deep disables the button
+    // (the sim would reject it; the sheet never offers a dead command).
+    final wouldDeepen =
+        resolved != null &&
+        resolved.custom &&
+        _face == resolved.temperedFace &&
+        _rune == resolved.rune;
+    final alreadyDeep = wouldDeepen && resolved.tier >= 2;
+    final ready = die != null && _face != null && _rune != null && !alreadyDeep;
 
     // The three steps scroll; the header and the commit button never do, so
     // the sheet works on short phones and at large text scales (it overflowed
@@ -82,6 +93,17 @@ class _TemperSheetState extends State<TemperSheet> {
                         'a delve, and each lasts the whole run.',
                         style: EmberText.bodyDim,
                       ),
+                      if (resolved != null && resolved.custom) ...[
+                        const SizedBox(height: Space.s),
+                        Text(
+                          'This die bears '
+                          '${runeTierName(resolved.rune, resolved.tier)} on '
+                          '${resolved.temperedFace}. '
+                          '${resolved.tier >= 2 ? 'That mark is already deep.' : 'The same face and rune deepens the mark: ${runeDeepBlurb(resolved.rune!)}'}',
+                          key: const ValueKey('temper-deepen-hint'),
+                          style: EmberText.bodyDim,
+                        ),
+                      ],
                       const SizedBox(height: Space.l),
 
                       Text('1 · WHICH DIE', style: EmberText.micro),
@@ -174,8 +196,12 @@ class _TemperSheetState extends State<TemperSheet> {
 
               EmberButton(
                 ready
-                    ? 'Temper ${runeName(_rune)} on $_face'
-                    : 'Choose a die, a face and a rune',
+                    ? (wouldDeepen
+                          ? 'Deepen ${runeName(_rune)} on $_face'
+                          : 'Temper ${runeName(_rune)} on $_face')
+                    : (alreadyDeep
+                          ? 'That mark is already deep'
+                          : 'Choose a die, a face and a rune'),
                 key: const ValueKey('temper-confirm'),
                 primary: ready,
                 icon: Icons.local_fire_department,

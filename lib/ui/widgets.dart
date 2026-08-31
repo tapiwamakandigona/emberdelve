@@ -755,7 +755,8 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
     final a11y = StringBuffer('${def.name}, d${def.size} die');
     if (runDie.custom) {
       a11y.write(
-        ', tempered ${runeName(runDie.rune)} on ${runDie.temperedFace}',
+        ', tempered ${runeTierName(runDie.rune, runDie.tier)} '
+        'on ${runDie.temperedFace}',
       );
     }
     if (widget.value != null) a11y.write(', rolled ${widget.value}');
@@ -945,6 +946,7 @@ class _DieChipState extends State<DieChip> with SingleTickerProviderStateMixin {
                       child: _RuneMark(
                         rune: runDie.rune!,
                         face: runDie.temperedFace!,
+                        tier: runDie.tier,
                         live: value != null && value == runDie.temperedFace,
                       ),
                     ),
@@ -1422,8 +1424,14 @@ void showFlash(BuildContext context, String msg) {
 class _RuneMark extends StatelessWidget {
   final String rune;
   final int face;
+  final int tier;
   final bool live;
-  const _RuneMark({required this.rune, required this.face, required this.live});
+  const _RuneMark({
+    required this.rune,
+    required this.face,
+    required this.live,
+    this.tier = 1,
+  });
 
   static const Map<String, Color> _colors = {
     'blade': EmberColors.hp,
@@ -1445,7 +1453,9 @@ class _RuneMark extends StatelessWidget {
         border: Border.all(color: color, width: 1),
       ),
       child: Text(
-        '${runeName(rune)[0]}$face',
+        // v0.155.0: a deepened mark wears a plus — 'B3+' reads at a glance
+        // without widening the corner chip.
+        '${runeName(rune)[0]}$face${tier >= 2 ? '+' : ''}',
         style: EmberText.micro.copyWith(
           fontSize: 8,
           height: 1.1,

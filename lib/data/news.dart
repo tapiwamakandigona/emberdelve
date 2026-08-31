@@ -23,10 +23,20 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.154.0';
+const String currentAppVersion = '0.155.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.155.0',
+    title: 'The Deep Mark',
+    lines: [
+      'Temper the same face with the same rune again and the mark deepens: '
+          'every rune pays one step more.',
+      'Two tempers a delve, as before — depth or breadth is now your call.',
+      'Old marks are untouched, and a deep mark wears a plus on the die.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.154.0',
     title: "The Keeper's Day",

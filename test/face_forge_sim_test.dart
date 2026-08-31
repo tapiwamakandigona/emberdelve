@@ -88,6 +88,8 @@ void main() {
           'base': 'd6',
           'face': 4,
           'rune': 'echo',
+          // v0.155.0 The Deep Mark: every temper event declares its depth.
+          'tier': 1,
         },
       ]);
       expect(

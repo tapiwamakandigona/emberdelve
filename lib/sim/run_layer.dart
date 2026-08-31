@@ -480,6 +480,8 @@ void runForge(Sim sim, Map cmd, List<Map<String, Object?>> events) {
       'base': into,
       'face': resolved.temperedFace,
       'rune': resolved.rune,
+      // v0.155.0: forging a deep-marked die keeps its depth.
+      if (resolved.tier > 1) 'tier': resolved.tier,
     };
   } else {
     pool[idx - 1] = into;
@@ -519,6 +521,37 @@ void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (face is! int || face < 1 || face > resolved.def.size) {
     return _invalid(events, 'no_such_face');
   }
+  // v0.155.0 The Deep Mark: marking the SAME face with the SAME rune again
+  // deepens the mark to tier 2 in place — no new custom id, so recorded
+  // streams keep their die identities. It still spends a temper and still
+  // banks the rune (the forge work happened, Six Marks precedent). A mark
+  // already deep rejects honestly rather than wasting the temper.
+  if (resolved.custom &&
+      resolved.temperedFace == face &&
+      resolved.rune == rune) {
+    if (resolved.tier >= 2) return _invalid(events, 'already_deep');
+    (sim.run!['custom_dice'] as Map)[current] = {
+      'base': resolved.baseId,
+      'face': face,
+      'rune': rune,
+      'tier': 2,
+    };
+    sim.run!['tempers_used'] = (sim.run!['tempers_used'] as int? ?? 0) + 1;
+    final marked = sim.run!['runes_tempered'] as List? ?? [];
+    marked.add(rune);
+    sim.run!['runes_tempered'] = marked;
+    _push(events, {
+      'type': 'face_tempered',
+      'die': idx,
+      'custom': current,
+      'base': resolved.baseId,
+      'face': face,
+      'rune': rune,
+      'tier': 2,
+    });
+    sim.phase = 'map';
+    return;
+  }
   final next = sim.run!['next_custom_die'] as int? ?? 1;
   final customId = 'custom_$next';
   (sim.run!['custom_dice'] as Map)[customId] = {
@@ -542,6 +575,7 @@ void runTemperFace(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     'base': resolved.baseId,
     'face': face,
     'rune': rune,
+    'tier': 1,
   });
   sim.phase = 'map';
 }
