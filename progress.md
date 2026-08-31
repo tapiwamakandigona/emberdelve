@@ -3973,3 +3973,13 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   201/…) PUBLISHED, all pins OK + AAB pins OK, sha256 tables appended.
   In flight: v0.176 CI 33431048080, v0.177 CI 33432253170
   (predicate /work/temp/ci_check_175_177.sh covers 176+177 too).
+
+## 2026-08-31 — v0.176.0 + v0.177.0 artifacts PUBLISHED
+- v0.176.0: CI 33431048080 success, codes 202/1202/2202/4202, ALL PINS
+  OK + AAB PIN OK, sha256 table appended. PUBLISHED.
+- v0.177.0: CI 33432253170 success, codes 203/1203/2203/4203, ALL PINS
+  OK + AAB PIN OK, sha256 table appended. PUBLISHED.
+- Published-artifact chain now continuous v0.167.0 → v0.177.0.
+- Next lead scouting: sixteenth delver (LAST roster slot, unlock 2100?),
+  sixth tale cycle, further UI polish (instr 18), perf/anim rotation
+  (instr 17), roster "Wardrobe" jump anchor idea.
