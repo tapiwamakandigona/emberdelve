@@ -28,7 +28,7 @@ void main() {
   });
 
   test('the new colours sit at the ladder top with real prices', () {
-    expect(hearthThemesOrder.sublist(12), ['anvilglow', 'runefire']);
+    expect(hearthThemesOrder.sublist(12, 14), ['anvilglow', 'runefire']);
     final prices = [
       for (final id in hearthThemesOrder) hearthThemes[id]!.costEmbers,
     ];

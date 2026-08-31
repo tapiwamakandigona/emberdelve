@@ -467,7 +467,7 @@ const Map<String, AchievementDef> achievements = {
     'Hearth Keeper',
     'Own every hearth colour.',
     stat: 'themes_owned',
-    target: 14,
+    target: 16,
   ),
 
   // --- discipline -------------------------------------------------------

@@ -38,6 +38,9 @@ const List<String> hearthThemesOrder = [
   // v0.140.0 The Kept Hearth — the session's two arcs, on the hearth:
   // anvil-orange and rune-violet. Order = price order, ladder ascends.
   'anvilglow', 'runefire',
+  // v0.157.0 The Deep Hearth — the Deep Mark on the hearth, plus a hue the
+  // shelf never held. Order = price order, ladder ascends.
+  'twiceflame', 'marshlight',
 ];
 
 const Map<String, HearthThemeDef> hearthThemes = {
@@ -154,6 +157,22 @@ const Map<String, HearthThemeDef> hearthThemes = {
     costEmbers: 480,
     warmArgb: 0xFF2E1E44,
     brightArgb: 0xFFB98AE8,
+  ),
+  'twiceflame': HearthThemeDef(
+    'twiceflame',
+    'Twiceflame',
+    'A flame tempered twice over; it burns a shade deeper.',
+    costEmbers: 520,
+    warmArgb: 0xFF4A1038,
+    brightArgb: 0xFFE86AC0,
+  ),
+  'marshlight': HearthThemeDef(
+    'marshlight',
+    'Marshlight',
+    'A pale green fire that wanders in from the fens.',
+    costEmbers: 560,
+    warmArgb: 0xFF3E5210,
+    brightArgb: 0xFFC8E85A,
   ),
 };
 
