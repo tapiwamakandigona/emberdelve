@@ -12,9 +12,19 @@
 //     nag. Version bumps do not reset the flag; cloud merge ORs it so a
 //     second device never re-asks.
 //   • Asked only at a moment of earned pride, never mid-run: right after the
-//     player banks their SECOND (or later) run win, or banks a WON
-//     daily/weekly delve. A first win can still be tour-adjacent, so it
-//     never triggers the ask on its own.
+//     player banks their SECOND (or later) run win, banks a WON daily/weekly
+//     delve, or CLIMBS TO SPARKTENDER OR ABOVE. A first win can still be
+//     tour-adjacent, so it never triggers the ask on its own.
+//   • v0.7.0 REACHABILITY FIX: the win-only gate above was effectively dead
+//     code in the wild. Winning a delve is rare by design, and requiring a
+//     SECOND win meant that on 2026-08-31, with 54 device acquisitions and
+//     21 monthly actives, the store listing still showed NO public rating at
+//     all — the single biggest trust penalty on the page. A rank climb is
+//     the same kind of earned pride but is actually reachable without a win:
+//     marks accrue from foes met, foes felled and codex entries. We ask on
+//     the climb to Sparktender (24 marks) rather than Tinderhand (8), so the
+//     ask still lands on real investment (several runs) and never on a
+//     first-run fluke.
 //   • Never while the Guided Delve tour is running, and never on a profile
 //     that hasn't finished the tour version it was shown.
 //   • No incentives, no "only if you like it" pre-filtering, no custom
@@ -36,20 +46,31 @@ class ReviewService {
   /// Wired in main.dart on Android; null everywhere else (silent no-op).
   ReviewRequestBackend? backend;
 
+  /// Marks threshold the player must have just CLIMBED INTO for a rank-up to
+  /// count as "earned pride". 24 is Sparktender (data/ranks.dart); the tier
+  /// below it, Tinderhand at 8, is reachable inside a single first run, which
+  /// is too early to have an opinion worth asking for.
+  static const int rankAskFloorMarks = 24;
+
   /// Pure eligibility — the whole charter in one testable expression.
   /// [wonThisRun] is whether the run just banked ended in `run_won`;
   /// [wonDailyOrWeekly] is whether that run was a daily/weekly AND won;
+  /// [rankedUpToMarks] is the marks threshold of the tier the player just
+  /// climbed INTO on this bank, or null when this bank was not a rank-up;
   /// [tourActive] is whether a Guided Delve beat is currently running.
   static bool eligible(
     MetaState meta, {
     required bool wonThisRun,
     required bool wonDailyOrWeekly,
     required bool tourActive,
+    int? rankedUpToMarks,
   }) {
     if (meta.reviewAsked || tourActive) return false;
-    // "Earned pride": a 2nd+ win, or any won daily/weekly (those already
-    // require a finished, won run by construction in _bankRun).
-    return (wonThisRun && meta.runsWon >= 2) || wonDailyOrWeekly;
+    // "Earned pride", in the three shapes it actually takes:
+    //   a 2nd+ win, any won daily/weekly (those already require a finished,
+    //   won run by construction in _bankRun), or a climb into Sparktender+.
+    if ((wonThisRun && meta.runsWon >= 2) || wonDailyOrWeekly) return true;
+    return rankedUpToMarks != null && rankedUpToMarks >= rankAskFloorMarks;
   }
 
   /// Called once per banked run from GameController._bankRun. Stamps
@@ -61,12 +82,14 @@ class ReviewService {
     required bool wonThisRun,
     required bool wonDailyOrWeekly,
     required bool tourActive,
+    int? rankedUpToMarks,
   }) {
     if (!eligible(
       meta,
       wonThisRun: wonThisRun,
       wonDailyOrWeekly: wonDailyOrWeekly,
       tourActive: tourActive,
+      rankedUpToMarks: rankedUpToMarks,
     )) {
       return false;
     }
