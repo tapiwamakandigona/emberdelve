@@ -3968,3 +3968,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   CustomPainter EXTENDS Listenable — painter.addListener observes the
   repaint wiring directly in widget tests.
 - Suite 1093/1093, analyze clean. 0.177.0+203.
+- ARTIFACTS: v0.173.0 (CI 33427087325, codes 199/…) and v0.174.0
+  (CI 33427927937, codes 200/…) and v0.175.0 (CI 33430681673, codes
+  201/…) PUBLISHED, all pins OK + AAB pins OK, sha256 tables appended.
+  In flight: v0.176 CI 33431048080, v0.177 CI 33432253170
+  (predicate /work/temp/ci_check_175_177.sh covers 176+177 too).
