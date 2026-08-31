@@ -133,6 +133,99 @@ void main() {
     });
   });
 
+  group('rank-climb ask (v0.7.0 reachability fix)', () {
+    test('climbing into Sparktender asks, with no win at all', () {
+      final m = MetaState(runsPlayed: 6);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: ReviewService.rankAskFloorMarks,
+        ),
+        isTrue,
+      );
+    });
+
+    test('climbing into Tinderhand (8) is too early to ask', () {
+      final m = MetaState(runsPlayed: 1);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 8,
+        ),
+        isFalse,
+      );
+    });
+
+    test('a bank that is not a rank-up never asks on the rank path', () {
+      final m = MetaState(runsPlayed: 30);
+      expect(
+        ReviewService.eligible(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: null,
+        ),
+        isFalse,
+      );
+    });
+
+    test('a high rank climb still never asks twice, or during the tour', () {
+      expect(
+        ReviewService.eligible(
+          MetaState(reviewAsked: true),
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 240,
+        ),
+        isFalse,
+      );
+      expect(
+        ReviewService.eligible(
+          MetaState(),
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: true,
+          rankedUpToMarks: 240,
+        ),
+        isFalse,
+      );
+    });
+
+    test('rank climb stamps the flag exactly once', () {
+      final m = MetaState(runsPlayed: 9);
+      final svc = ReviewService.instance;
+      expect(
+        svc.maybeAsk(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 60,
+        ),
+        isTrue,
+      );
+      expect(m.reviewAsked, isTrue);
+      expect(
+        svc.maybeAsk(
+          m,
+          wonThisRun: false,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 120,
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('persistence + merge', () {
     test('reviewAsked round-trips through JSON and defaults false', () {
       final m = MetaState(reviewAsked: true);
