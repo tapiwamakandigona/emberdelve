@@ -109,6 +109,7 @@ const List<String> achievementsOrder = [
   'flintwright_wins', 'seven_ways_down',
   'runesmith_wins', 'eight_ways_down',
   'bearer_wins', 'nine_ways_down',
+  'mender_wins', 'ten_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -400,6 +401,22 @@ const Map<String, AchievementDef> achievements = {
     'Win a run with nine different delvers.',
     stat: 'delvers_cleared',
     target: 9,
+  ),
+  // v0.151.0 The Tenth Way (the v0.119 pattern, fourth use).
+  'mender_wins': AchievementDef(
+    'mender_wins',
+    'The First Stitch',
+    'Win a delve as the Mender.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'mender',
+  ),
+  'ten_ways_down': AchievementDef(
+    'ten_ways_down',
+    'Ten Ways Down',
+    'Win a run with ten different delvers.',
+    stat: 'delvers_cleared',
+    target: 10,
   ),
 
   // --- the bestiary -----------------------------------------------------
