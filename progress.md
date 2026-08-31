@@ -3605,3 +3605,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Dye lane scouted and REJECTED (no hue gap: mosscloak owns
   green, palewisp grey). Plates: map vs identity control + shelf
   locked/worn. 2 tests. Suite 1010/1010. 0.152.0+178.
+
+## v0.153.0 — The Shared Fire (2026-08-31)
+- 7th tip shared_delve: the daily/weekly finally TAUGHT — fires
+  on TITLE arrival, gated wonBefore && !dailyPlayed (first_anvil
+  canTemper doctrine, calendar edition: never explain a thing the
+  player already does). Copy states the honest contract; charter
+  pin in shared_fire_test.
+- FIRST OUT-OF-RUN TIP: TitleScreen is stateless — card mounts in
+  a StatefulBuilder (dismissTip persists but does NOT notify;
+  making it notify would rebuild routes mid-animation in three
+  run screens). TIP-OVERLAY LESSON: a new tip card over a screen
+  SWALLOWS TAPS in that screen's other tests — waymark_line_test
+  (won-but-no-daily profile) broke; fix = mark the tip seen in
+  unrelated tests' profiles. When adding a tip, grep tests that
+  pump the host screen with a profile matching the tip's gates.
+- tips_test last-unseen deck pin grew the id. 3 tests. Suite
+  1013/1013. 0.153.0+179.

@@ -145,6 +145,15 @@ class _ContextTip extends StatelessWidget {
           'Either way the delve ends there — and the next one starts fresh.',
       Alignment.center,
     ),
+    ContextTips.sharedDelve: (
+      Icons.today,
+      'THE SHARED DELVE',
+      'Each day deals one delve that is the same for everyone \u2014 '
+          'same seed, same road \u2014 and Monday adds a weekly rule on '
+          'top. Play it when you like: a skipped day is silent and costs '
+          'nothing.',
+      Alignment.center,
+    ),
     ContextTips.firstAnvil: (
       Icons.auto_awesome,
       'THE SMITH IS IN',
