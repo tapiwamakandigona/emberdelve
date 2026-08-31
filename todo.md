@@ -1,15 +1,18 @@
-# Gauntlet iteration 18 — v1.0.0-alpha.15: boss design-intent review
+# Gauntlet iteration 19 — v1.0.0-alpha.16: overflow sweep gate
 
-alpha.14 SHIPPED (CI ✓, APK verified 1.0.0-alpha.14/26 pin MATCH ✓, prerelease 379915652 ✓, assets ✓, skill bumped ✓).
+alpha.15 SHIPPED (CI 33418320882 ✓, APK verified 1.0.0-alpha.15/27 pin MATCH ✓, prerelease 379929799 + assets ✓, skill bumped+compressed ✓).
 
-Sweep state: all 10 regular levels COMPLETED by casual probe; w1_boss WIPED pct46, w2_boss WIPED pct42.
-Rule: design-intent review FIRST — bosses are telegraph fights, maybe meant to beat a masher. No automatic nerf.
+Improvement: DEMAND quality gate "Overflow sweep for Flutter UI screens at
+small phone + 1.3× text" has NO automation and no recent manual sweep. Build
+test/overflow_sweep_test.dart pumping every UI screen at small-phone sizes
+(portrait 320×640 + landscape 640×320 where relevant) with TextScaler 1.3;
+overflow errors fail widget tests natively. Fix whatever it flags.
 
-- [x] Boss code + levels read (BossCore state machine, pens, moats)
-- [x] Fresh masher probes: both wipe trading at melee range — 2 hits/life
-- [x] Verdict: (a) intended skill gate (fairness_test pins it) + one real defect: w2 sign coaches unreachable ground play
-- [x] Fix: w2_boss sign rewrite (crown-strike coaching) + permanent gate test/boss_intent_test.dart (coached bot must win, 8/8 green)
-- [x] Gates: analyze clean + 411 passed + 1 skipped
-- [x] Look-pass phone+desktop at sign site PASS (a15 shots)
-- [x] progress.md + checkpoint 18 + pubspec 1.0.0-alpha.15+27
-- [ ] Commit -F, tag, push, CI, verify artifacts (pin!), prerelease, skill bump + compress (<4000)
+- [ ] Read ui_smoke_test/meta_screens_test pump patterns (app_state deps)
+- [ ] Write sweep test: title, level select, shop, settings, credits, game results/pause
+- [ ] Run → log flagged overflows (VERIFIED red before fix)
+- [ ] Fix overflows (minimal layout edits)
+- [ ] Gates: analyze clean + full suite green
+- [ ] Look-pass phone+desktop at changed screens
+- [ ] progress.md + checkpoint 19 + pubspec 1.0.0-alpha.16+28
+- [ ] Commit -F, tag, push, CI, verify artifacts (pin!), prerelease, skill bump

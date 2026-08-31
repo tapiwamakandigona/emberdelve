@@ -708,3 +708,33 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   hit-and-run windows or the w2 moat-jump/perch reach. Suite 411+1 skipped,
   analyze clean. Look pass phone+desktop at the sign site.
 - Checkpoint: checkpoints/18-alpha15-crown-strike.md.
+
+## v1.0.0-alpha.16+28 — Small-Phone Sweep (2026-08-31)
+- One improvement: the DEMAND gate "Overflow sweep for Flutter UI screens at
+  small phone + 1.3× text" had no automation and no recent manual run. New
+  permanent gate test/overflow_sweep_test.dart pumps title / level select /
+  shop / settings / credits at 320×568 AND 568×320 logical px with
+  TextScaler 1.3 (loaded save: 999999 coins + all 36 medals so the widest
+  content lays out; lazy lists flung to the bottom). VERIFIED red on old
+  code — 4 real overflows: title menu Row +201 px right (320 portrait),
+  title Column +103 px bottom (568×320 landscape), level-select AppBar
+  actions +14 px (WalletChip at 1.3x), shop card rows +17 px (price+BUY
+  cluster) and +38 px (_WeaponStats fixed-width bars).
+- Fixes: title menu wrapped in Center>FittedBox(scaleDown) (whole menu
+  shrinks uniformly instead of clipping); WalletChip and the shop card's
+  trailing purchase cluster keep base text scale via
+  MediaQuery.withClampedTextScaling(1.0) (compact iconographic chrome —
+  the description column keeps full 1.3x and wraps); _WeaponStats bars in
+  FittedBox(scaleDown, centerLeft). Sweep 10/10 green after.
+- Harness: lib/main_webtest.dart gains ?screen=title|select|shop|settings|
+  credits (+ ?coins=N, ?allclear=1) so release look-passes can screenshot
+  the real meta screens in a browser (harness-only entrypoint, not in the
+  Android app).
+- Gates: analyze clean, suite 421 passed + 1 skipped. Look pass phone
+  915×412 + desktop 1280×800 on title/select/shop: unchanged at normal
+  sizes, no regressions.
+- Carry-forward (pre-existing, untouched): disabled BUY button on
+  feather-priced shop items (e.g. Skypiercer 12 feathers, wallet 0) is
+  near-invisible — white12 fill on dark panel reads as an empty gap next to
+  the price. Worth a contrast pass.
+- Checkpoint: checkpoints/19-alpha16-small-phone-sweep.md.

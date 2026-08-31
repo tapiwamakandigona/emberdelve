@@ -29,8 +29,8 @@ class ShopScreen extends StatefulWidget {
 }
 
 class _ShopScreenState extends State<ShopScreen> {
-  Wallet get _wallet => Wallet(
-      coins: AppState.save.coins, feathers: AppState.save.feathers);
+  Wallet get _wallet =>
+      Wallet(coins: AppState.save.coins, feathers: AppState.save.feathers);
 
   void _spendFromWallet(Wallet w) {
     AppState.save.coins = w.coins;
@@ -38,9 +38,10 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   int _priceFor(Currency currency, int price) => effectivePrice(
-      currency: currency,
-      price: price,
-      ownedAbilities: AppState.save.ownedAbilities);
+    currency: currency,
+    price: price,
+    ownedAbilities: AppState.save.ownedAbilities,
+  );
 
   Future<void> _buy({
     required String id,
@@ -89,8 +90,7 @@ class _ShopScreenState extends State<ShopScreen> {
   void _equipSpell(String id) {
     // Tapping the equipped spell unequips it (unlike weapons/skins there is
     // a meaningful "no spell" state — the button leaves the HUD).
-    AppState.save.equippedSpell =
-        AppState.save.equippedSpell == id ? '' : id;
+    AppState.save.equippedSpell = AppState.save.equippedSpell == id ? '' : id;
     AudioService.instance?.playSfx('ui_tap');
     unawaited(AppState.persist());
     setState(() {});
@@ -104,12 +104,15 @@ class _ShopScreenState extends State<ShopScreen> {
         backgroundColor: _bg,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text('EMBER SHOP',
-              style: TextStyle(
-                  fontFamily: 'Cinzel',
-                  color: _gold,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 3)),
+          title: const Text(
+            'EMBER SHOP',
+            style: TextStyle(
+              fontFamily: 'Cinzel',
+              color: _gold,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 3,
+            ),
+          ),
           actions: [WalletChip(wallet: _wallet)],
           bottom: const TabBar(
             indicatorColor: _gold,
@@ -123,12 +126,9 @@ class _ShopScreenState extends State<ShopScreen> {
             ],
           ),
         ),
-        body: TabBarView(children: [
-          _weaponsTab(),
-          _skinsTab(),
-          _spellsTab(),
-          _abilitiesTab(),
-        ]),
+        body: TabBarView(
+          children: [_weaponsTab(), _skinsTab(), _spellsTab(), _abilitiesTab()],
+        ),
       ),
     );
   }
@@ -154,12 +154,15 @@ class _ShopScreenState extends State<ShopScreen> {
             price: _priceFor(w.currency, w.price),
             basePrice: w.price,
             canAfford: _wallet.canAfford(
-                w.currency, _priceFor(w.currency, w.price)),
+              w.currency,
+              _priceFor(w.currency, w.price),
+            ),
             onBuy: () => _buy(
-                id: w.id,
-                currency: w.currency,
-                price: w.price,
-                owned: save.ownedWeapons),
+              id: w.id,
+              currency: w.currency,
+              price: w.price,
+              owned: save.ownedWeapons,
+            ),
             onEquip: () => _equipWeapon(w.id),
           ),
       ],
@@ -172,34 +175,39 @@ class _ShopScreenState extends State<ShopScreen> {
       padding: const EdgeInsets.all(12),
       children: [
         for (final sk in kSkins)
-          Builder(builder: (_) {
-            final level = skinLevel(save, sk.id);
-            final kills = save.skinKills[sk.id] ?? 0;
-            final next = level < Skin.maxLevel
-                ? '${Skin.killsForLevel(level) - kills} kills to Lv ${level + 1}'
-                : 'MAX level';
-            return _ShopCard(
-              key: ValueKey('skin_${sk.id}'),
-              leading: SkinPreview(skinId: sk.id),
-              title: sk.name,
-              subtitle:
-                  'Lv $level  ·  melee power x${sk.powerAt(level).toStringAsFixed(2)}',
-              detail: next,
-              owned: save.ownedSkins.contains(sk.id),
-              equipped: save.equippedSkin == sk.id,
-              currency: sk.currency,
-              price: _priceFor(sk.currency, sk.price),
-              basePrice: sk.price,
-              canAfford: _wallet.canAfford(
-                  sk.currency, _priceFor(sk.currency, sk.price)),
-              onBuy: () => _buy(
+          Builder(
+            builder: (_) {
+              final level = skinLevel(save, sk.id);
+              final kills = save.skinKills[sk.id] ?? 0;
+              final next = level < Skin.maxLevel
+                  ? '${Skin.killsForLevel(level) - kills} kills to Lv ${level + 1}'
+                  : 'MAX level';
+              return _ShopCard(
+                key: ValueKey('skin_${sk.id}'),
+                leading: SkinPreview(skinId: sk.id),
+                title: sk.name,
+                subtitle:
+                    'Lv $level  ·  melee power x${sk.powerAt(level).toStringAsFixed(2)}',
+                detail: next,
+                owned: save.ownedSkins.contains(sk.id),
+                equipped: save.equippedSkin == sk.id,
+                currency: sk.currency,
+                price: _priceFor(sk.currency, sk.price),
+                basePrice: sk.price,
+                canAfford: _wallet.canAfford(
+                  sk.currency,
+                  _priceFor(sk.currency, sk.price),
+                ),
+                onBuy: () => _buy(
                   id: sk.id,
                   currency: sk.currency,
                   price: sk.price,
-                  owned: save.ownedSkins),
-              onEquip: () => _equipSkin(sk.id),
-            );
-          }),
+                  owned: save.ownedSkins,
+                ),
+                onEquip: () => _equipSkin(sk.id),
+              );
+            },
+          ),
       ],
     );
   }
@@ -224,12 +232,15 @@ class _ShopScreenState extends State<ShopScreen> {
             price: _priceFor(sp.currency, sp.price),
             basePrice: sp.price,
             canAfford: _wallet.canAfford(
-                sp.currency, _priceFor(sp.currency, sp.price)),
+              sp.currency,
+              _priceFor(sp.currency, sp.price),
+            ),
             onBuy: () => _buy(
-                id: sp.id,
-                currency: sp.currency,
-                price: sp.price,
-                owned: save.ownedSpells),
+              id: sp.id,
+              currency: sp.currency,
+              price: sp.price,
+              owned: save.ownedSpells,
+            ),
             onEquip: () => _equipSpell(sp.id),
           ),
       ],
@@ -255,12 +266,15 @@ class _ShopScreenState extends State<ShopScreen> {
             price: _priceFor(a.currency, a.price),
             basePrice: a.price,
             canAfford: _wallet.canAfford(
-                a.currency, _priceFor(a.currency, a.price)),
+              a.currency,
+              _priceFor(a.currency, a.price),
+            ),
             onBuy: () => _buy(
-                id: a.id,
-                currency: a.currency,
-                price: a.price,
-                owned: save.ownedAbilities),
+              id: a.id,
+              currency: a.currency,
+              price: a.price,
+              owned: save.ownedAbilities,
+            ),
             onEquip: () {},
           ),
       ],
@@ -275,26 +289,42 @@ class WalletChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Row(children: [
-        Image.asset('assets/images/items/coin.png',
-            width: 32,
-            height: 16,
-            alignment: Alignment.centerLeft,
-            fit: BoxFit.none,
-            filterQuality: FilterQuality.none),
-        Text(' ${wallet.coins}   ',
-            style: const TextStyle(color: _gold, fontSize: 14)),
-        Image.asset('assets/images/items/feather.png',
-            width: 17,
-            height: 13,
-            alignment: Alignment.centerLeft,
-            fit: BoxFit.none,
-            filterQuality: FilterQuality.none),
-        Text(' ${wallet.feathers}',
-            style: const TextStyle(color: Colors.white70, fontSize: 14)),
-      ]),
+    // Overflow sweep (alpha.16): the chip lives in AppBar actions, where the
+    // Row cannot shrink it; at 1.3x text on a 320 px phone it pushed the bar
+    // 14 px past the edge. Compact icon counters keep base text scale.
+    return MediaQuery.withClampedTextScaling(
+      maxScaleFactor: 1.0,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: Row(
+          children: [
+            Image.asset(
+              'assets/images/items/coin.png',
+              width: 32,
+              height: 16,
+              alignment: Alignment.centerLeft,
+              fit: BoxFit.none,
+              filterQuality: FilterQuality.none,
+            ),
+            Text(
+              ' ${wallet.coins}   ',
+              style: const TextStyle(color: _gold, fontSize: 14),
+            ),
+            Image.asset(
+              'assets/images/items/feather.png',
+              width: 17,
+              height: 13,
+              alignment: Alignment.centerLeft,
+              fit: BoxFit.none,
+              filterQuality: FilterQuality.none,
+            ),
+            Text(
+              ' ${wallet.feathers}',
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -343,70 +373,117 @@ class _ShopCard extends StatelessWidget {
         color: _panel,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-            color: equipped ? _gold : Colors.white12,
-            width: equipped ? 1.5 : 1),
+          color: equipped ? _gold : Colors.white12,
+          width: equipped ? 1.5 : 1,
+        ),
       ),
-      child: Row(children: [
-        if (leading != null) ...[leading!, const SizedBox(width: 12)],
-        Expanded(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title,
-                style: const TextStyle(
+      child: Row(
+        children: [
+          if (leading != null) ...[leading!, const SizedBox(width: 12)],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
                     fontFamily: 'Cinzel',
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 15)),
-            const SizedBox(height: 2),
-            Text(subtitle,
-                style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            if (stats != null) ...[const SizedBox(height: 4), stats!],
-            if (detail != null && detail!.isNotEmpty)
-              Text(detail!,
-                  style: const TextStyle(color: _dim, fontSize: 11)),
-          ]),
-        ),
-        const SizedBox(width: 12),
-        if (!owned) ...[
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Row(mainAxisSize: MainAxisSize.min, children: [
-              if (discounted)
-                Text('$basePrice ',
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+                if (stats != null) ...[const SizedBox(height: 4), stats!],
+                if (detail != null && detail!.isNotEmpty)
+                  Text(
+                    detail!,
+                    style: const TextStyle(color: _dim, fontSize: 11),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Overflow sweep (alpha.16): the trailing purchase cluster is
+          // inflexible chrome (price + button) — at 1.3x text on a 320 px
+          // phone it pushed the card 17 px past the edge. Like WalletChip,
+          // compact chrome keeps base text scale; the description column on
+          // the left keeps full accessibility scaling and wraps.
+          MediaQuery.withClampedTextScaling(
+            maxScaleFactor: 1.0,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!owned) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (discounted)
+                            Text(
+                              '$basePrice ',
+                              style: const TextStyle(
+                                color: _dim,
+                                fontSize: 11,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                          Text(
+                            '$price ',
+                            style: TextStyle(
+                              color: currency == Currency.coins
+                                  ? _gold
+                                  : Colors.white70,
+                              fontSize: 13,
+                            ),
+                          ),
+                          _CurrencyIcon(currency),
+                        ],
+                      ),
+                      if (discounted)
+                        const Text(
+                          'Haggler -10%',
+                          style: TextStyle(color: _green, fontSize: 10),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: canAfford ? _green : Colors.white12,
+                    ),
+                    onPressed: canAfford ? onBuy : null,
+                    child: const Text('BUY'),
+                  ),
+                ] else if (equipped)
+                  Text(
+                    passive ? 'OWNED' : 'EQUIPPED',
                     style: const TextStyle(
-                        color: _dim,
-                        fontSize: 11,
-                        decoration: TextDecoration.lineThrough)),
-              Text('$price ',
-                  style: TextStyle(
-                      color: currency == Currency.coins
-                          ? _gold
-                          : Colors.white70,
-                      fontSize: 13)),
-              _CurrencyIcon(currency),
-            ]),
-            if (discounted)
-              const Text('Haggler -10%',
-                  style: TextStyle(color: _green, fontSize: 10)),
-          ]),
-          const SizedBox(width: 10),
-          FilledButton(
-            style: FilledButton.styleFrom(
-                backgroundColor: canAfford ? _green : Colors.white12),
-            onPressed: canAfford ? onBuy : null,
-            child: const Text('BUY'),
+                      color: _gold,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  )
+                else
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: _gold),
+                      foregroundColor: _gold,
+                    ),
+                    onPressed: onEquip,
+                    child: const Text('EQUIP'),
+                  ),
+              ],
+            ),
           ),
-        ] else if (equipped)
-          Text(passive ? 'OWNED' : 'EQUIPPED',
-              style: const TextStyle(
-                  color: _gold, fontWeight: FontWeight.bold, fontSize: 12))
-        else
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: _gold), foregroundColor: _gold),
-            onPressed: onEquip,
-            child: const Text('EQUIP'),
-          ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -427,8 +504,11 @@ class _ShopIcon extends StatelessWidget {
         border: Border.all(color: Colors.white10),
       ),
       padding: const EdgeInsets.all(6),
-      child: Image.asset('assets/images/shop/$id.png',
-          filterQuality: FilterQuality.none, fit: BoxFit.contain),
+      child: Image.asset(
+        'assets/images/shop/$id.png',
+        filterQuality: FilterQuality.none,
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
@@ -441,18 +521,22 @@ class _CurrencyIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return currency == Currency.coins
-        ? Image.asset('assets/images/items/coin.png',
+        ? Image.asset(
+            'assets/images/items/coin.png',
             width: 16,
             height: 16,
             alignment: Alignment.centerLeft,
             fit: BoxFit.none,
-            filterQuality: FilterQuality.none)
-        : Image.asset('assets/images/items/feather.png',
+            filterQuality: FilterQuality.none,
+          )
+        : Image.asset(
+            'assets/images/items/feather.png',
             width: 15,
             height: 13,
             alignment: Alignment.centerLeft,
             fit: BoxFit.none,
-            filterQuality: FilterQuality.none);
+            filterQuality: FilterQuality.none,
+          );
   }
 }
 
@@ -467,35 +551,51 @@ class _WeaponStats extends StatelessWidget {
   static const _maxRange = 26.0;
 
   Widget _bar(String label, double t, Color color) {
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      SizedBox(
-          width: 28,
-          child: Text(label,
-              style: const TextStyle(color: _dim, fontSize: 9))),
-      SizedBox(
-        width: 72,
-        height: 5,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: t.clamp(0.05, 1.0),
-            backgroundColor: Colors.white10,
-            valueColor: AlwaysStoppedAnimation(color),
+    // Overflow sweep (alpha.16): the card's stats column can get as little
+    // as ~62 px on a 320 px phone at 1.3x text — scale the fixed-width
+    // label+bar pair down to whatever is available instead of overflowing.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 28,
+            child: Text(
+              label,
+              style: const TextStyle(color: _dim, fontSize: 9),
+            ),
           ),
-        ),
+          SizedBox(
+            width: 72,
+            height: 5,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: LinearProgressIndicator(
+                value: t.clamp(0.05, 1.0),
+                backgroundColor: Colors.white10,
+                valueColor: AlwaysStoppedAnimation(color),
+              ),
+            ),
+          ),
+        ],
       ),
-    ]);
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _bar('DMG', weapon.damage / _maxDamage, const Color(0xFFE86A17)),
-      const SizedBox(height: 2),
-      _bar('CRIT', weapon.critPercent / _maxCrit, _gold),
-      const SizedBox(height: 2),
-      _bar('RNG', weapon.range / _maxRange, const Color(0xFF6EA0DC)),
-    ]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _bar('DMG', weapon.damage / _maxDamage, const Color(0xFFE86A17)),
+        const SizedBox(height: 2),
+        _bar('CRIT', weapon.critPercent / _maxCrit, _gold),
+        const SizedBox(height: 2),
+        _bar('RNG', weapon.range / _maxRange, const Color(0xFF6EA0DC)),
+      ],
+    );
   }
 }
 
@@ -525,8 +625,7 @@ class _SkinPreviewState extends State<SkinPreview> {
   }
 
   Future<ui.Image> _decode(ByteData bytes) async {
-    final codec =
-        await ui.instantiateImageCodec(bytes.buffer.asUint8List());
+    final codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List());
     return (await codec.getNextFrame()).image;
   }
 
@@ -534,9 +633,11 @@ class _SkinPreviewState extends State<SkinPreview> {
     ByteData bytes;
     try {
       // AKP-4a: skins are bladeless body sheets; 'red' = player/body/.
-      bytes = await rootBundle.load(widget.skinId == 'red'
-          ? 'assets/images/player/body/idle.png'
-          : 'assets/images/player/skins/${widget.skinId}/idle.png');
+      bytes = await rootBundle.load(
+        widget.skinId == 'red'
+            ? 'assets/images/player/body/idle.png'
+            : 'assets/images/player/skins/${widget.skinId}/idle.png',
+      );
     } catch (_) {
       // Missing skin sheet (catalog/art drift): preview the base knight
       // rather than crash the shop.
@@ -547,8 +648,11 @@ class _SkinPreviewState extends State<SkinPreview> {
     // the level actually renders. Missing sheet -> bare hands, never a crash.
     ui.Image? weapon;
     try {
-      weapon = await _decode(await rootBundle.load(
-          'assets/images/player/weapons/${AppState.save.equippedWeapon}/idle.png'));
+      weapon = await _decode(
+        await rootBundle.load(
+          'assets/images/player/weapons/${AppState.save.equippedWeapon}/idle.png',
+        ),
+      );
     } catch (_) {}
     if (!mounted) {
       sheet.dispose();
@@ -585,8 +689,8 @@ class _SkinPreviewState extends State<SkinPreview> {
       child: _sheet == null
           ? const SizedBox.shrink()
           : CustomPaint(
-              painter:
-                  _SkinFramePainter(_sheet!, _weapon, _frame, _fw, _fh)),
+              painter: _SkinFramePainter(_sheet!, _weapon, _frame, _fw, _fh),
+            ),
     );
   }
 }
@@ -602,9 +706,10 @@ class _SkinFramePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const scale = 2.0;
     final dst = Rect.fromCenter(
-        center: Offset(size.width / 2, size.height / 2),
-        width: fw * scale,
-        height: fh * scale);
+      center: Offset(size.width / 2, size.height / 2),
+      width: fw * scale,
+      height: fh * scale,
+    );
     final src = Rect.fromLTWH(frame * fw, 0, fw, fh);
     final paint = Paint()..filterQuality = FilterQuality.none;
     canvas.drawImageRect(sheet, src, dst, paint);
