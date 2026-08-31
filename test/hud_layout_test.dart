@@ -238,4 +238,34 @@ void main() {
           reason: '$name glyph is vertically off-center');
     }
   });
+
+  test(
+      'HUD text carries a full ink outline '
+      '(readable over World 1 sunburst sky)', () {
+    // 2026-08-31 look pass: counters/timer/lore were ivory-on-pale-sky with
+    // no outline — unreadable on every World 1 shot. Pin the pixel outline:
+    // four cardinal 1px shadows, fully opaque ink, zero blur (crisp at 8px).
+    final shadows = HudReadout.hudTextStyle.shadows;
+    expect(shadows, isNotNull,
+        reason: 'HUD text has no outline shadows at all');
+    final offsets = shadows!.map((s) => s.offset).toSet();
+    for (final o in const [
+      ui.Offset(1, 0),
+      ui.Offset(-1, 0),
+      ui.Offset(0, 1),
+      ui.Offset(0, -1),
+    ]) {
+      expect(offsets, contains(o),
+          reason: 'missing outline shadow on side $o');
+    }
+    for (final s in shadows) {
+      expect(s.color.a, 1.0,
+          reason: 'outline must be fully opaque to guarantee contrast');
+      expect(s.blurRadius, 0.0,
+          reason: 'blur would smear an 8px pixel font');
+      // Ink must be dark enough to contrast with the ivory glyph fill.
+      expect(s.color.computeLuminance() < 0.05, isTrue,
+          reason: 'outline ink is not dark');
+    }
+  });
 }

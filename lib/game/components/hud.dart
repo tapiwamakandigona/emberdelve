@@ -203,13 +203,23 @@ class HudReadout extends PositionComponent with HasGameReference<EmberGame> {
   late Sprite _featherSprite;
   late Sprite _chestSprite;
 
-  static final _text = TextPaint(
-    style: const TextStyle(
-      fontSize: 8,
-      color: ui.Color(0xFFF4EAD5),
-      fontFamily: 'Inter',
-    ),
+  /// Ink outline behind every in-world HUD glyph. World 1's sunburst sky is
+  /// almost the same value as the ivory text — counters/timer/lore were
+  /// unreadable over it (2026-08-31 look pass). Four 1px cardinal shadows
+  /// give a crisp pixel outline; they bake into each slot's cached
+  /// TextPainter, so steady-state frames pay nothing extra.
+  static const hudTextStyle = TextStyle(
+    fontSize: 8,
+    color: ui.Color(0xFFF4EAD5),
+    fontFamily: 'Inter',
+    shadows: [
+      ui.Shadow(offset: ui.Offset(1, 0), color: ui.Color(0xFF201826)),
+      ui.Shadow(offset: ui.Offset(-1, 0), color: ui.Color(0xFF201826)),
+      ui.Shadow(offset: ui.Offset(0, 1), color: ui.Color(0xFF201826)),
+      ui.Shadow(offset: ui.Offset(0, -1), color: ui.Color(0xFF201826)),
+    ],
   );
+  static final _text = TextPaint(style: hudTextStyle);
   final _heartFill = ui.Paint()..color = const ui.Color(0xFFD53C3C);
   final _bossBarBack = ui.Paint()..color = const ui.Color(0xCC201826);
   final _bossBarFill = ui.Paint()..color = const ui.Color(0xFF8FBF3F);

@@ -579,3 +579,42 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
 - No local build shipped (CI artifacts only); no Play upload (P-M10 stays an
   owner call).
 - Still open: P-M7 (on-device perf, needs hardware), P-M10 (Play beta.1).
+
+## 2026-08-31 — session start: Emberwood gauntlet resumes (owner: "work on emberdelve alpha version that isn't the dice game")
+- Track: `main` (Emberwood platformer, com.tsorostudios.emberwood), worktree
+  /work/repos/emberwood off the dice checkout. DEMAND.md written for this
+  branch (platformer standards; root DEMAND.md on legacy branch is
+  dice-scoped). Owner will drive the loop with "continue" pings, dice-style
+  cadence: one improvement per release.
+- BLOCKER (carried until fixed): GitHub PAT is dead — 401 on api.github.com
+  with the documented token [github, 2026-08-31]. Same failure the dice
+  branch has logged since 2026-08-25 ("push pending GitHub auth"): remote
+  legacy/dice-builder sits at v0.60.0 while local is v0.148.0 (92 unpushed
+  commits). NO pushes, tags, CI dispatches, or GitHub releases possible from
+  the sandbox until the owner re-provisions a PAT. Working in
+  gates-green-commit-locally mode meanwhile. Escalated to owner this session.
+- Baseline VERIFIED at 1326a80: flutter analyze 2 infos (deprecated
+  activeColor), suite 363/363 green (Flutter 3.44.9 from /work/temp/flutter;
+  pinned 3.32.7 unavailable — no regressions observed, watch goldens).
+
+## v1.0.0-alpha.8+20 — The Readable Wood (2026-08-31)
+- One improvement: in-world HUD text legibility. Look pass (web harness,
+  915x412 phone + 1280x800 desktop, spawn+mid shots, all 8 sampled levels
+  across both worlds) found counters/timer/lives/lore-intro ivory text with
+  NO outline — unreadable over World 1's pale sunburst sky in every W1 shot
+  (self-found, 3-second-stranger fail). Fix: HudReadout.hudTextStyle gains
+  four 1px cardinal ink shadows (0xFF201826, blur 0) — pixel-outline look,
+  bakes into cached TextPainters, zero steady-state cost.
+- Also: settings_screen.dart activeColor→activeThumbColor (2 deprecations);
+  analyze now clean.
+- VERIFIED: suite 364/364 (+1 hud outline pin test; fails on old code via
+  stash run — compile-level bind on hudTextStyle + shadow asserts). After
+  shots confirm crisp readouts on w1_l1/w1_l3 (sunniest levels).
+- OBSERVED (open, minor): all coins share one global spin phase — every coin
+  on screen hits the edge-on frame simultaneously; caught in the after shots
+  looking candle-like for a frame. Candidate future improvement: per-coin
+  phase offset from spawn position.
+- Release mechanics: version 1.0.0-alpha.8+20, checkpoint
+  checkpoints/11-alpha8-hud-legibility.md. Tag/CI/GitHub prerelease PENDING
+  GitHub auth (see blocker above); commit is release-shaped so the publish
+  is a tag+dispatch away once auth returns.

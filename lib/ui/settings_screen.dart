@@ -104,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(color: Colors.white)),
               subtitle: const Text('Vibrate on hits and boss beats',
                   style: TextStyle(color: Colors.white38, fontSize: 12)),
-              activeColor: const Color(0xFFE8A33D),
+              activeThumbColor: const Color(0xFFE8A33D),
               value: settings.haptics,
               onChanged: (v) {
                 setState(() => settings.haptics = v);
@@ -125,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'Anonymous level/settings stats to help improve the game. '
                 'Off by default; no personal data ever.',
                 style: TextStyle(color: Colors.white38, fontSize: 12)),
-            activeColor: const Color(0xFFE8A33D),
+            activeThumbColor: const Color(0xFFE8A33D),
             value: TelemetryService.instance.analyticsConsented,
             onChanged: (v) {
               TelemetryService.instance
