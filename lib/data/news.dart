@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.157.0';
+const String currentAppVersion = '0.158.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.158.0',
+    title: 'The Shieldwright',
+    lines: [
+      'An eleventh delver takes a chair: the Shieldwright arrives with a '
+          'DEEP Aegis already worked into an Ember Die\u2019s six.',
+      'The first kit to lead with a deep mark \u2014 the shield was '
+          'forged before the delve. 1,350 embers at the roster.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.157.0',
     title: 'The Deep Hearth',

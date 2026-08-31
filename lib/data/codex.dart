@@ -207,6 +207,14 @@ final List<CodexEntryDef> codexEntries = [
         'stitches. Ask why, and they tap the die: the delve takes. '
         'Something at this fire should give back.',
   ),
+  _delver(
+    'shieldwright',
+    'Every other delver marks their dice at the rest fires, one strike '
+        'at a time. The shieldwright finished the work topside — an '
+        'Aegis driven DEEP into an Ember Die\u2019s six before the '
+        'first stair. Ask what the hurry was, and they knock the die '
+        'twice: the delve does not wait for the second strike.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

@@ -53,6 +53,8 @@ const List<String> charactersOrder = [
   // v0.145.0 — append-LAST.
   'bearer',
   'mender',
+  // v0.158.0 — append-LAST.
+  'shieldwright',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -183,6 +185,23 @@ const Map<String, CharacterDef> characters = {
       {'die': 1, 'face': 1, 'rune': 'mend'},
     ],
     unlockEmbers: 1200,
+  ),
+  // v0.158.0 The Shieldwright — the eleventh delver, the WARD: the first
+  // kit to lead with a DEEP mark (v0.155.0). Aegis II is already worked
+  // into an Ember Die's 6 — the shield forged before the first floor.
+  // Pure data (existing dice + rune tiers) — no re-anchor. HP is the
+  // tuning knob (sweeps in docs/improvements/v0.158.0).
+  'shieldwright': CharacterDef(
+    'shieldwright',
+    'The Shieldwright',
+    'The ward: an Ember Die whose 6 carries a DEEP Aegis — '
+        'the shield was forged before the delve.',
+    maxHp: 26,
+    startDice: ['d6', 'd6', 'd6'],
+    startTempers: [
+      {'die': 1, 'face': 6, 'rune': 'aegis', 'tier': 2},
+    ],
+    unlockEmbers: 1350,
   ),
 };
 

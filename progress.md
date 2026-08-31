@@ -3683,3 +3683,26 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - test/deep_hearth_test.dart (4 tests: ladder-top pin + gradient + prices,
   hearth_keeper live-catalog promise, buy path, banned-words sweep).
   Suite 1031/1031. 0.157.0+183.
+
+2026-08-31 v0.156.0 ARTIFACTS ATTACHED: CI run 33406659037 success; 4×APK PIN-OK versionName 0.156.0 (codes 182/1182/2182/4182) + AAB pin 031acb42… match; renamed standard names, uploaded to v0.156.0 release, sha256 table appended (apk 85c491bf…, aab 17c380da…, arm64 c2d94634…, v7a a8997b31…, x86_64 9dbd9831…).
+
+2026-08-31 v0.157.0 ARTIFACTS ATTACHED: CI run 33407412686 success; 4×APK PIN-OK versionName 0.157.0 (codes 183/1183/2183/4183) + AAB pin 031acb42… match; uploaded to v0.157.0 release, sha256 table appended (apk dd3195e0…, aab dab62639…, arm64 71f3aa12…, v7a e68f2a0b…, x86_64 b6583941…). Releases fully current through v0.157.0 with signed artifacts.
+
+## v0.158.0 — The Shieldwright (2026-08-31)
+- The eleventh delver, the WARD: first kit to LEAD with a deep mark —
+  Aegis II already worked into an Ember Die's 6 (startTempers now takes
+  an optional 'tier' key, same absent=1 contract as the save shape, so
+  every earlier delver's record stays byte-identical — pinned by test).
+- Kit 26 HP / d6·d6·d6 / no relic / 1350 embers. Sweep (400 seeds):
+  89.00/68.00/41.50 vs kindler 89.75/67.25/41.50 — hard at exact par,
+  in band at the first HP guess (~2-HP-per-advantage prior held).
+- Fallout: tales 5+40 → 'Eleven', codex 11th delver page (114), promise
+  honors → 11 (full_company, crowned_company, Many-Handed), Planishing
+  Hammer weapon, shieldwright.png (warden remap hue +215° sat ×0.95
+  floor 0.38 val ×0.92 — cobalt steel vs bearer's granite), PROVENANCE
+  + sprite_meta rows, roster pins (runesmith/fourth_cycle), tenth_chair
+  tripwire fired AS DESIGNED (gate frozen, reason updated only).
+- test/shieldwright_test.dart (4 tests incl. tier-key presence AND the
+  runesmith no-tier-key byte-identity guard; seeds: easy loss 3, normal
+  win 4 / loss 5). Plates: picker card 2 sizes + warmup, judged.
+  Suite 1035/1035. 0.158.0+184. Proving follows in v0.159 (v0.119 recipe).
