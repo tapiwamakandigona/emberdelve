@@ -43,7 +43,10 @@ void main() {
     final line = find.byKey(const ValueKey('rank-line'));
     expect(line, findsOneWidget);
     expect(
-      find.descendant(of: line, matching: find.text('You delve as a Sparktender')),
+      find.descendant(
+        of: line,
+        matching: find.text('You delve as a Sparktender'),
+      ),
       findsOneWidget,
     );
     expect(
@@ -60,7 +63,7 @@ void main() {
     tester,
   ) async {
     final c = GameController();
-    c.meta.runsWon = 400; // 1200 marks > top threshold 1100
+    c.meta.runsWon = 600; // 1800 marks > top threshold 1700 (v0.149.0)
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
     );

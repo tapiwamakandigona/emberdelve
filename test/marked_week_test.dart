@@ -59,7 +59,11 @@ void main() {
     driveToTerminal(c);
     final r = c.meta.runHistory.first;
     expect(r['weekly'], isTrue);
-    expect(r['mutators'], rule.mutators);
+    // The bank SORTS mutators for determinism (_moddedMutators doc) —
+    // compare as a set, not in declared order. Latent until 2026-08-31,
+    // when the real clock first hit a doubled week whose declared order
+    // ('no_shops','no_rests') is not alphabetical.
+    expect(r['mutators'], unorderedEquals(rule.mutators));
     // short_road is not among the banked mutators even on a short week —
     // it encodes, and banks as 'short'.
     expect((r['mutators'] as List).contains('short_road'), isFalse);

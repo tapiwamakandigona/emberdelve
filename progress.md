@@ -3536,3 +3536,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   have per-boss buckets (boss_<id>) — bucket pins must allow them.
 - 3 tests; no plates (text-only lines in existing death screen).
   Suite 999/999. 0.148.0+174.
+
+## v0.149.0 — The Tenth Fire (2026-08-31)
+- Ranks lane (last unexplored catalog): marks formula unbounded,
+  ladder topped at 1100 — dead top for veterans. Added tenth tier
+  Mountainheart 1700 ('What the mountain remembers, it keeps'),
+  gap 600 keeps curve accelerating. Extension over insertion:
+  insertion re-names held ranks. NEW curve pin: threshold gaps
+  never shrink (tenth_fire_test). Two pins honestly retuned
+  (veteran 300→500 wins, top-UI 400→600).
+- LATENT REAL-CLOCK BUG FIXED: marked_week_test banked-mutators
+  pin was order-sensitive; _moddedMutators SORTS for determinism.
+  Latent until the real clock hit doubled week 'Cold Quarter'
+  (['no_shops','no_rests'] — not alphabetical) on 2026-08-31.
+  Fix: unorderedEquals. LESSON: any pin comparing banked lists to
+  declared catalog order must compare as a set when the bank
+  documents sorting — and real-clock tests can rot on a calendar
+  boundary, so a suite failure right after a week/day rollover is
+  a rollover suspect first.
+- 3 tests; no plates (data-only, same ledger widget). Suite
+  1002/1002. 0.149.0+175.

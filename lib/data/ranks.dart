@@ -52,4 +52,13 @@ const List<RankTier> rankTiers = [
     1100,
     'The mountain remembers your name.',
   ),
+  // v0.149.0 The Tenth Fire: the ladder grew — veterans who long ago
+  // banked 1100 marks climb again. Threshold gap keeps the curve's shape
+  // (diffs 280, 400, now 600).
+  RankTier(
+    'mountainheart',
+    'Mountainheart',
+    1700,
+    'What the mountain remembers, it keeps.',
+  ),
 ];
