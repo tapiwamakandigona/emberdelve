@@ -1,13 +1,15 @@
-# Emberdelve — Privacy Policy
+# Pyregrove — Privacy Policy
 
-_Last updated: 2026-07-25_
+_Last updated: 2026-08-31_
 
-Emberdelve ("the app", `com.tsorostudios.emberdelve`) is a single-player
-pixel action-platformer by Tsoro Studios (Tapiwa Makandigona).
+Pyregrove ("the app", `com.tsorostudios.pyregrove`) is a single-player
+pixel action-platformer by Tsoro Studios (Tapiwa Makandigona). Everything
+here applies equally to the earlier alpha builds of the same game published
+as "Emberwood" / "Emberdelve v2" (`com.tsorostudios.emberwood`).
 
 ## The short version
 
-**Emberdelve collects no personal data.** The only thing it can ever send is
+**Pyregrove collects no personal data.** The only thing it can ever send is
 **anonymous gameplay statistics, and only if you explicitly opt in** — it is
 off by default and can be turned off again any time in Settings.
 
@@ -53,4 +55,5 @@ off by default and can be turned off again any time in Settings.
 If a future version changes any of the above, this policy will be updated
 first and the change called out in the release notes.
 
-Questions: contact the developer via the Google Play listing for Emberdelve.
+Questions: contact the developer via GitHub (`tapiwamakandigona`) or, once
+the app is on Google Play, via its Play listing.
