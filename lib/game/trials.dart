@@ -67,6 +67,16 @@ bool trialGoalMet(TrialDef trial, Map<String, Object?> run, RunTrace trace) {
     // list — the sim stays sealed.
     case 'relics_at_least':
       return ((run['relics'] as List?)?.length ?? 0) >= trial.goalParam;
+    // v0.156.0 The Deep Day: pure observation of the run's own die
+    // records — a deep mark is a custom die whose tier reached 2. Absent
+    // tier reads as 1 (the v0.155.0 optional-key save contract), so a
+    // pre-deepening save simply counts zero.
+    case 'deep_marks_at_least':
+      final dice = (run['custom_dice'] as Map?)?.values ?? const [];
+      final deep = dice
+          .where((d) => ((d as Map)['tier'] as int? ?? 1) >= 2)
+          .length;
+      return deep >= trial.goalParam;
     default:
       return false;
   }

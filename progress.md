@@ -3654,3 +3654,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (deep_mark_test). Suite 1024/1024. 0.155.0+181.
 
 2026-08-31 v0.155.0 ARTIFACTS ATTACHED: CI run 33404171504 success; 4×APK PIN-OK versionName 0.155.0 (codes 181/1181/2181/4181) + AAB pin 031acb42… match; renamed standard names, uploaded to v0.155.0 release, sha256 table appended (apk 7f0f3764…, aab 1ddfe020…, arm64 a6beca0d…, v7a bffe744a…, x86_64 03c1ce8d…). Releases fully current through v0.155.0 with signed artifacts on latest.
+
+## v0.156.0 — The Deep Day (2026-08-31)
+- 11th trial, the Deep Mark's day: goal day 'deep_day', new goal kind
+  'deep_marks_at_least' (goalParam 1 — temper cap 2 means at most one
+  deep mark a run; emberBonus 15). Judge reads run['custom_dice'] tiers
+  with the absent-key=tier-1 contract (sealed sim, pure observation).
+  Appended LAST to trialsOrder; .last pin moved from keepers_day_test
+  to deep_day_test per the v0.154 .last-PIN rule.
+- LESSON (stale-test class): the trial rotation-uniformity floor was a
+  fixed 80 tuned for an older catalog; at 11 trials the roughest slot
+  draws 70. Fixed by scaling the floor with catalog size (60% of fair
+  share) — any fixed histogram pin on a hash-mod-N rotation goes stale
+  on every append. Prefer proportional floors on modulus-driven tests.
+- test/deep_day_test.dart (3 tests: rule pin + append-LAST, exact judge
+  fixtures incl. absent-tier, end-to-end sim-deepened run meets goal).
+  Suite 1027/1027. 0.156.0+182.

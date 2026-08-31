@@ -89,6 +89,7 @@ void main() {
             'clean_floors_at_least',
             'tempers_at_least', // v0.147.0 The Marked Day
             'relics_at_least', // v0.154.0 The Keeper's Day
+            'deep_marks_at_least', // v0.156.0 The Deep Day
           };
           expect(
             known.contains(t.goalId),
@@ -118,11 +119,16 @@ void main() {
         counts[t.id] = (counts[t.id] ?? 0) + 1;
         d = d.add(const Duration(days: 1));
       }
-      // 1096 days over 7 trials ≈ 156 each; DJB2 mod 7 is rough, not exact.
+      // 1096 days over the catalog; DJB2 mod N is rough, not exact, and
+      // every append changes the modulus, so the floor must scale with the
+      // catalog rather than pin one era's histogram: each trial must land
+      // at least ~60% of its fair share (at 11 trials that is ~59 of ~100 —
+      // the roughest observed slot draws 70).
+      final floor = (1096 * 0.6 / trialsOrder.length).floor();
       for (final id in trialsOrder) {
         expect(
           counts[id] ?? 0,
-          greaterThan(80),
+          greaterThan(floor),
           reason: '$id appears too rarely — rotation is skewed',
         );
       }
