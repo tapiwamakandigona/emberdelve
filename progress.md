@@ -638,3 +638,16 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   steps; permanent chute-trap lint gate added (fails on old geometry,
   VERIFIED). Suite 378/378. Probe: w1_l4 now CLEAR in 21 s all seeds.
 - Checkpoint: checkpoints/13-alpha10-cinder-steps-trap.md.
+
+## v1.0.0-alpha.11+23 — Mended Hearts (2026-08-31)
+- One improvement: heart pickups (first heal item in the game). Wipe probe
+  with hit attribution showed w2_l4 wiping at 73% (all seeds) and w1_l5 at
+  30-41% — long checkpoint gaps stacked with hazards and zero mid-run
+  healing. Added SpawnKind.heart ('h'): +1 heal, stays put at full health;
+  procedural 8x8 HUD-matching sprite with bob+shadow; heal sfx + red
+  sparkle. Placed 2 in w1_l5, 2 in w2_l4. Probe: w2_l4 flips to COMPLETED
+  (~28 s, all seeds). w1_l5 still wipes — root cause is the thornling@36 +
+  totem@44 colonnade geometry, next release's target. Suite 385/385 (+7,
+  incl. design pin that both levels keep >= 1 heart). Look pass VERIFIED
+  phone+desktop at all 4 heart sites.
+- Checkpoint: checkpoints/14-alpha11-heart-pickups.md.

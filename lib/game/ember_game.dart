@@ -603,6 +603,9 @@ class EmberGame extends FlameGame
           world.add(SparkleFx(at));
         case SessionEventKind.applePickup:
           AudioService.instance?.playSfx('heal', volume: 0.6);
+        case SessionEventKind.heartPickup:
+          AudioService.instance?.playSfx('heal', volume: 0.8);
+          world.add(SparkleFx(at, color: const Color(0xFFD53C3C), life: 0.4));
         case SessionEventKind.feather:
           AudioService.instance?.playSfx('feather');
         case SessionEventKind.chestOpen:

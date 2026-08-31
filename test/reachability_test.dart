@@ -127,7 +127,7 @@ List<String> unreachableTargets(List<String> g) {
     }
   }
 
-  const targets = {'c', 'a', 'f', 'C', 'X', 'K', 'E'};
+  const targets = {'c', 'a', 'f', 'h', 'C', 'X', 'K', 'E'};
   final missed = <String>[];
   for (var y = 0; y < h; y++) {
     for (var x = 0; x < w; x++) {

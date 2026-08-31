@@ -181,12 +181,14 @@ class ItemsComponent extends PositionComponent
           .render(canvas, position: _drawPos, size: _coinSize);
     }
 
-    // Apple + feather pickups.
+    // Apple + feather + heart pickups.
     final featherSprite = _feather.getSprite();
     for (final p in s.pickups) {
       if (p.collected) continue;
       if (p.kind == SpawnKind.apple) {
         _drawApple(canvas, p.x, p.y);
+      } else if (p.kind == SpawnKind.heart) {
+        _drawHeartPickup(canvas, p.x, p.y);
       } else {
         _drawPos.setValues(p.x - 7.5, p.y - 6.5);
         featherSprite.render(canvas, position: _drawPos, size: _featherSize);
@@ -233,5 +235,47 @@ class ItemsComponent extends PositionComponent
       ui.Rect.fromLTWH(x - 8, y - 8, 16, 16),
       _paint,
     );
+  }
+
+  /// 8x8 pixel heart, same bitmask as the HUD hearts so the pickup reads as
+  /// "this refills one of THOSE". Procedural (original-assets pillar), 1.5x
+  /// scale with a slow bob; darker outline row first for pop against grass.
+  static const _heartRows = [
+    0x66, // .##..##.
+    0xFF, // ########
+    0xFF, // ########
+    0xFF, // ########
+    0x7E, // .######.
+    0x3C, // ..####..
+    0x18, // ...##...
+    0x00,
+  ];
+  final _heartFill = ui.Paint()..color = const ui.Color(0xFFD53C3C);
+  final _heartShine = ui.Paint()..color = const ui.Color(0xFFF2917F);
+  final _heartShadow = ui.Paint()..color = const ui.Color(0x66201826);
+
+  void _drawHeartPickup(ui.Canvas canvas, double x, double y) {
+    const scale = 1.5;
+    final bob = math.sin(_coinClock * 2.4) * 1.5;
+    final left = x - 4 * scale, top = y - 4 * scale + bob;
+    for (var row = 0; row < 8; row++) {
+      final bits = _heartRows[row];
+      for (var col = 0; col < 8; col++) {
+        if ((bits >> (7 - col)) & 1 == 1) {
+          canvas.drawRect(
+              ui.Rect.fromLTWH(left + col * scale + 1, top + row * scale + 1,
+                  scale, scale),
+              _heartShadow);
+          canvas.drawRect(
+              ui.Rect.fromLTWH(
+                  left + col * scale, top + row * scale, scale, scale),
+              _heartFill);
+        }
+      }
+    }
+    // Single shine pixel top-left lobe.
+    canvas.drawRect(
+        ui.Rect.fromLTWH(left + 1 * scale, top + 1 * scale, scale, scale),
+        _heartShine);
   }
 }

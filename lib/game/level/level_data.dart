@@ -12,6 +12,7 @@
 //   P  player spawn     E  exit door           s  tutorial sign
 //   K  checkpoint campfire (lights on touch, respawn point after a death)
 //   c  coin             a  apple pickup        f  feather (rare currency)
+//   h  heart pickup (restores 1 heart; stays put while at full health)
 //   C  chest            X  secret chest (counts as chest + secret)
 //   T  Thornling        V  Ashbat (flyer)      O  Ember Totem (spitter)
 //   R  Rotshield        G  Grove Golem (boss)
@@ -44,6 +45,7 @@ enum SpawnKind {
   coin,
   apple,
   feather,
+  heart,
   chest,
   secretChest,
   thornling,
@@ -98,6 +100,7 @@ const Map<String, SpawnKind> _spawnChars = {
   'c': SpawnKind.coin,
   'a': SpawnKind.apple,
   'f': SpawnKind.feather,
+  'h': SpawnKind.heart,
   'C': SpawnKind.chest,
   'X': SpawnKind.secretChest,
   'T': SpawnKind.thornling,

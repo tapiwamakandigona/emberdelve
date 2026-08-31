@@ -25,6 +25,7 @@ import 'tuning.dart';
 enum SessionEventKind {
   coin, // +data: x,y
   applePickup,
+  heartPickup, // data: x,y — heart eaten, 1 heart restored
   feather,
   chestOpen,
   secretFound,
@@ -75,7 +76,7 @@ class CoinEntity {
 }
 
 class PickupEntity {
-  final SpawnKind kind; // apple / feather
+  final SpawnKind kind; // apple / feather / heart
   final double x, y;
   bool collected = false;
   PickupEntity(this.kind, this.x, this.y);
@@ -261,6 +262,7 @@ class LevelSession {
           coins.add(CoinEntity(cx, cy));
         case SpawnKind.apple:
         case SpawnKind.feather:
+        case SpawnKind.heart:
           pickups.add(PickupEntity(s.kind, cx, cy));
         case SpawnKind.chest:
           chests.add(ChestEntity(cx, cy, secret: false));
@@ -664,6 +666,16 @@ class LevelSession {
           applesHeld = (applesHeld + 3).clamp(0, loadout.appleCapacity);
           _events.add(
               SessionEvent(SessionEventKind.applePickup, x: p.x, y: p.y));
+        } else if (p.kind == SpawnKind.heart) {
+          // AKP-7a: hearts are the answer to the measured attrition wipes
+          // (w1_l5 colonnade, w2_l4 kiln road: 3 hits per life with zero
+          // mid-run healing = a guaranteed loop until the lives run out).
+          // At full health the heart stays put — come back for it hurt.
+          if (player.hearts >= player.maxHearts) continue;
+          p.collected = true;
+          player.hearts++;
+          _events.add(
+              SessionEvent(SessionEventKind.heartPickup, x: p.x, y: p.y));
         } else {
           p.collected = true;
           feathersCollected++;
