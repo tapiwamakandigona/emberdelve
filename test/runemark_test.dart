@@ -10,9 +10,11 @@ import 'package:emberdelve/sim/run_dice.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('runemark stands last, tenth, with a real grade', () {
-    expect(vistasOrder.last, 'runemark');
-    expect(vistasOrder.length, 10);
+  test('runemark stands tenth, with a real grade', () {
+    // v0.152.0: tenthfire appended after it — the order pin moves to the
+    // INDEX (append-only contract), the 'last' claim retires.
+    expect(vistasOrder.indexOf('runemark'), 9);
+    expect(vistasOrder.length, 11);
     final def = vistas['runemark']!;
     expect(def.unlockLine, 'Temper every rune the anvil offers.');
     expect(
@@ -33,6 +35,7 @@ void main() {
       talesHeard: 0,
       doubledWins: 0,
       tempersSet: 0,
+      charsUnlocked: 0,
       runesMarked: marked,
     );
     expect(at(5), isFalse);
