@@ -3745,3 +3745,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.160.0 artifacts ATTACHED (CI 33411215359, ALL PINS OK, codes
   186/1186/2186/4186, AAB pin OK; sha256 table appended: apk 252c00c6…,
   aab 18b44606…, arm64 84759f1a…, v7a 39464cda…, x86_64 1fa2ee3d…).
+- v0.162.0 The Gilder: TWELFTH delver, the GOLDSMITH — first kit with TWO
+  smith's marks (gilt tier-1 on both Ember Dice sixes; multi-entry
+  startTempers worked unchanged in the v0.135 loop). 28 HP (sweep
+  90.25/65.50/41.50 vs kindler 89.75/67.25/41.50 — in band), no relic,
+  unlock 1500, index 11. Sprite = peddler remap hue +230° sat ×1.00
+  floor 0.38 val ×1.05 (burnished gold); Agate Burnisher weapon; codex
+  entry; tales recounted to Twelve (5 & 40); full_company/crowned_company/
+  the_six_handed → 12; tenthfire gate FROZEN (reason-only edit). Count
+  pins updated in fourth_cycle/runesmith/tenth_chair tests. gilder_test
+  (kit/index/tier-free records/seeded pins: easy loss 3, normal wins
+  1/4/6/9/10/11). Suite 1050/1050. NEXT RELEASE: gilders_proving +
+  gilder_wins + twelve_ways_down + the_proven 20 (v0.159 pattern).

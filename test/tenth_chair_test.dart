@@ -36,10 +36,10 @@ void main() {
     // tripwire — when the roster grows past ten, the gate must NOT move.
     expect(
       characters.length,
-      11,
+      12,
       reason:
-          'v0.158.0: the roster grew past ten (shieldwright) and the '
-          'gate did NOT move — charsUnlocked >= 10 stays frozen. '
+          'v0.162.0: the roster grew past ten (shieldwright, gilder) and '
+          'the gate did NOT move — charsUnlocked >= 10 stays frozen. '
           'Next growth: update only this reason, never the gate',
     );
     expect(_unlocked(characters.length), isTrue);

@@ -143,6 +143,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.50,
     swingAngle: 1.80,
   ),
+  // Goldsmith (v0.162.0): an agate burnisher — the tool that rubs gold
+  // leaf to a shine. Short reach (gilders work at the bench, close and
+  // exact), burnished-gold accent to match the sheet's remap.
+  'gilder': WeaponDef(
+    'agate_burnisher',
+    'Agate Burnisher',
+    accent: Color(0xFFD9B84A),
+    reach: 0.44,
+    idleAngle: 0.28,
+    raiseAngle: -1.40,
+    swingAngle: 1.75,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.

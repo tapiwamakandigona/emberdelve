@@ -215,6 +215,14 @@ final List<CodexEntryDef> codexEntries = [
         'first stair. Ask what the hurry was, and they knock the die '
         'twice: the delve does not wait for the second strike.',
   ),
+  _delver(
+    'gilder',
+    'Most delvers spend their sixes and think no more of it. The '
+        'gilder worked gilt into both Ember Dice topside, so every six '
+        'that lands leaves coin in the pouch. Ask why gold, of all '
+        'runes, twice \u2014 and they shrug: the delve pays whoever '
+        'reads it. The gilder just wrote it on the dice.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(
