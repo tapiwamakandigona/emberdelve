@@ -626,3 +626,15 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   allocations, shared ticker removed). Suite 366/366 (+2). Visual VERIFIED:
   w1_l1 cluster shows mixed frames in one still; candle-wall gone.
 - Publish still PENDING GitHub auth (PAT dead — see 2026-08-31 blocker).
+
+## v1.0.0-alpha.10+22 — Unstuck Steps (2026-08-31)
+- Publish unblocked: user re-provisioned the PAT. alpha.8 + alpha.9 pushed,
+  tagged, CI-built (Flutter pin -> 3.44.9 after activeThumbColor broke the
+  3.32.7 analyze) and released as GitHub prereleases with signed APK/AAB.
+- One improvement: w1_l4 chute-trap fix. Playthrough probe (hold-jump casual
+  bot, 4 seeds, all 12 levels, stall telemetry) found the Cinder Steps
+  1-wide inter-tower slots trapped the bot for 290+ s every run; col-59 slot
+  needed rise 6 (> double-jump budget 4). Filled both slots into staircase
+  steps; permanent chute-trap lint gate added (fails on old geometry,
+  VERIFIED). Suite 378/378. Probe: w1_l4 now CLEAR in 21 s all seeds.
+- Checkpoint: checkpoints/13-alpha10-cinder-steps-trap.md.
