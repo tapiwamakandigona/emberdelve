@@ -7,6 +7,14 @@ class TitleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final m = c.meta;
+    // v0.153.0 The Shared Fire: first contact with the shared delve is the
+    // title's own Daily button — taught after a first win, never after a
+    // daily has been played. Idempotent across rebuilds (_fire no-ops while
+    // a tip is active or once seen).
+    c.tipDirector.onTitleArrival(
+      wonBefore: m.runsWon >= 1,
+      dailyPlayed: m.dailiesPlayed >= 1,
+    );
     // Hearth colors (v0.3.3): the active theme retints the title hearth.
     // The default theme passes null tints => byte-identical classic render.
     final theme = hearthThemeDef(m.activeTheme);
@@ -422,6 +430,18 @@ class TitleScreen extends StatelessWidget {
             },
           ),
         ),
+        // v0.153.0: the shared-delve card floats over the menu, pointing at
+        // the Daily button it teaches. StatefulBuilder because TitleScreen
+        // is stateless and dismissTip persists without notifying.
+        if (c.tipDirector.active == ContextTips.sharedDelve)
+          StatefulBuilder(
+            builder: (context, setTip) => c.tipDirector.active == null
+                ? const SizedBox.shrink()
+                : _ContextTip(
+                    id: c.tipDirector.active!,
+                    onDismiss: () => setTip(c.dismissTip),
+                  ),
+          ),
       ],
     );
   }

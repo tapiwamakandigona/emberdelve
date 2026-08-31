@@ -6,6 +6,7 @@
 // never assigns homework), counts are real and clamped, the line follows
 // nearestAchievements' ordering, and tapping it opens the Ledger.
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/meta/achievements.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/ui/ledger_screen.dart';
@@ -77,6 +78,10 @@ void main() {
     final c = GameController();
     c.meta.runsPlayed = 2;
     c.meta.runsWon = 2;
+    // v0.153.0: a won-but-no-daily profile now gets the shared-delve tip
+    // card over the title; this test is about the waymark line, so the
+    // tip is already seen.
+    c.meta.tipsSeen.add(ContextTips.sharedDelve);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: TitleScreen(c)),
     );

@@ -36,6 +36,11 @@ class ContextTips {
   /// available — the temper system's only front door, previously
   /// explained nowhere before the sheet itself.
   static const firstAnvil = 'first_anvil';
+
+  /// v0.153.0 The Shared Fire: the title screen after a first win, before
+  /// any daily — the shared delve's only front door, previously explained
+  /// nowhere before the run itself.
+  static const sharedDelve = 'shared_delve';
   static const List<String> all = [
     whatsADelve,
     rollSpend,
@@ -43,6 +48,7 @@ class ContextTips {
     combosPay,
     blockFades,
     firstAnvil,
+    sharedDelve,
   ];
 }
 
@@ -75,6 +81,15 @@ class TipDirector {
   /// button that is not on screen.
   String? onRestArrival({required bool canTemper}) =>
       canTemper ? _fire(ContextTips.firstAnvil) : null;
+
+  /// v0.153.0: back on the title screen. The shared delve is taught only
+  /// once the player has won a run (they know what a delve is and have
+  /// tasted the loop) and only if they have never played a daily — a
+  /// player who found the button alone never sees the card.
+  String? onTitleArrival({
+    required bool wonBefore,
+    required bool dailyPlayed,
+  }) => (wonBefore && !dailyPlayed) ? _fire(ContextTips.sharedDelve) : null;
 
   /// A batch of sim events was processed after a command.
   String? onEvents(List<Map<String, Object?>> events) {
