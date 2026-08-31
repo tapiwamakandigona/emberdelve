@@ -3732,3 +3732,6 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.158.0 artifacts ATTACHED (CI 33409356596, ALL PINS OK, codes
   184/1184/2184/4184, AAB pin OK; sha256 table appended: apk e498a77f…,
   aab dfaaf081…, arm64 f1212a7b…, v7a bc5b14d2…, x86_64 98715b8b…).
+- v0.159.0 artifacts ATTACHED (CI 33410076412, ALL PINS OK, codes
+  185/1185/2185/4185, AAB pin OK; sha256 table appended: apk d797c99f…,
+  aab 081b7826…, arm64 f11f5c57…, v7a 6a91c9de…, x86_64 9075032e…).
