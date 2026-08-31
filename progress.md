@@ -4035,3 +4035,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Item 3 (google-services.json / pyregrove mirroring): noted, applies to
   the pyregrove repos; nothing to touch in emberdelve. Not regenerating.
 - JRE for bundletool lives at /work/temp/jdk-21.0.12+8-jre (portable).
+
+## 2026-08-31 — SIXTEENTH DELVER: The Hearthkeeper (merged under freeze, NO release)
+- The FINAL chair: sworn pouch ['d6_brand','d6_ward','d6_steady'] — every
+  die a forged specialist, none plain. No relic, no marks. 26 HP (sweep:
+  28 -> 92.00/70.25/45.75 hot; 26 -> 91.50/68.25/42.00 vs kindler
+  89.75/67.25/41.50, in band). Unlock 2100, index 15 — ROSTER CLOSED at
+  16 (delve-code bits 31..34 full; hearthkeeper_test pins length==16).
+- Sprite: ascetic remap hue +20° sat ×1.0 floor 0.40 val ×1.12 (hearth
+  gold, doc base evens to 4; first cut floor 0.32/val 1.05 read muddy —
+  A/B'd). Weapon Hearth Hook 0xFFD9A85A reach 0.50. Codex page 119.
+  Promises move 15->16 (full_company/crowned_company/many-handed).
+  Tales 5+40 recount Sixteen (tale 5 EXACTLY 200 chars — cap is <=200).
+  Frozen vista gates: reason-only updates, marked 'never move again'.
+- test/hearthkeeper_test.dart (index pin 15, roster-closed pin, easy
+  win 1 / loss 3, normal win 4 / loss 8; hunt: easy losses 3 only,
+  normal losses 3/8/13). tool/ sweep+hunt+visual kept.
+- Suite 1095/1095, analyze clean. NO version bump, NO news entry, NO
+  tag: riding the freeze. News + release notes land at the owner's
+  consolidated release. Proving + honors (Kept Hearth, the_proven
+  23->24) follow in the next commit (v0.119 pattern, tenth use).

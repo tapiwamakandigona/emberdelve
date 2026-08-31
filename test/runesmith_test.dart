@@ -88,7 +88,7 @@ void main() {
 
   test('the roster-growth contracts all moved with the roster', () {
     final c = GameController();
-    expect(characters.length, 15); // v0.175.0: the stoker
+    expect(characters.length, 16); // sixteenth delver: the hearthkeeper
     // Unlock ladder ascends through the new tail.
     final ladder = [
       for (final id in charactersOrder) characters[id]!.unlockEmbers,

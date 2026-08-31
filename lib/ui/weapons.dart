@@ -192,6 +192,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.40,
     swingAngle: 1.74,
   ),
+  // Sixteenth delver: a hearth hook — the keeper's iron that banks the
+  // fire and bars the door. Middle reach (keepers hold the threshold),
+  // hearth-gold accent to match the sheet's remap.
+  'hearthkeeper': WeaponDef(
+    'hearth_hook',
+    'Hearth Hook',
+    accent: Color(0xFFD9A85A),
+    reach: 0.50,
+    idleAngle: 0.20,
+    raiseAngle: -1.36,
+    swingAngle: 1.70,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.

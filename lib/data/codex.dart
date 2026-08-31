@@ -247,6 +247,14 @@ final List<CodexEntryDef> codexEntries = [
         'marks, no clever low face. Big coals, big rolls, and a thin '
         'skin between the stoker and the heat they serve.',
   ),
+  _delver(
+    'hearthkeeper',
+    'The last chair belongs to the one who never leaves it empty. A '
+        'hearthkeeper\u2019s dice were born to their work \u2014 a Brand '
+        'that only strikes, a Ward that only shields, a Steady that never '
+        'rolls under three. Nothing plain, nothing spare: the fire is '
+        'kept, the door is kept, and the sixteenth chair keeps them both.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

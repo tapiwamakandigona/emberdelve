@@ -39,12 +39,13 @@ void main() {
     // tripwire — when the roster grows past ten, the gate must NOT move.
     expect(
       characters.length,
-      15,
+      16,
       reason:
-          'v0.175.0: the roster grew past ten (shieldwright, gilder, '
-          'cutler, collier, stoker) and the gate did NOT move — '
-          'charsUnlocked >= 10 stays frozen. Next growth: update only '
-          'this reason, never the gate',
+          'sixteenth delver: the roster grew past ten (shieldwright, '
+          'gilder, cutler, collier, stoker, hearthkeeper) and the gate '
+          'did NOT move — charsUnlocked >= 10 stays frozen. The roster '
+          'is now CLOSED at sixteen (delve-code bits full); this pin '
+          'should never move again',
     );
     expect(_unlocked(characters.length), isTrue);
   });

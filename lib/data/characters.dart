@@ -63,6 +63,9 @@ const List<String> charactersOrder = [
   'collier',
   // v0.175.0 — append-LAST.
   'stoker',
+  // sixteenth delver — append-LAST. Delve-code bits 31..34 are now FULL:
+  // the roster is complete at sixteen chairs. No seventeenth.
+  'hearthkeeper',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -282,6 +285,25 @@ const Map<String, CharacterDef> characters = {
     maxHp: 16,
     startDice: ['d8', 'd8', 'd8'],
     unlockEmbers: 1950,
+  ),
+  // The Hearthkeeper: the SIXTEENTH and FINAL chair — the sworn pouch.
+  // Every die is a forged specialist and none of them plain: a Brand Iron
+  // that only strikes, a Ward Iron that only shields, a Steady Ember that
+  // never rolls under 3. The collier's pouch was worked BY the smith
+  // (plain dice, rune faces); the hearthkeeper's dice were BORN to their
+  // work (forged die types, committed roles). Two of three dice locked to
+  // a single job is the tension the sweep prices in; HP is the tuning
+  // knob (sweeps in docs/improvements). Pure data — existing die ids,
+  // no relic, no marks, no re-anchor. The delve-code delver index
+  // (bits 31..34) holds sixteen; this delver takes the last value.
+  'hearthkeeper': CharacterDef(
+    'hearthkeeper',
+    'The Hearthkeeper',
+    'The last chair: every die sworn \u2014 a Brand that only strikes, '
+        'a Ward that only shields, a Steady that never fails.',
+    maxHp: 26,
+    startDice: ['d6_brand', 'd6_ward', 'd6_steady'],
+    unlockEmbers: 2100,
   ),
 };
 
