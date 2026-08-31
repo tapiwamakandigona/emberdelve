@@ -665,3 +665,16 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   probe committed as a skipped test (test/wipe_probe_test.dart). Suite
   397+1 skipped. Look pass phone+desktop at all three sites.
 - Checkpoint: checkpoints/15-alpha12-totem-squeeze-purge.md.
+
+## v1.0.0-alpha.13+25 — Fire Toll Relief (2026-08-31)
+- One improvement: w2_l4 flips from 73% WIPE to COMPLETED on all 4 probe
+  seeds. Root cause decoded from the probe trace: every life reached a fire
+  pit at 1 heart and paid the 1-damage pit "toll" (hazard eject) — 3 pits =
+  3 deaths = wipe at pct 79, deterministic. Fix (level-data only): high-road
+  platform row 12 cols 85-94 completing the sign fiction ("miners took the
+  high road" — every other pit already had its tier); totem (96,12) ->
+  (98,12) so the tower landing tile is no longer camped point-blank; hearts
+  at (41,15) and (101,15) breaking the toll chain before pits 1 and 3
+  (AKP-7a precedent). Probe: 28 s, 1 death, all seeds. Suite 397+1 skipped,
+  analyze clean. Look pass phone+desktop at both changed sites (4/4).
+- Checkpoint: checkpoints/16-alpha13-fire-toll-relief.md.

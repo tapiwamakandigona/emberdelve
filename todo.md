@@ -1,14 +1,16 @@
-# Session todo — Emberwood gauntlet (main), 2026-08-31
+# Gauntlet iteration 16 — v1.0.0-alpha.13: w2_l4 attrition fix
 
-- [x] Worktree /work/repos/emberwood on main @ 1326a80, ff to origin
-- [x] Baseline: analyze 2 infos (deprecations), tests 363/363 green
-- [x] BLOCKER FOUND: GitHub PAT dead (401) since ~08-25 — dice branch has 92
-      unpushed releases (remote v0.60.0 vs local v0.148.0). Emberwood pushes /
-      CI releases blocked the same way. Escalated to owner; work continues
-      locally ("gates GREEN, push pending GitHub auth" mode, same as dice).
-- [ ] DEMAND.md for main (platformer standards; root DEMAND.md is legacy-branch)
-- [ ] Web harness build → serve :8123 → Playwright look-loop
-      (landscape phone 915x412 + desktop 1280x800; several levels; close + wide)
-- [ ] Fix the 2 analyze deprecations (activeColor etc.) as part of first release
-- [ ] One improvement per release, alpha.8+20 onward; progress.md append each
-- [ ] Update personal skill: PAT dead, emberwood worktree, flutter at /work/temp/flutter
+Baseline (alpha.12): w2_l4 probe WIPES 73% all seeds near col 93.
+Attrition chain: soot creepers S@(24,14) + S@(74,14) (2 hits each), cinderDiver D@(44,8),
+totem stretch O@(96,11), pyreWisp W@(56,5). Hearts h@(45,14), h@(90,14). Checkpoints K@18/62/108.
+
+- [x] Ship alpha.12 release (CI ✓, artifacts verified ✓, prerelease 379876922 ✓, assets ✓, skill bumped ✓)
+- [ ] Fresh baseline probe w2_l4 (running: /work/temp/probe_w2l4_base.log)
+- [ ] Read probe attribution; design minimal fair fix (no difficulty gutting)
+- [ ] Edit level / code; verify row lengths uniform (alpha.12 insert-bug lesson: len check!)
+- [ ] Gates: flutter analyze clean + full test suite green (incl. totem_squeeze + reachability)
+- [ ] Probe rerun w2_l4: target COMPLETED on all 4 seeds (or honest improvement)
+- [ ] Web build + look-pass phone 915×412 + desktop 1280×800 at changed sites
+- [ ] progress.md append + checkpoint 16 file + pubspec bump 1.0.0-alpha.13+25
+- [ ] Commit (git commit -F), tag v1.0.0-alpha.13, push, CI, verify artifacts, prerelease
+- [ ] Update personal skill line; compress skill (<4000 chars warning)
