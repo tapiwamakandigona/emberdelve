@@ -136,6 +136,17 @@ const List<ProvingDef> provings = [
     character: 'bearer',
     difficulty: 'normal',
   ),
+  // v0.151.0 The Tenth Way (the v0.119 pattern, fourth use).
+  ProvingDef(
+    id: 'menders_proving',
+    title: "The Mender's Proving",
+    blurb:
+        'The Mender on normal floors. The worst face stitches — spend '
+        'the little dice and let the Coal pay its debt.',
+    seed: 9,
+    character: 'mender',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

@@ -3583,3 +3583,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   dim (expected, not a bug). Suite 1006/1006. 0.150.0+176.
 - NEXT (standing recipe): v0.151 = menders_proving + mender_wins
   + ten_ways_down.
+
+## v0.151.0 — The Tenth Way (2026-08-31)
+- menders_proving (normal, seed 9, after bearers_proving; blurb
+  'the worst face stitches'), mender_wins 'The First Stitch',
+  ten_ways_down 10 (nine stays 9). Provings 18; the_proven 18.
+- Pins: provings_test 18 ×2 + header 'of 18' ×2 (locked list AND
+  cleared mark — TWO header pins, not one), eighth_way_test.
+- 3 tests. Suite 1008/1008. 0.151.0+177.
