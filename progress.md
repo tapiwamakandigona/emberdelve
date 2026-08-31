@@ -3779,3 +3779,5 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   10; vistasOrder.length 12 in runemark_test. Suite 1056/1056 first try.
 - Lesson re-proved: check the plate against NEIGHBOR vistas (first grade at
   -60/x1.35/x0.96 was a duskquartz twin; retuned before ship).
+- v0.163.0 artifacts ATTACHED (CI 33414214101, ALL PINS OK, codes
+  189/1189/2189/4189, AAB pin OK; sha256 table appended, apk aaf54ad6…).
