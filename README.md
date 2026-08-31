@@ -1,3 +1,12 @@
+# Emberwood → moved
+
+> **⚠️ The platformer has MOVED (2026-08-31, owner-directed).** It is now
+> **Pyregrove** (`com.tsorostudios.pyregrove`) and lives in the private repo
+> [`tapiwamakandigona/pyregrove`](https://github.com/tapiwamakandigona/pyregrove).
+> This branch (`main`) is frozen at v1.0.0-alpha.16 — do not develop here.
+> The dice game **Emberdelve Classic** still lives on
+> [`legacy/dice-builder`](../../tree/legacy/dice-builder) and is unaffected.
+
 # Emberwood
 
 A crisp **pixel action-platformer** for Android. Fight through the cursed forest of Emberwood — slash beasts, loot chests, hunt secret rooms, and gear up in the shop. Apple-Knight-style loop, tighter feel, no ad spam.
