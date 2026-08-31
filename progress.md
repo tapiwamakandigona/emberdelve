@@ -3877,3 +3877,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   release notes. Publish pipeline scripted at /work/temp/
   publish_release.sh (download -> stage -> verify -> rename ->
   clobber-upload -> checksum table).
+- v0.170.0 The Thirteenth Way: cutler's proving (seed 14 normal,
+  bot-win pinned) + The First Edge (cutler_wins) + Thirteen Ways Down
+  (delvers_cleared 13); the_proven 20->21 (target-honesty pin holds);
+  count pins 20->21 in provings_test (x2 + 'of 21' copy x2) and
+  eighth_way_test; new test/thirteenth_way_test.dart. Suite 1073/1073
+  FIRST TRY, analyze clean. Release v0.170.0 target 6620733; CI
+  33423482420 dispatched (expect 0.170.0+196 -> codes 196/1196/2196/
+  4196). v0.119 pattern seventh use.
