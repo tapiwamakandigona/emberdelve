@@ -88,6 +88,7 @@ void main() {
             'embers_at_least',
             'clean_floors_at_least',
             'tempers_at_least', // v0.147.0 The Marked Day
+            'relics_at_least', // v0.154.0 The Keeper's Day
           };
           expect(
             known.contains(t.goalId),

@@ -65,6 +65,8 @@ const List<String> trialsOrder = [
   // v0.147.0 — append-LAST (the rotation is a hash over the list; append
   // keeps the change one modulus, not a reshuffle of authored order).
   'marked_day',
+  // v0.154.0 — append-LAST, same contract.
+  'keepers_day',
 ];
 
 const Map<String, TrialDef> trials = {
@@ -135,6 +137,16 @@ const Map<String, TrialDef> trials = {
     'Temper at least one die face at a rest fire.',
     goalId: 'tempers_at_least',
     goalParam: 1,
+    emberBonus: 15,
+  ),
+  // v0.154.0 The Keeper's Day: the relic shelf's day (goal kind
+  // 'relics_at_least', judged from the run's own relic list).
+  'keepers_day': TrialDef(
+    'keepers_day',
+    "The Keeper's Day",
+    'End the delve carrying two or more relics.',
+    goalId: 'relics_at_least',
+    goalParam: 2,
     emberBonus: 15,
   ),
 };

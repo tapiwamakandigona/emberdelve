@@ -63,6 +63,10 @@ bool trialGoalMet(TrialDef trial, Map<String, Object?> run, RunTrace trace) {
     // observation of the run's own counter — the sim stays sealed.
     case 'tempers_at_least':
       return ((run['tempers_used'] as int?) ?? 0) >= trial.goalParam;
+    // v0.154.0 The Keeper's Day: pure observation of the run's relic
+    // list — the sim stays sealed.
+    case 'relics_at_least':
+      return ((run['relics'] as List?)?.length ?? 0) >= trial.goalParam;
     default:
       return false;
   }

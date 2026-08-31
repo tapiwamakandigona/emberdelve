@@ -3623,3 +3623,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - tips_test last-unseen deck pin grew the id. 3 tests. Suite
   1013/1013. 0.153.0+179.
 2026-08-31 AUTH RESTORED + FULL BACKLOG PUBLISHED: owner supplied working PAT. Branch legacy/dice-builder pushed to origin at 93ed9e0 (97 commits; a leftover fire_push watcher won the final ref-update race — remote already at HEAD, treated as success; watcher machinery killed and cleaned). v0.60.0 released WITH signed CI artifacts (run 32879831365; 4×APK PIN-OK versionName 0.60.0 + AAB pin 031acb…44b7a0d; sha256 table appended). v0.61.0–v0.153.0 published as 93 source releases (gh release create --target <sha> --notes-file docs/releases/vX.md; version→commit map verified ancestor-monotonic, 0 retries). GitHub releases now current through v0.153.0 (latest). CI dispatched on v0.153.0 tag (run 33399481843) to attach signed artifacts to latest release. LESSON: a rejected push with 'remote is at <our HEAD>' means the push effectively landed — verify with ls-remote before retrying.
+
+## v0.154.0 — The Keeper's Day (2026-08-31)
+- 10th trial keepers_day: the relic shelf joins the daily
+  rotation. Goal kind relics_at_least over run['relics'] list
+  (null-safe, missing list = unmet). goalParam 2 — probe (80
+  seeds) showed greedy bot ends wins with 0–1 relics, so two is
+  a real spending choice, not an accident. Append-LAST; trials
+  known-goals set grew the id. 3 tests. Suite pending full run.
+2026-08-31 v0.153.0 ARTIFACTS ATTACHED: CI run 33399481843 success; 4×APK PIN-OK versionName 0.153.0 + AAB pin match; renamed standard names, uploaded to v0.153.0 release, sha256 table appended. .last-PIN BIT AGAIN in v0.154: marked_day_test pinned trialsOrder.last — retired to INDEX pin 8. The append-to-order-list grep for `.last` pins is MANDATORY, not advisory.
