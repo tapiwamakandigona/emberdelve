@@ -40,386 +40,392 @@ class TitleScreen extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, box) {
               return RepaintBoundary(
-                child: SingleChildScrollView(
-                  // Tablet clamp (v0.26.0): Center + maxWidth keep the menu
-                  // column from stretching edge to edge on 800dp tablets.
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: box.maxHeight,
-                        maxWidth: kMaxContentWidth,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Padding(
-                          padding: const EdgeInsets.all(Space.xl),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                child: ScrollComfort(
+                  child: SingleChildScrollView(
+                    // Tablet clamp (v0.26.0): Center + maxWidth keep the menu
+                    // column from stretching edge to edge on 800dp tablets.
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: box.maxHeight,
+                          maxWidth: kMaxContentWidth,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.all(Space.xl),
+                            child: Column(
+                              children: [
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // The Ledger (v0.3.3): lifetime stats + hearth colors.
+                                      IconButton(
+                                        key: const ValueKey('ledger-button'),
+                                        icon: const Icon(
+                                          Icons.menu_book,
+                                          color: EmberColors.textDim,
+                                          size: 26,
+                                        ),
+                                        tooltip: 'The Ledger',
+                                        onPressed: () {
+                                          AudioService.instance?.playSfx(
+                                            'ui_tap',
+                                          );
+                                          Navigator.of(context).push(
+                                            emberRoute((_) => LedgerScreen(c)),
+                                          );
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.settings,
+                                          color: EmberColors.textDim,
+                                          size: 26,
+                                        ),
+                                        tooltip: 'Settings',
+                                        onPressed: () {
+                                          AudioService.instance?.playSfx(
+                                            'ui_tap',
+                                          );
+                                          Navigator.of(context).push(
+                                            emberRoute(
+                                              (_) => const SettingsScreen(),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Spacer(),
+                                // Drawn logotype: glow bloom + charred-top/molten-bottom fill +
+                                // spark pinpricks (visuals.md #1 — never a plain Text).
+                                const EmberLogotype('EMBERDELVE', fontSize: 42),
+                                const SizedBox(height: Space.s),
+                                const Text(
+                                  'A dice-builder delve into the dark',
+                                  style: EmberText.bodyDim,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: Space.xl),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    // The Ledger (v0.3.3): lifetime stats + hearth colors.
-                                    IconButton(
-                                      key: const ValueKey('ledger-button'),
-                                      icon: const Icon(
-                                        Icons.menu_book,
-                                        color: EmberColors.textDim,
-                                        size: 26,
-                                      ),
-                                      tooltip: 'The Ledger',
-                                      onPressed: () {
-                                        AudioService.instance?.playSfx(
-                                          'ui_tap',
-                                        );
-                                        Navigator.of(context).push(
-                                          emberRoute((_) => LedgerScreen(c)),
-                                        );
-                                      },
+                                    ResourcePip(
+                                      Icons.local_fire_department,
+                                      EmberColors.ember,
+                                      m.embers,
+                                      'EMBERS',
+                                      imageAsset: Art.currencyEmber,
                                     ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.settings,
+                                    const SizedBox(width: Space.xl),
+                                    _statText(
+                                      '${m.runsWon}/${m.runsPlayed}',
+                                      'WINS',
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                // The Gathered Hearth (v0.42.0): every unlocked
+                                // delver idles at the fire, so the roster you
+                                // earned is visible the moment the game opens.
+                                // One delver renders exactly as it always did.
+                                _GatheredHearth(m, warm: warm, bright: bright),
+                                // v0.62.0 The Kept Fire: one warm line for a
+                                // player returning after a week or more away.
+                                // Pure derived state (newest runHistory date) —
+                                // it clears itself the moment a new run banks.
+                                // No streaks, no guilt, no ask (§Ethics).
+                                if (keptFireLine(m) != null) ...[
+                                  const SizedBox(height: Space.m),
+                                  Text(
+                                    keptFireLine(m)!,
+                                    key: const ValueKey('kept-fire-line'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                                // v0.71.0 The First Words: the premise, told
+                                // once — only a profile with no ended run
+                                // sees it (the review that asked "what's a
+                                // delve" never could again). §Ethics: states
+                                // the fiction, asks nothing.
+                                if (firstWordsLine(m) != null) ...[
+                                  const SizedBox(height: Space.m),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: Space.l,
+                                    ),
+                                    child: Text(
+                                      firstWordsLine(m)!,
+                                      key: const ValueKey('first-words'),
+                                      style: EmberText.micro.copyWith(
                                         color: EmberColors.textDim,
-                                        size: 26,
                                       ),
-                                      tooltip: 'Settings',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: Space.xxl),
+                                // Difficulty selector (v0.3.2): sticky, honest about the trade —
+                                // easier fights pay fewer embers, harder fights pay more. The
+                                // Daily Delve ignores it (shared seed, level field for everyone).
+                                _DifficultySelector(c),
+                                const SizedBox(height: Space.s),
+                                // The Shorter Road (v0.49.0): sticky Short
+                                // Delve format toggle — six floors instead of
+                                // nine, composing with any difficulty. Plain
+                                // words; shared delves (Daily/Weekly) ignore it.
+                                _ShortRoadToggle(c),
+                                const SizedBox(height: Space.m),
+                                // Primary CTA in the thumb zone.
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: EmberButton(
+                                    'Delve',
+                                    primary: true,
+                                    icon: Icons.bolt,
+                                    onTap: () => c.startRun(
+                                      character: defaultCharacter,
+                                      boons: true,
+                                      shortRoad: c.meta.preferShortRoad,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: Space.m),
+                                // Daily Delve: one shared seed per local calendar date — everyone
+                                // gets the same delve. No streaks, no expiry pressure (§Ethics).
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: EmberButton(
+                                    'Daily Delve — ${_dailyLabel()}',
+                                    icon: Icons.today,
+                                    onTap: () => c.startDailyRun(
+                                      character: defaultCharacter,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: Space.xs),
+                                // Today's Trial (v0.9.0): the ONE declared rule
+                                // this date carries, spelled out before you
+                                // commit — same charter as the weekly modifier
+                                // line. A goal day states its bonus as a fact.
+                                Text(
+                                  _dailyTrialLine(),
+                                  key: const ValueKey('daily-trial-line'),
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                // Daily recap (v0.3.4): a small honest checkmark on the day it was
+                                // played. Replaying stays allowed — no lockout, no streaks.
+                                if (m.lastDailyDate ==
+                                    dailyKey(DateTime.now())) ...[
+                                  const SizedBox(height: Space.s),
+                                  Text(
+                                    dailyRecapLine(
+                                      won: m.lastDailyWon,
+                                      floor: m.lastDailyFloor,
+                                      floors: m.lastDailyFloors,
+                                    ),
+                                    key: const ValueKey('daily-recap'),
+                                    style: EmberText.micro,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                                const SizedBox(height: Space.m),
+                                // Weekly Delve (P3): one shared seed AND one declared
+                                // modifier per Monday-aligned week — the same challenge
+                                // for everyone. No streaks, no expiry (§Ethics).
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: EmberButton(
+                                    'Weekly Delve — ${_weeklyModifierName()}',
+                                    key: const ValueKey('weekly-delve'),
+                                    icon: Icons.event_repeat,
+                                    onTap: () => c.startWeeklyRun(
+                                      character: defaultCharacter,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: Space.xs),
+                                // The rule, spelled out before you commit — the modifier
+                                // IS the difficulty, so it must never be a surprise.
+                                Text(
+                                  _weeklyModifierBlurb(),
+                                  key: const ValueKey('weekly-modifier'),
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                // Weekly recap: a small honest checkmark for the week it
+                                // was played. Replaying stays allowed — no lockout.
+                                if (m.lastWeeklyKey ==
+                                    weeklyKey(_thisWeek())) ...[
+                                  const SizedBox(height: Space.s),
+                                  Text(
+                                    weeklyRecapLine(
+                                      won: m.lastWeeklyWon,
+                                      floor: m.lastWeeklyFloor,
+                                      floors: m.lastWeeklyFloors,
+                                    ),
+                                    key: const ValueKey('weekly-recap'),
+                                    style: EmberText.micro,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  // The Coming Rule (v0.109.0): next Monday's
+                                  // modifier, a fact of the rotation shown only
+                                  // once this week is played. An appointment,
+                                  // not a nag — no countdown (§Ethics).
+                                  const SizedBox(height: Space.xs),
+                                  Text(
+                                    comingRuleLine(_thisWeek()),
+                                    key: const ValueKey('weekly-coming-rule'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  // v0.127.0 The Full Rotation: the collection
+                                  // fact, shown only once it exists (the
+                                  // waymark-line rule: no homework at zero).
+                                  if (m.weeklyRulesWon
+                                      .where(legalRuleLabels().contains)
+                                      .isNotEmpty) ...[
+                                    const SizedBox(height: Space.xs),
+                                    Text(
+                                      'Rules taken: '
+                                      '${m.weeklyRulesWon.where(legalRuleLabels().contains).length}'
+                                      ' of ${legalRuleLabels().length}',
+                                      key: const ValueKey('weekly-rules-taken'),
+                                      style: EmberText.micro.copyWith(
+                                        color: EmberColors.textDim,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ],
+                                const SizedBox(height: Space.m),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: EmberButton(
+                                    'Choose a delver',
+                                    ghost: true,
+                                    onTap: () => Navigator.of(context).push(
+                                      emberRoute((_) => CharacterScreen(c)),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: Space.s),
+                                // The Provings (v0.38.0): eight curated, exact
+                                // delves. Quiet entry beside the other
+                                // out-of-flow modes; the count is a fact, not
+                                // a nag.
+                                TextButton(
+                                  key: const ValueKey('provings-button'),
+                                  onPressed: () {
+                                    AudioService.instance?.playSfx(
+                                      'ui_confirm',
+                                    );
+                                    Navigator.of(context).push(
+                                      emberRoute((_) => ProvingsScreen(c)),
+                                    );
+                                  },
+                                  child: Text(
+                                    'The Provings — '
+                                    '${m.provingsCleared.length} of '
+                                    '${provings.length} cleared',
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                  ),
+                                ),
+                                // The Waymark Line (v0.121.0): the nearest
+                                // unearned honor, named before the run — the
+                                // summary's WITHIN REACH panel, promoted to
+                                // where session intent forms. Hidden entirely
+                                // until some real progress exists; tap opens
+                                // the Ledger where the full list lives.
+                                if (ach.waymarkLine(m) != null)
+                                  TextButton(
+                                    key: const ValueKey('waymark-line'),
+                                    onPressed: () {
+                                      AudioService.instance?.playSfx(
+                                        'ui_confirm',
+                                      );
+                                      Navigator.of(context).push(
+                                        emberRoute((_) => LedgerScreen(c)),
+                                      );
+                                    },
+                                    child: Text(
+                                      ach.waymarkLine(m)!,
+                                      style: EmberText.micro.copyWith(
+                                        color: EmberColors.textDim,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
+                                // shared seed IS a shared delve. Small, out of the main flow.
+                                TextButton(
+                                  key: const ValueKey('seeded-delve'),
+                                  onPressed: () => _promptSeed(context),
+                                  child: Text(
+                                    'Delve a seed',
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                  ),
+                                ),
+                                // The Hearthside Post (v0.15.0): shown ONCE per
+                                // release after an update, dismissed forever with
+                                // one tap, re-readable from Settings. Fresh
+                                // installs never see it (stamped at boot).
+                                if (m.lastSeenNewsVersion !=
+                                        currentAppVersion &&
+                                    newsFor(currentAppVersion) != null) ...[
+                                  const SizedBox(height: Space.m),
+                                  _HearthsidePost(c),
+                                ],
+                                // The Watchtower (v0.21.0): the opt-in launch
+                                // check found a newer release. ONE quiet line,
+                                // never a modal or badge; tap opens Settings
+                                // and the dismissal sticks per-version.
+                                AnimatedBuilder(
+                                  animation: UpdateService.instance.tick,
+                                  builder: (context, _) {
+                                    final tag =
+                                        UpdateService.instance.noticeTag;
+                                    if (tag == null) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return TextButton(
+                                      key: const ValueKey('update-notice'),
                                       onPressed: () {
-                                        AudioService.instance?.playSfx(
-                                          'ui_tap',
-                                        );
+                                        UpdateService.instance.dismissNotice();
                                         Navigator.of(context).push(
                                           emberRoute(
                                             (_) => const SettingsScreen(),
                                           ),
                                         );
                                       },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Spacer(),
-                              // Drawn logotype: glow bloom + charred-top/molten-bottom fill +
-                              // spark pinpricks (visuals.md #1 — never a plain Text).
-                              const EmberLogotype('EMBERDELVE', fontSize: 42),
-                              const SizedBox(height: Space.s),
-                              const Text(
-                                'A dice-builder delve into the dark',
-                                style: EmberText.bodyDim,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: Space.xl),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ResourcePip(
-                                    Icons.local_fire_department,
-                                    EmberColors.ember,
-                                    m.embers,
-                                    'EMBERS',
-                                    imageAsset: Art.currencyEmber,
-                                  ),
-                                  const SizedBox(width: Space.xl),
-                                  _statText(
-                                    '${m.runsWon}/${m.runsPlayed}',
-                                    'WINS',
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              // The Gathered Hearth (v0.42.0): every unlocked
-                              // delver idles at the fire, so the roster you
-                              // earned is visible the moment the game opens.
-                              // One delver renders exactly as it always did.
-                              _GatheredHearth(m, warm: warm, bright: bright),
-                              // v0.62.0 The Kept Fire: one warm line for a
-                              // player returning after a week or more away.
-                              // Pure derived state (newest runHistory date) —
-                              // it clears itself the moment a new run banks.
-                              // No streaks, no guilt, no ask (§Ethics).
-                              if (keptFireLine(m) != null) ...[
-                                const SizedBox(height: Space.m),
-                                Text(
-                                  keptFireLine(m)!,
-                                  key: const ValueKey('kept-fire-line'),
-                                  style: EmberText.micro.copyWith(
-                                    color: EmberColors.textDim,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                              // v0.71.0 The First Words: the premise, told
-                              // once — only a profile with no ended run
-                              // sees it (the review that asked "what's a
-                              // delve" never could again). §Ethics: states
-                              // the fiction, asks nothing.
-                              if (firstWordsLine(m) != null) ...[
-                                const SizedBox(height: Space.m),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: Space.l,
-                                  ),
-                                  child: Text(
-                                    firstWordsLine(m)!,
-                                    key: const ValueKey('first-words'),
-                                    style: EmberText.micro.copyWith(
-                                      color: EmberColors.textDim,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(height: Space.xxl),
-                              // Difficulty selector (v0.3.2): sticky, honest about the trade —
-                              // easier fights pay fewer embers, harder fights pay more. The
-                              // Daily Delve ignores it (shared seed, level field for everyone).
-                              _DifficultySelector(c),
-                              const SizedBox(height: Space.s),
-                              // The Shorter Road (v0.49.0): sticky Short
-                              // Delve format toggle — six floors instead of
-                              // nine, composing with any difficulty. Plain
-                              // words; shared delves (Daily/Weekly) ignore it.
-                              _ShortRoadToggle(c),
-                              const SizedBox(height: Space.m),
-                              // Primary CTA in the thumb zone.
-                              SizedBox(
-                                width: double.infinity,
-                                child: EmberButton(
-                                  'Delve',
-                                  primary: true,
-                                  icon: Icons.bolt,
-                                  onTap: () => c.startRun(
-                                    character: defaultCharacter,
-                                    boons: true,
-                                    shortRoad: c.meta.preferShortRoad,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: Space.m),
-                              // Daily Delve: one shared seed per local calendar date — everyone
-                              // gets the same delve. No streaks, no expiry pressure (§Ethics).
-                              SizedBox(
-                                width: double.infinity,
-                                child: EmberButton(
-                                  'Daily Delve — ${_dailyLabel()}',
-                                  icon: Icons.today,
-                                  onTap: () => c.startDailyRun(
-                                    character: defaultCharacter,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: Space.xs),
-                              // Today's Trial (v0.9.0): the ONE declared rule
-                              // this date carries, spelled out before you
-                              // commit — same charter as the weekly modifier
-                              // line. A goal day states its bonus as a fact.
-                              Text(
-                                _dailyTrialLine(),
-                                key: const ValueKey('daily-trial-line'),
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              // Daily recap (v0.3.4): a small honest checkmark on the day it was
-                              // played. Replaying stays allowed — no lockout, no streaks.
-                              if (m.lastDailyDate ==
-                                  dailyKey(DateTime.now())) ...[
-                                const SizedBox(height: Space.s),
-                                Text(
-                                  dailyRecapLine(
-                                    won: m.lastDailyWon,
-                                    floor: m.lastDailyFloor,
-                                    floors: m.lastDailyFloors,
-                                  ),
-                                  key: const ValueKey('daily-recap'),
-                                  style: EmberText.micro,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                              const SizedBox(height: Space.m),
-                              // Weekly Delve (P3): one shared seed AND one declared
-                              // modifier per Monday-aligned week — the same challenge
-                              // for everyone. No streaks, no expiry (§Ethics).
-                              SizedBox(
-                                width: double.infinity,
-                                child: EmberButton(
-                                  'Weekly Delve — ${_weeklyModifierName()}',
-                                  key: const ValueKey('weekly-delve'),
-                                  icon: Icons.event_repeat,
-                                  onTap: () => c.startWeeklyRun(
-                                    character: defaultCharacter,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: Space.xs),
-                              // The rule, spelled out before you commit — the modifier
-                              // IS the difficulty, so it must never be a surprise.
-                              Text(
-                                _weeklyModifierBlurb(),
-                                key: const ValueKey('weekly-modifier'),
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              // Weekly recap: a small honest checkmark for the week it
-                              // was played. Replaying stays allowed — no lockout.
-                              if (m.lastWeeklyKey ==
-                                  weeklyKey(_thisWeek())) ...[
-                                const SizedBox(height: Space.s),
-                                Text(
-                                  weeklyRecapLine(
-                                    won: m.lastWeeklyWon,
-                                    floor: m.lastWeeklyFloor,
-                                    floors: m.lastWeeklyFloors,
-                                  ),
-                                  key: const ValueKey('weekly-recap'),
-                                  style: EmberText.micro,
-                                  textAlign: TextAlign.center,
-                                ),
-                                // The Coming Rule (v0.109.0): next Monday's
-                                // modifier, a fact of the rotation shown only
-                                // once this week is played. An appointment,
-                                // not a nag — no countdown (§Ethics).
-                                const SizedBox(height: Space.xs),
-                                Text(
-                                  comingRuleLine(_thisWeek()),
-                                  key: const ValueKey('weekly-coming-rule'),
-                                  style: EmberText.micro.copyWith(
-                                    color: EmberColors.textDim,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                // v0.127.0 The Full Rotation: the collection
-                                // fact, shown only once it exists (the
-                                // waymark-line rule: no homework at zero).
-                                if (m.weeklyRulesWon
-                                    .where(legalRuleLabels().contains)
-                                    .isNotEmpty) ...[
-                                  const SizedBox(height: Space.xs),
-                                  Text(
-                                    'Rules taken: '
-                                    '${m.weeklyRulesWon.where(legalRuleLabels().contains).length}'
-                                    ' of ${legalRuleLabels().length}',
-                                    key: const ValueKey('weekly-rules-taken'),
-                                    style: EmberText.micro.copyWith(
-                                      color: EmberColors.textDim,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ],
-                              const SizedBox(height: Space.m),
-                              SizedBox(
-                                width: double.infinity,
-                                child: EmberButton(
-                                  'Choose a delver',
-                                  ghost: true,
-                                  onTap: () => Navigator.of(
-                                    context,
-                                  ).push(emberRoute((_) => CharacterScreen(c))),
-                                ),
-                              ),
-                              const SizedBox(height: Space.s),
-                              // The Provings (v0.38.0): eight curated, exact
-                              // delves. Quiet entry beside the other
-                              // out-of-flow modes; the count is a fact, not
-                              // a nag.
-                              TextButton(
-                                key: const ValueKey('provings-button'),
-                                onPressed: () {
-                                  AudioService.instance?.playSfx('ui_confirm');
-                                  Navigator.of(
-                                    context,
-                                  ).push(emberRoute((_) => ProvingsScreen(c)));
-                                },
-                                child: Text(
-                                  'The Provings — '
-                                  '${m.provingsCleared.length} of '
-                                  '${provings.length} cleared',
-                                  style: EmberText.micro.copyWith(
-                                    color: EmberColors.textDim,
-                                  ),
-                                ),
-                              ),
-                              // The Waymark Line (v0.121.0): the nearest
-                              // unearned honor, named before the run — the
-                              // summary's WITHIN REACH panel, promoted to
-                              // where session intent forms. Hidden entirely
-                              // until some real progress exists; tap opens
-                              // the Ledger where the full list lives.
-                              if (ach.waymarkLine(m) != null)
-                                TextButton(
-                                  key: const ValueKey('waymark-line'),
-                                  onPressed: () {
-                                    AudioService.instance?.playSfx(
-                                      'ui_confirm',
-                                    );
-                                    Navigator.of(
-                                      context,
-                                    ).push(emberRoute((_) => LedgerScreen(c)));
-                                  },
-                                  child: Text(
-                                    ach.waymarkLine(m)!,
-                                    style: EmberText.micro.copyWith(
-                                      color: EmberColors.textDim,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
-                              // shared seed IS a shared delve. Small, out of the main flow.
-                              TextButton(
-                                key: const ValueKey('seeded-delve'),
-                                onPressed: () => _promptSeed(context),
-                                child: Text(
-                                  'Delve a seed',
-                                  style: EmberText.micro.copyWith(
-                                    color: EmberColors.textDim,
-                                  ),
-                                ),
-                              ),
-                              // The Hearthside Post (v0.15.0): shown ONCE per
-                              // release after an update, dismissed forever with
-                              // one tap, re-readable from Settings. Fresh
-                              // installs never see it (stamped at boot).
-                              if (m.lastSeenNewsVersion != currentAppVersion &&
-                                  newsFor(currentAppVersion) != null) ...[
-                                const SizedBox(height: Space.m),
-                                _HearthsidePost(c),
-                              ],
-                              // The Watchtower (v0.21.0): the opt-in launch
-                              // check found a newer release. ONE quiet line,
-                              // never a modal or badge; tap opens Settings
-                              // and the dismissal sticks per-version.
-                              AnimatedBuilder(
-                                animation: UpdateService.instance.tick,
-                                builder: (context, _) {
-                                  final tag = UpdateService.instance.noticeTag;
-                                  if (tag == null) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return TextButton(
-                                    key: const ValueKey('update-notice'),
-                                    onPressed: () {
-                                      UpdateService.instance.dismissNotice();
-                                      Navigator.of(context).push(
-                                        emberRoute(
-                                          (_) => const SettingsScreen(),
+                                      child: Text(
+                                        'v$tag is available — see Settings',
+                                        style: EmberText.micro.copyWith(
+                                          color: EmberColors.textDim,
                                         ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'v$tag is available — see Settings',
-                                      style: EmberText.micro.copyWith(
-                                        color: EmberColors.textDim,
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

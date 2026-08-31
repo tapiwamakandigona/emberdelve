@@ -37,31 +37,33 @@ class ProvingsScreen extends StatelessWidget {
             animation: c,
             builder: (context, _) {
               final m = c.meta;
-              return ListView(
-                padding: const EdgeInsets.all(Space.l),
-                children: [
-                  Text(
-                    '${m.provingsCleared.length} of ${provings.length} '
-                    'CLEARED',
-                    style: EmberText.micro,
-                  ),
-                  const SizedBox(height: Space.s),
-                  const Text(
-                    // Count-free on purpose (v0.41.0 lesson: "eight" went
-                    // stale the moment a ninth was added — the header's
-                    // "N of M" states the count, so the prose never should).
-                    'Named delves, each one exact — same floors, same '
-                    'offers, same rolls for every delver who takes it. '
-                    'Every one is proven winnable. Take them in any order; '
-                    'clearing one marks it here, and the mark is the prize.',
-                    style: EmberText.bodyDim,
-                  ),
-                  const SizedBox(height: Space.l),
-                  for (final p in provings) ...[
-                    _ProvingCard(c, p, key: ValueKey('proving-${p.id}')),
-                    const SizedBox(height: Space.m),
+              return ScrollComfort(
+                child: ListView(
+                  padding: const EdgeInsets.all(Space.l),
+                  children: [
+                    Text(
+                      '${m.provingsCleared.length} of ${provings.length} '
+                      'CLEARED',
+                      style: EmberText.micro,
+                    ),
+                    const SizedBox(height: Space.s),
+                    const Text(
+                      // Count-free on purpose (v0.41.0 lesson: "eight" went
+                      // stale the moment a ninth was added — the header's
+                      // "N of M" states the count, so the prose never should).
+                      'Named delves, each one exact — same floors, same '
+                      'offers, same rolls for every delver who takes it. '
+                      'Every one is proven winnable. Take them in any order; '
+                      'clearing one marks it here, and the mark is the prize.',
+                      style: EmberText.bodyDim,
+                    ),
+                    const SizedBox(height: Space.l),
+                    for (final p in provings) ...[
+                      _ProvingCard(c, p, key: ValueKey('proving-${p.id}')),
+                      const SizedBox(height: Space.m),
+                    ],
                   ],
-                ],
+                ),
               );
             },
           ),

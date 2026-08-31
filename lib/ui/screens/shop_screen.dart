@@ -29,15 +29,17 @@ class ShopScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Space.l),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                    children: [
-                      for (var i = 0; i < slots.length; i++)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: Space.m),
-                          child: _slot(slots[i], i + 1, gold),
-                        ),
-                    ],
+                  child: ScrollComfort(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                      children: [
+                        for (var i = 0; i < slots.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: Space.m),
+                            child: _slot(slots[i], i + 1, gold),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(

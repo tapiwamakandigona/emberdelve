@@ -154,176 +154,180 @@ class _CharacterScreenState extends State<CharacterScreen> {
       body: SafeArea(
         // Tablet clamp (v0.26.0): content caps at kMaxContentWidth.
         child: ContentClamp(
-          child: ListView(
-            padding: const EdgeInsets.all(Space.l),
-            children: [
-              _nextUnlockBar(m),
-              const SizedBox(height: Space.l),
-              for (final id in charactersOrder) _charCard(context, id),
-              const SizedBox(height: Space.l),
-              // v0.27.0 The Delver's Wardrobe — dyes, same tap contract as
-              // the Ledger's hearth colors / dice skins: tap owned to wear,
-              // tap locked to buy (price always visible).
-              Row(
-                children: [
-                  const Expanded(child: Text('THE WARDROBE', style: EmberText.micro)),
-                  const Icon(
-                    Icons.local_fire_department,
-                    color: EmberColors.ember,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${m.embers}',
-                    style: EmberText.label.copyWith(color: EmberColors.ember),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Space.s),
-              // v0.67.0 The Dyed Delver: dyes are worn per delver. Same
-              // pills as THE EPITHET, same shared target — one delver is
-              // being dressed on this screen.
-              if (m.unlockedCharacters.length > 1) ...[
-                _dressChipRow(context, m, keyPrefix: 'dye-dress'),
-                const SizedBox(height: Space.m),
-              ],
-              for (final id in delverDyesOrder) ...[
-                _dyeCard(context, id),
-                const SizedBox(height: Space.m),
-              ],
-              const SizedBox(height: Space.s),
-              Text(
-                'Dyes recolor a delver everywhere they appear, and each '
-                'delver keeps their own. Bought once with embers, worn by '
-                'any of them. Pure cosmetics — the delve itself never '
-                'changes.',
-                style: EmberText.micro.copyWith(color: EmberColors.textDim),
-              ),
-              const SizedBox(height: Space.l),
-              // v0.35.0 The Vistas — background grades, milestone-unlocked
-              // (the other half of the wardrobe ask: 'change backgrounds').
-              const Text('THE VISTA', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              // v0.115.0 The Delver's Window: vistas are worn per delver —
-              // the pills name who the taps below dress. Hidden with one
-              // delver unlocked (the shelf reads exactly as it always has).
-              if (m.unlockedCharacters.length > 1) ...[
-                _dressChipRow(context, m, keyPrefix: 'vista-dress'),
-                const SizedBox(height: Space.m),
-              ],
-              for (final id in vistasOrder) ...[
-                _vistaCard(context, id),
-                const SizedBox(height: Space.m),
-              ],
-              const SizedBox(height: Space.s),
-              Text(
-                'Vistas repaint the delve itself — every layer, in the '
-                'light each delver chooses. Earned by delving, never sold.',
-                style: EmberText.micro.copyWith(color: EmberColors.textDim),
-              ),
-              const SizedBox(height: Space.l),
-              // v0.138.0 The Delver's Dice: skins worn per delver — the
-              // ledger shelf still buys and sets the global fallback; this
-              // row binds an owned skin to the delver being dressed.
-              const Text('THE DICE', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              if (m.unlockedCharacters.length > 1) ...[
-                _dressChipRow(context, m, keyPrefix: 'skin-dress'),
-                const SizedBox(height: Space.m),
-              ],
-              for (final id in dieSkinsOrder)
-                if (id == defaultDieSkin || m.ownedDieSkins.contains(id)) ...[
-                  _skinCard(context, id),
-                  const SizedBox(height: Space.m),
-                ],
-              const SizedBox(height: Space.s),
-              Text(
-                'Each delver rolls their own set. New skins are bought on '
-                'the Ledger shelf; owned ones are worn here.',
-                style: EmberText.micro.copyWith(color: EmberColors.textDim),
-              ),
-              const SizedBox(height: Space.l),
-              // v0.36.0 The Epithets — earned titles worn under the delver's
-              // name; carried onto the shareable Delver's Card.
-              const Text('THE EPITHET', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              // v0.66.0 The Dressed Delver: titles are worn per delver —
-              // the pills name who the taps below dress. Hidden with one
-              // delver unlocked (the shelf reads exactly as it always has).
-              if (m.unlockedCharacters.length > 1) ...[
-                _dressChipRow(context, m),
-                const SizedBox(height: Space.m),
-              ],
-              _epithetNoneCard(context),
-              const SizedBox(height: Space.m),
-              for (final id in epithetsOrder) ...[
-                _epithetCard(context, id),
-                const SizedBox(height: Space.m),
-              ],
-              const SizedBox(height: Space.s),
-              Text(
-                'An epithet is worn under a delver\'s name — on this '
-                'screen, on the summary, and on any card you share. Each '
-                'delver wears their own. Earned by delving, never sold.',
-                style: EmberText.micro.copyWith(color: EmberColors.textDim),
-              ),
-              const SizedBox(height: Space.l),
-              const Text('ASCENSION', style: EmberText.micro),
-              const SizedBox(height: Space.s),
-              const Text(
-                'Every rung makes enemies tougher; higher tiers hit harder too. '
-                'Unlock the next rung by winning at the current one.',
-                style: EmberText.bodyDim,
-              ),
-              const SizedBox(height: Space.s),
-              // Ember Forge (v0.4.0): the ladder is the Forge's endgame tier.
-              if (!m.forgeUnlocked) ...[
-                Panel(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.lock,
-                        color: EmberColors.textDim,
-                        size: 18,
-                      ),
-                      const SizedBox(width: Space.m),
-                      const Expanded(
-                        child: Text(
-                          'The Ascension ladder is part of the '
-                          'Ember Forge.',
-                          style: EmberText.bodyDim,
-                        ),
-                      ),
-                      EmberButton(
-                        'Open',
-                        dense: true,
-                        onTap: () => showForgeSheet(context, widget.c),
-                      ),
-                    ],
-                  ),
+          child: ScrollComfort(
+            child: ListView(
+              padding: const EdgeInsets.all(Space.l),
+              children: [
+                _nextUnlockBar(m),
+                const SizedBox(height: Space.l),
+                for (final id in charactersOrder) _charCard(context, id),
+                const SizedBox(height: Space.l),
+                // v0.27.0 The Delver's Wardrobe — dyes, same tap contract as
+                // the Ledger's hearth colors / dice skins: tap owned to wear,
+                // tap locked to buy (price always visible).
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text('THE WARDROBE', style: EmberText.micro),
+                    ),
+                    const Icon(
+                      Icons.local_fire_department,
+                      color: EmberColors.ember,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${m.embers}',
+                      style: EmberText.label.copyWith(color: EmberColors.ember),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: Space.s),
-              ],
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: ascension > 0
-                        ? () => setState(() => ascension--)
-                        : null,
-                    icon: const Icon(Icons.remove_circle_outline),
-                  ),
-                  Text('$ascension', style: EmberText.value),
-                  IconButton(
-                    onPressed: ascension < maxAsc
-                        ? () => setState(() => ascension++)
-                        : null,
-                    icon: const Icon(Icons.add_circle_outline),
-                  ),
-                  const SizedBox(width: Space.s),
-                  Text('max unlocked: $maxAsc', style: EmberText.bodyDim),
+                // v0.67.0 The Dyed Delver: dyes are worn per delver. Same
+                // pills as THE EPITHET, same shared target — one delver is
+                // being dressed on this screen.
+                if (m.unlockedCharacters.length > 1) ...[
+                  _dressChipRow(context, m, keyPrefix: 'dye-dress'),
+                  const SizedBox(height: Space.m),
                 ],
-              ),
-            ],
+                for (final id in delverDyesOrder) ...[
+                  _dyeCard(context, id),
+                  const SizedBox(height: Space.m),
+                ],
+                const SizedBox(height: Space.s),
+                Text(
+                  'Dyes recolor a delver everywhere they appear, and each '
+                  'delver keeps their own. Bought once with embers, worn by '
+                  'any of them. Pure cosmetics — the delve itself never '
+                  'changes.',
+                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                ),
+                const SizedBox(height: Space.l),
+                // v0.35.0 The Vistas — background grades, milestone-unlocked
+                // (the other half of the wardrobe ask: 'change backgrounds').
+                const Text('THE VISTA', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                // v0.115.0 The Delver's Window: vistas are worn per delver —
+                // the pills name who the taps below dress. Hidden with one
+                // delver unlocked (the shelf reads exactly as it always has).
+                if (m.unlockedCharacters.length > 1) ...[
+                  _dressChipRow(context, m, keyPrefix: 'vista-dress'),
+                  const SizedBox(height: Space.m),
+                ],
+                for (final id in vistasOrder) ...[
+                  _vistaCard(context, id),
+                  const SizedBox(height: Space.m),
+                ],
+                const SizedBox(height: Space.s),
+                Text(
+                  'Vistas repaint the delve itself — every layer, in the '
+                  'light each delver chooses. Earned by delving, never sold.',
+                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                ),
+                const SizedBox(height: Space.l),
+                // v0.138.0 The Delver's Dice: skins worn per delver — the
+                // ledger shelf still buys and sets the global fallback; this
+                // row binds an owned skin to the delver being dressed.
+                const Text('THE DICE', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                if (m.unlockedCharacters.length > 1) ...[
+                  _dressChipRow(context, m, keyPrefix: 'skin-dress'),
+                  const SizedBox(height: Space.m),
+                ],
+                for (final id in dieSkinsOrder)
+                  if (id == defaultDieSkin || m.ownedDieSkins.contains(id)) ...[
+                    _skinCard(context, id),
+                    const SizedBox(height: Space.m),
+                  ],
+                const SizedBox(height: Space.s),
+                Text(
+                  'Each delver rolls their own set. New skins are bought on '
+                  'the Ledger shelf; owned ones are worn here.',
+                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                ),
+                const SizedBox(height: Space.l),
+                // v0.36.0 The Epithets — earned titles worn under the delver's
+                // name; carried onto the shareable Delver's Card.
+                const Text('THE EPITHET', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                // v0.66.0 The Dressed Delver: titles are worn per delver —
+                // the pills name who the taps below dress. Hidden with one
+                // delver unlocked (the shelf reads exactly as it always has).
+                if (m.unlockedCharacters.length > 1) ...[
+                  _dressChipRow(context, m),
+                  const SizedBox(height: Space.m),
+                ],
+                _epithetNoneCard(context),
+                const SizedBox(height: Space.m),
+                for (final id in epithetsOrder) ...[
+                  _epithetCard(context, id),
+                  const SizedBox(height: Space.m),
+                ],
+                const SizedBox(height: Space.s),
+                Text(
+                  'An epithet is worn under a delver\'s name — on this '
+                  'screen, on the summary, and on any card you share. Each '
+                  'delver wears their own. Earned by delving, never sold.',
+                  style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                ),
+                const SizedBox(height: Space.l),
+                const Text('ASCENSION', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                const Text(
+                  'Every rung makes enemies tougher; higher tiers hit harder too. '
+                  'Unlock the next rung by winning at the current one.',
+                  style: EmberText.bodyDim,
+                ),
+                const SizedBox(height: Space.s),
+                // Ember Forge (v0.4.0): the ladder is the Forge's endgame tier.
+                if (!m.forgeUnlocked) ...[
+                  Panel(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.lock,
+                          color: EmberColors.textDim,
+                          size: 18,
+                        ),
+                        const SizedBox(width: Space.m),
+                        const Expanded(
+                          child: Text(
+                            'The Ascension ladder is part of the '
+                            'Ember Forge.',
+                            style: EmberText.bodyDim,
+                          ),
+                        ),
+                        EmberButton(
+                          'Open',
+                          dense: true,
+                          onTap: () => showForgeSheet(context, widget.c),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: Space.s),
+                ],
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: ascension > 0
+                          ? () => setState(() => ascension--)
+                          : null,
+                      icon: const Icon(Icons.remove_circle_outline),
+                    ),
+                    Text('$ascension', style: EmberText.value),
+                    IconButton(
+                      onPressed: ascension < maxAsc
+                          ? () => setState(() => ascension++)
+                          : null,
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                    const SizedBox(width: Space.s),
+                    Text('max unlocked: $maxAsc', style: EmberText.bodyDim),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -333,7 +337,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
   Widget _nextUnlockBar(m) {
     final target = m.nextUnlockTarget;
     if (target == null) {
-      return const Panel(child: Text('All delvers unlocked.', style: EmberText.body));
+      return const Panel(
+        child: Text('All delvers unlocked.', style: EmberText.body),
+      );
     }
     final frac = (m.embers / target.unlockEmbers).clamp(0.0, 1.0);
     return Panel(

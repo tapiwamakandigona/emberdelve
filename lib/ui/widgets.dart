@@ -1465,3 +1465,86 @@ class _RuneMark extends StatelessWidget {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// ScrollComfort (v0.174.0 The Honest Fold). Every scrolling surface tells the
+// truth about what lies past the fold: a soft ember-dark fade at the bottom
+// while more content waits below, and at the top once you have scrolled past
+// it. No scrollbar chrome, no bounce tricks — just the world dimming where it
+// continues. Purely visual (IgnorePointer); listens to the child scrollable's
+// own notifications, so it owns no controller and changes no scroll physics.
+// ---------------------------------------------------------------------------
+class ScrollComfort extends StatefulWidget {
+  final Widget child;
+
+  /// Fade color; defaults to the scaffold background so the fade reads as
+  /// the room's darkness, not an overlay.
+  final Color? color;
+  const ScrollComfort({required this.child, this.color, super.key});
+  @override
+  State<ScrollComfort> createState() => _ScrollComfortState();
+}
+
+class _ScrollComfortState extends State<ScrollComfort> {
+  bool _above = false; // content scrolled past, above the fold
+  bool _below = false; // content still waiting below
+
+  bool _read(ScrollMetrics m) {
+    // Horizontal scrollables inside (wardrobe chip rows) are not ours.
+    if (m.axis != Axis.vertical) return false;
+    final above = m.extentBefore > 2;
+    final below = m.extentAfter > 2;
+    if (above != _above || below != _below) {
+      setState(() {
+        _above = above;
+        _below = below;
+      });
+    }
+    return false;
+  }
+
+  Widget _fade({required bool top, required bool on, required Color c}) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: top ? 0 : null,
+      bottom: top ? null : 0,
+      height: 32,
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          key: ValueKey(top ? 'scroll-fade-top' : 'scroll-fade-bottom'),
+          opacity: on ? 1 : 0,
+          duration: const Duration(milliseconds: 160),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: top ? Alignment.topCenter : Alignment.bottomCenter,
+                end: top ? Alignment.bottomCenter : Alignment.topCenter,
+                colors: [c.withValues(alpha: 0.9), c.withValues(alpha: 0)],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = widget.color ?? EmberColors.bg;
+    return NotificationListener<ScrollMetricsNotification>(
+      onNotification: (n) => _read(n.metrics),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (n) => _read(n.metrics),
+        child: Stack(
+          fit: StackFit.passthrough,
+          children: [
+            widget.child,
+            _fade(top: true, on: _above, c: c),
+            _fade(top: false, on: _below, c: c),
+          ],
+        ),
+      ),
+    );
+  }
+}

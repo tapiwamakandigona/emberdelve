@@ -3914,3 +3914,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Pins moved: twelfth_fire_test freezes chair 12 + 'has a next fire again'; thirteenth_fire_test owns length-13/.last/top pins; rank_test veteran wins 1700 (5455); rank_ui_test runsWon 1850 (5550).
 - v0.171.0 artifacts PUBLISHED (CI 33424708073, codes 197/1197/2197/4197, all pins OK). v0.172 CI 33425977651 pending publish.
 - OWNER DIRECTIVE 2026-08-31 18:45: big UI pass, reduce/rethink scrolling everywhere ("IDK you know what's best") — v0.174 lane: scroll-comfort audit (edge fades, CTAs above fold, in-run screens scroll-free on phones; keep list screens scrollable — 117 codex entries can't fit a fold honestly).
+
+## v0.174.0 The Honest Fold (2026-08-31)
+- ScrollComfort edge-fade shell in lib/ui/widgets.dart (keys scroll-fade-top/bottom, 32px, 160ms, EmberColors.bg, IgnorePointer, vertical-only via notification listeners — owns no controller). Applied to 10 screens: roster/ledger/codex/provings/news/credits/settings/shop/title/summary.
+- LESSON: screens/*.dart are `part of` screens.dart — widgets.dart import there covers all parts. Paren-matching python wrapper (insert 'ScrollComfort(child: ' + matched ')') is the safe way to wrap long widget expressions; keep prefix ('return ', 'child: ') OUTSIDE the wrap.
+- Owner scroll directive answered: keep scrolling (CTAs already pinned; 117 codex entries can't fit a fold), add affordance instead. Plates confirm subtle fade; M3 appbar scrolled-under tint pre-existing.
+- v0.172.0 artifacts PUBLISHED (codes 198/…, all pins OK). v0.173 CI 33427087325 pending publish.

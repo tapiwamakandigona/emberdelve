@@ -34,12 +34,14 @@ class CreditsScreen extends StatelessWidget {
                   child: CircularProgressIndicator(color: EmberColors.ember),
                 );
               }
-              return ListView(
-                padding: const EdgeInsets.all(Space.l),
-                children: [
-                  for (final line in snap.data!.split('\n')) _line(line),
-                  const SizedBox(height: Space.xl),
-                ],
+              return ScrollComfort(
+                child: ListView(
+                  padding: const EdgeInsets.all(Space.l),
+                  children: [
+                    for (final line in snap.data!.split('\n')) _line(line),
+                    const SizedBox(height: Space.xl),
+                  ],
+                ),
               );
             },
           ),

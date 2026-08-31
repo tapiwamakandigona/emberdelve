@@ -87,381 +87,227 @@ class _LedgerScreenState extends State<LedgerScreen> {
               final m = c.meta;
               final rank = rankFor(m);
               final next = nextRank(m);
-              return ListView(
-                padding: const EdgeInsets.all(Space.l),
-                children: [
-                  // v0.13.0 Delver's Rank: derived from the counters below —
-                  // every mark is real banked history (§Ethics honesty), and
-                  // the next-tier line shows REAL earned progress, never a
-                  // teaser that resets or expires.
-                  Panel(
-                    key: const ValueKey('rank-line'),
-                    color: EmberColors.raised,
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.workspace_premium,
-                          color: EmberColors.gold,
-                          size: 28,
-                        ),
-                        const SizedBox(width: Space.m),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'You delve as ${rank.withArticle}',
-                                style: EmberText.body.copyWith(
-                                  color: EmberColors.gold,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                rank.flavor,
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                next == null
-                                    ? '${rankMarks(m)} marks — the ladder '
-                                          'ends here'
-                                    : '${rankMarks(m)} marks · '
-                                          '${next.name} at ${next.marks}',
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
-                                ),
-                              ),
-                            ],
+              return ScrollComfort(
+                child: ListView(
+                  padding: const EdgeInsets.all(Space.l),
+                  children: [
+                    // v0.13.0 Delver's Rank: derived from the counters below —
+                    // every mark is real banked history (§Ethics honesty), and
+                    // the next-tier line shows REAL earned progress, never a
+                    // teaser that resets or expires.
+                    Panel(
+                      key: const ValueKey('rank-line'),
+                      color: EmberColors.raised,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.workspace_premium,
+                            color: EmberColors.gold,
+                            size: 28,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: Space.m),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'You delve as ${rank.withArticle}',
+                                  style: EmberText.body.copyWith(
+                                    color: EmberColors.gold,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  rank.flavor,
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  next == null
+                                      ? '${rankMarks(m)} marks — the ladder '
+                                            'ends here'
+                                      : '${rankMarks(m)} marks · '
+                                            '${next.name} at ${next.marks}',
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: Space.l),
-                  const Text('LIFETIME', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  Panel(
-                    child: Column(
-                      children: [
-                        _row(
-                          Icons.local_fire_department,
-                          EmberColors.ember,
-                          'Embers banked, all time',
-                          '${m.lifetimeEmbers}',
-                        ),
-                        const Divider(
-                          color: EmberColors.line,
-                          height: Space.xl,
-                        ),
-                        _row(
-                          Icons.sports_martial_arts,
-                          EmberColors.textPrimary,
-                          'Delves won',
-                          '${m.runsWon} of ${m.runsPlayed}',
-                        ),
-                        const Divider(
-                          color: EmberColors.line,
-                          height: Space.xl,
-                        ),
-                        _row(
-                          Icons.trending_up,
-                          EmberColors.gold,
-                          'Best ascension',
-                          '${m.bestAscension}',
-                        ),
-                        // v0.80.0 The Plumb Line: the lifetime deepest floor,
-                        // stated absolutely — the sounding line above draws
-                        // the relative arc; this is the number.
-                        if (m.bestFloor > 0) ...[
+                    const SizedBox(height: Space.l),
+                    const Text('LIFETIME', style: EmberText.micro),
+                    const SizedBox(height: Space.s),
+                    Panel(
+                      child: Column(
+                        children: [
+                          _row(
+                            Icons.local_fire_department,
+                            EmberColors.ember,
+                            'Embers banked, all time',
+                            '${m.lifetimeEmbers}',
+                          ),
                           const Divider(
                             color: EmberColors.line,
                             height: Space.xl,
                           ),
-                          KeyedSubtree(
-                            key: const ValueKey('plumb-line'),
-                            child: _row(
-                              Icons.south,
-                              EmberColors.ember,
-                              'Deepest floor',
-                              '${m.bestFloor}',
-                            ),
+                          _row(
+                            Icons.sports_martial_arts,
+                            EmberColors.textPrimary,
+                            'Delves won',
+                            '${m.runsWon} of ${m.runsPlayed}',
                           ),
-                        ],
-                        const Divider(
-                          color: EmberColors.line,
-                          height: Space.xl,
-                        ),
-                        _row(
-                          Icons.adjust,
-                          EmberColors.success,
-                          'Exact kills',
-                          '${m.exactKills}',
-                        ),
-                        const Divider(
-                          color: EmberColors.line,
-                          height: Space.xl,
-                        ),
-                        _row(
-                          Icons.bolt,
-                          EmberColors.gold,
-                          'Best exact-kill streak',
-                          '${m.bestExactStreak}',
-                        ),
-                        // v0.78.0 The Old Foe: the enemy that has ended the
-                        // most delves, stated flatly. Two falls make a foe.
-                        if (oldFoe(m) case final foe?) ...[
                           const Divider(
                             color: EmberColors.line,
                             height: Space.xl,
                           ),
-                          KeyedSubtree(
-                            key: const ValueKey('old-foe'),
-                            child: _row(
-                              Icons.dangerous,
-                              EmberColors.textDim,
-                              'The old foe',
-                              '${enemies[foe.id]!.name} ×${foe.falls}',
-                            ),
+                          _row(
+                            Icons.trending_up,
+                            EmberColors.gold,
+                            'Best ascension',
+                            '${m.bestAscension}',
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: Space.xl),
-                  const Text('DELVERS', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  Panel(
-                    child: Column(
-                      children: [
-                        for (final (i, id) in charactersOrder.indexed) ...[
-                          if (i > 0)
+                          // v0.80.0 The Plumb Line: the lifetime deepest floor,
+                          // stated absolutely — the sounding line above draws
+                          // the relative arc; this is the number.
+                          if (m.bestFloor > 0) ...[
                             const Divider(
                               color: EmberColors.line,
                               height: Space.xl,
                             ),
-                          _delverRow(m, id),
-                        ],
-                      ],
-                    ),
-                  ),
-                  // Recent delves (v0.3.4, review note #4): the last runs,
-                  // newest first — every entry REAL (§Ethics honesty).
-                  if (m.runHistory.isNotEmpty) ...[
-                    const SizedBox(height: Space.xl),
-                    const Text('RECENT DELVES', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    // v0.101.0 The Delver's Page: when the remembered delves
-                    // belong to more than one delver, the section gains
-                    // pages — all delves, or one delver's. Pure reading aid:
-                    // no record is hidden for good, nothing is persisted.
-                    if (_delversRemembered(m).length >= 2) ...[
-                      Wrap(
-                        key: const ValueKey('delver-pages'),
-                        spacing: Space.s,
-                        runSpacing: Space.s,
-                        children: [
-                          _pageChip(
-                            key: const ValueKey('delver-page-all'),
-                            label: 'All delvers',
-                            selected: _delverPage.isEmpty,
-                            onTap: () => setState(() => _delverPage = ''),
-                          ),
-                          for (final id in _delversRemembered(m))
-                            _pageChip(
-                              key: ValueKey('delver-page-$id'),
-                              label: m.nameFor(id),
-                              selected: _delverPage == id,
-                              onTap: () => setState(() => _delverPage = id),
-                            ),
-                        ],
-                      ),
-                      // v0.105.0 The Delver's Line: one delver's page adds
-                      // a lifetime line from the uncapped counters — the
-                      // remembered list forgets past 30, these never do. A
-                      // tally of the page itself would lie; this cannot.
-                      if (_delverPage.isNotEmpty) ...[
-                        const SizedBox(height: Space.s),
-                        Text(
-                          key: const ValueKey('delver-lifetime'),
-                          delverLifetimeLine(m, _delverPage),
-                          style: EmberText.micro.copyWith(
-                            color: EmberColors.textDim,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: Space.s),
-                    ],
-                    // v0.77.0 The Sounding Line: the depth of the remembered
-                    // delves, drawn — oldest left, newest right, wins in
-                    // ember. Two records make a line; one stays a row.
-                    if (_pageHistory(m).length >= 2) ...[
-                      Panel(
-                        key: const ValueKey('sounding-line'),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SoundingLine(bars: soundingBars(_pageHistory(m))),
-                            const SizedBox(height: Space.s),
-                            Text(
-                              'Each bar a remembered delve, oldest to newest '
-                              '— its height, the floor it reached.',
-                              style: EmberText.micro.copyWith(
-                                color: EmberColors.textDim,
+                            KeyedSubtree(
+                              key: const ValueKey('plumb-line'),
+                              child: _row(
+                                Icons.south,
+                                EmberColors.ember,
+                                'Deepest floor',
+                                '${m.bestFloor}',
                               ),
                             ),
                           ],
-                        ),
+                          const Divider(
+                            color: EmberColors.line,
+                            height: Space.xl,
+                          ),
+                          _row(
+                            Icons.adjust,
+                            EmberColors.success,
+                            'Exact kills',
+                            '${m.exactKills}',
+                          ),
+                          const Divider(
+                            color: EmberColors.line,
+                            height: Space.xl,
+                          ),
+                          _row(
+                            Icons.bolt,
+                            EmberColors.gold,
+                            'Best exact-kill streak',
+                            '${m.bestExactStreak}',
+                          ),
+                          // v0.78.0 The Old Foe: the enemy that has ended the
+                          // most delves, stated flatly. Two falls make a foe.
+                          if (oldFoe(m) case final foe?) ...[
+                            const Divider(
+                              color: EmberColors.line,
+                              height: Space.xl,
+                            ),
+                            KeyedSubtree(
+                              key: const ValueKey('old-foe'),
+                              child: _row(
+                                Icons.dangerous,
+                                EmberColors.textDim,
+                                'The old foe',
+                                '${enemies[foe.id]!.name} ×${foe.falls}',
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                      const SizedBox(height: Space.s),
-                    ],
+                    ),
+                    const SizedBox(height: Space.xl),
+                    const Text('DELVERS', style: EmberText.micro),
+                    const SizedBox(height: Space.s),
                     Panel(
-                      key: const ValueKey('recent-delves'),
                       child: Column(
                         children: [
-                          for (final (i, r) in _pageHistory(
-                            m,
-                          ).take(10).toList().indexed) ...[
+                          for (final (i, id) in charactersOrder.indexed) ...[
                             if (i > 0)
                               const Divider(
                                 color: EmberColors.line,
                                 height: Space.xl,
                               ),
-                            _historyRow(context, r),
+                            _delverRow(m, id),
                           ],
                         ],
                       ),
                     ),
-                  ],
-                  const SizedBox(height: Space.xl),
-                  // Achievements (v0.5.0). Earned first, then the ones closest
-                  // to done, then the rest — so the list opens on what the
-                  // player has actually achieved.
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('ACHIEVEMENTS', style: EmberText.micro),
-                      ),
-                      Text(
-                        '${ach.earnedCount(m)} of ${ach.achievementCount}',
-                        style: EmberText.label.copyWith(
-                          color: EmberColors.textDim,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.s),
-                  Panel(
-                    key: const ValueKey('achievements'),
-                    child: Column(
-                      children: [
-                        for (final (i, def) in _ordered(m).indexed) ...[
-                          if (i > 0)
-                            const Divider(
-                              color: EmberColors.line,
-                              height: Space.xl,
+                    // Recent delves (v0.3.4, review note #4): the last runs,
+                    // newest first — every entry REAL (§Ethics honesty).
+                    if (m.runHistory.isNotEmpty) ...[
+                      const SizedBox(height: Space.xl),
+                      const Text('RECENT DELVES', style: EmberText.micro),
+                      const SizedBox(height: Space.s),
+                      // v0.101.0 The Delver's Page: when the remembered delves
+                      // belong to more than one delver, the section gains
+                      // pages — all delves, or one delver's. Pure reading aid:
+                      // no record is hidden for good, nothing is persisted.
+                      if (_delversRemembered(m).length >= 2) ...[
+                        Wrap(
+                          key: const ValueKey('delver-pages'),
+                          spacing: Space.s,
+                          runSpacing: Space.s,
+                          children: [
+                            _pageChip(
+                              key: const ValueKey('delver-page-all'),
+                              label: 'All delvers',
+                              selected: _delverPage.isEmpty,
+                              onTap: () => setState(() => _delverPage = ''),
                             ),
-                          _achievementRow(m, def),
+                            for (final id in _delversRemembered(m))
+                              _pageChip(
+                                key: ValueKey('delver-page-$id'),
+                                label: m.nameFor(id),
+                                selected: _delverPage == id,
+                                onTap: () => setState(() => _delverPage = id),
+                              ),
+                          ],
+                        ),
+                        // v0.105.0 The Delver's Line: one delver's page adds
+                        // a lifetime line from the uncapped counters — the
+                        // remembered list forgets past 30, these never do. A
+                        // tally of the page itself would lie; this cannot.
+                        if (_delverPage.isNotEmpty) ...[
+                          const SizedBox(height: Space.s),
+                          Text(
+                            key: const ValueKey('delver-lifetime'),
+                            delverLifetimeLine(m, _delverPage),
+                            style: EmberText.micro.copyWith(
+                              color: EmberColors.textDim,
+                            ),
+                          ),
                         ],
+                        const SizedBox(height: Space.s),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: Space.s),
-                  Text(
-                    'Achievements are recognition only — they never change '
-                    'a delve, and none of them expires.',
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
-                  const SizedBox(height: Space.xl),
-                  // Hearth colors: tap an owned color to light it; tap a
-                  // locked one to buy it with embers (price always shown).
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('HEARTH COLORS', style: EmberText.micro),
-                      ),
-                      const Icon(
-                        Icons.local_fire_department,
-                        color: EmberColors.ember,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${m.embers}',
-                        style: EmberText.label.copyWith(
-                          color: EmberColors.ember,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.s),
-                  for (final id in hearthThemesOrder) ...[
-                    _themeCard(context, id),
-                    const SizedBox(height: Space.m),
-                  ],
-                  const SizedBox(height: Space.s),
-                  Text(
-                    'Hearth colors retint the fire on the title screen. '
-                    'Pure cosmetics — the delve itself never changes.',
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
-                  const SizedBox(height: Space.xl),
-                  // Dice skins: same contract as hearth colors — tap an
-                  // owned skin to lit it, tap a locked one to buy it.
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text('DICE SKINS', style: EmberText.micro),
-                      ),
-                      const Icon(
-                        Icons.local_fire_department,
-                        color: EmberColors.ember,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${m.embers}',
-                        style: EmberText.label.copyWith(
-                          color: EmberColors.ember,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.s),
-                  for (final id in dieSkinsOrder) ...[
-                    _skinCard(context, id),
-                    const SizedBox(height: Space.m),
-                  ],
-                  const SizedBox(height: Space.s),
-                  Text(
-                    'Dice skins repaint every die in play. Pure cosmetics '
-                    '— faces, rolls and odds never change.',
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
-                  const SizedBox(height: Space.xl),
-                  // The Codex: lore entries bought with embers, on their own
-                  // screen so the Ledger stays scannable.
-                  const Text('THE CODEX', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  Panel(
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.menu_book,
-                          color: EmberColors.gold,
-                          size: 20,
-                        ),
-                        const SizedBox(width: Space.m),
-                        Expanded(
+                      // v0.77.0 The Sounding Line: the depth of the remembered
+                      // delves, drawn — oldest left, newest right, wins in
+                      // ember. Two records make a line; one stays a row.
+                      if (_pageHistory(m).length >= 2) ...[
+                        Panel(
+                          key: const ValueKey('sounding-line'),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const Text('The Codex', style: EmberText.body),
-                              const SizedBox(height: 2),
+                              SoundingLine(bars: soundingBars(_pageHistory(m))),
+                              const SizedBox(height: Space.s),
                               Text(
-                                '${m.ownedCodex.length} of '
-                                '${codexEntries.length} entries unsealed',
+                                'Each bar a remembered delve, oldest to newest '
+                                '— its height, the floor it reached.',
                                 style: EmberText.micro.copyWith(
                                   color: EmberColors.textDim,
                                 ),
@@ -469,45 +315,211 @@ class _LedgerScreenState extends State<LedgerScreen> {
                             ],
                           ),
                         ),
-                        EmberButton(
-                          'OPEN',
-                          dense: true,
-                          onTap: () {
-                            AudioService.instance?.playSfx('ui_tap');
-                            Navigator.of(
-                              context,
-                            ).push(emberRoute((_) => CodexScreen(c)));
-                          },
+                        const SizedBox(height: Space.s),
+                      ],
+                      Panel(
+                        key: const ValueKey('recent-delves'),
+                        child: Column(
+                          children: [
+                            for (final (i, r) in _pageHistory(
+                              m,
+                            ).take(10).toList().indexed) ...[
+                              if (i > 0)
+                                const Divider(
+                                  color: EmberColors.line,
+                                  height: Space.xl,
+                                ),
+                              _historyRow(context, r),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: Space.xl),
+                    // Achievements (v0.5.0). Earned first, then the ones closest
+                    // to done, then the rest — so the list opens on what the
+                    // player has actually achieved.
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text('ACHIEVEMENTS', style: EmberText.micro),
+                        ),
+                        Text(
+                          '${ach.earnedCount(m)} of ${ach.achievementCount}',
+                          style: EmberText.label.copyWith(
+                            color: EmberColors.textDim,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: Space.s),
-                  Text(
-                    'Enemy and relic lore, unsealed with embers. Flavor '
-                    'only — every rule stays readable in play for free.',
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
-                  const SizedBox(height: Space.xl),
-                  // v0.33.0 The Gramophone: the soundtrack as a collection.
-                  // Tracks unlock by simply playing (each names how, plainly);
-                  // tap an unlocked track to hear it here. No purchase, no
-                  // timer — a record of what the delve has already sung.
-                  const Text('THE GRAMOPHONE', style: EmberText.micro),
-                  const SizedBox(height: Space.s),
-                  _GramophoneSection(
-                    key: const ValueKey('gramophone-section'),
-                    heard: m.heardTracks,
-                    c: c,
-                  ),
-                  const SizedBox(height: Space.s),
-                  Text(
-                    'Every tune the delve has played for you, kept by the '
-                    'fire. The rest are earned by delving — each row says '
-                    'how.',
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
-                ],
+                    const SizedBox(height: Space.s),
+                    Panel(
+                      key: const ValueKey('achievements'),
+                      child: Column(
+                        children: [
+                          for (final (i, def) in _ordered(m).indexed) ...[
+                            if (i > 0)
+                              const Divider(
+                                color: EmberColors.line,
+                                height: Space.xl,
+                              ),
+                            _achievementRow(m, def),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      'Achievements are recognition only — they never change '
+                      'a delve, and none of them expires.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                    const SizedBox(height: Space.xl),
+                    // Hearth colors: tap an owned color to light it; tap a
+                    // locked one to buy it with embers (price always shown).
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text('HEARTH COLORS', style: EmberText.micro),
+                        ),
+                        const Icon(
+                          Icons.local_fire_department,
+                          color: EmberColors.ember,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${m.embers}',
+                          style: EmberText.label.copyWith(
+                            color: EmberColors.ember,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: Space.s),
+                    for (final id in hearthThemesOrder) ...[
+                      _themeCard(context, id),
+                      const SizedBox(height: Space.m),
+                    ],
+                    const SizedBox(height: Space.s),
+                    Text(
+                      'Hearth colors retint the fire on the title screen. '
+                      'Pure cosmetics — the delve itself never changes.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                    const SizedBox(height: Space.xl),
+                    // Dice skins: same contract as hearth colors — tap an
+                    // owned skin to lit it, tap a locked one to buy it.
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text('DICE SKINS', style: EmberText.micro),
+                        ),
+                        const Icon(
+                          Icons.local_fire_department,
+                          color: EmberColors.ember,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${m.embers}',
+                          style: EmberText.label.copyWith(
+                            color: EmberColors.ember,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: Space.s),
+                    for (final id in dieSkinsOrder) ...[
+                      _skinCard(context, id),
+                      const SizedBox(height: Space.m),
+                    ],
+                    const SizedBox(height: Space.s),
+                    Text(
+                      'Dice skins repaint every die in play. Pure cosmetics '
+                      '— faces, rolls and odds never change.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                    const SizedBox(height: Space.xl),
+                    // The Codex: lore entries bought with embers, on their own
+                    // screen so the Ledger stays scannable.
+                    const Text('THE CODEX', style: EmberText.micro),
+                    const SizedBox(height: Space.s),
+                    Panel(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.menu_book,
+                            color: EmberColors.gold,
+                            size: 20,
+                          ),
+                          const SizedBox(width: Space.m),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('The Codex', style: EmberText.body),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${m.ownedCodex.length} of '
+                                  '${codexEntries.length} entries unsealed',
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          EmberButton(
+                            'OPEN',
+                            dense: true,
+                            onTap: () {
+                              AudioService.instance?.playSfx('ui_tap');
+                              Navigator.of(
+                                context,
+                              ).push(emberRoute((_) => CodexScreen(c)));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      'Enemy and relic lore, unsealed with embers. Flavor '
+                      'only — every rule stays readable in play for free.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                    const SizedBox(height: Space.xl),
+                    // v0.33.0 The Gramophone: the soundtrack as a collection.
+                    // Tracks unlock by simply playing (each names how, plainly);
+                    // tap an unlocked track to hear it here. No purchase, no
+                    // timer — a record of what the delve has already sung.
+                    const Text('THE GRAMOPHONE', style: EmberText.micro),
+                    const SizedBox(height: Space.s),
+                    _GramophoneSection(
+                      key: const ValueKey('gramophone-section'),
+                      heard: m.heardTracks,
+                      c: c,
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      'Every tune the delve has played for you, kept by the '
+                      'fire. The rest are earned by delving — each row says '
+                      'how.',
+                      style: EmberText.micro.copyWith(
+                        color: EmberColors.textDim,
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
