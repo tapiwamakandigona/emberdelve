@@ -223,6 +223,14 @@ final List<CodexEntryDef> codexEntries = [
         'runes, twice \u2014 and they shrug: the delve pays whoever '
         'reads it. The gilder just wrote it on the dice.',
   ),
+  _delver(
+    'cutler',
+    'Ask a cutler which matters more, the edge or the spine, and you '
+        'will be there a while. Their dice answer faster: a Blade '
+        'sharpened into the Deep Coal\u2019s eight, an Aegis worked '
+        'into an Ember Die\u2019s six. One face cuts, one face holds. '
+        'A good knife, they say, does both.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

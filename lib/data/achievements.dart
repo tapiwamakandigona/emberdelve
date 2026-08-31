@@ -329,7 +329,7 @@ const Map<String, AchievementDef> achievements = {
     'Full Company',
     'Unlock every delver.',
     stat: 'chars_unlocked',
-    target: 12, // v0.162.0: the gilder joins (promise doctrine)
+    target: 13, // v0.168.0: the cutler joins (promise doctrine)
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
@@ -567,8 +567,8 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // v0.162.0: moved with the roster (promise wording).
-    target: 12,
+    // v0.168.0: moved with the roster (promise wording).
+    target: 13,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

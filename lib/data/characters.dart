@@ -57,6 +57,8 @@ const List<String> charactersOrder = [
   'shieldwright',
   // v0.162.0 — append-LAST.
   'gilder',
+  // v0.168.0 — append-LAST.
+  'cutler',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -223,6 +225,25 @@ const Map<String, CharacterDef> characters = {
       {'die': 2, 'face': 6, 'rune': 'gilt'},
     ],
     unlockEmbers: 1500,
+  ),
+  // v0.168.0 The Cutler — the thirteenth delver, the KNIFE-MAKER: the
+  // first kit with two DIFFERENT marks. Edge and spine — a Blade rides
+  // the Deep Coal's 8 and an Aegis rides an Ember Die's 6, so the kit
+  // opens with both a sharpened promise and a guarded one. Pure data
+  // (existing dice + runes) — no re-anchor. HP is the tuning knob
+  // (sweeps in docs/improvements/v0.168.0).
+  'cutler': CharacterDef(
+    'cutler',
+    'The Cutler',
+    'The knife-maker: edge and spine \u2014 a Blade on the Deep '
+        'Coal\u2019s 8, an Aegis on an Ember Die\u2019s 6.',
+    maxHp: 24,
+    startDice: ['d6', 'd6', 'd8'],
+    startTempers: [
+      {'die': 3, 'face': 8, 'rune': 'blade'},
+      {'die': 1, 'face': 6, 'rune': 'aegis'},
+    ],
+    unlockEmbers: 1650,
   ),
 };
 

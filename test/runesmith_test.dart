@@ -88,7 +88,7 @@ void main() {
 
   test('the roster-growth contracts all moved with the roster', () {
     final c = GameController();
-    expect(characters.length, 12); // v0.162.0: the gilder
+    expect(characters.length, 13); // v0.168.0: the cutler
     // Unlock ladder ascends through the new tail.
     final ladder = [
       for (final id in charactersOrder) characters[id]!.unlockEmbers,

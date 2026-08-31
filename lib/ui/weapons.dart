@@ -155,6 +155,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.40,
     swingAngle: 1.75,
   ),
+  // Knife-maker (v0.168.0): a steeling rod — the tool that trues an edge
+  // between grinds. Short reach (cutlers work at the bench, wrist and
+  // whetstone), pale-steel accent to match the sheet's remap.
+  'cutler': WeaponDef(
+    'steeling_rod',
+    'Steeling Rod',
+    accent: Color(0xFF9CB4CC),
+    reach: 0.46,
+    idleAngle: 0.26,
+    raiseAngle: -1.42,
+    swingAngle: 1.78,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.

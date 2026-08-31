@@ -3824,3 +3824,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - LESSON: a shipped feature is not a working feature. The 23 Aug release
   logged review_service.dart as done; nobody gated the trigger against a
   realistic play session. Pin reachability, not just correctness.
+- v0.168.0 The Cutler (renumbered from v0.167.0 after PR #98 landed as v0.167.0 'A Word From You'): THIRTEENTH delver, the KNIFE-MAKER — first kit
+  with two DIFFERENT marks (blade on Deep Coal 8, aegis on Ember Die 6,
+  both tier-1). 24 HP (sweep 90.25/66.50/43.75 vs kindler
+  89.75/67.25/41.50 — in band first guess), d6/d6/d8, no relic, unlock
+  1650, index 12. Sprite = ascetic remap hue +205 sat x0.95 floor 0.35
+  val x0.94 (whetstone steel); Steeling Rod weapon; codex page; tales 5
+  & 40 recounted to Thirteen; full_company/crowned_company/Many-Handed
+  -> 13; tenthfire + amethyst gates FROZEN (reason-only edits). Pins:
+  fourth_cycle (roster + 'Thirteen chairs' copy — the copy pin on line
+  BELOW the roster pin was missed first pass, one suite rerun),
+  runesmith, tenth_chair, amethyst. cutler_test (kit/pool order
+  custom_2,d6,custom_1/no-tier-key/seeded pins easy 1 win, normal 4 win
+  7 loss). Plates: picker card 2 sizes + warmup, judged (locked dim
+  expected). Suite 1070/1070. 0.168.0+194.
+- LESSON: roster recount grep must include test/ copy pins ('Twelve
+  chairs' lived in fourth_cycle_test line 39, one line under the roster
+  pin the checklist already covers).
+- USER DIRECTIVE (2026-08-31 17:18): performance optimisation + smooth
+  animations — schedule a dedicated perf/animation-polish release soon
+  (frame-timing probes, const/rebuild audit, animation easing pass).
