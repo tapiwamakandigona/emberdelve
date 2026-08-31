@@ -3795,3 +3795,11 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   tests' 260. Suite 1059/1059.
 - v0.164.0 artifacts ATTACHED (CI 33415964772, ALL PINS OK, codes
   190/1190/2190/4190, AAB pin OK; sha256 table appended, apk b075eb14…).
+- v0.165.0 artifacts ATTACHED (CI 33416719555, ALL PINS OK, codes
+  191/1191/2191/4191, AAB pin OK; sha256 table appended, apk e358a79c…).
+- NEXT LEAD (scouted, not started): v0.166 twelfth rank tier — id 'everburn',
+  name 'Everburn', marks 3750 (gap 1200 >= 850), flavor 'Fires die. Yours has
+  not.'; move length/.last pins from eleventh_fire_test into new
+  twelfth_fire_test; eleventh_fire_test 'Firstflame stands at top' becomes
+  'has a next fire again'; rank_test veteran wins 750->1150; rank_ui_test
+  runsWon 900->1300 with comment updates.
