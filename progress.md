@@ -3652,3 +3652,5 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   'invalid'. Injected custom_1 test fixtures must also bump
   next_custom_die or the next mint collides. 8 tests
   (deep_mark_test). Suite 1024/1024. 0.155.0+181.
+
+2026-08-31 v0.155.0 ARTIFACTS ATTACHED: CI run 33404171504 success; 4×APK PIN-OK versionName 0.155.0 (codes 181/1181/2181/4181) + AAB pin 031acb42… match; renamed standard names, uploaded to v0.155.0 release, sha256 table appended (apk 7f0f3764…, aab 1ddfe020…, arm64 a6beca0d…, v7a bffe744a…, x86_64 03c1ce8d…). Releases fully current through v0.155.0 with signed artifacts on latest.
