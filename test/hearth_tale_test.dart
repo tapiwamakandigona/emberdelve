@@ -76,7 +76,7 @@ void main() {
     // milestone, and the wrap follows the FULL list.
     // v0.120.0 The Third Cycle: three passes of ten. The milestone stays
     // frozen at the first cycle (see hearthgoldTales).
-    expect(hearthTales.length, 5 * hearthgoldTales); // v0.165.0 5th cycle
+    expect(hearthTales.length, 6 * hearthgoldTales); // the sixth cycle
     for (final tale in hearthTales) {
       expect(tale.trim(), isNotEmpty);
       expect(tale.length, lessThanOrEqualTo(200), reason: tale);

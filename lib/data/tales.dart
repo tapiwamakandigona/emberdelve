@@ -152,6 +152,33 @@ const List<String> hearthTales = [
   'The fire has never run out of tales, and the delve has never run '
       'out of reasons to go down. One rest at a time, the book gets '
       'longer.',
+  // The Sixth Cycle — the last chairs get their tales (cutler,
+  // collier, stoker, hearthkeeper), then the closed fire's honors: the
+  // roster, the Many-Handed, the crowned deep, the Worldflame, the last
+  // proving. Same charter: every line states one fact the game can
+  // prove. Append only, as chartered.
+  'The cutler came down with an edge struck on one die and a guard on '
+      'another. Ask which mattered more and the cutler taps whichever rolled '
+      'last.',
+  'The collier carries no relic, only three small marks worked into three '
+      'plain dice. Everything the collier owns was smithed, not found.',
+  'The stoker keeps three big coals and sixteen points of skin, nothing else. '
+      'Every roll is plenty, the stoker says. Every hit is dear.',
+  'The hearthkeeper\'s dice were never marked by the smith \u2014 they were '
+      'forged to their work. One iron only strikes, one only wards, and one '
+      'ember never rolls low.',
+  'Sixteen chairs, and the fire is done making chairs. Whoever answers the '
+      'delve now answers it as one of the sixteen.',
+  'Win a delve from every chair and the fire has a second name waiting: the '
+      'Many-Handed. Sixteen ways down, and the name asks all of them.',
+  'Eight crowned things wait in the low places. The book keeps a page for '
+      'each; the delve keeps the introductions.',
+  'The ledger\'s ladder holds thirteen rungs, and the topmost is the '
+      'Worldflame. No mark honestly earned ever slides back down.',
+  'The provings end at the summit of ash \u2014 the longest road the delve '
+      'holds still. Everything before it is practice for that stillness.',
+  'Six times round now, this book of tales. The fire is not repeating itself, '
+      'the old hands say. It is making sure.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

@@ -4070,3 +4070,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   suite count looks off, count per-file with `flutter test -r json`,
   not with the progress counter of a combined log.)
 - Still NO version bump / tag / news: riding the freeze.
+
+## 2026-08-31 — The Sixth Cycle: ten new hearth tales (merged under freeze)
+- Tales 51-60 (indices 50-59): the last chairs get theirs at last —
+  cutler (edge + guard marks), collier (no relic, three small marks),
+  stoker (three big coals, sixteen points of skin), hearthkeeper (dice
+  forged to their work) — then the closed fire's honors: roster done
+  making chairs, the Many-Handed asks all sixteen, eight crowned
+  things, thirteen rungs ending at the Worldflame, provings end at the
+  summit of ash, six times round the book. Every fact mirror-asserted
+  in new test/sixth_cycle_test.dart (3 tests; note: the epithet ID is
+  'the_six_handed' — display renamed the Many-Handed in v0.118 but the
+  save-contract id never changed; CharacterDef field is startRelic
+  (nullable single), not startRelics).
+- Pins moved: fifth_cycle_test + fourth_cycle_test 50 -> 60,
+  hearth_tale_test 5* -> 6*hearthgoldTales. All tales <= 200 chars
+  (asserted in the patch before writing). hearthgoldTales stays 10.
+- Suite 1097/1097, analyze clean. NO version bump / tag / news: freeze.
