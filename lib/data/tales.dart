@@ -119,6 +119,37 @@ const List<String> hearthTales = [
       'instead of against the dice.',
   'Twelve chairs at this fire now, and the delve answers each one '
       'differently. That is the whole game, if you ask the fire.',
+  // v0.165.0 The Fifth Cycle: ten more — the late chairs get their
+  // tales at last (bearer, mender, shieldwright, gilder), then the
+  // ledger's slower coins. Same charter: every line states one fact the
+  // game can prove. Append only, as chartered.
+  'The bearer keeps two dice only and the biggest life at this fire. '
+      'Few rolls, grand promises — the delve has learned to take '
+      'him at his word.',
+  'The mender worked her mend into the Deep Coal\'s worst face, so '
+      'the bad roll is the one that stitches. She calls that fairness, '
+      'applied by hand.',
+  'The shieldwright forged an aegis deep into a die before ever '
+      'stepping down. The first floor has never once caught them '
+      'unguarded.',
+  'The gilder walked in with both sixes gilded. Coin on the roll, not '
+      'on the kill — the peddler still has not forgiven the '
+      'elegance of it.',
+  'A deepened mark is the smith\'s second visit: the same rune, struck '
+      'harder. Gilt struck deep pays three where it paid two.',
+  'A whole delve fits in a short code. Hand it to a friend and the '
+      'same floors, the same foes, the same luck will meet you both.',
+  'Past embers, the hearth keeps marks — a slower coin. Wins, '
+      'bosses, tales, records: everything honest adds a little, and '
+      'nothing ever takes any away.',
+  'Clear every proving on the list and the fire has a name waiting: '
+      'the Proven. The list has grown before, and the name has kept '
+      'every time.',
+  'Each dawn the delve sets a small trial beside the week\'s rule. '
+      'The fire counts both in its book, and the count only climbs.',
+  'The fire has never run out of tales, and the delve has never run '
+      'out of reasons to go down. One rest at a time, the book gets '
+      'longer.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

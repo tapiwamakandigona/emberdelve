@@ -3781,3 +3781,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   -60/x1.35/x0.96 was a duskquartz twin; retuned before ship).
 - v0.163.0 artifacts ATTACHED (CI 33414214101, ALL PINS OK, codes
   189/1189/2189/4189, AAB pin OK; sha256 table appended, apk aaf54ad6…).
+
+## v0.165.0 — The Fifth Cycle (2026-08-31)
+- Ten hearth tales (41-50): the late chairs at last (bearer, mender,
+  shieldwright, gilder — every delver now has a tale), then deep-mark
+  arithmetic, delve codes, marks, the Proven, the two calendars, closer.
+- Pins: test/fifth_cycle_test.dart mirror-asserts copy vs live data;
+  hearth_tale_test wrap pin 4x -> 5x hearthgoldTales (missed on first
+  pass — cost one suite run); fourth_cycle_test length pin 40 -> 50.
+- LESSON: tale-count pins live in TWO places (hearth_tale_test charter AND
+  latest cycle test) — grep 'hearthgoldTales' in test/ before a new cycle.
+- Tale copy cap is 200 chars (hearth_tale_test), tighter than the cycle
+  tests' 260. Suite 1059/1059.
