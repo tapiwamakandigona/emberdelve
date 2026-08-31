@@ -4017,3 +4017,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   rendered via system fallback, unchanged. Verified: coverage script,
   stoker plates (kerning + em dash + middle dot perfect), full suite
   1093/1093. Original font kept at /work/temp/Inter-Original.ttf.
+
+## 2026-08-31 — freeze worklist: REAL download size + review-charter audit
+- MEASURED with bundletool 1.18.1 get-size on the v0.177.0 AAB
+  [bundletool, 2026-08-31]: Play per-device download = armeabi 25.9 MB,
+  arm64 26.4 MB, x86_64 26.6 MB. **The <30 MB pillar is MET when shipping
+  via the AAB.** The 33-37 MB figures in the freeze directive were raw
+  sideloaded split APKs (uncompressed zip stores + all densities), not
+  what a Play user downloads. Font subset (-630 KB) lands on top of this.
+  Sideload APKs remain ~35 MB; if the pillar is meant to cover the
+  "Direct APK" path too, that needs the owner's music-delivery call.
+- Review charter audited (worklist item 4): ReviewService matches every
+  clause — one ask ever stamped on request, cloud merge ORs reviewAsked
+  (cloud_merge.dart:156), tour-gated, no incentives/pre-filter, official
+  API only. Wired once in _bankRun; test/review_service_test.dart. No
+  regression, no change needed.
+- Item 3 (google-services.json / pyregrove mirroring): noted, applies to
+  the pyregrove repos; nothing to touch in emberdelve. Not regenerating.
+- JRE for bundletool lives at /work/temp/jdk-21.0.12+8-jre (portable).
