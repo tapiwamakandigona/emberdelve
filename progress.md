@@ -3866,3 +3866,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   Timer.periodic animations. Suite 1070/1070 + analyze clean.
   0.169.0+195. LESSON: `dart fix --apply` is safe here (suite green
   first try); lints-on beats one-off cleanup.
+- ARTIFACTS ATTACHED for three releases (2026-08-31 ~18:0x GMT):
+  v0.167.0 A Word From You (CI 33419616976, codes 193/1193/2193/4193,
+  ALL PINS OK + AAB pin OK; owner had pre-uploaded apk+aab — aab
+  differed by 3 bytes from CI's, both replaced via --clobber with
+  pin-verified CI artifacts, apk b5eb84e0…); v0.168.0 The Cutler
+  (CI 33420075500, codes 194/1194/2194/4194, ALL PINS OK + AAB pin OK);
+  v0.169.0 The Steady Flame (CI 33420586874, codes 195/1195/2195/4195,
+  ALL PINS OK + AAB pin OK). sha256 tables appended to all three
+  release notes. Publish pipeline scripted at /work/temp/
+  publish_release.sh (download -> stage -> verify -> rename ->
+  clobber-upload -> checksum table).
