@@ -1,5 +1,76 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
+
+## Owner directive 2026-08-31c — size pillar RETRACTED, priorities re-ranked
+
+### Correction first: the download-size pillar was my error. Stand down on it.
+
+Directive 2026-08-31 ranked "per-device download <30 MB" as focus item #1 and cited
+emberdelve splits at 33-37 MB. **That was wrong and I am retracting it.**
+
+Authoritative source, Play Console -> Android vitals -> App size, read 2026-08-31:
+
+- App download size: **20.6 MB** for the reference device, **20-20.7 MB** across all
+  device configurations.
+- Peer group median: **52.7 MB**. Emberdelve is **32.1 MB below** the peer median.
+- ABI, screen-density and language configuration APKs: all three already
+  **Implemented**.
+
+Your bundletool `get-size` measurement (25.9-26.6 MB, commit 4009f01) was right and
+reached me correctly. The 33-37 MB figures I quoted were raw sideload split APKs
+with uncompressed stores — not what a Play user downloads. I fed you a bad number
+and ranked it first; that is on me, and you caught it. Good.
+
+**Consequence: stop all work aimed at the <30 MB pillar. It is met with a 9 MB
+margin and beats peers by a wide gap.** The Inter subset in 7136a97 was a real win
+and stays, but do not chase further byte-shaving. It is not a bottleneck, and the
+"Extract large files" tip in the console shows no quantified saving.
+
+The sideloaded direct-APK path is still ~35 MB. That is a real number but it affects
+only the minority who download from GitHub, it is not a Play compliance matter, and
+it does not justify a music-delivery redesign. **Do not open that work.** If it ever
+becomes worth doing, it will be an owner call, not a freeze-worklist item.
+
+### Feb-2027 migration: CLOSED on both products. Verified.
+
+`emberdelve@legacy/dice-builder` now declares `allowBackup="true"`,
+`dataExtractionRules`, `fullBackupContent`, with both rules files present and the
+paid unlock explicitly included in cloud-backup and device-transfer. Read back from
+the GitHub API and confirmed. Combined with R8 already being on, **emberdelve and
+pyregrove are both Feb-2027 clean.** Nothing further needed unless Google moves the
+goalposts. Do not re-open it.
+
+### Re-ranked focus list — replaces the previous one
+
+1. **Retention, not content breadth.** This is now the weakest real number in the
+   business. Last 28 days: 28 monthly active devices, and **7-day retention of 1
+   device**. Meanwhile the roster just reached sixteen delvers and a sixth cycle of
+   hearth tales. More content for players who are not coming back on day 7 does not
+   move anything. Favour work that strengthens the first session and the first week:
+   the opening run's clarity, the first meaningful decision, the reason to open the
+   app tomorrow. If you are choosing between a seventeenth delver and making day-2
+   return compelling, choose day 2 every time.
+   Caveat, stated honestly: n is tiny (28 devices, retention of 1). Treat this as a
+   direction, not a precise target, and do not build anything that depends on the
+   exact figures.
+2. **Stability is already excellent — protect it.** Play vitals shows zero
+   user-perceived crashes and zero ANRs over the full 28 days. That is a genuine
+   asset. Any change that risks it is a bad trade.
+3. **Keep the suite green and `flutter analyze` clean.** Suite is at 1093/1093.
+4. **Do not regress the in-app review charter.** Your audit found it clean; keep it
+   that way. It is the single highest-value unshipped change in the repo.
+5. Mirror Android config to `pyregrove-ci`; still do not regenerate
+   `android/app/google-services.json`.
+
+### The freeze still stands, unchanged.
+
+No tags, no GitHub releases, no Play submissions, no store-listing edits. The freeze
+is on publishing, not on work. The next release is ONE consolidated GitHub + Play
+release cut by the owner and the ops agent, carrying the review-ask fix, the
+migration attributes, and the captioned screenshots. Urgent items go at the top of
+`progress.md` with a stop, not a self-cut release.
+
+
 What "good" means for every Gauntlet session on this branch. Edited only when
 standards genuinely change. Never contains diagnosis of the current build —
 that lives in progress.md.
