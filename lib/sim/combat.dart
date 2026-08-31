@@ -361,7 +361,10 @@ void _grantSurge(
   if (rd.rune != 'surge' || rd.temperedFace != naturalFace) return;
   final used = ((sim.player['surge_used'] as List?)?.cast<int>() ?? <int>[])
       .toList();
-  if (used.contains(die)) return;
+  // v0.155.0 The Deep Mark: the per-turn allowance equals the mark's tier.
+  // Counting occurrences generalises the old contains() check — a tier-1
+  // die behaves byte-identically to every release before this one.
+  if (used.where((d) => d == die).length >= rd.tier) return;
   used.add(die);
   sim.player['surge_used'] = used;
   sim.player['rerolls_left'] = (sim.player['rerolls_left'] as int? ?? 0) + 1;
@@ -761,7 +764,8 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     sim.player['echo_pending'] = <String, Object?>{
       'die': die,
       'action': other,
-      'amount': 1,
+      // v0.155.0 The Deep Mark: a deepened echo arms a 2-point charge.
+      'amount': resolution.runeTier >= 2 ? 2 : 1,
     };
     _push(events, {'type': 'echo_armed', 'die': die, 'other_action': other});
   }
@@ -771,7 +775,9 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   if (resolution.rune == 'mend') {
     final hp = sim.player['hp'] as int;
     final maxHp = sim.player['max_hp'] as int;
-    final healed = (hp + 1).clamp(0, maxHp) - hp;
+    // v0.155.0 The Deep Mark: a deepened mend banks 2, same honesty cap.
+    final healed =
+        (hp + (resolution.runeTier >= 2 ? 2 : 1)).clamp(0, maxHp) - hp;
     if (healed > 0) {
       sim.player['hp'] = hp + healed;
       _push(events, {
@@ -786,10 +792,12 @@ void combatAssign(Sim sim, Map cmd, List<Map<String, Object?>> events) {
   // on_max_gold exception extended (incidental economy, uncapped like
   // every other gold source, announced honestly).
   if (resolution.rune == 'gilt' && sim.run != null) {
-    sim.run!['gold'] = (sim.run!['gold'] as int) + 2;
+    // v0.155.0 The Deep Mark: a deepened gilt pays 3.
+    final pay = resolution.runeTier >= 2 ? 3 : 2;
+    sim.run!['gold'] = (sim.run!['gold'] as int) + pay;
     _push(events, {
       'type': 'gold_gained',
-      'amount': 2,
+      'amount': pay,
       'source': 'gilt_rune',
       'total': sim.run!['gold'],
     });

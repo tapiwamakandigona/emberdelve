@@ -15,6 +15,11 @@ class AssignmentResolution {
   final String? rune;
   final int runeBonus;
 
+  /// Depth of the triggered rune's mark (1 or 2). Meaningful only when
+  /// [rune] is non-null; combat reads it for the mend/gilt/echo payoffs
+  /// that resolve outside the value math.
+  final int runeTier;
+
   /// Pending Echo charge consumed by this assignment: the die that armed it
   /// and the amount it pays. Zero/null when no charge applies.
   final int? echoFromDie;
@@ -31,6 +36,7 @@ class AssignmentResolution {
     this.invalidReason,
     this.rune,
     this.runeBonus = 0,
+    this.runeTier = 1,
     this.echoFromDie,
     this.echoBonus = 0,
     this.keystoneHits = const [],
@@ -40,6 +46,7 @@ class AssignmentResolution {
     int value, {
     String? rune,
     int runeBonus = 0,
+    int runeTier = 1,
     int? echoFromDie,
     int echoBonus = 0,
     List<Map<String, Object?>> keystoneHits = const [],
@@ -48,6 +55,7 @@ class AssignmentResolution {
          value: value,
          rune: rune,
          runeBonus: runeBonus,
+         runeTier: runeTier,
          echoFromDie: echoFromDie,
          echoBonus: echoBonus,
          keystoneHits: keystoneHits,
@@ -124,14 +132,18 @@ AssignmentResolution resolveAssignment({
       naturalFaces[die - 1] == resolvedDie.temperedFace;
   var runeBonus = 0;
   String? triggeredRune;
+  // v0.155.0 The Deep Mark: a deepened mark (tier 2) pays one step more —
+  // blade/aegis +3 here; echo/mend/gilt/surge scale at their own payoff
+  // sites, which read [runeTier] off the resolution or the die.
+  final runeTier = resolvedDie.tier;
   if (runeFaceMatches) {
     final rune = resolvedDie.rune;
     if (rune == 'blade' && action == 'attack') {
       triggeredRune = rune;
-      runeBonus = 2;
+      runeBonus = runeTier >= 2 ? 3 : 2;
     } else if (rune == 'aegis' && action == 'block') {
       triggeredRune = rune;
-      runeBonus = 2;
+      runeBonus = runeTier >= 2 ? 3 : 2;
     } else if (rune == 'echo') {
       // Echo pays by arming the opposite verb, not by raising this value.
       triggeredRune = rune;
@@ -211,6 +223,7 @@ AssignmentResolution resolveAssignment({
     value,
     rune: triggeredRune,
     runeBonus: runeBonus,
+    runeTier: triggeredRune == null ? 1 : runeTier,
     echoFromDie: echoFromDie,
     echoBonus: echoBonus,
     keystoneHits: hits,
