@@ -55,6 +55,8 @@ const List<String> charactersOrder = [
   'mender',
   // v0.158.0 — append-LAST.
   'shieldwright',
+  // v0.162.0 — append-LAST.
+  'gilder',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -202,6 +204,25 @@ const Map<String, CharacterDef> characters = {
       {'die': 1, 'face': 6, 'rune': 'aegis', 'tier': 2},
     ],
     unlockEmbers: 1350,
+  ),
+  // v0.162.0 The Gilder — the twelfth delver, the GOLDSMITH: the first
+  // kit with TWO smith's marks. Gilt is worked into both Ember Dice
+  // sixes, so the pouch itself pays — coin on the roll, not on the kill
+  // (the peddler's opposite pole: kiln gold arrives per fight won, gilt
+  // gold per gilded face spent). Pure data (existing dice + rune) — no
+  // re-anchor. HP is the tuning knob (sweeps in docs/improvements).
+  'gilder': CharacterDef(
+    'gilder',
+    'The Gilder',
+    'The goldsmith: TWO gilt marks — both Ember Dice sixes pay coin '
+        'when they land.',
+    maxHp: 28,
+    startDice: ['d6', 'd6', 'd6'],
+    startTempers: [
+      {'die': 1, 'face': 6, 'rune': 'gilt'},
+      {'die': 2, 'face': 6, 'rune': 'gilt'},
+    ],
+    unlockEmbers: 1500,
   ),
 };
 
