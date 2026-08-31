@@ -13,7 +13,9 @@ void main() {
     expect(t.goalParam, 1);
     expect(t.emberBonus, 15, reason: 'goal days pay one flat rate');
     expect(t.mutators, isEmpty, reason: 'goal days run vanilla rules');
-    expect(trialsOrder.last, 'marked_day', reason: 'append-LAST');
+    // Retired to an INDEX pin when v0.154.0 appended keepers_day —
+    // authored position is what the date hash depends on.
+    expect(trialsOrder.indexOf('marked_day'), 8, reason: 'authored slot');
   });
 
   test('the goal judges the counter exactly', () {
