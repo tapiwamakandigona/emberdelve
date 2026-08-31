@@ -3632,3 +3632,4 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   a real spending choice, not an accident. Append-LAST; trials
   known-goals set grew the id. 3 tests. Suite pending full run.
 2026-08-31 v0.153.0 ARTIFACTS ATTACHED: CI run 33399481843 success; 4×APK PIN-OK versionName 0.153.0 + AAB pin match; renamed standard names, uploaded to v0.153.0 release, sha256 table appended. .last-PIN BIT AGAIN in v0.154: marked_day_test pinned trialsOrder.last — retired to INDEX pin 8. The append-to-order-list grep for `.last` pins is MANDATORY, not advisory.
+2026-08-31 v0.154.0 ARTIFACTS ATTACHED: CI run 33401229453 success; 4×APK PIN-OK versionName 0.154.0 code 4180 + AAB pin match; renamed standard names, uploaded to v0.154.0 release, sha256 table appended. Suite note corrected: full run landed 1016/1016 green before the release commit. Releases fully current through v0.154.0 with signed artifacts on latest.
