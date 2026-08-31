@@ -112,8 +112,9 @@ void main() {
   test('a long, honest climb tops the ladder', () {
     // A veteran profile: hundreds of wins, full bestiary, full codex.
     // v0.149.0: the ladder grew a tenth tier; the veteran grew with it.
+    // v0.161.0: an eleventh fire — the veteran grew again (2605 marks).
     final m = _profile(
-      wins: 500,
+      wins: 750,
       bosses: 6,
       felled: 35,
       met: 35,

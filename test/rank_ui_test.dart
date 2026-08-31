@@ -63,7 +63,7 @@ void main() {
     tester,
   ) async {
     final c = GameController();
-    c.meta.runsWon = 600; // 1800 marks > top threshold 1700 (v0.149.0)
+    c.meta.runsWon = 900; // 2700 marks > top threshold 2550 (v0.161.0)
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: LedgerScreen(c)),
     );
