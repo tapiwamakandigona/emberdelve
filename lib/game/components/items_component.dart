@@ -23,8 +23,18 @@ class ItemsComponent extends PositionComponent
   final Map<Object, double> _chestOpenClock = {};
   double _doorPulse = 0;
 
-  late SpriteAnimationTicker _coin;
+  /// Coin frames drawn per-coin (indexed by [coinFrame]) so each coin spins
+  /// on its own phase; a single shared ticker made every coin in the level
+  /// hit the edge-on frame simultaneously.
+  late List<Sprite> _coinFrames;
+  double _coinClock = 0;
+  static const _coinStep = 0.12; // s per frame, matches items/coin.png
   late SpriteAnimationTicker _feather;
+
+  /// Frame index for a coin with [spinPhase] (cycles) at animation [clock].
+  /// Pure so tests can pin the phase math.
+  static int coinFrame(double clock, double spinPhase, int frameCount) =>
+      ((clock / _coinStep) + spinPhase * frameCount).floor() % frameCount;
   late ui.Image _apple;
   late ui.Image _chest;
   late ui.Image _door;
@@ -68,7 +78,12 @@ class ItemsComponent extends PositionComponent
       ).createTicker();
     }
 
-    _coin = await anim('items/coin.png', 4, Vector2(16, 16), 0.12);
+    final coinAnim = SpriteAnimation.fromFrameData(
+      await game.images.load('items/coin.png'),
+      SpriteAnimationData.sequenced(
+          amount: 4, stepTime: _coinStep, textureSize: Vector2(16, 16)),
+    );
+    _coinFrames = [for (final f in coinAnim.frames) f.sprite];
     _feather = await anim('items/feather.png', 5, Vector2(15, 13), 0.14);
     _apple = await game.images.load('items/apple.png');
     _chest = await game.images.load('items/chest.png');
@@ -81,7 +96,7 @@ class ItemsComponent extends PositionComponent
 
   @override
   void update(double dt) {
-    _coin.update(dt);
+    _coinClock += dt;
     _feather.update(dt);
     _doorPulse += dt;
     for (final ch in game.session.chests) {
@@ -157,12 +172,13 @@ class ItemsComponent extends PositionComponent
       );
     }
 
-    // Coins.
-    final coinSprite = _coin.getSprite();
+    // Coins — each on its own spin phase (see CoinEntity.spinPhase).
+    final nFrames = _coinFrames.length;
     for (final c in s.coins) {
       if (c.collected) continue;
       _drawPos.setValues(c.x - 8, c.y - 8);
-      coinSprite.render(canvas, position: _drawPos, size: _coinSize);
+      _coinFrames[coinFrame(_coinClock, c.spinPhase, nFrames)]
+          .render(canvas, position: _drawPos, size: _coinSize);
     }
 
     // Apple + feather pickups.

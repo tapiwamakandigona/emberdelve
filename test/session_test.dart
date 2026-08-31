@@ -2,6 +2,7 @@
 // LevelSession.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberwood/core/rng.dart';
+import 'package:emberwood/game/components/items_component.dart';
 import 'package:emberwood/game/core_loadout.dart';
 import 'package:emberwood/game/input_intent.dart';
 import 'package:emberwood/game/level/level_data.dart';
@@ -287,5 +288,42 @@ meta: sign2=Tap SWORD to attack
         Loadout.starter());
     expect(s.signs[0].text, contains('JUMP'));
     expect(s.signs[1].text, contains('SWORD'));
+  });
+
+  group('coin spin phase', () {
+    // Regression: all coins used to share one global ticker, so every coin
+    // in a level hit the edge-on frame on the same tick (screenshot bug,
+    // 2026-08-31 — a wall of "candles"). Phase must be per-coin, stable,
+    // and actually spread across a level's coin layout.
+    test('spinPhase is deterministic, in [0,1), and varies by position', () {
+      final a1 = CoinEntity(48, 96);
+      final a2 = CoinEntity(48, 96);
+      expect(a1.spinPhase, a2.spinPhase, reason: 'must be deterministic');
+      final phases = <double>{};
+      for (var i = 0; i < 12; i++) {
+        final c = CoinEntity(16.0 * i + 8, 96 - (i % 3) * 32);
+        expect(c.spinPhase, inInclusiveRange(0, 0.9999999),
+            reason: 'phase out of range for coin $i');
+        phases.add(c.spinPhase);
+      }
+      expect(phases.length, greaterThanOrEqualTo(6),
+          reason: 'a row of coins collapsed onto too few phases');
+    });
+
+    test('coinFrame spreads distinct phases across distinct frames', () {
+      const clock = 1.234;
+      final frames = <int>{
+        for (final ph in [0.0, 0.25, 0.5, 0.75])
+          ItemsComponent.coinFrame(clock, ph, 4),
+      };
+      expect(frames, {0, 1, 2, 3},
+          reason: 'quarter-cycle phases must land on all 4 frames');
+      // And the mapping still animates over time for a fixed phase.
+      final over = <int>{
+        for (var t = 0.0; t < 0.48; t += 0.12)
+          ItemsComponent.coinFrame(t, 0.6, 4),
+      };
+      expect(over, {0, 1, 2, 3});
+    });
   });
 }

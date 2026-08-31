@@ -618,3 +618,11 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   checkpoints/11-alpha8-hud-legibility.md. Tag/CI/GitHub prerelease PENDING
   GitHub auth (see blocker above); commit is release-shaped so the publish
   is a tag+dispatch away once auth returns.
+
+## v1.0.0-alpha.9+21 — Twinkling Hoard (2026-08-31)
+- One improvement: per-coin spin phase (the open minor logged in alpha.8).
+  CoinEntity.spinPhase from spawn position; ItemsComponent draws per-coin
+  frames from a precomputed sprite list (pure coinFrame(), no per-frame
+  allocations, shared ticker removed). Suite 366/366 (+2). Visual VERIFIED:
+  w1_l1 cluster shows mixed frames in one still; candle-wall gone.
+- Publish still PENDING GitHub auth (PAT dead — see 2026-08-31 blocker).

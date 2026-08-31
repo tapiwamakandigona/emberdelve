@@ -63,7 +63,15 @@ class CoinEntity {
   bool physical; // chest-burst coins fly and settle before collection
   double settleTime = 0;
   bool collected = false;
-  CoinEntity(this.x, this.y, {this.vx = 0, this.vy = 0, this.physical = false});
+
+  /// Spin phase in cycles [0,1), derived from the spawn position so
+  /// neighbouring coins twinkle out of step instead of the whole level
+  /// hitting the edge-on frame on the same tick (looked like candles in
+  /// screenshots). Deterministic — no RNG, stable across restarts.
+  final double spinPhase;
+
+  CoinEntity(this.x, this.y, {this.vx = 0, this.vy = 0, this.physical = false})
+      : spinPhase = ((x * 0.37 + y * 0.23) % 1.0 + 1.0) % 1.0;
 }
 
 class PickupEntity {
