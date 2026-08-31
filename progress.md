@@ -3844,3 +3844,14 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - USER DIRECTIVE (2026-08-31 17:18): performance optimisation + smooth
   animations — schedule a dedicated perf/animation-polish release soon
   (frame-timing probes, const/rebuild audit, animation easing pass).
+- COLLISION RESOLVED: PR #98 ("A Word From You", review-ask fix) was
+  merged + pushed from the GitHub account at 17:09 as v0.167.0
+  (0.167.0+193) while the cutler was being built locally under the same
+  number. Cutler renumbered to v0.168.0+194 everywhere; v0.167.0 tag/
+  release re-titled to the review-ask feature with proper notes
+  (docs/releases/v0.167.0.md written from PR body); rebased suite
+  1070/1070 (review tests + cutler together).
+- LESSON: fetch+rebase BEFORE choosing the next version number, not
+  only before pushing — the account owner can land PRs mid-run. Also:
+  never compute the release --target sha after a failed rebase; and
+  `git rebase --continue` needs GIT_EDITOR=true in this sandbox.
