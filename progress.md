@@ -3762,3 +3762,6 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   twelve_ways_down 12 (predecessors frozen), the_proven → 20.
   Achievements 76. twelfth_way_test (3 tests); provings pins 19→20 in
   provings_test + eighth_way_test. Suite 1053/1053.
+- v0.161.0 artifacts ATTACHED (CI 33412759993, ALL PINS OK, codes
+  187/1187/2187/4187, AAB pin OK; sha256 table appended: apk 25ae987d…,
+  aab a36b48bd…, arm64 1890d3af…, v7a 001143f0…, x86_64 a9535fd3…).
