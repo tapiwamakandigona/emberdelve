@@ -239,6 +239,14 @@ final List<CodexEntryDef> codexEntries = [
         'one six, a Gilt on another, and a Mend hidden on the low face, '
         'because a collier knows the small coal keeps the burn alive.',
   ),
+  _delver(
+    'stoker',
+    'A stoker\u2019s craft is appetite: the furnace eats what it is '
+        'fed, and a good stoker feeds it whole. Their pouch holds three '
+        'heavy dice and nothing else \u2014 no relic, no smith\u2019s '
+        'marks, no clever low face. Big coals, big rolls, and a thin '
+        'skin between the stoker and the heat they serve.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

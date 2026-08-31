@@ -39,11 +39,12 @@ void main() {
     // move. Update only this reason, never the gate.
     expect(
       characters.length,
-      14,
+      15,
       reason:
-          'v0.171.0: the roster grew past twelve (cutler, collier) and the '
-          'gate did NOT move — delversCleared >= 12 stays frozen. Next '
-          'growth: update only this reason, never the gate',
+          'v0.175.0: the roster grew past twelve (cutler, collier, stoker) '
+          'and the gate did NOT move — delversCleared >= 12 stays '
+          'frozen. Next growth: update only this reason, never the '
+          'gate',
     );
   });
 

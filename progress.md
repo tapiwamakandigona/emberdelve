@@ -3920,3 +3920,25 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - LESSON: screens/*.dart are `part of` screens.dart — widgets.dart import there covers all parts. Paren-matching python wrapper (insert 'ScrollComfort(child: ' + matched ')') is the safe way to wrap long widget expressions; keep prefix ('return ', 'child: ') OUTSIDE the wrap.
 - Owner scroll directive answered: keep scrolling (CTAs already pinned; 117 codex entries can't fit a fold), add affordance instead. Plates confirm subtle fade; M3 appbar scrolled-under tint pre-existing.
 - v0.172.0 artifacts PUBLISHED (codes 198/…, all pins OK). v0.173 CI 33427087325 pending publish.
+
+## v0.175.0 The Stoker (2026-08-31)
+- FIFTEENTH delver: first all-heavy pouch (three plain d8s, no relic, no
+  marks). 16 HP — roster's thinnest skin (prior floor 24); the heavy
+  pouch swept HOT at normal HP (24→94.00/78.75/57.75, 20→92.75/72.75/
+  51.25, 16→89.00/64.75/44.00 vs kindler 89.75/67.25/41.50 — third
+  guess in band). Unlock 1950, index 14 — delve-code bits full at 16:
+  ONE roster slot remains.
+- Sprite: peddler remap hue -140° sat ×1.05 floor 0.28 val ×0.86
+  (soot-rust; elf_m). LESSON: peddler source is teal (~170°) — furnace
+  orange needs the LONG hue rotation; first cut -18° came out green.
+- LESSON (escape doubling): a Dart '\u2014' written through file_edit
+  JSON needs ONE backslash in the file — '\\u2014' renders literally on
+  the card. Plates caught it; grep lib/data for '\\\\u' after patching.
+- Weapon Fire Iron 0xFFC97B3F reach 0.58. Promise moves 14→15
+  (full_company/crowned_company/the_six_handed); tales recount Fifteen
+  (tale 5 hit the 200 cap at 203 chars — dropped 'now'; assert length
+  in the patch BEFORE writing). Frozen gates: reason-only updates
+  (amethyst delversCleared>=12, tenthfire charsUnlocked>=10).
+- test/stoker_test.dart (easy 1 win; normal 4 win 7 loss; hunt: easy
+  losses 3/13, normal wins 1/2/4/5/6/9/10/11/12/14). Suite 1087/1087,
+  analyze clean. Plates good (locked card dim = expected).

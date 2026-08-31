@@ -180,6 +180,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.38,
     swingAngle: 1.72,
   ),
+  // Furnace-feeder (v0.175.0): a fire iron — the bar that shoves the
+  // big coals home. Long reach (stokers work at the mouth of the heat,
+  // not in it), hot-iron accent to match the sheet's remap.
+  'stoker': WeaponDef(
+    'fire_iron',
+    'Fire Iron',
+    accent: Color(0xFFC97B3F),
+    reach: 0.58,
+    idleAngle: 0.22,
+    raiseAngle: -1.40,
+    swingAngle: 1.74,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.

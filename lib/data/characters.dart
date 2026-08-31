@@ -61,6 +61,8 @@ const List<String> charactersOrder = [
   'cutler',
   // v0.171.0 — append-LAST.
   'collier',
+  // v0.175.0 — append-LAST.
+  'stoker',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -266,6 +268,20 @@ const Map<String, CharacterDef> characters = {
       {'die': 3, 'face': 1, 'rune': 'mend'},
     ],
     unlockEmbers: 1800,
+  ),
+  // v0.175.0 The Stoker: the furnace-feeder — the first all-heavy pouch.
+  // Three plain d8s: big coals, thrown whole. No relic, no smith's marks;
+  // the identity is the weight of the dice themselves. Every prior pouch
+  // mixed sizes or stayed at sixes (the flintwright went the OTHER way,
+  // four small); the uniform heavy pool is the open novelty slot.
+  'stoker': CharacterDef(
+    'stoker',
+    'The Stoker',
+    'The furnace-feeder: three heavy Ember Dice \u2014 big coals, '
+        'thrown whole.',
+    maxHp: 16,
+    startDice: ['d8', 'd8', 'd8'],
+    unlockEmbers: 1950,
   ),
 };
 
