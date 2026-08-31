@@ -3998,3 +3998,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   device transfer ("file" domain = getApplicationSupportDirectory).
   .tmp atomic-save files not included. No release cut — riding the freeze.
 - No Dart changes; push CI will validate the manifest merge + @xml refs.
+
+## 2026-08-31 — freeze worklist item 1: size audit + font subset (merged, no release)
+- arm64 APK ledger (v0.177 artifact, 35.8 MB): libflutter.so 11.6 MB
+  (fixed engine cost), libapp.so 6.6 MB (AOT), music oggs 15.6 MB,
+  classes.dex 3.3 MB (R8 already on), Inter-Regular.ttf 0.86 MB.
+- Music is ALREADY lean vorbis (70-117 kbps stereo per ffprobe) — a
+  lossy->lossy re-encode would audibly degrade a reviewed-9/10 asset for
+  modest savings; Opus-in-Ogg needs API 29 under MediaPlayer. NOT done.
+  The honest paths to the <30 MB pillar are (a) count Play's real
+  per-device download size from the AAB, not raw APK bytes, or (b) an
+  owner call on music delivery (install-time asset pack vs re-encode).
+  Parked for the consolidated release discussion.
+- Inter-Regular.ttf subset with fontTools 876 KB -> 247 KB (774 glyphs:
+  Latin-1 + Latin Ext-A, general punctuation, arrows, math ops, U+2713;
+  kern/liga/ccmp/mark/mkmk/frac/tnum kept, hinting dropped — Flutter
+  ignores hinting). Chars Inter lacks (U+2726 sparkle etc.) already
+  rendered via system fallback, unchanged. Verified: coverage script,
+  stoker plates (kerning + em dash + middle dot perfect), full suite
+  1093/1093. Original font kept at /work/temp/Inter-Original.ttf.
