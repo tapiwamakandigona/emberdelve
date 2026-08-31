@@ -167,6 +167,19 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.42,
     swingAngle: 1.78,
   ),
+  // Charcoal-burner (v0.171.0): a coal rake — the long tool that tends
+  // the clamp without opening it. Longer reach (colliers work the pile
+  // at arm's length, in the heat), sooty-ember accent to match the
+  // sheet's remap.
+  'collier': WeaponDef(
+    'coal_rake',
+    'Coal Rake',
+    accent: Color(0xFF8A6A52),
+    reach: 0.56,
+    idleAngle: 0.24,
+    raiseAngle: -1.38,
+    swingAngle: 1.72,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.

@@ -3885,3 +3885,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   FIRST TRY, analyze clean. Release v0.170.0 target 6620733; CI
   33423482420 dispatched (expect 0.170.0+196 -> codes 196/1196/2196/
   4196). v0.119 pattern seventh use.
+- v0.171.0 The Collier: FOURTEENTH delver, the charcoal-burner — first
+  kit whose WHOLE pool arrives worked (blade d6f6 + gilt d6f6 + mend
+  d6f1, all tier 1; d6/d6/d6, no relic). 27 HP (400-seed sweep
+  88.75/65.25/40.50 vs kindler 89.75/67.25/41.50 — second guess; 25 HP
+  swept low). Unlock 1800, index 13. Pool order custom_1/2/3 (tempers
+  in listed order). Sprite = kindler remap hue +12 sat x0.55 floor 0.18
+  val x0.74 (banked-coal soot; sprite_meta entry inserted COMPACT —
+  json.dumps no indent, the file is single-line; PROVENANCE row via
+  line-insert, the 'at a glance' anchor is NOT unique). Coal Rake
+  weapon (accent 0xFF8A6A52, reach 0.56). Codex collier page after
+  cutler (117 entries, all pins derive). Promise doctrine: full_company
+  /crowned_company/the_six_handed 13->14; tales 5&40 recount Fourteen
+  (+', collier'); tenthfire+amethyst gates FROZEN (reason-only, tripwires
+  14). Roster pins: fourth_cycle_test (14 + 'Fourteen chairs'),
+  runesmith_test 14. test/collier_test.dart (easy 1 win, normal 4 win 7
+  loss; full probe: easy losses 3,13; normal wins 1,4,6,9,10,11,14).
+  Plates via tool/collier_visual_test.dart (gilder recipe), judged good.
+  Suite 1076/1076 FIRST TRY, analyze clean.

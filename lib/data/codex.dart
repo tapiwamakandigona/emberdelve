@@ -231,6 +231,14 @@ final List<CodexEntryDef> codexEntries = [
         'into an Ember Die\u2019s six. One face cuts, one face holds. '
         'A good knife, they say, does both.',
   ),
+  _delver(
+    'collier',
+    'A collier\u2019s craft is patience: wood banked under turf, burning '
+        'slow for days until every stick is coal. Their dice came out of '
+        'the same clamp \u2014 all three worked, none plain. A Blade on '
+        'one six, a Gilt on another, and a Mend hidden on the low face, '
+        'because a collier knows the small coal keeps the burn alive.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

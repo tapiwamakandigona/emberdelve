@@ -152,8 +152,8 @@ const Map<String, EpithetDef> epithets = {
     'the Many-Handed',
     unlockLine: 'Win a delve with every delver.',
     stat: 'delvers_cleared',
-    // v0.168.0: moved with the roster (promise wording; count-free name).
-    target: 13,
+    // v0.171.0: moved with the roster (promise wording; count-free name).
+    target: 14,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never

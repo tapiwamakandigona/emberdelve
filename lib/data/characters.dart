@@ -59,6 +59,8 @@ const List<String> charactersOrder = [
   'gilder',
   // v0.168.0 — append-LAST.
   'cutler',
+  // v0.171.0 — append-LAST.
+  'collier',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -244,6 +246,26 @@ const Map<String, CharacterDef> characters = {
       {'die': 1, 'face': 6, 'rune': 'aegis'},
     ],
     unlockEmbers: 1650,
+  ),
+  // v0.171.0 The Collier: the charcoal-burner — the first delver whose
+  // WHOLE pool arrives worked. Three Ember Dice, three tier-1 marks from
+  // the smith: a Blade and a Gilt on two of the sixes, a Mend banked on a
+  // low face (the mender's clever coal: the one that keeps the burn
+  // alive). No relic. Every prior marked kit left plain dice in the pool;
+  // the full-worked pool is the open novelty slot.
+  'collier': CharacterDef(
+    'collier',
+    'The Collier',
+    'The charcoal-burner: every die worked \u2014 a Blade and a Gilt '
+        'on the sixes, a Mend on the low coal.',
+    maxHp: 27,
+    startDice: ['d6', 'd6', 'd6'],
+    startTempers: [
+      {'die': 1, 'face': 6, 'rune': 'blade'},
+      {'die': 2, 'face': 6, 'rune': 'gilt'},
+      {'die': 3, 'face': 1, 'rune': 'mend'},
+    ],
+    unlockEmbers: 1800,
   ),
 };
 

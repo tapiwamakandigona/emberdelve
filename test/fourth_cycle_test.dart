@@ -35,8 +35,8 @@ void main() {
     expect(faceRunes.length, 6);
     expect(all.contains('Six runes'), isTrue);
     // 'Eight chairs at this fire' — the live roster.
-    expect(characters.length, 13); // v0.168.0: the cutler
-    expect(all.contains('Thirteen chairs'), isTrue); // v0.168.0
+    expect(characters.length, 14); // v0.171.0: the collier
+    expect(all.contains('Fourteen chairs'), isTrue); // v0.171.0
   });
 
   test('the new tales keep the charter (short, honest)', () {
