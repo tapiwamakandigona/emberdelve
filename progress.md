@@ -3670,3 +3670,16 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - test/deep_day_test.dart (3 tests: rule pin + append-LAST, exact judge
   fixtures incl. absent-tier, end-to-end sim-deepened run meets goal).
   Suite 1027/1027. 0.156.0+182.
+
+## v0.157.0 — The Deep Hearth (2026-08-31)
+- Two hearth colours, shelf now 16: twiceflame (Deep Mark magenta, 520)
+  and marshlight (chartreuse, 560) — both in unclaimed hue space per the
+  Anvilglow plate-critique rule. Ladder ascends; shipped prices frozen.
+- hearth_keeper target moved WITH the catalog 14→16 (v0.140 honesty rule,
+  live-length test pin). kept_hearth_test sublist pin got an end bound
+  (12,14) — the .last-PIN class applies to sublist pins too.
+- LESSON: meta/achievements.dart does NOT export the achievements map —
+  import data/achievements.dart for the catalog, meta/ for the judges.
+- test/deep_hearth_test.dart (4 tests: ladder-top pin + gradient + prices,
+  hearth_keeper live-catalog promise, buy path, banned-words sweep).
+  Suite 1031/1031. 0.157.0+183.

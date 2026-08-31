@@ -23,10 +23,19 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.156.0';
+const String currentAppVersion = '0.157.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.157.0',
+    title: 'The Deep Hearth',
+    lines: [
+      'Two hearth colours join the shelf: Twiceflame, a magenta tempered '
+          'a shade deeper, and Marshlight, a pale green off the fens.',
+      'Cosmetic as ever — real prices up front, no effect on play.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.156.0',
     title: 'The Deep Day',
