@@ -1464,14 +1464,17 @@ class GameController extends ChangeNotifier {
         .where((id) => !vistasBefore.contains(id) && vistaUnlocked(id))
         .toList();
     // In-app review ask (REVENUE ASK #1): one quiet ask, ever, at a moment
-    // of earned pride — 2nd+ win or a won daily/weekly, never while the
-    // tour runs. Stamps meta.reviewAsked; the save below persists it.
+    // of earned pride — 2nd+ win, a won daily/weekly, or a climb into
+    // Sparktender+ — never while the tour runs. The rank path exists because
+    // wins alone are far too rare to ever fire the ask (see review_service
+    // header). Stamps meta.reviewAsked; the save below persists it.
     ReviewService.instance.maybeAsk(
       meta,
       wonThisRun: sim!.phase == 'run_won',
       wonDailyOrWeekly:
           sim!.phase == 'run_won' && (dailyDate != null || weeklyIndex != null),
       tourActive: tour.active != null,
+      rankedUpToMarks: rankAfter.marks > rankBefore.marks ? rankAfter.marks : null,
     );
     MetaStore.save(meta);
     // P4/P5 (v0.5.0): mirror the fresh snapshot to the Play Games cloud save
