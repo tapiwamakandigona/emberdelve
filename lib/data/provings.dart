@@ -147,6 +147,17 @@ const List<ProvingDef> provings = [
     character: 'mender',
     difficulty: 'normal',
   ),
+  // v0.159.0 The Eleventh Way (the v0.119 pattern, fifth use).
+  ProvingDef(
+    id: 'shieldwrights_proving',
+    title: "The Shieldwright's Proving",
+    blurb:
+        'The Shieldwright on normal floors. The deep Aegis pays on the '
+        'six — hold the marked die for the blows worth blunting.',
+    seed: 10,
+    character: 'shieldwright',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

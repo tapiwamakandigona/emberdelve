@@ -3706,3 +3706,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   runesmith no-tier-key byte-identity guard; seeds: easy loss 3, normal
   win 4 / loss 5). Plates: picker card 2 sizes + warmup, judged.
   Suite 1035/1035. 0.158.0+184. Proving follows in v0.159 (v0.119 recipe).
+
+## v0.159.0 — The Eleventh Way (2026-08-31)
+- The shieldwright's proving (seed 10 normal, bot-win pinned; provings
+  19) + The First Ward (shieldwright_wins) + Eleven Ways Down —
+  the v0.119 recipe, fifth use. the_proven 18→19; 'N of 18' pins →
+  'N of 19' (provings_test ×2 textContaining + 2 length pins,
+  eighth_way_test).
+- LESSON (copy-collision class): news lines render on the TITLE screen,
+  so a news line echoing another card's signature phrase ('same seed,
+  same road') breaks that card's textContaining finder. Before shipping
+  news copy, grep test/ for its distinctive phrases.
+- test/eleventh_way_test.dart (3 tests: proving def + roster-order,
+  seed replay, honors + frozen predecessors). Suite 1038/1038.
+  0.159.0+185.
