@@ -192,6 +192,17 @@ const List<ProvingDef> provings = [
     character: 'collier',
     difficulty: 'normal',
   ),
+  // v0.176.0 The Fifteenth Way (the v0.119 pattern, ninth use).
+  ProvingDef(
+    id: 'stokers_proving',
+    title: "The Stoker's Proving",
+    blurb:
+        'The Stoker on normal floors. Three big coals and sixteen points '
+        'of skin \u2014 every roll is plenty, every hit is dear.',
+    seed: 12,
+    character: 'stoker',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

@@ -3942,3 +3942,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - test/stoker_test.dart (easy 1 win; normal 4 win 7 loss; hunt: easy
   losses 3/13, normal wins 1/2/4/5/6/9/10/11/12/14). Suite 1087/1087,
   analyze clean. Plates good (locked card dim = expected).
+
+## v0.176.0 The Fifteenth Way (2026-08-31)
+- Stoker's proving (seed 12 normal — UNUSED by any other delver proving,
+  bot-win pinned; stoker normal win set 1/2/4/5/6/9/10/11/12/14) after
+  colliers_proving; honors The First Shovel (char_wins/stoker/1) +
+  Fifteen Ways Down (delvers_cleared 15); the_proven 22→23. Count pins
+  22→23 in provings_test (×2 + '0 of 23'/'1 of 23') + eighth_way_test.
+  New test/fifteenth_way_test.dart. Suite 1090/1090 first try, analyze
+  clean. v0.119 pattern, ninth use.
