@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.162.0';
+const String currentAppVersion = '0.163.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.163.0',
+    title: 'The Twelfth Way',
+    lines: [
+      'The Gilder\u2019s Proving joins the list: the goldsmith on '
+          'normal floors, same seed for everyone, forever.',
+      'Two new honors on the wall \u2014 The First Coin, and Twelve '
+          'Ways Down. Earlier honors keep their earned prices, as ever.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.162.0',
     title: 'The Gilder',

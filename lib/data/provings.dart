@@ -158,6 +158,17 @@ const List<ProvingDef> provings = [
     character: 'shieldwright',
     difficulty: 'normal',
   ),
+  // v0.163.0 The Twelfth Way (the v0.119 pattern, sixth use).
+  ProvingDef(
+    id: 'gilders_proving',
+    title: "The Gilder's Proving",
+    blurb:
+        'The Gilder on normal floors. Both sixes pay coin — spend the '
+        'gilded dice freely and let the shops do the forging.',
+    seed: 4,
+    character: 'gilder',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

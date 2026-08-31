@@ -3757,3 +3757,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   (kit/index/tier-free records/seeded pins: easy loss 3, normal wins
   1/4/6/9/10/11). Suite 1050/1050. NEXT RELEASE: gilders_proving +
   gilder_wins + twelve_ways_down + the_proven 20 (v0.159 pattern).
+- v0.163.0 The Twelfth Way: gilders_proving (seed 4 normal, provings 20,
+  stands after shieldwrights_proving), gilder_wins "The First Coin",
+  twelve_ways_down 12 (predecessors frozen), the_proven → 20.
+  Achievements 76. twelfth_way_test (3 tests); provings pins 19→20 in
+  provings_test + eighth_way_test. Suite 1053/1053.

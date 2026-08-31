@@ -24,7 +24,7 @@ void main() {
       ids.indexOf('flintwrights_proving') + 1,
       reason: 'the character provings stand together',
     );
-    expect(provings.length, 19);
+    expect(provings.length, 20);
     expect(provings.last.id, 'ash_summit');
   });
 
