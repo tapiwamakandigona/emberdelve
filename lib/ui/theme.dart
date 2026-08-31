@@ -160,6 +160,16 @@ ThemeData buildEmberTheme() {
       secondary: EmberColors.gold,
       error: EmberColors.danger,
     ),
+    // M3 tints an app bar with the primary color once content scrolls
+    // under it (scrolledUnderElevation + surfaceTint) — on our palette
+    // that reads as a muddy tan slab over the room. The bar stays the
+    // room's own darkness at every scroll offset, on every screen.
+    appBarTheme: const AppBarTheme(
+      backgroundColor: EmberColors.bg,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+    ),
     splashFactory: NoSplash.splashFactory,
     // Kill stock focus/hover/highlight tints (de-Flutter pass, visuals.md #6).
     highlightColor: Colors.transparent,

@@ -52,7 +52,10 @@ void main() {
       MaterialApp(theme: buildEmberTheme(), home: CodexScreen(c)),
     );
     await tester.pump(const Duration(milliseconds: 300));
-    final scrollable = find.byType(Scrollable).first;
+    final scrollable = find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first;
     await tester.scrollUntilVisible(
       find.text('THE DICE'),
       400,

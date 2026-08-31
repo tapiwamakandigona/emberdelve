@@ -1548,3 +1548,49 @@ class _ScrollComfortState extends State<ScrollComfort> {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// The lazy walk (Wardrobe Lift, generalized). ListView(children:) inflates
+// lazily, so a GlobalKey anchor far from the viewport has NO context until
+// the list is scrolled near it — ensureVisible alone can't reach it. Walk
+// toward the anchor viewport by viewport (linear steps read as ONE glide;
+// chained eased steps make a saw-tooth velocity), then hand off to
+// ensureVisible for the eased settle. Walks both directions.
+// ---------------------------------------------------------------------------
+Future<void> walkToAnchor(
+  ScrollController scroll,
+  GlobalKey anchor, {
+  double alignment = 0,
+  bool preferUp = false,
+}) async {
+  const step = 1200.0;
+  var down = !preferUp;
+  var flipped = false;
+  for (var i = 0; i < 48 && anchor.currentContext == null; i++) {
+    if (!scroll.hasClients) return;
+    final max = scroll.position.maxScrollExtent;
+    final atEdge = down ? scroll.offset >= max : scroll.offset <= 0;
+    if (atEdge) {
+      if (flipped) return; // walked the whole list both ways: give up
+      flipped = true;
+      down = !down;
+      continue;
+    }
+    final target = down
+        ? math.min(scroll.offset + step, max)
+        : math.max(scroll.offset - step, 0.0);
+    await scroll.animateTo(
+      target,
+      duration: const Duration(milliseconds: 70),
+      curve: Curves.linear,
+    );
+  }
+  final ctx = anchor.currentContext;
+  if (ctx == null || !ctx.mounted) return;
+  await Scrollable.ensureVisible(
+    ctx,
+    alignment: alignment,
+    duration: const Duration(milliseconds: 250),
+    curve: Curves.easeOutCubic,
+  );
+}

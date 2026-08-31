@@ -16,9 +16,84 @@ import '../game/controller.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
-class CodexScreen extends StatelessWidget {
+class CodexScreen extends StatefulWidget {
   final GameController c;
   const CodexScreen(this.c, {super.key});
+
+  @override
+  State<CodexScreen> createState() => _CodexScreenState();
+}
+
+class _CodexScreenState extends State<CodexScreen> {
+  GameController get c => widget.c;
+
+  // Codex Lanes: the book is 119 entries across seven sections — reaching
+  // THE DICE was a marathon of scrolling. One chip per section, pinned
+  // under the app bar, walks the lazy list to that section's header
+  // (widgets.dart walkToAnchor). Chips navigate; they never filter — the
+  // whole book stays on one honest page.
+  static const _lanes = <(String, String)>[
+    ('world', 'World'),
+    ('company', 'Company'),
+    ('enemies', 'Enemies'),
+    ('relics', 'Relics'),
+    ('rules', 'Rules'),
+    ('marks', 'Marks'),
+    ('dice', 'Dice'),
+  ];
+  final _scroll = ScrollController();
+  final _laneKeys = {for (final (id, _) in _lanes) id: GlobalKey()};
+  int _laneIdx = 0; // last lane walked to: hints the walk direction
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toLane(int idx) async {
+    AudioService.instance?.playSfx('ui_tap');
+    final up = idx < _laneIdx;
+    setState(() => _laneIdx = idx);
+    await walkToAnchor(_scroll, _laneKeys[_lanes[idx].$1]!, preferUp: up);
+  }
+
+  Widget _laneChips(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+      child: Row(
+        children: [
+          for (final (i, (id, name)) in _lanes.indexed)
+            Padding(
+              padding: const EdgeInsets.only(right: Space.s),
+              child: GestureDetector(
+                key: ValueKey('codex-lane-$id'),
+                onTap: () => _toLane(i),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Space.m,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: EmberColors.surface,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: EmberColors.line),
+                  ),
+                  child: Text(
+                    name,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _laneHeader(String id, String title) =>
+      Text(title, key: _laneKeys[id], style: EmberText.micro);
 
   @override
   Widget build(BuildContext context) {
@@ -71,93 +146,103 @@ class CodexScreen extends StatelessWidget {
               final runeEntries = codexEntries
                   .where((e) => e.kind == 'rune')
                   .toList();
-              return ScrollComfort(
-                child: ListView(
-                  padding: const EdgeInsets.all(Space.l),
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${m.ownedCodex.length} of ${codexEntries.length} '
-                            'UNSEALED',
-                            style: EmberText.micro,
+              return Column(
+                children: [
+                  const SizedBox(height: Space.s),
+                  _laneChips(context),
+                  const SizedBox(height: Space.s),
+                  Expanded(
+                    child: ScrollComfort(
+                      child: ListView(
+                        controller: _scroll,
+                        padding: const EdgeInsets.all(Space.l),
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${m.ownedCodex.length} of ${codexEntries.length} '
+                                  'UNSEALED',
+                                  style: EmberText.micro,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.local_fire_department,
+                                color: EmberColors.ember,
+                                size: 14,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${m.embers}',
+                                style: EmberText.label.copyWith(
+                                  color: EmberColors.ember,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const Icon(
-                          Icons.local_fire_department,
-                          color: EmberColors.ember,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${m.embers}',
-                          style: EmberText.label.copyWith(
-                            color: EmberColors.ember,
+                          const SizedBox(height: Space.s),
+                          Text(
+                            'Lore of the delve, unsealed with embers. Flavor only '
+                            '— enemy intents and relic effects stay readable in '
+                            'play, free, forever.',
+                            style: EmberText.micro.copyWith(
+                              color: EmberColors.textDim,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: Space.s),
-                    Text(
-                      'Lore of the delve, unsealed with embers. Flavor only '
-                      '— enemy intents and relic effects stay readable in '
-                      'play, free, forever.',
-                      style: EmberText.micro.copyWith(
-                        color: EmberColors.textDim,
+                          const SizedBox(height: Space.xl),
+                          _laneHeader('world', 'THE WORLD'),
+                          const SizedBox(height: Space.s),
+                          for (final e in placeEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('company', 'THE COMPANY'),
+                          const SizedBox(height: Space.s),
+                          for (final e in delverEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('enemies', 'ENEMIES'),
+                          const SizedBox(height: Space.s),
+                          for (final e in enemyEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('relics', 'RELICS'),
+                          const SizedBox(height: Space.s),
+                          for (final e in relicEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('rules', 'THE RULES'),
+                          const SizedBox(height: Space.s),
+                          for (final e in ruleEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('marks', 'THE MARKS'),
+                          const SizedBox(height: Space.s),
+                          for (final e in runeEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
+                          _laneHeader('dice', 'THE DICE'),
+                          const SizedBox(height: Space.s),
+                          for (final e in dieEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                        ],
                       ),
                     ),
-                    const SizedBox(height: Space.xl),
-                    const Text('THE WORLD', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in placeEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('THE COMPANY', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in delverEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('ENEMIES', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in enemyEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('RELICS', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in relicEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('THE RULES', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in ruleEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('THE MARKS', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in runeEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                    const SizedBox(height: Space.l),
-                    const Text('THE DICE', style: EmberText.micro),
-                    const SizedBox(height: Space.s),
-                    for (final e in dieEntries) ...[
-                      _entryCard(context, e),
-                      const SizedBox(height: Space.m),
-                    ],
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

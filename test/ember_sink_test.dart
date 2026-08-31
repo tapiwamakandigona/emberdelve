@@ -225,7 +225,10 @@ void main() {
       await tester.scrollUntilVisible(
         find.byKey(ValueKey('skin-$id')),
         200,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first,
         // v0.146.0: the ledger grew past the default 50-scroll budget
         // (every honors release lengthens the list above the shelves).
         maxScrolls: 200,
@@ -239,7 +242,10 @@ void main() {
     await tester.scrollUntilVisible(
       find.text('The Codex'),
       200,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first,
     );
     expect(
       find.text('The Codex'),
@@ -268,7 +274,10 @@ void main() {
     await tester.scrollUntilVisible(
       find.byKey(ValueKey('codex-${entry.id}')),
       400,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first,
     );
     await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byKey(ValueKey('codex-${entry.id}')));
@@ -284,7 +293,10 @@ void main() {
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('codex-enemy:ash_rat')),
       400,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first,
     );
     await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byKey(const ValueKey('codex-enemy:ash_rat')));

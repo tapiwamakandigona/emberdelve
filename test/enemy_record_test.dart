@@ -266,7 +266,11 @@ void main() {
     );
     await pumpFor(tester, 400);
     final record = find.byKey(const ValueKey('codex-record-cinder_wisp'));
-    await tester.scrollUntilVisible(record, 120);
+    final bookScroll = find.descendant(
+      of: find.byType(ListView),
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(record, 120, scrollable: bookScroll);
     expect(record, findsOneWidget);
     expect(
       tester.widget<Text>(record).data,
@@ -274,7 +278,7 @@ void main() {
     );
     // A never-met enemy states it plainly instead of showing zeros.
     final unmet = find.byKey(const ValueKey('codex-record-ash_rat'));
-    await tester.scrollUntilVisible(unmet, 120);
+    await tester.scrollUntilVisible(unmet, 120, scrollable: bookScroll);
     expect(tester.widget<Text>(unmet).data, 'Not yet met.');
     await pumpFor(tester, 400);
   });

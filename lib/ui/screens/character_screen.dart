@@ -25,32 +25,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   Future<void> _jumpToWardrobe() async {
     AudioService.instance?.playSfx('ui_tap');
-    // ListView(children:) inflates lazily, so the anchor may not exist
-    // yet. Step toward it viewport by viewport; each step inflates more
-    // of the list, and the walk stops the moment the anchor is real.
-    for (var i = 0; i < 24 && _wardrobeKey.currentContext == null; i++) {
-      if (!_scroll.hasClients) return;
-      final target = math.min(
-        _scroll.offset + 1200,
-        _scroll.position.maxScrollExtent,
-      );
-      // Linear mid-walk: chained easeOut steps make a saw-tooth velocity
-      // (decelerate, jerk, decelerate). Constant speed across steps reads
-      // as ONE glide; the final ensureVisible below supplies the ease-out.
-      await _scroll.animateTo(
-        target,
-        duration: const Duration(milliseconds: 70),
-        curve: Curves.linear,
-      );
-      if (target >= _scroll.position.maxScrollExtent) break;
-    }
-    final ctx = _wardrobeKey.currentContext;
-    if (ctx == null || !ctx.mounted) return;
-    await Scrollable.ensureVisible(
-      ctx,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeOutCubic,
-    );
+    // Shared lazy walk (widgets.dart walkToAnchor): linear glide toward
+    // the anchor until it inflates, then an eased settle.
+    await walkToAnchor(_scroll, _wardrobeKey);
   }
 
   // v0.66.0 The Dressed Delver: which delver THE EPITHET shelf dresses.

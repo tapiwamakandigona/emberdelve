@@ -4139,3 +4139,29 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   frequency); map/reward hot paths carry their own past perf fixes. No
   blind micro-optimization added.
 - Suite 1102/1102, analyze clean.
+
+## 2026-08-31/09-01 — THE CODEX LANES + the tan-bar fix (merged under freeze)
+- Shared lazy walk: walkToAnchor(scroll, key, {alignment, preferUp}) in
+  widgets.dart — linear glide steps until the lazy anchor inflates, eased
+  ensureVisible settle, walks BOTH directions (flips once at an edge,
+  gives up after covering the list both ways). The wardrobe lift now
+  delegates to it (character_screen.dart shrank by 23 lines).
+- Codex Lanes: the book is 119 entries across seven sections; reaching
+  THE DICE was a marathon. CodexScreen (now stateful) pins one chip per
+  section under the app bar — World/Company/Enemies/Relics/Rules/Marks/
+  Dice — each walking the list to its keyed header. Chips NAVIGATE, they
+  never filter: the whole book stays one honest page. Direction hint =
+  tapped index vs last-walked index. Keys 'codex-lane-<id>'.
+- test/codex_lanes_test.dart (3): chips render; dice lane inflates and
+  lands the bottom section; world lane walks back UP from the bottom.
+- PLATE CRITIQUE CATCH (global): M3 scrolledUnderElevation tinted every
+  scrolled app bar a muddy TAN (primary surfaceTint over our palette) —
+  visible on codex/picker/every scrolling screen since M3. theme.dart
+  AppBarTheme now pins bg color, surfaceTint transparent, elevations 0.
+  Re-plated: the bar stays the room's darkness at every offset.
+- LESSON (test churn): adding a horizontal scrollable ABOVE a screen's
+  ListView breaks find.byType(Scrollable).first in that screen's older
+  tests — retarget them at find.descendant(of: ListView). Fixed in
+  spoken_dice/ember_sink/enemy_record tests. Also: chips beyond the
+  viewport need tester.ensureVisible before tap.
+- Plate tool: tool/codex_lanes_visual_test.dart. Suite 1105/1105.
