@@ -169,6 +169,17 @@ const List<ProvingDef> provings = [
     character: 'gilder',
     difficulty: 'normal',
   ),
+  // v0.170.0 The Thirteenth Way (the v0.119 pattern, seventh use).
+  ProvingDef(
+    id: 'cutlers_proving',
+    title: "The Cutler's Proving",
+    blurb:
+        'The Cutler on normal floors. Two marks, two dice \u2014 the deep '
+        'eight cuts, the ember six shields. Spend each where it pays.',
+    seed: 14,
+    character: 'cutler',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

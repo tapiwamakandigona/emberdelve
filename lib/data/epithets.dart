@@ -182,6 +182,6 @@ const Map<String, EpithetDef> epithets = {
     'the Proven',
     unlockLine: 'Clear every proving.',
     stat: 'provings_cleared',
-    target: 20, // v0.163.0: the gilder's proving joined the list
+    target: 21, // v0.170.0: the cutler's proving joined the list
   ),
 };
