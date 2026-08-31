@@ -52,7 +52,8 @@ const List<String> vistasOrder = [
   'hearthgold', // v0.98.0 — append-LAST
   'frostvein', // v0.112.0 — append-LAST
   'forgelight', // v0.126.0 — append-LAST
-  'runemark', // v0.134.0 — append-LAST
+  'runemark', // v0.134.0
+  'tenthfire', // v0.152.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -186,6 +187,19 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.06,
     wash: Color(0x5C7B4FC0),
   ),
+  // v0.152.0 The Tenth Chair: the full company's vista — every chair at
+  // the fire filled. Warm and bright: ten delvers' worth of hearthlight.
+  'tenthfire': VistaDef(
+    'tenthfire',
+    'Tenthfire',
+    'Ten chairs, ten shadows on the same wall. The delve is not '
+        'smaller for it \u2014 but it is warmer.',
+    unlockLine: 'Unlock every delver.',
+    hueDeg: 24,
+    satMul: 1.25,
+    valMul: 1.10,
+    wash: Color(0x40E8A050),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -204,6 +218,7 @@ bool vistaUnlockedFor(
   required int doubledWins,
   required int tempersSet,
   required int runesMarked,
+  required int charsUnlocked,
 }) {
   switch (id) {
     case 'emberlight':
@@ -238,6 +253,11 @@ bool vistaUnlockedFor(
     // would re-lock earned vistas if the anvil ever grows (v0.100 lesson).
     case 'runemark':
       return runesMarked >= 6;
+    // v0.152.0: FROZEN at ten — a gate that tracked the live roster would
+    // re-lock this vista the day an eleventh delver joins (v0.100 lesson;
+    // milestones freeze, exactly like full_roster's plain 'four').
+    case 'tenthfire':
+      return charsUnlocked >= 10;
     default:
       return false;
   }

@@ -31,6 +31,7 @@ void main() {
       talesHeard: 0,
       doubledWins: 0,
       tempersSet: tempers,
+      charsUnlocked: 0,
       runesMarked: 0,
     );
     expect(at(9), isFalse);

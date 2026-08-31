@@ -3591,3 +3591,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Pins: provings_test 18 ×2 + header 'of 18' ×2 (locked list AND
   cleared mark — TWO header pins, not one), eighth_way_test.
 - 3 tests. Suite 1008/1008. 0.151.0+177.
+
+## v0.152.0 — The Tenth Chair (2026-08-31)
+- 11th vista Tenthfire: full-company reward you can SEE (warm
+  amber, hue+24 sat×1.25 val×1.10 wash 0x40E8A050). Gate FROZEN
+  at charsUnlocked >= 10 with a TRIPWIRE PIN (test fails at
+  roster 11 saying update the reason, never the gate).
+- vistaUnlockedFor grew charsUnlocked param — 4 test files' call
+  sites patched mechanically (regex after tempersSet lines).
+- runemark_test 'last' pin retired to INDEX pin. LESSON: when a
+  release appends to an order list, grep for `.last` pins on the
+  previous tail — same family as the header-count pins.
+- Dye lane scouted and REJECTED (no hue gap: mosscloak owns
+  green, palewisp grey). Plates: map vs identity control + shelf
+  locked/worn. 2 tests. Suite 1010/1010. 0.152.0+178.

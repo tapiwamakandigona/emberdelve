@@ -44,6 +44,7 @@ void main() {
       talesHeard: 99,
       doubledWins: wins,
       tempersSet: 0,
+      charsUnlocked: 0,
       runesMarked: 0,
     );
     expect(unlocked(0), isFalse, reason: 'blind to every other counter');

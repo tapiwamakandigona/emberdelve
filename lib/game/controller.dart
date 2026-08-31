@@ -729,6 +729,7 @@ class GameController extends ChangeNotifier {
     doubledWins: meta.doubledWins,
     tempersSet: meta.tempersSet,
     runesMarked: meta.runesTempered.where(faceRunes.contains).length,
+    charsUnlocked: meta.unlockedCharacters.length,
   );
 
   void selectVista(String id) {
