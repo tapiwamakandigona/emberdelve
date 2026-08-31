@@ -169,10 +169,14 @@ void runStartRun(Sim sim, Map cmd, List<Map<String, Object?>> events) {
     if (idx < 1 || idx > pool.length) continue;
     final next = sim.run!['next_custom_die'] as int;
     final customId = 'custom_$next';
+    // v0.158.0 The Shieldwright: a smith's mark may arrive DEEP. Same
+    // optional-key contract as the save shape (v0.155.0): absent = tier 1,
+    // so every earlier delver's record stays byte-identical.
     (sim.run!['custom_dice'] as Map)[customId] = {
       'base': pool[idx - 1],
       'face': t['face'],
       'rune': t['rune'],
+      if ((t['tier'] as int? ?? 1) >= 2) 'tier': 2,
     };
     pool[idx - 1] = customId;
     sim.run!['next_custom_die'] = next + 1;

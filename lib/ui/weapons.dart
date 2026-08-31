@@ -130,6 +130,19 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.45,
     swingAngle: 1.95,
   ),
+  // Ward (v0.158.0): a planishing hammer — the tool that raises a shield
+  // from flat steel. Mid reach, deliberate swing (shieldwrights strike
+  // twice in the shop and once in the field), deep-steel-blue accent to
+  // match the sheet's remap.
+  'shieldwright': WeaponDef(
+    'planishing_hammer',
+    'Planishing Hammer',
+    accent: Color(0xFF7FA3D9),
+    reach: 0.50,
+    idleAngle: 0.30,
+    raiseAngle: -1.50,
+    swingAngle: 1.80,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
