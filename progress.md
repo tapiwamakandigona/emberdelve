@@ -3742,3 +3742,6 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   wins; rank_ui_test top profile 900 wins. LESSON re-proved: banned-word
   scan news copy BEFORE the suite run ('expires' cost a cycle). Suite
   1047/1047.
+- v0.160.0 artifacts ATTACHED (CI 33411215359, ALL PINS OK, codes
+  186/1186/2186/4186, AAB pin OK; sha256 table appended: apk 252c00c6…,
+  aab 18b44606…, arm64 84759f1a…, v7a 39464cda…, x86_64 1fa2ee3d…).
