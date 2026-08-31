@@ -114,8 +114,9 @@ void main() {
     // v0.149.0: the ladder grew a tenth tier; the veteran grew with it.
     // v0.161.0: an eleventh fire — the veteran grew again (2605 marks).
     // v0.166.0: the Everburn — the veteran grew again (3805 marks).
+    // v0.173.0: the Worldflame — the veteran grew again (5455 marks).
     final m = _profile(
-      wins: 1150,
+      wins: 1700,
       bosses: 6,
       felled: 35,
       met: 35,

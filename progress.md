@@ -3908,3 +3908,9 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Collier's proving (seed 6 normal, bot-win pinned; win set was 1,4,6,9,10,11,14) after cutlers_proving; honors The First Coal (char_wins/collier/1) + Fourteen Ways Down (14); the_proven 21→22 (derived pins auto-move). Count pins 21→22 in provings_test (×2 + '0 of 22'/'1 of 22') + eighth_way_test. New test/fourteenth_way_test.dart. Suite 1079/1079 first try, analyze clean. v0.119 pattern, eighth use.
 - Commit 2da5ba686e84673bc7ea4bb39747dd26781b96db; CI 33425977651 (expect 0.172.0+198 → codes 198/1198/2198/4198).
 - v0.170.0 artifacts PUBLISHED (196/1196/2196/4196, ALL PINS OK + AAB PIN OK). v0.171 CI 33424708073 still in flight at this writing.
+
+## v0.173.0 The Worldflame (2026-08-31)
+- Thirteenth rank tier: worldflame 5450 marks (gap 1700; curve 280/400/600/850/1200/1700). v0.166 pattern third use (v0.149, v0.161, v0.166 → v0.173).
+- Pins moved: twelfth_fire_test freezes chair 12 + 'has a next fire again'; thirteenth_fire_test owns length-13/.last/top pins; rank_test veteran wins 1700 (5455); rank_ui_test runsWon 1850 (5550).
+- v0.171.0 artifacts PUBLISHED (CI 33424708073, codes 197/1197/2197/4197, all pins OK). v0.172 CI 33425977651 pending publish.
+- OWNER DIRECTIVE 2026-08-31 18:45: big UI pass, reduce/rethink scrolling everywhere ("IDK you know what's best") — v0.174 lane: scroll-comfort audit (edge fades, CTAs above fold, in-run screens scroll-free on phones; keep list screens scrollable — 117 codex entries can't fit a fold honestly).

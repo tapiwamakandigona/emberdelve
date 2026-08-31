@@ -79,4 +79,13 @@ const List<RankTier> rankTiers = [
     3750,
     'Fires gutter and fall. Yours has not.',
   ),
+  // v0.173.0 The Worldflame: a thirteenth fire above the Everburn — veterans
+  // who long ago banked 3750 marks climb again. Threshold gap keeps the
+  // curve's shape (diffs 280, 400, 600, 850, 1200, now 1700).
+  RankTier(
+    'worldflame',
+    'Worldflame',
+    5450,
+    'Far above, the world steers by your light.',
+  ),
 ];
