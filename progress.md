@@ -3807,3 +3807,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   3750 marks, gap 1200 keeps the curve; pins moved eleventh_fire_test ->
   new twelfth_fire_test; rank_test veteran wins 1150, rank_ui_test
   runsWon 1300. Suite 1067/1067 first try. News entry + docs.
+## v0.167.0 — The ask that could never fire (2026-08-31)
+- ROOT CAUSE: the in-app review ask shipped 2026-08-23 but was unreachable.
+  Gate was `(wonThisRun && meta.runsWon >= 2) || wonDailyOrWeekly` — it needed
+  a SECOND full run win, so in practice it never fired. That, not player
+  sentiment, is why a 5.00 internal average produced zero organic public
+  ratings.
+- FIX (#98, squash 0076b04): third trigger — climbing into Sparktender
+  (24 marks) or above. `ReviewService.rankAskFloorMarks = 24`; optional
+  `int? rankedUpToMarks` on eligible()/maybeAsk(); call site
+  lib/game/controller.dart passes rankAfter.marks when the rank improved.
+- Evidence: rank_test pins "first evening lands 2-3 rank-ups" and tier 2 IS
+  Sparktender, so one evening = one ask. Suite 1064/1064 pre-rebase; re-verified on top of v0.166.0 Everburn.
+- Charter intact: one ask ever, stamp on request, sticky cloud merge OR,
+  never during the tour, no incentives, no pre-filtering, official API only.
+- LESSON: a shipped feature is not a working feature. The 23 Aug release
+  logged review_service.dart as done; nobody gated the trigger against a
+  realistic play session. Pin reachability, not just correctness.
