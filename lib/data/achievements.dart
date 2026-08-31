@@ -115,6 +115,7 @@ const List<String> achievementsOrder = [
   'cutler_wins', 'thirteen_ways_down',
   'collier_wins', 'fourteen_ways_down',
   'stoker_wins', 'fifteen_ways_down',
+  'hearthkeeper_wins', 'sixteen_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -503,6 +504,23 @@ const Map<String, AchievementDef> achievements = {
     'Win a run with fifteen different delvers.',
     stat: 'delvers_cleared',
     target: 15,
+  ),
+  // The Kept Hearth (the v0.119 pattern, tenth use) — the LAST roster
+  // honors: the sixteenth chair closes the company.
+  'hearthkeeper_wins': AchievementDef(
+    'hearthkeeper_wins',
+    'The Kept Fire',
+    'Win a delve as the Hearthkeeper.',
+    stat: 'char_wins',
+    target: 1,
+    param: 'hearthkeeper',
+  ),
+  'sixteen_ways_down': AchievementDef(
+    'sixteen_ways_down',
+    'Sixteen Ways Down',
+    'Win a run with every one of the sixteen delvers.',
+    stat: 'delvers_cleared',
+    target: 16,
   ),
 
   // --- the bestiary -----------------------------------------------------

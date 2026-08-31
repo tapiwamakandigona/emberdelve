@@ -4055,3 +4055,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   tag: riding the freeze. News + release notes land at the owner's
   consolidated release. Proving + honors (Kept Hearth, the_proven
   23->24) follow in the next commit (v0.119 pattern, tenth use).
+
+## 2026-08-31 — The Kept Hearth: hearthkeeper proving + final roster honors (merged under freeze)
+- The v0.119 pattern, TENTH and LAST use: hearthkeepers_proving (seed 16
+  normal — seed sixteen for the sixteenth chair, bot-win pinned, unused
+  by other delver provings) after stokers_proving; honors The Kept Fire
+  (char_wins/hearthkeeper/1) + Sixteen Ways Down (delvers_cleared 16);
+  the_proven 23 -> 24. Count pins moved in provings_test (x2 + '0 of
+  24'/'1 of 24') + eighth_way_test. New test/kept_hearth_test.dart (3).
+  The delver-proving block is COMPLETE — no seventeenth.
+- Suite verified with JSON reporter: 1094 tests, all pass, analyze
+  clean. (Plain-counter totals drifted ±1 across concatenated logs;
+  per-file JSON counts confirmed every new test runs. LESSON: when a
+  suite count looks off, count per-file with `flutter test -r json`,
+  not with the progress counter of a combined log.)
+- Still NO version bump / tag / news: riding the freeze.

@@ -203,6 +203,20 @@ const List<ProvingDef> provings = [
     character: 'stoker',
     difficulty: 'normal',
   ),
+  // The Kept Hearth (the v0.119 pattern, tenth use) — the sixteenth and
+  // LAST delver proving: the roster is closed, the list of delver
+  // provings is complete. Seed 16 for the sixteenth chair (bot-win
+  // pinned, unused by any other delver proving).
+  ProvingDef(
+    id: 'hearthkeepers_proving',
+    title: "The Hearthkeeper's Proving",
+    blurb:
+        'The Hearthkeeper on normal floors. Every die sworn to one job '
+        '\u2014 win with the pouch the fire dealt you.',
+    seed: 16,
+    character: 'hearthkeeper',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
