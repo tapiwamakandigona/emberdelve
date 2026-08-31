@@ -41,6 +41,11 @@ class ContextTips {
   /// any daily — the shared delve's only front door, previously explained
   /// nowhere before the run itself.
   static const sharedDelve = 'shared_delve';
+
+  /// v0.160.0 The Second Strike: the first rest fire where the player
+  /// holds a tier-1 mark and the anvil is live — deepening's only front
+  /// door (v0.155.0), previously explained nowhere before the sheet.
+  static const deepMark = 'deep_mark';
   static const List<String> all = [
     whatsADelve,
     rollSpend,
@@ -49,6 +54,7 @@ class ContextTips {
     blockFades,
     firstAnvil,
     sharedDelve,
+    deepMark,
   ];
 }
 
@@ -79,8 +85,17 @@ class TipDirector {
   /// v0.139.0: the first rest fire where a temper is still available.
   /// The caller passes canTemper so a spent-anvil rest never teaches a
   /// button that is not on screen.
-  String? onRestArrival({required bool canTemper}) =>
-      canTemper ? _fire(ContextTips.firstAnvil) : null;
+  /// v0.160.0: [hasShallowMark] — the pool holds a tier-1 marked die.
+  /// The anvil card outranks the deepen card (a player who has never
+  /// tempered cannot deepen), and the one-tip rule means the deepen card
+  /// simply recurs at the next marked rest.
+  String? onRestArrival({required bool canTemper, bool hasShallowMark = false}) {
+    if (!canTemper) return null;
+    final anvil = _fire(ContextTips.firstAnvil);
+    if (anvil != null) return anvil;
+    if (!seen.contains(ContextTips.firstAnvil)) return null;
+    return hasShallowMark ? _fire(ContextTips.deepMark) : null;
+  }
 
   /// v0.153.0: back on the title screen. The shared delve is taught only
   /// once the player has won a run (they know what a delve is and have

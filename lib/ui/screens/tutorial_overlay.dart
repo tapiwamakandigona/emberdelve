@@ -154,6 +154,15 @@ class _ContextTip extends StatelessWidget {
           'nothing.',
       Alignment.center,
     ),
+    ContextTips.deepMark: (
+      Icons.layers,
+      'THE SECOND STRIKE',
+      'A marked face can be tempered AGAIN: strike the same rune deeper '
+          'and it pays more on the same roll \u2014 a II beside the rune '
+          'says the work is done. Deepening spends a temper like any '
+          'other mark.',
+      Alignment.center,
+    ),
     ContextTips.firstAnvil: (
       Icons.auto_awesome,
       'THE SMITH IS IN',

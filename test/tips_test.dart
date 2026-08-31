@@ -128,6 +128,7 @@ void main() {
         ContextTips.combosPay,
         ContextTips.firstAnvil, // v0.139.0 joined the deck
         ContextTips.sharedDelve, // v0.153.0 joined the deck
+        ContextTips.deepMark, // v0.160.0 joined the deck
       });
       expect(d.onIntent({'kind': 'attack', 'amount': 6}), isNotNull);
       expect(d.dismiss(), isTrue);
