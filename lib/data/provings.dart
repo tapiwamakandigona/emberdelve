@@ -180,6 +180,18 @@ const List<ProvingDef> provings = [
     character: 'cutler',
     difficulty: 'normal',
   ),
+  // v0.172.0 The Fourteenth Way (the v0.119 pattern, eighth use).
+  ProvingDef(
+    id: 'colliers_proving',
+    title: "The Collier's Proving",
+    blurb:
+        'The Collier on normal floors. Every die arrives worked \u2014 the '
+        'blade cuts, the gilt pays, the mend holds. Nothing to build; '
+        'everything to spend well.',
+    seed: 6,
+    character: 'collier',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
