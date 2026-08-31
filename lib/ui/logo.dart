@@ -172,16 +172,16 @@ class _LogotypePainter extends CustomPainter {
     // 3. Fill: charred top -> molten bottom (warm-from-below).
     _tp('fill${rect.top.round()}x${rect.height.round()}', () {
       final fill = Paint()
-        ..shader = LinearGradient(
+        ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: const [
+          colors: [
             Color(0xFF6E6258), // ash top
             Color(0xFFEDE6DA),
             Color(0xFFFFC46B),
             Color(0xFFF08A2C), // ember base
           ],
-          stops: const [0.0, 0.42, 0.72, 1.0],
+          stops: [0.0, 0.42, 0.72, 1.0],
         ).createShader(rect);
       return _base(foreground: fill);
     }).paint(canvas, origin);

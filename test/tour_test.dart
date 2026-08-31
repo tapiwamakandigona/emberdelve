@@ -16,7 +16,7 @@ import 'package:emberdelve/ui/theme.dart';
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
   for (var t = 0; t < ms; t += step) {
-    await tester.pump(Duration(milliseconds: step));
+    await tester.pump(const Duration(milliseconds: step));
   }
 }
 

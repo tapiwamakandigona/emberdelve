@@ -87,7 +87,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildEmberTheme(),
-        home: Material(child: Center(child: PaintedTrace('🟩🔥'))),
+        home: const Material(child: Center(child: PaintedTrace('🟩🔥'))),
       ),
     );
     final ringed = tester.widgetList<Container>(find.byType(Container)).where((

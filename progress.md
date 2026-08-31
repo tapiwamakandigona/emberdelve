@@ -3857,3 +3857,12 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   `git rebase --continue` needs GIT_EDITOR=true in this sandbox.
 - v0.166.0 artifacts ATTACHED (CI 33418478520, ALL PINS OK, codes
   192/1192/2192/4192, AAB pin OK; sha256 table appended, apk b8447ef8…).
+- v0.169.0 The Steady Flame: perf-polish release (user directive
+  2026-08-31 17:18 "performance optimisation + smooth animations").
+  Five rebuild-cost lints enabled PERMANENTLY in analysis_options.yaml
+  (CI runs flutter analyze -> const regressions now fail CI); 112
+  violations auto-fixed in 28 files via `dart fix --apply`. Audit:
+  sprites already repaint-direct + RepaintBoundary'd (42 in lib/ui), no
+  Timer.periodic animations. Suite 1070/1070 + analyze clean.
+  0.169.0+195. LESSON: `dart fix --apply` is safe here (suite green
+  first try); lints-on beats one-off cleanup.

@@ -66,7 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: EmberText.h2),
+        title: const Text('Settings', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
         leading: BackButton(
           onPressed: () {
@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: ListView(
             padding: const EdgeInsets.all(Space.l),
             children: [
-              Text('AUDIO', style: EmberText.micro),
+              const Text('AUDIO', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Panel(
                 child: Column(
@@ -131,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: Space.xl),
               // COMFORT (v0.16.0, was FEEDBACK): body-facing settings —
               // vibration and motion. Renamed when reduce-motion joined.
-              Text('COMFORT', style: EmberText.micro),
+              const Text('COMFORT', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Panel(
                 child: Column(
@@ -144,7 +144,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(child: Text('Haptics', style: EmberText.body)),
+                        const Expanded(child: Text('Haptics', style: EmberText.body)),
                         _EmberToggle(
                           semanticLabel: 'Haptics',
                           value: _s.haptics,
@@ -162,14 +162,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Reduce motion (v0.16.0 The Still Flame): no screen
                     // shake, no drifting embers, damage numbers hold still.
                     // 'System' follows the OS accessibility setting.
-                    Row(
+                    const Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.waves,
                           color: EmberColors.textDim,
                           size: 20,
                         ),
-                        const SizedBox(width: Space.m),
+                        SizedBox(width: Space.m),
                         Expanded(
                           child: Text('Reduce motion', style: EmberText.body),
                         ),
@@ -248,7 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: Space.xl),
-              Text('PRIVACY', style: EmberText.micro),
+              const Text('PRIVACY', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Panel(
                 child: Row(
@@ -259,7 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: Space.m),
-                    Expanded(
+                    const Expanded(
                       child: Text('Gameplay analytics', style: EmberText.body),
                     ),
                     _EmberToggle(
@@ -282,7 +282,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Hidden entirely on builds without the platform backends.
               if (ReminderService.instance.available) ...[
                 const SizedBox(height: Space.xl),
-                Text('NOTIFICATIONS', style: EmberText.micro),
+                const Text('NOTIFICATIONS', style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 AnimatedBuilder(
                   animation: ReminderService.instance.tick,
@@ -299,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             size: 20,
                           ),
                           const SizedBox(width: Space.m),
-                          Expanded(
+                          const Expanded(
                             child: Text(
                               'Daily Delve reminder',
                               style: EmberText.body,
@@ -331,7 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // when no fetcher is wired (tests, non-Android).
               if (UpdateService.instance.available) ...[
                 const SizedBox(height: Space.xl),
-                Text('UPDATES', style: EmberText.micro),
+                const Text('UPDATES', style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 AnimatedBuilder(
                   animation: UpdateService.instance.tick,
@@ -376,7 +376,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 const SizedBox(height: Space.s),
                                 Row(
                                   children: [
-                                    Expanded(
+                                    const Expanded(
                                       child: Text(
                                         'New releases live on the GitHub '
                                         'releases page.',
@@ -416,7 +416,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 size: 20,
                               ),
                               const SizedBox(width: Space.m),
-                              Expanded(
+                              const Expanded(
                                 child: Text(
                                   'Check once at launch',
                                   style: EmberText.body,
@@ -444,7 +444,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // builds without the platform backends (tests, web, desktop).
               if (PlayGamesService.instance.available) ...[
                 const SizedBox(height: Space.xl),
-                Text('PLAY GAMES', style: EmberText.micro),
+                const Text('PLAY GAMES', style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 AnimatedBuilder(
                   animation: PlayGamesService.instance.tick,
@@ -502,7 +502,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   size: 20,
                                 ),
                                 const SizedBox(width: Space.m),
-                                Expanded(
+                                const Expanded(
                                   child: Text(
                                     'Daily & Weekly Delve boards',
                                     style: EmberText.body,
@@ -531,7 +531,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // guaranteed cloud save — the whole ledger travels as one
               // pasteable code instead. Import merges (never replaces); the
               // Forge purchase deliberately does not ride in the code.
-              Text('CARRY YOUR EMBER', style: EmberText.micro),
+              const Text('CARRY YOUR EMBER', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Panel(
                 key: const ValueKey('carry-ember-panel'),
@@ -546,7 +546,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             'Copy a save code that holds your progress.',
                             style: EmberText.body,
@@ -569,7 +569,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             'Paste a code from another device to merge '
                             'it here.',
@@ -594,7 +594,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             'Replay the guided tour in your next fight.',
                             style: EmberText.body,
@@ -626,7 +626,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           size: 20,
                         ),
                         const SizedBox(width: Space.m),
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             'Have an unlock code? Copy it, then redeem '
                             'it here.',
@@ -673,7 +673,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: Space.xl),
               // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
               // a player on a new device must never have to hunt for it.
-              Text('THE EMBER FORGE', style: EmberText.micro),
+              const Text('THE EMBER FORGE', style: EmberText.micro),
               const SizedBox(height: Space.s),
               if (StoreService.instance != null)
                 AnimatedBuilder(
@@ -716,14 +716,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 )
               else
-                Panel(
+                const Panel(
                   child: Text(
                     'Purchases are unavailable in this build.',
                     style: EmberText.bodyDim,
                   ),
                 ),
               const SizedBox(height: Space.xl),
-              Text('ABOUT', style: EmberText.micro),
+              const Text('ABOUT', style: EmberText.micro),
               const SizedBox(height: Space.s),
               Panel(
                 child: Row(
@@ -734,7 +734,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: Space.m),
-                    Expanded(
+                    const Expanded(
                       child: Text('Credits & Licenses', style: EmberText.body),
                     ),
                     EmberButton(
@@ -764,7 +764,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: Space.m),
-                    Expanded(child: Text('Past posts', style: EmberText.body)),
+                    const Expanded(child: Text('Past posts', style: EmberText.body)),
                     EmberButton(
                       'Read',
                       onTap: () {
@@ -858,7 +858,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('CARRY THE EMBER', style: EmberText.h2),
+              const Text('CARRY THE EMBER', style: EmberText.h2),
               const SizedBox(height: Space.m),
               Text(
                 'This code holds ${saveCodeSummary(decoded)}.',

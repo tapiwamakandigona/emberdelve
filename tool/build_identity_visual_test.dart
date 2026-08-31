@@ -37,7 +37,7 @@ void main() {
               padding: const EdgeInsets.all(Space.l),
               child: Column(
                 children: [
-                  Text('POOL-FORGED WEAPONS', style: EmberText.h2),
+                  const Text('POOL-FORGED WEAPONS', style: EmberText.h2),
                   const SizedBox(height: Space.l),
                   for (final entry in pools.entries)
                     Expanded(

@@ -40,9 +40,9 @@ class _RewardScreenState extends State<RewardScreen> {
             child: Column(
               children: [
                 const SizedBox(height: Space.l),
-                Text('Choose a die', style: EmberText.h1),
+                const Text('Choose a die', style: EmberText.h1),
                 const SizedBox(height: Space.xs),
-                Text(
+                const Text(
                   'It joins your pool for the rest of the run.',
                   style: EmberText.bodyDim,
                 ),

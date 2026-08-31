@@ -37,8 +37,8 @@ void showRelicInventory(BuildContext context, GameController c) {
             ),
             const SizedBox(height: Space.l),
             if (owned.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: Space.l),
+              const Padding(
+                padding: EdgeInsets.only(bottom: Space.l),
                 child: Text(
                   'No relics yet. Elites, events, and the shop carry them.',
                   style: EmberText.bodyDim,

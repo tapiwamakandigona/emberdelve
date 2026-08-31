@@ -342,7 +342,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildEmberTheme(),
-        home: Scaffold(
+        home: const Scaffold(
           body: SizedBox(
             width: 380, // phone-width column like the event screen
             child: EmberButton('TRADE (LOSE A RANDOM DIE, GAIN A RANDOM DIE)'),

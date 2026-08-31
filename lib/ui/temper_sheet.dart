@@ -75,7 +75,7 @@ class _TemperSheetState extends State<TemperSheet> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text('Temper a face', style: EmberText.h2)),
+                  const Expanded(child: Text('Temper a face', style: EmberText.h2)),
                   IconButton(
                     key: const ValueKey('temper-close'),
                     icon: const Icon(Icons.close, color: EmberColors.textDim),
@@ -88,7 +88,7 @@ class _TemperSheetState extends State<TemperSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
+                      const Text(
                         'Mark one face of one die with a rune. Two tempers '
                         'a delve, and each lasts the whole run.',
                         style: EmberText.bodyDim,
@@ -106,7 +106,7 @@ class _TemperSheetState extends State<TemperSheet> {
                       ],
                       const SizedBox(height: Space.l),
 
-                      Text('1 · WHICH DIE', style: EmberText.micro),
+                      const Text('1 · WHICH DIE', style: EmberText.micro),
                       const SizedBox(height: Space.s),
                       SizedBox(
                         height: 92,
@@ -154,10 +154,10 @@ class _TemperSheetState extends State<TemperSheet> {
                       ),
                       const SizedBox(height: Space.l),
 
-                      Text('2 · WHICH FACE', style: EmberText.micro),
+                      const Text('2 · WHICH FACE', style: EmberText.micro),
                       const SizedBox(height: Space.s),
                       if (die == null)
-                        Text('Pick a die first.', style: EmberText.bodyDim)
+                        const Text('Pick a die first.', style: EmberText.bodyDim)
                       else
                         Wrap(
                           spacing: Space.s,
@@ -174,7 +174,7 @@ class _TemperSheetState extends State<TemperSheet> {
                         ),
                       const SizedBox(height: Space.l),
 
-                      Text('3 · WHICH RUNE', style: EmberText.micro),
+                      const Text('3 · WHICH RUNE', style: EmberText.micro),
                       const SizedBox(height: Space.s),
                       for (final rune in [
                         'blade',

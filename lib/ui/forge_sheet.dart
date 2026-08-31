@@ -64,7 +64,7 @@ class ForgeSheet extends StatelessWidget {
                       size: 28,
                     ),
                     const SizedBox(width: Space.m),
-                    Text('THE EMBER FORGE', style: EmberText.h2),
+                    const Text('THE EMBER FORGE', style: EmberText.h2),
                     const Spacer(),
                     IconButton(
                       key: const ValueKey('forge-close'),
@@ -75,7 +75,7 @@ class ForgeSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: Space.m),
                 if (owned) ...[
-                  Panel(
+                  const Panel(
                     child: Text(
                       'The Forge burns for you. HARD and the Ascension '
                       'ladder are open — thank you for keeping a solo '
@@ -84,7 +84,7 @@ class ForgeSheet extends StatelessWidget {
                     ),
                   ),
                 ] else ...[
-                  Text(
+                  const Text(
                     'Emberdelve is free, forever: full runs, every delver, '
                     'the Daily Delve. No ads, no timers, no tricks.',
                     style: EmberText.bodyDim,
@@ -94,7 +94,7 @@ class ForgeSheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'ONE PURCHASE OPENS THE ENDGAME',
                           style: EmberText.micro,
                         ),
@@ -172,7 +172,7 @@ class ForgeSheet extends StatelessWidget {
               child: CircularProgressIndicator(color: EmberColors.ember),
             ),
           ),
-          Text(
+          const Text(
             'Waiting on Google Play…',
             style: EmberText.micro,
             textAlign: TextAlign.center,

@@ -176,7 +176,7 @@ void main() {
     }
 
     test('gold_at_least judges final gold', () {
-      final t = const TrialDef(
+      const t = TrialDef(
         'x',
         'X',
         'x',
@@ -194,7 +194,7 @@ void main() {
     });
 
     test('fights_at_least judges fights won', () {
-      final t = const TrialDef(
+      const t = TrialDef(
         'x',
         'X',
         'x',
@@ -207,7 +207,7 @@ void main() {
     });
 
     test('embers_at_least judges run embers', () {
-      final t = const TrialDef(
+      const t = TrialDef(
         'x',
         'X',
         'x',
@@ -220,7 +220,7 @@ void main() {
     });
 
     test('clean_floors_at_least counts untouched floors from the trace', () {
-      final t = const TrialDef(
+      const t = TrialDef(
         'x',
         'X',
         'x',
@@ -247,7 +247,7 @@ void main() {
         trialGoalMet(trialDef('flint_day'), {'gold': 999}, RunTrace()),
         isFalse,
       );
-      final future = const TrialDef(
+      const future = TrialDef(
         'f',
         'F',
         'f',

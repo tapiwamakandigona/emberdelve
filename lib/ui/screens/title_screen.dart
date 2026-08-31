@@ -103,7 +103,7 @@ class TitleScreen extends StatelessWidget {
                               // spark pinpricks (visuals.md #1 — never a plain Text).
                               const EmberLogotype('EMBERDELVE', fontSize: 42),
                               const SizedBox(height: Space.s),
-                              Text(
+                              const Text(
                                 'A dice-builder delve into the dark',
                                 style: EmberText.bodyDim,
                                 textAlign: TextAlign.center,
@@ -461,14 +461,14 @@ class TitleScreen extends StatelessWidget {
           horizontal: Space.l,
           vertical: Space.xl,
         ),
-        title: Text('Delve a seed', style: EmberText.h2),
+        title: const Text('Delve a seed', style: EmberText.h2),
         // Scrollable so the rumor preview (v0.53.0) never overflows the
         // dialog on tight screens (320px @ 1.3x text scale — plate-proven).
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'A seed decides the whole delve — map, offers, rolls. '
                 'Paste a Delve Code or a number from a run summary, or '
                 'type any word.',
@@ -511,7 +511,7 @@ class TitleScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: Text('Cancel', style: EmberText.bodyDim),
+            child: const Text('Cancel', style: EmberText.bodyDim),
           ),
           TextButton(
             key: const ValueKey('seed-start'),
@@ -719,7 +719,7 @@ class _ShortRoadToggle extends StatelessWidget {
               color: on ? EmberColors.ember : EmberColors.textDim,
             ),
             const SizedBox(width: Space.s),
-            Text('SHORT DELVE', style: EmberText.label),
+            const Text('SHORT DELVE', style: EmberText.label),
             const SizedBox(width: Space.s),
             // Ellipsis, never overflow, on 320px at 1.3x text.
             Expanded(

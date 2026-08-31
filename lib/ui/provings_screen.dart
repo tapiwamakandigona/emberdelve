@@ -22,7 +22,7 @@ class ProvingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('The Provings', style: EmberText.h2),
+        title: const Text('The Provings', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
         leading: BackButton(
           onPressed: () {
@@ -46,7 +46,7 @@ class ProvingsScreen extends StatelessWidget {
                     style: EmberText.micro,
                   ),
                   const SizedBox(height: Space.s),
-                  Text(
+                  const Text(
                     // Count-free on purpose (v0.41.0 lesson: "eight" went
                     // stale the moment a ninth was added — the header's
                     // "N of M" states the count, so the prose never should).

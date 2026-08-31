@@ -304,9 +304,9 @@ void main() {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    Row(
+                    const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         SizedBox(width: 56, child: DieChip('d6', value: 6)),
                         SizedBox(width: 14),
                         SizedBox(

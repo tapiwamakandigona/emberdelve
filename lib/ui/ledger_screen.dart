@@ -69,7 +69,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('The Ledger', style: EmberText.h2),
+        title: const Text('The Ledger', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
         leading: BackButton(
           onPressed: () {
@@ -140,7 +140,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                     ),
                   ),
                   const SizedBox(height: Space.l),
-                  Text('LIFETIME', style: EmberText.micro),
+                  const Text('LIFETIME', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   Panel(
                     child: Column(
@@ -230,7 +230,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                     ),
                   ),
                   const SizedBox(height: Space.xl),
-                  Text('DELVERS', style: EmberText.micro),
+                  const Text('DELVERS', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   Panel(
                     child: Column(
@@ -250,7 +250,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   // newest first — every entry REAL (§Ethics honesty).
                   if (m.runHistory.isNotEmpty) ...[
                     const SizedBox(height: Space.xl),
-                    Text('RECENT DELVES', style: EmberText.micro),
+                    const Text('RECENT DELVES', style: EmberText.micro),
                     const SizedBox(height: Space.s),
                     // v0.101.0 The Delver's Page: when the remembered delves
                     // belong to more than one delver, the section gains
@@ -340,7 +340,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   // player has actually achieved.
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text('ACHIEVEMENTS', style: EmberText.micro),
                       ),
                       Text(
@@ -378,7 +378,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   // locked one to buy it with embers (price always shown).
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text('HEARTH COLORS', style: EmberText.micro),
                       ),
                       const Icon(
@@ -411,7 +411,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   // owned skin to lit it, tap a locked one to buy it.
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text('DICE SKINS', style: EmberText.micro),
                       ),
                       const Icon(
@@ -442,7 +442,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   const SizedBox(height: Space.xl),
                   // The Codex: lore entries bought with embers, on their own
                   // screen so the Ledger stays scannable.
-                  Text('THE CODEX', style: EmberText.micro),
+                  const Text('THE CODEX', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   Panel(
                     child: Row(
@@ -457,7 +457,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('The Codex', style: EmberText.body),
+                              const Text('The Codex', style: EmberText.body),
                               const SizedBox(height: 2),
                               Text(
                                 '${m.ownedCodex.length} of '
@@ -493,7 +493,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
                   // Tracks unlock by simply playing (each names how, plainly);
                   // tap an unlocked track to hear it here. No purchase, no
                   // timer — a record of what the delve has already sung.
-                  Text('THE GRAMOPHONE', style: EmberText.micro),
+                  const Text('THE GRAMOPHONE', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   _GramophoneSection(
                     key: const ValueKey('gramophone-section'),

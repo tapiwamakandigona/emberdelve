@@ -132,8 +132,8 @@ class Art {
   static Color strataWash(double depth) {
     final t = depth.clamp(0.0, 1.0);
     if (t <= 0) return const Color(0x00000000);
-    final mid = const Color(0xFF2A3A55); // ash-blue
-    final deep = const Color(0xFF3A2450); // wyrm-violet
+    const mid = Color(0xFF2A3A55); // ash-blue
+    const deep = Color(0xFF3A2450); // wyrm-violet
     final c = t < 0.5
         ? Color.lerp(mid, mid, t * 2)!
         : Color.lerp(mid, deep, (t - 0.5) * 2)!;

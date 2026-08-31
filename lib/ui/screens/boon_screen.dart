@@ -61,14 +61,14 @@ class BoonScreen extends StatelessWidget {
                         ),
                         children: [
                           const SizedBox(height: Space.xl),
-                          Text(
+                          const Text(
                             'Choose a boon',
                             style: EmberText.h1,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: Space.xs),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
+                          const Padding(
+                            padding: EdgeInsets.symmetric(
                               horizontal: Space.m,
                             ),
                             child: Text(

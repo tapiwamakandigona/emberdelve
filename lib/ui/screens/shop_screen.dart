@@ -21,9 +21,9 @@ class ShopScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: Space.l),
-                Text('The Ashmonger', style: EmberText.h1),
+                const Text('The Ashmonger', style: EmberText.h1),
                 const SizedBox(height: Space.xs),
-                Text(
+                const Text(
                   'Spend your gold before the descent.',
                   style: EmberText.bodyDim,
                 ),
@@ -124,7 +124,7 @@ class ShopScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: Space.s),
                 sold
-                    ? Text('SOLD', style: EmberText.micro)
+                    ? const Text('SOLD', style: EmberText.micro)
                     : EmberButton(
                         '$price',
                         // A coin, not an abstract dot (wordiness 2026-07-24).

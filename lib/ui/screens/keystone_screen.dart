@@ -29,8 +29,8 @@ class KeystoneScreen extends StatelessWidget {
                     const SizedBox(height: Space.xl),
                     // Padded so the heading WRAPS at large accessibility text scales
                     // instead of running off both edges (visual sweep 2026-08-12).
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: Space.l),
                       child: Text(
                         'Set a keystone',
                         style: EmberText.h1,
@@ -38,8 +38,8 @@ class KeystoneScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: Space.xs),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: Space.xl),
                       child: Text(
                         'One rule for the rest of this delve. It rewards how you '
                         'play, not what you roll.',

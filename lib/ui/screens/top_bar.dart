@@ -79,7 +79,7 @@ class _TopBar extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
+                  const Icon(Icons.diamond, size: 14, color: EmberColors.textDim),
                   const SizedBox(width: 4),
                   Text(
                     '${(run['relics'] as List).length}',
@@ -130,7 +130,7 @@ void showPauseMenu(BuildContext context, GameController c) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('PAUSED', style: EmberText.h2),
+            const Text('PAUSED', style: EmberText.h2),
             const SizedBox(height: Space.l),
             SizedBox(
               width: double.infinity,
@@ -200,13 +200,13 @@ void _confirmAbandon(BuildContext context, GameController c) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Abandon this delve?',
               style: EmberText.h2,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: Space.s),
-            Text(
+            const Text(
               'The run ends here — embers gathered this run are lost. '
               'Dying keeps half; walking away keeps nothing.',
               style: EmberText.bodyDim,

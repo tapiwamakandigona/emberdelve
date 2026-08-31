@@ -499,7 +499,7 @@ class SummaryScreen extends StatelessWidget {
                                     size: 20,
                                   ),
                                   const SizedBox(width: Space.m),
-                                  Expanded(
+                                  const Expanded(
                                     child: Text(
                                       'The dark goes deeper. The Ascension ladder '
                                       'waits in the Ember Forge.',
@@ -537,14 +537,14 @@ class SummaryScreen extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Row(
+                                  const Row(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.terrain,
                                         color: EmberColors.gold,
                                         size: 20,
                                       ),
-                                      const SizedBox(width: Space.m),
+                                      SizedBox(width: Space.m),
                                       Expanded(
                                         child: Text(
                                           'The easy delve is tamed. The same '
@@ -670,10 +670,10 @@ class SummaryScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: Space.s),
-                            Text(
+                            const Text(
                               'Same map, same offers, same rolls — '
                               'only your choices change.',
-                              key: const ValueKey('retrace-fact'),
+                              key: ValueKey('retrace-fact'),
                               style: EmberText.micro,
                               textAlign: TextAlign.center,
                             ),
@@ -1036,7 +1036,7 @@ String? comingVistaLine(GameController c) {
   // v0.98.0: rests taken this run are movement toward the Hearthgold.
   if (c.runTalesHeard > 0 && !c.vistaUnlocked('hearthgold')) {
     final n = c.meta.hearthTalesHeard;
-    final total = hearthgoldTales;
+    const total = hearthgoldTales;
     lines.add((
       n / total,
       'The Hearthgold vista waits — $n\u00A0of\u00A0$total tales heard.',

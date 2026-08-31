@@ -24,7 +24,7 @@ class CodexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('The Codex', style: EmberText.h2),
+        title: const Text('The Codex', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
         leading: BackButton(
           onPressed: () {
@@ -105,49 +105,49 @@ class CodexScreen extends StatelessWidget {
                     style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
                   const SizedBox(height: Space.xl),
-                  Text('THE WORLD', style: EmberText.micro),
+                  const Text('THE WORLD', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in placeEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('THE COMPANY', style: EmberText.micro),
+                  const Text('THE COMPANY', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in delverEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('ENEMIES', style: EmberText.micro),
+                  const Text('ENEMIES', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in enemyEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('RELICS', style: EmberText.micro),
+                  const Text('RELICS', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in relicEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('THE RULES', style: EmberText.micro),
+                  const Text('THE RULES', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in ruleEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('THE MARKS', style: EmberText.micro),
+                  const Text('THE MARKS', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in runeEntries) ...[
                     _entryCard(context, e),
                     const SizedBox(height: Space.m),
                   ],
                   const SizedBox(height: Space.l),
-                  Text('THE DICE', style: EmberText.micro),
+                  const Text('THE DICE', style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   for (final e in dieEntries) ...[
                     _entryCard(context, e),

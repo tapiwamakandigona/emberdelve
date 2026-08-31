@@ -258,7 +258,7 @@ class _ButtonPainter extends CustomPainter {
     );
     // Char line along the top (cool shadow side).
     canvas.drawLine(
-      Offset(10, 1.2),
+      const Offset(10, 1.2),
       Offset(size.width - 10, 1.2),
       Paint()
         ..strokeWidth = 2

@@ -66,7 +66,7 @@ class _RestScreenState extends State<RestScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: Space.xl),
-                    Text('A warm hollow', style: EmberText.h1),
+                    const Text('A warm hollow', style: EmberText.h1),
                     const SizedBox(height: Space.xs),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -144,7 +144,7 @@ class _RestScreenState extends State<RestScreen> {
                             horizontal: Space.l,
                           ),
                           children: [
-                            Text('FORGE', style: EmberText.micro),
+                            const Text('FORGE', style: EmberText.micro),
                             const SizedBox(height: Space.s),
                             for (final i in forgeable)
                               Padding(

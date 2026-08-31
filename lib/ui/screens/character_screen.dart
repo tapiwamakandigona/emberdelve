@@ -41,7 +41,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
           horizontal: Space.l,
           vertical: Space.xl,
         ),
-        title: Text('Name this delver', style: EmberText.h2),
+        title: const Text('Name this delver', style: EmberText.h2),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -64,7 +64,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: Text('Cancel', style: EmberText.bodyDim),
+            child: const Text('Cancel', style: EmberText.bodyDim),
           ),
           TextButton(
             key: const ValueKey('name-save'),
@@ -73,7 +73,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               Navigator.of(dialogCtx).pop();
               setState(() {});
             },
-            child: Text('Keep', style: EmberText.body),
+            child: const Text('Keep', style: EmberText.body),
           ),
         ],
       ),
@@ -142,7 +142,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final maxAsc = maxAscensionFor(m); // Forge-gated (v0.4.0)
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose a delver', style: EmberText.h2),
+        title: const Text('Choose a delver', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
         leading: BackButton(
           onPressed: () {
@@ -166,7 +166,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               // tap locked to buy (price always visible).
               Row(
                 children: [
-                  Expanded(child: Text('THE WARDROBE', style: EmberText.micro)),
+                  const Expanded(child: Text('THE WARDROBE', style: EmberText.micro)),
                   const Icon(
                     Icons.local_fire_department,
                     color: EmberColors.ember,
@@ -202,7 +202,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               const SizedBox(height: Space.l),
               // v0.35.0 The Vistas — background grades, milestone-unlocked
               // (the other half of the wardrobe ask: 'change backgrounds').
-              Text('THE VISTA', style: EmberText.micro),
+              const Text('THE VISTA', style: EmberText.micro),
               const SizedBox(height: Space.s),
               // v0.115.0 The Delver's Window: vistas are worn per delver —
               // the pills name who the taps below dress. Hidden with one
@@ -225,7 +225,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               // v0.138.0 The Delver's Dice: skins worn per delver — the
               // ledger shelf still buys and sets the global fallback; this
               // row binds an owned skin to the delver being dressed.
-              Text('THE DICE', style: EmberText.micro),
+              const Text('THE DICE', style: EmberText.micro),
               const SizedBox(height: Space.s),
               if (m.unlockedCharacters.length > 1) ...[
                 _dressChipRow(context, m, keyPrefix: 'skin-dress'),
@@ -245,7 +245,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               const SizedBox(height: Space.l),
               // v0.36.0 The Epithets — earned titles worn under the delver's
               // name; carried onto the shareable Delver's Card.
-              Text('THE EPITHET', style: EmberText.micro),
+              const Text('THE EPITHET', style: EmberText.micro),
               const SizedBox(height: Space.s),
               // v0.66.0 The Dressed Delver: titles are worn per delver —
               // the pills name who the taps below dress. Hidden with one
@@ -268,9 +268,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
               ),
               const SizedBox(height: Space.l),
-              Text('ASCENSION', style: EmberText.micro),
+              const Text('ASCENSION', style: EmberText.micro),
               const SizedBox(height: Space.s),
-              Text(
+              const Text(
                 'Every rung makes enemies tougher; higher tiers hit harder too. '
                 'Unlock the next rung by winning at the current one.',
                 style: EmberText.bodyDim,
@@ -287,7 +287,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         size: 18,
                       ),
                       const SizedBox(width: Space.m),
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'The Ascension ladder is part of the '
                           'Ember Forge.',
@@ -333,7 +333,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
   Widget _nextUnlockBar(m) {
     final target = m.nextUnlockTarget;
     if (target == null) {
-      return Panel(child: Text('All delvers unlocked.', style: EmberText.body));
+      return const Panel(child: Text('All delvers unlocked.', style: EmberText.body));
     }
     final frac = (m.embers / target.unlockEmbers).clamp(0.0, 1.0);
     return Panel(
@@ -391,7 +391,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('No epithet', style: EmberText.body),
+                  const Text('No epithet', style: EmberText.body),
                   const SizedBox(height: 2),
                   Text(
                     'Just a delver. The dark asks no more.',

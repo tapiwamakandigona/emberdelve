@@ -32,7 +32,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('gathered-hearth')), findsOneWidget);
     expect(
-      find.byKey(ValueKey('hearth-$defaultCharacter')),
+      find.byKey(const ValueKey('hearth-$defaultCharacter')),
       findsOneWidget,
     );
     for (final id in charactersOrder) {
@@ -45,7 +45,7 @@ void main() {
     }
     // The lone kindler keeps the classic pose: unflipped, full 72px.
     final lone = tester.widget<SpriteView>(
-      find.byKey(ValueKey('hearth-$defaultCharacter')),
+      find.byKey(const ValueKey('hearth-$defaultCharacter')),
     );
     expect(lone.flipX, isFalse);
     expect(lone.height, 72.0);
