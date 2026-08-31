@@ -3720,3 +3720,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - test/eleventh_way_test.dart (3 tests: proving def + roster-order,
   seed replay, honors + frozen predecessors). Suite 1038/1038.
   0.159.0+185.
+
+## v0.160.0 — The Second Strike (2026-08-31)
+- 8th contextual tip `deep_mark`: deepening's front door — first rest fire
+  with a tier-1 mark in the pool, live anvil, anvil card already seen.
+  Director: onRestArrival gains hasShallowMark; anvil card outranks it;
+  blocked card recurs (one-tip rule). rest_screen derives hasShallowMark
+  from custom_dice tier (absent = 1, v0.155 contract).
+- test/second_strike_test.dart (5 tests); tips_test allSeen deck → 8.
+- Suite 1043/1043 (/work/temp/v0160_full2.log).
+- v0.158.0 artifacts ATTACHED (CI 33409356596, ALL PINS OK, codes
+  184/1184/2184/4184, AAB pin OK; sha256 table appended: apk e498a77f…,
+  aab dfaaf081…, arm64 f1212a7b…, v7a bc5b14d2…, x86_64 98715b8b…).

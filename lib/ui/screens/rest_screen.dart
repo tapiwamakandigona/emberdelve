@@ -18,8 +18,19 @@ class _RestScreenState extends State<RestScreen> {
     // the temper system (map_screen's onMapArrival idiom). canTemper is
     // re-derived here so a spent anvil never teaches an absent button.
     final run = c.state?['run'] as Map?;
+    // v0.160.0 The Second Strike: a tier-1 mark in the pool makes this
+    // fire deepening's first-contact moment (custom dice are always in
+    // the pool by construction; absent tier key = tier 1, v0.155.0).
+    var shallow = false;
+    final customs = run?['custom_dice'] as Map?;
+    if (customs != null) {
+      for (final v in customs.values) {
+        if (((v as Map)['tier'] as int? ?? 1) == 1) shallow = true;
+      }
+    }
     c.tipDirector.onRestArrival(
       canTemper: (run?['tempers_used'] as int? ?? 0) < 2,
+      hasShallowMark: shallow,
     );
   }
 
