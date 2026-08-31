@@ -52,6 +52,7 @@ const List<String> charactersOrder = [
   'runesmith',
   // v0.145.0 — append-LAST.
   'bearer',
+  'mender',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -167,6 +168,21 @@ const Map<String, CharacterDef> characters = {
       {'die': 1, 'face': 12, 'rune': 'echo'},
     ],
     unlockEmbers: 1050,
+  ),
+  // v0.150.0 The Mender — the tenth delver, the HEALER: the mend rune
+  // arrives worked into the Deep Coal's WORST face, so the bad roll is
+  // the one that stitches. Pure data (existing dice + rune) — no
+  // re-anchor. HP is the tuning knob (sweeps in docs/improvements).
+  'mender': CharacterDef(
+    'mender',
+    'The Mender',
+    'The healer: a Deep Coal whose 1 stitches a wound — the worst roll pays.',
+    maxHp: 24,
+    startDice: ['d8', 'd6', 'd6'],
+    startTempers: [
+      {'die': 1, 'face': 1, 'rune': 'mend'},
+    ],
+    unlockEmbers: 1200,
   ),
 };
 

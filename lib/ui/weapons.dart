@@ -130,6 +130,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.45,
     swingAngle: 1.95,
   ),
+  // Healer (v0.150.0): a stitching awl — the tool that closes what the
+  // delve opens. Short reach (menders work close, where the wound is),
+  // sage-green accent to match the sheet's remap.
+  'mender': WeaponDef(
+    'stitching_awl',
+    'Stitching Awl',
+    accent: Color(0xFF8FBF9A),
+    reach: 0.40,
+    idleAngle: 0.22,
+    raiseAngle: -1.15,
+    swingAngle: 1.55,
+  ),
   // Swarm (v0.118.0): a short knapping pick — the tool that makes shards.
   // Stubby reach (the flintwright fights close, like their dice: small and
   // many), flint-tan accent to match the sheet's palette.

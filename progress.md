@@ -3556,3 +3556,30 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   a rollover suspect first.
 - 3 tests; no plates (data-only, same ledger widget). Suite
   1002/1002. 0.149.0+175.
+
+## v0.150.0 — The Mender (2026-08-31)
+- TENTH delver, the HEALER: mend rune worked into the WORST face
+  of a Deep Coal (d8's 1) — the roll every delver curses is the
+  one that stitches. 24 HP (ties flintwright smallest), ['d8',
+  'd6','d6'], NO relic (three dice don't starve coverage — the
+  mark alone tested strong), 1200 embers. SWEEP (400 seeds vs
+  kindler 89.75/67.25/41.50): 28HP 91.75/71.50/46.25 → 26HP
+  91.75/69.50/44.25 → 24HP 90.00/66.00/41.50 SHIPPED (normal
+  between runesmith 65.5 and bearer 67.5; hard exactly par). The
+  ~2-HP prior held all three steps.
+- Fallout: tales 5+40 'Ten keep/Ten chairs' (+ fourth_cycle
+  MIRROR-ASSERT 'Nine chairs'→'Ten chairs' — the tale mirror pins
+  live in fourth_cycle_test, remember them in the delver
+  checklist), codex 10th delver page (113), promise honors → 10,
+  stitching_awl weapon (reach 0.40 sage 0xFF8FBF9A), mender.png
+  (ascetic remap hue+90 sat×0.90 FLOOR 0.28 — desaturated source
+  robes need a sat floor or the hue shift has nothing to bite;
+  first attempt without floor stayed ash-grey), PROVENANCE +
+  sprite_meta rows.
+- Mender seeds: easy loss 3 (rest win 1-12); normal wins
+  1/2/4/6/9/10/11, losses 3/5/7/8/12. Probe tool kept:
+  tool/mender_sweep_probe_test.dart.
+- Plates warmup + 2 sizes; locked-card state renders the sprite
+  dim (expected, not a bug). Suite 1006/1006. 0.150.0+176.
+- NEXT (standing recipe): v0.151 = menders_proving + mender_wins
+  + ten_ways_down.

@@ -200,6 +200,13 @@ final List<CodexEntryDef> codexEntries = [
         'face lands, the floor remembers it. The ninth chair is wider '
         'than the others. Nobody jokes about it twice.',
   ),
+  _delver(
+    'mender',
+    'The mender worked the Mend rune into the worst face of a Deep '
+        'Coal — so the roll every delver curses is the one that '
+        'stitches. Ask why, and they tap the die: the delve takes. '
+        'Something at this fire should give back.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(
