@@ -651,3 +651,17 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   incl. design pin that both levels keep >= 1 heart). Look pass VERIFIED
   phone+desktop at all 4 heart sites.
 - Checkpoint: checkpoints/14-alpha11-heart-pickups.md.
+
+## v1.0.0-alpha.12+24 — Totem Squeeze Purge (2026-08-31)
+- One improvement: purged the "totem squeeze" pocket (stationary totem 1
+  free tile from a >=2-tall wall = unavoidable contact-damage trap) from all
+  three levels that had it. w1_l5: pillar x38-40 collapsed to a 1-tall step
+  + totem moved to the row-12 platform (45,11) — probe flips 10 hits/2
+  deaths/38 s to 3 hits/0 deaths/22 s COMPLETED all seeds. w2_l4: totem
+  perched on the 58-60 wall (59,13) — pocket gone, completion unchanged
+  (73% wipe; creeper attrition is next). w2_l5: totem to (95,9), 2-tile
+  landing restored — COMPLETED all seeds. Permanent gate
+  test/totem_squeeze_test.dart (red on old geometry, VERIFIED) + the wipe
+  probe committed as a skipped test (test/wipe_probe_test.dart). Suite
+  397+1 skipped. Look pass phone+desktop at all three sites.
+- Checkpoint: checkpoints/15-alpha12-totem-squeeze-purge.md.

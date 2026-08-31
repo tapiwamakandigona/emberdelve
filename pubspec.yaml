@@ -3,7 +3,7 @@ description: "Emberwood — pixel action-platformer in the cursed forest of Embe
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 1.0.0-alpha.11+23
+version: 1.0.0-alpha.12+24
 
 environment:
   sdk: ^3.8.1
