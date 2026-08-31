@@ -3903,3 +3903,8 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   loss; full probe: easy losses 3,13; normal wins 1,4,6,9,10,11,14).
   Plates via tool/collier_visual_test.dart (gilder recipe), judged good.
   Suite 1076/1076 FIRST TRY, analyze clean.
+
+## v0.172.0 — The Fourteenth Way (2026-08-31)
+- Collier's proving (seed 6 normal, bot-win pinned; win set was 1,4,6,9,10,11,14) after cutlers_proving; honors The First Coal (char_wins/collier/1) + Fourteen Ways Down (14); the_proven 21→22 (derived pins auto-move). Count pins 21→22 in provings_test (×2 + '0 of 22'/'1 of 22') + eighth_way_test. New test/fourteenth_way_test.dart. Suite 1079/1079 first try, analyze clean. v0.119 pattern, eighth use.
+- Commit 2da5ba686e84673bc7ea4bb39747dd26781b96db; CI 33425977651 (expect 0.172.0+198 → codes 198/1198/2198/4198).
+- v0.170.0 artifacts PUBLISHED (196/1196/2196/4196, ALL PINS OK + AAB PIN OK). v0.171 CI 33424708073 still in flight at this writing.
