@@ -4087,3 +4087,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   hearth_tale_test 5* -> 6*hearthgoldTales. All tales <= 200 chars
   (asserted in the patch before writing). hearthgoldTales stays 10.
 - Suite 1097/1097, analyze clean. NO version bump / tag / news: freeze.
+
+## 2026-08-31 — The Wardrobe Lift: jump anchor on the picker (merged under freeze)
+- The picker screen is sixteen delver cards, THEN the whole Wardrobe
+  (dyes, vistas, dice skins). Owner UI directive (2026-08-31 18:45)
+  dislikes forced scrolling — so the app bar gains a 'WARDROBE' action
+  (checkroom icon, micro/dim — quiet chrome) that walks the lazy
+  ListView in short animated steps until the wardrobe header inflates,
+  then Scrollable.ensureVisible settles it under the app bar. Handles
+  both the full-roster long scroll and a fresh one-delver roster
+  without overshooting. ScrollController owned+disposed by the state;
+  anchor is a GlobalKey on the header Row.
+- LESSON: ListView(children:) inflates lazily — a GlobalKey anchor far
+  below the fold has NO context until scrolled near, so ensureVisible
+  alone can't reach it; step-scroll first. LESSON: pumpAndSettle never
+  settles on screens with idling sprites — pump fixed frames. LESSON
+  (tooling): never issue two parallel file_edit calls against the same
+  file; they race on the original and the second write clobbers the
+  first. Edit one file sequentially.
+- test/wardrobe_jump_test.dart (3 tests). Suite 1100/1100, analyze
+  clean. NO version bump / tag / news: freeze.

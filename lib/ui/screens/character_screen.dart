@@ -10,6 +10,46 @@ class CharacterScreen extends StatefulWidget {
 
 class _CharacterScreenState extends State<CharacterScreen> {
   int ascension = 0;
+  // The Wardrobe anchor: sixteen delver cards stand between the app bar
+  // and the dressing shelves, and nobody should have to scroll past the
+  // whole company to change a dye. The app-bar action walks the lazy
+  // list until the anchor inflates, then settles it under the app bar.
+  final ScrollController _scroll = ScrollController();
+  final GlobalKey _wardrobeKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> _jumpToWardrobe() async {
+    AudioService.instance?.playSfx('ui_tap');
+    // ListView(children:) inflates lazily, so the anchor may not exist
+    // yet. Step toward it viewport by viewport; each step inflates more
+    // of the list, and the walk stops the moment the anchor is real.
+    for (var i = 0; i < 24 && _wardrobeKey.currentContext == null; i++) {
+      if (!_scroll.hasClients) return;
+      final target = math.min(
+        _scroll.offset + 1200,
+        _scroll.position.maxScrollExtent,
+      );
+      await _scroll.animateTo(
+        target,
+        duration: const Duration(milliseconds: 70),
+        curve: Curves.easeOut,
+      );
+      if (target >= _scroll.position.maxScrollExtent) break;
+    }
+    final ctx = _wardrobeKey.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    await Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   // v0.66.0 The Dressed Delver: which delver THE EPITHET shelf dresses.
   // Defaults to the last delved (their record is freshest in mind), else
   // the first unlocked. Screen-local — the dress itself persists in meta.
@@ -144,6 +184,23 @@ class _CharacterScreenState extends State<CharacterScreen> {
       appBar: AppBar(
         title: const Text('Choose a delver', style: EmberText.h2),
         backgroundColor: EmberColors.bg,
+        actions: [
+          // The Wardrobe sits below the whole roster; this is the lift.
+          TextButton.icon(
+            key: const ValueKey('wardrobe-jump'),
+            onPressed: _jumpToWardrobe,
+            icon: const Icon(
+              Icons.checkroom,
+              size: 16,
+              color: EmberColors.textDim,
+            ),
+            label: Text(
+              'WARDROBE',
+              style: EmberText.micro.copyWith(color: EmberColors.textDim),
+            ),
+          ),
+          const SizedBox(width: Space.s),
+        ],
         leading: BackButton(
           onPressed: () {
             AudioService.instance?.playSfx('ui_back');
@@ -156,6 +213,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
         child: ContentClamp(
           child: ScrollComfort(
             child: ListView(
+              controller: _scroll,
               padding: const EdgeInsets.all(Space.l),
               children: [
                 _nextUnlockBar(m),
@@ -166,6 +224,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                 // the Ledger's hearth colors / dice skins: tap owned to wear,
                 // tap locked to buy (price always visible).
                 Row(
+                  key: _wardrobeKey,
                   children: [
                     const Expanded(
                       child: Text('THE WARDROBE', style: EmberText.micro),
