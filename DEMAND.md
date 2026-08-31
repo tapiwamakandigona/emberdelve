@@ -65,6 +65,49 @@ Ranked. Do these instead of releasing.
    pre-filtering by sentiment, official API only.
 5. Keep the full test suite green and `flutter analyze` clean. No skipped tests.
 
+## Owner directive 2026-08-31b — device migration + the paid unlock (DECIDED)
+
+Status check, verified against the repos on 2026-08-31 21:15Z:
+
+- `pyregrove@main` now sets `isMinifyEnabled`/`isShrinkResources`, has real keep
+  rules in `android/app/proguard-rules.pro`, and declares all three of
+  `allowBackup`, `dataExtractionRules`, `fullBackupContent`. Good — that closes
+  its Feb-2027 items.
+- **`emberdelve@legacy/dice-builder` declares none of the three.** R8 is already
+  on here, so migration is the only outstanding Feb-2027 item — and this is the
+  branch that ships the paid product. Close it.
+
+### The entitlement question is now decided: KEEP THE UNLOCK PORTABLE
+
+The first directive said not to change paid-entitlement backup behaviour without
+owner sign-off. Here is the sign-off, with the reasoning, so it is not
+re-litigated later.
+
+`forgeUnlocked` and the redeemed unlock nonces live in `MetaState` ->
+`emberdelve_meta.json` (`lib/meta/meta.dart`, `_fileName = 'emberdelve_meta.json'`).
+
+**Include that file in both backup and device transfer. Do not exclude it.**
+
+Why: buyers who redeemed an offline unlock code — sideload users, who cannot buy
+the Forge through Play billing at all — have **no Play receipt to restore from**.
+For them `emberdelve_meta.json` is the only record that they paid. Excluding it
+would silently destroy a purchase when they change phones, and they would have no
+way to prove it and no way to re-buy. Play-billing buyers can restore via their
+Google account, so they lose nothing either way. The asymmetry is one-sided.
+
+The piracy angle does not change this: a copyable meta file is a theoretical loss
+on a 4.25 USD game, whereas a paying customer losing the thing they bought is a
+real loss, a refund, and a one-star review.
+
+So: add the three attributes, and write `backup_rules.xml` /
+`data_extraction_rules.xml` so `emberdelve_meta.json` is explicitly **included**
+for both cloud backup and device-to-device transfer. Note in code review that on
+some devices `allowBackup="false"` does not disable D2D transfer, so rely on the
+explicit rules rather than on the flag alone.
+
+Do not cut a release for this. The freeze still holds — merge it and let it ride
+until the consolidated release.
+
 ## Product pillars
 
 1. **Tighter, fairer Apple Knight.** Run / double-jump / dash, 3-hit melee,
