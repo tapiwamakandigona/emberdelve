@@ -7,13 +7,14 @@ import 'package:emberdelve/meta/rank.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('the ladder has ten fires and Mountainheart tops it', () {
-    expect(rankTiers.length, 10);
-    final top = rankTiers.last;
-    expect(top.id, 'mountainheart');
-    expect(top.marks, 1700);
+  test('Mountainheart is the tenth fire', () {
+    // v0.161.0: the .last / length pins moved to eleventh_fire_test.dart —
+    // this test now pins the TENTH rung itself, which must never move.
+    final tenth = rankTiers[9];
+    expect(tenth.id, 'mountainheart');
+    expect(tenth.marks, 1700);
     expect(
-      top.withArticle,
+      tenth.withArticle,
       'a Mountainheart',
       reason: '"You delve as …" must stay grammatical',
     );

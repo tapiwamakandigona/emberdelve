@@ -61,4 +61,13 @@ const List<RankTier> rankTiers = [
     1700,
     'What the mountain remembers, it keeps.',
   ),
+  // v0.161.0 The Eleventh Fire: the ladder grew again — veterans who long
+  // ago banked 1700 marks climb again. Threshold gap keeps the curve's
+  // shape (diffs 280, 400, 600, now 850).
+  RankTier(
+    'firstflame',
+    'Firstflame',
+    2550,
+    'Every fire below began with yours.',
+  ),
 ];

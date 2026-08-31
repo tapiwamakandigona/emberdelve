@@ -3735,3 +3735,10 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - v0.159.0 artifacts ATTACHED (CI 33410076412, ALL PINS OK, codes
   185/1185/2185/4185, AAB pin OK; sha256 table appended: apk d797c99f…,
   aab 081b7826…, arm64 f11f5c57…, v7a 6a91c9de…, x86_64 9075032e…).
+- v0.161.0 The Eleventh Fire: 11th rank tier `firstflame` 2550 marks
+  ("Every fire below began with yours."), gap 850 keeps the accelerating
+  curve. eleventh_fire_test (4 tests, length/.last pins moved here);
+  tenth_fire_test now pins rankTiers[9]; rank_test veteran grew to 750
+  wins; rank_ui_test top profile 900 wins. LESSON re-proved: banned-word
+  scan news copy BEFORE the suite run ('expires' cost a cycle). Suite
+  1047/1047.
