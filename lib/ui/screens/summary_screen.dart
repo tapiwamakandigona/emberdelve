@@ -650,6 +650,100 @@ class SummaryScreen extends StatelessWidget {
                                 );
                               },
                             ),
+                            // THE NEXT DELVER (retention lane, DEMAND
+                            // 2026-08-31c focus #1): the picker has always
+                            // known who unlocks next; the run's end — the
+                            // moment a player decides about tomorrow — never
+                            // said it. One quiet panel names the next delver,
+                            // dim sprite and honest arithmetic. Embers banked
+                            // this run counted either way, so the fact is
+                            // equally true after wins and losses (§Ethics:
+                            // recognition facts, no urgency, nothing sold;
+                            // ignoring it costs nothing). Affordable = a
+                            // plain statement, never a countdown.
+                            Builder(
+                              builder: (context) {
+                                final target = c.meta.nextUnlockTarget;
+                                if (target == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                final have = c.meta.embers;
+                                final cost = target.unlockEmbers;
+                                final frac = (have / cost).clamp(0.0, 1.0);
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: Space.l),
+                                  child: Panel(
+                                    key: const ValueKey('next-delver'),
+                                    color: EmberColors.raised,
+                                    child: Row(
+                                      children: [
+                                        Opacity(
+                                          opacity: 0.55,
+                                          child: SpriteView(
+                                            target.id,
+                                            key: const ValueKey(
+                                              'next-delver-sprite',
+                                            ),
+                                            height: 40,
+                                            animate: false,
+                                          ),
+                                        ),
+                                        const SizedBox(width: Space.m),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'NEXT DELVER — '
+                                                '${target.name.toUpperCase()}',
+                                                style: EmberText.micro,
+                                              ),
+                                              const SizedBox(height: Space.s),
+                                              if (have >= cost)
+                                                const Text(
+                                                  'The embers are banked. '
+                                                  'They wait at the hearth.',
+                                                  style: EmberText.bodyDim,
+                                                )
+                                              else ...[
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  child: Stack(
+                                                    children: [
+                                                      Container(
+                                                        height: 8,
+                                                        color: EmberColors.bg,
+                                                      ),
+                                                      FractionallySizedBox(
+                                                        widthFactor: frac,
+                                                        child: Container(
+                                                          height: 8,
+                                                          color: EmberColors
+                                                              .ember,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: Space.s,
+                                                ),
+                                                Text(
+                                                  '$have / $cost embers',
+                                                  style: EmberText.bodyDim,
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                             const Spacer(),
                             // Fast restart (backlog #8): straight into a new run — boon pick
                             // included — without a detour through the title.

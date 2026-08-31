@@ -4165,3 +4165,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   spoken_dice/ember_sink/enemy_record tests. Also: chips beyond the
   viewport need tester.ensureVisible before tap.
 - Plate tool: tool/codex_lanes_visual_test.dart. Suite 1105/1105.
+
+## 2026-09-01 — THE NEXT DELVER (retention lane #1, merged under freeze)
+- DEMAND 2026-08-31c focus #1 is retention (28 MAU, 7-day retention of 1
+  device) — first session / first week, "the reason to open the app
+  tomorrow." First answer: the summary screen — the exact moment a player
+  decides about day 2 — never named the next delver, though the picker
+  has always known (meta.nextUnlockTarget). A first loss banks embers
+  toward the Warden and the player was never told.
+- SummaryScreen: 'next-delver' panel between the waymarks and Delve
+  again — dim 40dp sprite of the cheapest locked delver, 'NEXT DELVER —
+  THE WARDEN', an ember progress bar with the profile's real '<have> /
+  <cost> embers'. Affordable → plain 'The embers are banked. They wait
+  at the hearth.' Roster complete → panel absent. Wins AND losses
+  (embers banked either way). §Ethics: recognition facts, no urgency,
+  no countdown, nothing sold.
+- test/next_delver_test.dart (3): loss names the Warden with real
+  arithmetic; affordable swaps to the banked fact (no '/' text);
+  roster-complete says nothing. Plates tool/next_delver_visual_test.dart
+  at 320/360/412 — panel sits directly above the Delve-again CTA.
+- Suite 1108/1108, analyze clean. No tag/version bump (freeze).
