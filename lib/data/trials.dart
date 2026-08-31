@@ -67,6 +67,8 @@ const List<String> trialsOrder = [
   'marked_day',
   // v0.154.0 — append-LAST, same contract.
   'keepers_day',
+  // v0.156.0 — append-LAST, same contract.
+  'deep_day',
 ];
 
 const Map<String, TrialDef> trials = {
@@ -147,6 +149,16 @@ const Map<String, TrialDef> trials = {
     'End the delve carrying two or more relics.',
     goalId: 'relics_at_least',
     goalParam: 2,
+    emberBonus: 15,
+  ),
+  // v0.156.0 The Deep Day: the Deep Mark's day (goal kind
+  // 'deep_marks_at_least', judged from the run's own die records).
+  'deep_day': TrialDef(
+    'deep_day',
+    'The Deep Day',
+    'Deepen a rune mark at a rest fire.',
+    goalId: 'deep_marks_at_least',
+    goalParam: 1,
     emberBonus: 15,
   ),
 };

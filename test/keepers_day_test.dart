@@ -13,7 +13,8 @@ void main() {
     expect(t.goalParam, 2);
     expect(t.emberBonus, 15, reason: 'goal days pay one flat rate');
     expect(t.mutators, isEmpty, reason: 'goal days run vanilla rules');
-    expect(trialsOrder.last, 'keepers_day', reason: 'append-LAST');
+    expect(trialsOrder.contains('keepers_day'), isTrue,
+        reason: 'stays in the rotation; the newest trial owns the .last pin');
   });
 
   test('the goal judges the relic list exactly', () {
