@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ (cloud backup + device-to-device transfer). Mirrors
+     backup_rules.xml — see the rationale there. The paid unlock file is
+     explicitly INCLUDED in BOTH sections: on some devices
+     allowBackup="false" does not disable D2D transfer, so portability is
+     guaranteed by these explicit rules rather than by any flag.
+     No disableIfNoEncryptionCapabilities: blocking backup on
+     non-encrypting devices would strand a purchase, which is worse than
+     the theoretical copy risk on a $4.25 game. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="file" path="emberdelve_meta.json"/>
+        <include domain="file" path="emberdelve_run.json"/>
+        <include domain="file" path="emberdelve_settings.json"/>
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path="emberdelve_meta.json"/>
+        <include domain="file" path="emberdelve_run.json"/>
+        <include domain="file" path="emberdelve_settings.json"/>
+    </device-transfer>
+</data-extraction-rules>

@@ -3983,3 +3983,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Next lead scouting: sixteenth delver (LAST roster slot, unlock 2100?),
   sixth tale cycle, further UI polish (instr 18), perf/anim rotation
   (instr 17), roster "Wardrobe" jump anchor idea.
+
+## 2026-08-31 — DEMAND freeze acknowledged + Feb-2027 migration item closed
+- Pulled two owner-authored DEMAND.md commits (12bd0ec, 1a82b1d): RELEASE
+  FREEZE (no new tags/releases/Play until owner's consolidated cut; work
+  and merging continue) + ranked freeze worklist + DECIDED: the paid
+  unlock file stays portable. Freeze honored from this point; flagged to
+  requester in-app for confirmation since it supersedes the per-improvement
+  release instruction.
+- MIGRATION (Feb-2027 item, per directive 2026-08-31b): AndroidManifest
+  now declares allowBackup="true" + fullBackupContent + dataExtractionRules.
+  New res/xml/backup_rules.xml + data_extraction_rules.xml explicitly
+  INCLUDE emberdelve_meta.json (+ run + settings) in cloud backup AND
+  device transfer ("file" domain = getApplicationSupportDirectory).
+  .tmp atomic-save files not included. No release cut — riding the freeze.
+- No Dart changes; push CI will validate the manifest merge + @xml refs.

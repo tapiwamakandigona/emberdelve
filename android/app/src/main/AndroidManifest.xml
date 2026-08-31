@@ -22,10 +22,18 @@
         tools:node="remove"/>
     <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
         tools:node="remove"/>
+    <!-- Backup + device migration (Feb-2027 Play quality requirement).
+         The paid Forge unlock (emberdelve_meta.json) is explicitly INCLUDED
+         in cloud backup and D2D transfer — owner decision, DEMAND.md
+         "Owner directive 2026-08-31b". allowBackup is true on purpose;
+         the explicit include lists in res/xml/ are the source of truth. -->
     <application
         android:label="emberdelve"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"

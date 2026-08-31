@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and below (Auto Backup). Explicit include list: when any
+     <include> is present, ONLY the listed paths are backed up.
+
+     emberdelve_meta.json is proof of purchase for offline unlock-code
+     buyers (forgeUnlocked + redeemed nonces live in MetaState). They have
+     no Play receipt to restore from, so this file MUST survive backup and
+     device transfer. Owner decision recorded in DEMAND.md
+     ("Owner directive 2026-08-31b"). Do not exclude it.
+
+     path_provider's getApplicationSupportDirectory() maps to the app's
+     files/ dir on Android, which is the "file" backup domain. The .tmp
+     files written during atomic saves are intentionally not included. -->
+<full-backup-content>
+    <include domain="file" path="emberdelve_meta.json"/>
+    <include domain="file" path="emberdelve_run.json"/>
+    <include domain="file" path="emberdelve_settings.json"/>
+</full-backup-content>
