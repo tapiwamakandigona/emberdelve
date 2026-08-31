@@ -3855,3 +3855,5 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   only before pushing — the account owner can land PRs mid-run. Also:
   never compute the release --target sha after a failed rebase; and
   `git rebase --continue` needs GIT_EDITOR=true in this sandbox.
+- v0.166.0 artifacts ATTACHED (CI 33418478520, ALL PINS OK, codes
+  192/1192/2192/4192, AAB pin OK; sha256 table appended, apk b8447ef8…).
