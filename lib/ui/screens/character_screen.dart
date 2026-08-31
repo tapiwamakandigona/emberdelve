@@ -34,10 +34,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
         _scroll.offset + 1200,
         _scroll.position.maxScrollExtent,
       );
+      // Linear mid-walk: chained easeOut steps make a saw-tooth velocity
+      // (decelerate, jerk, decelerate). Constant speed across steps reads
+      // as ONE glide; the final ensureVisible below supplies the ease-out.
       await _scroll.animateTo(
         target,
         duration: const Duration(milliseconds: 70),
-        curve: Curves.easeOut,
+        curve: Curves.linear,
       );
       if (target >= _scroll.position.maxScrollExtent) break;
     }

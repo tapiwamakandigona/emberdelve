@@ -4119,3 +4119,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - LESSON: any new AppBar action steals title slack — re-plate the bar
   at 320 wide whenever one is added; scale titles, never ellipsize.
 - Suite 1100/1100, analyze clean. Plate tool kept in tool/.
+
+## 2026-08-31 — perf lane: one glide, one pin (merged under freeze)
+- Lift glide: the wardrobe walk was 24 chained easeOut steps — a
+  saw-tooth velocity (decelerate, jerk, decelerate). Mid-walk steps are
+  now Curves.linear, so the walk reads as ONE constant-speed glide; the
+  final ensureVisible keeps the easeOutCubic settle. (Owner directive:
+  smooth animations.)
+- Scoped-rebuild pin: GameRoot's combat scoping (identical CombatScreen
+  instance across controller notifications so Element.updateChild
+  short-circuits) lived only in a comment. test/scoped_rebuild_test.dart
+  pins it: a c.notifyListeners() must NOT produce a new CombatScreen
+  widget instance, with the deliberately-_whole shop screen as the
+  sensitivity control (it MUST produce a new instance). One refactor can
+  no longer silently regress combat to whole-screen rebuilds per sim
+  command.
+- Audit alongside: SpriteView already RepaintBoundary-wrapped with a
+  cached repaint driver; picker uses local setState only (user-action
+  frequency); map/reward hot paths carry their own past perf fixes. No
+  blind micro-optimization added.
+- Suite 1102/1102, analyze clean.
