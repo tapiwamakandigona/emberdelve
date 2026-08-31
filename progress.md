@@ -4107,3 +4107,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   first. Edit one file sequentially.
 - test/wardrobe_jump_test.dart (3 tests). Suite 1100/1100, analyze
   clean. NO version bump / tag / news: freeze.
+
+## 2026-08-31 — plate critique caught a title squeeze (merged under freeze)
+- Rendered wardrobe-lift plates (tool/wardrobe_lift_visual_test.dart,
+  390x844 + 320x568, before/after the lift). CRITIQUE FINDING: the new
+  WARDROBE action ellipsized the app-bar title ('CHOOSE A DELV...' at
+  390, 'CHOOSE...' at 320). Fix: title wrapped in FittedBox scaleDown —
+  full 'Choose a delver' at every width, slightly smaller at 320.
+  Landed plates verified: wardrobe header settles right under the app
+  bar; chip row + ember purse render clean at both widths.
+- LESSON: any new AppBar action steals title slack — re-plate the bar
+  at 320 wide whenever one is added; scale titles, never ellipsize.
+- Suite 1100/1100, analyze clean. Plate tool kept in tool/.

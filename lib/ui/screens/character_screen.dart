@@ -182,7 +182,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
     final maxAsc = maxAscensionFor(m); // Forge-gated (v0.4.0)
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose a delver', style: EmberText.h2),
+        // The WARDROBE action costs the title its slack — scale, don't
+        // ellipsize ('CHOOSE A DELV…' is not a title).
+        title: const FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('Choose a delver', style: EmberText.h2),
+        ),
         backgroundColor: EmberColors.bg,
         actions: [
           // The Wardrobe sits below the whole roster; this is the lift.
