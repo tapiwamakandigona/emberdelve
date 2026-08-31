@@ -3793,3 +3793,5 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   latest cycle test) — grep 'hearthgoldTales' in test/ before a new cycle.
 - Tale copy cap is 200 chars (hearth_tale_test), tighter than the cycle
   tests' 260. Suite 1059/1059.
+- v0.164.0 artifacts ATTACHED (CI 33415964772, ALL PINS OK, codes
+  190/1190/2190/4190, AAB pin OK; sha256 table appended, apk b075eb14…).
