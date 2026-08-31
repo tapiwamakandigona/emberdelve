@@ -691,3 +691,20 @@ Owner (DM): "cut me a pre release I can test". Cut from main at ef73fa8
   new. Suite 409+1 skipped, analyze clean. Look pass phone+desktop at the
   vault site.
 - Checkpoint: checkpoints/17-alpha14-vault-break-out.md.
+
+## v1.0.0-alpha.15+27 — Crown Strike (2026-08-31)
+- One improvement: the boss design-intent review the alpha.14 sweep called
+  for. Verdict: masher wipes on both bosses are BY DESIGN (fairness_test
+  already pins "bosses are a skill check") — a coached-strategy bot beats
+  Grove Golem 22 s/1 death and Kiln Golem 13 s/0 deaths on all 4 seeds. But
+  the review caught a real defect: Kiln Golem is caged in its pen and ground
+  melee CANNOT reach it (0/60 dmg measured from every ground bot — the perch
+  route over the pillar crowns is mandatory), yet its sign coached ground
+  play ("Keep moving!"). Fix: w2_boss sign rewritten to coach the crown
+  strike ("no blade reaches it from the floor. Climb the vent pillars and
+  strike its crown"). New permanent gate test/boss_intent_test.dart (2
+  tests, 4 seeds each): each boss's coached strategy must complete the level
+  with a life to spare — goes red if a level edit ever breaks the w1
+  hit-and-run windows or the w2 moat-jump/perch reach. Suite 411+1 skipped,
+  analyze clean. Look pass phone+desktop at the sign site.
+- Checkpoint: checkpoints/18-alpha15-crown-strike.md.

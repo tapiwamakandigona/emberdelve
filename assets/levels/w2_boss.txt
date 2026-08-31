@@ -4,7 +4,7 @@ meta: world=2
 meta: env=cave
 meta: music=boss_combat
 meta: par_s=150
-meta: sign1=The Kiln Golem bars the deep door. Fire lingers where its embers fall - and vents erupt in waves. Keep moving!
+meta: sign1=The Kiln Golem bars the deep door, walled into its own kiln - no blade reaches it from the floor. Climb the vent pillars and strike its crown. Fire lingers where its embers fall!
 ........................................................
 ........................................................
 ########################################################
