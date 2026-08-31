@@ -113,8 +113,9 @@ void main() {
     // A veteran profile: hundreds of wins, full bestiary, full codex.
     // v0.149.0: the ladder grew a tenth tier; the veteran grew with it.
     // v0.161.0: an eleventh fire — the veteran grew again (2605 marks).
+    // v0.166.0: the Everburn — the veteran grew again (3805 marks).
     final m = _profile(
-      wins: 750,
+      wins: 1150,
       bosses: 6,
       felled: 35,
       met: 35,

@@ -7,9 +7,9 @@ import 'package:emberdelve/meta/rank.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('the ladder has eleven fires and Firstflame tops it', () {
-    expect(rankTiers.length, 11);
-    final top = rankTiers.last;
+  test('Firstflame holds the eleventh chair', () {
+    // v0.166.0 grew the ladder past it; the tier itself is frozen here.
+    final top = rankTiers[10];
     expect(top.id, 'firstflame');
     expect(top.marks, 2550);
     expect(
@@ -41,9 +41,13 @@ void main() {
     );
   });
 
-  test('a Firstflame stands at the top of the ladder', () {
-    final m = MetaState()..runsWon = 900; // 2700 marks: past the new top.
+  test('a Firstflame has a next fire again', () {
+    final m = MetaState()..runsWon = 900; // 2700 marks: the old ladder's top.
     expect(rankFor(m).id, 'firstflame');
-    expect(nextRank(m), isNull);
+    expect(
+      nextRank(m)!.id,
+      'everburn',
+      reason: 'v0.166.0: the veteran plateau is a climb again',
+    );
   });
 }

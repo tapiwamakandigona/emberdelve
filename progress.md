@@ -3803,3 +3803,7 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   twelfth_fire_test; eleventh_fire_test 'Firstflame stands at top' becomes
   'has a next fire again'; rank_test veteran wins 750->1150; rank_ui_test
   runsWon 900->1300 with comment updates.
+- v0.166.0 "The Everburn" RELEASED (source): twelfth rank tier 'everburn'
+  3750 marks, gap 1200 keeps the curve; pins moved eleventh_fire_test ->
+  new twelfth_fire_test; rank_test veteran wins 1150, rank_ui_test
+  runsWon 1300. Suite 1067/1067 first try. News entry + docs.

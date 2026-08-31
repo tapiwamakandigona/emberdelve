@@ -70,4 +70,13 @@ const List<RankTier> rankTiers = [
     2550,
     'Every fire below began with yours.',
   ),
+  // v0.166.0 The Everburn: a twelfth fire above Firstflame — veterans who
+  // long ago banked 2550 marks climb again. Threshold gap keeps the curve's
+  // shape (diffs 280, 400, 600, 850, now 1200).
+  RankTier(
+    'everburn',
+    'Everburn',
+    3750,
+    'Fires gutter and fall. Yours has not.',
+  ),
 ];
