@@ -53,7 +53,8 @@ const List<String> vistasOrder = [
   'frostvein', // v0.112.0 — append-LAST
   'forgelight', // v0.126.0 — append-LAST
   'runemark', // v0.134.0
-  'tenthfire', // v0.152.0 — append-LAST
+  'tenthfire', // v0.152.0
+  'amethyst', // v0.164.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -200,6 +201,19 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.10,
     wash: Color(0x40E8A050),
   ),
+  // v0.164.0 The Amethyst Vein: the won company's vista — not just every
+  // chair filled, but every delver carried out of the deep with a win.
+  'amethyst': VistaDef(
+    'amethyst',
+    'Amethyst',
+    'Vein-purple crystal in the dark. Twelve roads down, twelve roads '
+        'back — the rock remembers each one.',
+    unlockLine: 'Win a delve with twelve different delvers.',
+    hueDeg: -48,
+    satMul: 1.8,
+    valMul: 1.04,
+    wash: Color(0x46603090),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -219,6 +233,7 @@ bool vistaUnlockedFor(
   required int tempersSet,
   required int runesMarked,
   required int charsUnlocked,
+  required int delversCleared,
 }) {
   switch (id) {
     case 'emberlight':
@@ -258,6 +273,12 @@ bool vistaUnlockedFor(
     // milestones freeze, exactly like full_roster's plain 'four').
     case 'tenthfire':
       return charsUnlocked >= 10;
+    // v0.164.0: fed by the junk-proofed distinct-winners count
+    // (delvers_cleared — only real roster ids with a banked win). FROZEN
+    // at twelve — a gate that tracked the live roster would re-lock this
+    // vista the day a thirteenth delver joins (v0.100 lesson).
+    case 'amethyst':
+      return delversCleared >= 12;
     default:
       return false;
   }

@@ -23,6 +23,7 @@ void main() {
   test('the resolver flips exactly at ten tempers', () {
     bool at(int tempers) => vistaUnlockedFor(
       'forgelight',
+      delversCleared: 0,
       runsWon: 0,
       distinctFelled: 0,
       hardWins: 0,

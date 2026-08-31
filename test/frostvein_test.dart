@@ -36,6 +36,7 @@ void main() {
     expect(vistas['frostvein'], isNotNull);
     bool unlocked(int wins) => vistaUnlockedFor(
       'frostvein',
+      delversCleared: 0,
       runsWon: 99,
       distinctFelled: 99,
       hardWins: 99,

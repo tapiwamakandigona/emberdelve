@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 bool _unlocked(int chars) => vistaUnlockedFor(
   'tenthfire',
+  delversCleared: 0,
   runsWon: 0,
   distinctFelled: 0,
   hardWins: 0,
@@ -26,8 +27,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('tenthfire stands last with a warm grade and a frozen gate', () {
-    expect(vistasOrder.last, 'tenthfire');
-    expect(vistasOrder.length, 11);
+    // v0.164.0: amethyst stands last now — the .last pin lives in
+    // amethyst_test; tenthfire keeps its seat by index.
+    expect(vistasOrder[10], 'tenthfire');
+    expect(vistasOrder.length, 12);
     final def = vistas['tenthfire']!;
     expect(def.hueDeg, isNot(0), reason: 'a vista must actually recolor');
     expect(_unlocked(9), isFalse);

@@ -3767,3 +3767,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   aab a36b48bd…, arm64 1890d3af…, v7a 001143f0…, x86_64 a9535fd3…).
 - v0.162.0 artifacts ATTACHED (CI 33413826091, ALL PINS OK, codes
   188/1188/2188/4188, AAB pin OK; sha256 table appended, apk e3d2c221…).
+
+## v0.164.0 — The Amethyst Vein (2026-08-31)
+- Twelfth vista 'amethyst' (append-LAST): hue -48, sat x1.8, val x1.04,
+  wash 0x46603090 — plum/vein-purple, plate-checked apart from duskquartz.
+- Gate: delversCleared >= 12, FROZEN; fed by junk-proofed
+  statValue(meta,'delvers_cleared'). New required param on vistaUnlockedFor
+  (all 18 call sites updated).
+- Pins: test/amethyst_test.dart (last, 11/12 table, freeze tripwire,
+  controller feed, junk-key immunity); tenth_chair .last pin moved to index
+  10; vistasOrder.length 12 in runemark_test. Suite 1056/1056 first try.
+- Lesson re-proved: check the plate against NEIGHBOR vistas (first grade at
+  -60/x1.35/x0.96 was a duskquartz twin; retuned before ship).

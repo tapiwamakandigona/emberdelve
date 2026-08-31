@@ -66,6 +66,7 @@ void main() {
         expect(
           vistaUnlockedFor(
             id,
+            delversCleared: 0,
             runsWon: 0,
             distinctFelled: 0,
             hardWins: 0,
@@ -84,6 +85,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'moonveil',
+          delversCleared: 0,
           runsWon: 1,
           distinctFelled: 0,
           hardWins: 0,
@@ -100,6 +102,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'verdigris',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 15,
           hardWins: 0,
@@ -116,6 +119,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'verdigris',
+          delversCleared: 0,
           runsWon: 9,
           distinctFelled: 14,
           hardWins: 9,
@@ -132,6 +136,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'bloodstone',
+          delversCleared: 0,
           runsWon: 5,
           distinctFelled: 30,
           hardWins: 0,
@@ -148,6 +153,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'bloodstone',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 0,
           hardWins: 1,
@@ -165,6 +171,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'duskquartz',
+          delversCleared: 0,
           runsWon: 9,
           distinctFelled: 30,
           hardWins: 9,
@@ -181,6 +188,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'duskquartz',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 0,
           hardWins: 0,
@@ -200,6 +208,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'deepshale',
+          delversCleared: 0,
           runsWon: 99,
           distinctFelled: 99,
           hardWins: 99,
@@ -216,6 +225,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'deepshale',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 0,
           hardWins: 0,
@@ -235,6 +245,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'hearthgold',
+          delversCleared: 0,
           runsWon: 99,
           distinctFelled: 99,
           hardWins: 99,
@@ -251,6 +262,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'hearthgold',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 0,
           hardWins: 0,
@@ -270,6 +282,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'hearthgold',
+          delversCleared: 0,
           runsWon: 0,
           distinctFelled: 0,
           hardWins: 0,
@@ -286,6 +299,7 @@ void main() {
       expect(
         vistaUnlockedFor(
           'nonsense',
+          delversCleared: 0,
           runsWon: 99,
           distinctFelled: 99,
           hardWins: 99,
