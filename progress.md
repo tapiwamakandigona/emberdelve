@@ -4285,3 +4285,18 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   scale the cap clips again. For helper copy, wrap freely and let the
   row grow; plate at 1.3x before calling a wrap fix done.
 - Suite 1110/1110, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE SETTLED ROOM (UI lane; settings scroll-comfort plate check)
+- New plate tool tool/settings_scroll_visual_test.dart (NOT in CI):
+  settings at 320x568 — top, mid-scroll, bottom. First eyeball pass on
+  this screen since ScrollComfort landed in v0.174.
+- ScrollComfort verdict: fades behave honestly — bottom fade only at
+  the top, both fades mid-scroll, top fade only at the bottom. No
+  remediation.
+- One cramp: every settings action row put Expanded(Text) flush
+  against its button — on 320px the Paste row's copy ("…to merge")
+  touched the PASTE plate. Space.m gutter inserted between text and
+  button in all ten action rows (save-code, unlock-code, tour, about,
+  et al). Re-plated: every row breathes; 1.3x plates unchanged-good.
+- Suite 1110/1110, analyze clean, large-font plates re-verified.
+  No tag/bump (freeze).

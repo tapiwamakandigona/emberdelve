@@ -365,6 +365,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         style: EmberText.body,
                                       ),
                                     ),
+                                    const SizedBox(width: Space.m),
                                     EmberButton(
                                       'Check',
                                       key: const ValueKey('update-check-now'),
@@ -389,6 +390,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           style: EmberText.bodyDim,
                                         ),
                                       ),
+                                      const SizedBox(width: Space.m),
                                       EmberButton(
                                         _linkCopied ? 'Copied' : 'Copy link',
                                         key: const ValueKey('update-copy-link'),
@@ -481,6 +483,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     style: EmberText.body,
                                   ),
                                 ),
+                                const SizedBox(width: Space.m),
                                 EmberButton(
                                   on ? 'Disconnect' : 'Connect',
                                   key: const ValueKey('pgs-connect'),
@@ -515,6 +518,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       style: EmberText.body,
                                     ),
                                   ),
+                                  const SizedBox(width: Space.m),
                                   EmberButton(
                                     'View',
                                     key: const ValueKey('pgs-leaderboards'),
@@ -559,6 +563,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: EmberText.body,
                             ),
                           ),
+                          const SizedBox(width: Space.m),
                           EmberButton(
                             'Copy',
                             key: const ValueKey('copy-save-code'),
@@ -583,6 +588,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: EmberText.body,
                             ),
                           ),
+                          const SizedBox(width: Space.m),
                           EmberButton(
                             'Paste',
                             key: const ValueKey('paste-save-code'),
@@ -607,6 +613,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: EmberText.body,
                             ),
                           ),
+                          const SizedBox(width: Space.m),
                           EmberButton(
                             _tourQueued ? 'Queued' : 'Replay',
                             key: const ValueKey('replay-tour'),
@@ -640,6 +647,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: EmberText.body,
                             ),
                           ),
+                          const SizedBox(width: Space.m),
                           EmberButton(
                             'Redeem',
                             key: const ValueKey('redeem-unlock-code'),
@@ -747,6 +755,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: EmberText.body,
                         ),
                       ),
+                      const SizedBox(width: Space.m),
                       EmberButton(
                         'View',
                         onTap: () {
@@ -777,6 +786,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const Expanded(
                         child: Text('Past posts', style: EmberText.body),
                       ),
+                      const SizedBox(width: Space.m),
                       EmberButton(
                         'Read',
                         onTap: () {
