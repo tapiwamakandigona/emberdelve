@@ -127,6 +127,15 @@ MetaState mergeMetaStates(MetaState local, MetaState cloud) {
     hearthTalesHeard: local.hearthTalesHeard > cloud.hearthTalesHeard
         ? local.hearthTalesHeard
         : cloud.hearthTalesHeard,
+    // Seven Hearths: MAX days, OR settlement — never regresses, never
+    // double-pays (the grant checks sevenHearthsSettled before paying).
+    hearthDaysLit: local.hearthDaysLit > cloud.hearthDaysLit
+        ? local.hearthDaysLit
+        : cloud.hearthDaysLit,
+    lastHearthDay: local.hearthDaysLit >= cloud.hearthDaysLit
+        ? local.lastHearthDay
+        : cloud.lastHearthDay,
+    sevenHearthsSettled: local.sevenHearthsSettled || cloud.sevenHearthsSettled,
     charRuns: _maxMap(local.charRuns, cloud.charRuns),
     charWins: _maxMap(local.charWins, cloud.charWins),
     charHardWins: _maxMap(local.charHardWins, cloud.charHardWins),

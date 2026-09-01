@@ -38,6 +38,7 @@ import '../sim/keystones.dart';
 import '../sim/run_dice.dart';
 import '../sim/sim.dart';
 import 'daily_share.dart';
+import 'hearths.dart';
 import 'trials.dart';
 import 'run_trace.dart';
 import 'weekly.dart';
@@ -1169,6 +1170,7 @@ class GameController extends ChangeNotifier {
   /// away banks nothing) but still counts the run as played.
   void abandonRun() {
     if (sim == null) return;
+    _lightHearth();
     meta.runsPlayed += 1;
     final char = sim!.run?['character'] as String? ?? defaultCharacter;
     meta.charRuns[char] = (meta.charRuns[char] ?? 0) + 1;
@@ -1299,11 +1301,30 @@ class GameController extends ChangeNotifier {
     MetaStore.save(meta);
   }
 
+  /// THE SEVEN HEARTHS (v0.178.0): one hearth per distinct local day a
+  /// run ENDS (won, lost, or abandoned — the sitting-down was real either
+  /// way). Days need not be consecutive; nothing resets (§Ethics). The
+  /// seventh settles [hearthGrantEmbers] spendable embers exactly once —
+  /// deliberately NOT into lifetimeEmbers, which stays a record of
+  /// embers banked from delves (vistas/honors read it).
+  void _lightHearth() {
+    if (meta.hearthDaysLit >= hearthCount) return;
+    final today = dailyKey(DateTime.now());
+    if (meta.lastHearthDay == today) return; // this day already lit one
+    meta.lastHearthDay = today;
+    meta.hearthDaysLit += 1;
+    if (meta.hearthDaysLit >= hearthCount && !meta.sevenHearthsSettled) {
+      meta.sevenHearthsSettled = true;
+      meta.embers += hearthGrantEmbers;
+    }
+  }
+
   void _bankRun() {
     if (_bankedThisRun || sim == null) return;
     _bankedThisRun = true;
     final run = sim!.run;
     if (run == null) return;
+    _lightHearth();
     final banked = run['embers'] as int? ?? 0;
     final char = run['character'] as String? ?? defaultCharacter;
     // v0.13.0 Delver's Rank: rank is derived, so a rank-up is just the tier

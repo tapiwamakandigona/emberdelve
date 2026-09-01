@@ -275,6 +275,51 @@ class TitleScreen extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
+                                // THE SEVEN HEARTHS (v0.178.0, retention
+                                // lane): the first-week arc. One hearth per
+                                // distinct day a delve ends — never
+                                // consecutive-day pressure, nothing goes out
+                                // (§Ethics; lib/game/hearths.dart). The row
+                                // retires after the settlement day: the arc
+                                // resolves instead of trailing off.
+                                if (!m.sevenHearthsSettled ||
+                                    m.lastHearthDay ==
+                                        dailyKey(DateTime.now())) ...[
+                                  const SizedBox(height: Space.m),
+                                  Row(
+                                    key: const ValueKey('hearth-row'),
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    children: [
+                                      for (var i = 0; i < hearthCount; i++)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 3,
+                                              ),
+                                          child: Icon(
+                                            Icons.local_fire_department,
+                                            size: 16,
+                                            color: i < m.hearthDaysLit
+                                                ? EmberColors.ember
+                                                : EmberColors.textDim
+                                                      .withValues(
+                                                        alpha: 0.35,
+                                                      ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: Space.xs),
+                                  Text(
+                                    hearthLine(m.hearthDaysLit),
+                                    key: const ValueKey('hearth-line'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                                 const SizedBox(height: Space.m),
                                 // Weekly Delve (P3): one shared seed AND one declared
                                 // modifier per Monday-aligned week — the same challenge

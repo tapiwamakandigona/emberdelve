@@ -186,6 +186,14 @@ class MetaState {
   // v0.96.0 The Hearth Tale: rest-fire hollows left, lifetime. Indexes
   // the fixed tale sequence in lib/data/tales.dart. Monotonic, MAX-merged.
   int hearthTalesHeard;
+  // v0.178.0 THE SEVEN HEARTHS: the first seven distinct local days a
+  // delve was finished (lib/game/hearths.dart). Not consecutive days —
+  // a gap costs nothing (§Ethics: no streaks, no expiry). Monotonic,
+  // cloud merge MAX; `sevenHearthsSettled` (grant paid) merges OR so a
+  // merge can never double-pay or revoke the settlement.
+  int hearthDaysLit; // 0..7 distinct days played
+  String? lastHearthDay; // dailyKey of the last day that lit one
+  bool sevenHearthsSettled; // 60-ember settlement paid
   // v0.11.0 Delver's Ledger — per-enemy record, keyed by enemy id. All
   // event-derived in GameController.recordCombatStats, never estimated.
   // Cloud merge: per-key MAX (same convention as charRuns/charWins).
@@ -272,6 +280,9 @@ class MetaState {
     this.winsNoRest = 0,
     this.hardWins = 0,
     this.hearthTalesHeard = 0,
+    this.hearthDaysLit = 0,
+    this.lastHearthDay,
+    this.sevenHearthsSettled = false,
     Map<String, int>? enemyMet,
     Map<String, int>? enemyFelled,
     Map<String, int>? enemyFellTo,
@@ -370,6 +381,9 @@ class MetaState {
     if (winsNoRest > 0) 'winsNoRest': winsNoRest,
     if (hardWins > 0) 'hardWins': hardWins,
     if (hearthTalesHeard > 0) 'hearthTalesHeard': hearthTalesHeard,
+    if (hearthDaysLit > 0) 'hearthDaysLit': hearthDaysLit,
+    if (lastHearthDay != null) 'lastHearthDay': lastHearthDay,
+    if (sevenHearthsSettled) 'sevenHearthsSettled': true,
     if (enemyMet.isNotEmpty) 'enemyMet': enemyMet,
     if (enemyFelled.isNotEmpty) 'enemyFelled': enemyFelled,
     if (enemyFellTo.isNotEmpty) 'enemyFellTo': enemyFellTo,
@@ -605,6 +619,9 @@ class MetaState {
     winsNoRest: j['winsNoRest'] as int? ?? 0,
     hardWins: j['hardWins'] as int? ?? 0,
     hearthTalesHeard: j['hearthTalesHeard'] as int? ?? 0,
+    hearthDaysLit: j['hearthDaysLit'] as int? ?? 0,
+    lastHearthDay: j['lastHearthDay'] as String?,
+    sevenHearthsSettled: j['sevenHearthsSettled'] as bool? ?? false,
     enemyMet: _intMap(j['enemyMet']),
     enemyFelled: _intMap(j['enemyFelled']),
     enemyFellTo: _intMap(j['enemyFellTo']),
