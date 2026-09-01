@@ -192,7 +192,15 @@ class _RestScreenState extends State<RestScreen> {
           child: _forgeRow(run, dice0[i], i + 1),
         ),
     ];
-    if (cramped) {
+    // THE OPEN FORGE (2026-09-01): the old default layout gave the forge
+    // list only the leftover strip under the buttons — a ~107px letterbox
+    // hiding most of a multi-row forge behind a nested scroll nobody could
+    // see (scroll audit: 586px of hidden extent behind one visible row).
+    // Whenever there IS something to forge, the whole hollow becomes one
+    // full-height list: every option sits inline and short contents fit
+    // with no scroll at all. The centered Column stays for the pure
+    // rest-only hollow, which always fits.
+    if (cramped || forgeable.isNotEmpty) {
       return ScrollComfort(
         child: ListView(
           padding: const EdgeInsets.only(bottom: Space.l),
@@ -220,15 +228,7 @@ class _RestScreenState extends State<RestScreen> {
         restButton,
         if (temperButton != null) temperButton,
         if (temperButton != null) const SizedBox(height: Space.m),
-        if (forgeable.isNotEmpty)
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: Space.l),
-              children: forgeChildren,
-            ),
-          )
-        else
-          const Spacer(),
+        const Spacer(),
       ],
     );
   }

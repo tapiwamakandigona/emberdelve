@@ -4570,3 +4570,21 @@ completes before runApp, all wiring below is order-independent of the
 loads (verified by reading each), so semantics are unchanged — only
 the wall-clock sum shrinks to the slowest single member. app_open
 still fires after telemetry is up. Suite 1125/1125, analyze clean.
+
+## 2026-09-01 — THE OPEN FORGE (UI lane, under freeze; owner no-scroll directive)
+New probe tool/scroll_audit_test.dart (report-only, not in CI): mounts
+boon/map/rest/title at 360x800 and 320x640 and reports every
+scrollable's maxScrollExtent. Doctrine: content lists may scroll
+(browsing); decision screens must fit.
+- FOUND: the rest hollow's default layout gave the forge list only the
+  leftover strip under the buttons — a ~107px letterbox hiding 586px of
+  forge rows (7 options, ONE visible) behind a nested inner scroll.
+- FIX: whenever anything is forgeable the hollow now uses the one
+  full-height ScrollComfort list (the former cramped branch): every
+  forge option sits inline in the page, one honest scroll, no peephole.
+  The centered no-scroll Column remains for the rest-only hollow.
+- Remaining audit numbers are by-design: map pans (it's a chart), title
+  and summary are browsable lists, boon fits at 360x800 (22px overflow
+  at 320x640 noted as a future shave).
+- Suite 1125/1125, analyze clean; hearth plates re-shot (eye-check
+  queued, viewer still down).
