@@ -154,3 +154,27 @@ open question is purely wall-clock (engine boot + title settle +
 map sweep on a low-end device), which no tap count can answer.
 Verdict: no structural change warranted from tap distance alone;
 the device stopwatch pass remains the follow-up. [probe, 2026-09-01]
+
+## Addendum 2 (2026-09-01) — the "what's a delve" gap is already closed; do not re-fix
+
+Delta #6 named a residual vocabulary gap ("I still don't understand
+what's a delve", player review, 2026-08-23). Code audit shows this gap
+was already closed by v0.71.0 and the earlier claim needs correcting:
+
+- **Title, fresh profile** — `firstWordsLine` (title_screen.dart)
+  pushes the definition unprompted: "The delve is the dark below the
+  hearth — floor under floor of it. Go down with your dice, come back
+  with the Ember." Retires after the first banked run. Its own doc
+  comment cites this exact review as the reason it exists.
+- **Codex** — `place:the_delve` is the one GIFTED entry ("A delve is
+  a walk down into the dark with a light you have to feed…"), so the
+  pull-channel answer is free from minute one.
+- **Why the review still happened**: the reviewer was on the Play
+  production build 0.59.0, which predates v0.71.0. The review is
+  evidence about an old build, not the current product.
+
+Verdict: nothing to ship. The remaining sliver — a player who banks
+run 1 still confused loses the title line forever — is thin (they've
+by then walked a delve and hold the gifted codex entry) and not worth
+a product change. Future runs: check `firstWordsLine` before
+proposing any vocabulary fix. [code-audit, 2026-09-01]

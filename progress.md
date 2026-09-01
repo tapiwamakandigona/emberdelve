@@ -4697,3 +4697,7 @@ the opening run itself (R1 brief input).
 - R3 addendum: proposed listing screenshots rendered as documents —
   docs/store/screenshots/framed-r3/ (5 plates, R3 order + captions,
   live framed/ untouched, listing still FROZEN). [probe, 2026-09-01]
+- R1 addendum 2: "what's a delve" vocabulary gap is ALREADY CLOSED
+  (v0.71.0 firstWordsLine + gifted codex place:the_delve; reviewer
+  was on pre-fix Play build 0.59.0). Corrected R1's residual-gap
+  claim; nothing to ship. [code-audit, 2026-09-01]
