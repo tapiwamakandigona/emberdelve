@@ -5027,3 +5027,19 @@ the opening run itself (R1 brief input).
   test/circle_headers_test.dart pins both headers + the hearthkeeper
   at index 15. Seam plate critiqued (hearthkeeper's 'last chair' card
   → header → hedger reads as a chapter break). Suite 1178 green.
+- THE FARRIER LANDED COMPLETE (v0.183.0-dev): twenty-first delver,
+  fifth chair of the second circle — the STEADY counterpart to the
+  lamplighter's spike. Three Forged Embers (d6_forged +1/+1 flat,
+  never started by any kit), no relic. HP 12 — THE FRAILEST CHAIR EVER
+  (below hearthkeeper's 16): raw kit at HP 22 swept 93.75/81.50/64.00,
+  the strongest ever measured; 15 and 13 still broke the hard ceiling;
+  12 lands 85.50/64.25/44.25 all bands. unlockEmbers 2850. Shoeing-
+  hammer custom silhouette (short haft, cross-pein head, forge-glow
+  striking face — deliberately smaller than the warden's maul). Dark-
+  iron warden-sourced sprite (hue +15° sat×0.45 floor 0.20 val×0.62;
+  knight family rust/olive/granite/cobalt/green/iron critiqued).
+  Codex, The Farrier's Fit + twentyone_ways_down (20..16 frozen),
+  farriers_proving seed 21 (chair tradition holds), 65th tale, honors
+  → 21 / proven → 29. test/farrier_test.dart (win 21 / loss 43; pins
+  the d6_forged mods). Plates critiqued; squeeze title fits 21 one
+  line. Suite 1184 green, analyze clean.

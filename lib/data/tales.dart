@@ -192,6 +192,9 @@ const List<String> hearthTales = [
   'The lamplighter came to the second fire last of the four and lit '
       'nothing \u2014 the circle was already burning. Some trades rest '
       'where the light is kept for them.',
+  'The farrier came to the second fire with twelve hearts and iron '
+      'that never rolls less. The circle asked no proof \u2014 sure '
+      'iron is its own word.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

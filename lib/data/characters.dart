@@ -77,6 +77,7 @@ const List<String> charactersOrder = [
   'miller',
   'brewster',
   'lamplighter',
+  'farrier',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -382,6 +383,22 @@ const Map<String, CharacterDef> characters = {
     maxHp: 24,
     startDice: ['d6_ember', 'd6_ember', 'd6_ember'],
     unlockEmbers: 2700,
+  ),
+  // v0.183.0 The Farrier: the fifth chair of the second circle — the
+  // STEADY counterpart to the lamplighter's spike, from the same gap
+  // pass. Three Forged Embers (d6_forged, flat +1 attack and +1 block on
+  // every roll — never started by any kit): no flare, no fishing, just
+  // iron that is always a little more than the face says. Pure data
+  // (existing specialty die). HP is the tuning knob (sweep in
+  // docs/improvements).
+  'farrier': CharacterDef(
+    'farrier',
+    'The Farrier',
+    'The iron-shoer: three Forged Embers \u2014 every roll a little '
+        'more than its face, no roll ever less.',
+    maxHp: 12,
+    startDice: ['d6_forged', 'd6_forged', 'd6_forged'],
+    unlockEmbers: 2850,
   ),
 };
 

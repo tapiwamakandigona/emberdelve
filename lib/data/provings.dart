@@ -271,6 +271,19 @@ const List<ProvingDef> provings = [
     character: 'lamplighter',
     difficulty: 'normal',
   ),
+  // v0.183.0 The Fitted Shoe — the twenty-first delver proving. Seed
+  // 21: the chair-number tradition holds (bot-win pinned, unused by
+  // any other delver proving).
+  ProvingDef(
+    id: 'farriers_proving',
+    title: "The Farrier's Proving",
+    blurb:
+        'The Farrier on normal floors. Twelve hearts of skin and iron '
+        'that never rolls less \u2014 be exact.',
+    seed: 21,
+    character: 'farrier',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

@@ -13,7 +13,7 @@ void main() {
   List<String> cycle4() => hearthTales.sublist(30, 40);
 
   test('four full cycles, hearthgold frozen at the first', () {
-    expect(hearthTales.length, 64); // v0.182.0: the lamplighter's tale
+    expect(hearthTales.length, 65); // v0.183.0: the farrier's tale
     expect(hearthgoldTales, 10, reason: 'the vista gate never moves');
   });
 

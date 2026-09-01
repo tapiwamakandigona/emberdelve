@@ -121,6 +121,7 @@ const List<String> achievementsOrder = [
   'miller_wins', 'eighteen_ways_down',
   'brewster_wins', 'nineteen_ways_down',
   'lamplighter_wins', 'twenty_ways_down',
+  'farrier_wins', 'twentyone_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -339,8 +340,8 @@ const Map<String, AchievementDef> achievements = {
     'Unlock every delver.',
     stat: 'chars_unlocked',
     // Promise honors move with the live roster (promise doctrine).
-    // v0.182.0: the lamplighter, fourth chair of the second circle.
-    target: 20,
+    // v0.183.0: the farrier, fifth chair of the second circle.
+    target: 21,
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
@@ -591,6 +592,21 @@ const Map<String, AchievementDef> achievements = {
     stat: 'delvers_cleared',
     target: 20,
   ),
+  'farrier_wins': AchievementDef(
+    'farrier_wins',
+    "The Farrier's Fit",
+    'Win a run as the Farrier.',
+    stat: 'char_wins',
+    param: 'farrier',
+    target: 1,
+  ),
+  'twentyone_ways_down': AchievementDef(
+    'twentyone_ways_down',
+    'Twenty-One Ways Down',
+    'Win a run with every one of the twenty-one delvers.',
+    stat: 'delvers_cleared',
+    target: 21,
+  ),
 
   // --- the bestiary -----------------------------------------------------
   'tyrant_felled': AchievementDef(
@@ -706,8 +722,8 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // Promise honors move with the live roster. v0.182.0: the lamplighter.
-    target: 20,
+    // Promise honors move with the live roster. v0.183.0: the farrier.
+    target: 21,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

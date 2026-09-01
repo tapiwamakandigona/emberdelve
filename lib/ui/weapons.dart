@@ -253,6 +253,17 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.32,
     swingAngle: 1.60,
   ),
+  // Iron-shoer (v0.183.0): the shoeing hammer — short, dense, cross-
+  // peined; a tool for exact blows, not grand ones. Forge-glow accent.
+  'farrier': WeaponDef(
+    'shoeing_hammer',
+    'Shoeing Hammer',
+    accent: Color(0xFFE08A3C),
+    reach: 0.40,
+    idleAngle: 0.28,
+    raiseAngle: -1.26,
+    swingAngle: 1.54,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -612,6 +623,9 @@ class _WeaponPainter extends CustomPainter {
       case 'lamp_pole':
         _lampPole(canvas, reach);
         break;
+      case 'shoeing_hammer':
+        _shoeingHammer(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -939,6 +953,64 @@ class _WeaponPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(box.inflate(w * 0.18), Radius.circular(w * 0.2)),
       _outline,
+    );
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The farrier's shoeing hammer (v0.183.0): a short thick haft and a
+  /// compact head — flat face forward, cross-pein behind. Smaller than
+  /// the warden's maul on purpose: this iron works in exact blows. The
+  /// forge-glow accent lies along the striking face.
+  void _shoeingHammer(Canvas canvas, double reach) {
+    final w = reach * 0.14;
+    // Short thick haft.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.30),
+          width: w * 0.85,
+          height: reach * 0.82,
+        ),
+        Radius.circular(w * 0.4),
+      ),
+      _p,
+    );
+    // Grip band.
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 1.7, height: w * 0.7),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Head: flat striking face forward, tapered cross-pein behind.
+    final head = Path()
+      ..moveTo(-w * 1.35, -reach * 0.78) // pein tip (behind)
+      ..lineTo(-w * 0.35, -reach * 0.88)
+      ..lineTo(w * 1.15, -reach * 0.88) // top of face block
+      ..lineTo(w * 1.15, -reach * 0.62) // striking face (forward, flat)
+      ..lineTo(-w * 0.35, -reach * 0.62)
+      ..close();
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF565058);
+    canvas.drawPath(head, _p);
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawPath(head, _outline);
+    // Forge-glow accent along the striking face.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.3
+      ..strokeCap = StrokeCap.round
+      ..color = _accent.withValues(alpha: 0.9);
+    canvas.drawLine(
+      Offset(w * 1.15, -reach * 0.85),
+      Offset(w * 1.15, -reach * 0.65),
+      _p,
     );
     _p.style = PaintingStyle.fill;
   }

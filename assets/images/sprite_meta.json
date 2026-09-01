@@ -1261,6 +1261,31 @@
       ],
       "fps": 8,
       "scale": 3
+    },
+    {
+      "id": "farrier",
+      "source_base": "knight_m (palette variant of warden, v0.183.0)",
+      "frame_w": 48,
+      "frame_h": 84,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        },
+        {
+          "state": "run",
+          "frames": 4,
+          "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
+        }
+      ],
+      "fps": 8,
+      "scale": 3
     }
   ]
 }

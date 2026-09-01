@@ -293,6 +293,15 @@ final List<CodexEntryDef> codexEntries = [
         'a whole street changes. Three Glowing Embers \u2014 plain '
         'sixes until they land true, and when they do, they flare.',
   ),
+  _delver(
+    'farrier',
+    'The fifth chair of the second circle. Farriery is exactness '
+        'under weight: the shoe fits or it does not, and the horse '
+        'does not care how hard you swung. Three Forged Embers, each '
+        'a little more than its face on every roll \u2014 and the '
+        'thinnest skin at any fire, because iron this sure was paid '
+        'for somewhere.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

@@ -24,7 +24,7 @@ void main() {
     final def = characters['hearthkeeper']!;
     // Index pin, not 'last': the index IS the delve-code contract.
     expect(charactersOrder.indexOf('hearthkeeper'), 15);
-    expect(charactersOrder.length, 20,
+    expect(charactersOrder.length, 21,
         reason: 'v0.179.0: the second circle opened (DEMAND 2026-09-01f); '
             'the hearthkeeper still closes the FIRST circle at index 15 — '
             'v1 delve-code bits 31..34 stay full, index 16+ rides v2');

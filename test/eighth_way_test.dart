@@ -24,7 +24,7 @@ void main() {
       ids.indexOf('flintwrights_proving') + 1,
       reason: 'the character provings stand together',
     );
-    expect(provings.length, 28); // v0.182.0: the lamplighter's proving
+    expect(provings.length, 29); // v0.183.0: the farrier's proving
     expect(provings.last.id, 'ash_summit');
   });
 
