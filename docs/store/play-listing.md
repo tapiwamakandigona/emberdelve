@@ -1,5 +1,16 @@
 # Emberdelve — Google Play listing draft
 
+> ⚠️ **The live Play listing is canonical, not this file.** This copy drifted from
+> what is actually published. Verified against the public store page on 2026-09-01:
+> the live short description is *"Fair dice, real choices. A pocket dice roguelite
+> with zero ads, played offline."* and the live full description is the newer
+> "BUILD YOUR POOL / TEMPER A FACE / CHOOSE A KEYSTONE" copy.
+>
+> **Diff against the live listing before pasting anything from here.** Never restate
+> a data or permission claim without checking it against the shipped binary: the app
+> declares `INTERNET` and ships opt-in Firebase Analytics, so "no internet permission"
+> and "zero tracking" are false and were removed below.
+
 Draft copy for the Play Console listing (owner to review before submitting).
 Screenshots + feature graphic: first pass committed under
 `docs/store/screenshots/` (1080×1920 PNGs + 1024×500 graphic, rendered from
@@ -13,7 +24,7 @@ Emberdelve: Dice Roguelite
 
 ## Short description (80 chars max)
 
-Fair dice, real choices. A pocket roguelite with zero ads and zero tracking.
+Fair dice, real choices. A pocket dice roguelite with zero ads, played offline.
 
 ## Full description (4000 chars max)
 
@@ -43,7 +54,7 @@ Pick a starting boon and delve again in seconds — 15 boons keep restarts
 fresh.
 
 FAIR BY DESIGN
-• Zero ads, zero tracking, no internet permission — fully offline
+• Zero ads, no third-party trackers — analytics only if you switch it on
 • No energy timers, no streaks, no FOMO mechanics
 • Deterministic runs: fair deaths, learnable rules
 • A daily seeded delve, shared by everyone

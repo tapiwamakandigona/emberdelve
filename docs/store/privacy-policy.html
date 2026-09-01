@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tsoro Studios Games — Privacy Policy</title>
-<meta name="description" content="Privacy policy for Tsoro Studios games (Emberdelve, Pyregrove, Emberwood). No personal data collected. Optional, opt-in anonymous gameplay analytics only — off by default. No ads, no tracking.">
+<meta name="description" content="Privacy policy for Tsoro Studios games (Emberdelve, Pyregrove, Emberwood). No personal data collected. Optional, opt-in anonymous gameplay analytics only — off by default. No ads, no third-party trackers, no data sales.">
 <style>
   :root {
     --bg: #14101e;
@@ -107,10 +107,16 @@
     <li><b>Permissions.</b> <code>VIBRATE</code> (optional in-game haptics)
       and <code>INTERNET</code>/<code>ACCESS_NETWORK_STATE</code> (used solely
       for the optional analytics above; if you never opt in, nothing is
-      transmitted). The Google Analytics library also adds <code>WAKE_LOCK</code>
-      and a Play Store install-referrer binding of its own; the advertising-ID
-      permissions it would normally add are removed from our build. No
-      permission requires a runtime prompt.</li>
+      transmitted). The Google Analytics
+      library also merges in several permissions of its own:
+      <code>WAKE_LOCK</code>, <code>RECEIVE_BOOT_COMPLETED</code> (shown by
+      Google Play as &ldquo;run at startup&rdquo;), <code>BIND_JOB_SERVICE</code>,
+      <code>POST_NOTIFICATIONS</code>, <code>DUMP</code> and a Play Store
+      install-referrer binding. They are used by that library to schedule and
+      batch uploads; the game itself sends no notifications and starts nothing
+      at boot, and if you never opt in, nothing is transmitted at all. The
+      advertising-ID permissions the library would normally add are removed
+      from our build. No permission requires a runtime prompt.</li>
     <li><b>Children.</b> The app collects no personal data from anyone,
       including children. Analytics, when enabled, are anonymous gameplay
       statistics only.</li>
