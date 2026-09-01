@@ -4694,3 +4694,6 @@ the opening run itself (R1 brief input).
   device wall-clock pass still owed. Also: retention-ledger.md
   created (R2 Option A instrument, baseline row; next pull
   ~2026-09-29, wakeup scheduled). [probe, 2026-09-01]
+- R3 addendum: proposed listing screenshots rendered as documents —
+  docs/store/screenshots/framed-r3/ (5 plates, R3 order + captions,
+  live framed/ untouched, listing still FROZEN). [probe, 2026-09-01]
