@@ -4335,3 +4335,28 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   dominated = the 119-entry walk inflating lazily, as designed.
 - Verdict: boundaries hold everywhere; no remediation. The retention
   strikes cost the summary nothing at idle.
+
+## 2026-09-01 — THE FIRST FALL (retention lane, DEMAND focus #1, first-session funnel)
+- Research: Hades death-moment design ("the moment of death isn't about
+  rage-quitting... feel the time you spent wasn't a waste" — Kasavin,
+  gamedeveloper.com) + Slay the Spire first-run telemetry (~90% of
+  first runs lose, foxrow.com) + loser-friendly design essay (losing is
+  a valid way to experience the game). The genre's normal first
+  experience IS a loss; a new player may read it as a failure screen.
+- The profile's very first LOST run now opens its loss cluster with one
+  gold line: 'A first fall — every delve ends in one, sooner or later.
+  The embers you banked came home with you.' Once ever (runsPlayed==1
+  && runsWon==0 at summary time). Sits ABOVE last-thread/named-foe, so
+  a first loss reads frame → foe → codex page. The ember claim is
+  always true: sim's fair-death floor banks >= 5 + layer on any death
+  (run_layer.dart ~926).
+- firstFallLine(c) helper beside settledScoreLine in summary_screen;
+  ValueKey('first-fall'); charter-clean copy (a fact, no consolation
+  prize language, no prod).
+- test/first_fall_test.dart (3 pins: first loss shows it AND the banked
+  embers fact is true; second loss silent; first win silent). LESSON:
+  seed 13 is only a pinned loss on a FRESH profile — replayed after a
+  prior run it wins; back-to-back seed 18 stays a loss.
+- Plate tool tool/first_fall_visual_test.dart (320px, 1.0x and 1.3x):
+  wraps freely, leads the cluster cleanly at both scales.
+- Suite 1115/1115, analyze clean. No tag/bump (freeze).

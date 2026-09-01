@@ -262,6 +262,21 @@ class SummaryScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
+                            // THE FIRST FALL: the first-ever run's loss is
+                            // framed as the genre's normal beat, not a
+                            // failure screen — and the banked embers above
+                            // are pointed at as the proof nothing was lost.
+                            if (firstFallLine(c) case final line?) ...[
+                              const SizedBox(height: Space.l),
+                              Text(
+                                line,
+                                key: const ValueKey('first-fall'),
+                                textAlign: TextAlign.center,
+                                style: EmberText.body.copyWith(
+                                  color: EmberColors.gold,
+                                ),
+                              ),
+                            ],
                             // v0.79.0 The Settled Score: the run that finally
                             // fells the old foe gets one gold line. Once per
                             // foe, ever — a payoff, not a treadmill.
@@ -1239,6 +1254,21 @@ String? narrowClimbLine(GameController c) {
   final hp = p['hp'] as int? ?? 0;
   if (!inTheRed(hp, p['max_hp'] as int? ?? 1)) return null;
   return 'A narrow climb home — $hp HP standing.';
+}
+
+/// THE FIRST FALL: the profile's very first run, when it ends in a loss,
+/// gets one framing line. Genre reality (Slay the Spire telemetry: ~90% of
+/// first runs lose) meets the Hades death-moment lesson: the fall must not
+/// read as wasted time. States only true facts — every death banks embers
+/// (sim floor: 5 + layer), and the ledger above shows them. Once ever:
+/// runsPlayed is already incremented when the summary shows, so 1 + no win
+/// means this exact run was the first, and it fell.
+String? firstFallLine(GameController c) {
+  final st = c.state;
+  if (st == null || st['phase'] != 'run_lost') return null;
+  if (c.meta.runsPlayed != 1 || c.meta.runsWon != 0) return null;
+  return 'A first fall — every delve ends in one, sooner or later. '
+      'The embers you banked came home with you.';
 }
 
 /// v0.79.0 The Settled Score: the gold line for the run that felled the
