@@ -23,10 +23,24 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.177.0';
+const String currentAppVersion = '0.178.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.178.0',
+    title: 'The Seven Hearths',
+    lines: [
+      'Seven hearths now wait on the title \u2014 one lights for each '
+          'day you delve, whenever those days come. They keep: no '
+          'hearth ever goes out.',
+      'The seventh settles 60 embers straight into your pouch.',
+      'The delver on the map now walks facing the way they travel, '
+          'with a shadow underfoot; the rest hollow and the boon hand '
+          'fit the smallest screens without a squeeze.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.177.0',
     title: 'The Banked Coals',

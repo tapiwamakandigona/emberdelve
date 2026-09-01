@@ -4646,3 +4646,18 @@ WHY THIS MOVES DAY-7 RETENTION (the mechanism):
 Falsifiable prediction: day-7 retention among NEW devices in the 28
 days after ship should move off 1; if it does not, the next lever is
 the opening run itself (R1 brief input).
+
+## 2026-09-01 — v0.178.0 THE SEVEN HEARTHS (the one authorized release)
+
+- Seven Hearths built exactly as the mechanism note above: hearths.dart
+  (hearthCount=7, hearthGrantEmbers=60, hearthLine 0..7), meta fields
+  (hearthDaysLit / lastHearthDay / sevenHearthsSettled), cloud merge
+  MAX/OR, _lightHearth() at the top of _bankRun and abandonRun, title
+  row between the daily block and the Weekly button.
+- Suite 1136 green (9 new in test/seven_hearths_test.dart), analyze
+  clean; plates eye-checked at 360x640 (0/3 lit) and 320x568 (settled).
+  Lesson kept: never await controller.boot() inside a widget test —
+  real I/O under FakeAsync hangs to the 10-minute timeout; title-row
+  fixtures use an unbooted controller (waymark_line_test pattern).
+- Version bumped 0.178.0+204; currentAppVersion 0.178.0; news entry;
+  docs/releases/v0.178.0.md. ONE release, NOT prerelease, no Play.
