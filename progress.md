@@ -4265,3 +4265,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   lines (maxLines: 2), full words at every width; 360+ stays one line.
   Verified by re-plate at 320x568 and the 36-size overflow probe.
 - Suite 1110/1110, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE LARGE PRINT (UI lane; 1.3x accessibility plate pass)
+- New plate tool tool/large_font_plates_test.dart (NOT in CI): title
+  (day-2 state), wardrobe picker (full roster), summary (next-delver
+  panel), settings — all at 320px AND 1.3x system text (Android
+  "Large"), the accessibility worst case. The overflow probe catches
+  layout ERRORS at 1.3x; these plates catch what it cannot — clipped
+  words, cramped rows.
+- Findings: picker, summary, and settings all degrade gracefully at
+  1.3x — delver cards wrap kit lines, next-delver panel wraps its
+  heading, settings helper copy wraps, nothing clipped.
+- One regression caught in the freshly-merged Unclipped Word: the
+  Short Delve helper's maxLines: 2 cap clipped its LAST word at 1.3x
+  ("…a shorter" without its "sit"). The cap is gone — the helper now
+  wraps freely (three lines at 320/1.3x, two at 320/1.0x, one at
+  360+). Every word survives every width and font scale.
+- LESSON: maxLines is just deferred ellipsis — under a bigger font
+  scale the cap clips again. For helper copy, wrap freely and let the
+  row grow; plate at 1.3x before calling a wrap fix done.
+- Suite 1110/1110, analyze clean. No tag/bump (freeze).

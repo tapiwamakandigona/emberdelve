@@ -749,14 +749,15 @@ class _ShortRoadToggle extends StatelessWidget {
             const SizedBox(width: Space.s),
             const Text('SHORT DELVE', style: EmberText.label),
             const SizedBox(width: Space.s),
-            // Wrap, never ellipsize (title-scale doctrine): on 320px the
-            // old ellipsis clipped mid-word ("a sh…") — the helper now
-            // takes a second line instead of eating its own words.
+            // Wrap freely, never ellipsize, never cap lines (title-scale
+            // doctrine): the old ellipsis clipped mid-word on 320px
+            // ("a sh…"), and a maxLines cap clipped the last word at 1.3x
+            // text ("…a shorter" without its "sit"). The row grows; every
+            // word survives every width and font scale.
             Expanded(
               child: Text(
                 'six floors — a shorter sit',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                maxLines: 2,
                 textAlign: TextAlign.right,
               ),
             ),
