@@ -4750,3 +4750,9 @@ the opening run itself (R1 brief input).
   swatch). Regression tests test/background_decode_test.dart. Suite
   1138 green, analyze clean. Numeric Play thresholds remain
   UNPUBLISHED — nothing claims compliance. [asset-audit, 2026-09-01]
+- Combat idle painter census (tool/combat_idle_probe_test.dart, seed 1
+  kindler player_turn, 300-frame warmup + 120-frame census): 1.0
+  paint/frame — a single RenderCustomPaint (EmberDrift). Combat is
+  already optimal at idle; no work owed. Perf book now: combat idle
+  1.0, map idle 9.0, summary idle 1.0 / drag 3.1, codex idle 0.0.
+  [combat_idle_probe, 2026-09-01]
