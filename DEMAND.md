@@ -1,6 +1,111 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-01 — one major update, ONE GitHub release, then research
+
+### The freeze changes shape. Read this precisely.
+
+The 2026-08-31 freeze stopped 177 small releases and it worked: emberdelve has
+published nothing since v0.177.0 (2026-08-31T19:44:55Z) while development
+continued. Good. It is now partially lifted, in one direction only:
+
+- **AUTHORISED: exactly ONE GitHub release.** Not a series. One.
+- **STILL FROZEN: Google Play.** No submissions, no track changes, no
+  store-listing edits, no screenshot changes. Play ships on a separate owner
+  call, from this same tag, using this same artifact.
+
+If you find yourself typing a second version bump after this release, stop —
+that is the old failure mode returning.
+
+### Scope of the update: ONE cohesive retention improvement
+
+Not a grab-bag, not a changelog of six small things. The weakest real number in
+this business is retention: **28 monthly active devices and 7-day retention of
+1 device** over the last 28 days. Content breadth is not the problem — the
+roster is already at sixteen delvers.
+
+Pick the single strongest intervention on the **first session and the first
+week** and build it properly, with tests. Candidates worth weighing (your call,
+you are closer to the code): the clarity of the opening run, the first
+meaningful decision arriving sooner, a reason to open the app on day 2 that is
+not a loss-framed nag, or a first-week arc that resolves rather than trails off.
+
+Whatever you choose, write down in progress.md *why* you believe it moves day-7
+retention, before you build it. If you cannot articulate the mechanism, it is
+the wrong pick.
+
+### What the release must carry
+
+1. The chosen retention improvement.
+2. **The in-app review ask fix (PR #98, squash-merged 0076b043).** This is the
+   single most valuable thing sitting unshipped. Production is still on version
+   name 0.59.0 / code 85, cut 30 Aug, which predates the fix — so every player
+   in the world is currently running a build that cannot ask them to rate it.
+   The app has **2 ratings**. Verify the fix is actually present on the ship
+   branch before tagging; do not assume.
+3. The Feb-2027 migration attributes already merged (3e85a8c). Closed, verified,
+   do not re-open.
+
+### Version numbering — unify the lines
+
+GitHub tags sit at v0.177.0 while Play's version *name* is 0.59.0. Two numbering
+lines is a permanent source of confusion. Collapse them:
+
+- Tag **v0.178.0**, pubspec **0.178.0+204**.
+- Version code 204 is comfortably above Play's live 85, so this same artifact
+  can be submitted to Play unchanged when that call is made. **Build it once.**
+  Do not rebuild for Play later — the tagged AAB is the Play candidate.
+
+### Release standards for this one release
+
+Tag at the release sha. Signed APK + AAB from CI (workflow_dispatch on this
+branch). Signer cert must match pin
+`031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d`. sha256s in
+the notes. Notes explain the improvement in plain player-facing language, plus a
+short technical section. Mark it **not** a prerelease — v0.176.0 and v0.177.0
+were flipped to prerelease so that `/releases/latest` points at a build with a
+working download; v0.178.0 should become the new latest.
+
+### Then: stop shipping and do research
+
+After the release is cut, **do not start another feature**. Three research
+briefs, in priority order. Each one produces a written artifact in `docs/`, with
+evidence, not opinions.
+
+**R1 — First-session teardown of comparable dice roguelites (highest value).**
+Take the top comparable titles on Play. Actually play the first session of each.
+Record, with timestamps: how long until the first meaningful decision, what is
+on screen at the 60-second mark, when the first reward lands, what the day-2
+return hook is, and what the game does when a first run is lost. Deliver a
+concrete delta list against Emberdelve's first session. This is the input to the
+next retention decision, so it must be observation, not speculation.
+
+**R2 — We are flying blind on where session one ends, and that is a real
+tension.** Analytics are off until a player switches them on, and that stays —
+it is a product pillar and it is part of why this game is trustworthy. But
+"retention is our weakest number" and "we cannot see where players stop" cannot
+both be permanent. Research the honest options: what can be learned from purely
+local, on-device signals the player can see and erase; what Play Console already
+exposes for free that we are not reading; what a genuinely informed-consent
+prompt would look like if it were worth asking at all. Deliver a recommendation
+with the privacy cost stated plainly for each option. If your conclusion is
+"ask nothing, read Play Console harder", that is a legitimate finding — say so.
+
+**R3 — Store listing conversion (research only, changes are FROZEN).** The
+listing is the funnel above everything: 38 installs. Study what the first three
+screenshots, the short description and the title do in this category. Deliver a
+proposed listing as a document. **Do not touch the live listing.**
+
+### Guardrails, unchanged
+
+- Stability is excellent — zero crashes and zero ANRs over 28 days. Protect it.
+  A retention feature that costs stability is a net loss.
+- `flutter analyze` clean; full suite green; no skipped tests; new behaviour has
+  tests; bug fixes get a regression test that fails on the old code.
+- The sim stays pure. Golden hashes move only with a documented re-anchor table.
+- Do not re-open download size. It is 20.6 MB against a peer median of 52.7 MB.
+- Waiting on a build is research time, not idle time.
+
 ## Owner directive 2026-08-31c — size pillar RETRACTED, priorities re-ranked
 
 ### Correction first: the download-size pillar was my error. Stand down on it.
