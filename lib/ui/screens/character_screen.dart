@@ -584,6 +584,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
       height: 42,
       fit: BoxFit.cover,
       gaplessPlayback: true,
+      // PERF/MEM: without a decode hint this swatch decoded the full
+      // 1080x1920 source (~7.9 MB) to paint 34x42 dp. 144 px covers the
+      // drawn width at any realistic devicePixelRatio (~0.1 MB decoded).
+      cacheWidth: 144,
     );
     if (grade != null) {
       swatch = ColorFiltered(colorFilter: grade, child: swatch);

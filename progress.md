@@ -4741,3 +4741,12 @@ the opening run itself (R1 brief input).
   Safe because summary sprites are animate:false (bob ticker requires
   animate). Suite 1136 green, analyze clean, no release.
   [summary_drag_probe, 2026-09-01]
+- DEMAND drop 2026-09-01c handled: docs/research/memory-budget.md —
+  static decoded-bitmap budget from source (48.4 MB worst case, 115
+  PNGs; four 1080x1920 backgrounds = 7.9 MB decoded EACH dominate).
+  Two decode-hint fixes: ScreenBackground cacheWidth = physical width
+  capped at 1080 (720p device: 7.9 -> ~3.5 MB per background); vista
+  swatch cacheWidth 144 (was full-source decode for a 34x42 dp
+  swatch). Regression tests test/background_decode_test.dart. Suite
+  1138 green, analyze clean. Numeric Play thresholds remain
+  UNPUBLISHED — nothing claims compliance. [asset-audit, 2026-09-01]

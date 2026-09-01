@@ -299,7 +299,20 @@ class ScreenBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final img = Image.asset(asset, fit: BoxFit.cover, gaplessPlayback: true);
+    // PERF/MEM (Play 2027 memory thresholds, DEMAND 2026-09-01c): the
+    // background sources are 1080x1920 and decode to ~7.9 MB EACH at full
+    // size; Flutter's image cache keeps every visited one resident (~32 MB
+    // for all four). cacheWidth decodes at the device's physical width
+    // instead (BoxFit.cover never upscales past it) — a 720p phone now pays
+    // ~3.5 MB per background instead of 7.9. Height follows aspect ratio.
+    final mq = MediaQuery.of(context);
+    final physW = (mq.size.width * mq.devicePixelRatio).round();
+    final img = Image.asset(
+      asset,
+      fit: BoxFit.cover,
+      gaplessPlayback: true,
+      cacheWidth: physW.clamp(1, 1080),
+    );
     return Stack(
       fit: StackFit.expand,
       children: [
