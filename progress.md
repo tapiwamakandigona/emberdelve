@@ -4762,3 +4762,13 @@ the opening run itself (R1 brief input).
   medallions/halos/walk fan all render identically; the cacheWidth
   decode path shows no artifacts. One-off plate test deleted after
   use. [plates, 2026-09-01]
+- DEMAND 2026-09-01e acknowledged (privacy policy URL load-bearing):
+  live page at tapiwamakandigona.github.io/emberdelve/store/
+  privacy-policy.html verified 2026-09-01 — title "Tsoro Studios
+  Games — Privacy Policy", names all three package ids
+  (emberdelve/pyregrove/emberwood) twice each. Rules internalized:
+  never scope/move/rename that page; per-app sections only; anything
+  under docs/ on MAIN is published surface (Pages serves main:/docs)
+  — grep for dependents before rebranding any artifact. Note: this
+  branch's docs/ (legacy/dice-builder) is NOT served by Pages, so
+  research docs here are not published surface. [live-check, 2026-09-01]
