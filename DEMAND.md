@@ -1,6 +1,99 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-01b — research steering, freeze unchanged
+
+### Compliance acknowledged, specifically
+
+Directive 477857c asked for one cohesive retention improvement, exactly one
+GitHub release, then research. That is what happened: the mechanism went into
+progress.md *before* the build (235d3fe), THE SEVEN HEARTHS landed (e9926ae),
+v0.178.0 was tagged once (1e9a49a), shipping stopped (a19b9cd), and the work
+moved to R1/R2/R3. The screenshot set was correctly filed under `docs/` with
+the listing left alone. No second version bump. This is the pattern to keep.
+
+Verified independently on our side: v0.178.0 published 11:51:44Z, not a
+prerelease, 5 assets, all five sha256s in the notes matching the artifacts, and
+the v2 signing certificate hashing to the pinned upload key. `/releases/latest`
+now resolves to v0.178.0, so every "latest APK" link in the world silently
+upgraded from v0.175.0 to this build. One note for whenever the signing config
+is next touched: the APK carries a v2 signature block but **no v3 block**. Fine
+for Play today; v3 is what would allow key rotation later. Not urgent.
+
+### Current external state — use these facts, do not re-derive them
+
+- **Play is still on version name 0.59.0 / code 85, cut 30 Aug.** The review-ask
+  fix has therefore still never run on a real player's device. Unchanged.
+- **itch.io is now at 0.178.0** (butler build #1936002), and the v0.178.0 devlog
+  is published: `tsorostudios.itch.io/emberdelve/devlog/1648555/the-seven-hearths-v01780`
+- itch lifetime: **34 views, 6 downloads, 0 purchases, listed free.**
+
+### Correction — R3 §4 rests on a false premise
+
+R3 proposes, as the cheapest traffic experiment, "a free itch demo build linking
+to Play," on the Slice & Dice demo-first template. That template does not map
+onto our situation, because **the itch build is already the complete game, free**.
+There is no demo/full split to create: a player who takes the itch build has the
+whole thing and no reason to visit Play. Shipping a *cut-down* build to itch
+would be strictly worse than what is there now, and it would sit badly beside
+the "free = full game" promise the listing makes.
+
+The useful reframe: **itch cannot convert, because there is nothing there to
+buy** (the Ember Forge unlock exists only in the Play build). itch is a
+discovery surface and a devlog home, nothing more. So do not design funnels that
+re-route the six people who already downloaded. Design for people who have never
+heard of the game.
+
+### The research question, sharpened
+
+R3's own evidence is the important finding, and it agrees with what we measured
+independently: at 38 lifetime installs, **traffic is the binding constraint and
+conversion is not**. Play gives cold-start apps effectively no organic push, so
+a perfect listing multiplies visitors we never get. Keep that conclusion.
+
+What is still missing is anything actionable. Replace generic advice with a
+short list of **named, reachable channels**, and require each candidate to carry
+four things or it does not make the list:
+
+1. **Named and specific** — an actual community, publication, curator, festival,
+   newsletter or subreddit, not a category like "content creators".
+2. **Reachable from Zimbabwe, at zero budget** — no paid UA, no rail we cannot
+   pay on, nothing requiring a US entity.
+3. **An order-of-magnitude expectation with a source** — "this class of post has
+   historically produced tens, not thousands, of installs" is useful; an
+   unquantified maybe is not.
+4. **What would falsify it** — the observation that would tell us it failed, and
+   how long we would wait.
+
+Rank them by expected installs per hour of my time. A ranked list of five
+honest candidates beats twenty unranked ones. Explicitly include the option
+"none of these clear the bar, and here is why" if that is where the evidence
+lands — that is a real finding, not a failure.
+
+### R2 — do not trade the promise for the metric
+
+R2 is measuring retention while the store listing promises **no ads, no
+tracking, plays offline**. Those constraints are not obstacles to work around.
+R3's own research is the reason: the trust promise is the strongest asset the
+product has, and Royal Match's 2026 reversal shows what it costs to break one.
+
+So: **do not propose adding analytics, telemetry, event beacons or any
+phone-home to measure retention.** Retention gets measured from Play Console's
+aggregate device metrics, which already exist and need no code. If a question
+cannot be answered without new tracking, the correct output is to write down
+that the question is unanswerable under our promise, and to say what
+aggregate-only proxy comes closest. `docs/research/retention-ledger.md` should
+state this constraint at the top so nobody re-opens it in three weeks.
+
+### Freeze: unchanged
+
+- **No further GitHub releases.** v0.178.0 was the one. Do not tag another
+  without a new directive saying so.
+- **No Play submissions, no track changes, no listing or screenshot edits.** If
+  Play is authorised, it ships from the existing v0.178.0 AAB, handled outside
+  this repo. Nothing for you to do.
+- Keep writing research to `docs/`. Waiting is research time, not idle time.
+
 ## Owner directive 2026-09-01 — one major update, ONE GitHub release, then research
 
 ### The freeze changes shape. Read this precisely.
