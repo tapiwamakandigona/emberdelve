@@ -1,6 +1,61 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
 
+## Owner directive 2026-09-01g — cut the release now, then stop building and go research
+
+**The condition the owner set has been met.** The instruction was: one more major
+update, then cut it as a single GitHub release, then move to research. Verified
+against the repo a few minutes ago:
+
+- `legacy/dice-builder` is **45 commits ahead of `v0.178.0`** with **CI green on
+  HEAD** (`4619f6a`, both `CI` and `ios` jobs successful).
+- The roster has gone from **16 delvers to 21** — THE HEDGER, THE MILLER, THE
+  BREWSTER and on through THE FARRIER — each shipping a sprite, a PROVENANCE row,
+  codex text, achievements, a proving, a hearth tale and a dedicated test.
+- `pubspec.yaml` still reads `0.178.0+204`, so none of it has been released.
+
+That is the major update. **Cut it.** Do not add a twenty-second delver first.
+
+**How to cut it — one release, not a chain of small ones:**
+
+1. Bump `pubspec.yaml` to **`0.179.0+205`**.
+2. Tag and cut **exactly one** GitHub release, `v0.179.0`, from
+   `legacy/dice-builder`. Mark it a full release, not a prerelease.
+3. Attach the full asset set, matching v0.178.0: universal APK, the three ABI
+   splits (`arm64-v8a`, `armeabi-v7a`, `x86_64`), and the **AAB**. The AAB is not
+   optional — it is the only artefact the Play track can accept, and its absence
+   is what would block the owner's ship decision.
+4. Put the **sha256 of every asset in the release body**, as v0.178.0 did. It is
+   how the build gets verified independently before it ever reaches a store.
+5. Release notes lead with the roster: **five new delvers, 16 to 21**. A player
+   asked "add more delvers, I need more" — the notes should visibly answer that
+   person in plain language, not in changelog shorthand.
+6. **GitHub only.** No Play submission, no store-listing edit. The owner makes
+   that call, not us.
+
+**Then stop shipping features and research.** Specifically, and in this order:
+
+- **Why do 38 installs produce 2 ratings and 4.25 USD of lifetime revenue?** That
+  ratio is the whole business problem. Everything else is downstream of it.
+- **Where does the funnel actually leak** — install to first delve, first delve to
+  second session, second session to the Ember Forge unlock? Instrument nothing to
+  find out; reason from the build and the store listing, because the promise of
+  "zero ads, played offline" means we do not get to watch people.
+- **What do comparable offline premium roguelites do at the 20-to-50-install
+  stage** that we are not doing? Store assets, screenshot order, the first sixty
+  seconds of play, the unlock's placement and price.
+- Write findings into `docs/research/` as primary-source-cited markdown. A claim
+  without a source is a guess, and guesses have already cost us time here.
+
+**Unchanged and non-negotiable:** no ads, no analytics, no telemetry, no
+phone-home, no dark patterns. Public `docs/` is published surface — the privacy
+policy URL is load-bearing and must not move, be renamed, or be rescoped.
+
+**The lesson in the sequencing:** content that sits unreleased on a branch helps
+nobody. Twenty-one delvers on `legacy/dice-builder` and five in players' hands is
+not a content problem, it is a shipping problem. Finish the loop before starting
+another one.
+
 ## Owner directive 2026-09-01f — the players have voted, and they voted for content
 
 **This is not my opinion. This is primary-source player evidence**, and it is the
