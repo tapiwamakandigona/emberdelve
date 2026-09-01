@@ -119,11 +119,23 @@ class SummaryScreen extends StatelessWidget {
                               Panel(
                                 child: Column(
                                   children: [
-                                    _ledgerRow(
+                                    // v0.179-dev THE SETTLING COUNT: the
+                                    // run's payoff number settles upward
+                                    // instead of appearing — the one screen
+                                    // where a number IS the reward (Balatro
+                                    // lesson: feedback built into the scoring
+                                    // moment, not layered on). One-shot,
+                                    // finite, honest — the resting value is
+                                    // exact, and under reduce motion the
+                                    // final number shows immediately.
+                                    _ledgerRowWidget(
                                       Icons.local_fire_department,
                                       EmberColors.ember,
                                       'Embers banked',
-                                      '${run['embers']}',
+                                      _SettlingCount(
+                                        value: (run['embers'] as num).toInt(),
+                                        color: EmberColors.ember,
+                                      ),
                                     ),
                                     const Divider(
                                       color: EmberColors.line,
@@ -1079,12 +1091,26 @@ class SummaryScreen extends StatelessWidget {
   }
 
   Widget _ledgerRow(IconData icon, Color color, String label, String value) {
+    return _ledgerRowWidget(
+      icon,
+      color,
+      label,
+      Text(value, style: EmberText.value.copyWith(color: color)),
+    );
+  }
+
+  Widget _ledgerRowWidget(
+    IconData icon,
+    Color color,
+    String label,
+    Widget value,
+  ) {
     return Row(
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(width: Space.m),
         Expanded(child: Text(label, style: EmberText.body)),
-        Text(value, style: EmberText.value.copyWith(color: color)),
+        value,
       ],
     );
   }
@@ -1338,4 +1364,37 @@ String? settledScoreLine(GameController c) {
   final name = enemies[id]?.name;
   if (name == null) return null;
   return 'The score with the $name is settled.';
+}
+
+/// THE SETTLING COUNT — an integer that counts up to its true value once,
+/// then rests. 700ms easeOut: fast through the small numbers, slowing as it
+/// lands, so the eye reads the settle as the bank closing. Honesty contract:
+/// the tween ENDS at the exact value and the widget is stateless after the
+/// run — no loop, no replay on rebuild (TweenAnimationBuilder only animates
+/// when its end value CHANGES, and a summary's value never does). Under
+/// reduce motion the number appears at rest immediately: a delayed fact is
+/// a cost, not a courtesy, for players who asked for stillness.
+class _SettlingCount extends StatelessWidget {
+  final int value;
+  final Color color;
+  const _SettlingCount({required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final style = EmberText.value.copyWith(color: color);
+    if (Motion.instance.reduced) {
+      return Text(
+        '$value',
+        key: const ValueKey('settling-count'),
+        style: style,
+      );
+    }
+    return TweenAnimationBuilder<int>(
+      key: const ValueKey('settling-count'),
+      tween: IntTween(begin: 0, end: value),
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeOut,
+      builder: (context, n, _) => Text('$n', style: style),
+    );
+  }
 }

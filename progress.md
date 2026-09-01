@@ -4882,3 +4882,16 @@ the opening run itself (R1 brief input).
   test/meta_size_test.dart gates the maxed save under 64 KB (fixture
   shared at test/support/maxed_meta.dart); timing probes stay in
   tool/boot_cost_probe_test.dart (explicit run only). Suite 1144.
+- Game-feel research pass (docs/research/game-feel-borrowings.md):
+  surveyed 2026 game-feel/low-end writing (Balatro feedback analysis,
+  hit-stop guides, zero-alloc loops, Compose RPG hue-rotation
+  postmortem) against our shipped juice inventory — ~90% already
+  covered; found exactly two real gaps. TAKEN: THE SETTLING COUNT —
+  summary "Embers banked" now counts 0→N in 700ms easeOut once and
+  rests exact (_SettlingCount, summary_screen.dart); reduce motion
+  shows the exact value first-frame. Pinned by
+  test/settling_count_test.dart (exact rest / climbs mid-flight / no
+  replay / reduced first-frame). PARKED: staggered ledger-row reveal
+  (fights the summary drag RepaintBoundary). Rejected list + perf note
+  (TweenAnimationBuilder fine for one-shots, wrong inside frame loops)
+  in the doc. Suite 1146.
