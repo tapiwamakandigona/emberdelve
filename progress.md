@@ -4670,3 +4670,19 @@ the opening run itself (R1 brief input).
 - SHIPPING STOPPED per DEMAND 477857cf. Next work is written research
   only: R1 first-session teardown, R2 session-end blindness options,
   R3 store-listing conversion doc. No second version bump.
+- R1/R2/R3 research briefs written per DEMAND 477857cf (documents
+  only, no code, no listing changes):
+  docs/research/r1-first-session-teardown.md (method-labeled — no
+  device/emulator in sandbox, so secondary-source teardown; top
+  finding: sub-45s cold-start-to-first-roll in genre leaders +
+  combat undo as the trust feature; our loss handling and day-2
+  hooks already lead the premium field),
+  docs/research/r2-session-end-blindness.md (recommendation: ask
+  nothing, read Play Console harder — monthly retention ledger,
+  first entry due ~2026-09-29 to judge the Seven Hearths
+  prediction; consent-prompt rework parked behind MAU>500 trigger;
+  third-party analytics rejected),
+  docs/research/r3-listing-conversion.md (proposed listing as a
+  document: short-desc keyword fix, screenshot reorder with
+  benefit-first captions, trust block lifted to the top; live
+  listing untouched — FROZEN). [research, 2026-09-01]
