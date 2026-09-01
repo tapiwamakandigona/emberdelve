@@ -20,6 +20,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'build_identity.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 /// Choreography phase for the held weapon. Drive it straight from the combat
@@ -267,7 +268,7 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
   late final AnimationController _sway = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 2600),
-  )..repeat();
+  );
   // Phase transition tween (retargeted on phase change).
   late final AnimationController _move = AnimationController(
     vsync: this,
@@ -293,6 +294,23 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _from = _to = _def.idleAngle;
+    // Reduce motion (2026-09-01 stillness audit): the idle sway is pure
+    // decoration. Under reduce the clock parks at 0 (sin(0) = the exact
+    // neutral idle angle) and stops — the phase tween (_move) stays, it
+    // communicates the attack. Frozen clock also stills the ember sparks.
+    Motion.instance.addListener(_onMotion);
+    if (!Motion.instance.reduced) _sway.repeat();
+  }
+
+  void _onMotion() {
+    if (!mounted) return;
+    if (Motion.instance.reduced) {
+      _sway
+        ..stop()
+        ..value = 0;
+    } else if (!_sway.isAnimating) {
+      _sway.repeat();
+    }
   }
 
   void _retarget(
@@ -355,6 +373,7 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    Motion.instance.removeListener(_onMotion);
     _sway.dispose();
     _move.dispose();
     super.dispose();

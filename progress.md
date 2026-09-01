@@ -4799,3 +4799,19 @@ the opening run itself (R1 brief input).
   also note plate fonts wrap wider than shipped fonts (comment in
   boon_screen.dart). One-off plate test deleted after critique.
   [plates, 2026-09-01]
+- Stillness audit (reduce-motion coverage sweep): three continuous
+  decorative clocks ran forever regardless of Motion.instance.reduced —
+  the EmberLogotype glow/spark clock (title, 6s repeat), the WeaponView
+  idle sway (combat, 2.6s repeat), and BOTH SpriteView clocks (bob/sway
+  life ticker + the sheet frame loop, which repaints its layer every
+  frame even between visible frame steps). All four now gate on Motion
+  with the EmberDrift listener pattern: stop under reduce (logotype
+  holds a mid-breath glow with no sparks; weapon parks at sin(0) =
+  exact neutral idle angle; sprites park on frame 0, the portrait
+  pose), resume on toggle without a route rebuild. Under reduce, title
+  and combat idle now repaint at 0 paints/frame (was 3.0 / 1.0).
+  Regression: test/reduced_motion_stillness_test.dart (4 tests,
+  including a mid-session toggle resume). Doctrine note: one-shot,
+  finite, informational animations (dice tumble, reward flip, weapon
+  phase move, impact slash) deliberately stay — they carry game
+  information; only unending decorative loops gate. [audit, 2026-09-01]

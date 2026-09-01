@@ -10,6 +10,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'motion.dart';
 
 /// One animation row on a sheet.
 class SpriteRowDef {
@@ -202,7 +203,14 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   }
 
   void _syncLife() {
-    final want = widget.animate && (widget.bob || widget.sway);
+    // Reduce motion (2026-09-01 stillness audit): bob/sway is a decorative
+    // displacement loop — under reduce the life ticker never runs and the
+    // sprite holds its neutral pose (the sheet frame loop, if any, is a
+    // separate clock and unaffected).
+    final want =
+        widget.animate &&
+        (widget.bob || widget.sway) &&
+        !Motion.instance.reduced;
     if (want) {
       _life ??= AnimationController(
         vsync: this,
@@ -220,9 +228,32 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   // didUpdateWidget) can never leak a second ticker.
   int _loadGen = 0;
 
+  /// Reduce motion also parks the sheet frame loop on frame 0 (the same
+  /// pose portraits render) — the repeating clock repaints the layer every
+  /// frame even when the visible sheet frame only changes a few times a
+  /// second, so under reduce it must not run at all.
+  void _syncFrameLoop() {
+    final c = _ctrl;
+    if (c == null) return;
+    if (Motion.instance.reduced) {
+      c
+        ..stop()
+        ..value = 0;
+    } else if (!c.isAnimating) {
+      c.repeat();
+    }
+  }
+
+  void _onMotion() {
+    if (!mounted) return;
+    setState(_syncLife);
+    _syncFrameLoop();
+  }
+
   @override
   void initState() {
     super.initState();
+    Motion.instance.addListener(_onMotion);
     _syncLife();
     _load();
   }
@@ -264,7 +295,8 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
             duration: Duration(
               milliseconds: (row.frames * 1000 / def.fps).round(),
             ),
-          )..repeat();
+          );
+          _syncFrameLoop();
           _rebuildDriver();
         }
         return;
@@ -295,7 +327,8 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           duration: Duration(
             milliseconds: (row.frames * 1000 / def.fps).round(),
           ),
-        )..repeat();
+        );
+        _syncFrameLoop();
         // v0.177.0 fix: the driver was built in initState, BEFORE this
         // controller existed, and never rebuilt — so the frame loop ticked
         // into a painter that never repainted. Anywhere without the bob
@@ -309,6 +342,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    Motion.instance.removeListener(_onMotion);
     _ctrl?.dispose();
     _life?.dispose();
     super.dispose();

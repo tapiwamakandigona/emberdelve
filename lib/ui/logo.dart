@@ -5,6 +5,7 @@
 // pinpricks across the letterforms. No image assets involved.
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'motion.dart';
 import 'theme.dart';
 
 class EmberLogotype extends StatefulWidget {
@@ -21,10 +22,33 @@ class _EmberLogotypeState extends State<EmberLogotype>
   late final AnimationController _t = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 6),
-  )..repeat();
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    // Reduce motion (2026-09-01 stillness audit): the glow breath and the
+    // rising sparks are pure decoration. Under reduce the ticker stops and
+    // the painter holds a mid-breath frame with no sparks — the logotype
+    // itself (bloom, outline, gradient fill) stays exactly as designed.
+    Motion.instance.addListener(_onMotion);
+    if (!Motion.instance.reduced) _t.repeat();
+  }
+
+  void _onMotion() {
+    if (!mounted) return;
+    setState(() {
+      if (Motion.instance.reduced) {
+        _t.stop();
+      } else if (!_t.isAnimating) {
+        _t.repeat();
+      }
+    });
+  }
 
   @override
   void dispose() {
+    Motion.instance.removeListener(_onMotion);
     _t.dispose();
     super.dispose();
   }
@@ -41,7 +65,12 @@ class _EmberLogotypeState extends State<EmberLogotype>
     // size — the title's vertical rhythm never shifts.
     return RepaintBoundary(
       child: CustomPaint(
-        painter: _LogotypePainter(widget.text, widget.fontSize, _t),
+        painter: _LogotypePainter(
+          widget.text,
+          widget.fontSize,
+          _t,
+          still: Motion.instance.reduced,
+        ),
         size: Size(double.infinity, widget.fontSize * 1.5),
       ),
     );
@@ -85,7 +114,10 @@ class _LogotypePainter extends CustomPainter {
   final String text;
   final double fontSize;
   final Animation<double> clock;
-  _LogotypePainter(this.text, this.fontSize, this.clock)
+
+  /// Reduce motion: hold a mid-breath glow and skip the spark pass.
+  final bool still;
+  _LogotypePainter(this.text, this.fontSize, this.clock, {this.still = false})
     : effectiveFontSize = fontSize,
       super(repaint: clock);
 
@@ -127,7 +159,7 @@ class _LogotypePainter extends CustomPainter {
     // v0.63.0 The Fitted Name: fit to the width actually given, once per
     // paint (the probe measure is cached per text|requested pair).
     effectiveFontSize = fittedLogoFontSize(text, fontSize, size.width);
-    final rawPulse = 0.5 + 0.5 * math.sin(time * math.pi * 2);
+    final rawPulse = still ? 0.5 : 0.5 + 0.5 * math.sin(time * math.pi * 2);
     // Quantised so the blurred glow pass is cacheable. 1/24 of the pulse is
     // an alpha step of 0.005 and a blur step of 0.09px at fontSize 44 —
     // below the visible threshold.
@@ -186,7 +218,10 @@ class _LogotypePainter extends CustomPainter {
       return _base(foreground: fill);
     }).paint(canvas, origin);
 
-    // 4. Spark pinpricks drifting up through the letters.
+    // 4. Spark pinpricks drifting up through the letters. Pure motion —
+    // omitted entirely under reduce (EmberDrift rule: absence is calmer
+    // than a freeze-frame of things mid-flight).
+    if (still) return;
     final spark = Paint();
     for (var i = 0; i < 14; i++) {
       final f = (time * (0.5 + _h(i, 1) * 0.8) + _h(i, 2)) % 1.0;
@@ -200,5 +235,8 @@ class _LogotypePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _LogotypePainter old) =>
-      old.clock != clock || old.text != text || old.fontSize != fontSize;
+      old.clock != clock ||
+      old.text != text ||
+      old.fontSize != fontSize ||
+      old.still != still;
 }
