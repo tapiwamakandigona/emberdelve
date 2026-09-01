@@ -4772,3 +4772,11 @@ the opening run itself (R1 brief input).
   — grep for dependents before rebranding any artifact. Note: this
   branch's docs/ (legacy/dice-builder) is NOT served by Pages, so
   research docs here are not published surface. [live-check, 2026-09-01]
+- Idle census, final three screens (tool/idle_census_probe_test.dart):
+  TITLE 3.0 paints/frame (all RenderCustomPaint — painter-only
+  repaints by design, no child dragged in), REST 1.0 (EmberDrift),
+  SHOP 0.0 (fully static). Perf book now covers EVERY screen: title
+  3.0 / map 9.0 / combat 1.0 / rest 1.0 / shop 0.0 / summary 1.0
+  (drag 3.1) / codex 0.0. No repaint leaks remain anywhere; the map's
+  9.0 is the halo pulse painting reachable-node medallions, which is
+  intended motion. Probe kept as benchmark. [idle_census, 2026-09-01]
