@@ -85,11 +85,19 @@ class BoonScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                               horizontal: Space.m,
                             ),
-                            child: Text(
-                              rumorForSeed(c.sim!.runSeed),
-                              key: const ValueKey('rumor-line'),
-                              style: EmberText.bodyDim,
-                              textAlign: TextAlign.center,
+                            // THE KINDLED TALE, extended: the rumor catches
+                            // light while the hand deals — one entrance
+                            // language for the whole boon moment. Paint-only
+                            // (fx.dart SmolderIn); full text laid out and
+                            // semantic from frame one.
+                            child: SmolderIn(
+                              duration: const Duration(milliseconds: 700),
+                              child: Text(
+                                rumorForSeed(c.sim!.runSeed),
+                                key: const ValueKey('rumor-line'),
+                                style: EmberText.bodyDim,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                           const SizedBox(height: Space.l),

@@ -4487,3 +4487,18 @@ void: jagged rock walls frame both sides of the descent.
   chasm_deep floor 4, 360x800): two-plane depth reads on both sides,
   walls sit behind trails/nodes, fog-of-war unaffected. Verified by eye.
 - Suite 1123/1123, analyze clean. No tag/bump.
+
+## 2026-09-01 — THE WHISPERED RUMOR (animation lane, under freeze)
+SmolderIn extended to its second surface: the boon screen's rumor line
+catches light (700ms) while the hand deals — one entrance language for
+the whole boon moment.
+- boon_screen.dart wraps the rumor-line Text in SmolderIn(700ms).
+  Paint-only as before: rumor_test's full-text read still passes
+  untouched, semantics whole from frame one, mask dropped when settled,
+  reduce-motion plain.
+- test/kindled_tale_test.dart gains a third pin: rumor masked mid-sweep
+  with full text + mask gone settled (BoonScreen mounted directly).
+- Suite 1124/1124, analyze clean. Plates re-shot (dealt_hand set);
+  visual eye-check pending — the sandbox image viewer was down this
+  loop (upload Unauthorized); mechanism identical to the eye-verified
+  hearth tale smolder. No tag/bump.

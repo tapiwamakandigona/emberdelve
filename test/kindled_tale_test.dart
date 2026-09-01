@@ -87,6 +87,32 @@ void main() {
     await pumpFor(tester, 600);
   });
 
+  testWidgets('boon rumor smolders in and settles mask-free', (tester) async {
+    final c = atRest(); // seasoned meta; we only need a fresh boon phase
+    c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: BoonScreen(c)),
+    );
+    await tester.pump(const Duration(milliseconds: 25));
+    final line = find.byKey(const ValueKey('rumor-line'));
+    expect(line, findsOneWidget);
+    // Full text from frame one, even mid-sweep.
+    expect(tester.widget<Text>(line).data, isNotEmpty);
+    expect(
+      find.ancestor(of: line, matching: find.byType(ShaderMask)),
+      findsOneWidget,
+      reason: 'the rumor smolders in',
+    );
+    for (var t = 0; t < 1000; t += 50) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(
+      find.ancestor(of: line, matching: find.byType(ShaderMask)),
+      findsNothing,
+      reason: 'settled rumor drops the mask',
+    );
+  });
+
   testWidgets('reduce-motion never masks', (tester) async {
     Motion.instance.update(setting: 'on');
     addTearDown(() => Motion.instance.update(setting: 'system'));
