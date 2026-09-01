@@ -19,6 +19,8 @@
 //   - MaskFilter.blur normal-style (logo, weapons, widgets under-glow)
 //   - Plain + stroked rects/rrects/circles/paths, saveLayer w/ opacity
 //     (shake boundary composite, phase fades)
+//   - drawImageRect @ FilterQuality.none, plain / matrix-ColorFilter
+//     (dye) / ColorFilter.mode saveLayer composite (sprites, hit-flash)
 //
 // Kept intentionally small (~a dozen draws on a 100x100 canvas): warm-up
 // runs once at boot; every draw must be onscreen within [size] to count.
@@ -100,5 +102,59 @@ class EmberShaderWarmUp extends ShaderWarmUp {
     canvas.saveLayer(rect, Paint()..color = const Color(0x66FFFFFF));
     canvas.drawCircle(const Offset(50, 50), 12, Paint()..color = const Color(0xFFFF7A29));
     canvas.restore();
+
+    // 7. Image sampling variants (2026-09-01 warmup audit): every sprite
+    // draws through drawImageRect at FilterQuality.none, dyed player
+    // sprites add a matrix ColorFilter (Art.dyeFilter), and the combat
+    // hit-flash composites a ColorFilter.mode saveLayer over the sprite.
+    // None of these pipelines were rehearsed — on the Skia renderer (the
+    // shipped one: Impeller is disabled in the manifest) the FIRST sprite
+    // frame and the FIRST hit therefore compiled shaders mid-combat.
+    // The image is drawn on the spot; sub-frame cost, run once at boot.
+    final rec = ui.PictureRecorder();
+    ui.Canvas(rec).drawRect(
+      const Rect.fromLTWH(0, 0, 4, 4),
+      Paint()..color = const Color(0xFFFF7A29),
+    );
+    final img = await rec.endRecording().toImage(4, 4);
+    const src = Rect.fromLTWH(0, 0, 4, 4);
+    // Plain pixel-art sample (every sprite, every frame).
+    canvas.drawImageRect(
+      img,
+      src,
+      rect,
+      Paint()..filterQuality = FilterQuality.none,
+    );
+    // Dyed sample: identity hue matrix — same shader variant as any dye.
+    canvas.drawImageRect(
+      img,
+      src,
+      rect,
+      Paint()
+        ..filterQuality = FilterQuality.none
+        ..colorFilter = const ColorFilter.matrix(<double>[
+          1, 0, 0, 0, 0, //
+          0, 1, 0, 0, 0, //
+          0, 0, 1, 0, 0, //
+          0, 0, 0, 1, 0, //
+        ]),
+    );
+    // Hit-flash composite: ColorFilter.mode saveLayer over an image draw.
+    canvas.saveLayer(
+      rect,
+      Paint()
+        ..colorFilter = const ColorFilter.mode(
+          Color(0xFFFFFFFF),
+          BlendMode.srcATop,
+        ),
+    );
+    canvas.drawImageRect(
+      img,
+      src,
+      rect,
+      Paint()..filterQuality = FilterQuality.none,
+    );
+    canvas.restore();
+    img.dispose();
   }
 }

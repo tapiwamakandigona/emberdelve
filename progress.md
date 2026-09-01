@@ -4829,3 +4829,14 @@ the opening run itself (R1 brief input).
   CustomPaints, never assert absolute counts). Already-gated and
   verified: DealtIn (jumps to settled), ShakeBox, DamagePop,
   EmberDrift, SmolderIn is opacity-only. Suite 1143. [audit, 2026-09-01]
+- Shader warm-up coverage audit: the shipped renderer is Skia (Impeller
+  disabled in the manifest — THE STEADY RENDERER), so warm-up gaps are
+  real first-use hitches. EmberShaderWarmUp rehearsed gradients, blur,
+  solids, and opacity saveLayer — but NOT the image-sampling family:
+  every sprite draws via drawImageRect @ FilterQuality.none, dyed
+  sprites add a matrix ColorFilter, and the combat hit-flash is a
+  ColorFilter.mode saveLayer composite. Those shaders compiled on the
+  FIRST sprite frame / FIRST hit, mid-combat, on-device. Warm-up now
+  draws all three variants (tiny PictureRecorder-made image, disposed
+  after). test/warmup_test.dart pin rasterizes the scene and covers the
+  additions automatically. [audit, 2026-09-01]
