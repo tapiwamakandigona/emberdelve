@@ -1,6 +1,18 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
 
+## Primary-source drop 2026-09-01c — Play's two new quality requirements
+
+Relayed from the owner's mailbox into `docs/research/owner-inbox-evidence.md`:
+Google Play has announced **two new app quality requirements** (memory/bitmap/
+code-optimization thresholds with separate criteria for games, and a device-
+migration onboarding standard). Verbatim text and provenance are in that file.
+
+Read it before touching `docs/PLAY-QUALITY-2027.md`. Two cautions: the email
+carries **no dates and no numbers**, so anything numeric must be sourced or
+marked `unknown`; and these are **memory** limits, not download size — download
+size is settled at 20.6 MB and stays closed. This lifts no freeze.
+
 ## Owner directive 2026-09-01b — research steering, freeze unchanged
 
 ### Compliance acknowledged, specifically
