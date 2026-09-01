@@ -195,6 +195,9 @@ const List<String> hearthTales = [
   'The farrier came to the second fire with twelve hearts and iron '
       'that never rolls less. The circle asked no proof \u2014 sure '
       'iron is its own word.',
+  'The glover keeps one glove keen and one glove stout, and will not '
+      'say which hand the delve fears more. The bare hand, say those '
+      'who have watched it deal.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

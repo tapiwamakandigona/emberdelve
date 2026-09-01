@@ -264,6 +264,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.26,
     swingAngle: 1.54,
   ),
+  // Split-handed (v0.184.0): the glover's needle — the slightest
+  // weapon at any fire, a long saddler's needle trailing waxed thread.
+  // Pale kid-leather accent.
+  'glover': WeaponDef(
+    'glovers_needle',
+    "Glover's Needle",
+    accent: Color(0xFFE8D9A8),
+    reach: 0.44,
+    idleAngle: 0.24,
+    raiseAngle: -1.30,
+    swingAngle: 1.58,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -625,6 +637,9 @@ class _WeaponPainter extends CustomPainter {
         break;
       case 'shoeing_hammer':
         _shoeingHammer(canvas, reach);
+        break;
+      case 'glovers_needle':
+        _gloversNeedle(canvas, reach);
         break;
       default:
         _sword(canvas, reach);
@@ -1012,6 +1027,56 @@ class _WeaponPainter extends CustomPainter {
       Offset(w * 1.15, -reach * 0.65),
       _p,
     );
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The glover's needle (v0.184.0): the slightest weapon at any fire —
+  /// a long saddler's needle with a flattened grip-end eye and a short
+  /// curl of waxed thread. Split-hands doctrine in one silhouette: it
+  /// only cuts where it is pointed, and it mends the same way.
+  void _gloversNeedle(Canvas canvas, double reach) {
+    final w = reach * 0.10;
+    // The shaft: a slim taper from grip to point.
+    final shaft = Path()
+      ..moveTo(-w * 0.55, 0)
+      ..lineTo(w * 0.55, 0)
+      ..lineTo(w * 0.12, -reach)
+      ..lineTo(-w * 0.12, -reach)
+      ..close();
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFFB8B2A4);
+    canvas.drawPath(shaft, _p);
+    _outline.strokeWidth = w * 0.18;
+    canvas.drawPath(shaft, _outline);
+    // The eye: a flattened oval near the grip end.
+    final eye = Rect.fromCenter(
+      center: Offset(0, -reach * 0.16),
+      width: w * 0.9,
+      height: reach * 0.14,
+    );
+    _p.color = const Color(0xFF6E6A60);
+    canvas.drawOval(eye, _p);
+    // Waxed thread: a short curl trailing from the eye, in the pale
+    // kid-leather accent.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.28
+      ..strokeCap = StrokeCap.round
+      ..color = _accent.withValues(alpha: 0.9);
+    final thread = Path()
+      ..moveTo(-w * 0.35, -reach * 0.16)
+      ..cubicTo(
+        -w * 2.1,
+        -reach * 0.10,
+        -w * 1.4,
+        reach * 0.12,
+        -w * 2.6,
+        reach * 0.16,
+      );
+    canvas.drawPath(thread, _p);
+    // Point glint.
+    canvas.drawLine(Offset(0, -reach * 0.98), Offset(0, -reach * 0.84), _p);
     _p.style = PaintingStyle.fill;
   }
 

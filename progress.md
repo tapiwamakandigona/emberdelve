@@ -5043,3 +5043,23 @@ the opening run itself (R1 brief input).
   → 21 / proven → 29. test/farrier_test.dart (win 21 / loss 43; pins
   the d6_forged mods). Plates critiqued; squeeze title fits 21 one
   line. Suite 1184 green, analyze clean.
+- THE GLOVER LANDED COMPLETE (v0.184.0-dev): twenty-second delver,
+  sixth chair of the second circle — the SPLIT-HANDS identity that
+  seats the LAST two unused tier-1 specialty starts: one Keen Ember
+  (attack-only +1), one Stout Ember (block-only +1), one bare Ember
+  Die. Every tier-1 start piece now has a delver who begins with it
+  (pinned in glover_test: the next tier-1 die added names the next
+  gap). HP 23 (sweep 89.75/69.25/44.50 all bands; 26 broke all three
+  ceilings). unlockEmbers 3000. Glover's-needle custom silhouette
+  (slim tapered shaft, grip-end eye, waxed-thread curl in pale kid-
+  leather accent — the slightest weapon at any fire). Pale-leather
+  ascetic-sourced sprite (hue +38° sat×0.55 floor 0.30 val×1.12; doc
+  family grey/green/blue/gold/copper/pale-leather critiqued). Codex,
+  The Glover's Stitch + twentytwo_ways_down (21..16 frozen),
+  glovers_proving seed 22 (chair tradition holds), 66th tale, honors
+  → 22 / proven → 30. Combat plate: the split reads at a glance — two
+  ringed dice, one bare. Squeeze title fits 22 one line.
+- proven_epithet_test scroll fix: scrollUntilVisible's single-element
+  lookup broke once the roster passed twenty chairs (lazy list) —
+  replaced with the fixed-step drag-to-bottom loop the visual tools
+  already use. Suite 1191 green, analyze clean.

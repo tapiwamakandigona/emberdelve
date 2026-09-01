@@ -58,14 +58,16 @@ void main() {
       MaterialApp(theme: buildEmberTheme(), home: CharacterScreen(c)),
     );
     await tester.pump();
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('epithet-the_proven')),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('epithet-the_proven')),
-    );
+    // The character list inflates lazily and the epithet shelf sits
+    // below a roster that keeps growing — drag to the bottom in fixed
+    // steps (scrollUntilVisible's single-element lookup breaks on the
+    // lazy list once the roster passed twenty chairs).
+    final proven = find.byKey(const ValueKey('epithet-the_proven'));
+    for (var i = 0; i < 24 && proven.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
+      await tester.pump();
+    }
+    await tester.ensureVisible(proven);
     await tester.pump();
     expect(find.byKey(const ValueKey('epithet-the_proven')), findsOneWidget);
     expect(find.text('Clear every proving.'), findsOneWidget);

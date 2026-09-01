@@ -78,6 +78,7 @@ const List<String> charactersOrder = [
   'brewster',
   'lamplighter',
   'farrier',
+  'glover',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -399,6 +400,21 @@ const Map<String, CharacterDef> characters = {
     maxHp: 12,
     startDice: ['d6_forged', 'd6_forged', 'd6_forged'],
     unlockEmbers: 2850,
+  ),
+  // v0.184.0 The Glover: the sixth chair of the second circle — the
+  // SPLIT-HANDS identity, and the kit that finally starts the last two
+  // unused tier-1 specialties. One Keen Ember (attack-only +1), one
+  // Stout Ember (block-only +1), one bare Ember Die: the right hand
+  // cuts, the left hand holds, the bare hand learns. Pure data. HP is
+  // the tuning knob (sweep in docs/improvements).
+  'glover': CharacterDef(
+    'glover',
+    'The Glover',
+    'The split-handed: a keen right glove, a stout left glove, and '
+        'one bare hand still learning.',
+    maxHp: 23,
+    startDice: ['d6_keen', 'd6_stout', 'd6'],
+    unlockEmbers: 3000,
   ),
 };
 

@@ -302,6 +302,14 @@ final List<CodexEntryDef> codexEntries = [
         'thinnest skin at any fire, because iron this sure was paid '
         'for somewhere.',
   ),
+  _delver(
+    'glover',
+    'The sixth chair of the second circle. Glove-work is the trade of '
+        'knowing which hand does what: the keen right glove cuts, the '
+        'stout left glove holds, and the bare hand between them is '
+        'still deciding. The last two waiting embers found their '
+        'delver at the same fire.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

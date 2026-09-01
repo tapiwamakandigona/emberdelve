@@ -88,7 +88,7 @@ void main() {
 
   test('the roster-growth contracts all moved with the roster', () {
     final c = GameController();
-    expect(characters.length, 21); // v0.183.0: the farrier joined the second circle
+    expect(characters.length, 22); // v0.184.0: the glover joined the second circle
     // Unlock ladder ascends through the new tail.
     final ladder = [
       for (final id in charactersOrder) characters[id]!.unlockEmbers,

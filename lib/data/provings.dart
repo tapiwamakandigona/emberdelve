@@ -284,6 +284,19 @@ const List<ProvingDef> provings = [
     character: 'farrier',
     difficulty: 'normal',
   ),
+  // v0.184.0 The Even Stitch — the twenty-second delver proving. Seed
+  // 22: the chair-number tradition holds (bot-win pinned, unused by
+  // any other delver proving).
+  ProvingDef(
+    id: 'glovers_proving',
+    title: "The Glover's Proving",
+    blurb:
+        'The Glover on normal floors. Keen right, stout left, one '
+        'bare hand \u2014 give each roll to the glove that fits it.',
+    seed: 22,
+    character: 'glover',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win
