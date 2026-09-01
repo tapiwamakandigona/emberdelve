@@ -4661,3 +4661,12 @@ the opening run itself (R1 brief input).
   fixtures use an unbooted controller (waymark_line_test pattern).
 - Version bumped 0.178.0+204; currentAppVersion 0.178.0; news entry;
   docs/releases/v0.178.0.md. ONE release, NOT prerelease, no Play.
+- Release v0.178.0 PUBLISHED on GitHub (target 1e9a49ac, latest, not
+  prerelease): signed CI run 33503007781, all 5 artifacts uploaded
+  (universal apk code 204, aab 204, arm64 2204, v7a 1204, x86_64 4204),
+  every signer cert matched pin 031acb42..., sha256 table appended to
+  the notes. The tagged AAB is the Play candidate — do NOT rebuild.
+  [publish_release.sh, 2026-09-01]
+- SHIPPING STOPPED per DEMAND 477857cf. Next work is written research
+  only: R1 first-session teardown, R2 session-end blindness options,
+  R3 store-listing conversion doc. No second version bump.
