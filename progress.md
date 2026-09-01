@@ -4905,3 +4905,22 @@ the opening run itself (R1 brief input).
   (angle-dependent, transient) — documented as left-alone in
   docs/research/game-feel-borrowings.md so it doesn't get "fixed" into
   a stale-angle bug. Suite 1146 green. [audit, 2026-09-01]
+- ⚡ OWNER DEMAND 2026-09-01f (bad77ae) ACKNOWLEDGED: first real player
+  feedback ever — 5-star review "Add more delvers, I need more" + two
+  beta notes — makes CONTENT VOLUME (more delvers) the next major
+  update. Primary source outranks all speculation. Constraints hold:
+  no ads/telemetry/timers, content ships complete, freeze unchanged.
+- Roster expansion foundation shipped: DELVE-CODE V2
+  (lib/game/delve_code.dart) — founding sixteen keep byte-identical
+  9-char codes forever; 17th+ delvers emit a 10-char form (4 high
+  index bits, 256 ceiling, reserved bit 49 must be 0). Old builds see
+  "not a code", never a wrong delve; v2 spelling of a v1-range delver
+  rejected (one challenge, one spelling). Pinned by v2 suite in
+  test/delve_code_test.dart via the codec's new roster seam — the
+  encoding is proven BEFORE the first new delver exists. Design doc
+  docs/improvements/roster-expansion-design.md: what closed the
+  roster and how each lock opens (codes SOLVED; second-circle fiction
+  needs OWNER SIGN-OFF since tales/achievements publish "complete at
+  sixteen"; sprites via hue families; honors never re-price),
+  the completeness bar per delver, sequencing (gap analysis next;
+  Seven Hearths pairing already shipped — don't double-build).

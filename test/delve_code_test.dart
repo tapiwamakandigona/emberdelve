@@ -6,6 +6,7 @@ import 'package:emberdelve/game/delve_code.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  v2Suite();
   group('round-trip', () {
     test('every delver × difficulty × ascension corners × seed corners', () {
       const seeds = [1, 2, 503, 123456789, 0x7ffffffe];
@@ -160,6 +161,158 @@ void main() {
         expect(got, isNotNull, reason: v);
         expect(got!.seed, 4242, reason: v);
       }
+    });
+  });
+}
+
+// ── Delve-code v2 (2026-09-01, DEMAND 01f roster expansion) ────────────
+// The founding sixteen keep their 9-char codes byte-identical forever;
+// only a 17th-or-later delver emits the 10-char form. Tested against an
+// extended fake roster via the codec's roster seam — the contract is
+// pinned BEFORE the first new delver ships, so the encoding can never
+// be the reason a new delver breaks old shares.
+void v2Suite() {
+  final extended = [
+    ...charactersOrder,
+    for (var i = 0; i < 240; i++) 'newcomer_$i',
+  ];
+
+  group('delve-code v2', () {
+    test(
+      'founding sixteen emit byte-identical codes under extended roster',
+      () {
+        for (final id in charactersOrder) {
+          for (final seed in [1, 12345, 0x7ffffffe]) {
+            final v1 = encodeDelveCode(
+              seed: seed,
+              character: id,
+              difficulty: 'hard',
+              ascension: 7,
+            );
+            final ext = encodeDelveCode(
+              seed: seed,
+              character: id,
+              difficulty: 'hard',
+              ascension: 7,
+              roster: extended,
+            );
+            expect(ext, v1, reason: 'code for $id must never change');
+            expect(v1!.length, 'DELVE-'.length + 10);
+          }
+        }
+      },
+    );
+
+    test('17th+ delvers round-trip through the 10-char form', () {
+      for (final idx in [16, 17, 31, 128, 255]) {
+        final id = extended[idx];
+        for (final seed in [1, 987654321, 0x7ffffffe]) {
+          for (final diff in ['easy', 'normal', 'hard']) {
+            for (final shortRoad in [false, true]) {
+              final code = encodeDelveCode(
+                seed: seed,
+                character: id,
+                difficulty: diff,
+                ascension: 42,
+                shortRoad: shortRoad,
+                roster: extended,
+              );
+              expect(code, isNotNull);
+              expect(
+                code!.length,
+                'DELVE-'.length + 11,
+                reason: 'index $idx needs the long form',
+              );
+              final d = decodeDelveCode(code, roster: extended);
+              expect(d, isNotNull);
+              expect(d!.seed, seed);
+              expect(d.character, id);
+              expect(d.difficulty, diff);
+              expect(d.ascension, 42);
+              expect(d.shortRoad, shortRoad);
+            }
+          }
+        }
+      }
+    });
+
+    test('index past 255 refuses to encode (no silent truncation)', () {
+      final huge = [...extended, for (var i = 0; i < 20; i++) 'over_$i'];
+      expect(
+        encodeDelveCode(
+          seed: 5,
+          character: 'over_5',
+          difficulty: 'easy',
+          ascension: 0,
+          roster: huge,
+        ),
+        isNull,
+      );
+    });
+
+    test('a v2 spelling of a v1-range delver is rejected', () {
+      // Hand-build a 10-char payload whose full index is <= 15: the
+      // encoder never emits this, so the decoder must not accept it —
+      // one challenge, one spelling.
+      const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+      var bits = 12345 | (3 << 31) | (1 << 35) | (2 << 37);
+      final chars = List.filled(10, '');
+      var b = bits;
+      for (var i = 0; i < 10; i++) {
+        chars[i] = alphabet[b & 31];
+        b >>= 5;
+      }
+      final payload = chars.join();
+      // Recompute the real checksum so ONLY the two-spellings rule can
+      // reject it.
+      String? accepted;
+      for (final c in alphabet.split('')) {
+        final d = decodeDelveCode('DELVE-$payload$c', roster: extended);
+        if (d != null) accepted = 'DELVE-$payload$c';
+      }
+      expect(accepted, isNull);
+    });
+
+    test('reserved bit 49 set means not-a-code', () {
+      const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+      var bits = 12345 | (2 << 31) | (1 << 35) | (2 << 37);
+      bits |= 1 << 45; // high index bits -> index 18, genuine v2
+      bits |= 1 << 49; // reserved bit SET
+      final chars = List.filled(10, '');
+      var b = bits;
+      for (var i = 0; i < 10; i++) {
+        chars[i] = alphabet[b & 31];
+        b >>= 5;
+      }
+      final payload = chars.join();
+      for (final c in alphabet.split('')) {
+        expect(decodeDelveCode('DELVE-$payload$c', roster: extended), isNull);
+      }
+    });
+
+    test('every single-character mutation of a v2 code is rejected or '
+        'decodes to a different challenge, never a silent corruption', () {
+      const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+      final code = encodeDelveCode(
+        seed: 424242,
+        character: extended[17],
+        difficulty: 'normal',
+        ascension: 3,
+        roster: extended,
+      )!;
+      final body = code.substring('DELVE-'.length);
+      var rejected = 0;
+      for (var i = 0; i < body.length; i++) {
+        for (final c in alphabet.split('')) {
+          if (c == body[i]) continue;
+          final mutated = body.substring(0, i) + c + body.substring(i + 1);
+          final d = decodeDelveCode('DELVE-$mutated', roster: extended);
+          if (d == null) rejected++;
+        }
+      }
+      // The 5-bit checksum catches ~31/32 of mutations; the rest must
+      // at least be a VALID different challenge, never a throw.
+      expect(rejected, greaterThan(body.length * 31 * 30 ~/ 32));
     });
   });
 }
