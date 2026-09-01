@@ -56,6 +56,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- THE STEADY RENDERER (2026-09-01): render with Skia, not Impeller.
+             This game's market skews to older Adreno 5xx/6xx and Mali GPUs.
+             Flutter's engine denylists Vulkan on Adreno <= 650, landing those
+             devices on Impeller's GLES backend, which (a) measures ~28fps vs
+             Skia's ~54 on Adreno 506 (flutter/flutter#187009) and (b) still
+             carries an ImageDecoder SIGABRT on Android 10 Mali as of 3.44.8
+             (flutter/flutter#190640) — this game decodes sprite PNGs, and its
+             28-day zero-crash record is a DEMAND pillar. Skia is the mature
+             path for a pure-2D CustomPaint game. Re-evaluate on each Flutter
+             upgrade; remove this once Impeller GLES is clean on low-end. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

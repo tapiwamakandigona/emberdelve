@@ -4379,3 +4379,20 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - All other mid-run surfaces passed clean at both scales (reward cards,
   shop rows, event choice buttons, win summary all wrap correctly).
 - Suite 1115/1115, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE STEADY RENDERER (perf lane, under freeze)
+Impeller opted OUT on Android via manifest meta-data
+(io.flutter.embedding.android.EnableImpeller=false), keeping Skia as
+the renderer.
+- Why: our market skews Adreno 5xx / low-end Mali. Flutter's engine
+  denylists Vulkan on Adreno <=650, so those devices fall to Impeller
+  GLES, which measures ~28fps vs Skia ~54 on Adreno 506
+  (flutter/flutter#187009), and Android-10 Mali carries an
+  ImageDecoder SIGABRT (flutter/flutter#190640 — we decode sprite
+  PNGs). DEMAND pillar #2 = protect the zero-crash record; a pure-2D
+  CustomPaint game gains nothing from Impeller here.
+- Verified: debug APK built, merged manifest confirmed via aapt2 dump
+  (EnableImpeller=false present) [local build, 2026-09-01].
+- Re-evaluate on every Flutter upgrade (comment in manifest says so).
+  Mirror to pyregrove-ci per DEMAND config-mirror rule.
+- Manifest-only change; suite untouched (1115). No tag/bump (freeze).
