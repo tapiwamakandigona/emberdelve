@@ -26,9 +26,15 @@ import 'telemetry/telemetry_bootstrap.dart';
 import 'telemetry/telemetry_service.dart';
 import 'ui/motion.dart';
 import 'ui/screens.dart';
+import 'ui/warmup.dart';
 import 'ui/theme.dart';
 
 Future<void> main() async {
+  // THE FIRST SPARK: must be set BEFORE the binding initializes —
+  // PaintingBinding.initInstances() executes the warm-up (see
+  // lib/ui/warmup.dart for why Skia + no default warm-up = first-use
+  // shader jank on low-end devices without this).
+  PaintingBinding.shaderWarmUp = const EmberShaderWarmUp();
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

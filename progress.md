@@ -4523,3 +4523,21 @@ the same entrance language as the hearth tale and the rumor:
 - Paint-only as ever: full text + semantics frame one, mask dropped at
   rest, reduce-motion plain. first_fall_test pins a SmolderIn ancestor
   (type check — time-independent). Suite 1124/1124, analyze clean.
+
+## 2026-09-01 — THE FIRST SPARK (perf lane, under freeze)
+Research pass (game-juice + low-end Flutter, 2026 sources) confirmed
+combat juice already implements the canon (magnitude-scaled shake = the
+"Balatro data channel", 80ms hit-stop at >=25% hits, 120ms flash in the
+readable 50-100ms+tail window) — no change needed there. The real gap:
+THE STEADY RENDERER pinned Skia, and Flutter ships no default shader
+warm-up anymore, so every shader family compiles mid-animation on first
+sight — a first-use hitch on exactly the low-end devices the directive
+names.
+- lib/ui/warmup.dart: EmberShaderWarmUp draws one small instance of
+  every shader family the app actually uses (grep-audited): linear
+  gradient fill/mask, radial glow, sweep ring, MaskFilter.blur, solid +
+  stroked rrects/paths, saveLayer composite. ~12 draws, 100x100.
+- main.dart sets PaintingBinding.shaderWarmUp BEFORE the binding
+  initializes (contract: initInstances executes it).
+- test/warmup_test.dart pins the scene rasterizes end-to-end (execute()
+  through toImage) so it can't silently rot. Suite 1125, analyze clean.
