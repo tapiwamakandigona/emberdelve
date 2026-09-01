@@ -23,10 +23,25 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.178.0';
+const String currentAppVersion = '0.179.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.179.0',
+    title: 'More Hands at the Fire',
+    lines: [
+      'Someone asked for more delvers. Here are SIX \u2014 the roster '
+          'grows from sixteen to twenty-two: the Hedger, the Miller, '
+          'the Brewster, the Lamplighter, the Farrier and the Glover, '
+          'each with their own dice, weapon, proving and tale.',
+      'The character list now reads as the fiction does: the founding '
+          'sixteen under THE FIRST CIRCLE, the new chairs under THE '
+          'SECOND.',
+      'Nothing you already earned changed its price.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.178.0',
     title: 'The Seven Hearths',
