@@ -66,6 +66,13 @@ const List<String> charactersOrder = [
   // sixteenth delver — append-LAST. Delve-code bits 31..34 are now FULL:
   // the roster is complete at sixteen chairs. No seventeenth.
   'hearthkeeper',
+  // ── THE SECOND CIRCLE ────────────────────────────────────────────
+  // DEMAND 2026-09-01f: the first real player review asked for more
+  // delvers. The first fire's sixteen chairs stay complete exactly as
+  // published; newcomers sit at a SECOND circle. Delve codes carry
+  // index 16+ in the v2 ten-char form (delve_code.dart) — every code
+  // ever shared stays byte-identical. Append-LAST discipline unchanged.
+  'hedger',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -304,6 +311,25 @@ const Map<String, CharacterDef> characters = {
     maxHp: 26,
     startDice: ['d6_brand', 'd6_ward', 'd6_steady'],
     unlockEmbers: 2100,
+  ),
+  // v0.179.0 The Hedger: the SEVENTEENTH delver — first chair of the
+  // second circle, and the roster's first retaliation identity. The
+  // kindler's own pouch under a Thorn Band: same three plain Ember
+  // Dice, but a landed blow answers for 3 — an unblocked hit is no
+  // longer pure loss, which inverts the block calculus the other
+  // sixteen play by. Pure data (existing relic, existing dice, no
+  // marks); HP 20 from the v0.179.0 sweep (400 seeds: easy 89.25 /
+  // normal 65.50 / hard 43.00 — all bands): the hedge is sharp, not
+  // thick.
+  'hedger': CharacterDef(
+    'hedger',
+    'The Hedger',
+    'The thorn-layer: a Thorn Band and plain Ember Dice \u2014 '
+        'every blow against them is answered.',
+    maxHp: 20,
+    startDice: ['d6', 'd6', 'd6'],
+    startRelic: 'thorn_band',
+    unlockEmbers: 2250,
   ),
 };
 

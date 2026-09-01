@@ -23,7 +23,13 @@ void main() {
               );
               expect(code, isNotNull);
               expect(code, startsWith('DELVE-'));
-              expect(code!.length, 'DELVE-'.length + 10);
+              // First circle rides v1 (10 chars); the second circle the
+              // v2 long form (11) — delve_code.dart format header.
+              expect(
+                code!.length,
+                'DELVE-'.length +
+                    (charactersOrder.indexOf(ch) <= 15 ? 10 : 11),
+              );
               final back = decodeDelveCode(code);
               expect(back, isNotNull, reason: code);
               expect(back!.seed, seed);
@@ -181,7 +187,9 @@ void v2Suite() {
     test(
       'founding sixteen emit byte-identical codes under extended roster',
       () {
-        for (final id in charactersOrder) {
+        // .take(16): the FIRST CIRCLE. A 17th+ delver rightly emits the
+        // v2 long form — its byte-identity contract is with itself.
+        for (final id in charactersOrder.take(16)) {
           for (final seed in [1, 12345, 0x7ffffffe]) {
             final v1 = encodeDelveCode(
               seed: seed,

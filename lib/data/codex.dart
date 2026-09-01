@@ -263,6 +263,14 @@ final List<CodexEntryDef> codexEntries = [
         'rolls under three. Nothing plain, nothing spare: the fire is '
         'kept, the door is kept, and the sixteenth chair keeps them both.',
   ),
+  _delver(
+    'hedger',
+    'The first chair of the second circle. A hedger\u2019s craft is the '
+        'laid thorn: the wall that answers whoever strikes it. Their '
+        'pouch is the kindler\u2019s own \u2014 three plain dice \u2014 '
+        'but the Thorn Band prices every blow against them, and thin '
+        'skin makes the pricing dear both ways.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

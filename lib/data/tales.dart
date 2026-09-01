@@ -179,6 +179,10 @@ const List<String> hearthTales = [
       'holds still. Everything before it is practice for that stillness.',
   'Six times round now, this book of tales. The fire is not repeating itself, '
       'the old hands say. It is making sure.',
+  // v0.179.0 — the second circle opens (append-LAST, same discipline).
+  'When the sixteenth chair filled, the fire did not end \u2014 it drew '
+      'a second circle. The hedger sat down first, and the thorns sat '
+      'with them.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

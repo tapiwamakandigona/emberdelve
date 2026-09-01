@@ -13,7 +13,7 @@ void main() {
   List<String> cycle4() => hearthTales.sublist(30, 40);
 
   test('four full cycles, hearthgold frozen at the first', () {
-    expect(hearthTales.length, 60); // the sixth cycle
+    expect(hearthTales.length, 61); // v0.179.0: the second-circle tale
     expect(hearthgoldTales, 10, reason: 'the vista gate never moves');
   });
 
@@ -34,9 +34,13 @@ void main() {
     // 'Six runes come off that anvil' — the live rune set.
     expect(faceRunes.length, 6);
     expect(all.contains('Six runes'), isTrue);
-    // 'Eight chairs at this fire' — the live roster.
-    expect(characters.length, 16); // sixteenth delver: the hearthkeeper
-    expect(all.contains('Sixteen chairs'), isTrue); // roster closed
+    // 'Sixteen chairs' — the FIRST CIRCLE, which stays complete exactly
+    // as published: the hearthkeeper holds index 15 forever (delve-code
+    // contract). The roster itself grew past it (v0.179.0 second circle);
+    // the tale speaks of the first fire and stays true.
+    expect(charactersOrder.indexOf('hearthkeeper'), 15);
+    expect(characters.length, greaterThanOrEqualTo(16));
+    expect(all.contains('Sixteen chairs'), isTrue); // first circle complete
   });
 
   test('the new tales keep the charter (short, honest)', () {

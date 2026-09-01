@@ -205,6 +205,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.36,
     swingAngle: 1.70,
   ),
+  // Thorn-layer (v0.179.0): a billhook — the hedge-layer's own tool, the
+  // curved blade that lays a thorn wall. Modest reach (hedges are laid
+  // close), hedge-green accent to match the sheet's remap.
+  'hedger': WeaponDef(
+    'billhook',
+    'Billhook',
+    accent: Color(0xFF6FA84C),
+    reach: 0.46,
+    idleAngle: 0.24,
+    raiseAngle: -1.30,
+    swingAngle: 1.62,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -552,6 +564,9 @@ class _WeaponPainter extends CustomPainter {
       case 'pin_wrench':
         _pinWrench(canvas, reach);
         break;
+      case 'billhook':
+        _billhook(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -620,6 +635,76 @@ class _WeaponPainter extends CustomPainter {
         }
         break;
     }
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The hedger's billhook (v0.179.0): a working blade, not a war one —
+  /// straight spine that breaks into a forward hook at the tip, the curve
+  /// that lays a hedge. Wood-and-iron palette; the hedge-green accent
+  /// rides the hook's inner edge as the glint.
+  void _billhook(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Wooden haft with a banded grip.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, reach * 0.06),
+          width: w,
+          height: reach * 0.26,
+        ),
+        Radius.circular(w * 0.5),
+      ),
+      _p,
+    );
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 2.2, height: w * 0.7),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Blade: straight working spine, then the forward hook — the outer
+    // edge sweeps ahead of the grip and curls back like a laid stem.
+    final blade = Path()
+      ..moveTo(-w * 0.55, -w * 0.3)
+      ..lineTo(-w * 0.40, -reach * 0.62) // spine climbs nearly straight
+      ..quadraticBezierTo(
+        -w * 0.15,
+        -reach * 0.92,
+        w * 1.35,
+        -reach * 0.98,
+      ) // hook throws forward
+      ..quadraticBezierTo(
+        w * 0.45,
+        -reach * 0.86,
+        w * 0.42,
+        -reach * 0.66,
+      ) // inner beak returns
+      ..lineTo(w * 0.5, -w * 0.3)
+      ..close();
+    _p.shader = const LinearGradient(
+      begin: Alignment.bottomCenter,
+      end: Alignment.topCenter,
+      colors: [Color(0xFF9AA394), Color(0xFFDDE3D2)],
+    ).createShader(Rect.fromLTWH(-w, -reach, w * 2.6, reach));
+    canvas.drawPath(blade, _p);
+    _p.shader = null;
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawPath(blade, _outline);
+    // Hedge-green glint along the hook's inner curve.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.3
+      ..strokeCap = StrokeCap.round
+      ..color = _accent.withValues(alpha: 0.9);
+    final glint = Path()
+      ..moveTo(-w * 0.28, -reach * 0.64)
+      ..quadraticBezierTo(-w * 0.05, -reach * 0.88, w * 1.1, -reach * 0.94);
+    canvas.drawPath(glint, _p);
     _p.style = PaintingStyle.fill;
   }
 

@@ -217,6 +217,20 @@ const List<ProvingDef> provings = [
     character: 'hearthkeeper',
     difficulty: 'normal',
   ),
+  // v0.179.0 The Laid Hedge — the seventeenth delver proving, first of
+  // the second circle (the v0.119 pattern, eleventh use). Seed 17 for the
+  // seventeenth chair (bot-win pinned, unused by any other delver
+  // proving).
+  ProvingDef(
+    id: 'hedgers_proving',
+    title: "The Hedger's Proving",
+    blurb:
+        'The Hedger on normal floors. Thin skin and a Thorn Band '
+        '\u2014 make every blow against you cost.',
+    seed: 17,
+    character: 'hedger',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

@@ -116,6 +116,8 @@ const List<String> achievementsOrder = [
   'collier_wins', 'fourteen_ways_down',
   'stoker_wins', 'fifteen_ways_down',
   'hearthkeeper_wins', 'sixteen_ways_down',
+  // v0.179.0 — the second circle opens (DEMAND 2026-09-01f).
+  'hedger_wins', 'seventeen_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -333,8 +335,9 @@ const Map<String, AchievementDef> achievements = {
     'Full Company',
     'Unlock every delver.',
     stat: 'chars_unlocked',
-    // sixteenth delver: the hearthkeeper closes the roster (promise doctrine).
-    target: 16,
+    // seventeenth delver (v0.179.0): the second circle opens — promise
+    // honors move with the live roster (promise doctrine).
+    target: 17,
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
@@ -522,6 +525,24 @@ const Map<String, AchievementDef> achievements = {
     stat: 'delvers_cleared',
     target: 16,
   ),
+  // v0.179.0 THE SECOND CIRCLE: the hedger opens it. Historical honors
+  // never re-price — Sixteen Ways Down stays the first circle's honor at
+  // sixteen; the new count gets a NEW name, per the v0.119 pattern.
+  'hedger_wins': AchievementDef(
+    'hedger_wins',
+    "The Hedger's Answer",
+    'Win a run as the Hedger.',
+    stat: 'char_wins',
+    param: 'hedger',
+    target: 1,
+  ),
+  'seventeen_ways_down': AchievementDef(
+    'seventeen_ways_down',
+    'Seventeen Ways Down',
+    'Win a run with every one of the seventeen delvers.',
+    stat: 'delvers_cleared',
+    target: 17,
+  ),
 
   // --- the bestiary -----------------------------------------------------
   'tyrant_felled': AchievementDef(
@@ -637,8 +658,9 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // sixteenth delver: moved with the roster one last time (roster closed).
-    target: 16,
+    // seventeenth delver (v0.179.0): moved with the roster — the second
+    // circle opened (DEMAND 2026-09-01f).
+    target: 17,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

@@ -24,7 +24,7 @@ void main() {
       ids.indexOf('flintwrights_proving') + 1,
       reason: 'the character provings stand together',
     );
-    expect(provings.length, 24);
+    expect(provings.length, 25); // v0.179.0: the hedger's proving
     expect(provings.last.id, 'ash_summit');
   });
 

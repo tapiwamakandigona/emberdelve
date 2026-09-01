@@ -4945,3 +4945,26 @@ the opening run itself (R1 brief input).
   reviews, 2 rating users all-time) — it came via Play Console email;
   tester-track or since-removed. Build evidence unchanged, but NEVER
   use the "first public review" framing in any copy, notes, or docs.
+- ⚡ THE HEDGER LANDED COMPLETE (v0.179.0-dev): seventeenth delver,
+  first chair of the SECOND CIRCLE, roster's first retaliation
+  identity — kindler's pouch (d6/d6/d6) + thorn_band, HP 20 (swept:
+  89.25/65.50/43.00 all bands), unlockEmbers 2250, delve-code index 16
+  = first v2 long-form code. ALL lanes in one commit: def; billhook
+  weapon (custom silhouette — straight spine, forward hook, hedge-green
+  glint); hedge-green knight_m sprite (hue +95° sat×0.90 floor 0.34
+  val×0.88, PROVENANCE row); codex; hedger_wins + seventeen_ways_down
+  (Sixteen Ways Down FROZEN at 16 — historical honors never re-price);
+  hedgers_proving seed 17 (bot-win pinned, seed = chair number);
+  second-circle tale (61st, ≤200 chars); full_company/crowned_company/
+  the_six_handed → 17, the_proven → 25 (promise honors move with the
+  live roster). Test moves with honest reasons: amethyst/tenth_chair
+  frozen-gate pins, fourth-cycle 'Sixteen chairs' fact now pinned to
+  hearthkeeper index 15 (the tale speaks of the FIRST fire and stays
+  true), provings 24→25 + '0 of 25' UI strings, hearthTales 60→61,
+  delve-code round-trip length by circle. NEW test/hedger_test.dart
+  (7 pins incl. win seed 17 / loss seed 3 replays). Visual plates
+  critiqued (tool/hedger_visual_test.dart): sprite distinct at 56dp
+  next to warden/bearer/shieldwright; billhook reads as a working
+  hook, not a sword. Suite 1160 green, analyze clean. API learnings:
+  relics live in sim.run!['relics'] not player; lazy character list
+  needs drag-to-bottom (no element until scrolled).

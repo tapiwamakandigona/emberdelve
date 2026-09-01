@@ -39,13 +39,13 @@ void main() {
     // move. Update only this reason, never the gate.
     expect(
       characters.length,
-      16,
+      17,
       reason:
-          'sixteenth delver: the roster grew past twelve (cutler, collier, '
-          'stoker, hearthkeeper) and the gate did NOT move — '
-          'delversCleared >= 12 stays frozen. The roster is now CLOSED '
-          'at sixteen (delve-code bits full); this pin should never '
-          'move again',
+          'seventeenth delver (v0.179.0, DEMAND 2026-09-01f): the second '
+          'circle opened past the sixteen-chair first fire and the gate '
+          'did NOT move — delversCleared >= 12 stays frozen. Delve codes '
+          'grew a v2 long form for index 16+; the first sixteen keep '
+          'their codes byte-identical.',
     );
   });
 

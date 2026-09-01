@@ -16,7 +16,7 @@ void main() {
   List<String> cycle6() => hearthTales.sublist(50, 60);
 
   test('six full cycles, hearthgold frozen at the first', () {
-    expect(hearthTales.length, 60);
+    expect(hearthTales.length, 61); // v0.179.0: the second-circle tale
     expect(hearthgoldTales, 10, reason: 'the vista gate never moves');
   });
 
@@ -48,7 +48,9 @@ void main() {
     expect(keeper.startTempers, isEmpty);
     expect(all.contains('forged to their work'), isTrue);
     // 'Sixteen chairs, and the fire is done making chairs' — the roster.
-    expect(characters.length, 16);
+    // v0.179.0: the second circle opened; the sixth-cycle facts are about
+    // first-circle delvers, whose indexes are frozen.
+    expect(characters.length, 17);
     expect(all.contains('done making chairs'), isTrue);
     // 'the Many-Handed' asks every chair (v0.140 AUDIT RULE: an
     // 'every X' promise follows the catalog — and the catalog is closed).

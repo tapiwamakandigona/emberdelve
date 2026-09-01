@@ -152,8 +152,9 @@ const Map<String, EpithetDef> epithets = {
     'the Many-Handed',
     unlockLine: 'Win a delve with every delver.',
     stat: 'delvers_cleared',
-    // sixteenth delver: moved with the roster one last time (roster closed).
-    target: 16,
+    // seventeenth delver (v0.179.0): the second circle opened — promise
+    // epithets move with the live roster.
+    target: 17,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never
@@ -182,6 +183,6 @@ const Map<String, EpithetDef> epithets = {
     'the Proven',
     unlockLine: 'Clear every proving.',
     stat: 'provings_cleared',
-    target: 24, // the hearthkeeper's proving closed the delver list
+    target: 25, // v0.179.0: the hedger's proving — the second circle opened
   ),
 };
