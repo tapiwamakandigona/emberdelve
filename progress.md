@@ -4233,3 +4233,23 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   owed). daily_record_test extended: today→recap, yesterday→return line,
   older→silence + ethics sweep on both variants.
 - Suite 1110/1110, analyze clean. No tag/version bump (freeze).
+
+## 2026-09-01 — THE MEASURED GLIDE (perf lane; probe only, no app change)
+- Standing perf directive (2026-08-31): frame-cost audit of the two newest
+  hot paths. New tool/glide_probe_test.dart (NOT in CI; perf_probe method:
+  debugOnProfilePaint per-frame counts → build/glide_probe/metrics.json).
+- Findings [glide_probe, 2026-09-01]:
+  - codex idle: 0.0 paints/frame — the book is fully static at rest.
+  - codex lane glide (World→Dice 18.2, Dice→World 20.2 paints/frame while
+    the walk is animating): all of it is lazy child inflation inside the
+    moving viewport (RenderIndexedSemantics/RenderRepaintBoundary pairs —
+    ListView.addRepaintBoundaries doing its job). No app-bar, chip-row, or
+    route-level leakage. Reference: pre-fix map_drag was 54.5/frame.
+  - title idle with day-2 return line: 3.0 paints/frame, IDENTICAL to the
+    plain title (RenderCustomPaint = EmberDrift's own layer only). The
+    return line costs nothing at rest.
+- Probe lessons: a guarded tester.tap cannot be left unawaited (chip onTap
+  discards the glide future, so awaiting the tap does NOT await the walk —
+  pump frames after); ensureVisible scrolls earlier chips off the row, so
+  re-anchor before tapping a leftward chip.
+- Verdict: boundaries hold; no remediation needed. No tag/bump (freeze).
