@@ -7,11 +7,12 @@ Brand palette from the app's own privacy page: bg #14101e, ember #f2953f,
 text #efe9dc, line #352c4e. Cinzel = display, Inter = subhead.
 """
 import os
+import sys
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "docs/store/screenshots")
-OUT = os.path.join(SRC, "framed")
+OUT = os.path.join(SRC, "framed-r3" if "--r3" in sys.argv else "framed")
 CINZEL = os.path.join(ROOT, "assets/fonts/Cinzel-Variable.ttf")
 INTER = os.path.join(ROOT, "assets/fonts/Inter-Regular.ttf")
 
@@ -27,13 +28,28 @@ BAND = 300               # caption band height
 PAD = 40
 
 # (source file, headline, subline) — order = store order, hook first
-PLATES = [
+PLATES_LIVE = [
     ("04-combat-roll.png", "Every death is fair.",   "Enemies always telegraph. No hidden math."),
     ("02-boon-pick.png",   "Real choices, every run.", "Push your luck — or walk in unaided."),
     ("03-map.png",         "Branching paths.",        "See what an elite guards before you commit."),
     ("01-title.png",       "Fair dice. No ads.",      "No timers, no gacha. Free forever."),
     ("05-ledger.png",      "Die forward.",            "Bank embers. Unlock delvers, dice, ascension."),
 ]
+
+# R3 proposed set (docs/research/r3-listing-conversion.md addendum
+# 2026-09-01) — output dir framed-r3/. Run: python3 tool/frame_store_screenshots.py --r3
+# NOTE: source names refer to the CAPTURE harness output where
+# 04 = combat, 01 = title (tool/store_screenshots_test.dart).
+PLATES_R3 = [
+    ("04-combat-roll.png", "Every roll is a real decision.", "Assign, reroll once, push your luck."),
+    ("02-boon-pick.png",   "Nothing hidden.",                "See what you're choosing — honest previews."),
+    ("03-map.png",         "Pick your path.",                "See what an elite guards before you commit."),
+    ("05-ledger.png",      "Die forward.",                   "Every run banks progress. Rank up, unlock."),
+    ("01-title.png",       "Free full game. 21 MB.",         "One honest unlock. No ads, no timers."),
+]
+
+R3 = "--r3" in sys.argv
+PLATES = PLATES_R3 if R3 else PLATES_LIVE
 
 
 def load_font(path, size):

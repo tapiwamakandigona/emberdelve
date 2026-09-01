@@ -120,7 +120,8 @@ shipped in the assets (all banned-word-clean, all verified claims):
 4. ledger — "Die forward." / "Every run banks progress. Rank up, unlock."
 5. title — "Free full game. 21 MB." / "One honest unlock. No ads, no timers."
 
-Note for the console session that eventually applies these: the title
-screenshot shows a dated Daily Delve label (Aug 25) — consider a
-fresh capture via tool/store_screenshots_test.dart on apply day, then
-re-run the framing script with the R3 plate table.
+Note for the console session that eventually applies these: recapture
+on apply day so the Daily Delve date matches — the R3 plate table now
+lives in the framing script itself (`tool/frame_store_screenshots.py
+--r3`, added 2026-09-01; set regenerated and verified same day). Full
+runbook: docs/store/PLAY-APPLY-DAY.md.

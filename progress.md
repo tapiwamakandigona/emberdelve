@@ -4851,3 +4851,12 @@ the opening run itself (R1 brief input).
   that AAB, don't claim it. docs/launch/LAUNCH-CHECKLIST.md (v0.7.0
   era, $3.99, production-inactive facts) marked SUPERSEDED, kept for
   history. [runbook, 2026-09-01]
+- Apply-day screenshot dry-run: found framed-r3 was NOT regenerable —
+  the R3 plate table existed only in the r3 doc, the framing script on
+  disk held the live table and always wrote to framed/. Script now
+  takes `--r3` (R3 table -> framed-r3/; plain run -> framed/, which is
+  the live RECORD set — never overwrite it with r3 plates). Full
+  pipeline dry-run: fresh captures (Daily Delve — Sep 1) -> --r3
+  re-frame -> all five plates visually verified (captions per r3 spec,
+  no clipping, stale Aug 25 title fixed). Runbook + r3 doc updated.
+  [dry-run, 2026-09-01]

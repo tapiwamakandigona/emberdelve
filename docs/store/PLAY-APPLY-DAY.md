@@ -12,11 +12,14 @@ executed without the owner; nothing here requires a rebuild.
 
 ## Before the session (agent-side, no console)
 
-1. Recapture the title screenshot — framed-r3's title plate is stale
-   ("Daily Delve — Aug 25"). Run `tool/store_screenshots_test.dart`,
-   re-frame via `tool/frame_store_screenshots.py`, eyeball against
-   docs/store/STORE-ASSET-QA.md. Do this the SAME day as the console
-   session so the daily line matches.
+1. Recapture screenshots the SAME day as the console session so the
+   Daily Delve date matches: `flutter test tool/store_screenshots_test.dart`
+   then `python3 tool/frame_store_screenshots.py --r3` (the R3 plate
+   table is in the script since 2026-09-01; plain run regenerates the
+   live-record `framed/` set — leave that one alone). Eyeball against
+   docs/store/STORE-ASSET-QA.md. Dry-run proven 2026-09-01: full
+   pipeline regenerated framed-r3 with the Sep 1 daily line, plates
+   visually verified.
 2. Download the release AAB and verify before handing it over:
    - Asset: `emberdelve-v0.178.0.aab` from the v0.178.0 GitHub release
      (sha256 `84eb0cba…`, versionCode 204, versionName 0.178.0).
