@@ -5063,3 +5063,17 @@ the opening run itself (R1 brief input).
   lookup broke once the roster passed twenty chairs (lazy list) —
   replaced with the fixed-step drag-to-bottom loop the visual tools
   already use. Suite 1191 green, analyze clean.
+- OWNER DEMAND 2026-09-01g (1aaf2ca, arrived mid-glover): the content
+  batch IS the major update — bump to 0.179.0+205, cut EXACTLY ONE
+  GitHub release v0.179.0 from legacy/dice-builder (universal APK + 3
+  ABI splits + AAB, sha256 of every asset in the body, notes lead with
+  the roster answering the "more delvers" reviewer in plain language,
+  GitHub only, NO Play submission), then STOP shipping features and
+  research: the 38-installs/2-ratings/$4.25 ratio, the funnel
+  (reasoned, not instrumented), and 20–50-install-stage comparables —
+  findings as primary-source-cited markdown in docs/research/. The
+  glover (27f0fa9) landed complete+green in the minutes the DEMAND was
+  being pushed; the release honestly ships 16→22.
+- Version bumped 0.179.0+205; release cut via CI workflow_dispatch
+  (signed release job materializes the permanent upload key from repo
+  secrets and pins cert 031acb42…).
