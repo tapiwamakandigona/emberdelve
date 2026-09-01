@@ -176,6 +176,36 @@ void main() {
     // Report only (probe doctrine), but surface the number loudly.
     // ignore: avoid_print
     print('MAP custom-paint paints over 60 idle frames: $scenePaints');
+
+    // THE DEEP WALL: drag cost. The parallax far plane repaints only on
+    // scrolled frames — measure a steady drag to price it.
+    final drag = await measure('map_drag_30f', () async {
+      final gesture = await tester.startGesture(const Offset(180, 400));
+      for (var i = 0; i < 30; i++) {
+        await gesture.moveBy(const Offset(0, -4));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await gesture.up();
+      await tester.pump(const Duration(milliseconds: 16));
+    });
+    // ignore: avoid_print
+    print('MAP drag paints/frame: ${drag.paintsPerFrame}');
+    // The deep wall must have repainted during the drag (parallax is
+    // scroll-driven) — find its RenderCustomPaint via the ValueKey.
+    final wallEl = tester.element(find.byKey(const ValueKey('deep-wall')));
+    var wallPaints = 0;
+    debugOnProfilePaint = (ro) {
+      if (ro == wallEl.renderObject) wallPaints++;
+    };
+    final g2 = await tester.startGesture(const Offset(180, 400));
+    for (var i = 0; i < 10; i++) {
+      await g2.moveBy(const Offset(0, 6));
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await g2.up();
+    debugOnProfilePaint = null;
+    // ignore: avoid_print
+    print('MAP deep-wall paints over 10 scrolled frames: $wallPaints');
   });
 
   testWidgets('rest hollow: smolder vs settled', (tester) async {

@@ -56,6 +56,7 @@ import 'settings_screen.dart';
 import 'sprites.dart';
 import 'temper_sheet.dart';
 import 'share_card.dart';
+import 'motion.dart';
 import 'theme.dart';
 import 'weapons.dart';
 import 'widgets.dart';

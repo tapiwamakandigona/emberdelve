@@ -136,6 +136,19 @@ class _MapScreenState extends State<MapScreen>
                         width: cns.maxWidth,
                         child: Stack(
                           children: [
+                            // THE DEEP WALL: far plane, parallax on scroll.
+                            IgnorePointer(
+                              child: RepaintBoundary(
+                                child: CustomPaint(
+                                  key: const ValueKey('deep-wall'),
+                                  size: Size(cns.maxWidth, h),
+                                  painter: _FarWallPainter(
+                                    _scroll,
+                                    Motion.instance.reduced,
+                                  ),
+                                ),
+                              ),
+                            ),
                             // Trails + fog-of-war + descent tint, painted once.
                             RepaintBoundary(
                               child: CustomPaint(
@@ -633,11 +646,6 @@ class _MapScenePainter extends CustomPainter {
       return p;
     }
 
-    // Far wall (wider, dimmer) behind the near wall — two planes = depth.
-    canvas.drawPath(
-      silhouette(19),
-      Paint()..color = const Color(0xFF1A1522).withValues(alpha: 0.55),
-    );
     canvas.drawPath(
       silhouette(11),
       Paint()..color = const Color(0xFF0E0B13).withValues(alpha: 0.85),
@@ -687,6 +695,8 @@ class _MapScenePainter extends CustomPainter {
     // of y (sin-noise, no RNG state) — the same map always shows the same
     // walls, and the painter stays static: zero per-frame cost. Nodes
     // never enter the outer 22px (min center x = 54, node edge = 28).
+    // THE DEEP WALL: the far plane lives in _FarWallPainter (parallax,
+    // scroll-driven, its own boundary); only near plane + rim live here.
     _wall(canvas, size, left: true);
     _wall(canvas, size, left: false);
 
@@ -734,6 +744,49 @@ class _MapScenePainter extends CustomPainter {
 /// between the lifetime deepest floor and the floor beyond, captioned with
 /// the record. Repaint-isolated from the scene painter — the scene repaints
 /// on every move; this repaints only if the record itself changes.
+// THE DEEP WALL: the far rock plane, one step behind the near wall.
+// Parallax — it tracks the scroll at 0.94x, so during a drag or the
+// camera follow the far plane lags ~6% and the chasm gains true depth.
+// Cost discipline: repaint is the ScrollController itself, so this
+// painter (behind its own RepaintBoundary) redraws ONLY on scrolled
+// frames — idle stays zero like everything else on this screen
+// [entrance_probe map_idle_60f, 2026-09-01]. Reduced motion pins the
+// offset to 0: the plane still exists, it just holds still.
+class _FarWallPainter extends CustomPainter {
+  final ScrollController scroll;
+  final bool reduced;
+  _FarWallPainter(this.scroll, this.reduced) : super(repaint: scroll);
+
+  double _edgeAt(double y, bool left) {
+    final phase = left ? 0.0 : 2.1;
+    return 19.0 +
+        math.sin(y * 0.021 + phase) * 5.0 +
+        math.sin(y * 0.0047 + phase * 1.7) * 7.0;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final off = (reduced || !scroll.hasClients) ? 0.0 : scroll.offset * 0.06;
+    final paintFill = Paint()
+      ..color = const Color(0xFF1A1522).withValues(alpha: 0.55);
+    for (final left in [true, false]) {
+      final p = Path()..moveTo(left ? 0 : size.width, 0);
+      for (var y = 0.0; y <= size.height + 14; y += 14) {
+        final yy = math.min(y, size.height);
+        final e = _edgeAt(yy + off, left);
+        p.lineTo(left ? e : size.width - e, yy);
+      }
+      p.lineTo(left ? 0 : size.width, size.height);
+      p.close();
+      canvas.drawPath(p, paintFill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _FarWallPainter old) =>
+      old.scroll != scroll || old.reduced != reduced;
+}
+
 class _FarthestLanternPainter extends CustomPainter {
   final int bestFloor;
   _FarthestLanternPainter(this.bestFloor);

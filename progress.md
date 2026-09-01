@@ -4541,3 +4541,21 @@ names.
   initializes (contract: initInstances executes it).
 - test/warmup_test.dart pins the scene rasterizes end-to-end (execute()
   through toImage) so it can't silently rot. Suite 1125, analyze clean.
+
+## 2026-09-01 — THE DEEP WALL (visual/perf lane, under freeze)
+The chasm gains true depth: the far rock plane now parallaxes, lagging
+the scroll at 6% while the near wall, trails, and nodes move with the
+chart — during a drag or the camera follow the walls read as standing
+apart in space.
+- _FarWallPainter (map_screen.dart): far plane extracted from
+  _MapScenePainter into its own scroll-driven layer (repaint: the
+  ScrollController itself), behind its own RepaintBoundary, under the
+  scene. ValueKey('deep-wall'). Reduced motion pins offset 0 — the
+  plane holds still but stays.
+- Probe-verified pricing [entrance_probe, 2026-09-01]: map idle
+  UNCHANGED at 17.0 paints/frame (parallax layer contributes zero);
+  deep wall repaints exactly 1x per scrolled frame (10/10 in a counted
+  drag) — one 2-path fill, nothing else joins it.
+- Chasm plates re-shot (identical at offset 0 to the eye-verified set);
+  suite 1125/1125, analyze clean. screens.dart gained motion.dart
+  import (part-of files share it).
