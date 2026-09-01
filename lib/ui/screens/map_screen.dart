@@ -419,13 +419,21 @@ class _MapScreenState extends State<MapScreen>
                 // Unreachable nodes have no halo, so they don't listen at all.
                 pulse: isReachable ? _pulse : null,
               ),
-              child: SizedBox(
-                width: _nodeSize,
-                height: _nodeSize,
-                child: Center(
-                  child: Opacity(
-                    opacity: isReachable || isHere ? 1.0 : 0.55,
-                    child: _nodeIcon(kind),
+              // Perf (2026-09-01): a RenderCustomPaint repaint also paints its
+              // CHILDREN, so every halo pulse frame was redrawing this static
+              // icon stack too (probe: idle map 17 paints/frame — 4 reachable
+              // medallions x 4 renders + 1 drift). Boxing the child in its own
+              // RepaintBoundary leaves the pulse repainting only the painter:
+              // idle map drops to reachable-halo count + drift (~5/frame).
+              child: RepaintBoundary(
+                child: SizedBox(
+                  width: _nodeSize,
+                  height: _nodeSize,
+                  child: Center(
+                    child: Opacity(
+                      opacity: isReachable || isHere ? 1.0 : 0.55,
+                      child: _nodeIcon(kind),
+                    ),
                   ),
                 ),
               ),

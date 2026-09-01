@@ -4707,3 +4707,11 @@ the opening run itself (R1 brief input).
   premium niche ~15%, Play cold-start traffic wall); relaunch copy
   implications — trust block as FIRST line, "everything visible"
   phrasing, itch demo funnel parked as owner call. [web, 2026-09-01]
+- Perf: idle map repaint leak fixed — RenderCustomPaint repaints its
+  children, so each reachable-node halo pulse frame was also redrawing
+  the static icon stack (17.0/frame). Child now boxed in its own
+  RepaintBoundary: idle map 17.0 -> 9.0/frame (5 real painters: 4
+  reachable halos + drift; rest are boundary composites). Probe:
+  tool/map_idle_probe_test.dart. No behavior change; suite 1136 green,
+  analyze clean. NOT released — code sits on branch per one-release
+  demand. [map_idle_probe, 2026-09-01]
