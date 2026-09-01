@@ -130,16 +130,21 @@ class _RestScreenState extends State<RestScreen> {
       // v0.96.0 The Hearth Tale: one short tale of the world per
       // hollow, in a fixed lifetime sequence (lib/data/tales.dart)
       // — the "what's a delve" answer as a drip, not a card.
+      // THE KINDLED TALE: the tale smolders in top-to-bottom (fx.dart
+      // SmolderIn) — a paint-only reveal, so the full text is laid out,
+      // semantic, and findable from frame one.
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-        child: Text(
-          '\u201C${hearthTale(c.meta.hearthTalesHeard)}\u201D',
-          key: const ValueKey('hearth-tale'),
-          style: EmberText.bodyDim.copyWith(
-            fontStyle: FontStyle.italic,
-            height: 1.5,
+        child: SmolderIn(
+          child: Text(
+            '\u201C${hearthTale(c.meta.hearthTalesHeard)}\u201D',
+            key: const ValueKey('hearth-tale'),
+            style: EmberText.bodyDim.copyWith(
+              fontStyle: FontStyle.italic,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     ];

@@ -961,3 +961,86 @@ class _DealtInState extends State<DealtIn>
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// THE KINDLED TALE — smolder-in reveal for flavour prose (rest hearth tale).
+// ---------------------------------------------------------------------------
+
+/// Reveals [child] like fire catching down a page: a paint-only alpha sweep
+/// from top to bottom with a warm ember edge. The child is laid out in full
+/// from frame one — no reflow, the tree and semantics always hold the whole
+/// text (a screen reader, a test, or a paused frame never sees a partial
+/// string). Once the sweep completes the mask is dropped entirely, so the
+/// settled screen pays zero extra cost per frame.
+///
+/// Reduce-motion renders the child plainly, immediately.
+class SmolderIn extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  const SmolderIn({
+    super.key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 900),
+  });
+
+  @override
+  State<SmolderIn> createState() => _SmolderInState();
+}
+
+class _SmolderInState extends State<SmolderIn>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (Motion.instance.reduced) {
+      _t.value = 1.0;
+    } else {
+      _t.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _t,
+      child: widget.child,
+      builder: (context, child) {
+        if (_t.isCompleted) return child!;
+        // p runs past 1.0 so the trailing fade band clears the bottom edge.
+        final p = Curves.easeInOut.transform(_t.value) * 1.25;
+        return ShaderMask(
+          blendMode: BlendMode.modulate,
+          shaderCallback: (rect) => LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white,
+              Colors.white,
+              // The leading edge glows warm as the words catch.
+              EmberColors.ember.withValues(alpha: 0.55),
+              Colors.white.withValues(alpha: 0.0),
+            ],
+            stops: [
+              0.0,
+              (p - 0.18).clamp(0.0, 1.0),
+              p.clamp(0.0, 1.0),
+              (p + 0.10).clamp(0.0, 1.0),
+            ],
+          ).createShader(rect),
+          child: child,
+        );
+      },
+    );
+  }
+}

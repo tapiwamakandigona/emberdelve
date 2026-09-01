@@ -4431,3 +4431,25 @@ per card on the boon and keystone screens.
   tool/dealt_hand_visual_test.dart (deal start / mid / settled, 360x800
   — all three beats read clean).
 - Suite 1121/1121, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE KINDLED TALE (animation lane, under freeze)
+The rest-hollow hearth tale now smolders in like fire catching down the
+page, instead of pasting on screen. (Research pass [2026-09-01]:
+slow-smoldering / letter-reveal UI text is a current indie trend —
+Gamescom LATAM coverage, loomfeed 2026-05-28; micro/transition timing
+canon 100-200ms / 200-400ms confirms DealtIn and this sit in band.)
+- lib/ui/fx.dart: SmolderIn(child, duration=900ms) — paint-only
+  ShaderMask alpha sweep top-to-bottom with a warm ember leading edge.
+  Full text laid out + semantic from frame one (no reflow, no partial
+  strings for readers or tests); mask DROPPED entirely once complete
+  (settled = plain child, zero per-frame cost). Reduce-motion renders
+  plainly, immediately.
+- rest_screen.dart wraps the hearth-tale Text in SmolderIn.
+- test/kindled_tale_test.dart: 2 pins (full text findable mid-sweep +
+  mask dropped when settled; reduce-motion never masks). Fixture reuses
+  hearth_tale_test's bot-driven atRest (LESSON: "seed 6 reaches rest"
+  holds under botCmd, NOT under the trivial roll/end_turn walker — that
+  policy dies before the hollow).
+- Plate tool tool/kindled_tale_visual_test.dart (mid / late / settled,
+  360x800): first line catches with warm edge, settled identical.
+- Suite 1123/1123, analyze clean. No tag/bump (freeze).
