@@ -4840,3 +4840,14 @@ the opening run itself (R1 brief input).
   draws all three variants (tiny PictureRecorder-made image, disposed
   after). test/warmup_test.dart pin rasterizes the scene and covers the
   additions automatically. [audit, 2026-09-01]
+- Play apply-day runbook: docs/store/PLAY-APPLY-DAY.md — the complete
+  single-session console script for shipping the tagged v0.178.0 AAB
+  to production when the owner authorises it (verify sha+cert pin
+  first; recapture stale title screenshot same day; listing edits +
+  release in one session; 100% rollout at this n; ledger note row
+  re-anchors the Sept-29 prediction to ship date + 28d; data-safety
+  answers unchanged). Release notes drafted against the TAGGED
+  artifact, not the branch — post-tag perf/animation work is NOT in
+  that AAB, don't claim it. docs/launch/LAUNCH-CHECKLIST.md (v0.7.0
+  era, $3.99, production-inactive facts) marked SUPERSEDED, kept for
+  history. [runbook, 2026-09-01]

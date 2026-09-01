@@ -1,5 +1,11 @@
 # Emberdelve — Launch Checklist & Go/No-Go
 
+> **SUPERSEDED (2026-09-01)** for the ship decision by
+> `docs/store/PLAY-APPLY-DAY.md`: prices, track facts, and gates below
+> are from the v0.7.0 era (2026-08-16) and predate the 0.59.0 prod
+> release, the $4.99 Ember Forge, and the v0.178.0 one-release freeze.
+> Kept for history; do not action.
+
 **Purpose.** Turn "should I release?" from a gut call into a data-backed decision.
 "Release" here = promoting the current early-access build to a **full production
 launch** with a coordinated free-channel push (Reddit + LinkedIn dev-log). It is a
