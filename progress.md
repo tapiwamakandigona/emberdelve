@@ -4940,3 +4940,8 @@ the opening run itself (R1 brief input).
   build checklist. Next unit: land ALL lanes + def in one green commit
   (weapon, sprite, codex, achievement, proving, tales, tests, plus the
   14 roster-growth test moves). Exact def text recorded in design doc.
+- ⚡ DEMAND correction (a016ae6) noted: the 5-star "more delvers"
+  review is NOT on the public listing (console Reviews page: 0
+  reviews, 2 rating users all-time) — it came via Play Console email;
+  tester-track or since-removed. Build evidence unchanged, but NEVER
+  use the "first public review" framing in any copy, notes, or docs.
