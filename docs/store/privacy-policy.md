@@ -1,15 +1,25 @@
-# Pyregrove — Privacy Policy
+# Tsoro Studios Games — Privacy Policy
 
-_Last updated: 2026-08-31_
+_Last updated: 2026-09-01_
 
-Pyregrove ("the app", `com.tsorostudios.pyregrove`) is a single-player
-pixel action-platformer by Tsoro Studios (Tapiwa Makandigona). Everything
-here applies equally to the earlier alpha builds of the same game published
-as "Emberwood" / "Emberdelve v2" (`com.tsorostudios.emberwood`).
+This policy covers every game published by Tsoro Studios (Tapiwa
+Makandigona). All of them are single-player and behave identically with
+regard to your data:
+
+- **Emberdelve: Dice Roguelite** (`com.tsorostudios.emberdelve`) — a
+  turn-based dice roguelite dungeon crawl, on Google Play.
+- **Pyregrove** (`com.tsorostudios.pyregrove`) — a pixel action-platformer.
+- **Emberwood** / "Emberdelve v2" (`com.tsorostudios.emberwood`) — the
+  earlier alpha builds of Pyregrove.
+
+> **Do not narrow this document to a single game.** Its HTML twin
+> (`privacy-policy.html`, same directory) is served by GitHub Pages at the
+> URL declared as the Privacy Policy on Emberdelve's live Google Play
+> listing. Keep the two in sync.
 
 ## The short version
 
-**Pyregrove collects no personal data.** The only thing it can ever send is
+**These apps collect no personal data.** The only thing it can ever send is
 **anonymous gameplay statistics, and only if you explicitly opt in** — it is
 off by default and can be turned off again any time in Settings.
 
