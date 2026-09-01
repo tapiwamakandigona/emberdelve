@@ -8,10 +8,16 @@ first we have ever had. Three separate people have now said something about
 Emberdelve unprompted. Not one of them mentioned a bug, the difficulty curve, the
 price, or the UI.
 
-1. **Public review, 31 Aug 2026, 16:48 GMT, five stars** — the first written
-   review this app has ever received, on a listing that until now had two silent
-   ratings and zero words:
+1. **Five-star review, 31 Aug 2026, 16:48 GMT**, reported by Play Console email:
    > Add more delvers, I need more... give mee moreee. Good game tho
+
+   **Correction, same day:** an earlier version of this directive called that a
+   *public* review. It is not on the public listing. The console's Reviews page
+   reads "Your app doesn't have any reviews", ratings-with-reviews **0**, users
+   **2**, over all time. The email is real; the placement claim was mine and it
+   was wrong. It is either tester-track feedback or a review the author removed.
+   The evidence for what to build is unchanged — the sentence was still typed by
+   a player — but do not repeat the "first public review" framing anywhere.
 2. **Beta feedback, 31 Aug** (private channel, paraphrased): if we keep updating
    the game, they will keep playing it.
 3. **Beta feedback, 31 Aug** (private channel, paraphrased): fun, both
