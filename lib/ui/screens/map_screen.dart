@@ -264,37 +264,53 @@ class _MapScreenState extends State<MapScreen>
       onEnd: () => _walkFrom = position,
       builder: (context, f, child) {
         final p = Offset.lerp(from, to, f)!;
-        // Little hop while walking.
-        final hop = _walkFrom == position
-            ? 0.0
-            : (math.sin(f * math.pi * 4).abs() * 4);
+        // THE WALKED PATH (2026-09-01): the hop respects reduce motion
+        // (the glide alone still shows where you went), the sprite faces
+        // the way it walks, and the shadow thins at the hop's apex —
+        // three small tells that turn a lerp into a walk.
+        final walking = _walkFrom != position;
+        final reduced = Motion.instance.reduced;
+        final hopWave = (walking && !reduced)
+            ? math.sin(f * math.pi * 4).abs()
+            : 0.0;
+        final hop = hopWave * 4;
+        // Face the travel direction while walking; at rest face forward.
+        final faceLeft = walking && f < 1 && to.dx < from.dx - 1;
         return Positioned(
           left: p.dx - 14,
           bottom: p.dy + _nodeSize / 2 - 6 + hop,
-          child: child!,
+          child: IgnorePointer(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Transform.flip(flipX: faceLeft, child: child!),
+                // Grounded shadow: it stays on the path (does not ride the
+                // hop) — width and weight ease off as the delver lifts.
+                Transform.translate(
+                  offset: Offset(0, hop),
+                  child: Container(
+                    key: const ValueKey('delver-shadow'),
+                    width: 14 - hopWave * 5,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(
+                        alpha: 0.4 - hopWave * 0.18,
+                      ),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
-      child: IgnorePointer(
-        child: RepaintBoundary(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SpriteView(
-                characterId,
-                height: 30,
-                animate: false,
-                dye: Art.dyeFilter(widget.c.meta.dyeFor(characterId)),
-              ),
-              Container(
-                width: 14,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ],
-          ),
+      child: RepaintBoundary(
+        child: SpriteView(
+          characterId,
+          height: 30,
+          animate: false,
+          dye: Art.dyeFilter(widget.c.meta.dyeFor(characterId)),
         ),
       ),
     );

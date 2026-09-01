@@ -35,14 +35,19 @@ class EmberDrift extends StatefulWidget {
 
 class _EmberDriftState extends State<EmberDrift>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _t = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 14),
-  );
+  // Created eagerly in initState: as a lazy `late final` initializer this
+  // was first touched by dispose() when reduce motion kept build() from
+  // ever reading it — and creating a ticker during unmount crashes on the
+  // TickerMode ancestor lookup (THE WALKED PATH teardown, 2026-09-01).
+  late final AnimationController _t;
 
   @override
   void initState() {
     super.initState();
+    _t = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 14),
+    );
     // Reduce motion (v0.16.0): drifting particles are pure motion, so under
     // reduce they vanish entirely (absence is calmer than a freeze-frame)
     // and the ticker stops — no repaints for an invisible layer.

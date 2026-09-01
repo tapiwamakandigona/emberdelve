@@ -4595,3 +4595,20 @@ Scroll-audit follow-up: the boon hand overran 320x640-class screens by
 (24->8, 16->8); text and cards never shrink. Audit now reads
 maxExtent=0 at BOTH 360x800 and 320x640 — the decision screen fits
 everywhere. Suite 1125/1125, analyze clean.
+
+## 2026-09-01 — THE WALKED PATH (animation lane, under freeze)
+The map delver's node-to-node walk gained three tells (map_screen
+_delverMarker): the sprite faces its travel direction (Transform.flip
+while moving left), the drop shadow stays grounded on the path and
+thins/lightens at each hop apex (width 14->9, alpha .40->.22), and the
+hop now respects reduce motion (glide alone remains). New
+test/walked_path_test.dart pins the squash mid-walk and its absence
+under reduce motion (suite 1127).
+BONUS FIX: that test's teardown exposed a latent crash — EmberDrift's
+AnimationController was a lazy `late final`; under reduce motion
+build() never touched it, so dispose() CREATED it during unmount and
+crashed on the TickerMode ancestor lookup. Now created eagerly in
+initState (fx.dart). Any screen with EmberDrift unmounted while
+reduce-motion was on would have thrown. Plates eye-verified (walk apex
+mid-flight + settled); full eye-check queue also cleared this loop
+(chasm, dealt hand, hearth, first-fall, settled-score — all pass).
