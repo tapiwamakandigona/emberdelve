@@ -4895,3 +4895,13 @@ the opening run itself (R1 brief input).
   (fights the summary drag RepaintBoundary). Rejected list + perf note
   (TweenAnimationBuilder fine for one-shots, wrong inside frame loops)
   in the doc. Suite 1146.
+- Hot-painter zero-alloc audit: checked every painter that repaints at
+  60fps (_EmberDriftPainter, _EmberBurstPainter, _FlameWipePainter,
+  weapons sway, EmberLogotype, _SpritePainter) for per-frame object
+  churn. All but one already held their Paints. Fixed _SpritePainter:
+  fresh Paint() per frame per idling sprite -> late-final per-instance
+  Paint (dye is final; painter instance survives frames since repaint
+  rides the listenable). Weapons' per-frame smear shader is inherent
+  (angle-dependent, transient) — documented as left-alone in
+  docs/research/game-feel-borrowings.md so it doesn't get "fixed" into
+  a stale-angle bug. Suite 1146 green. [audit, 2026-09-01]

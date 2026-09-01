@@ -85,3 +85,14 @@ hold their Paint objects, probes gate paints/frame). One addition to
 watch in review: TweenAnimationBuilder in per-frame paths creates an
 implicit animation controller per mount — fine for one-shots like
 _SettlingCount, wrong for anything inside a combat frame loop.
+
+Audit of every 60fps painter (2026-09-01): _EmberDriftPainter,
+_EmberBurstPainter, _FlameWipePainter, weapons' sway painter, and
+EmberLogotype all held their Paint objects already (the logo also
+caches TextPainters and quantises its pulse). The one churn found and
+fixed: _SpritePainter (sprites.dart) allocated a fresh Paint every
+frame for every idling sprite — now a late-final per-instance Paint
+(the painter instance survives frames; repaint rides the listenable).
+Weapons' per-frame SweepGradient shader during a smear is inherent
+(angle-dependent) and transient — left alone, documented here so
+nobody "fixes" it into a stale-angle bug.

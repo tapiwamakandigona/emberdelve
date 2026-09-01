@@ -404,6 +404,15 @@ class _SpritePainter extends CustomPainter {
   final bool sway;
   final bool flipX;
   final ColorFilter? dye;
+  // Zero-alloc hot path (2026-09-01): this painter repaints at 60fps for
+  // every idling sprite, and the painter INSTANCE survives across frames
+  // (repaint rides the listenable, not a rebuild) — so the Paint is built
+  // once here, not once per frame. `dye` is final, so the filter never
+  // needs re-setting.
+  late final Paint _paint = Paint()
+    ..filterQuality = FilterQuality.none
+    ..colorFilter = dye;
+
   _SpritePainter({
     required this.img,
     required this.def,
@@ -433,9 +442,6 @@ class _SpritePainter extends CustomPainter {
       def.frameH.toDouble(),
     );
     final dst = Rect.fromLTWH(0, 0, size.width, size.height);
-    final paint = Paint()..filterQuality = FilterQuality.none;
-    // Delver dye: hue-rotation matrix; null (undyed) costs nothing.
-    if (dye != null) paint.colorFilter = dye;
     canvas.save();
     final l = life;
     if (l != null && (bob || sway)) {
@@ -457,7 +463,7 @@ class _SpritePainter extends CustomPainter {
       canvas.translate(size.width, 0);
       canvas.scale(-1, 1);
     }
-    canvas.drawImageRect(img, src, dst, paint);
+    canvas.drawImageRect(img, src, dst, _paint);
     canvas.restore();
   }
 
