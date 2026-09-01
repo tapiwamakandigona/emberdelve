@@ -229,6 +229,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.34,
     swingAngle: 1.66,
   ),
+  // Kettle-keeper (v0.181.0): a long ladle — the brewster's reach into
+  // the pot, swung like a mace when the delve insists. Copper accent to
+  // match the kettle-copper sheet.
+  'brewster': WeaponDef(
+    'long_ladle',
+    'Long Ladle',
+    accent: Color(0xFFC87F5A),
+    reach: 0.48,
+    idleAngle: 0.26,
+    raiseAngle: -1.28,
+    swingAngle: 1.58,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -582,6 +594,9 @@ class _WeaponPainter extends CustomPainter {
       case 'grain_flail':
         _grainFlail(canvas, reach);
         break;
+      case 'long_ladle':
+        _longLadle(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -781,6 +796,66 @@ class _WeaponPainter extends CustomPainter {
     canvas.drawLine(
       Offset(w * 0.5, -reach * 0.79),
       Offset(w * 2.2, -reach * 0.965),
+      _p,
+    );
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The brewster's long ladle (v0.181.0): a slim haft ending in a
+  /// hemispheric bowl, tipped forward — a kitchen tool doing dungeon
+  /// work. The copper accent glints on the bowl's lip.
+  void _longLadle(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Slim haft.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.32),
+          width: w * 0.6,
+          height: reach * 0.86,
+        ),
+        Radius.circular(w * 0.3),
+      ),
+      _p,
+    );
+    // Grip band.
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 1.5, height: w * 0.7),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Bowl: a filled hemisphere hung forward off the haft's end.
+    final bowlCenter = Offset(w * 0.85, -reach * 0.80);
+    final bowl = Path()
+      ..addArc(
+        Rect.fromCircle(center: bowlCenter, radius: w * 1.15),
+        -0.35,
+        3.60,
+      )
+      ..close();
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF7A5A44);
+    canvas.drawPath(bowl, _p);
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawPath(bowl, _outline);
+    // Copper glint along the bowl's lip.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.3
+      ..strokeCap = StrokeCap.round
+      ..color = _accent.withValues(alpha: 0.9);
+    canvas.drawArc(
+      Rect.fromCircle(center: bowlCenter, radius: w * 1.15),
+      -0.55,
+      1.35,
+      false,
       _p,
     );
     _p.style = PaintingStyle.fill;

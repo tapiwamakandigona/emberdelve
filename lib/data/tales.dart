@@ -186,6 +186,9 @@ const List<String> hearthTales = [
   'The miller took the second chair of the second circle and set the '
       'stone turning. Grand promises grind slow \u2014 the small dice '
       'keep the fire fed meanwhile.',
+  'The brewster hung a kettle over the second fire and said nothing. '
+      'Some chairs are taken with a word, some with a full cup passed '
+      'along the circle.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

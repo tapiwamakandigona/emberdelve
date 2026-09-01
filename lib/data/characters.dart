@@ -75,6 +75,7 @@ const List<String> charactersOrder = [
   'hedger',
   // v0.180.0 — append-LAST.
   'miller',
+  'brewster',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -348,6 +349,22 @@ const Map<String, CharacterDef> characters = {
     maxHp: 27,
     startDice: ['d12', 'd4', 'd4'],
     unlockEmbers: 2400,
+  ),
+  // v0.181.0 The Brewster: the third chair of the second circle — the
+  // rest-economy identity the gap analysis flagged. A staircase pouch
+  // (d8/d6/d4, the only strictly-descending set) and a Hearth Kettle:
+  // thin in the fight, but every rest pays back double. The delve is
+  // walked kettle to kettle. HP is the tuning knob (sweep in
+  // docs/improvements).
+  'brewster': CharacterDef(
+    'brewster',
+    'The Brewster',
+    'The kettle-keeper: thin dice and a Hearth Kettle \u2014 the delve '
+        'is walked rest to rest.',
+    maxHp: 25,
+    startDice: ['d8', 'd6', 'd4'],
+    startRelic: 'hearth_kettle',
+    unlockEmbers: 2550,
   ),
 };
 

@@ -1216,6 +1216,26 @@
       ],
       "fps": 8,
       "scale": 3
+    },
+    {
+      "id": "brewster",
+      "source_base": "doc (palette variant of ascetic, v0.181.0)",
+      "frame_w": 48,
+      "frame_h": 69,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        },
+        {
+          "state": "run",
+          "frames": 4,
+          "row": 1
+        }
+      ],
+      "fps": 8,
+      "scale": 3
     }
   ]
 }

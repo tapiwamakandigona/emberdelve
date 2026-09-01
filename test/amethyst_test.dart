@@ -39,7 +39,7 @@ void main() {
     // move. Update only this reason, never the gate.
     expect(
       characters.length,
-      18,
+      19,
       reason:
           'seventeenth delver (v0.179.0, DEMAND 2026-09-01f): the second '
           'circle opened past the sixteen-chair first fire and the gate '

@@ -245,6 +245,19 @@ const List<ProvingDef> provings = [
     character: 'miller',
     difficulty: 'normal',
   ),
+  // v0.181.0 The Kettle's Song — the nineteenth delver proving. Seed
+  // 29: the chair seed (19) loses at HP 25; 29 is bot-win pinned and
+  // unused by any other delver proving.
+  ProvingDef(
+    id: 'brewsters_proving',
+    title: "The Brewster's Proving",
+    blurb:
+        'The Brewster on normal floors. Thin dice and a full kettle '
+        '\u2014 last until it sings.',
+    seed: 29,
+    character: 'brewster',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

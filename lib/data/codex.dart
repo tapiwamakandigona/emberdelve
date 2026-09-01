@@ -279,6 +279,13 @@ final List<CodexEntryDef> codexEntries = [
         'grind, two shards that keep the mill fed while it comes round '
         '\u2014 the widest pouch a delver has ever carried.',
   ),
+  _delver(
+    'brewster',
+    'The third chair of the second circle. Brewing is the trade of '
+        'waiting well: the kettle does the work if you can last until '
+        'it sings. Thin dice, a Hearth Kettle, and the delve walked '
+        'rest to rest \u2014 every camp a table set twice over.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

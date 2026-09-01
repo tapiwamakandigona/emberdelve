@@ -4984,3 +4984,20 @@ the opening run itself (R1 brief input).
   320×568@1.3× title fits 18 sprites one line, no overflow. Suite 1164
   green, analyze clean. Squeeze-plate sweep for the 17-roster also
   done this session (character bottom + title clean).
+- THE BREWSTER LANDED COMPLETE (v0.181.0-dev): nineteenth delver, third
+  chair of the second circle — the rest-economy identity (staircase
+  d8/d6/d4, the only strictly-descending pouch + hearth_kettle: the
+  delve walked rest to rest). HP 25 swept (87.75/57.75/32.00 all
+  bands; 24 sat on the hard floor at 30.50). unlockEmbers 2550. Long
+  ladle custom silhouette (slim haft, hemispheric bowl, copper lip
+  glint). Kettle-copper ascetic-sourced sprite (hue −20° sat×1.75
+  floor 0.42 val×0.98; doc-family side-by-side critiqued: grey/green/
+  blue/gold/copper all apart). Codex, The Brewster's Table +
+  nineteen_ways_down (18/17/16 frozen), brewsters_proving seed 29
+  (chair seed 19 loses — pinned as the loss replay), 63rd tale,
+  promise honors → 19 / proven → 27. test/brewster_test.dart (win 29 /
+  loss 19). Plates critiqued incl. squeeze 320×568@1.3× (19 sprites
+  still one title line). Suite 1170 green, analyze clean. Gap analysis
+  now fully executed: retaliation (#17), mixed extremes (#18), rest
+  economy (#19). Next open design space needs NEW pieces or a fresh
+  gap pass.

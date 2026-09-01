@@ -152,8 +152,8 @@ const Map<String, EpithetDef> epithets = {
     'the Many-Handed',
     unlockLine: 'Win a delve with every delver.',
     stat: 'delvers_cleared',
-    // Promise epithets move with the live roster. v0.180.0: the miller.
-    target: 18,
+    // Promise epithets move with the live roster. v0.181.0: the brewster.
+    target: 19,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
   // equal provings.length — pinned by test so a future proving can never
@@ -182,6 +182,6 @@ const Map<String, EpithetDef> epithets = {
     'the Proven',
     unlockLine: 'Clear every proving.',
     stat: 'provings_cleared',
-    target: 26, // v0.180.0: the miller's proving
+    target: 27, // v0.181.0: the brewster's proving
   ),
 };
