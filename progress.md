@@ -4756,3 +4756,9 @@ the opening run itself (R1 brief input).
   already optimal at idle; no work owed. Perf book now: combat idle
   1.0, map idle 9.0, summary idle 1.0 / drag 3.1, codex idle 0.0.
   [combat_idle_probe, 2026-09-01]
+- Visual verification of today's boundary/decode changes: plated
+  summary (won, seed 1) and map (seed 6) at 360x800 via a temp plate
+  test and inspected — summary column, honors, pool panel, map
+  medallions/halos/walk fan all render identically; the cacheWidth
+  decode path shows no artifacts. One-off plate test deleted after
+  use. [plates, 2026-09-01]
