@@ -4701,3 +4701,9 @@ the opening run itself (R1 brief input).
   (v0.71.0 firstWordsLine + gifted codex place:the_delve; reviewer
   was on pre-fix Play build 0.59.0). Corrected R1's residual-gap
   claim; nothing to ship. [code-audit, 2026-09-01]
+- R3 supplement written (docs/research/r3-supplement-trust-headline.md):
+  trust-as-headline = objection-handling before the pitch; evidence
+  (S&D trust-list-as-description, Royal Match "no ads" brand arc,
+  premium niche ~15%, Play cold-start traffic wall); relaunch copy
+  implications — trust block as FIRST line, "everything visible"
+  phrasing, itch demo funnel parked as owner call. [web, 2026-09-01]
