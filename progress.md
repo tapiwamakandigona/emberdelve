@@ -4253,3 +4253,15 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   pump frames after); ensureVisible scrolls earlier chips off the row, so
   re-anchor before tapping a leftward chip.
 - Verdict: boundaries hold; no remediation needed. No tag/bump (freeze).
+
+## 2026-09-01 — THE UNCLIPPED WORD (UI lane; plate pass over this session's new surfaces)
+- Plate review of everything that gained content under the freeze:
+  next-delver panel (320/360/412 — reads well at all three, sprite dim,
+  bar honest), codex lanes top/mid/narrow (chips clear, gifted The Delve
+  unsealed with PLACE tag, '1 of 119 UNSEALED'), first-words title 320.
+- One real find: the Short Delve toggle's helper ellipsized mid-word on
+  320px ("six floors — a sh…"). Doctrine is wrap or scale, never clip
+  meaning (v0.174 title-scale lesson) — the helper now wraps to two
+  lines (maxLines: 2), full words at every width; 360+ stays one line.
+  Verified by re-plate at 320x568 and the 36-size overflow probe.
+- Suite 1110/1110, analyze clean. No tag/bump (freeze).

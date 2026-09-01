@@ -749,12 +749,14 @@ class _ShortRoadToggle extends StatelessWidget {
             const SizedBox(width: Space.s),
             const Text('SHORT DELVE', style: EmberText.label),
             const SizedBox(width: Space.s),
-            // Ellipsis, never overflow, on 320px at 1.3x text.
+            // Wrap, never ellipsize (title-scale doctrine): on 320px the
+            // old ellipsis clipped mid-word ("a sh…") — the helper now
+            // takes a second line instead of eating its own words.
             Expanded(
               child: Text(
                 'six floors — a shorter sit',
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
                 textAlign: TextAlign.right,
               ),
             ),
