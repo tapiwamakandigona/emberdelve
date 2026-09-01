@@ -147,3 +147,41 @@ few-tens of installs — which, against a 38-install lifetime base, is
 a doubling. The postmortem essay (#4) is the only ticket to a bigger
 number and costs the most owner time. Everything else measured out
 below the bar. That is the honest finding.
+
+## Second-pass critique (same day, against the DEMAND's own bar)
+
+Three gaps found on re-read; fixed here rather than papering over:
+
+1. **Wait times, explicit** (the bar demands them): #1 and #2 — 7 days
+   from post; #3 — measured inside #2's window (not separable); #4 —
+   14 days per attempt (HN resubmission etiquette), channel closed
+   after two failed attempts; #5 — one-time, judged at season results.
+2. **The ranking metric, computed** (it was asserted, not shown).
+   Midpoint expectations over owner-hours:
+
+   | # | Channel | Expected installs | Hours | Installs/hour |
+   |---|---|---|---|---|
+   | 1 | r/AndroidGaming post | ~15 (5–30) | 2 | ~7.5 |
+   | 2 | r/roguelikes post | ~8 (3–20) | 2 | ~4 |
+   | 3 | Discord + RogueBasin | ~3 (1–5) | 0.5 | ~6, but capped |
+   | 4 | HN/dev.to essay | ~20 (0–70) | 5 | ~4, fat tail |
+   | 5 | GDWC entry | ~0 | 0.25 | ~0 |
+
+   The point estimates are derived from the two anchors (Asterogue's
+   30-across-everything at ~1% conversion; Everfront's niche-post
+   asymmetry) — they are honest guesses with sources, not data. The
+   ORDER is robust even if every number is off 2×; that is what the
+   ranking is for.
+3. **Attribution without tracking**: we have no UTM and will add none
+   (R2 constraint). The only attribution instrument is the Play
+   Console acquisition timeline, so **the channels must not overlap
+   in time** — one post per week, read the weekly delta, then the
+   next. This also satisfies the anti-spam-filter rule. Sequence:
+   #1, wait 7 days, #2 (+#3 same day, they measure together), wait
+   7 days, then decide on #4 with two real data points in hand.
+
+Also named-and-rejected on second pass: itch.io community forums'
+release-announcements board (Asterogue was ON itch and still drew
+only 1,937 page views total — the board's reach rounds to zero) and
+r/roguelikedev Sharing Saturday (dev-facing feedback loop, not a
+player channel; fine for feedback, zero installs expected).
