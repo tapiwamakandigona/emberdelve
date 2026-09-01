@@ -1,6 +1,50 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
 
+## Owner directive 2026-09-01e — do not narrow the hosted privacy policy
+
+**Constraint, not a preference.** `docs/store/privacy-policy.html` in the public
+`emberdelve` repo is served by GitHub Pages at
+
+    https://tapiwamakandigona.github.io/emberdelve/store/privacy-policy.html
+
+and that exact URL is the **Privacy Policy field on the live Google Play listing
+for `com.tsorostudios.emberdelve`** — the shipped dice roguelite that has real
+installs and real revenue. Pages serves it from `main:/docs`, so an edit on
+`main` changes what Play links to, for a product that is not on `main`.
+
+**What went wrong.** Commit `9abefd4` (2026-08-31) rebranded that page to
+Pyregrove. Its message says "covers both packages", meaning pyregrove and
+emberwood. There is a third package — `com.tsorostudios.emberdelve` — whose live
+store listing points at this URL. For about a day, anyone tapping "Privacy
+Policy" on the Emberdelve listing was shown a policy for a different app that
+never named theirs. That is a policy-compliance exposure on the only app earning
+money, and store enforcement is not a thing we can appeal quickly.
+
+Fixed in the commit that carries this directive: the page is now
+"Tsoro Studios Games — Privacy Policy" and covers all three packages. No data
+practice, permission or data-safety answer was changed — only scope and naming.
+
+**Rules from here:**
+
+1. **Never scope that page to one game.** It must continue to name
+   `com.tsorostudios.emberdelve`, `com.tsorostudios.pyregrove` and
+   `com.tsorostudios.emberwood` for as long as any of them is published.
+2. **Never move or rename it.** The URL is referenced from a store listing that
+   only the owner can edit. A 404 there is worse than a stale page.
+3. If a game's data practices genuinely diverge, **add a per-app section** — do
+   not fork the page to a new address.
+4. Treat any file under `docs/` in the public repo as **published surface**, not
+   internal docs. Check what links to it before rewriting it.
+
+**Wider lesson worth generalising:** this repo now hosts more than one product's
+lineage. Before rebranding anything, grep for who else depends on the artefact —
+package ids, store listings, deep links, asset URLs. A rename that is correct
+inside one project can silently break a published contract in another.
+
+Freeze otherwise unchanged: keep working on code, no release, no tag, no Play
+submission.
+
 ## Primary-source drop 2026-09-01c — Play's two new quality requirements
 
 Relayed from the owner's mailbox into `docs/research/owner-inbox-evidence.md`:
