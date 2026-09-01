@@ -54,3 +54,32 @@ Suite 1138 green, analyze clean. No release (freeze); rides in the branch.
 - DEX/R8: emberdelve has isMinifyEnabled + isShrinkResources since 8f756dd8.
 - Cross-repo: pyregrove/docs/PLAY-QUALITY-2027.md is the evidence-graded
   master checklist; this file is the emberdelve memory-side companion.
+
+## Re-check 2026-09-01 — the technical guide landed (partially)
+
+- **Published**: developer.android.com/topic/performance/vitals/memory-usage
+  — defines the metric (anonymous RSS + swap = heap + native allocations
+  incl. bitmap pixel data + thread stacks; unevictable footprint), vitals
+  breakdown by process state (foreground / user-perceived services /
+  background / cached) and by RAM bucket, percentile timelines. The ONE
+  number in it: **P90/P50 ratio > 3.5× by process name = likely memory
+  leak** during extended sessions. **Numeric bad-behavior thresholds are
+  STILL not published** — the games column remains unknown. [android-dev,
+  2026-09-01]
+- **Not yet published**: the bitmap-memory vitals page
+  (…/vitals/bitmap-memory-usage is a soft 404). Re-check later.
+- **New blog** "Preparing your app for broader memory limits"
+  (android-developers.googleblog.com/2026/08/app-broader-memory-limits.html):
+  over the coming year more OEMs adopt Android per-app memory limits across
+  4 GB–16 GB+ devices; exceeding them = throttled or terminated. AOSP
+  Memory Limiter doc (source.android.com/docs/core/perf/memory-limiter):
+  visible processes capped at 1/2–2/3 of total RAM, not-visible at 1/4–1/3,
+  OEM-tunable. [aosp, 2026-09-01]
+- **Reading for Emberdelve**: the OS limiter is not our risk — even the
+  pre-fix worst case (~50 MB bitmaps + Dart heap) is two orders of
+  magnitude under a 4 GB device's not-visible cap (~1 GB). The live
+  exposure is the unpublished vitals percentile thresholds and the
+  P90/P50 leak ratio, both checkable only once Play vitals has data
+  (currently "Limited data" at 38 installs). Action stands: keep decoded
+  bitmaps proportional to the device (done), re-check for the games
+  thresholds and the bitmap page on the next research pass.

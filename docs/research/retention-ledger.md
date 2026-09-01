@@ -42,3 +42,12 @@ Instrument of record for the Seven Hearths falsifiable prediction
   ship). Anchor each judgment to the right channel.
 - Listing conversion rows feed R3: any listing change gets a note in
   the row it lands in, so before/after is readable.
+- Traffic-channel attribution (traffic-channels.md, second pass): the
+  Play Console acquisition timeline is the ONLY attribution
+  instrument (no UTM, ever — see header). If the owner runs the
+  channel sequence, each post gets its own note row here on its date
+  ("posted r/AndroidGaming YYYY-MM-DD") so the weekly install delta
+  next to it is readable. One channel per 7-day window; overlapping
+  posts destroy the only attribution we have. Falsification criteria
+  live in traffic-channels.md — judge each channel there, record the
+  raw numbers here.
