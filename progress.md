@@ -4588,3 +4588,10 @@ scrollable's maxScrollExtent. Doctrine: content lists may scroll
   at 320x640 noted as a future shave).
 - Suite 1125/1125, analyze clean; hearth plates re-shot (eye-check
   queued, viewer still down).
+
+## 2026-09-01 — THE TRIMMED WICK (UI lane, under freeze)
+Scroll-audit follow-up: the boon hand overran 320x640-class screens by
+22px. On short screens (<700px) the two decorative gaps shrink
+(24->8, 16->8); text and cards never shrink. Audit now reads
+maxExtent=0 at BOTH 360x800 and 320x640 — the decision screen fits
+everywhere. Suite 1125/1125, analyze clean.

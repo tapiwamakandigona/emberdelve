@@ -35,6 +35,10 @@ class BoonScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final boonIds = ((c.state!['boons']) as List?)?.cast<String>() ?? const [];
     final recIdx = recommendedIndex(boonIds);
+    // THE TRIMMED WICK (2026-09-01): on short screens (320x640-class) the
+    // full hand overran the fold by 22px — a decision screen must fit.
+    // Only the two decorative gaps shrink; text and cards never do.
+    final short = MediaQuery.sizeOf(context).height < 700;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -60,7 +64,7 @@ class BoonScreen extends StatelessWidget {
                           horizontal: Space.l,
                         ),
                         children: [
-                          const SizedBox(height: Space.xl),
+                          SizedBox(height: short ? Space.s : Space.xl),
                           const Text(
                             'Choose a boon',
                             style: EmberText.h1,
@@ -100,7 +104,7 @@ class BoonScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: Space.l),
+                          SizedBox(height: short ? Space.s : Space.l),
                           // THE DEALT HAND: the offered boons deal in
                           // card-by-card (fx.dart DealtIn) instead of
                           // popping as a finished wall.
