@@ -4780,3 +4780,13 @@ the opening run itself (R1 brief input).
   (drag 3.1) / codex 0.0. No repaint leaks remain anywhere; the map's
   9.0 is the halo pulse painting reachable-node medallions, which is
   intended motion. Probe kept as benchmark. [idle_census, 2026-09-01]
+- Startup audit (main.dart): "Swifter Lantern" — controller.boot()
+  (meta/run file reads) was serial BEFORE the four-service Future.wait
+  though nothing in that group reads the profile; boot() now joins the
+  overlap group, plus orientation-lock and SettingsStore.load overlap
+  initPlatformAudio. Ordering guarantees preserved: initPlatformAudio
+  before first AudioPlayer; Motion seeded from loaded settings;
+  StoreService/pgs hooks/runApp all after the join, so every profile
+  reader still sees a loaded profile. Cold-start critical path is now
+  max(boot, prefs×3, Firebase) instead of boot + max(...). Suite 1138
+  green, analyze clean. [startup-audit, 2026-09-01]

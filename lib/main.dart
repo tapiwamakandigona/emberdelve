@@ -36,30 +36,23 @@ Future<void> main() async {
   // shader jank on low-end devices without this).
   PaintingBinding.shaderWarmUp = const EmberShaderWarmUp();
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
+  // THE SWIFTER LANTERN (startup audit, 2026-09-01): orientation locking and
+  // the settings read are independent of the audio session setup — start
+  // them, do the audio session, then join. Nothing below runs before its
+  // prerequisites; the disk and platform channels just work in parallel.
+  final orientationsDone = SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  final settingsFuture = SettingsStore.load();
   // Must run before the first AudioPlayer exists — see initPlatformAudio.
   await AudioService.initPlatformAudio();
-  final audio = AudioService(await SettingsStore.load());
+  final audio = AudioService(await settingsFuture);
   AudioService.instance = audio;
   // Reduce motion (v0.16.0): seed the resolver with the persisted choice;
   // the MaterialApp builder below keeps the OS flag side current.
   Motion.instance.update(setting: audio.settings.reduceMotion);
   final controller = GameController()..audio = audio;
-  await controller.boot();
-  // Ember Forge billing (v0.4.0, spec R8). Wired after boot so the
-  // entitlement check reads the loaded profile; init is deliberately not
-  // awaited — startup never blocks on Google Play, and a purchase event
-  // arriving later just lands through the stream.
-  final store = StoreService(
-    gateway: PlayStoreGateway(),
-    alreadyOwned: () => controller.meta.forgeUnlocked,
-    onEntitled: controller.grantForgeUnlock,
-  );
-  StoreService.instance = store;
-  unawaited(store.init());
   // Decode the first-touch SFX into SoundPool in the background so the very
   // first tap doesn't pay the load. Deliberately not awaited: startup must
   // not wait on audio, and a failure here just means load-on-demand.
@@ -77,11 +70,29 @@ Future<void> main() async {
   final reminder = ReminderService.instance;
   final updates = UpdateService.instance;
   await Future.wait([
+    // Startup audit 2026-09-01: controller.boot() (meta/run file reads)
+    // used to run to completion BEFORE this group started, yet nothing in
+    // the group reads the profile — it now overlaps. Everything that DOES
+    // read the loaded profile (StoreService, the pgs hooks, runApp) sits
+    // below this join, exactly as before.
+    controller.boot(),
     pgs.load(),
     reminder.load(),
     updates.load(),
     initTelemetry(),
+    orientationsDone,
   ]);
+  // Ember Forge billing (v0.4.0, spec R8). Wired after boot so the
+  // entitlement check reads the loaded profile; init is deliberately not
+  // awaited — startup never blocks on Google Play, and a purchase event
+  // arriving later just lands through the stream.
+  final store = StoreService(
+    gateway: PlayStoreGateway(),
+    alreadyOwned: () => controller.meta.forgeUnlocked,
+    onEntitled: controller.grantForgeUnlock,
+  );
+  StoreService.instance = store;
+  unawaited(store.init());
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     pgs.signInBackend = () async {
       await GameAuth.signIn();
@@ -102,8 +113,7 @@ Future<void> main() async {
   // service is a silent no-op everywhere else. One quiet ask per profile —
   // see lib/meta/review_service.dart for the charter.
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    ReviewService.instance.backend = () =>
-        InAppReview.instance.requestReview();
+    ReviewService.instance.backend = () => InAppReview.instance.requestReview();
   }
   // The Carried Ember (v0.24.0): the Settings save-code panel reads and
   // adopts meta through the same two doors as the cloud path.
