@@ -4559,3 +4559,14 @@ apart in space.
 - Chasm plates re-shot (identical at offset 0 to the eye-verified set);
   suite 1125/1125, analyze clean. screens.dart gained motion.dart
   import (part-of files share it).
+
+## 2026-09-01 — THE SWIFT LANTERN (perf lane, under freeze)
+Cold-boot audit of main(): four independent service bring-ups (Play
+Games prefs, reminder prefs, Watchtower prefs, and telemetry's
+Firebase.initializeApp platform-channel init) ran in strict sequence
+before runApp — on a slow phone the title screen literally waited on
+Firebase. They now overlap in one Future.wait; every load still
+completes before runApp, all wiring below is order-independent of the
+loads (verified by reading each), so semantics are unchanged — only
+the wall-clock sum shrinks to the slowest single member. app_open
+still fires after telemetry is up. Suite 1125/1125, analyze clean.

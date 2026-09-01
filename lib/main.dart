@@ -69,7 +69,19 @@ Future<void> main() async {
   // Connecting is OPT-IN via Settings — resumeIfWanted only acts on a
   // remembered "Connect" choice and never pops UI on its own.
   final pgs = PlayGamesService.instance;
-  await pgs.load();
+  // THE SWIFT LANTERN: the four service loads below are mutually
+  // independent (three SharedPreferences reads + Firebase init) but ran
+  // in strict sequence — on a slow phone the title screen was waiting on
+  // Firebase before it could exist. Overlap them; everything is still
+  // fully loaded before runApp, so no wiring below changes meaning.
+  final reminder = ReminderService.instance;
+  final updates = UpdateService.instance;
+  await Future.wait([
+    pgs.load(),
+    reminder.load(),
+    updates.load(),
+    initTelemetry(),
+  ]);
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     pgs.signInBackend = () async {
       await GameAuth.signIn();
@@ -105,23 +117,18 @@ Future<void> main() async {
   // explicit Settings tap. Backends wired on Android only; the service is a
   // silent no-op everywhere else. Rescheduling is not awaited — startup
   // never blocks on the notifications plugin.
-  final reminder = ReminderService.instance;
-  await reminder.load();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     unawaited(_wireReminderBackends(reminder));
   }
   // The Watchtower (v0.21.0): update awareness for GitHub-only builds.
   // The fetcher is wired on Android only; the launch check runs only on a
   // remembered opt-in and is not awaited — startup never blocks on GitHub.
-  final updates = UpdateService.instance;
-  await updates.load();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     updates.fetcher = _fetchReleaseJson;
     unawaited(updates.launchCheckIfEnabled());
   }
-  // Consent-gated, opt-in analytics (docs/telemetry-events.md). Silent
-  // no-op if Firebase is unconfigured; nothing fires before opt-in.
-  await initTelemetry();
+  // Consent-gated, opt-in analytics (docs/telemetry-events.md) was
+  // brought up in the Future.wait above; only the first event fires here.
   TelemetryService.instance.logEvent('app_open');
   runApp(EmberdelveApp(controller));
 }
