@@ -4815,3 +4815,17 @@ the opening run itself (R1 brief input).
   finite, informational animations (dice tumble, reward flip, weapon
   phase move, impact slash) deliberately stay — they carry game
   information; only unending decorative loops gate. [audit, 2026-09-01]
+- Transition polish audit (follow-up to the stillness audit): full
+  inventory of every Duration/Curve in lib/ui. Verdict: curve usage is
+  disciplined — easeOut entrances, easeIn exits (enemy death fade,
+  wipe cover half, spent-die ghost flight are deliberate easeIn),
+  linear only on 70ms scroll micro-steps. Durations are documented
+  juice constants; no retiming owed — DO NOT churn them. One real gap
+  found and fixed: the map->combat FLAME WIPE (full-screen
+  displacement sweep) ignored reduce motion; it now falls back to the
+  plain 380ms fade-to-black dissolve (opacity-only substitute) under
+  reduce. Regression in test/reduced_motion_stillness_test.dart
+  (paints counted against idle baseline — Material adds its own
+  CustomPaints, never assert absolute counts). Already-gated and
+  verified: DealtIn (jumps to settled), ShakeBox, DamagePop,
+  EmberDrift, SmolderIn is opacity-only. Suite 1143. [audit, 2026-09-01]

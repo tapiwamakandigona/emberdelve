@@ -582,7 +582,11 @@ class _PhaseSwitcherState extends State<PhaseSwitcher>
     if (prev.phaseKey != widget.phaseKey) {
       _old = prev.child;
       _oldKey = prev.phaseKey;
-      _wipe = widget.flameWipe;
+      // Reduce motion (2026-09-01 stillness audit): the flame wipe is a
+      // full-screen displacement sweep — under reduce it falls back to the
+      // plain fade-to-black, an opacity-only dissolve (the standard
+      // reduced-motion substitute for movement).
+      _wipe = widget.flameWipe && !Motion.instance.reduced;
       _t
         ..duration = Duration(milliseconds: _wipe ? 520 : 380)
         ..forward(from: 0).whenComplete(() {

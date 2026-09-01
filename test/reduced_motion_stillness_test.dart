@@ -9,6 +9,7 @@
 //
 // Census pattern: debugOnProfilePaint by runtimeType, warmup frames first,
 // end with pumpWidget(SizedBox.shrink()).
+import 'package:emberdelve/ui/fx.dart';
 import 'package:emberdelve/ui/logo.dart';
 import 'package:emberdelve/ui/motion.dart';
 import 'package:emberdelve/ui/sprites.dart';
@@ -123,6 +124,52 @@ void main() {
     );
     await _teardown(tester);
     expect(alive, greaterThan(30), reason: 'sway clock repaints every frame');
+  });
+
+  testWidgets('flame wipe falls back to plain fade under reduce', (
+    tester,
+  ) async {
+    Future<void> mount(String phase) => tester.pumpWidget(
+      MaterialApp(
+        home: PhaseSwitcher(
+          phaseKey: phase,
+          flameWipe: true,
+          child: ColoredBox(
+            color: phase == 'a' ? Colors.red : Colors.blue,
+          ),
+        ),
+      ),
+    );
+
+    // Baseline: CustomPaints present when idle (framework-owned ones).
+    Motion.instance.update(setting: 'off');
+    await mount('a');
+    final idle = find.byType(CustomPaint).evaluate().length;
+
+    // Without reduce: the map->combat wipe adds its flame overlay painter.
+    await mount('b');
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      find.byType(CustomPaint).evaluate().length,
+      idle + 1,
+      reason: 'flame wipe painter must be present mid-transition',
+    );
+    await tester.pumpAndSettle();
+    await _teardown(tester);
+
+    // Under reduce: same transition dissolves through plain black —
+    // opacity only, no displacement sweep, no extra painter.
+    Motion.instance.update(setting: 'on');
+    await mount('a');
+    await mount('b');
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      find.byType(CustomPaint).evaluate().length,
+      idle,
+      reason: 'under reduce the wipe must fall back to the plain fade',
+    );
+    await tester.pumpAndSettle();
+    await _teardown(tester);
   });
 
   testWidgets('SpriteView bob life ticker is still under reduce', (
