@@ -4612,3 +4612,37 @@ initState (fx.dart). Any screen with EmberDrift unmounted while
 reduce-motion was on would have thrown. Plates eye-verified (walk apex
 mid-flight + settled); full eye-check queue also cleared this loop
 (chasm, dealt hand, hearth, first-fall, settled-score — all pass).
+
+## 2026-09-01 — v0.178.0 retention pick: THE SEVEN HEARTHS (mechanism, written BEFORE building)
+
+Owner directive 2026-09-01 authorizes ONE release carrying ONE cohesive
+retention improvement. Pick: **a first-week arc that resolves** — the
+Seven Hearths.
+
+WHY THIS MOVES DAY-7 RETENTION (the mechanism):
+- The measured failure is day-7 (28 MAU, 7-day retention = 1 device),
+  not day-1: people play a session and never build a week. Every
+  existing hook is either single-day (morrow trial: reaches only day 2)
+  or endless (the 2100-ember unlock ladder: no near horizon a new
+  player can see resolving). Nothing in the game today names "your
+  first week" as a thing that completes.
+- The Seven Hearths gives the first seven PLAYED DAYS a visible,
+  bounded arc: each day you finish (or even abandon) a delve, one of
+  seven hearths on the title screen lights. Day counting uses distinct
+  local dates, NOT consecutive days — a missed day costs nothing and
+  the copy says the hearths keep. This is the strongest honest form of
+  a week hook available under the §Ethics charter (no streaks, no
+  expiry, no loss-framing) — the mechanism is goal-gradient + a
+  concrete near-term resolution, not fear.
+- It RESOLVES rather than trails off: the seventh hearth settles 60
+  embers into the pouch (half a delver unlock — the ladder's own next
+  step, so the arc hands you into the endless loop) and the row then
+  retires from the title. One-time, per-profile, monotonic, cloud-merge
+  MAX/OR so it can never regress or double-grant.
+- Each session in week one thus ends with a changed title screen the
+  next open will show — a reason to come back tomorrow that is a fact
+  ("the third hearth lit") instead of a nag.
+
+Falsifiable prediction: day-7 retention among NEW devices in the 28
+days after ship should move off 1; if it does not, the next lever is
+the opening run itself (R1 brief input).
