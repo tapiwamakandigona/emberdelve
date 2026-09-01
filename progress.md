@@ -4873,3 +4873,12 @@ the opening run itself (R1 brief input).
   never trade the zero-crash record for an upgrade), and a
   per-Flutter-upgrade grep checklist. Manifest comment now points at
   the doc. [engine source + web, 2026-09-01]
+- Boot-cost probe + THE SLIM SATCHEL gate: measured the pre-first-frame
+  path with a fully maxed veteran save (every codex/achievement/tale/
+  tip/track/cosmetic + all 16 delvers' tallies): meta json 7,649 bytes,
+  MetaStore.load 2.5ms warm, controller.boot 21ms veteran / 8ms fresh
+  [probe, 2026-09-01]. Verdict: boot I/O is NOT a first-frame risk at
+  any realistic save size — no code change warranted. Durable guard:
+  test/meta_size_test.dart gates the maxed save under 64 KB (fixture
+  shared at test/support/maxed_meta.dart); timing probes stay in
+  tool/boot_cost_probe_test.dart (explicit run only). Suite 1144.
