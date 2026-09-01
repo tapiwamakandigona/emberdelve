@@ -4511,3 +4511,15 @@ EmberDrift's 1 [entrance_probe, 2026-09-01]. _MapScenePainter (which
 now carries THE CARVED CHASM walls) contributes ZERO idle paints — the
 walls are confirmed free per-frame, and the node pulse dirties only
 tiny glow subtrees. No lib/ change needed; report only.
+
+## 2026-09-01 — THE WEIGHED FALL (animation lane, under freeze)
+The summary's four narrative one-liners kindle in with SmolderIn — the
+screen that decides day-2 return now delivers its verdict lines with
+the same entrance language as the hearth tale and the rumor:
+- first-fall + settled-score (gold, the big beats): 900ms.
+- last-thread + narrow-climb (quiet micro facts): 600ms.
+- The tappable named-foe panel stays static — it is a control, not a
+  tale. Ledger, buttons, waymarks untouched: only prose smolders.
+- Paint-only as ever: full text + semantics frame one, mask dropped at
+  rest, reduce-motion plain. first_fall_test pins a SmolderIn ancestor
+  (type check — time-independent). Suite 1124/1124, analyze clean.

@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/sim/autoplay.dart';
+import 'package:emberdelve/ui/fx.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 
@@ -65,6 +66,13 @@ void main() {
     );
     await tester.scrollUntilVisible(line, 200);
     expect(line, findsOneWidget);
+    // THE WEIGHED FALL: the framing line kindles in (paint-only; the
+    // text itself was full and semantic from frame one).
+    expect(
+      find.ancestor(of: line, matching: find.byType(SmolderIn)),
+      findsOneWidget,
+      reason: 'the first fall smolders in',
+    );
   });
 
   testWidgets('second loss: the line has said its piece', (tester) async {

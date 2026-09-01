@@ -268,12 +268,15 @@ class SummaryScreen extends StatelessWidget {
                             // are pointed at as the proof nothing was lost.
                             if (firstFallLine(c) case final line?) ...[
                               const SizedBox(height: Space.l),
-                              Text(
-                                line,
-                                key: const ValueKey('first-fall'),
-                                textAlign: TextAlign.center,
-                                style: EmberText.body.copyWith(
-                                  color: EmberColors.gold,
+                              SmolderIn(
+                                duration: const Duration(milliseconds: 900),
+                                child: Text(
+                                  line,
+                                  key: const ValueKey('first-fall'),
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.body.copyWith(
+                                    color: EmberColors.gold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -282,12 +285,15 @@ class SummaryScreen extends StatelessWidget {
                             // foe, ever — a payoff, not a treadmill.
                             if (settledScoreLine(c) case final line?) ...[
                               const SizedBox(height: Space.l),
-                              Text(
-                                line,
-                                key: const ValueKey('settled-score'),
-                                textAlign: TextAlign.center,
-                                style: EmberText.body.copyWith(
-                                  color: EmberColors.gold,
+                              SmolderIn(
+                                duration: const Duration(milliseconds: 900),
+                                child: Text(
+                                  line,
+                                  key: const ValueKey('settled-score'),
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.body.copyWith(
+                                    color: EmberColors.gold,
+                                  ),
                                 ),
                               ),
                             ],
@@ -296,12 +302,15 @@ class SummaryScreen extends StatelessWidget {
                             // the Narrow Climb, same 30% rule, foe's side.
                             if (lastThreadLine(c) case final line?) ...[
                               const SizedBox(height: Space.s),
-                              Text(
-                                line,
-                                key: const ValueKey('last-thread'),
-                                textAlign: TextAlign.center,
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
+                              SmolderIn(
+                                duration: const Duration(milliseconds: 600),
+                                child: Text(
+                                  line,
+                                  key: const ValueKey('last-thread'),
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
                                 ),
                               ),
                             ],
@@ -318,10 +327,7 @@ class SummaryScreen extends StatelessWidget {
                                   AudioService.instance?.playSfx('ui_tap');
                                   Navigator.of(context).push(
                                     emberRoute(
-                                      (_) => CodexScreen(
-                                        c,
-                                        openEntry: foe.id,
-                                      ),
+                                      (_) => CodexScreen(c, openEntry: foe.id),
                                     ),
                                   );
                                 },
@@ -357,12 +363,15 @@ class SummaryScreen extends StatelessWidget {
                             // absent when the win was comfortable.
                             if (narrowClimbLine(c) case final line?) ...[
                               const SizedBox(height: Space.s),
-                              Text(
-                                line,
-                                key: const ValueKey('narrow-climb'),
-                                textAlign: TextAlign.center,
-                                style: EmberText.micro.copyWith(
-                                  color: EmberColors.textDim,
+                              SmolderIn(
+                                duration: const Duration(milliseconds: 600),
+                                child: Text(
+                                  line,
+                                  key: const ValueKey('narrow-climb'),
+                                  textAlign: TextAlign.center,
+                                  style: EmberText.micro.copyWith(
+                                    color: EmberColors.textDim,
+                                  ),
                                 ),
                               ),
                             ],
@@ -800,16 +809,14 @@ class SummaryScreen extends StatelessWidget {
                                                         widthFactor: frac,
                                                         child: Container(
                                                           height: 8,
-                                                          color: EmberColors
-                                                              .ember,
+                                                          color:
+                                                              EmberColors.ember,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                                const SizedBox(
-                                                  height: Space.s,
-                                                ),
+                                                const SizedBox(height: Space.s),
                                                 Text(
                                                   '$have / $cost embers',
                                                   style: EmberText.bodyDim,
