@@ -4360,3 +4360,22 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - Plate tool tool/first_fall_visual_test.dart (320px, 1.0x and 1.3x):
   wraps freely, leads the cluster cleanly at both scales.
 - Suite 1115/1115, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE ROOMY HOLLOW (UI lane, Large Print sweep over the mid-run screens)
+- New plate tool tool/midrun_large_plates_test.dart (NOT in CI): reward,
+  rest, shop, event, and the WIN summary at 320x568 in 1.0x AND 1.3x
+  text. These were the last surfaces never re-plated since the Large
+  Print doctrine (87961f13).
+- FOUND: the rest screen's fixed column (title + subtitle + hearth tale
+  + rest/temper buttons) overflowed 78px at 1.3x — Spacers collapse to
+  zero but fixed prose cannot; no scroll escape existed. The tip card
+  itself was already guarded (its own SingleChildScrollView).
+- FIX: _hollowBody(...) builds the hollow's pieces once and arranges
+  them two ways. Normal scale: the exact designed still room (Spacers,
+  seated buttons, flexing forge list) — nothing scrolls, per the
+  no-scroll directive. Under pressure (textScaler >115% AND height
+  <640): the same pieces stack in one ScrollComfort ListView — every
+  word and button reachable, nothing clipped.
+- All other mid-run surfaces passed clean at both scales (reward cards,
+  shop rows, event choice buttons, win summary all wrap correctly).
+- Suite 1115/1115, analyze clean. No tag/bump (freeze).

@@ -53,6 +53,15 @@ class _RestScreenState extends State<RestScreen> {
     // the option disappears rather than sitting there greyed out (v7 rule).
     final tempersUsed = run?['tempers_used'] as int? ?? 0;
     final canTemper = tempersUsed < 2;
+    // THE ROOMY HOLLOW (2026-09-01, Large Print sweep): at 320x568 with 1.3x
+    // text the hollow's fixed prose + buttons exceed the column and the
+    // Spacers cannot save it (78px overflow, caught by the mid-run plates).
+    // Under pressure — big text on a short screen — the whole column becomes
+    // one comfortable scroll; at normal scale nothing changes and nothing
+    // scrolls (the no-scroll charter holds where it can).
+    final mq = MediaQuery.of(context);
+    final cramped =
+        mq.textScaler.scale(100) > 115 && mq.size.height < 640 * 1.0;
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -63,101 +72,12 @@ class _RestScreenState extends State<RestScreen> {
             // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
             Expanded(
               child: ContentClamp(
-                child: Column(
-                  children: [
-                    const SizedBox(height: Space.xl),
-                    const Text('A warm hollow', style: EmberText.h1),
-                    const SizedBox(height: Space.xs),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                      child: Text(
-                        canTemper
-                            ? 'Rest to heal, forge a die into something stronger, or '
-                                  'temper one face. '
-                                  '${tempersUsed == 0 ? 'Two marks a delve.' : 'One mark left.'}'
-                            : 'Rest to heal, or forge a die into something stronger. '
-                                  'One only.',
-                        style: EmberText.bodyDim,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: Space.xl),
-                    // v0.96.0 The Hearth Tale: one short tale of the world per
-                    // hollow, in a fixed lifetime sequence (lib/data/tales.dart)
-                    // — the "what's a delve" answer as a drip, not a card.
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: Space.xl),
-                      child: Text(
-                        '\u201C${hearthTale(c.meta.hearthTalesHeard)}\u201D',
-                        key: const ValueKey('hearth-tale'),
-                        style: EmberText.bodyDim.copyWith(
-                          fontStyle: FontStyle.italic,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(Space.l),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: EmberButton(
-                          // At full HP this is the ONLY exit when nothing is forgeable —
-                          // a disabled button here soft-locked the run (found in play
-                          // session 2026-07-24). The sim's `rest` command is safe at full
-                          // HP: it heals 0 and moves to the map.
-                          fullHp
-                              ? 'Move on — fully rested'
-                              : 'Rest — heal $heal HP '
-                                    '($hp\u00A0to\u00A0${hp + heal})',
-                          primary: !fullHp,
-                          icon: fullHp
-                              ? Icons.arrow_forward
-                              : Icons.local_fire_department,
-                          onTap: () => c.apply({'type': 'rest'}),
-                        ),
-                      ),
-                    ),
-                    if (canTemper)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Space.l,
-                        ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: EmberButton(
-                            tempersUsed == 0
-                                ? 'Temper a face — two per delve'
-                                : 'Temper a face — one mark left',
-                            key: const ValueKey('rest-temper'),
-                            icon: Icons.auto_awesome,
-                            onTap: () => showTemperSheet(context, c),
-                          ),
-                        ),
-                      ),
-                    if (canTemper) const SizedBox(height: Space.m),
-                    if (forgeable.isNotEmpty)
-                      Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Space.l,
-                          ),
-                          children: [
-                            const Text('FORGE', style: EmberText.micro),
-                            const SizedBox(height: Space.s),
-                            for (final i in forgeable)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: Space.s),
-                                child: _forgeRow(run, dice0[i], i + 1),
-                              ),
-                          ],
-                        ),
-                      )
-                    else
-                      const Spacer(),
-                  ],
-                ),
+                child: _hollowBody(context, c, run, forgeable, dice0, cramped,
+                    canTemper: canTemper,
+                    fullHp: fullHp,
+                    hp: hp,
+                    heal: heal,
+                    tempersUsed: tempersUsed),
               ),
             ),
           ],
@@ -167,6 +87,143 @@ class _RestScreenState extends State<RestScreen> {
             id: c.tipDirector.active!,
             onDismiss: () => setState(c.dismissTip),
           ),
+      ],
+    );
+  }
+
+  /// THE ROOMY HOLLOW: the hollow's content in two arrangements. Normal
+  /// scale keeps the designed still room — prose up top, Spacers breathing,
+  /// buttons seated, forge list flexing. Under large-text pressure the same
+  /// pieces stack in one ScrollComfort list so every word and button stays
+  /// reachable; nothing is ellipsized, nothing overflows.
+  Widget _hollowBody(
+    BuildContext context,
+    GameController c,
+    Map? run,
+    List<int> forgeable,
+    List<String> dice0,
+    bool cramped, {
+    required bool canTemper,
+    required bool fullHp,
+    required int hp,
+    required int heal,
+    required int tempersUsed,
+  }) {
+    final prose = <Widget>[
+      const SizedBox(height: Space.xl),
+      const Text('A warm hollow', style: EmberText.h1),
+      const SizedBox(height: Space.xs),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.l),
+        child: Text(
+          canTemper
+              ? 'Rest to heal, forge a die into something stronger, or '
+                    'temper one face. '
+                    '${tempersUsed == 0 ? 'Two marks a delve.' : 'One mark left.'}'
+              : 'Rest to heal, or forge a die into something stronger. '
+                    'One only.',
+          style: EmberText.bodyDim,
+          textAlign: TextAlign.center,
+        ),
+      ),
+      const SizedBox(height: Space.xl),
+      // v0.96.0 The Hearth Tale: one short tale of the world per
+      // hollow, in a fixed lifetime sequence (lib/data/tales.dart)
+      // — the "what's a delve" answer as a drip, not a card.
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+        child: Text(
+          '\u201C${hearthTale(c.meta.hearthTalesHeard)}\u201D',
+          key: const ValueKey('hearth-tale'),
+          style: EmberText.bodyDim.copyWith(
+            fontStyle: FontStyle.italic,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ];
+    final restButton = Padding(
+      padding: const EdgeInsets.all(Space.l),
+      child: SizedBox(
+        width: double.infinity,
+        child: EmberButton(
+          // At full HP this is the ONLY exit when nothing is forgeable —
+          // a disabled button here soft-locked the run (found in play
+          // session 2026-07-24). The sim's `rest` command is safe at full
+          // HP: it heals 0 and moves to the map.
+          fullHp
+              ? 'Move on — fully rested'
+              : 'Rest — heal $heal HP '
+                    '($hp\u00A0to\u00A0${hp + heal})',
+          primary: !fullHp,
+          icon: fullHp ? Icons.arrow_forward : Icons.local_fire_department,
+          onTap: () => c.apply({'type': 'rest'}),
+        ),
+      ),
+    );
+    final temperButton = canTemper
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Space.l),
+            child: SizedBox(
+              width: double.infinity,
+              child: EmberButton(
+                tempersUsed == 0
+                    ? 'Temper a face — two per delve'
+                    : 'Temper a face — one mark left',
+                key: const ValueKey('rest-temper'),
+                icon: Icons.auto_awesome,
+                onTap: () => showTemperSheet(context, c),
+              ),
+            ),
+          )
+        : null;
+    final forgeChildren = <Widget>[
+      const Text('FORGE', style: EmberText.micro),
+      const SizedBox(height: Space.s),
+      for (final i in forgeable)
+        Padding(
+          padding: const EdgeInsets.only(bottom: Space.s),
+          child: _forgeRow(run, dice0[i], i + 1),
+        ),
+    ];
+    if (cramped) {
+      return ScrollComfort(
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: Space.l),
+          children: [
+            ...prose,
+            restButton,
+            if (temperButton != null) temperButton,
+            if (temperButton != null) const SizedBox(height: Space.m),
+            if (forgeable.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: forgeChildren,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+    return Column(
+      children: [
+        ...prose,
+        const Spacer(),
+        restButton,
+        if (temperButton != null) temperButton,
+        if (temperButton != null) const SizedBox(height: Space.m),
+        if (forgeable.isNotEmpty)
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: Space.l),
+              children: forgeChildren,
+            ),
+          )
+        else
+          const Spacer(),
       ],
     );
   }
