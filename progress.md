@@ -4790,3 +4790,12 @@ the opening run itself (R1 brief input).
   reader still sees a loaded profile. Cold-start critical path is now
   max(boot, prefs×3, Firebase) instead of boot + max(...). Suite 1138
   green, analyze clean. [startup-audit, 2026-09-01]
+- Insurance plate pass after the perf cycle: five core screens
+  (title/map/combat/boon/summary) plated at 320×568 @1.3× text —
+  zero overflow exceptions, all conform to scroll doctrine. Boon's
+  partially-visible second card at extreme squeeze is the DOCUMENTED
+  accepted state from the 2026-08-25 sweep (header scrolls with
+  cards, Skip pinned, partial card = scroll cue) — do not re-flag it;
+  also note plate fonts wrap wider than shipped fonts (comment in
+  boon_screen.dart). One-off plate test deleted after critique.
+  [plates, 2026-09-01]
