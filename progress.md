@@ -4415,3 +4415,19 @@ lands at the exact moment today's is done.
   honest-copy sweep; daily summary shows / normal run silent; title
   shows on played day only, absent on day-2 return).
 - Suite 1119/1119, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE DEALT HAND (animation lane, under freeze)
+Choice hands now deal in instead of popping: staggered fade + 14px rise
+per card on the boon and keystone screens.
+- lib/ui/fx.dart: DealtIn(index, child) — 300ms/card + 90ms stagger,
+  Interval curve (no Timers), settled state is the identity so an idle
+  screen pays nothing. Reduce-motion renders settled immediately;
+  semantics always included (a reader hears the full hand at once).
+- boon_screen.dart / keystone_screen.dart wrap each card in DealtIn.
+- Third card settles at 480ms — under the 700ms older widget tests pump
+  before tapping (verified: widget_test/overflow/semantics all green).
+- test/dealt_hand_test.dart: 2 pins (stagger ordering mid-deal +
+  settled identity; reduce-motion skip). Plate tool
+  tool/dealt_hand_visual_test.dart (deal start / mid / settled, 360x800
+  — all three beats read clean).
+- Suite 1121/1121, analyze clean. No tag/bump (freeze).

@@ -54,10 +54,17 @@ class KeystoneScreen extends StatelessWidget {
                           horizontal: Space.l,
                         ),
                         children: [
+                          // THE DEALT HAND: same staggered deal as the boon
+                          // hand (fx.dart DealtIn).
                           for (var i = 0; i < ids.length; i++)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: Space.m),
-                              child: _card(ids[i], i + 1),
+                            DealtIn(
+                              index: i,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: Space.m,
+                                ),
+                                child: _card(ids[i], i + 1),
+                              ),
                             ),
                         ],
                       ),

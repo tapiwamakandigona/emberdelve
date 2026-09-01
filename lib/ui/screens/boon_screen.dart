@@ -93,14 +93,22 @@ class BoonScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: Space.l),
+                          // THE DEALT HAND: the offered boons deal in
+                          // card-by-card (fx.dart DealtIn) instead of
+                          // popping as a finished wall.
                           for (var i = 0; i < boonIds.length; i++)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: Space.m),
-                              child: _boonCard(
-                                context,
-                                boonIds[i],
-                                i + 1,
-                                recommended: i == recIdx,
+                            DealtIn(
+                              index: i,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: Space.m,
+                                ),
+                                child: _boonCard(
+                                  context,
+                                  boonIds[i],
+                                  i + 1,
+                                  recommended: i == recIdx,
+                                ),
                               ),
                             ),
                         ],

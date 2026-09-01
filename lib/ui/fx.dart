@@ -877,3 +877,87 @@ class _CampFirePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _CampFirePainter old) => false;
 }
+
+// ---------------------------------------------------------------------------
+// THE DEALT HAND — staggered entrance for choice cards (boon / keystone).
+// ---------------------------------------------------------------------------
+
+/// One choice card dealt onto the table: a short fade + 14px rise, staggered
+/// by [index] so a hand of three lands card-by-card instead of popping in as
+/// a finished wall. One-shot on mount; the settled state is the identity
+/// (Opacity 1.0 lays down no layer, the translate is zero), so an idle
+/// choice screen costs nothing extra per frame.
+///
+/// Reduce-motion renders the child immediately — the deal is flavour, not
+/// information. Semantics are always included, so a screen reader hears the
+/// full hand on arrival rather than card-by-card.
+///
+/// Timing: 300ms per card + 90ms stagger; the third card settles at 480ms,
+/// safely under the 700ms the widget tests pump before tapping.
+class DealtIn extends StatefulWidget {
+  final int index;
+  final Widget child;
+  const DealtIn({super.key, required this.index, required this.child});
+
+  @override
+  State<DealtIn> createState() => _DealtInState();
+}
+
+class _DealtInState extends State<DealtIn>
+    with SingleTickerProviderStateMixin {
+  static const int _cardMs = 300;
+  static const int _staggerMs = 90;
+
+  late final AnimationController _t;
+  late final Animation<double> _a;
+
+  @override
+  void initState() {
+    super.initState();
+    final delay = widget.index * _staggerMs;
+    _t = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: _cardMs + delay),
+    );
+    // The stagger lives INSIDE the curve (an Interval), not in a Timer —
+    // no cancellation bookkeeping, and a disposed card mid-deal is safe.
+    _a = CurvedAnimation(
+      parent: _t,
+      curve: Interval(
+        delay / (_cardMs + delay),
+        1.0,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    if (Motion.instance.reduced) {
+      _t.value = 1.0;
+    } else {
+      _t.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _a,
+      // The card itself is built ONCE by the parent and handed down as
+      // [child]; every deal frame is an opacity + matrix change only.
+      child: widget.child,
+      builder: (context, child) => Opacity(
+        opacity: _a.value,
+        // The hand must exist for accessibility from frame one.
+        alwaysIncludeSemantics: true,
+        child: Transform.translate(
+          offset: Offset(0, (1.0 - _a.value) * 14),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
