@@ -100,9 +100,12 @@ using existing pieces only (simVersion stays sealed):
   kindler comparison IS the design: same pouch, but the relic changes
   what a hit means. Distinct from warden (block-shaped) because the
   hedger WANTS contact priced in, not prevented.
-- maxHp: tuning knob, start sweep at 29 (thorns rewards absorbing;
-  must not out-tank the warden's 32). Bands: easy 80–90 / normal
-  55–70 / hard 30–45, tuned ONLY via HP per roster doctrine.
+- maxHp: **20 — SWEPT AND SETTLED** (tool/hedger_sweep_probe_test.dart,
+  400 seeds): HP 29 → 93.75/80.25/58.75 (thorns is strong), HP 22 →
+  90.75/69.25/47.75 (easy+hard over band), **HP 20 → 89.25/65.50/43.00
+  — all three bands hit** (easy 80–90 / normal 55–70 / hard 30–45)
+  [sweep, 2026-09-01]. The hedge is sharp, not thick: lowest HP but
+  the stoker. Tuned ONLY via HP per roster doctrine.
 - unlockEmbers 2250 (curve continues +150; honors never re-price).
 - Sprite: knight_m base (armored silhouette reads as the wall) with a
   new hue family — must read distinct next to warden/flintwright/
@@ -115,6 +118,26 @@ using existing pieces only (simVersion stays sealed):
 - Full lane checklist per the completeness bar above; pipeline files
   to mirror: hearthkeeper_test.dart + hearthkeeper_sweep_probe_test
   (every delver since v0.145 has both).
+- **Exact def (proven by sweep; wiring reverted to keep the branch
+  green — re-apply when all lanes land together):** charactersOrder
+  appends 'hedger' after hearthkeeper under a SECOND CIRCLE comment
+  block; map entry: CharacterDef('hedger', 'The Hedger', 'The
+  thorn-layer: a Thorn Band and plain Ember Dice \u2014 every blow
+  against them is answered.', maxHp: 20, startDice: ['d6','d6','d6'],
+  startRelic: 'thorn_band', unlockEmbers: 2250).
+- **The suite's own lane list** (from running with the def wired —
+  these are the tests that must move with the roster, each one a work
+  item): amethyst 'stands last' pin, assets sprite_meta + sheet,
+  crowned-company target 16→17, deep-wardrobe six_handed target,
+  delve-code round-trip-every-delver + v2 founding-16 expectation
+  (parameterise on charactersOrder.length, not literal 16),
+  fourth/sixth-cycle tale facts ('sixteen answers' style counts —
+  tale WORDING stays, tests must pin the first circle explicitly),
+  hearthkeeper 'stands last' pin, honest-ledger whole-catalog
+  promises, named-company codex coverage in roster order, runesmith
+  roster-growth contracts, tenth-chair vista pin. Plus new: weapon
+  def, sprite row/hue, codex entry, <id>_wins achievement, proving,
+  tale(s), hedger_test.dart, delve-code index-16 round-trip.
 
 ## Sequencing
 

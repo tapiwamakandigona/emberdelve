@@ -4932,3 +4932,11 @@ the opening run itself (R1 brief input).
   from 29, unlockEmbers 2250, knight_m base + new hue, second-circle
   fiction (additive only — published "sixteen" words untouched).
   Pipeline mirror: hearthkeeper_test.dart + sweep probe. [2026-09-01]
+- THE HEDGER swept and settled: HP 20 hits all bands (400 seeds: easy
+  89.25 / normal 65.50 / hard 43.00; HP29 and HP22 over band) [sweep,
+  2026-09-01]. tool/hedger_sweep_probe_test.dart committed. Def wiring
+  REVERTED for now — wiring the def alone reddens 14 roster-invariant
+  lanes; the suite's failure list is captured in the design doc as the
+  build checklist. Next unit: land ALL lanes + def in one green commit
+  (weapon, sprite, codex, achievement, proving, tales, tests, plus the
+  14 roster-growth test moves). Exact def text recorded in design doc.
