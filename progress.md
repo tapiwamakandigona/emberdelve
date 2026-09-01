@@ -4453,3 +4453,22 @@ canon 100-200ms / 200-400ms confirms DealtIn and this sit in band.)
 - Plate tool tool/kindled_tale_visual_test.dart (mid / late / settled,
   360x800): first line catches with warm edge, settled identical.
 - Suite 1123/1123, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE BOUNDED ENTRANCE (perf lane, under freeze)
+New probe tool/entrance_probe_test.dart (NOT in CI; reports, never
+asserts) measures repaint cost of the two new entrance effects, mounting
+BoonScreen/RestScreen DIRECTLY — the PhaseSwitcher fade legitimately
+repaints the incoming screen every frame and drowns the signal if the
+probe goes through GameRoot.
+- Findings (before): DealtIn deal repainted the whole screen (85
+  paints/frame incl. fade); SmolderIn sweep repainted the whole hollow
+  (104 paints/frame).
+- Fix in fx.dart: DealtIn gains RepaintBoundary on BOTH sides of the
+  Opacity/Transform pair (outer keeps deal dirt off the screen, inner
+  caches the card subtree as a layer); SmolderIn wraps its ShaderMask in
+  a RepaintBoundary (mask builder extracted to _mask). Settled paths
+  unchanged (identity / mask dropped).
+- After: deal 7.1 paints/frame, smolder 3.0, both settled 1.0 (=
+  EmberDrift baseline) [entrance_probe, 2026-09-01].
+- Plates re-shot: deal stagger and smolder read identical — boundaries
+  are visually invisible. Suite 1123/1123, analyze clean. No tag/bump.

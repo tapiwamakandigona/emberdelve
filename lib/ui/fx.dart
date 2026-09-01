@@ -949,13 +949,20 @@ class _DealtInState extends State<DealtIn>
       // The card itself is built ONCE by the parent and handed down as
       // [child]; every deal frame is an opacity + matrix change only.
       child: widget.child,
-      builder: (context, child) => Opacity(
-        opacity: _a.value,
-        // The hand must exist for accessibility from frame one.
-        alwaysIncludeSemantics: true,
-        child: Transform.translate(
-          offset: Offset(0, (1.0 - _a.value) * 14),
-          child: child,
+      // Boundaries on BOTH sides of the animated pair (entrance_probe):
+      // the outer one keeps deal dirt off the rest of the screen; the
+      // inner one caches the card's own subtree in a layer, so each deal
+      // frame re-composites a cached layer instead of repainting every
+      // render object in the card (was 85 paints/frame screen-wide).
+      builder: (context, child) => RepaintBoundary(
+        child: Opacity(
+          opacity: _a.value,
+          // The hand must exist for accessibility from frame one.
+          alwaysIncludeSemantics: true,
+          child: Transform.translate(
+            offset: Offset(0, (1.0 - _a.value) * 14),
+            child: RepaintBoundary(child: child),
+          ),
         ),
       ),
     );
@@ -1019,7 +1026,18 @@ class _SmolderInState extends State<SmolderIn>
         if (_t.isCompleted) return child!;
         // p runs past 1.0 so the trailing fade band clears the bottom edge.
         final p = Curves.easeInOut.transform(_t.value) * 1.25;
-        return ShaderMask(
+        // RepaintBoundary keeps the per-frame shader update inside the
+        // tale's own layer (entrance_probe: un-bounded sweep repainted the
+        // whole hollow at 104 paints/frame).
+        return RepaintBoundary(
+          child: _mask(p, child!),
+        );
+      },
+    );
+  }
+
+  Widget _mask(double p, Widget child) {
+    return ShaderMask(
           blendMode: BlendMode.modulate,
           shaderCallback: (rect) => LinearGradient(
             begin: Alignment.topCenter,
@@ -1038,9 +1056,7 @@ class _SmolderInState extends State<SmolderIn>
               (p + 0.10).clamp(0.0, 1.0),
             ],
           ).createShader(rect),
-          child: child,
-        );
-      },
+      child: child,
     );
   }
 }
