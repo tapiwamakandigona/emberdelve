@@ -161,8 +161,8 @@ class _CodexScreenState extends State<CodexScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  '${m.ownedCodex.length} of ${codexEntries.length} '
-                                  'UNSEALED',
+                                  '${codexEntries.where((e) => m.codexOwned(e.id)).length} '
+                                  'of ${codexEntries.length} UNSEALED',
                                   style: EmberText.micro,
                                 ),
                               ),
@@ -295,7 +295,7 @@ class _CodexScreenState extends State<CodexScreen> {
 
   Widget _entryCard(BuildContext context, CodexEntryDef e) {
     final m = c.meta;
-    final owned = m.ownedCodex.contains(e.id);
+    final owned = m.codexOwned(e.id);
     final affordable = m.embers >= e.costEmbers;
     return GestureDetector(
       key: ValueKey('codex-${e.id}'),

@@ -60,10 +60,45 @@ void main() {
   test('buying a place entry works through the normal codex path', () {
     final c = GameController();
     c.meta.embers = 25;
-    expect(c.buyCodexEntry('place:the_delve'), isTrue);
+    // THE FIRST WORDS: the_delve is the book's gift now — never for sale,
+    // never charged. A paid place entry still sells normally.
+    expect(c.buyCodexEntry('place:the_delve'), isFalse, reason: 'gifted');
+    expect(c.meta.embers, 25, reason: 'a gift never touches the purse');
+    expect(c.meta.codexOwned('place:the_delve'), isTrue);
+    expect(
+      c.meta.ownedCodex.contains('place:the_delve'),
+      isFalse,
+      reason: 'a gift is not an earned unseal',
+    );
+    expect(c.buyCodexEntry('place:the_ember'), isTrue);
     expect(c.meta.embers, 15);
-    expect(c.meta.ownedCodex.contains('place:the_delve'), isTrue);
-    expect(c.buyCodexEntry('place:the_delve'), isFalse, reason: 'owned');
+    expect(c.meta.ownedCodex.contains('place:the_ember'), isTrue);
+  });
+
+  testWidgets('the first words: the delve entry opens the book unsealed', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 3600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = GameController(); // fresh profile, zero embers
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: CodexScreen(c)),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    final delve = codexById['place:the_delve']!;
+    // The lore is readable with nothing bought and nothing spent.
+    expect(find.text(delve.text), findsOneWidget);
+    expect(c.meta.embers, 0);
+    // The header counts the gift honestly.
+    expect(
+      find.textContaining('1 of ${codexEntries.length} UNSEALED'),
+      findsOneWidget,
+    );
+    // Tapping a gift sells nothing and changes nothing.
+    await tester.tap(find.byKey(const ValueKey('codex-place:the_delve')));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(c.meta.ownedCodex, isEmpty);
   });
 
   testWidgets('codex screen opens on THE WORLD, The Delve first', (

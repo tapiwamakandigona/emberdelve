@@ -4185,3 +4185,21 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   roster-complete says nothing. Plates tool/next_delver_visual_test.dart
   at 320/360/412 — panel sits directly above the Delve-again CTA.
 - Suite 1108/1108, analyze clean. No tag/version bump (freeze).
+
+## 2026-09-01 — THE FIRST WORDS (retention lane #2, merged under freeze)
+- A real Play review answered our design for us: a player FINISHED easy
+  mode and wrote "I still don't understand what's a delve." The world's
+  own answer — place:the_delve, the book's opening entry — sat sealed
+  behind 10 embers. The first question a new delver asks should not
+  carry a price.
+- data/codex.dart: `giftedCodex` const set {place:the_delve} — entries
+  the book gives away: always unsealed, never charged, never counted as
+  an earned unseal by the ledger's marks (achievements keep reading
+  ownedCodex only). meta.codexOwned(id) = bought OR gifted; tryBuyCodex
+  refuses gifts. Codex screen renders gifts as owned; the UNSEALED
+  header counts them honestly (fresh profile reads '1 of 119').
+- delve_itself_test purchase pin updated to the new truth (gift refuses
+  sale, purse untouched; the_ember still sells at 10); new widget test:
+  fresh profile opens the book with the delve's lore readable, header
+  '1 of 119', tapping the gift sells nothing.
+- Suite 1109/1109, analyze clean. No tag/version bump (freeze).

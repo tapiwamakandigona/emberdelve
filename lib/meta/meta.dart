@@ -678,10 +678,16 @@ class MetaState {
     return true;
   }
 
+  /// Whether a Codex entry reads as unsealed: bought, or one of the book's
+  /// gifts (data/codex.dart giftedCodex). The ledger's marks keep counting
+  /// ownedCodex only — a gift is not an earned unseal.
+  bool codexOwned(String id) =>
+      ownedCodex.contains(id) || giftedCodex.contains(id);
+
   /// Try to buy a Codex entry with embers; returns true on success.
   bool tryBuyCodex(String id) {
     final e = codexById[id];
-    if (e == null || ownedCodex.contains(id)) return false;
+    if (e == null || codexOwned(id)) return false;
     if (embers < e.costEmbers) return false;
     embers -= e.costEmbers;
     ownedCodex.add(id);

@@ -22,6 +22,14 @@
 // because 'what is a delve?' is the first question a new delver actually
 // asks; who the company are is the second.
 
+/// THE FIRST WORDS (retention lane, DEMAND 2026-08-31c focus #1): entries
+/// the book gives away — always unsealed, never charged, never counted as
+/// an earned unseal by the ledger's marks. 'What is a delve?' is the first
+/// question a new delver actually asks, and a real review answered our old
+/// design for us: a player finished easy mode still not knowing. The
+/// world's first words are free; the rest of the book still sells.
+const Set<String> giftedCodex = {'place:the_delve'};
+
 class CodexEntryDef {
   final String id; // 'enemy:cinder_wisp' / 'relic:ember_ring'
   final String kind; // 'enemy' | 'relic' | 'place'
