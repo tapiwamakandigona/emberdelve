@@ -65,7 +65,9 @@
              (flutter/flutter#190640) — this game decodes sprite PNGs, and its
              28-day zero-crash record is a DEMAND pillar. Skia is the mature
              path for a pure-2D CustomPaint game. Re-evaluate on each Flutter
-             upgrade; remove this once Impeller GLES is clean on low-end. -->
+             upgrade; remove this once Impeller GLES is clean on low-end.
+             Exit criteria + per-upgrade checklist: docs/research/renderer-watch.md
+             (verified live on 3.44.9 against engine source, 2026-09-01). -->
         <meta-data
             android:name="io.flutter.embedding.android.EnableImpeller"
             android:value="false" />

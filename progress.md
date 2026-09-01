@@ -4860,3 +4860,16 @@ the opening run itself (R1 brief input).
   re-frame -> all five plates visually verified (captions per r3 spec,
   no clipping, stale Aug 25 title fixed). Runbook + r3 doc updated.
   [dry-run, 2026-09-01]
+- Renderer watch (docs/research/renderer-watch.md): verified against
+  the 3.44.9 engine SOURCE (FlutterEngineFlags.java + flutter_main.cc)
+  that the EnableImpeller=false manifest opt-out is fully live —
+  enable_impeller=false -> kSkiaOpenGLES, no Android-10+ carve-out. A
+  circulating June-2026 Medium claim that the opt-out was "removed in
+  3.44 / silently ignored" is FALSE for our engine; what's true is the
+  deprecation warning (warn_on_impeller_opt_out) and upstream intent
+  to remove it later. Doc records the pin's exit criteria (#187009 +
+  #190640 fixed + own-device probe), the forced-exit plan if the
+  opt-out is removed before GLES is fixed (hold Flutter version;
+  never trade the zero-crash record for an upgrade), and a
+  per-Flutter-upgrade grep checklist. Manifest comment now points at
+  the doc. [engine source + web, 2026-09-01]
