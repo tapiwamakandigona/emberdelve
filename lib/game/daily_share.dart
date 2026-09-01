@@ -23,6 +23,16 @@ String dailyRecapLine({
     ? '✓ Played today — the Ember claimed'
     : '✓ Played today — fell on floor $floor of $floors';
 
+/// Day-2 arrival line (retention lane, DEMAND 2026-08-31c focus #1): when
+/// yesterday's daily is the profile's last one, the title acknowledges the
+/// return and states the one honest fact that matters — today's delve is a
+/// different one. Still the single stored record, still no history, no
+/// chain counter, no expiry talk (§Ethics): a player arriving on day 2 is
+/// told what is TRUE today, never what they owe.
+String dailyReturnLine({required bool won, required int floor}) => won
+    ? 'Yesterday\u2019s delve fell to you. Today deals a new one.'
+    : 'Yesterday you reached floor $floor. Today deals a new delve.';
+
 /// Copyable result for the summary screen (review note #3): Wordle-style,
 /// deliberately plain text so it pastes anywhere. States the shared-seed
 /// fact instead of a call to action — no streaks, no pressure.

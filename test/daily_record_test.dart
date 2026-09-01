@@ -142,12 +142,51 @@ void main() {
     expect(find.byKey(const ValueKey('daily-recap')), findsOneWidget);
     expect(find.textContaining('floor 5 of 9'), findsOneWidget);
 
-    // A record from another day stays silent.
+    // Yesterday's record swaps to the day-2 return line (retention lane):
+    // one honest fact — today's delve is new. Never both lines at once.
+    c.meta.lastDailyDate = dailyKey(
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
+    c.announce('rebuild');
+    await pumpFor(tester, 300);
+    expect(find.byKey(const ValueKey('daily-recap')), findsNothing);
+    expect(find.byKey(const ValueKey('daily-return')), findsOneWidget);
+    expect(find.textContaining('floor 5'), findsOneWidget);
+    expect(find.textContaining('new delve'), findsOneWidget);
+
+    // A record from any OLDER day stays fully silent — no history talk.
     c.meta.lastDailyDate = '2001-01-01';
     c.announce('rebuild');
     await pumpFor(tester, 300);
     expect(find.byKey(const ValueKey('daily-recap')), findsNothing);
+    expect(find.byKey(const ValueKey('daily-return')), findsNothing);
     await pumpFor(tester, 400);
+  });
+
+  test('the day-2 return line passes the ethics copy sweep', () {
+    const banned = [
+      'streak',
+      'expire',
+      'hurry',
+      'miss out',
+      'last chance',
+      'beat me',
+      'bet you',
+      'only today',
+      "can't",
+      'loser',
+    ];
+    for (final line in [
+      dailyReturnLine(won: true, floor: 9),
+      dailyReturnLine(won: false, floor: 5),
+    ]) {
+      final lower = line.toLowerCase();
+      for (final word in banned) {
+        expect(lower.contains(word), isFalse, reason: '"$word" in "$line"');
+      }
+    }
+    expect(dailyReturnLine(won: false, floor: 5), contains('floor 5'));
+    expect(dailyReturnLine(won: true, floor: 9), contains('new one'));
   });
 
   testWidgets('summary offers Copy daily result for dailies only', (

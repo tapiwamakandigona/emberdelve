@@ -4217,3 +4217,19 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   fires for daily-never veterans, which is desired in the app — the
   test just needs one story on the title).
 - Suite 1109/1109, analyze clean. No tag/version bump (freeze).
+
+## 2026-09-01 — THE RETURNED DELVER (retention lane #4, merged under freeze)
+- Day-2 arrival: the daily recap (v0.3.4) speaks only on the day it was
+  played — a player who came back TOMORROW (the exact behavior the
+  retention focus wants) arrived to a title that said nothing. Now, when
+  the profile's last daily is yesterday's, one micro line under the
+  Daily button acknowledges the return and states the one fact that
+  matters: dailyReturnLine (game/daily_share.dart) — won: "Yesterday's
+  delve fell to you. Today deals a new one." / lost: "Yesterday you
+  reached floor N. Today deals a new delve." Key 'daily-return'.
+- Still the SINGLE stored record (no history added), never both lines at
+  once, older-than-yesterday stays fully silent, copy sweep pinned
+  against the banned list (§Ethics: what is true today, never what is
+  owed). daily_record_test extended: today→recap, yesterday→return line,
+  older→silence + ethics sweep on both variants.
+- Suite 1110/1110, analyze clean. No tag/version bump (freeze).

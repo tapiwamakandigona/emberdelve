@@ -238,6 +238,27 @@ class TitleScreen extends StatelessWidget {
                                     style: EmberText.micro,
                                     textAlign: TextAlign.center,
                                   ),
+                                ]
+                                // Day-2 arrival (retention lane): a player
+                                // whose LAST daily was yesterday's gets one
+                                // honest line — today's delve is new. Same
+                                // single record, no history, no chain talk.
+                                else if (m.lastDailyDate ==
+                                    dailyKey(
+                                      DateTime.now().subtract(
+                                        const Duration(days: 1),
+                                      ),
+                                    )) ...[
+                                  const SizedBox(height: Space.s),
+                                  Text(
+                                    dailyReturnLine(
+                                      won: m.lastDailyWon,
+                                      floor: m.lastDailyFloor,
+                                    ),
+                                    key: const ValueKey('daily-return'),
+                                    style: EmberText.micro,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ],
                                 const SizedBox(height: Space.m),
                                 // Weekly Delve (P3): one shared seed AND one declared
