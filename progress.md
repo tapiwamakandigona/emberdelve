@@ -4733,3 +4733,11 @@ the opening run itself (R1 brief input).
   children — any repaint-driven painter with a static child needs the
   child in its own RepaintBoundary. Audit complete, don't redo.
   [code-audit, 2026-09-01]
+- Summary-screen drag perf: the ledger column had no RepaintBoundary,
+  so every drag frame re-rasterized the entire static column — 380.1
+  paints/frame measured (tool/summary_drag_probe_test.dart, seed 1
+  kindler autoplay to run_won, 60-frame scrub). Boxed the scroll
+  child: 380.1 -> 3.1 paints/frame (EmberDrift + composites remain).
+  Safe because summary sprites are animate:false (bob ticker requires
+  animate). Suite 1136 green, analyze clean, no release.
+  [summary_drag_probe, 2026-09-01]
