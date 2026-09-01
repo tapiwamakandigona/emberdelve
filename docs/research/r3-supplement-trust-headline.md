@@ -58,3 +58,18 @@ objection-handling placed before the pitch. [web, 2026-09-01]
 
 Nothing here changes the frozen listing; it sharpens what gets pasted
 on unfreeze day.
+
+## Correction (owner directive 2026-09-01b) — §4's itch funnel premise was false
+
+§4 proposed a "free itch demo build linking to Play" on the Slice &
+Dice template. The owner corrected this with facts I did not have:
+the itch build is ALREADY the complete game, free (itch at 0.178.0,
+butler #1936002; 34 views, 6 downloads, 0 purchases, listed free
+[owner, 2026-09-01]). There is no demo/full split to create, and a
+cut-down itch build would break the "free = full game" promise.
+Reframe: **itch cannot convert — the Ember Forge unlock exists only
+in the Play build. itch is a discovery surface and devlog home,
+nothing more.** Do not design funnels re-routing the six existing
+downloads; design for people who have never heard of the game. The
+actionable follow-up is docs/research/traffic-channels.md (ranked,
+named, zero-budget channels).

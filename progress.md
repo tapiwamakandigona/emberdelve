@@ -4715,3 +4715,14 @@ the opening run itself (R1 brief input).
   tool/map_idle_probe_test.dart. No behavior change; suite 1136 green,
   analyze clean. NOT released — code sits on branch per one-release
   demand. [map_idle_probe, 2026-09-01]
+- Owner directive 2026-09-01b (DEMAND.md 69401329) executed: (1)
+  retention-ledger.md now opens with the no-new-tracking constraint;
+  (2) R3 supplement corrected — itch is already the full free game,
+  discovery surface only, no demo funnel exists to build; (3)
+  docs/research/traffic-channels.md written — ranked zero-budget
+  channels with sources & falsification (anchors: Asterogue 30
+  Android sales across ALL channels @ ~1% conversion; Everfront
+  UTM data: niche subs convert 2-3x broad, one niche post = 59% of
+  results). Top of list: r/AndroidGaming dev post, r/roguelikes
+  release post; HN postmortem essay = only fat-tail; GDWC/TouchArcade/
+  X/broad-indie-subs named and rejected. [web, 2026-09-01]

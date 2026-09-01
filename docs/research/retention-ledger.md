@@ -1,5 +1,15 @@
 # Retention ledger — monthly Play Console pull (R2 Option A)
 
+> **Constraint (owner directive 2026-09-01b, DEMAND.md): retention is
+> measured from Play Console's aggregate device metrics ONLY. Do not
+> propose or add analytics, telemetry, event beacons, or any
+> phone-home to answer a retention question. The listing promises no
+> ads, no tracking, plays offline — that promise is the product's
+> strongest asset (see r3-supplement-trust-headline.md). If a question
+> cannot be answered without new tracking, write down that it is
+> unanswerable under the promise and name the closest aggregate-only
+> proxy. Do not re-open this.**
+
 Instrument of record for the Seven Hearths falsifiable prediction
 (progress.md, v0.178.0): *day-7 retention among new devices moves off
 1 within 28 days of ship (shipped 2026-09-01 → judge ~2026-09-29).*
