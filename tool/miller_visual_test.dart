@@ -1,9 +1,9 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
-// tool/hedger_visual_test.dart — manual visual-critique plates for THE
+// tool/miller_visual_test.dart — manual visual-critique plates for THE
 // HEDGER (v0.179.0): character screen with the seventeenth chair unlocked,
-// and the hedger standing in combat. Not part of CI.
+// and the miller standing in combat. Not part of CI.
 //
-//   flutter test tool/hedger_visual_test.dart
+//   flutter test tool/miller_visual_test.dart
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const outDir = 'build/hedger_visual';
+const outDir = 'build/miller_visual';
 
 Future<void> loadRealFonts() async {
   Future<ByteData> asset(String path) async =>
@@ -72,7 +72,7 @@ GameController seasoned() {
 }
 
 void main() {
-  testWidgets('character screen with the hedger (360x640 @1.0)', (
+  testWidgets('character screen with the miller (360x640 @1.0)', (
     tester,
   ) async {
     await loadRealFonts();
@@ -93,7 +93,7 @@ void main() {
     for (var i = 0; i < 20; i++) {
       await tester.pump(const Duration(milliseconds: 25));
     }
-    // The hedger is the LAST row — drag to the bottom in big steps
+    // The miller is the LAST row — drag to the bottom in big steps
     // (lazy ListView: the row has no element until scrolled into view).
     for (var i = 0; i < 12; i++) {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, -600));
@@ -102,7 +102,7 @@ void main() {
     for (var i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 25));
     }
-    await shoot(tester, key, 'character-screen-hedger');
+    await shoot(tester, key, 'character-screen-miller');
   });
 
   testWidgets('SQUEEZE character screen bottom (320x568 @1.3x)',
@@ -162,13 +162,13 @@ void main() {
     await shoot(tester, key, 'squeeze-title');
   });
 
-  testWidgets('hedger stands in combat (seed 17 normal)', (tester) async {
+  testWidgets('miller stands in combat (seed 24 normal)', (tester) async {
     await loadRealFonts();
     tester.view.physicalSize = const Size(360 * 3, 640 * 3);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.reset);
     final c = seasoned();
-    c.startRun(character: 'hedger', seed: 17, boons: false);
+    c.startRun(character: 'miller', seed: 24, boons: false);
     var guard = 0;
     while (guard++ < 200 && c.phase != 'player_turn') {
       final cmd = botCmd(c.sim!);
@@ -188,6 +188,6 @@ void main() {
     for (var i = 0; i < 30; i++) {
       await tester.pump(const Duration(milliseconds: 25));
     }
-    await shoot(tester, key, 'combat-hedger');
+    await shoot(tester, key, 'combat-miller');
   });
 }

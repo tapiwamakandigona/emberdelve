@@ -118,6 +118,7 @@ const List<String> achievementsOrder = [
   'hearthkeeper_wins', 'sixteen_ways_down',
   // v0.179.0 — the second circle opens (DEMAND 2026-09-01f).
   'hedger_wins', 'seventeen_ways_down',
+  'miller_wins', 'eighteen_ways_down',
   // --- the bestiary ------------------------------------------------------
   'tyrant_felled', 'all_three_bosses',
   // --- the hoard ---------------------------------------------------------
@@ -335,9 +336,9 @@ const Map<String, AchievementDef> achievements = {
     'Full Company',
     'Unlock every delver.',
     stat: 'chars_unlocked',
-    // seventeenth delver (v0.179.0): the second circle opens — promise
-    // honors move with the live roster (promise doctrine).
-    target: 17,
+    // Promise honors move with the live roster (promise doctrine).
+    // v0.180.0: the miller, second chair of the second circle.
+    target: 18,
   ),
   'five_ways_down': AchievementDef(
     'five_ways_down',
@@ -543,6 +544,21 @@ const Map<String, AchievementDef> achievements = {
     stat: 'delvers_cleared',
     target: 17,
   ),
+  'miller_wins': AchievementDef(
+    'miller_wins',
+    "The Miller's Round",
+    'Win a run as the Miller.',
+    stat: 'char_wins',
+    param: 'miller',
+    target: 1,
+  ),
+  'eighteen_ways_down': AchievementDef(
+    'eighteen_ways_down',
+    'Eighteen Ways Down',
+    'Win a run with every one of the eighteen delvers.',
+    stat: 'delvers_cleared',
+    target: 18,
+  ),
 
   // --- the bestiary -----------------------------------------------------
   'tyrant_felled': AchievementDef(
@@ -658,9 +674,8 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // seventeenth delver (v0.179.0): moved with the roster — the second
-    // circle opened (DEMAND 2026-09-01f).
-    target: 17,
+    // Promise honors move with the live roster. v0.180.0: the miller.
+    target: 18,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.
   'first_temper': AchievementDef(

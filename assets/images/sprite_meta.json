@@ -1191,6 +1191,31 @@
       ],
       "fps": 8,
       "scale": 3
+    },
+    {
+      "id": "miller",
+      "source_base": "wizzard_m (palette variant of kindler, v0.180.0)",
+      "frame_w": 48,
+      "frame_h": 84,
+      "rows": [
+        {
+          "state": "idle",
+          "frames": 4,
+          "row": 0
+        },
+        {
+          "state": "run",
+          "frames": 4,
+          "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
+        }
+      ],
+      "fps": 8,
+      "scale": 3
     }
   ]
 }

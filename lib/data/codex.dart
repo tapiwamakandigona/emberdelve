@@ -271,6 +271,14 @@ final List<CodexEntryDef> codexEntries = [
         'but the Thorn Band prices every blow against them, and thin '
         'skin makes the pricing dear both ways.',
   ),
+  _delver(
+    'miller',
+    'The second chair of the second circle. A miller\u2019s trade is '
+        'patience with weight: the stone turns slow, and everything '
+        'smaller moves to feed it. One grand die that promises the '
+        'grind, two shards that keep the mill fed while it comes round '
+        '\u2014 the widest pouch a delver has ever carried.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

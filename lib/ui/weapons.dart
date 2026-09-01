@@ -217,6 +217,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.30,
     swingAngle: 1.62,
   ),
+  // Millstone-and-grist (v0.180.0): a grain flail — the tool that
+  // threshes what the stone will grind. Long haft, hinged bar; wheat-gold
+  // accent to match the flour-dust sheet.
+  'miller': WeaponDef(
+    'grain_flail',
+    'Grain Flail',
+    accent: Color(0xFFD8C27A),
+    reach: 0.52,
+    idleAngle: 0.22,
+    raiseAngle: -1.34,
+    swingAngle: 1.66,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -567,6 +579,9 @@ class _WeaponPainter extends CustomPainter {
       case 'billhook':
         _billhook(canvas, reach);
         break;
+      case 'grain_flail':
+        _grainFlail(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -705,6 +720,69 @@ class _WeaponPainter extends CustomPainter {
       ..moveTo(-w * 0.28, -reach * 0.64)
       ..quadraticBezierTo(-w * 0.05, -reach * 0.88, w * 1.1, -reach * 0.94);
     canvas.drawPath(glint, _p);
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The miller's grain flail (v0.180.0): a long wooden haft, a hinge
+  /// ring, and the free bar swung out ahead — the thresher's angle, not a
+  /// soldier's. The wheat-gold accent rides the bar's leading face.
+  void _grainFlail(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Haft: full-length working wood.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.28),
+          width: w * 0.72,
+          height: reach * 0.92,
+        ),
+        Radius.circular(w * 0.36),
+      ),
+      _p,
+    );
+    // Grip band.
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 1.6, height: w * 0.7),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Hinge ring at the tip.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.28
+      ..color = const Color(0xFF6E6258);
+    canvas.drawCircle(Offset(0, -reach * 0.76), w * 0.5, _p);
+    // Free bar: swung forward off the hinge, shorter and heavier than
+    // the haft — the part that does the threshing.
+    final bar = Path()
+      ..moveTo(w * 0.35, -reach * 0.82)
+      ..lineTo(w * 2.15, -reach * 1.00)
+      ..lineTo(w * 2.45, -reach * 0.90)
+      ..lineTo(w * 0.62, -reach * 0.70)
+      ..close();
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF5C4A33);
+    canvas.drawPath(bar, _p);
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawPath(bar, _outline);
+    // Wheat-gold glint on the bar's leading face.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.3
+      ..strokeCap = StrokeCap.round
+      ..color = _accent.withValues(alpha: 0.9);
+    canvas.drawLine(
+      Offset(w * 0.5, -reach * 0.79),
+      Offset(w * 2.2, -reach * 0.965),
+      _p,
+    );
     _p.style = PaintingStyle.fill;
   }
 

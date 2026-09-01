@@ -4968,3 +4968,19 @@ the opening run itself (R1 brief input).
   hook, not a sword. Suite 1160 green, analyze clean. API learnings:
   relics live in sim.run!['relics'] not player; lazy character list
   needs drag-to-bottom (no element until scrolled).
+- THE MILLER LANDED COMPLETE (v0.180.0-dev): eighteenth delver, second
+  chair of the second circle — the millstone and the grist (d12+d4+d4,
+  the roster's widest pouch; no relic, the spread IS the identity).
+  HP 27 swept (89.50/69.50/44.50 all bands). unlockEmbers 2400. Grain
+  flail custom silhouette (haft, hinge ring, forward bar, wheat-gold
+  glint). Flour-dust kindler-sourced sprite (hue +30° sat×0.30
+  val×1.05, PROVENANCE row). Codex, The Miller's Round +
+  eighteen_ways_down (17/16 frozen), millers_proving seed 24 (18..23
+  lose or collide — chair-seed tradition ends where the dice say no),
+  62nd tale, promise honors → 18 / proven → 26. All pins moved with
+  honest reasons; test/miller_test.dart (win seed 24 / loss seed 25
+  replays). Plates critiqued: sprite distinct at 56dp (pale vs ember
+  kindler / soot collier), flail reads as a thresher's tool; squeeze
+  320×568@1.3× title fits 18 sprites one line, no overflow. Suite 1164
+  green, analyze clean. Squeeze-plate sweep for the 17-roster also
+  done this session (character bottom + title clean).

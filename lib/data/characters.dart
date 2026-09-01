@@ -73,6 +73,8 @@ const List<String> charactersOrder = [
   // index 16+ in the v2 ten-char form (delve_code.dart) — every code
   // ever shared stays byte-identical. Append-LAST discipline unchanged.
   'hedger',
+  // v0.180.0 — append-LAST.
+  'miller',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -330,6 +332,22 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6', 'd6', 'd6'],
     startRelic: 'thorn_band',
     unlockEmbers: 2250,
+  ),
+  // v0.180.0 The Miller: the second chair of the second circle — the
+  // millstone and the grist. One Molten Core and two Flint Shards: the
+  // roster's extremes in ONE pouch (the bearer went all-grand, the
+  // flintwright all-small; nobody straddled). No relic, no marks — the
+  // spread of the dice IS the identity: one grinding roll that promises
+  // everything, two chips that keep the smaller promises while it turns.
+  // HP is the tuning knob (sweep in docs/improvements).
+  'miller': CharacterDef(
+    'miller',
+    'The Miller',
+    'The millstone and the grist: one grand die, two small \u2014 '
+        'the grind and what it feeds.',
+    maxHp: 27,
+    startDice: ['d12', 'd4', 'd4'],
+    unlockEmbers: 2400,
   ),
 };
 

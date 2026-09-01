@@ -231,6 +231,20 @@ const List<ProvingDef> provings = [
     character: 'hedger',
     difficulty: 'normal',
   ),
+  // v0.180.0 The Turned Stone — the eighteenth delver proving (the
+  // v0.119 pattern, twelfth use). Seed 24: chair-number seeds 18..23
+  // lose or collide; 24 is bot-win pinned and unused by any other
+  // delver proving.
+  ProvingDef(
+    id: 'millers_proving',
+    title: "The Miller's Proving",
+    blurb:
+        'The Miller on normal floors. One grand die, two small '
+        '\u2014 keep the mill fed until the stone comes round.',
+    seed: 24,
+    character: 'miller',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

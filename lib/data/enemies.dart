@@ -593,11 +593,7 @@ const Map<String, EnemyDef> enemies = {
     'Slag Regent',
     108,
     boss: true,
-    pattern: [
-      Intent('block', 32),
-      Intent('block', 27),
-      Intent('attack', 36),
-    ],
+    pattern: [Intent('block', 32), Intent('block', 27), Intent('attack', 36)],
   ),
   'hearthless_king': EnemyDef(
     'hearthless_king',
