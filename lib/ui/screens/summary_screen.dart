@@ -509,6 +509,24 @@ class SummaryScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: Space.s),
                             ],
+                            // THE MORROW'S DELVE (retention lane, DEMAND
+                            // focus #1): a finished daily also states
+                            // tomorrow's declared rule — the hook lands at
+                            // the exact moment today's is done. A fact
+                            // about what tomorrow IS (§Ethics: no
+                            // countdown, no streak, no owing); normal runs
+                            // render nothing.
+                            if (c.dailyResultShareText != null) ...[
+                              Text(
+                                morrowTrialLine(DateTime.now()),
+                                key: const ValueKey('morrow-trial'),
+                                textAlign: TextAlign.center,
+                                style: EmberText.micro.copyWith(
+                                  color: EmberColors.textDim,
+                                ),
+                              ),
+                              const SizedBox(height: Space.s),
+                            ],
                             // Run seed (v0.3.4) upgraded to a Delve Code
                             // (v0.37.0): the code packs seed + delver +
                             // difficulty + ascension, so a friend plays THIS

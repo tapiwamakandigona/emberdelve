@@ -81,3 +81,21 @@ bool trialGoalMet(TrialDef trial, Map<String, Object?> run, RunTrace trace) {
       return false;
   }
 }
+
+/// THE MORROW'S DELVE (retention lane, DEMAND 2026-08-31c focus #1): the
+/// trial the NEXT local calendar day carries. Pure date arithmetic —
+/// DateTime(y, m, d + 1) normalizes month/year rollover without touching
+/// wall-clock hours, so a DST-shifted day can never skip or repeat a date.
+TrialDef trialForMorrow(DateTime now) {
+  final next = DateTime(now.year, now.month, now.day + 1);
+  return trialForDate(next.year, next.month, next.day);
+}
+
+/// One honest line stating tomorrow's declared rule — shown after today's
+/// daily is done (summary + title recap). Same charter as the title's
+/// today-line: a fact about what tomorrow's delve IS, never what the
+/// player owes. No countdowns, no streaks, no expiry talk (§Ethics).
+String morrowTrialLine(DateTime now) {
+  final t = trialForMorrow(now);
+  return 'Tomorrow\u2019s trial: ${t.name} — ${t.blurb}';
+}

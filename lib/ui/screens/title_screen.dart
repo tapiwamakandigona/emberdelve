@@ -238,6 +238,21 @@ class TitleScreen extends StatelessWidget {
                                     style: EmberText.micro,
                                     textAlign: TextAlign.center,
                                   ),
+                                  // THE MORROW'S DELVE (retention lane):
+                                  // with today's daily done, the recap also
+                                  // states tomorrow's declared rule — a
+                                  // concrete reason day 2 is a DIFFERENT
+                                  // delve, told as a fact (§Ethics: no
+                                  // countdowns, no streaks, no owing).
+                                  const SizedBox(height: Space.xs),
+                                  Text(
+                                    morrowTrialLine(DateTime.now()),
+                                    key: const ValueKey('morrow-trial'),
+                                    style: EmberText.micro.copyWith(
+                                      color: EmberColors.textDim,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ]
                                 // Day-2 arrival (retention lane): a player
                                 // whose LAST daily was yesterday's gets one

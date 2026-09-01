@@ -4396,3 +4396,22 @@ the renderer.
 - Re-evaluate on every Flutter upgrade (comment in manifest says so).
   Mirror to pyregrove-ci per DEMAND config-mirror rule.
 - Manifest-only change; suite untouched (1115). No tag/bump (freeze).
+
+## 2026-09-01 — THE MORROW'S DELVE (retention lane, under freeze)
+A finished daily now states tomorrow's declared trial — the day-2 hook
+lands at the exact moment today's is done.
+- lib/game/trials.dart: trialForMorrow(now) (pure next-calendar-day via
+  DateTime(y,m,d+1) — month/year rollover safe) + morrowTrialLine(now)
+  ("Tomorrow's trial: NAME — blurb").
+- Summary: daily runs only (gate c.dailyResultShareText != null), micro
+  dim line ValueKey('morrow-trial') after the trial-met chip. Normal
+  runs render nothing.
+- Title: the played-today recap block adds the same line under the
+  checkmark; the day-2 return line stands alone (no lecture about the
+  day after tomorrow).
+- §Ethics held: a fact about what tomorrow IS — no countdown, streak,
+  or owing language; banned-word sweep pinned in test.
+- test/morrow_trial_test.dart: 4 pins (pure rollover incl. year edge;
+  honest-copy sweep; daily summary shows / normal run silent; title
+  shows on played day only, absent on day-2 return).
+- Suite 1119/1119, analyze clean. No tag/bump (freeze).
