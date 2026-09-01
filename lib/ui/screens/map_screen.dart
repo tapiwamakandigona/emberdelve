@@ -610,6 +610,60 @@ class _MapScenePainter extends CustomPainter {
     }
   }
 
+  /// One chasm wall: a jagged silhouette hugging the screen edge, plus a
+  /// dim inner echo line for depth. Deterministic in y so it never shifts.
+  void _wall(Canvas canvas, Size size, {required bool left}) {
+    double edgeAt(double y, double base) {
+      // Two sine octaves + a phase offset per side read as hewn rock.
+      final phase = left ? 0.0 : 2.1;
+      return base +
+          math.sin(y * 0.021 + phase) * 5.0 +
+          math.sin(y * 0.0047 + phase * 1.7) * 7.0;
+    }
+
+    Path silhouette(double base) {
+      final p = Path()..moveTo(left ? 0 : size.width, 0);
+      for (var y = 0.0; y <= size.height + 14; y += 14) {
+        final yy = math.min(y, size.height);
+        final e = edgeAt(yy, base);
+        p.lineTo(left ? e : size.width - e, yy);
+      }
+      p.lineTo(left ? 0 : size.width, size.height);
+      p.close();
+      return p;
+    }
+
+    // Far wall (wider, dimmer) behind the near wall — two planes = depth.
+    canvas.drawPath(
+      silhouette(19),
+      Paint()..color = const Color(0xFF1A1522).withValues(alpha: 0.55),
+    );
+    canvas.drawPath(
+      silhouette(11),
+      Paint()..color = const Color(0xFF0E0B13).withValues(alpha: 0.85),
+    );
+    // A faint warm rim where torchlight from the paths grazes the rock.
+    final rim = Path();
+    var first = true;
+    for (var y = 0.0; y <= size.height; y += 14) {
+      final e = edgeAt(y, 11);
+      final x = left ? e : size.width - e;
+      if (first) {
+        rim.moveTo(x, y);
+        first = false;
+      } else {
+        rim.lineTo(x, y);
+      }
+    }
+    canvas.drawPath(
+      rim,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = EmberColors.ember.withValues(alpha: 0.10),
+    );
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     // Descent tint: hotter (warm) toward the bottom layer, colder/darker up.
@@ -627,6 +681,14 @@ class _MapScenePainter extends CustomPainter {
           stops: const [0.0, 0.4, 1.0],
         ).createShader(Offset.zero & size),
     );
+
+    // THE CARVED CHASM: jagged rock walls frame the descent so the chart
+    // reads as the inside of a delve, not nodes on a void. Pure function
+    // of y (sin-noise, no RNG state) — the same map always shows the same
+    // walls, and the painter stays static: zero per-frame cost. Nodes
+    // never enter the outer 22px (min center x = 54, node edge = 28).
+    _wall(canvas, size, left: true);
+    _wall(canvas, size, left: false);
 
     // Trails.
     final dim = Paint()

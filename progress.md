@@ -4472,3 +4472,18 @@ probe goes through GameRoot.
   EmberDrift baseline) [entrance_probe, 2026-09-01].
 - Plates re-shot: deal stagger and smolder read identical — boundaries
   are visually invisible. Suite 1123/1123, analyze clean. No tag/bump.
+
+## 2026-09-01 — THE CARVED CHASM (visual lane, under freeze)
+The map chart now reads as the inside of a delve instead of nodes on a
+void: jagged rock walls frame both sides of the descent.
+- map_screen.dart _MapScenePainter._wall(): two overlapping silhouettes
+  per side (far wall wider/dimmer, near wall darker) + a faint warm rim
+  stroke where torchlight grazes the rock. Edge is a pure function of y
+  (two sine octaves, per-side phase) — deterministic, no RNG state, and
+  the painter stays static: zero per-frame cost, shouldRepaint
+  unchanged. Max wall extent 31px; node centers start at x=54 and nodes
+  are widgets ABOVE the CustomPaint, so no collision at any width.
+- Plate tool tool/carved_chasm_visual_test.dart (chasm_start floor 1 +
+  chasm_deep floor 4, 360x800): two-plane depth reads on both sides,
+  walls sit behind trails/nodes, fog-of-war unaffected. Verified by eye.
+- Suite 1123/1123, analyze clean. No tag/bump.
