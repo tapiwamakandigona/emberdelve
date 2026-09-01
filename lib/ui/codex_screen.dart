@@ -18,7 +18,12 @@ import 'widgets.dart';
 
 class CodexScreen extends StatefulWidget {
   final GameController c;
-  const CodexScreen(this.c, {super.key});
+
+  /// THE NAMED FOE: a namespaced entry id ('enemy:ashfall_twins') to glide
+  /// to on open — the loss summary sends the reader straight to the foe
+  /// that ended the run. Null opens the book at its first page as ever.
+  final String? openEntry;
+  const CodexScreen(this.c, {super.key, this.openEntry});
 
   @override
   State<CodexScreen> createState() => _CodexScreenState();
@@ -44,6 +49,20 @@ class _CodexScreenState extends State<CodexScreen> {
   final _scroll = ScrollController();
   final _laneKeys = {for (final (id, _) in _lanes) id: GlobalKey()};
   int _laneIdx = 0; // last lane walked to: hints the walk direction
+
+  /// THE NAMED FOE: anchor on the one entry the caller asked to open.
+  final _openEntryKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.openEntry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        walkToAnchor(_scroll, _openEntryKey, alignment: 0.15);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -298,7 +317,7 @@ class _CodexScreenState extends State<CodexScreen> {
     final owned = m.codexOwned(e.id);
     final affordable = m.embers >= e.costEmbers;
     return GestureDetector(
-      key: ValueKey('codex-${e.id}'),
+      key: e.id == widget.openEntry ? _openEntryKey : ValueKey('codex-${e.id}'),
       onTap: () {
         if (owned) return;
         if (!c.buyCodexEntry(e.id)) {

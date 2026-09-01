@@ -4300,3 +4300,24 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   et al). Re-plated: every row breathes; 1.3x plates unchanged-good.
 - Suite 1110/1110, analyze clean, large-font plates re-verified.
   No tag/bump (freeze).
+
+## 2026-09-01 — THE NAMED FOE (retention lane, DEMAND focus #1)
+- Research (Roguebook GDC writeup; GlyphShuffle replayability essay;
+  failure-design pieces) converges on one churn moment: the loss the
+  player cannot explain. "You should be able to lose and understand
+  the chain" — our loss summary named the floor but never the foe.
+- The loss summary now shows a tappable row after the loss lines:
+  "The <killer> has a page in the codex." One tap opens the codex
+  glided straight to that entry (walkToAnchor, alignment 0.15) —
+  sealed or unsealed, the book decides what it shows. Wins show
+  nothing. Copy is a fact, not a prod (banned-words charter clean).
+- CodexScreen gains optional `openEntry` (namespaced id): post-frame
+  walk to that entry's card; the opened entry carries a GlobalKey
+  anchor instead of its ValueKey.
+- namedFoeEntry(c) helper beside lastThreadLine in summary_screen.
+- test/named_foe_test.dart (2 pins: loss row names killer + tap lands
+  codex at entry; win shows nothing). Plate tool
+  tool/named_foe_visual_test.dart (320px, 1.0x AND 1.3x text): row
+  wraps cleanly, codex lands on the killer's card ("Quench Hag —
+  Met 1 · Deaths 1") at both scales.
+- Suite 1112/1112, analyze clean. No tag/bump (freeze).

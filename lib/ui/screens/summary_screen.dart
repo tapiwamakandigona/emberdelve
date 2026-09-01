@@ -290,6 +290,53 @@ class SummaryScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
+                            // THE NAMED FOE: the loss summary already names
+                            // the floor; this row names the foe and opens its
+                            // codex page in one tap — sealed or unsealed, the
+                            // book decides what it shows. Losses that teach
+                            // bring delvers back; losses that shrug do not.
+                            if (namedFoeEntry(c) case final foe?) ...[
+                              const SizedBox(height: Space.m),
+                              GestureDetector(
+                                key: const ValueKey('named-foe'),
+                                onTap: () {
+                                  AudioService.instance?.playSfx('ui_tap');
+                                  Navigator.of(context).push(
+                                    emberRoute(
+                                      (_) => CodexScreen(
+                                        c,
+                                        openEntry: foe.id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Panel(
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.menu_book,
+                                        color: EmberColors.textDim,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: Space.m),
+                                      Expanded(
+                                        child: Text(
+                                          'The ${enemies[foe.refId]?.name ?? 'foe'} '
+                                          'has a page in the codex.',
+                                          style: EmberText.body,
+                                        ),
+                                      ),
+                                      const SizedBox(width: Space.m),
+                                      const Icon(
+                                        Icons.chevron_right,
+                                        color: EmberColors.textDim,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                             // v0.85.0 The Narrow Climb: a won run that ended
                             // inside the danger rule says so — quiet, factual,
                             // absent when the win was comfortable.
@@ -1152,6 +1199,20 @@ String? comingVistaLine(GameController c) {
   if (lines.isEmpty) return null;
   lines.sort((a, b) => b.$1.compareTo(a.$1));
   return lines.first.$2;
+}
+
+/// THE NAMED FOE (retention lane): the codex entry of the enemy that ended
+/// a lost run, or null when the run was won, the killer cannot be named, or
+/// the foe has no codex page. Research and our own reviews agree losses
+/// churn when the player cannot see WHY — this hands them the foe's page,
+/// one tap away. Pure read; the codex prices stay the codex's business.
+CodexEntryDef? namedFoeEntry(GameController c) {
+  final st = c.state;
+  if (st == null || st['phase'] != 'run_lost') return null;
+  final e = st['enemy'] as Map?;
+  final id = e?['id'];
+  if (id is! String) return null;
+  return codexById['enemy:$id'];
 }
 
 String? lastThreadLine(GameController c) {

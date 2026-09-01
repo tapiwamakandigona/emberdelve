@@ -27,6 +27,7 @@ import '../data/provings.dart';
 import '../game/controller.dart';
 import '../meta/meta.dart' show MetaState;
 import '../game/tour.dart';
+import 'codex_screen.dart';
 import '../game/daily_share.dart';
 import '../game/run_trace.dart';
 import '../game/rumor.dart';
