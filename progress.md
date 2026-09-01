@@ -4321,3 +4321,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   wraps cleanly, codex lands on the killer's card ("Quench Hag —
   Met 1 · Deaths 1") at both scales.
 - Suite 1112/1112, analyze clean. No tag/bump (freeze).
+
+## 2026-09-01 — THE WEIGHED SUMMARY (perf lane; repaint probe on the grown summary)
+- New probe tool tool/summary_probe_test.dart (NOT in CI; glide-probe
+  method): the summary gained a second live SpriteView (next-delver)
+  and the named-foe row since the last measurement — weighed it.
+- Numbers [summary_probe, 2026-09-01]: idle loss summary 1.0
+  paints/frame (one RenderCustomPaint — the sprite tickers stay inside
+  their RepaintBoundaries; ledger, panels, route all sleep). Full
+  drag down+up 11.6/frame, all lazy child inflation (pre-fix map_drag
+  reference: 54.5). Named-foe tap → route push + codex openEntry glide
+  15.6/frame across 120 frames, RepaintBoundary/IndexedSemantics
+  dominated = the 119-entry walk inflating lazily, as designed.
+- Verdict: boundaries hold everywhere; no remediation. The retention
+  strikes cost the summary nothing at idle.
