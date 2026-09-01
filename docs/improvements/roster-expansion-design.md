@@ -61,18 +61,71 @@ Verification per delver (the guardrails, unchanged):
 - Delve code round-trip for the new index (v2 suite extends).
 - Codex/achievement/proving/tale wiring tests per existing patterns.
 
+## Archetype gap analysis (2026-09-01, complete)
+
+Occupied identities, by what DEFINES the start: balanced (kindler),
+tank+guard die (warden), variance+reroll (gambler), glass cannon
+(ascetic), fight economy (peddler), consistency floor (tinker),
+four-small swarm (flintwright), pre-marked surge (runesmith),
+two-dice giant + echo (bearer), mend-on-worst-face healer (mender),
+deep aegis ward (shieldwright), gilt coin (gilder), blade+aegis mixed
+marks (cutler), fully-worked pool (collier), all-heavy d8s (stoker),
+all-forged sworn dice (hearthkeeper).
+
+Every start rune is spoken for (surge/echo/mend/aegis/blade/gilt all
+appear in someone's startTempers). Every DICE-SHAPE extreme is taken
+(2 giant / 4 small / all-heavy / all-forged). What is genuinely open,
+using existing pieces only (simVersion stays sealed):
+
+1. **Retaliation** — `thorn_band` ('Attackers take 3 damage', mods
+   {'thorns': 3}) exists, is fully simmed, and NO delver starts with
+   it. Damage you deal by BEING hit is a real identity the roster
+   lacks: it inverts the block calculus (an unblocked hit is no
+   longer pure loss) — a genuinely different decision texture, not a
+   stat reshuffle. ← DELVER #17.
+2. **Mixed extremes** — one d12 + two d4s (millstone and sparks);
+   bearer is two dice, flintwright four small, nobody straddles.
+   ← candidate #18.
+3. **Rest economy** — `bedroll`/`hearth_kettle` start (the delver who
+   delves slow); interacts with the rest-forge lane. ← candidate #19.
+
+## Delver #17 spec — THE HEDGER (thorn identity)
+
+- id `hedger`, name 'The Hedger' — the hedge-layer, a real old craft:
+  the one who weaves thorn walls. Fits the trade-name register of the
+  roster (collier, cutler, stoker...).
+- text (≤ card budget): 'The thorn-layer: a Thorn Band and plain
+  Ember Dice — every blow against them is answered.'
+- startDice ['d6','d6','d6'], startRelic 'thorn_band', no marks. The
+  kindler comparison IS the design: same pouch, but the relic changes
+  what a hit means. Distinct from warden (block-shaped) because the
+  hedger WANTS contact priced in, not prevented.
+- maxHp: tuning knob, start sweep at 29 (thorns rewards absorbing;
+  must not out-tank the warden's 32). Bands: easy 80–90 / normal
+  55–70 / hard 30–45, tuned ONLY via HP per roster doctrine.
+- unlockEmbers 2250 (curve continues +150; honors never re-price).
+- Sprite: knight_m base (armored silhouette reads as the wall) with a
+  new hue family — must read distinct next to warden/flintwright/
+  bearer/shieldwright at 56dp; plate critique required.
+- Fiction: FIRST delver of the second circle — new tales/codex say a
+  second circle opened at the hearth; the first fire's sixteen chairs
+  and 'sixteen ways down' stay exactly as published. No shipped words
+  edited. (Owner may veto the framing; nothing published until the
+  next release anyway.)
+- Full lane checklist per the completeness bar above; pipeline files
+  to mirror: hearthkeeper_test.dart + hearthkeeper_sweep_probe_test
+  (every delver since v0.145 has both).
+
 ## Sequencing
 
-1. ✅ Delve-code v2 (this commit) — the enabler, zero player-visible
-   change until a 17th delver exists.
-2. Archetype gap analysis: what does the roster NOT have? (First
-   pass: no debuff/damage-over-time identity; no dice-count extremes
-   beyond stoker; no "changes the map" identity.) Pick 1–3 that are
-   distinct BY MECHANIC.
-3. Second-circle fiction proposal → owner sign-off (it touches the
-   published "complete at sixteen" words).
-4. Build delver #17 complete per the bar above; then #18+ only after
-   #17 proves the pipeline.
+1. ✅ Delve-code v2 — the enabler, zero player-visible change until a
+   17th delver exists.
+2. ✅ Archetype gap analysis (above): retaliation is #17; mixed
+   extremes and rest economy queued as #18/#19 candidates.
+3. Second-circle fiction: proposed above, additive-only; owner can
+   veto before release (freeze holds regardless).
+4. Build THE HEDGER complete per the bar; then #18+ only after #17
+   proves the pipeline.
 5. Seven Hearths retention pairing is ALREADY SHIPPED (v0.178.0) —
    the DEMAND's "reason to return across days" box is ticked; do not
    double-build it.

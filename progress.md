@@ -4924,3 +4924,11 @@ the opening run itself (R1 brief input).
   sixteen"; sprites via hue families; honors never re-price),
   the completeness bar per delver, sequencing (gap analysis next;
   Seven Hearths pairing already shipped — don't double-build).
+- Archetype gap analysis complete (roster-expansion-design.md): every
+  start rune and dice-shape extreme is occupied; the open identities
+  with existing pieces are retaliation (thorn_band — no delver starts
+  with it), mixed extremes (d12+2×d4), rest economy. DELVER #17
+  SPECced: THE HEDGER — id 'hedger', 'd6/d6/d6' + thorn_band, HP sweep
+  from 29, unlockEmbers 2250, knight_m base + new hue, second-circle
+  fiction (additive only — published "sixteen" words untouched).
+  Pipeline mirror: hearthkeeper_test.dart + sweep probe. [2026-09-01]
