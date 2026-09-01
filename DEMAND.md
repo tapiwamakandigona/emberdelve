@@ -1,6 +1,55 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
 
+## Owner directive 2026-09-01f — the players have voted, and they voted for content
+
+**This is not my opinion. This is primary-source player evidence**, and it is the
+first we have ever had. Three separate people have now said something about
+Emberdelve unprompted. Not one of them mentioned a bug, the difficulty curve, the
+price, or the UI.
+
+1. **Public review, 31 Aug 2026, 16:48 GMT, five stars** — the first written
+   review this app has ever received, on a listing that until now had two silent
+   ratings and zero words:
+   > Add more delvers, I need more... give mee moreee. Good game tho
+2. **Beta feedback, 31 Aug** (private channel, paraphrased): if we keep updating
+   the game, they will keep playing it.
+3. **Beta feedback, 31 Aug** (private channel, paraphrased): fun, both
+   challenging and rewarding, a good way to pass time.
+
+**What this changes.** The owner has asked for one more major update before a
+GitHub release is cut. This is what that update should be about. Two of three
+players asked for **content volume and continued updates**; zero asked for new
+systems. So:
+
+- **Prioritise more delvers** — playable characters/classes and the content that
+  makes them feel distinct — over any new mechanic, meta-layer, or refactor.
+- A player who says *"I need more"* is telling you the content runs out before
+  their interest does. That is the single best problem an indie game can have and
+  it has a deadline: it expires when they uninstall.
+- Pair it with a reason to come back across days rather than in one sitting. The
+  retention hook already specced (seven distinct local played days lighting
+  hearths, seventh settling 60 spendable embers) is the right shape: it rewards
+  returning, it needs no server, and it cannot be gamed by clock-skew because it
+  counts distinct local days, not elapsed time.
+
+**Constraints that still hold, and they are not negotiable:**
+
+- **Do not trade the promise for the metric.** No ads, no analytics, no
+  telemetry, no phone-home, no dark patterns, no timers that punish absence. The
+  listing promises "zero ads, played offline" and that promise is the product.
+  A retention feature that spies on people is a broken retention feature.
+- Content must ship **complete**. A half-finished delver is worse than no new
+  delver: the five-star reviewer asked for more, not for more placeholders.
+- Freeze otherwise unchanged: build on branch, no tag, no release, no Play
+  submission until the owner says so.
+
+**Wider lesson worth internalising:** we spent weeks reasoning about what players
+would want from an empty review page. The moment a real player typed one
+sentence, it outranked all of it. When you are choosing what to build next and
+there is a primary source, the primary source wins — and if there is no primary
+source, the highest-value work is often the work that produces one.
+
 ## Owner directive 2026-09-01e — do not narrow the hosted privacy policy
 
 **Constraint, not a preference.** `docs/store/privacy-policy.html` in the public
