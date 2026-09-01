@@ -4686,3 +4686,11 @@ the opening run itself (R1 brief input).
   document: short-desc keyword fix, screenshot reorder with
   benefit-first captions, trust block lifted to the top; live
   listing untouched — FROZEN). [research, 2026-09-01]
+- R1 addendum: decision-distance probe
+  (tool/first_session_distance_test.dart, green) — fresh profile
+  reaches its first meaningful decision at tap 2 (boon pick) and the
+  first roll at tap 4 across 4 screens; tour beat 1 anchors the ROLL.
+  No structural first-session change warranted from tap distance;
+  device wall-clock pass still owed. Also: retention-ledger.md
+  created (R2 Option A instrument, baseline row; next pull
+  ~2026-09-29, wakeup scheduled). [probe, 2026-09-01]

@@ -131,3 +131,26 @@ note — its reviews stress "minimalistic, core loop first").
 
 *All entries [web, 2026-09-01]; first-hand device play still owed if
 owner wants stopwatch-grade timestamps.*
+
+## Addendum (2026-09-01) — our own decision distance, measured
+
+Delta #1 asked for our cold-start number. Wall-clock cold start needs
+a real device (still owed), but the deterministic half — decision
+distance — is now measured by `tool/first_session_distance_test.dart`
+(hit-tested taps, fresh profile, tour unseen, steerToEasy active):
+
+- **First meaningful decision: tap 2** (the boon pick — offered
+  immediately after the single title CTA).
+- **First roll: tap 4** (title Delve → boon pick → first map node →
+  ROLL, with tour beat 1 anchored on the ROLL button).
+- **Screens to combat: 4** (title → boon → map → combat). First
+  words are a non-blocking line ON the title, not an extra screen.
+
+Reading vs the genre leaders: Slice & Dice and Dicey Dungeons reach
+the first decision in ~1-2 taps by skipping ANY pre-run choice; we
+spend our tap-2 on a boon pick, which IS a meaningful decision — so
+in decisions-per-tap we are already at the front of the pack. The
+open question is purely wall-clock (engine boot + title settle +
+map sweep on a low-end device), which no tap count can answer.
+Verdict: no structural change warranted from tap distance alone;
+the device stopwatch pass remains the follow-up. [probe, 2026-09-01]
