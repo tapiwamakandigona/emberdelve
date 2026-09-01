@@ -162,6 +162,42 @@ void main() {
     await shoot(tester, key, 'squeeze-title');
   });
 
+  testWidgets('SEAM the second-circle header (360x640 @1.0)',
+      (tester) async {
+    await loadRealFonts();
+    tester.view.physicalSize = const Size(360 * 3, 640 * 3);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.reset);
+    final c = seasoned();
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildEmberTheme(),
+        home: RepaintBoundary(key: key, child: CharacterScreen(c)),
+      ),
+    );
+    await tester.binding.runAsync(
+        () => Future.delayed(const Duration(milliseconds: 300)));
+    for (var i = 0; i < 20; i++) {
+      await tester.pump(const Duration(milliseconds: 25));
+    }
+    var found = false;
+    for (var i = 0; i < 40 && !found; i++) {
+      found = find.text('THE SECOND CIRCLE').evaluate().isNotEmpty;
+      if (!found) {
+        await tester.drag(
+            find.byType(Scrollable).first, const Offset(0, -400));
+        await tester.pump(const Duration(milliseconds: 25));
+      }
+    }
+    // one more nudge so the seam sits mid-screen
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -150));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 25));
+    }
+    await shoot(tester, key, 'circle-seam');
+  });
+
   testWidgets('lamplighter stands in combat (seed 20 normal)', (tester) async {
     await loadRealFonts();
     tester.view.physicalSize = const Size(360 * 3, 640 * 3);

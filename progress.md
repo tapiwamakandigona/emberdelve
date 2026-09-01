@@ -5019,3 +5019,11 @@ the opening run itself (R1 brief input).
   clean. SECOND GAP PASS notes: unused start pieces remaining —
   d6_keen/d6_stout/d6_forged/d8-specialties; candidate #21: forged
   identity (2×d6_forged, flat +1/+1) or a d10-start chair.
+- THE TWO CIRCLES headers (character screen): at 20 chairs the single
+  card run lost its shape — the list now sections along the roster's
+  own fiction ('THE FIRST CIRCLE' / 'THE SECOND CIRCLE', EmberText
+  .micro, split hard at take(16)/skip(16) — the closed circle IS the
+  split, new chairs land under the second header untouched).
+  test/circle_headers_test.dart pins both headers + the hearthkeeper
+  at index 15. Seam plate critiqued (hearthkeeper's 'last chair' card
+  → header → hedger reads as a chapter break). Suite 1178 green.

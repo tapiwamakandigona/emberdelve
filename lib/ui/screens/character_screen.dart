@@ -203,7 +203,19 @@ class _CharacterScreenState extends State<CharacterScreen> {
               children: [
                 _nextUnlockBar(m),
                 const SizedBox(height: Space.l),
-                for (final id in charactersOrder) _charCard(context, id),
+                // v0.182.0 The Two Circles: at twenty chairs the single run
+                // of cards lost its shape. The roster fiction already draws
+                // the line — the first circle closed at sixteen, the second
+                // is open — so the list sections itself along it.
+                const Text('THE FIRST CIRCLE', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                for (final id in charactersOrder.take(16))
+                  _charCard(context, id),
+                const SizedBox(height: Space.m),
+                const Text('THE SECOND CIRCLE', style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                for (final id in charactersOrder.skip(16))
+                  _charCard(context, id),
                 const SizedBox(height: Space.l),
                 // v0.27.0 The Delver's Wardrobe — dyes, same tap contract as
                 // the Ledger's hearth colors / dice skins: tap owned to wear,
