@@ -4726,3 +4726,10 @@ the opening run itself (R1 brief input).
   results). Top of list: r/AndroidGaming dev post, r/roguelikes
   release post; HN postmortem essay = only fat-tail; GDWC/TouchArcade/
   X/broad-indie-subs named and rejected. [web, 2026-09-01]
+- Pattern audit after the map fix: grep for `super(repaint:` painters
+  paired with a CustomPaint `child:` — logo.dart, weapons.dart (x2)
+  are painter-only, no child; the map medallion was the ONLY leak of
+  this shape. Lesson: a RenderCustomPaint repaint also paints its
+  children — any repaint-driven painter with a static child needs the
+  child in its own RepaintBoundary. Audit complete, don't redo.
+  [code-audit, 2026-09-01]
