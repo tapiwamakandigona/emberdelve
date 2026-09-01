@@ -11,6 +11,7 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/news_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/game/tips.dart';
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
@@ -26,6 +27,9 @@ void main() {
     final c = GameController();
     c.meta.runsPlayed = 12; // a veteran, not a fresh install
     c.meta.lastSeenNewsVersion = '0.13.0';
+    // The shared-delve tip now fires on any finished run (retention lane);
+    // this veteran has long since seen it — keep the title to one story.
+    c.meta.tipsSeen.add(ContextTips.sharedDelve);
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );

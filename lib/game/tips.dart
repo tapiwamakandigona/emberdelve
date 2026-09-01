@@ -37,9 +37,12 @@ class ContextTips {
   /// explained nowhere before the sheet itself.
   static const firstAnvil = 'first_anvil';
 
-  /// v0.153.0 The Shared Fire: the title screen after a first win, before
-  /// any daily — the shared delve's only front door, previously explained
-  /// nowhere before the run itself.
+  /// v0.153.0 The Shared Fire: the title screen after a first FINISHED
+  /// run, before any daily — the shared delve's only front door. Gated on
+  /// a first win until the retention lane (DEMAND 2026-08-31c): the
+  /// players most at risk of not returning are the ones LOSING their
+  /// opening runs, and they were never told tomorrow's shared delve
+  /// exists. A finished run — won or lost — is the loop tasted.
   static const sharedDelve = 'shared_delve';
 
   /// v0.160.0 The Second Strike: the first rest fire where the player
@@ -102,9 +105,9 @@ class TipDirector {
   /// tasted the loop) and only if they have never played a daily — a
   /// player who found the button alone never sees the card.
   String? onTitleArrival({
-    required bool wonBefore,
+    required bool playedBefore,
     required bool dailyPlayed,
-  }) => (wonBefore && !dailyPlayed) ? _fire(ContextTips.sharedDelve) : null;
+  }) => (playedBefore && !dailyPlayed) ? _fire(ContextTips.sharedDelve) : null;
 
   /// A batch of sim events was processed after a command.
   String? onEvents(List<Map<String, Object?>> events) {

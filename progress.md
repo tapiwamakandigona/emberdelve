@@ -4203,3 +4203,17 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
   fresh profile opens the book with the delve's lore readable, header
   '1 of 119', tapping the gift sells nothing.
 - Suite 1109/1109, analyze clean. No tag/version bump (freeze).
+
+## 2026-09-01 — THE SHARED FIRE, RELIT (retention lane #3, merged under freeze)
+- The daily delve is the literal "reason to open the app tomorrow," and
+  its only front door (v0.153.0 shared-delve tip) was gated on a first
+  WIN (runsWon >= 1). The players most at risk of never returning are
+  the ones LOSING their opening runs — exactly the cohort the tip never
+  reached. Gate is now any FINISHED run: tips.onTitleArrival takes
+  playedBefore (runsPlayed >= 1) instead of wonBefore. Copy unchanged
+  (already charter-clean: "a skipped day is silent and costs nothing").
+- shared_fire_test updated to the new truth (a lost first run counts);
+  news_ui_test veteran profile marks the tip seen (it now legitimately
+  fires for daily-never veterans, which is desired in the app — the
+  test just needs one story on the title).
+- Suite 1109/1109, analyze clean. No tag/version bump (freeze).

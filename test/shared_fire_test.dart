@@ -14,25 +14,27 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('the moment fires only between first win and first daily', () {
+  test('the moment fires only between first finished run and first daily', () {
     final d = TipDirector(<String>{});
     expect(
-      d.onTitleArrival(wonBefore: false, dailyPlayed: false),
+      d.onTitleArrival(playedBefore: false, dailyPlayed: false),
       isNull,
-      reason: 'no win yet — the loop is not tasted',
+      reason: 'no run finished yet — the loop is not tasted',
     );
     expect(
-      d.onTitleArrival(wonBefore: true, dailyPlayed: true),
+      d.onTitleArrival(playedBefore: true, dailyPlayed: true),
       isNull,
       reason: 'found the button alone — nothing left to teach',
     );
+    // Retention lane: a LOST first run counts — the player most at risk
+    // of not returning is exactly the one who needs tomorrow's reason.
     expect(
-      d.onTitleArrival(wonBefore: true, dailyPlayed: false),
+      d.onTitleArrival(playedBefore: true, dailyPlayed: false),
       ContextTips.sharedDelve,
     );
     d.dismiss();
     expect(
-      d.onTitleArrival(wonBefore: true, dailyPlayed: false),
+      d.onTitleArrival(playedBefore: true, dailyPlayed: false),
       isNull,
       reason: 'once ever',
     );
@@ -40,7 +42,8 @@ void main() {
 
   testWidgets('the title screen shows and dismisses the card', (tester) async {
     final c = GameController();
-    c.meta.runsWon = 1;
+    // A finished run — a LOSS, deliberately — is enough (retention lane).
+    c.meta.runsPlayed = 1;
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: TitleScreen(c)),
     );

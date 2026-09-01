@@ -8,11 +8,12 @@ class TitleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final m = c.meta;
     // v0.153.0 The Shared Fire: first contact with the shared delve is the
-    // title's own Daily button — taught after a first win, never after a
-    // daily has been played. Idempotent across rebuilds (_fire no-ops while
-    // a tip is active or once seen).
+    // title's own Daily button — taught after a first FINISHED run (won or
+    // lost; retention lane — the losing new player needs tomorrow's reason
+    // most), never after a daily has been played. Idempotent across
+    // rebuilds (_fire no-ops while a tip is active or once seen).
     c.tipDirector.onTitleArrival(
-      wonBefore: m.runsWon >= 1,
+      playedBefore: m.runsPlayed >= 1,
       dailyPlayed: m.dailiesPlayed >= 1,
     );
     // Hearth colors (v0.3.3): the active theme retints the title hearth.
