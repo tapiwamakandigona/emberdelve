@@ -83,3 +83,24 @@ Suite 1138 green, analyze clean. No release (freeze); rides in the branch.
   (currently "Limited data" at 38 installs). Action stands: keep decoded
   bitmaps proportional to the device (done), re-check for the games
   thresholds and the bitmap page on the next research pass.
+
+## DEX optimization measurement — shipped v0.178.0 (2026-09-01)
+
+Play's Feb-2027 quality bar requires "a minimum of 25% coverage across
+optimization, shrinking, and obfuscation using a tool such as R8."
+Measured on the shipped release asset (same androguard method the
+pyregrove checklist used):
+
+- Artifact: `emberdelve-v0.178.0-arm64-v8a.apk` (GitHub release
+  v0.178.0, the tagged Play candidate).
+- `classes.dex` + `classes2.dex`: **3,537 classes, 2,640 (74.6%)
+  carry R8-obfuscated short names** (final segment ≤2 chars).
+- Verdict: **VERIFIED-MET** — 74.6% ≫ 25%. The unobfuscated remainder
+  is keep-rule-protected API surface (Play Billing listener
+  interfaces, gson internals, androidx) — expected and correct;
+  obfuscating those would break reflection/JNI contracts.
+- Config: `isMinifyEnabled` + `isShrinkResources` since 8f756dd8;
+  this measurement closes the gap between "config says on" and
+  "shipped bytes show it".
+
+[androguard census, 2026-09-01]
