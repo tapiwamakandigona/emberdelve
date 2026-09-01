@@ -141,6 +141,43 @@ void main() {
     await measure('boon_settled_60f', () => pumpFrames(tester, 60));
   });
 
+  testWidgets('map idle: pulse cost, walls must stay quiet', (tester) async {
+    await loadRealFonts();
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final c = _seasoned();
+    c.startRun(character: 'kindler', seed: 6, difficulty: 'easy');
+    var guard = 0;
+    while (c.phase != 'map' && guard++ < 50) {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+    }
+    expect(c.phase, 'map');
+    await tester.pumpWidget(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: buildEmberTheme(),
+        home: MapScreen(c),
+      ),
+    );
+    // Let the entrance walk/camera settle before measuring.
+    await pumpFrames(tester, 90);
+
+    // Idle: the reachable-node pulse and EmberDrift are the only owed
+    // costs. THE CARVED CHASM walls live in the scene painter behind a
+    // RepaintBoundary — any _MapScenePainter repaint here is a leak.
+    final m = await measure('map_idle_60f', () => pumpFrames(tester, 60));
+    final scenePaints = m.paintsByType.entries
+        .where((e) => e.key.contains('CustomPaint'))
+        .fold(0, (a, e) => a + e.value);
+    // Report only (probe doctrine), but surface the number loudly.
+    // ignore: avoid_print
+    print('MAP custom-paint paints over 60 idle frames: $scenePaints');
+  });
+
   testWidgets('rest hollow: smolder vs settled', (tester) async {
     await loadRealFonts();
     tester.view.physicalSize = const Size(360, 800);

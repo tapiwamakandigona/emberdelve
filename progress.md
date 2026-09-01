@@ -4502,3 +4502,12 @@ the whole boon moment.
   visual eye-check pending — the sandbox image viewer was down this
   loop (upload Unauthorized); mechanism identical to the eye-verified
   hearth tale smolder. No tag/bump.
+
+## 2026-09-01 — map idle probe (perf lane, tool-only)
+entrance_probe gains a map_idle_60f measurement (MapScreen mounted
+directly, entrance walk settled first): 17.0 paints/frame idle, decoded
+exactly as 4 reachable-node pulse glows x 4 small render objects each +
+EmberDrift's 1 [entrance_probe, 2026-09-01]. _MapScenePainter (which
+now carries THE CARVED CHASM walls) contributes ZERO idle paints — the
+walls are confirmed free per-frame, and the node pulse dirties only
+tiny glow subtrees. No lib/ change needed; report only.
