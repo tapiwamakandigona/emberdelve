@@ -241,6 +241,18 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.28,
     swingAngle: 1.58,
   ),
+  // Lamp-tender (v0.182.0): the lamp pole — a hooked pole with the lit
+  // lantern hung at its end. The amber accent IS the flame against the
+  // night-violet sheet.
+  'lamplighter': WeaponDef(
+    'lamp_pole',
+    'Lamp Pole',
+    accent: Color(0xFFF2B24C),
+    reach: 0.54,
+    idleAngle: 0.20,
+    raiseAngle: -1.32,
+    swingAngle: 1.60,
+  ),
   // Healer (v0.150.0): a stitching awl — the tool that closes what the
   // delve opens. Short reach (menders work close, where the wound is),
   // sage-green accent to match the sheet's remap.
@@ -597,6 +609,9 @@ class _WeaponPainter extends CustomPainter {
       case 'long_ladle':
         _longLadle(canvas, reach);
         break;
+      case 'lamp_pole':
+        _lampPole(canvas, reach);
+        break;
       default:
         _sword(canvas, reach);
     }
@@ -857,6 +872,73 @@ class _WeaponPainter extends CustomPainter {
       1.35,
       false,
       _p,
+    );
+    _p.style = PaintingStyle.fill;
+  }
+
+  /// The lamplighter's pole (v0.182.0): a long slim pole with a small
+  /// forward hook, and the lantern hung from it — a square glass box
+  /// with the amber accent burning inside. The tool of a trade that
+  /// walks at dusk.
+  void _lampPole(Canvas canvas, double reach) {
+    final w = reach * 0.12;
+    // Long slim pole.
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF4A3626);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(0, -reach * 0.36),
+          width: w * 0.55,
+          height: reach * 0.98,
+        ),
+        Radius.circular(w * 0.28),
+      ),
+      _p,
+    );
+    // Grip band.
+    _p.color = const Color(0xFF8A6A3A);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: w * 1.4, height: w * 0.7),
+        Radius.circular(w * 0.35),
+      ),
+      _p,
+    );
+    // Forward hook at the tip.
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = w * 0.5
+      ..color = const Color(0xFF6E6258);
+    final hook = Path()
+      ..moveTo(0, -reach * 0.84)
+      ..quadraticBezierTo(w * 1.1, -reach * 0.92, w * 1.25, -reach * 0.76);
+    canvas.drawPath(hook, _p);
+    // The lantern: a glass box hung from the hook's end.
+    final box = Rect.fromCenter(
+      center: Offset(w * 1.25, -reach * 0.58),
+      width: w * 1.5,
+      height: w * 1.9,
+    );
+    _p
+      ..style = PaintingStyle.fill
+      ..color = const Color(0xFF2E2A33);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(box.inflate(w * 0.18), Radius.circular(w * 0.2)),
+      _p,
+    );
+    // The flame inside — the accent doing what the trade promises.
+    _p.color = _accent.withValues(alpha: 0.95);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(box.deflate(w * 0.16), Radius.circular(w * 0.15)),
+      _p,
+    );
+    _outline.strokeWidth = w * 0.16;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(box.inflate(w * 0.18), Radius.circular(w * 0.2)),
+      _outline,
     );
     _p.style = PaintingStyle.fill;
   }

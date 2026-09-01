@@ -76,6 +76,7 @@ const List<String> charactersOrder = [
   // v0.180.0 — append-LAST.
   'miller',
   'brewster',
+  'lamplighter',
 ];
 
 const Map<String, CharacterDef> characters = {
@@ -365,6 +366,22 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d8', 'd6', 'd4'],
     startRelic: 'hearth_kettle',
     unlockEmbers: 2550,
+  ),
+  // v0.182.0 The Lamplighter: the fourth chair of the second circle — the
+  // JACKPOT identity, from the second gap pass. Three Glowing Embers
+  // (d6_ember, +2 whenever the max face lands) and nothing else: a pouch
+  // of ordinary sixes that flare. The gambler fishes with a lucky d4;
+  // the lamplighter carries a whole kit that spikes. Pure data (existing
+  // specialty die, runesmith precedent for an all-specialty pouch). HP
+  // is the tuning knob (sweep in docs/improvements).
+  'lamplighter': CharacterDef(
+    'lamplighter',
+    'The Lamplighter',
+    'The lamp-tender: three Glowing Embers \u2014 ordinary sixes that '
+        'flare when they land true.',
+    maxHp: 24,
+    startDice: ['d6_ember', 'd6_ember', 'd6_ember'],
+    unlockEmbers: 2700,
   ),
 };
 

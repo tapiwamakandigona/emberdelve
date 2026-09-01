@@ -258,6 +258,19 @@ const List<ProvingDef> provings = [
     character: 'brewster',
     difficulty: 'normal',
   ),
+  // v0.182.0 The Lit Street — the twentieth delver proving. Seed 20:
+  // the chair-number tradition holds again (bot-win pinned, unused by
+  // any other delver proving).
+  ProvingDef(
+    id: 'lamplighters_proving',
+    title: "The Lamplighter's Proving",
+    blurb:
+        'The Lamplighter on normal floors. Ordinary sixes \u2014 walk '
+        'the street until they take.',
+    seed: 20,
+    character: 'lamplighter',
+    difficulty: 'normal',
+  ),
   // v0.108.0 The Proven Rules: the weekly's rules, kept. The rotation
   // moves on every Monday; these two stand still so a rule can be taken
   // deliberately, not just when the calendar deals it. Seeds bot-win

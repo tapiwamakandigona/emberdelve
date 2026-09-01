@@ -39,7 +39,7 @@ void main() {
     // tripwire — when the roster grows past ten, the gate must NOT move.
     expect(
       characters.length,
-      19,
+      20,
       reason:
           'seventeenth delver (v0.179.0): the second circle opened past '
           'the sixteen-chair first fire and the gate did NOT move — '

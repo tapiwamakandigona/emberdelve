@@ -88,7 +88,7 @@ void main() {
 
   test('the roster-growth contracts all moved with the roster', () {
     final c = GameController();
-    expect(characters.length, 19); // v0.181.0: the brewster joined the second circle
+    expect(characters.length, 20); // v0.182.0: the lamplighter joined the second circle
     // Unlock ladder ascends through the new tail.
     final ladder = [
       for (final id in charactersOrder) characters[id]!.unlockEmbers,

@@ -78,7 +78,7 @@ void main() {
     // frozen at the first cycle (see hearthgoldTales).
     // v0.179.0: the second-circle tale starts the seventh cycle — the
     // list keeps growing past whole cycles; hearthgold stays frozen at 10.
-    expect(hearthTales.length, 6 * hearthgoldTales + 3);
+    expect(hearthTales.length, 6 * hearthgoldTales + 4);
     for (final tale in hearthTales) {
       expect(tale.trim(), isNotEmpty);
       expect(tale.length, lessThanOrEqualTo(200), reason: tale);

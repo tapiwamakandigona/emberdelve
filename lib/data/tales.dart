@@ -189,6 +189,9 @@ const List<String> hearthTales = [
   'The brewster hung a kettle over the second fire and said nothing. '
       'Some chairs are taken with a word, some with a full cup passed '
       'along the circle.',
+  'The lamplighter came to the second fire last of the four and lit '
+      'nothing \u2014 the circle was already burning. Some trades rest '
+      'where the light is kept for them.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

@@ -286,6 +286,13 @@ final List<CodexEntryDef> codexEntries = [
         'it sings. Thin dice, a Hearth Kettle, and the delve walked '
         'rest to rest \u2014 every camp a table set twice over.',
   ),
+  _delver(
+    'lamplighter',
+    'The fourth chair of the second circle. Lamplighting is a dusk '
+        'trade: most of the walk is ordinary, and then a wick takes and '
+        'a whole street changes. Three Glowing Embers \u2014 plain '
+        'sixes until they land true, and when they do, they flare.',
+  ),
 
   // enemies — common -----------------------------------------------------
   _enemy(

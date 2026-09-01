@@ -5001,3 +5001,21 @@ the opening run itself (R1 brief input).
   now fully executed: retaliation (#17), mixed extremes (#18), rest
   economy (#19). Next open design space needs NEW pieces or a fresh
   gap pass.
+- THE LAMPLIGHTER LANDED COMPLETE (v0.182.0-dev): twentieth delver,
+  fourth chair of the second circle — the JACKPOT identity from the
+  second gap pass. Three Glowing Embers (d6_ember, +2 on max face —
+  first kit ever to start this die), no relic, no marks. HP 24 swept
+  (88.50/67.00/43.00 all bands; 26 broke all ceilings). unlockEmbers
+  2700. Lamp-pole custom silhouette (long pole, forward hook, hung
+  lantern box with the amber accent burning inside). Night-violet
+  gambler-sourced sprite (hue +250° sat×0.80 floor 0.35 val×0.78;
+  elf family red/teal/gold/tan/violet critiqued side by side). Codex,
+  The Lamplighter's Flare + twenty_ways_down (19..16 frozen),
+  lamplighters_proving seed 20 (chair-number tradition HOLDS — bot-win
+  pinned), 64th tale (closes the four-chair arc), honors → 20 /
+  proven → 28. test/lamplighter_test.dart (win 20 / loss 35; pins the
+  d6_ember mod itself). Plates critiqued incl. squeeze (20 sprites
+  still one title line at 320×568@1.3×). Suite 1176 green, analyze
+  clean. SECOND GAP PASS notes: unused start pieces remaining —
+  d6_keen/d6_stout/d6_forged/d8-specialties; candidate #21: forged
+  identity (2×d6_forged, flat +1/+1) or a d10-start chair.
