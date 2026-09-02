@@ -1,6 +1,13 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-02M — STOP PUSHING. History rewrite in progress (2026-09-02 11:50Z)
+The owner approved re-authoring the entire history of this repo so every past commit is his. That is a force-push of
+every branch and tag. Until a later directive titled "history rewrite COMPLETE" appears in this file:
+1. If you have unpushed commits, push them **right now** (normal push, no force). After that: **no commits, no pushes, no tags.**
+2. Keep working locally only if you must, but do NOT create commits — stash or keep a patch (`git diff > /tmp/wip.patch`).
+3. Do not `git pull`, `git merge` or `git rebase` during this window.
+Expected duration: under an hour. Re-read this file every few minutes.
 ## Owner directive 2026-09-02L — Author identity: everything in the owner's name, effective immediately (2026-09-02 11:30Z)
 The owner has ruled: **every artifact in this repo is his.** No exceptions, no "assistant" identity.
 
