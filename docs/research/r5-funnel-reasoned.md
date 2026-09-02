@@ -21,9 +21,12 @@ What a visitor sees (listing record + R3):
   largest trust signal on a Play page and it is blank.
 - Short description: "Fair dice roguelite. Build your pool, delve deep. No ads, no timers,
   no gacha." (live per play-listing.md) — the trust promise is in the right place.
-- Five screenshots (combat roll, boon pick, map, title, ledger) of the eight Play allows
-  ([Play Console Help 9866151](https://support.google.com/googleplay/android-developer/answer/9866151):
-  "up to 8 screenshots for each supported device type"). No video.
+- **Ten phone screenshots, no video** (verified live, §Live check below): five framed plates
+  with taglines (Every death is fair / Real choices, every run / Branching paths / Fair dice.
+  No ads. / Die forward) followed by **five unframed raw captures of the same five screens**.
+  Slots 6–10 therefore repeat slots 1–5 without the message. Play allows eight per device
+  type ([Play Console Help 9866151](https://support.google.com/googleplay/android-developer/answer/9866151))
+  — the listing is at the cap with half of it duplicated.
 - The business model — "one honest one-time unlock (the Ember Forge) opens HARD and the
   Ascension ladder" — is the **last bullet of the FAIR BY DESIGN block, ~2,900 characters into a ~3,100-character description** (docs/store/play-listing.md, 0.34.0 refresh — the record of what was pasted; the console text may lag it).
   Slice & Dice puts its equivalent in the *first sentence* ("Free demo, no ads, single IAP to
@@ -103,3 +106,20 @@ No prompts, popups, timers, ads, analytics or nags (standing rule). "Ship v0.179
 is a finding, not an action — the directive reserves that call to the owner
 (docs/store/PLAY-APPLY-DAY.md is the runbook when they make it; use the v0.179.0 AAB,
 sha256 d47fa1d1…).
+
+## Live check (2026-09-02, unauthenticated fetch of the public listing, gl=US)
+
+Fetched `play.google.com/store/apps/details?id=com.tsorostudios.emberdelve` without a login
+and read the page, so these are facts, not Console relays:
+
+- Version shown: **0.59.0**; "Updated on **Aug 30, 2026**".
+- Download badge: **50+**. Badges: **In-app purchases**; no "Contains ads".
+- **No `ratingValue` / `ratingCount` in the page data and no ratings section rendered** — the
+  public page carries no star. R4 §4.2 confirmed.
+- Short description live: "Fair dice, real choices. A pocket dice roguelite with zero ads,
+  played offline." (the play-listing.md refresh text, not the older console line).
+- Full description matches docs/store/play-listing.md's 0.34.0 refresh; the Forge line is the
+  last FAIR BY DESIGN bullet as stated above.
+- Screenshots: 10 phone images as described in §A; the raw duplicates show the HARD segment
+  **without a lock glyph** (pre-0.6.1 captures — they predate the Forge gate returning to HARD).
+- Content rating: Everyone 10+.

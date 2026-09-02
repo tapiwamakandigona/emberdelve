@@ -62,11 +62,13 @@ and Play's own asset guidance
 1. **Model in sentence one.** Slice & Dice, Void Tyrant and Shattered all disambiguate the
    "In-app purchases" badge immediately. We do not (R5 §A). *Cost to fix: one paste; owner's
    call while the listing is frozen.*
-2. **Eight screenshots, or a video, or both.** We ship five and no video. Play allows eight
-   per device type and lists video among the assets used "to highlight and promote your app
-   on Google Play and other Google promotional channels" (9866151). Slice & Dice's listing
+2. **Every asset slot carries a message; a video where the mechanic sells itself.** Our live
+   listing has ten phone screenshots and no video, but slots 6–10 are unframed duplicates of
+   slots 1–5 (R5 §Live check) — half the carousel says nothing new, and the raw captures still
+   show HARD without its lock. Play lists video among the assets used "to highlight and
+   promote your app on Google Play and other Google promotional channels" (9866151). Slice & Dice's listing
    leads its feature list with the mechanic ("3D dice physics, choose which dice to reroll"). *R3's framed-r3 set is
-   already five plates; three more slots are empty.*
+   already five plates that could replace the five duplicates.*
 3. **The paid tier is described as support or as "the rest of the game", never as a lock.**
    Shattered frames it as supporting the developer; Slice & Dice as "unlock the full game".
    Our title-screen surface is a padlock glyph with no copy (R5 §D). *Inference: a padlock
@@ -94,6 +96,6 @@ and Play's own asset guidance
 
 At 20–50 installs the comparables were not doing anything *inside the game* we are not doing;
 they were doing three things *outside* it: saying the business model in the first line,
-filling the asset slots, and getting the newest build in front of people. Two of the three
+replacing the five duplicate screenshots with plates that say something (R3's framed-r3 set exists), and getting the newest build in front of people. Two of the three
 are listing pastes; the third is the v0.179.0 AAB already on the release page. All three are
 owner calls under the current freeze.
