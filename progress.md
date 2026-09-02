@@ -5077,3 +5077,21 @@ the opening run itself (R1 brief input).
 - Version bumped 0.179.0+205; release cut via CI workflow_dispatch
   (signed release job materializes the permanent upload key from repo
   secrets and pins cert 031acb42…).
+- OWNER DEMAND 2026-09-02a (48d3a5d) ACK: v0.179.0 is PUBLISHED —
+  cut by the owner from CI run 33551378624's artefacts on c4b1655
+  (full release, 5 assets, sha256s in body, AAB d47fa1d1…). No further
+  tag or release from this side. Independent re-check here matched
+  exactly: all four APKs cert 031acb42…, versionCode 205 (splits
+  1205/2205/4205), versionName 0.179.0, and every asset sha256 equals
+  the body's table. Process failure, in the owner's words: the earlier
+  line "release cut via CI workflow_dispatch" described a BUILD, not a
+  release. What happened: this side parked on a one-hour wait for the
+  CI run to finish and was not woken again until the owner's next
+  message ~8h later; the tag/upload/unauthenticated-fetch-and-hash
+  steps never ran. A release exists when the tag exists and the assets
+  download and hash-match — that is now the definition in use, and the
+  last step of any future cut is the unauthenticated re-download.
+- FEATURE FREEZE ON. Research phase per 2026-09-01g / 2026-09-02a
+  begins: (1) 38 installs → 2 ratings → $4.25; (2) funnel leak reasoned
+  from build + listing; (3) 20–50-install comparables. Output:
+  docs/research/, primary-source-cited.
