@@ -61,6 +61,36 @@ class ContextTips {
   ];
 }
 
+/// v0.180.0 The Spoken Badge (docs/research/r9-first-run-spec.md §3).
+///
+/// The response-puzzle intents — charge, counter, stagger, attack+block —
+/// draw as icons and numbers only; the words that decode them existed
+/// solely behind an untaught long-press or a sealed codex entry. Now the
+/// FIRST time an enemy ever declares each kind, the existing explain
+/// call-out fires on its own. A call-out, not a card: it fades unaided, so
+/// it is marked seen the moment it fires. Keys live in the same
+/// MetaState.tipsSeen set (union-merged in cloud like every tip) but are NOT
+/// part of [ContextTips.all] — the legacy tutorialSeen flag keeps meaning
+/// "the card deck is done". Plain attack/block badges are taught by the tour
+/// and never speak on their own.
+class SpokenBadges {
+  static const charge = 'intent_charge';
+  static const counter = 'intent_counter';
+  static const stagger = 'intent_stagger';
+  static const attackBlock = 'intent_attack_block';
+  static const List<String> all = [charge, counter, stagger, attackBlock];
+
+  /// The spoken-badge key for an intent kind, or null when the badge is
+  /// self-evident (attack, block) or unknown.
+  static String? keyFor(Object? kind) => switch (kind) {
+    'charge' => charge,
+    'counter' => counter,
+    'stagger' => stagger,
+    'attack_block' => attackBlock,
+    _ => null,
+  };
+}
+
 /// An incoming telegraphed attack at or above this is a "big hit" — the
 /// teachable moment for block. d6 max is 6; 4+ is worth blocking.
 const int bigHitThreshold = 4;
@@ -92,7 +122,10 @@ class TipDirector {
   /// The anvil card outranks the deepen card (a player who has never
   /// tempered cannot deepen), and the one-tip rule means the deepen card
   /// simply recurs at the next marked rest.
-  String? onRestArrival({required bool canTemper, bool hasShallowMark = false}) {
+  String? onRestArrival({
+    required bool canTemper,
+    bool hasShallowMark = false,
+  }) {
     if (!canTemper) return null;
     final anvil = _fire(ContextTips.firstAnvil);
     if (anvil != null) return anvil;
@@ -141,6 +174,19 @@ class TipDirector {
     final amount = intent['amount'];
     if (amount is! int || amount < bigHitThreshold) return null;
     return _fire(ContextTips.blockFades);
+  }
+
+  /// v0.180.0 The Spoken Badge: an enemy has this intent on its badge.
+  /// Returns the spoken-badge key to voice, or null. Fires once ever per
+  /// kind and marks it seen IMMEDIATELY (a call-out has no dismiss). Quiet
+  /// while a tip card is up — the kind recurs, so it speaks at its next
+  /// declaration instead. Never touches [active].
+  String? onIntentDeclared(Map<String, Object?> intent) {
+    if (active != null) return null;
+    final key = SpokenBadges.keyFor(intent['kind']);
+    if (key == null || seen.contains(key)) return null;
+    seen.add(key);
+    return key;
   }
 
   /// The player dismissed the active tip — mark it seen forever.

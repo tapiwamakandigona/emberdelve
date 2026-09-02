@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.179.0';
+const String currentAppVersion = '0.180.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.180.0',
+    title: 'The Spoken Badge',
+    lines: [
+      'Some foes do not simply attack. When one first winds up a charge, '
+          'bristles into a counter, staggers, or raises a shield behind its '
+          'strike, the badge now says so in words \u2014 once, unasked, the '
+          'first time you ever meet that move.',
+      'Hold any badge to hear it again. The how-to-play deck now says so.',
+      'Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.179.0',
     title: 'More Hands at the Fire',

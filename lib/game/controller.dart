@@ -1128,6 +1128,11 @@ class GameController extends ChangeNotifier {
     MetaStore.save(meta);
   }
 
+  /// v0.180.0 The Spoken Badge: the combat screen voiced a first-contact
+  /// intent kind (tipDirector.onIntentDeclared already marked it seen in
+  /// the shared set) — persist so it never speaks again on any device.
+  void spokenBadgeFired() => MetaStore.save(meta);
+
   /// v0.3.1 F11: persist that the first-fight tutorial has been seen.
   void markTutorialSeen() {
     if (meta.tutorialSeen) return;
@@ -1495,7 +1500,9 @@ class GameController extends ChangeNotifier {
       wonDailyOrWeekly:
           sim!.phase == 'run_won' && (dailyDate != null || weeklyIndex != null),
       tourActive: tour.active != null,
-      rankedUpToMarks: rankAfter.marks > rankBefore.marks ? rankAfter.marks : null,
+      rankedUpToMarks: rankAfter.marks > rankBefore.marks
+          ? rankAfter.marks
+          : null,
     );
     MetaStore.save(meta);
     // P4/P5 (v0.5.0): mirror the fresh snapshot to the Play Games cloud save

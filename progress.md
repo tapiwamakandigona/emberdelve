@@ -5160,3 +5160,19 @@ the opening run itself (R1 brief input).
   fire = end of run one (won daily, or won first run ≥24 marks; bot
   probe 18/120 easy), never after a lost first run; quota/dismissal
   consequences; header-vs-code tour-version mismatch noted. No code.
+
+## 2026-09-02 — directive 2026-09-02d acknowledged: research over, build again
+- ACK. R9/R10 were complete and pushed (5c61a7a) before the directive
+  landed; no half-written R-file. No new R-files from here.
+- Backlog item 1 BUILT — v0.180.0 "The Spoken Badge" (R9 §3): first-ever
+  declaration of charge/counter/stagger/attack_block speaks the existing
+  `_explainIntent` call-out unasked, once per kind, keys in tipsSeen
+  (`SpokenBadges` in lib/game/tips.dart; `TipDirector.onIntentDeclared`;
+  combat_screen `_maybeSpeakBadge` after each batch + 450/1900 ms after
+  fight start; controller `spokenBadgeFired` persists). How-to-play card
+  THE DARK FIGHTS FAIR: "Hold any badge to hear it in words." Tests
+  test/spoken_badge_test.dart (7: director, persistence, two widget pins
+  incl. fresh profile sees it once). pubspec 0.180.0+206, news entry,
+  docs/releases/v0.180.0.md DRAFT. Suite 1198 green pre-bump; rerun after
+  bump below. No tag, no release, no Play.
+- Post-bump full suite: 1198: All tests passed!

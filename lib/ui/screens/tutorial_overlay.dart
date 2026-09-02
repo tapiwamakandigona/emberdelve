@@ -33,9 +33,11 @@ class _TutorialOverlay extends StatelessWidget {
       // LFP-3c: one clause separating the two channels — the badge above its
       // head is the PLAN, flame chips on the body are STATUS (tester theme:
       // burn beside intent read as "it will burn me for 3").
+      // v0.180.0 The Spoken Badge: the long-press finally has a sentence.
       'The badge above the enemy\'s head is its next move — attack damage, '
           'shield block, or both. It always resolves exactly as shown. Flame '
-          'chips on its body are burn it already suffers, never a threat.',
+          'chips on its body are burn it already suffers, never a threat. '
+          'Hold any badge to hear it in words.',
     ),
     (
       Icons.casino,

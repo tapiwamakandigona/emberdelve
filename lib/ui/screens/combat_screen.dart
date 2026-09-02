@@ -256,6 +256,11 @@ class _CombatScreenState extends State<CombatScreen> {
         if (mounted) setState(() => _splash = false);
       });
     }
+    // v0.180.0 The Spoken Badge: the opening intent is on the badge before
+    // the first roll — speak it once the name plate (if any) has cleared.
+    Future.delayed(Duration(milliseconds: _splash ? 1900 : 450), () {
+      _maybeSpeakBadge(_declaredIntent);
+    });
     // LFP-6a: overkill splash carried into THIS enemy — call the dent out on
     // the stage (the enemy opens below max HP by design, not by bug). Delayed
     // past the flame wipe so the call-out lands on a readable stage.
@@ -418,13 +423,37 @@ class _CombatScreenState extends State<CombatScreen> {
   void _maybeTip(List<Map<String, Object?>> events) {
     final d = widget.c.tipDirector;
     var tip = d.onEvents(events);
-    if (tip == null) {
-      final intent = (widget.c.state?['enemy'] as Map?)?['intent'];
-      if (intent is Map) {
-        tip = d.onIntent(intent.map((k, v) => MapEntry('$k', v as Object?)));
-      }
+    final rawIntent = (widget.c.state?['enemy'] as Map?)?['intent'];
+    final intent = rawIntent is Map
+        ? rawIntent.map((k, v) => MapEntry('$k', v as Object?))
+        : null;
+    if (tip == null && intent != null) tip = d.onIntent(intent);
+    if (tip != null) {
+      _ui(() {});
+      return;
     }
-    if (tip != null) _ui(() {});
+    _maybeSpeakBadge(intent);
+  }
+
+  /// v0.180.0 The Spoken Badge: a response-puzzle intent (charge, counter,
+  /// stagger, attack+block) speaks its own explain call-out the first time
+  /// it is ever declared — the same words the long-press gives, unasked.
+  /// Quiet while a tip card, a tour beat or the how-to-play deck is on
+  /// screen; the kind recurs, so it speaks at its next declaration instead.
+  /// Called after every processed batch and once after the stage settles on
+  /// fight start (the opening intent is declared before the first roll).
+  void _maybeSpeakBadge(Map<String, Object?>? intent) {
+    if (!mounted || intent == null) return;
+    if (widget.c.tour.active != null || _tutStep >= 0) return;
+    if (widget.c.tipDirector.onIntentDeclared(intent) != null) {
+      widget.c.spokenBadgeFired();
+      _explainIntent(intent);
+    }
+  }
+
+  Map<String, Object?>? get _declaredIntent {
+    final raw = (widget.c.state?['enemy'] as Map?)?['intent'];
+    return raw is Map ? raw.map((k, v) => MapEntry('$k', v as Object?)) : null;
   }
 
   /// LFP-3b: long-press tooltips — name what a badge means in one 2s
@@ -1132,8 +1161,7 @@ class _CombatScreenState extends State<CombatScreen> {
                         isInfo: widget.c.tour.activeIsInfo,
                         step: widget.c.tour.step,
                         total: widget.c.tour.total,
-                        onAdvanceInfo: () =>
-                            setState(widget.c.tourAdvanceInfo),
+                        onAdvanceInfo: () => setState(widget.c.tourAdvanceInfo),
                         onSkip: () => setState(widget.c.tourSkip),
                       )
                     : const SizedBox.shrink(),
