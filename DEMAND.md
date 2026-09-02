@@ -1,6 +1,13 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-02N — History rewrite COMPLETE. Reset, verify, resume (2026-09-02 11:55Z)
+Every branch and tag was rewritten; all commit SHAs changed. Your local clone/worktree is now on a dead history. Do exactly this:
+1. `git fetch origin --prune --tags --force`
+2. For every branch you track: `git checkout <branch> && git reset --hard origin/<branch>`  — **never** `git pull`/`git merge`; merging old and new history would resurrect the Viktor commits.
+3. Re-apply your WIP from the patch/stash, commit as `Tapiwa Makandigona <tapiwamakandigoner@gmail.com>` (directive L), push normally.
+4. Prove it in progress.md: `git log --format='%an <%ae>' | sort | uniq -c` must show only the owner, and `git status` clean.
+Then resume the plan you were on.
 ## Owner directive 2026-09-02M — STOP PUSHING. History rewrite in progress (2026-09-02 11:50Z)
 The owner approved re-authoring the entire history of this repo so every past commit is his. That is a force-push of
 every branch and tag. Until a later directive titled "history rewrite COMPLETE" appears in this file:
