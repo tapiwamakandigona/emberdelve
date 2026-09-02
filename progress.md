@@ -5398,3 +5398,20 @@ Verification, run right after the identity commit:
   one ghost button's height on every summary. Real-font pins at 320/1.3×.
   Plate lesson: MaterialIcons must be loaded in plate tools too, or glyphs
   render as boxes (FLUTTER_ROOT/bin/cache/artifacts/material_fonts).
+- The Quiet Shell (perf): summary entrance re-weighed — PhaseSwitcher screen
+  + veil in permanent RepaintBoundaries; Scaffold body boxed (toasts no
+  longer re-rasterize the screen: combat toast 22.2→12.6 paints/frame);
+  Settling Count in a tight final-size box + boundary (digit changes no
+  longer relayout the IntrinsicHeight column); summary LayoutBuilder made
+  its own relayout/repaint boundary. Entrance 5508→2213 paints (−60%),
+  drag 4.5→2.1/frame, idle 1.0 unchanged. test/quiet_shell_test.dart (3
+  behavioral pins, each red on the old code). LESSONS: (1) a LayoutBuilder
+  flushes dirty descendants during layout — any rebuild-driven animation
+  under one marks it needs-layout every frame; give it tight constraints
+  (SizedBox.expand) + a RepaintBoundary. (2) RenderParagraph.text= walks
+  markNeedsLayout up to the first TIGHT box — an animated number needs a
+  fixed-size box, width alone is not enough. (3) Probe by repaint ROOTS per
+  frame (painted objects whose parent did not paint) + debugPrintMarkNeeds
+  LayoutStacks on one frame; per-type censuses hide the cause. (4) The
+  summary_probe's 40-frame settle now measures the entrance, not idle —
+  read the timeline, not one number.

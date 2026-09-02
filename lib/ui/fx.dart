@@ -621,26 +621,36 @@ class _PhaseSwitcherState extends State<PhaseSwitcher>
         final f = _t.value;
         // Old covers the first half, new reveals in the second.
         final showNew = !transitioning || f >= 0.5;
+        // PERF (v0.180.0 The Quiet Shell): the veil and the screen sit in
+        // their own permanent boundaries. Without them every frame of the
+        // fade-through-black re-rasterized the whole screen beneath it
+        // (~100 paints/frame for the 380ms, summary_probe); boxed, a veil
+        // frame is the veil. Permanent, so the tree shape never changes
+        // (see above).
         return Stack(
           fit: StackFit.expand,
           children: [
-            KeyedSubtree(
-              key: ValueKey('ps-${showNew ? widget.phaseKey : _oldKey}'),
-              child: showNew ? widget.child : _old!,
+            RepaintBoundary(
+              child: KeyedSubtree(
+                key: ValueKey('ps-${showNew ? widget.phaseKey : _oldKey}'),
+                child: showNew ? widget.child : _old!,
+              ),
             ),
             IgnorePointer(
-              child: !transitioning
-                  ? const SizedBox.shrink()
-                  : _wipe
-                  ? CustomPaint(
-                      painter: _FlameWipePainter(f),
-                      size: Size.infinite,
-                    )
-                  : Container(
-                      color: Colors.black.withValues(
-                        alpha: (1.0 - (2 * f - 1).abs()).clamp(0.0, 1.0),
+              child: RepaintBoundary(
+                child: !transitioning
+                    ? const SizedBox.shrink()
+                    : _wipe
+                    ? CustomPaint(
+                        painter: _FlameWipePainter(f),
+                        size: Size.infinite,
+                      )
+                    : Container(
+                        color: Colors.black.withValues(
+                          alpha: (1.0 - (2 * f - 1).abs()).clamp(0.0, 1.0),
+                        ),
                       ),
-                    ),
+              ),
             ),
           ],
         );
@@ -912,8 +922,7 @@ class DealtIn extends StatefulWidget {
   State<DealtIn> createState() => _DealtInState();
 }
 
-class _DealtInState extends State<DealtIn>
-    with SingleTickerProviderStateMixin {
+class _DealtInState extends State<DealtIn> with SingleTickerProviderStateMixin {
   static const int _cardMs = 300;
   static const int _staggerMs = 90;
 
@@ -1038,33 +1047,31 @@ class _SmolderInState extends State<SmolderIn>
         // RepaintBoundary keeps the per-frame shader update inside the
         // tale's own layer (entrance_probe: un-bounded sweep repainted the
         // whole hollow at 104 paints/frame).
-        return RepaintBoundary(
-          child: _mask(p, child!),
-        );
+        return RepaintBoundary(child: _mask(p, child!));
       },
     );
   }
 
   Widget _mask(double p, Widget child) {
     return ShaderMask(
-          blendMode: BlendMode.modulate,
-          shaderCallback: (rect) => LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.white,
-              // The leading edge glows warm as the words catch.
-              EmberColors.ember.withValues(alpha: 0.55),
-              Colors.white.withValues(alpha: 0.0),
-            ],
-            stops: [
-              0.0,
-              (p - 0.18).clamp(0.0, 1.0),
-              p.clamp(0.0, 1.0),
-              (p + 0.10).clamp(0.0, 1.0),
-            ],
-          ).createShader(rect),
+      blendMode: BlendMode.modulate,
+      shaderCallback: (rect) => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.white,
+          Colors.white,
+          // The leading edge glows warm as the words catch.
+          EmberColors.ember.withValues(alpha: 0.55),
+          Colors.white.withValues(alpha: 0.0),
+        ],
+        stops: [
+          0.0,
+          (p - 0.18).clamp(0.0, 1.0),
+          p.clamp(0.0, 1.0),
+          (p + 0.10).clamp(0.0, 1.0),
+        ],
+      ).createShader(rect),
       child: child,
     );
   }

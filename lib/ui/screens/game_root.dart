@@ -140,22 +140,30 @@ class _GameRootState extends State<GameRoot> {
         // Flame-wipe smash-cut into combat; fade-through-black elsewhere
         // (visuals.md #12 — the stock cross-fade dies here).
         return Scaffold(
-          body: PhaseSwitcher(
-            phaseKey: phase ?? 'title',
-            flameWipe: phase == 'player_turn',
-            child: ScreenBackground(
-              asset: Art.backgroundForPhase(phase, bossFight: bossFight),
-              // v0.28.0 The Shifting Strata: the rock changes as you
-              // descend (depth 0 = identity, so the title never grades).
-              // v0.35.0 The Vistas: player-selected grade composed with
-              // the strata depth grade in a single matrix.
-              // v0.115.0: the delve wears the RUN DELVER's vista.
-              grade: Art.backgroundGrade(c.mapDepth, c.activeRunVista),
-              wash: Art.backgroundWash(c.mapDepth, c.activeRunVista),
-              child: SafeArea(
-                child: KeyedSubtree(
-                  key: ValueKey(phase ?? 'title'),
-                  child: screen,
+          // PERF (v0.180.0 The Quiet Shell): the floating toast (showFlash —
+          // heals, forges, rerolls, first hearings, invalid-move reasons)
+          // animates inside the Scaffold's own layout, and every one of its
+          // frames relaid the Scaffold and re-rasterized the whole body with
+          // it (summary_probe: ~300 paints on each toast frame; the same
+          // held for every combat toast). Boxed, a toast frame is the toast.
+          body: RepaintBoundary(
+            child: PhaseSwitcher(
+              phaseKey: phase ?? 'title',
+              flameWipe: phase == 'player_turn',
+              child: ScreenBackground(
+                asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+                // v0.28.0 The Shifting Strata: the rock changes as you
+                // descend (depth 0 = identity, so the title never grades).
+                // v0.35.0 The Vistas: player-selected grade composed with
+                // the strata depth grade in a single matrix.
+                // v0.115.0: the delve wears the RUN DELVER's vista.
+                grade: Art.backgroundGrade(c.mapDepth, c.activeRunVista),
+                wash: Art.backgroundWash(c.mapDepth, c.activeRunVista),
+                child: SafeArea(
+                  child: KeyedSubtree(
+                    key: ValueKey(phase ?? 'title'),
+                    child: screen,
+                  ),
                 ),
               ),
             ),
