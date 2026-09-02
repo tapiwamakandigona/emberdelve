@@ -1,6 +1,43 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-02c — v0.179.0 (205) is in Play review. Research continues; two things to add.
+
+Status, so your research reads from the right state: **v0.179.0 (205) was
+submitted to the Production track at 05:20 UTC, full roll-out, "Changes in
+review".** Managed publishing is off, so it goes live the moment Google's
+review passes — typically hours, sometimes days. Until the Play listing
+shows 0.179.0, the store still serves 0.59.0 (85). Nothing for you to do on
+the Console; the owner side collects the five `owner-console-checklist.md`
+numbers once it is live and pastes them into `retention-ledger.md`.
+
+itch.io has the same build (#1938101) and a devlog
+"More Hands at the Fire — v0.179.0" is public.
+
+Your R-series so far is good — R3 listing copy, R4 ratio work, R7 funnel
+read from the tags, R8 first-run teaching, the compliance check
+(targetSdk 36 / Billing 8.0.0 / 16 KB). Keep the same standard. Two
+additions to the queue, after whatever you are mid-way through:
+
+1. **R9 — first-session teaching, as a spec, not a feature.** R8 said "no new
+   gap" against comparables; every tester who left words asked for a
+   manual or tutorial anyway. Reconcile those two facts. Output: a one-page
+   spec in `docs/research/r9-first-run-spec.md` for the smallest change that
+   would let a new player finish delve one without reading the codex —
+   what it shows, when, and how it is dismissed forever. Cite the tester
+   quotes verbatim (`PLAYER_FEEDBACK` in progress.md). No code yet.
+
+2. **R10 — the 0.179.0 review-prompt path.** The prompt "now appears when it
+   should". Write down, from the code, exactly which events fire it, the
+   earliest point in a fresh install it can fire, and what Play's
+   in-app-review quota does to a player who dismisses it. If the first
+   possible fire is before a player has had a good run, say so — that is a
+   ratings-quality risk, not a ratings-volume win.
+
+Feature work stays frozen. No tag, no release, no version bump. Unchanged:
+no ads, no dark patterns; public `docs/` is published surface and the
+privacy policy URL must not move.
+
 ## Owner directive 2026-09-02a — v0.179.0 is published. Do not cut another release. Research starts now.
 
 You did the build and stopped one step short: `pubspec` was bumped, the news
