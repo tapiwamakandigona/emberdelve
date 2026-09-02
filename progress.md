@@ -5370,3 +5370,11 @@ Verification, run right after the identity commit:
   (target unchanged). Mid/late/boss insight buckets audited the same way as
   early — every line coaches a read the game offers (elite cycles are fixed
   and repeat; guard beats show on the badge); no text changed.
+- History rewrite (directive 02N) applied on my side: fetched with
+  `--prune --tags --force`, hard-reset `legacy/dice-builder`, `main` and the
+  three worktree branches to the rewritten remote (no pull/merge), deleted
+  five dead local branches that only existed on the old history.
+  `git log --format='%an <%ae>' | sort | uniq -c` → 673 Tapiwa Makandigona
+  <tapiwamakandigoner@gmail.com>, 4 tapiwamakandigona <tapiwamakandigoner@gmail.com>,
+  nothing else (committer column adds 57 GitHub <noreply@github.com> web
+  merges). `git status` clean. Nothing was in flight, so no patch to re-apply.
