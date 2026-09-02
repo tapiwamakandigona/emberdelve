@@ -2,7 +2,7 @@
 
 **Goal:** A 2D **pixel action-platformer** for Android (Google Play), built with Flutter + Flame. Inspired by *Apple Knight*'s loop — run/jump/double-jump, melee combat, coins, treasure chests, secret rooms, level-based worlds, and a meta shop (weapons · skins · abilities) — but tighter, fairer, and better optimised. Landscape, touch-first, 2–5 minute levels. Free download, no forced ads.
 
-**Owner:** memorymadie (Tsoro Studios, GitHub `tapiwamakandigona`). Built and orchestrated by Viktor (AI). This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
+**Owner:** memorymadie (Tsoro Studios, GitHub `tapiwamakandigona`). Built by Tsoro Studios. This repo is designed so **anyone can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
 
 > **Pivot note (2026-07-24, owner-directed):** The original turn-based dice-builder
 > is archived intact on branch `legacy/dice-builder`, tag `v0.3.10-legacy`, and the
