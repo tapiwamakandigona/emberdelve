@@ -22,7 +22,7 @@ build gap.** It is written so the question is not re-asked.
 | Non-forcing, action-completed tutorial | Five-beat anchored tour; action beats complete only on the real action, SKIP always available, seen once per `tourVersion` | `lib/game/tour.dart` header rules; `TourBeats` roll/pick/spend/intent/reroll |
 | Info at first contact, not up front | Staged contextual tips fire at first contact with each concept, one at a time, once ever; the up-front 4-card wall was removed in v0.10.0 | `lib/game/tips.dart` (`whats_a_delve`, `roll_spend`, `intent_fair`, `combos_pay`, `block_fades`, `first_anvil`, `shared_delve`, `deep_mark`) |
 | Re-readable reference | "How to play" control on the enemy panel reopens the card set (THIS IS A DELVE / ROLL, THEN SPEND / THE DARK FIGHTS FAIR / MATCHING FACES PAY / BLOCK FADES FAST / THE SHARED DELVE / THE SECOND STRIKE / THE SMITH IS IN); Codex persists tales and entries across runs | `lib/ui/screens/combat/enemy_panel.dart:54` (`Semantics(label: 'How to play')` → `_restartTutorial`); `lib/ui/screens/tutorial_overlay.dart` |
-| Design for the never-won majority | Default 'normal' with `steerToEasy` for fresh profiles; review ask reachable from losses (24 marks) since v0.179.0; sim bands easy 80–90 % | `controller.dart:247`; `review_service.dart:72–73`; R7 |
+| Design for the never-won majority | Default 'normal' with `steerToEasy` for fresh profiles; review ask reachable from losses (24 marks) since v0.179.0; sim bands easy 80–90 % | `controller.dart:295`; `review_service.dart:72–73`; R7 |
 
 ## What the comparables did that we cannot copy in a research phase
 
