@@ -11,7 +11,7 @@ Package id: `com.tsorostudios.emberdelve`.
 
 | What | Where |
 |---|---|
-| Keystore (PKCS12, alias `emberdelve`, RSA-4096, valid to 2066) | Viktor sandbox: `/work/secrets/emberdelve-upload.keystore`; passwords + alias + cert fingerprint: `/work/secrets/emberdelve_signing.md` |
+| Keystore (PKCS12, alias `emberdelve`, RSA-4096, valid to 2066) | Build machine: `/work/secrets/emberdelve-upload.keystore`; passwords + alias + cert fingerprint: `/work/secrets/emberdelve_signing.md` |
 | CI copies | GitHub Actions secrets on `tapiwamakandigona/emberdelve`: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` (set 2026-07-23) |
 | Cert SHA-256 fingerprint | `03:1A:CB:42:56:6A:51:D5:B5:9F:FD:5D:EB:17:3F:1B:0E:81:7A:9E:DF:F1:BB:69:79:F6:85:64:D4:4B:7A:0D` (public info — pinned in CI's verification step) |
 

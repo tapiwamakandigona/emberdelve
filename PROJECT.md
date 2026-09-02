@@ -2,7 +2,7 @@
 
 **Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Flutter. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
 
-**Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built and orchestrated by Viktor (AI). This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
+**Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built by Tsoro Studios. This repo is designed so **anyone can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
 
 ## Canonical artifacts
 | What | Where |

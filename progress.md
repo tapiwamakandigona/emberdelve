@@ -431,7 +431,7 @@ byte-identical by construction (no file under lib/sim/ or lib/data/ changed).
 
 ## 2026-07-25 — v0.3.11 phase 2: LFP-1 physical dice, LFP-2a die flight, LFP-4 idle life (owner-directed "fix the issues and make the update")
 
-Owner asked Viktor to implement the remaining playtest-gap workstreams and
+Owner asked Tapiwa to implement the remaining playtest-gap workstreams and
 ship a GitHub release. Everything presentation-only; sim untouched again.
 
 - LFP-1a/1b/1c: rolls now THROW the dice — launch from a bottom-center thumb
@@ -459,13 +459,13 @@ Evidence: flutter analyze clean; full flutter test green; play_session
 harness green. No lib/sim or lib/data change across the whole branch —
 golden anchors, replays and saves byte-identical.
 
-## 2026-07-25 — Release v0.3.11 published (Viktor)
+## 2026-07-25 — Release v0.3.11 published (Tapiwa)
 - PR #52 merged into legacy/dice-builder (merge head bd5d33f).
 - CI workflow_dispatch run 30153939057: tests + signed release build green (cert SHA-256 verified in CI). VERIFIED.
 - Tag v0.3.11 created on bd5d33f; GitHub Release published with emberdelve-v0.3.11.apk (38295092 B) and .aab (57191187 B) assets: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.11
 - Deferred: LFP-2b in-turn undo, LFP-5 settings toggle (PR #49 open questions).
 
-## 2026-07-25 — Perf: repaint storm + SFX tap latency (v0.3.12+17, Viktor)
+## 2026-07-25 — Perf: repaint storm + SFX tap latency (v0.3.12+17, Tapiwa)
 Owner report on released v0.3.11: laggy, glitchy audio, and "when I click a
 button too quick it lags a lot".
 
@@ -734,7 +734,7 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 
 ## 2026-08-10 — v0.4.0+24: the Ember Forge (Play Billing full unlock, spec R8)
 
-- Owner directives (Viktor app chat, 2026-08-10): production access is granted
+- Owner directives (Tapiwa app chat, 2026-08-10): production access is granted
   (per-app; Emberdelve needs no further tester gate), monetize without
   annoying players, everything production-ready. Market research (r/roguelites,
   r/AndroidGaming pricing threads, Slice & Dice / Dicey Dungeons comps) says:
@@ -771,7 +771,7 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   tests green (`flutter analyze` + `flutter test`, sandbox run 2026-08-10).
 - features.json: added M4-2 (passes:false — needs a real license-tester
   purchase + restore on a Play build for device evidence).
-- Play Console side still needed (owner/Viktor, tracked outside the repo):
+- Play Console side still needed (owner/Tapiwa, tracked outside the repo):
   create one-time product `ember_forge_unlock` ($4.99 base, launch intro
   $2.99 optional), add tester emails as license testers, upload the v0.4.0
   AAB to closed testing, verify purchase+restore on-device, then M4-2 flips.

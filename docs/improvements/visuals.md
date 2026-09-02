@@ -1,6 +1,6 @@
 # Improvement backlog — Visuals ("stop looking like a Flutter app")
 
-**Status:** proposal (Viktor, 2026-07-23), grounded in the v0.2.0 emulator evidence
+**Status:** proposal (Tapiwa, 2026-07-23), grounded in the v0.2.0 emulator evidence
 (`checkpoints/03-assets-and-release.md`) and the current UI code (`lib/ui/`). Read
 `docs/design-system.md` and PROJECT.md decision #7 (art direction: dark, high-contrast,
 cartoony pixel-painterly, 48–64 px sprites, portrait; **no AI-generated animated sprites**;

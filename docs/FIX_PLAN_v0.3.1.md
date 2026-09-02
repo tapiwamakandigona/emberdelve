@@ -1,6 +1,6 @@
 # Emberdelve v0.3.1 — Playtest Fix Plan
 
-Source: Viktor's hands-on playtest review of v0.3.0 (2026-07-23) — two full runs to
+Source: hands-on playtest review of v0.3.0 (2026-07-23) — two full runs to
 death, daily delve, rest/forge, events, an elite, all menus, plus APK/audio/code
 audit. This plan turns every finding into a concrete, verifiable fix. Executed
 solo (no subagents) on branch `fix/v0.3.1-playtest-fixes`, merged to main when
