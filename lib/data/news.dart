@@ -38,6 +38,8 @@ const List<NewsEntryDef> newsEntries = [
       'Hold any badge to hear it again. The how-to-play deck now says so.',
       'The one-time rating ask now waits until at least your second '
           'delve \u2014 a first run is a good run, but a thin opinion.',
+      'The lock beside HARD now says what it holds: the Ember Forge '
+          'opens HARD and Ascension. One line, no popup.',
       'Thank you for delving with us.',
     ],
   ),

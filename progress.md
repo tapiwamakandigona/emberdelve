@@ -5182,3 +5182,11 @@ the opening run itself (R1 brief input).
   aspirational). Tests: first run never asks via won-daily or Sparktender
   climb; same climb asks on run two; existing tests given runsPlayed.
   News line + v0.180.0 draft notes updated. No sim movement.
+- Backlog item 3 (R7/R5 stage D, cheapest gap) BUILT — The Named Lock:
+  lock-led micro line under the difficulty caption when the Forge is not
+  owned: "The Ember Forge opens HARD and Ascension." Key 'forge-hint';
+  copy only; gone once forgeUnlocked. Plates critiqued at 320×568@1.3×
+  (two lines under the glyph) and 412×915 (one line). Test
+  test/named_lock_test.dart; tool/named_lock_visual_test.dart. News line
+  + draft notes. Stage B remains device-blocked (cold-start stopwatch);
+  stage C had nothing R7 listed as lacking.

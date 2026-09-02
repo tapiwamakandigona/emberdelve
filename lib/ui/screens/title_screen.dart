@@ -288,24 +288,20 @@ class TitleScreen extends StatelessWidget {
                                   const SizedBox(height: Space.m),
                                   Row(
                                     key: const ValueKey('hearth-row'),
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       for (var i = 0; i < hearthCount; i++)
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 3,
-                                              ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 3,
+                                          ),
                                           child: Icon(
                                             Icons.local_fire_department,
                                             size: 16,
                                             color: i < m.hearthDaysLit
                                                 ? EmberColors.ember
                                                 : EmberColors.textDim
-                                                      .withValues(
-                                                        alpha: 0.35,
-                                                      ),
+                                                      .withValues(alpha: 0.35),
                                           ),
                                         ),
                                     ],
@@ -934,6 +930,33 @@ class _DifficultySelector extends StatelessWidget {
           hint.$3,
           style: EmberText.micro.copyWith(color: EmberColors.textDim),
         ),
+        // v0.180.0 The Named Lock (R5 stage D, directive 2026-09-02d item 3):
+        // the HARD segment carried a lock and nothing else — the only way to
+        // learn what it held was to tap it. One dim line names it. Copy, not
+        // a popup; gone the moment the Forge is open. No price here — the
+        // sheet quotes the store's live figure.
+        if (!canSelectDifficulty(c.meta, 'hard'))
+          Padding(
+            key: const ValueKey('forge-hint'),
+            padding: const EdgeInsets.only(top: 2),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 2, right: 3),
+                  child: Icon(Icons.lock, size: 10, color: EmberColors.textDim),
+                ),
+                Flexible(
+                  child: Text(
+                    'The Ember Forge opens HARD and Ascension.',
+                    textAlign: TextAlign.center,
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
