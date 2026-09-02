@@ -32,10 +32,13 @@ const List<String> hearthTales = [
   // v0.120.0 honesty edit: the roster grew (flintwright, v0.118.0). The
   // sequence contract is about ORDER, not frozen text — position 5 must
   // never state a count the picker disproves one screen away.
-  'Sixteen keep this fire. Kindler, warden, gambler, ascetic, peddler, '
-      'tinker, flintwright, runesmith, bearer, mender, shieldwright, '
-      'gilder, cutler, collier, stoker, hearthkeeper. Each answers '
-      'the delve.',
+  // v0.180.0 The Honest Count: the second circle (v0.179.0) made it
+  // twenty-two; the tale now says so in the picker's own words (two
+  // circles). Pinned to characters.length in test/honest_count_test.dart
+  // so a twenty-third chair trips this line, not a player.
+  'Twenty-two keep this fire, in two circles: the founding sixteen, '
+      'kindler to hearthkeeper, and the six who drew the second. Each '
+      'answers the delve.',
   'The relics you find were not lost. They were left — by delvers '
       'who wanted the next one through to go further.',
   'Every fire on the way down is borrowed from the hearth above. '

@@ -5321,3 +5321,7 @@ the opening run itself (R1 brief input).
   and recorded in v0.180.0.md; map is the only screen above 3.0/frame and
   the remainder there is the drift layer + four small halos by design.
 - The Wayside: ninth codex place for the event rooms (codex 128).
+- The Honest Count: tale 5 re-told for twenty-two (two circles); pinned
+  to the live roster. Lesson: when a catalog grows, grep every data file
+  for the OLD number word — the v0.179 pass caught "Sixteen chairs" but
+  not "Sixteen keep this fire".
