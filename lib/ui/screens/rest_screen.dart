@@ -187,10 +187,12 @@ class _RestScreenState extends State<RestScreen> {
             padding: const EdgeInsets.symmetric(horizontal: Space.l),
             child: SizedBox(
               width: double.infinity,
+              // v0.180.0 The Single Word: the count ('Two marks a delve.'
+              // / 'One mark left.') is stated once, in the line above; the
+              // button only acts, and so stays one line on every phone
+              // (the old '— two per delve' suffix wrapped at 360 and 320).
               child: EmberButton(
-                tempersUsed == 0
-                    ? 'Temper a face — two per delve'
-                    : 'Temper a face — one mark left',
+                'Temper a face',
                 key: const ValueKey('rest-temper'),
                 icon: Icons.auto_awesome,
                 onTap: () => showTemperSheet(context, c),

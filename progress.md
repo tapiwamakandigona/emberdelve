@@ -5327,3 +5327,4 @@ the opening run itself (R1 brief input).
   not "Sixteen keep this fire".
 - The Eighth Cycle: ten tales (80), each coupled to its data; Many-Handed
   tale re-told for twenty-two.
+- The Single Word: temper button one line; count stated once above it.
