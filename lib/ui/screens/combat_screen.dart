@@ -720,6 +720,10 @@ class _CombatScreenState extends State<CombatScreen> {
         icon: Icons.flash_off,
         onEnemy: true,
       );
+      // v0.180.0 The Spoken Badge: the break is the only moment a stagger
+      // is ever declared (no foe patterns one), so its first-contact words
+      // ride the break call-out — once, then never.
+      _maybeSpeakBadge(_declaredIntent);
     }
     final counter = _find(events, 'counter_struck');
     if (counter != null) {

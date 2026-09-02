@@ -19,6 +19,8 @@ import 'package:emberdelve/meta/cloud_merge.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/ui/widgets.dart';
+import 'package:emberdelve/sim/combos.dart';
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
@@ -198,5 +200,57 @@ void main() {
     expect(find.textContaining('CHARGING 34'), findsOneWidget);
     expect(c.meta.tipsSeen, contains(SpokenBadges.charge));
     await pumpFor(tester, 3000); // drain the call-out before teardown
+  });
+
+  testWidgets('breaking a charge speaks the stagger badge, once', (
+    tester,
+  ) async {
+    final c = GameController();
+    c.meta.tourSeenVersion = tourVersion;
+    c.tour = TourDirector(seenVersion: tourVersion);
+    c.meta.tipsSeen.addAll(ContextTips.all);
+    // The charge itself is not under test here — pre-hear it so only the
+    // stagger's first contact can speak.
+    c.meta.tipsSeen.add(SpokenBadges.charge);
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
+    c.startRun(character: 'kindler', seed: 1);
+    await pumpFor(tester, 400);
+    if (!await walkIntoFight(tester, c)) return; // no early fight; fine
+    await pumpFor(tester, 2400);
+
+    // A Vent Ram's wind-up: 34 incoming, break at 9.
+    final enemy = c.sim!.enemy!;
+    enemy['hp'] = 999;
+    enemy['max_hp'] = 999;
+    enemy['intent'] = charge();
+    enemy['charge_taken'] = 0;
+    enemy['block'] = 0; // only unabsorbed dice damage counts toward the break
+    c.sim!.player['hp'] = 99;
+    c.sim!.player['max_hp'] = 99;
+    await tester.tap(find.text('Roll'));
+    await pumpFor(tester, 900);
+    // Force a pool whose first two faces break the threshold (6 + 5 ≥ 9).
+    c.sim!.player['rolled'] = <int>[6, 5, 3];
+    c.sim!.player['rolled_max'] = List<bool>.filled(3, false);
+    c.sim!.player['combo_bonus'] = detectCombos(<int>[6, 5, 3]).bonus;
+    // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+    c.notifyListeners();
+    await pumpFor(tester, 300);
+
+    await tester.tap(find.byType(DieChip).at(0));
+    await pumpFor(tester, 200);
+    await tester.tap(find.text('Attack'));
+    await pumpFor(tester, 1600);
+
+    await tester.tap(find.byType(DieChip).at(1), warnIfMissed: false);
+    await pumpFor(tester, 200);
+    await tester.tap(find.text('Attack'));
+    await pumpFor(tester, 600);
+    expect(find.textContaining('CHARGE BROKEN'), findsOneWidget);
+    expect(find.textContaining('STAGGERED'), findsOneWidget);
+    expect(c.meta.tipsSeen, contains(SpokenBadges.stagger));
+    await pumpFor(tester, 3000); // drain call-outs before teardown
   });
 }

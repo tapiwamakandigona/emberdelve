@@ -5209,3 +5209,10 @@ the opening run itself (R1 brief input).
   + the_weathered target 6→8 per re-pricing doctrine (promise wording
   moves with the catalog); title tally "of 8". AUDIT RULE honoured late
   — should have read the honors' targets against the catalog FIRST.
+- Spoken Badge follow-up: stagger is never pattern-declared (grep
+  Intent('stagger') = 0), only flipped live by a break — wired
+  _maybeSpeakBadge after the CHARGE BROKEN! call-out; widget pin drives
+  Roll → die → Attack twice on a forced [6,5,3] pool (combo_bonus is a
+  per-die LIST, not an int — cost 15 min). Idle census after the UI
+  changes: title 3.0 / combat 1.0 / rest 1.0 paints per frame — no
+  regression [idle_census, 2026-09-02].
