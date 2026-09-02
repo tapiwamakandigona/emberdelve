@@ -146,6 +146,9 @@ const List<String> achievementsOrder = [
   'twenty_names',
   // --- the cold honors (v0.113.0): the doubled week's recognition ---------
   'first_winter', 'thrice_wintered',
+  // --- the long shelf (v0.180.0): the rungs the Codex (132) and the tales
+  // (80) outgrew — between 'forty'/'ten' and the Lettered/the Storied ------
+  'codex_hundred', 'tales_forty',
 ];
 
 const Map<String, AchievementDef> achievements = {
@@ -868,6 +871,24 @@ const Map<String, AchievementDef> achievements = {
   // v0.113.0 The Cold Honors — recognition for the rotation's hardest sit
   // (the doubled week, v0.111.0). Reads the same monotonic counter that
   // feeds the Frostvein vista; recognition only, grants nothing (§Ethics).
+  // v0.180.0 The Long Shelf. The Codex grew 40→132 and the tales 30→80
+  // since these ladders were written; the next rung after 'forty'/'ten'
+  // was the whole catalog (the Lettered / the Storied epithets). One
+  // honest middle rung each. Recognition only, grants nothing (§Ethics).
+  'codex_hundred': AchievementDef(
+    'codex_hundred',
+    'The Long Shelf',
+    'Unseal 100 Codex entries.',
+    stat: 'codex_unsealed',
+    target: 100,
+  ),
+  'tales_forty': AchievementDef(
+    'tales_forty',
+    'Fireside Fixture',
+    'Hear 40 hearth tales at rests.',
+    stat: 'tales_heard',
+    target: 40,
+  ),
   'first_winter': AchievementDef(
     'first_winter',
     'The First Winter',

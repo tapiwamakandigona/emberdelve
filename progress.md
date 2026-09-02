@@ -5378,3 +5378,5 @@ Verification, run right after the identity commit:
   <tapiwamakandigoner@gmail.com>, 4 tapiwamakandigona <tapiwamakandigoner@gmail.com>,
   nothing else (committer column adds 57 GitHub <noreply@github.com> web
   merges). `git status` clean. Nothing was in flight, so no patch to re-apply.
+- The Long Shelf: two middle honors (Codex 100, tales 40) between the old
+  rungs and the new whole-catalog epithets. Honors 93.
