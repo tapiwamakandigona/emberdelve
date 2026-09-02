@@ -5241,3 +5241,8 @@ the opening run itself (R1 brief input).
   ×3 sizes. Plates critiqued top/bottom. Audit harness lesson:
   c.endToTitle() while SummaryScreen is mounted throws a null-check in
   SummaryScreen.build (pre-existing; only reachable from tests).
+- The Quieter Roster: unaffordable locked delvers lose the disabled LOCKED
+  button (header already has lock+price); 'Unlock (N embers)' appears when
+  affordable (key 'unlock-<id>'). Locked card ~250→~185 px. Lock/price gets
+  left padding so THE FLINTWRIGHT doesn't touch it at 360. Test added;
+  11 CharacterScreen test files green.

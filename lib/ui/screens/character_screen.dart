@@ -917,16 +917,21 @@ class _CharacterScreenState extends State<CharacterScreen> {
                   ),
                 ),
                 if (!unlocked)
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.lock,
-                        size: 14,
-                        color: EmberColors.textDim,
-                      ),
-                      const SizedBox(width: 4),
-                      Text('${def.unlockEmbers}', style: EmberText.label),
-                    ],
+                  Padding(
+                    // v0.180.0: breathing room so a long name (THE
+                    // FLINTWRIGHT) never touches the lock at 360 wide.
+                    padding: const EdgeInsets.only(left: Space.s),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.lock,
+                          size: 14,
+                          color: EmberColors.textDim,
+                        ),
+                        const SizedBox(width: 4),
+                        Text('${def.unlockEmbers}', style: EmberText.label),
+                      ],
+                    ),
                   ),
               ],
             ),
@@ -938,35 +943,40 @@ class _CharacterScreenState extends State<CharacterScreen> {
               '${def.startDice.map((d) => dieDef(d).name).join(", ")}',
               style: EmberText.micro,
             ),
-            const SizedBox(height: Space.m),
-            SizedBox(
-              width: double.infinity,
-              child: unlocked
-                  ? EmberButton(
-                      'Delve as ${def.name}',
-                      primary: id == defaultCharacter,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        c.startRun(
-                          character: id,
-                          ascension: ascension,
-                          boons: true,
-                          shortRoad: c.meta.preferShortRoad,
-                        );
-                      },
-                    )
-                  : EmberButton(
-                      canAfford
-                          ? 'Unlock (${def.unlockEmbers} embers)'
-                          : 'Locked',
-                      onTap: canAfford
-                          ? () {
-                              c.unlock(id);
-                              setState(() {});
-                            }
-                          : null,
-                    ),
-            ),
+            // v0.180.0 The Quieter Roster: a locked delver the player cannot
+            // yet afford shows no button at all — the header already carries
+            // the lock and the price, and twenty-one disabled LOCKED buttons
+            // were a screen and a half of dead controls on a 360×800 phone.
+            // The button returns as 'Unlock (N embers)' the moment it can
+            // do something.
+            if (unlocked || canAfford) ...[
+              const SizedBox(height: Space.m),
+              SizedBox(
+                width: double.infinity,
+                child: unlocked
+                    ? EmberButton(
+                        'Delve as ${def.name}',
+                        primary: id == defaultCharacter,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          c.startRun(
+                            character: id,
+                            ascension: ascension,
+                            boons: true,
+                            shortRoad: c.meta.preferShortRoad,
+                          );
+                        },
+                      )
+                    : EmberButton(
+                        'Unlock (${def.unlockEmbers} embers)',
+                        key: ValueKey('unlock-$id'),
+                        onTap: () {
+                          c.unlock(id);
+                          setState(() {});
+                        },
+                      ),
+              ),
+            ],
           ],
         ),
       ),

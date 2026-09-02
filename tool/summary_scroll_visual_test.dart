@@ -58,4 +58,23 @@ void main() {
     await tester.drag(find.byType(Scrollable).first, const Offset(0, -1500)); await pumpFor(tester, 400);
     await snap(tester, key, 'summary_bottom');
   });
+
+  testWidgets('character plates', (tester) async {
+    const size = Size(360, 800);
+    tester.view.physicalSize = size * 2; tester.view.devicePixelRatio = 2; addTearDown(tester.view.reset);
+    final c = GameController();
+    c.meta..tourSeenVersion = tourVersion..tutorialSeen = true..tipsSeen.addAll(ContextTips.all)..lastSeenNewsVersion = currentAppVersion..runsPlayed = 3;
+    final key = GlobalKey();
+    await tester.pumpWidget(RepaintBoundary(key: key, child: MaterialApp(debugShowCheckedModeBanner: false, theme: buildEmberTheme(), home: MediaQuery(data: const MediaQueryData(size: size), child: CharacterScreen(c)))));
+    await tester.binding.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 400)));
+    await pumpFor(tester, 800);
+    await snap(tester, key, 'character_top');
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -700)); await pumpFor(tester, 400);
+    await snap(tester, key, 'character_2');
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -700)); await pumpFor(tester, 400);
+    await snap(tester, key, 'character_3');
+    final s = tester.state<ScrollableState>(find.byType(Scrollable).first);
+    // ignore: avoid_print
+    print('CHAR extent=${s.position.maxScrollExtent}');
+  });
 }
