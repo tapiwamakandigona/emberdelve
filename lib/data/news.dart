@@ -41,10 +41,15 @@ const List<NewsEntryDef> newsEntries = [
           'the weekly, and three new days join the daily. The Codex '
           'gains their words.',
       'Three new rooms, the Spoken Stones: a fair scale, a wall of '
-          'finished marks, and the first delver\'s lantern still lit. The '
-          'lock beside HARD now says what it holds; the one-time rating '
-          'ask waits until your second delve; the map drags lighter on '
-          'small phones. Thank you for delving with us.',
+          'finished marks, and the first delver\'s lantern still lit. A '
+          'thirteenth vista, Obsidian, waits for whoever puts down all '
+          'eight bosses, and each of those bosses now leaves its own honest '
+          'word on the death screen.',
+      'The guided first fight holds stray taps while it asks for a die. '
+          'The lock beside HARD says what it holds; the one-time rating '
+          'ask waits until your second delve; the map drags lighter and '
+          'ATTACK stays one word on the smallest phones. Thank you for '
+          'delving with us.',
     ],
   ),
   NewsEntryDef(
