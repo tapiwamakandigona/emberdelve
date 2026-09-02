@@ -67,8 +67,19 @@ class EmberButton extends StatefulWidget {
 
 class _EmberButtonState extends State<EmberButton> {
   bool _down = false;
+  static TextStyle _labelStyle(Color fg) => TextStyle(
+    fontFamily: 'Cinzel',
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+    color: fg,
+    letterSpacing: 0.6,
+  );
+
   @override
   Widget build(BuildContext context) {
+    final screenW = MediaQuery.sizeOf(context).width;
+    final narrow = screenW < 340;
+    final hPad = narrow ? Space.l : Space.xl;
     final enabled = widget.onTap != null;
     final tier = widget.danger
         ? _ButtonTier.danger
@@ -85,6 +96,21 @@ class _EmberButtonState extends State<EmberButton> {
             _ButtonTier.secondary => EmberColors.textPrimary,
             _ButtonTier.ghost => EmberColors.textDim,
           };
+    // The Kept Line (see below): would the label fit on one line beside its
+    // glyph if this button ran the full width of the screen (Space.l
+    // margins, as every full-width button is laid out)? MediaQuery rather
+    // than LayoutBuilder — buttons sit inside IntrinsicHeight rows.
+    var glyphFits = true;
+    if (widget.icon != null) {
+      final room = screenW - 2 * Space.l - 2 * hPad - 18 - Space.s;
+      final painter = TextPainter(
+        text: TextSpan(text: widget.label, style: _labelStyle(fg)),
+        textDirection: TextDirection.ltr,
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout();
+      glyphFits = painter.width <= room;
+      painter.dispose();
+    }
     void handleTap() {
       AudioService.instance?.playSfx('ui_tap', volume: 0.8);
       widget.onTap!();
@@ -125,16 +151,22 @@ class _EmberButtonState extends State<EmberButton> {
                 // (MediaQuery, not LayoutBuilder: buttons sit inside
                 // IntrinsicHeight rows that ask for intrinsic sizes.)
                 padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.sizeOf(context).width < 340
-                      ? Space.l
-                      : Space.xl,
+                  horizontal: narrow ? Space.l : Space.xl,
                   vertical: widget.dense ? Space.m : Space.l,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (widget.icon != null) ...[
+                    // v0.180.0 The Kept Line: a long label with a leading
+                    // glyph wrapped to two lines on small phones ('Rest —
+                    // heal 13 HP (10 to 23)' at 320; 'Kindle the Forge —
+                    // 4,99 US$' at 360 under Play's longer price formats).
+                    // The glyph is decoration; the words are the button.
+                    // When the label would not fit beside the glyph on a
+                    // full-width button, the glyph steps aside and the
+                    // words keep their one line. Short labels keep theirs.
+                    if (widget.icon != null && glyphFits) ...[
                       Icon(widget.icon, size: 18, color: fg),
                       const SizedBox(width: Space.s),
                     ],
@@ -146,13 +178,7 @@ class _EmberButtonState extends State<EmberButton> {
                         widget.label,
                         textAlign: TextAlign.center,
                         softWrap: true,
-                        style: TextStyle(
-                          fontFamily: 'Cinzel',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: fg,
-                          letterSpacing: 0.6,
-                        ),
+                        style: _labelStyle(fg),
                       ),
                     ),
                   ],

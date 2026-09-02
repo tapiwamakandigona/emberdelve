@@ -5328,3 +5328,6 @@ the opening run itself (R1 brief input).
 - The Eighth Cycle: ten tales (80), each coupled to its data; Many-Handed
   tale re-told for twenty-two.
 - The Single Word: temper button one line; count stated once above it.
+- The Kept Line: EmberButton drops its glyph only when the words would
+  otherwise wrap (measured, not a char count); Rest/Forge labels one line
+  at 320/360.
