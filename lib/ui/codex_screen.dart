@@ -33,7 +33,7 @@ class CodexScreen extends StatefulWidget {
 class _CodexScreenState extends State<CodexScreen> {
   GameController get c => widget.c;
 
-  // Codex Lanes: the book is 132 entries across eight sections — reaching
+  // Codex Lanes: the book is 134 entries across eight sections — reaching
   // THE DICE was a marathon of scrolling. One chip per section, pinned
   // under the app bar, walks the lazy list to that section's header
   // (widgets.dart walkToAnchor). Chips navigate; they never filter — the

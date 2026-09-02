@@ -5387,3 +5387,8 @@ Verification, run right after the identity commit:
   progress.md's own "-dev" entries stay as written (they are the log).
 - The Kept Line, cached: EmberButton's glyph-fit TextPainter layout now runs
   once per (label, padding, scale, room) instead of on every rebuild.
+- The Stall and the Book: codex place pages for the Ashmonger (shop) and the
+  Ledger — the two rooms every delver visits that had no words. Codex 134,
+  places 11, the Lettered 134. test/stall_and_book_test.dart pins names,
+  price, contiguous shelf, mechanics words (three dice/two relics/rations/
+  gold; Embers/delvers/Codex) and the Lettered = codexEntries.length.

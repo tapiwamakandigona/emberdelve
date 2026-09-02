@@ -19,10 +19,11 @@ void main() {
       isFalse,
       reason: 'only the delve is gifted',
     );
-    // Sits on the contiguous world shelf, after the vistas.
+    // Sits on the contiguous world shelf, after the vistas (the stall and
+    // the book follow it, v0.180.0).
     final places = codexEntries.where((e) => e.kind == 'place').toList();
-    expect(places.last.refId, 'the_wayside');
-    expect(placeNames.length, 9);
+    expect(places.map((e) => e.refId), contains('the_wayside'));
+    expect(placeNames.length, 11);
   });
 
   test('its words are true of the rooms that exist', () {

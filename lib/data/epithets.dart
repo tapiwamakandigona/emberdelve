@@ -200,7 +200,7 @@ const Map<String, EpithetDef> epithets = {
     'the Lettered',
     unlockLine: 'Unseal every page of the Codex.',
     stat: 'codex_unsealed',
-    target: 132,
+    target: 134,
   ),
   'the_proven': EpithetDef(
     'the_proven',

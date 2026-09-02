@@ -93,6 +93,8 @@ const Map<String, String> placeNames = {
   'the_provings': 'The Provings',
   'the_vistas': 'The Vistas',
   'the_wayside': 'The Wayside', // v0.180.0
+  'the_ashmonger': 'The Ashmonger', // v0.180.0
+  'the_ledger': 'The Ledger', // v0.180.0
 };
 
 /// Authoring order — the world first (a new delver's questions in the order
@@ -159,6 +161,24 @@ final List<CodexEntryDef> codexEntries = [
         'scale, a shrine, a lantern left lit. The map marks them with a '
         'question because it does not know either \u2014 only that whoever '
         'stands there gets a choice, and keeps what it costs.',
+  ),
+  // v0.180.0 The Stall and the Book: the two rooms every delver visits
+  // that had no page — the shop on the way down, the Ledger at the top.
+  _place(
+    'the_ashmonger',
+    'Nobody has seen the Ashmonger\'s face. The stall is set before you '
+        'arrive and folded before you leave: three dice, two relics, a '
+        'plate of rations, prices in gold \u2014 the one coin the delve does '
+        'not care about. Gold does not climb the stairs. Spend it, or '
+        'leave it for the floor.',
+  ),
+  _place(
+    'the_ledger',
+    'The Hearth\'s book of everything carried back up. Embers are counted '
+        'here and spent here \u2014 on chairs for new delvers, colors for '
+        'the fire, cuts for the dice, pages for this Codex. Every delve is '
+        'entered, won or lost. The Ledger never rounds, never forgets, and '
+        'never charges for reading.',
   ),
 
   // the company (v0.110.0 The Named Company) — one entry per delver, in
