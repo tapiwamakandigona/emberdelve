@@ -5286,3 +5286,8 @@ the opening run itself (R1 brief input).
   (see docs/releases/v0.180.0.md). LESSON: `dart format test/` reformats
   untouched files — format ONLY the files you edited (reverted 27 files by
   name; never `git checkout -- .`). [reanchor, 2026-09-02]
+- Spoken Stones plated at 320/360 (tool/spoken_stones_visual_test.dart):
+  prose scrolled 19–43 px at 320×568 (pre-existing: rivals_ledger 42). The
+  Shorter Scroll: event glyph 96→56 and gaps xl/l→m/m when height < 640;
+  all six longest rooms now 0 scroll at 320; 360 unchanged. Test with real
+  fonts (Ahem gave 228 px — never assert extents under Ahem).

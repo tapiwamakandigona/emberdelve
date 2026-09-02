@@ -28,6 +28,11 @@ class EventScreen extends StatelessWidget {
     final eventId = c.state?['event'] as String?;
     if (eventId == null) return const SizedBox.shrink();
     final def = eventDef(eventId);
+    // v0.180.0 The Shorter Scroll: on short screens (320×568 class) the
+    // 96 px scroll glyph pushed three-line prose under the fold (43 px of
+    // scroll for the longest rooms). A smaller glyph and a tighter top gap
+    // let every room's prose sit whole above the pinned choices.
+    final short = MediaQuery.sizeOf(context).height < 640;
     return Column(
       children: [
         _TopBar(c),
@@ -37,7 +42,7 @@ class EventScreen extends StatelessWidget {
           child: ContentClamp(
             child: Column(
               children: [
-                const SizedBox(height: Space.xl),
+                SizedBox(height: short ? Space.m : Space.xl),
                 // Long event prose scrolls on short screens; the choice buttons stay
                 // pinned in the thumb zone below.
                 Expanded(
@@ -47,11 +52,11 @@ class EventScreen extends StatelessWidget {
                       children: [
                         Image.asset(
                           Art.eventIcon(def.id),
-                          width: 96,
-                          height: 96,
+                          width: short ? 56 : 96,
+                          height: short ? 56 : 96,
                           filterQuality: FilterQuality.medium,
                         ),
-                        const SizedBox(height: Space.l),
+                        SizedBox(height: short ? Space.m : Space.l),
                         Text(
                           def.name,
                           style: EmberText.h1,
