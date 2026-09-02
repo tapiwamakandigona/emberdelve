@@ -30,6 +30,7 @@ Instrument of record for the Seven Hearths falsifiable prediction
 | Pulled | Window | New devices | D1 | D7 | D30 | MAU | Listing conv. | Crash/ANR | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | 2026-09-01 | baseline (pre-v0.178.0 on Play; prod build 0.59.0) | — | — | 7-day retention = 1 device | — | 28 | — (38 lifetime installs, 2 ratings) | 0 / 0 (28d) | Baseline from owner-relayed Console facts [console, 2026-08]. Seven Hearths not yet in any Play build. |
+| 2026-09-02 | last 28 d to 2026-09-02 (v0.179.0 live ~05:20Z same day) | 64 device acquisitions; 28 device first opens | n/a | n/a | n/a | 34 (+750% vs prior 28 d) | conversion page not reachable from this session (bounces to app-list) | – / – (dashboard shows no data yet) | Owner-side Console pull [play-console dashboard, 2026-09-02]. Installed-audience daily line ≈24→40 over the window (Statistics, 5 countries). 28-day average rating 5.00★; lifetime revenue USD 4.25 (1 order). Retention cohorts (D1/D7/D30) still need the Statistics report configured — next pull. |
 | ~2026-09-29 | Sep 2026 | | | | | | | | Prediction check. NOTE: Play prod is still 0.59.0 — if v0.178.0 has not shipped to Play by the pull date, the prediction window has not actually started for Play users; record and re-anchor. |
 
 ## Reading rules
