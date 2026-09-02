@@ -40,10 +40,16 @@ class _TutorialOverlay extends StatelessWidget {
       // head is the PLAN, flame chips on the body are STATUS (tester theme:
       // burn beside intent read as "it will burn me for 3").
       // v0.180.0 The Spoken Badge: the long-press finally has a sentence.
+      // v0.180.0 The Read Page: the card predated v0.47.0's charge and
+      // counter intents (three deep foes carry them) and said "always
+      // attack, block, or both" — now it names the exceptions and points
+      // at the badge that explains them the first time.
       'The badge above the enemy\'s head is its next move — attack damage, '
-          'shield block, or both. It always resolves exactly as shown. Flame '
-          'chips on its body are burn it already suffers, never a threat. '
-          'Hold any badge to hear it in words.',
+          'shield block, or both — and it resolves exactly as shown. A few '
+          'deep foes wind up a charge or set a counter instead; the badge '
+          'says so in words the first time you meet one. Flame chips on its '
+          'body are burn it already suffers, never a threat. Hold any badge '
+          'to hear it again.',
     ),
     (
       Icons.casino,
@@ -71,61 +77,71 @@ class _TutorialOverlay extends StatelessWidget {
     final (icon, title, body) = _cards[step];
     // Dim everything; the card sits near what it explains (intent up top,
     // dice tray at the bottom, combos mid-stage).
-    final align = centered
-        ? Alignment.center
+    //
+    // v0.180.0 The Read Page: the lean used to be fixed padding (120 px
+    // above card one, 210 px below card two). On a 320×568 phone card one
+    // overflowed by 241 px; on 360×640 by 73; card two on 360×800 by 123 —
+    // the card was simply taller than the room left for it. Flex spacers
+    // keep the lean where there is room and give it all up when there is
+    // not, so the card only ever competes with the screen, never with a
+    // number.
+    final (above, below) = centered
+        ? (1, 1)
         : switch (step) {
-            0 => Alignment.topCenter,
-            1 => Alignment.bottomCenter,
-            _ => Alignment.center,
+            0 => (1, 3),
+            1 => (3, 1),
+            _ => (1, 1),
           };
     return Positioned.fill(
       child: GestureDetector(
         onTap: onNext, // tapping anywhere advances — never traps the player
         child: Container(
           color: Colors.black.withValues(alpha: 0.62),
-          padding: EdgeInsets.only(
-            left: Space.l,
-            right: Space.l,
-            top: !centered && step == 0 ? 120 : Space.l,
-            bottom: !centered && step == 1 ? 210 : Space.l,
-          ),
-          child: Align(
-            alignment: align,
-            child: Panel(
-              padding: const EdgeInsets.all(Space.l),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, color: EmberColors.ember, size: 28),
-                  const SizedBox(height: Space.s),
-                  Text(title, style: EmberText.h2, textAlign: TextAlign.center),
-                  const SizedBox(height: Space.s),
-                  Text(
-                    body,
-                    style: EmberText.bodyDim,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: Space.l),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      EmberButton('Skip', ghost: true, onTap: onSkip),
-                      const SizedBox(width: Space.m),
-                      EmberButton(
-                        step >= _cards.length - 1 ? 'Got it' : 'Next',
-                        primary: true,
-                        onTap: onNext,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Space.s),
-                  Text(
-                    '${step + 1} / ${_cards.length}',
-                    style: EmberText.micro,
-                  ),
-                ],
+          padding: const EdgeInsets.all(Space.l),
+          child: Column(
+            children: [
+              Spacer(flex: above),
+              Panel(
+                padding: const EdgeInsets.all(Space.l),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: EmberColors.ember, size: 28),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      title,
+                      style: EmberText.h2,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      body,
+                      style: EmberText.bodyDim,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: Space.l),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        EmberButton('Skip', ghost: true, onTap: onSkip),
+                        const SizedBox(width: Space.m),
+                        EmberButton(
+                          step >= _cards.length - 1 ? 'Got it' : 'Next',
+                          primary: true,
+                          onTap: onNext,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: Space.s),
+                    Text(
+                      '${step + 1} / ${_cards.length}',
+                      style: EmberText.micro,
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Spacer(flex: below),
+            ],
           ),
         ),
       ),
@@ -195,7 +211,7 @@ class _ContextTip extends StatelessWidget {
       'THE DARK FIGHTS FAIR',
       'That move was announced. The badge above the enemy\'s head is always '
           'its next move — attack damage, shield block, or both — and it '
-          'always resolves exactly as shown.',
+          'resolves exactly as shown. Hold any badge to hear it in words.',
       Alignment.topCenter,
     ),
     ContextTips.combosPay: (

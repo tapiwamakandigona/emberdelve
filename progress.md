@@ -5337,3 +5337,5 @@ the opening run itself (R1 brief input).
   entries, eight lanes).
 - The Open Book: a ? on the title opens the how-to-play deck before the
   first delve; footer-link draft rejected on plates (wrapped).
+- The Read Page: card two names charge/counter; deck lean is flex, not
+  fixed padding (overflowed at 320/360 with real fonts).

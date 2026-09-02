@@ -9,6 +9,7 @@
 // saved state (tutorialSeen stays false, tour stays unseen).
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/data/enemies.dart';
 import 'package:emberdelve/data/news.dart';
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/screens.dart';
@@ -82,5 +83,24 @@ void main() {
     await tester.tap(find.text('Skip'));
     await pumpFor(tester, 600);
     expect(find.byType(PrimerScreen), findsNothing);
+  });
+
+  testWidgets('card two names the charge and counter the data carries', (
+    tester,
+  ) async {
+    // The Read Page: the primer must not promise "always attack, block or
+    // both" while enemies.dart declares charge and counter intents.
+    final kinds = {
+      for (final e in enemies.values)
+        for (final i in e.pattern) i.kind,
+    };
+    expect(kinds, containsAll(['charge', 'counter']));
+    await pumpTitle(tester);
+    await open(tester);
+    await tester.tap(find.text('Next'));
+    await pumpFor(tester, 200);
+    expect(find.text('THE DARK FIGHTS FAIR'), findsOneWidget);
+    expect(find.textContaining('wind up a charge'), findsOneWidget);
+    expect(find.textContaining('set a counter'), findsOneWidget);
   });
 }
