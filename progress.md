@@ -5246,3 +5246,9 @@ the opening run itself (R1 brief input).
   affordable (key 'unlock-<id>'). Locked card ~250→~185 px. Lock/price gets
   left padding so THE FLINTWRIGHT doesn't touch it at 360. Test added;
   11 CharacterScreen test files green.
+- Mid-run scroll audit (real fonts; 360×800 | 412×915): map 209|94 (layers,
+  by design), rest 1121|921 with a forced 10-die pool (forge list is
+  content; Move on/Temper above the fold), keystone 0|0, reward 0|0,
+  shop 308|193 (wares). Slip found: rest title left-flush in the forge-list
+  (ListView) branch — The Centered Hollow: textAlign center; test added.
+  Event node not reached on seed 11 — event screen unaudited this round.

@@ -72,12 +72,19 @@ class _RestScreenState extends State<RestScreen> {
             // Tablet clamp (v0.26.0): content column caps at kMaxContentWidth.
             Expanded(
               child: ContentClamp(
-                child: _hollowBody(context, c, run, forgeable, dice0, cramped,
-                    canTemper: canTemper,
-                    fullHp: fullHp,
-                    hp: hp,
-                    heal: heal,
-                    tempersUsed: tempersUsed),
+                child: _hollowBody(
+                  context,
+                  c,
+                  run,
+                  forgeable,
+                  dice0,
+                  cramped,
+                  canTemper: canTemper,
+                  fullHp: fullHp,
+                  hp: hp,
+                  heal: heal,
+                  tempersUsed: tempersUsed,
+                ),
               ),
             ),
           ],
@@ -111,7 +118,15 @@ class _RestScreenState extends State<RestScreen> {
   }) {
     final prose = <Widget>[
       const SizedBox(height: Space.xl),
-      const Text('A warm hollow', style: EmberText.h1),
+      // Centered explicitly: in the forge-list branch below the ListView
+      // stretches its children, and an un-aligned title sat flush against
+      // the left screen edge with its first glyph shaved (scroll audit
+      // plate, 360×800, v0.180.0 The Centered Hollow).
+      const Text(
+        'A warm hollow',
+        style: EmberText.h1,
+        textAlign: TextAlign.center,
+      ),
       const SizedBox(height: Space.xs),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: Space.l),
