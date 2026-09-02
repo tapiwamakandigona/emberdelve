@@ -5392,3 +5392,9 @@ Verification, run right after the identity commit:
   places 11, the Lettered 134. test/stall_and_book_test.dart pins names,
   price, contiguous shelf, mechanics words (three dice/two relics/rations/
   gold; Embers/delvers/Codex) and the Lettered = codexEntries.length.
+- The Paired Copies: summary copy-as-text offers (story + daily/weekly/seed)
+  share one row under a COPY AS TEXT caption — short word + glyph, full
+  sentence kept as the semantics label, same keys, same text copied. Saves
+  one ghost button's height on every summary. Real-font pins at 320/1.3×.
+  Plate lesson: MaterialIcons must be loaded in plate tools too, or glyphs
+  render as boxes (FLUTTER_ROOT/bin/cache/artifacts/material_fonts).

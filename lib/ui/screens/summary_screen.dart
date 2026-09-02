@@ -1025,107 +1025,17 @@ class SummaryScreen extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: Space.m),
-                                    // v0.51.0: the story above, as plain text that
-                                    // pastes anywhere — same pattern as the daily copy
-                                    // below. Player-initiated, never rewarded (§Ethics).
-                                    if (c.delveStoryText != null) ...[
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: EmberButton(
-                                          'Copy delve story',
-                                          key: const ValueKey(
-                                            'copy-delve-story',
-                                          ),
-                                          ghost: true,
-                                          icon: Icons.copy,
-                                          onTap: () async {
-                                            final text = c.delveStoryText;
-                                            if (text == null) return;
-                                            await Clipboard.setData(
-                                              ClipboardData(text: text),
-                                            );
-                                            c.announce('Story copied');
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(height: Space.m),
-                                    ],
-                                    // Daily result share (v0.3.4): plain-text copy, pastes anywhere.
-                                    // Only offered when this run WAS the daily — normal runs stay quiet.
-                                    if (c.dailyResultShareText != null) ...[
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: EmberButton(
-                                          'Copy daily result',
-                                          key: const ValueKey(
-                                            'copy-daily-result',
-                                          ),
-                                          ghost: true,
-                                          icon: Icons.copy,
-                                          onTap: () async {
-                                            final text = c.dailyResultShareText;
-                                            if (text == null) return;
-                                            await Clipboard.setData(
-                                              ClipboardData(text: text),
-                                            );
-                                            c.announce('Result copied');
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(height: Space.m),
-                                    ],
-                                    // Weekly result share (P3): same plain-text copy, only when this run
-                                    // WAS the weekly. States the seed + modifier fact and stops.
-                                    if (c.weeklyResultShareText != null) ...[
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: EmberButton(
-                                          'Copy weekly result',
-                                          key: const ValueKey(
-                                            'copy-weekly-result',
-                                          ),
-                                          ghost: true,
-                                          icon: Icons.copy,
-                                          onTap: () async {
-                                            final text =
-                                                c.weeklyResultShareText;
-                                            if (text == null) return;
-                                            await Clipboard.setData(
-                                              ClipboardData(text: text),
-                                            );
-                                            c.announce('Result copied');
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(height: Space.m),
-                                    ],
-                                    // v0.8.0: seed challenge for every OTHER finished
-                                    // run — the daily/weekly keep their own text above.
-                                    // A seed plus a claim is a complete invitation
-                                    // (Balatro lesson); the copy states facts and stops.
-                                    if (c.seedChallengeShareText != null) ...[
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: EmberButton(
-                                          'Copy seed challenge',
-                                          key: const ValueKey(
-                                            'copy-seed-challenge',
-                                          ),
-                                          ghost: true,
-                                          icon: Icons.copy,
-                                          onTap: () async {
-                                            final text =
-                                                c.seedChallengeShareText;
-                                            if (text == null) return;
-                                            await Clipboard.setData(
-                                              ClipboardData(text: text),
-                                            );
-                                            c.announce('Challenge copied');
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(height: Space.m),
-                                    ],
+                                    // v0.51.0 / v0.3.4 / P3 / v0.8.0: the copy-as-text
+                                    // offers — the story above, plus exactly one of
+                                    // daily result / weekly result / seed challenge.
+                                    // Player-initiated, never rewarded (§Ethics).
+                                    // v0.180.0 The Paired Copies: two ghost buttons
+                                    // stacked full-width cost a phone-height of
+                                    // scrolling for two rarely-tapped actions; they
+                                    // now share one row (short word + glyph; the
+                                    // full sentence stays the TalkBack label). A
+                                    // lone offer keeps its full-width, full-label form.
+                                    ..._copyRows(context, c),
                                     // P5 (v0.5.0): straight to the board this run just landed on. Only
                                     // for a finished Daily/Weekly AND only while Play Games is connected
                                     // — normal runs and unconnected players see nothing.
@@ -1524,4 +1434,104 @@ class _SettlingCount extends StatelessWidget {
       builder: (context, n, _) => Text('$n', style: style),
     );
   }
+}
+
+/// One copy-as-text offer on the summary (see The Paired Copies).
+class _CopyOffer {
+  final String label; // full sentence — lone button and semantics
+  final String short; // one word beside the glyph when paired
+  final String key;
+  final String Function() text;
+  final String announce;
+  const _CopyOffer(this.label, this.short, this.key, this.text, this.announce);
+}
+
+List<Widget> _copyRows(BuildContext context, GameController c) {
+  final offers = <_CopyOffer>[
+    if (c.delveStoryText != null)
+      _CopyOffer(
+        'Copy delve story',
+        'Story',
+        'copy-delve-story',
+        () => c.delveStoryText ?? '',
+        'Story copied',
+      ),
+    // Only offered when this run WAS the daily — normal runs stay quiet.
+    if (c.dailyResultShareText != null)
+      _CopyOffer(
+        'Copy daily result',
+        'Daily',
+        'copy-daily-result',
+        () => c.dailyResultShareText ?? '',
+        'Result copied',
+      ),
+    // Same plain-text copy, only when this run WAS the weekly.
+    if (c.weeklyResultShareText != null)
+      _CopyOffer(
+        'Copy weekly result',
+        'Weekly',
+        'copy-weekly-result',
+        () => c.weeklyResultShareText ?? '',
+        'Result copied',
+      ),
+    // Seed challenge for every OTHER finished run — a seed plus a claim is
+    // a complete invitation (Balatro lesson); the copy states facts, stops.
+    if (c.seedChallengeShareText != null)
+      _CopyOffer(
+        'Copy seed challenge',
+        'Seed',
+        'copy-seed-challenge',
+        () => c.seedChallengeShareText ?? '',
+        'Challenge copied',
+      ),
+  ];
+  Widget button(_CopyOffer o, {required bool paired}) => EmberButton(
+    paired ? o.short : o.label,
+    key: ValueKey(o.key),
+    semanticLabel: o.label,
+    ghost: true,
+    icon: Icons.copy,
+    onTap: () async {
+      final text = o.text();
+      if (text.isEmpty) return;
+      await Clipboard.setData(ClipboardData(text: text));
+      c.announce(o.announce);
+    },
+  );
+  final rows = <Widget>[];
+  // Paired buttons carry one word each; the caption says what the pair does.
+  if (offers.length >= 2) {
+    rows.add(
+      const Text(
+        'COPY AS TEXT',
+        key: ValueKey('copy-caption'),
+        style: EmberText.micro,
+        textAlign: TextAlign.center,
+      ),
+    );
+    rows.add(const SizedBox(height: Space.s));
+  }
+  for (var i = 0; i < offers.length; i += 2) {
+    final pair = offers.skip(i).take(2).toList();
+    if (pair.length == 1) {
+      rows.add(
+        SizedBox(
+          width: double.infinity,
+          child: button(pair.single, paired: false),
+        ),
+      );
+    } else {
+      rows.add(
+        Row(
+          children: [
+            Expanded(child: button(pair[0], paired: true)),
+            const SizedBox(width: Space.m),
+            Expanded(child: button(pair[1], paired: true)),
+          ],
+        ),
+      );
+    }
+    rows.add(const SizedBox(height: Space.m));
+  }
+  return rows;
 }
