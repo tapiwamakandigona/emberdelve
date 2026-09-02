@@ -53,6 +53,7 @@ Future<void> capture(
   String name, {
   String? lane,
   String? thenLane,
+  String? scrollTo,
 }) async {
   tester.view.physicalSize = logical * 2;
   tester.view.devicePixelRatio = 2;
@@ -83,6 +84,15 @@ Future<void> capture(
 
   if (lane != null) await walk(lane);
   if (thenLane != null) await walk(thenLane);
+  if (scrollTo != null) {
+    final target = find.byKey(ValueKey('codex-$scrollTo'));
+    for (var i = 0; i < 40 && target.evaluate().isEmpty; i++) {
+      await tester.drag(find.byType(CodexScreen), const Offset(0, -200));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    await tester.ensureVisible(target);
+    await tester.pump(const Duration(milliseconds: 400));
+  }
   final boundary =
       key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
   final image = await tester.binding.runAsync(
@@ -99,9 +109,7 @@ Future<void> capture(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('plates: codex lanes at phone and narrow widths', (
-    tester,
-  ) async {
+  testWidgets('plates: codex lanes at phone and narrow widths', (tester) async {
     await loadRealFonts();
     await capture(tester, richMeta(), const Size(390, 844), 'top_phone');
     await capture(
@@ -118,6 +126,17 @@ void main() {
       'back_world_phone',
       lane: 'dice',
       thenLane: 'world',
+    );
+    // v0.180.0 The Wayside: the world shelf's ninth card, unsealed, at
+    // phone width — scrolled to the bottom of the world shelf.
+    final wayside = richMeta();
+    wayside.meta.ownedCodex.add('place:the_wayside');
+    await capture(
+      tester,
+      wayside,
+      const Size(390, 844),
+      'wayside_phone',
+      scrollTo: 'place:the_wayside',
     );
     await capture(tester, richMeta(), const Size(320, 568), 'top_narrow');
     await capture(

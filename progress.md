@@ -5320,3 +5320,4 @@ the opening run itself (R1 brief input).
   repeating controller that did not). Idle census across all screens run
   and recorded in v0.180.0.md; map is the only screen above 3.0/frame and
   the remainder there is the drift layer + four small halos by design.
+- The Wayside: ninth codex place for the event rooms (codex 128).

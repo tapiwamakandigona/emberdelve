@@ -88,6 +88,7 @@ const Map<String, String> placeNames = {
   'the_forge': 'The Forge',
   'the_provings': 'The Provings',
   'the_vistas': 'The Vistas',
+  'the_wayside': 'The Wayside', // v0.180.0
 };
 
 /// Authoring order — the world first (a new delver's questions in the order
@@ -144,6 +145,16 @@ final List<CodexEntryDef> codexEntries = [
     'What the Hearth\'s one window looks out on. The view does not change '
         'because the world changed — it changes because the delver did. '
         'Earn a vista and the window admits it.',
+  ),
+  // v0.180.0 The Wayside: the map's question-mark rooms had no words of
+  // their own — the one node kind a new delver cannot guess from its icon.
+  // Fiction only: what a given room offers stays on its own screen, free.
+  _place(
+    'the_wayside',
+    'Not every door in the delve has teeth behind it. Some open on a '
+        'scale, a shrine, a lantern left lit. The map marks them with a '
+        'question because it does not know either \u2014 only that whoever '
+        'stands there gets a choice, and keeps what it costs.',
   ),
 
   // the company (v0.110.0 The Named Company) — one entry per delver, in
