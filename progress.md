@@ -5134,3 +5134,9 @@ the opening run itself (R1 brief input).
   unchanged by any build. Measurement guidance: listing pastes first,
   build two weeks later, or the two effects can't be told apart at
   n≈40. Owner's call; no code.
+- Research: docs/research/play-compliance-2026-09.md — v0.179.0
+  artefacts checked against Play's 2026–27 deadlines from the primary
+  pages: targetSdk 36 (Aug-31-2026 bar), Billing Library 8.0.0 in the
+  manifest meta-data (Aug-31-2026 bar; Billing 9 due Aug-31-2027),
+  16 KB page alignment on every arm64 .so + zipalign -P 16 verified
+  (Feb-1-2027 hard stop). All clear; no action; not a reason to cut.
