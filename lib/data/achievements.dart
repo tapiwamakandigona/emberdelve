@@ -344,7 +344,7 @@ const Map<String, AchievementDef> achievements = {
     'Unlock every delver.',
     stat: 'chars_unlocked',
     // Promise honors move with the live roster (promise doctrine).
-    // v0.184.0: the glover, sixth chair of the second circle.
+    // v0.179.0: the glover, sixth chair of the second circle.
     target: 22,
   ),
   'five_ways_down': AchievementDef(
@@ -741,7 +741,7 @@ const Map<String, AchievementDef> achievements = {
     'The Crowned Company',
     'Win on hard with every delver.',
     stat: 'delvers_crowned',
-    // Promise honors move with the live roster. v0.184.0: the glover.
+    // Promise honors move with the live roster. v0.179.0: the glover.
     target: 22,
   ),
   // v0.125.0 The Tempered Hand: the Face Forge's lifetime arc.

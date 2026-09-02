@@ -203,7 +203,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
               children: [
                 _nextUnlockBar(m),
                 const SizedBox(height: Space.l),
-                // v0.182.0 The Two Circles: at twenty chairs the single run
+                // v0.179.0 The Two Circles: at twenty chairs the single run
                 // of cards lost its shape. The roster fiction already draws
                 // the line — the first circle closed at sixteen, the second
                 // is open — so the list sections itself along it.

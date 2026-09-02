@@ -92,7 +92,7 @@ void main() {
     expect(
       characters.length,
       22,
-    ); // v0.184.0: the glover joined the second circle
+    ); // v0.179.0: the glover joined the second circle
     // Unlock ladder ascends through the new tail.
     final ladder = [
       for (final id in charactersOrder) characters[id]!.unlockEmbers,

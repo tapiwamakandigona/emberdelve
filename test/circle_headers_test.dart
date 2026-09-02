@@ -1,4 +1,4 @@
-// test/circle_headers_test.dart — v0.182.0 The Two Circles: the character
+// test/circle_headers_test.dart — v0.179.0 The Two Circles: the character
 // list sections itself along the roster's own fiction (first circle closed
 // at sixteen chairs, second circle open, append-LAST). Pins:
 //   1. Both headers render, in order, with the first sixteen cards under

@@ -207,6 +207,6 @@ const Map<String, EpithetDef> epithets = {
     'the Proven',
     unlockLine: 'Clear every proving.',
     stat: 'provings_cleared',
-    target: 30, // v0.184.0: the glover's proving
+    target: 30, // v0.179.0: the glover's proving
   ),
 };

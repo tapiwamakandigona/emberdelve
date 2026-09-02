@@ -229,7 +229,7 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.34,
     swingAngle: 1.66,
   ),
-  // Kettle-keeper (v0.181.0): a long ladle — the brewster's reach into
+  // Kettle-keeper (v0.179.0): a long ladle — the brewster's reach into
   // the pot, swung like a mace when the delve insists. Copper accent to
   // match the kettle-copper sheet.
   'brewster': WeaponDef(
@@ -241,7 +241,7 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.28,
     swingAngle: 1.58,
   ),
-  // Lamp-tender (v0.182.0): the lamp pole — a hooked pole with the lit
+  // Lamp-tender (v0.179.0): the lamp pole — a hooked pole with the lit
   // lantern hung at its end. The amber accent IS the flame against the
   // night-violet sheet.
   'lamplighter': WeaponDef(
@@ -253,7 +253,7 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.32,
     swingAngle: 1.60,
   ),
-  // Iron-shoer (v0.183.0): the shoeing hammer — short, dense, cross-
+  // Iron-shoer (v0.179.0): the shoeing hammer — short, dense, cross-
   // peined; a tool for exact blows, not grand ones. Forge-glow accent.
   'farrier': WeaponDef(
     'shoeing_hammer',
@@ -264,7 +264,7 @@ const Map<String, WeaponDef> _weapons = {
     raiseAngle: -1.26,
     swingAngle: 1.54,
   ),
-  // Split-handed (v0.184.0): the glover's needle — the slightest
+  // Split-handed (v0.179.0): the glover's needle — the slightest
   // weapon at any fire, a long saddler's needle trailing waxed thread.
   // Pale kid-leather accent.
   'glover': WeaponDef(
@@ -845,7 +845,7 @@ class _WeaponPainter extends CustomPainter {
     _p.style = PaintingStyle.fill;
   }
 
-  /// The brewster's long ladle (v0.181.0): a slim haft ending in a
+  /// The brewster's long ladle (v0.179.0): a slim haft ending in a
   /// hemispheric bowl, tipped forward — a kitchen tool doing dungeon
   /// work. The copper accent glints on the bowl's lip.
   void _longLadle(Canvas canvas, double reach) {
@@ -905,7 +905,7 @@ class _WeaponPainter extends CustomPainter {
     _p.style = PaintingStyle.fill;
   }
 
-  /// The lamplighter's pole (v0.182.0): a long slim pole with a small
+  /// The lamplighter's pole (v0.179.0): a long slim pole with a small
   /// forward hook, and the lantern hung from it — a square glass box
   /// with the amber accent burning inside. The tool of a trade that
   /// walks at dusk.
@@ -972,7 +972,7 @@ class _WeaponPainter extends CustomPainter {
     _p.style = PaintingStyle.fill;
   }
 
-  /// The farrier's shoeing hammer (v0.183.0): a short thick haft and a
+  /// The farrier's shoeing hammer (v0.179.0): a short thick haft and a
   /// compact head — flat face forward, cross-pein behind. Smaller than
   /// the warden's maul on purpose: this iron works in exact blows. The
   /// forge-glow accent lies along the striking face.
@@ -1030,7 +1030,7 @@ class _WeaponPainter extends CustomPainter {
     _p.style = PaintingStyle.fill;
   }
 
-  /// The glover's needle (v0.184.0): the slightest weapon at any fire —
+  /// The glover's needle (v0.179.0): the slightest weapon at any fire —
   /// a long saddler's needle with a flattened grip-end eye and a short
   /// curl of waxed thread. Split-hands doctrine in one silhouette: it
   /// only cuts where it is pointed, and it mends the same way.

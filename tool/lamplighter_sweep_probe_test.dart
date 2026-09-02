@@ -1,4 +1,4 @@
-// tool/lamplighter_sweep_probe_test.dart — v0.182.0 balance probe: Hedger bot
+// tool/lamplighter_sweep_probe_test.dart — v0.179.0 balance probe: Hedger bot
 // winrate x difficulty over 400 seeds, vs Kindler baseline. Not part of CI.
 import 'package:emberdelve/sim/autoplay.dart';
 import 'package:flutter_test/flutter_test.dart';

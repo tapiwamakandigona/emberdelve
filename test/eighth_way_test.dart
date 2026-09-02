@@ -24,7 +24,7 @@ void main() {
       ids.indexOf('flintwrights_proving') + 1,
       reason: 'the character provings stand together',
     );
-    expect(provings.length, 30); // v0.184.0: the glover's proving
+    expect(provings.length, 30); // v0.179.0: the glover's proving
     expect(provings.last.id, 'ash_summit');
   });
 

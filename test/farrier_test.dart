@@ -1,4 +1,4 @@
-// test/farrier_test.dart — v0.183.0 The Farrier: the TWENTY-FIRST delver,
+// test/farrier_test.dart — v0.179.0 The Farrier: the TWENTY-FIRST delver,
 // fifth chair of the second circle, and the STEADY counterpart to the
 // lamplighter's spike — three Forged Embers (d6_forged, flat +1 attack
 // and +1 block on every roll; never started by any kit) on the thinnest

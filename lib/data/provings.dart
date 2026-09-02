@@ -249,7 +249,7 @@ const List<ProvingDef> provings = [
     character: 'miller',
     difficulty: 'normal',
   ),
-  // v0.181.0 The Kettle's Song — the nineteenth delver proving. Seed
+  // v0.179.0 The Kettle's Song — the nineteenth delver proving. Seed
   // 29: the chair seed (19) loses at HP 25; 29 is bot-win pinned and
   // unused by any other delver proving.
   ProvingDef(
@@ -262,7 +262,7 @@ const List<ProvingDef> provings = [
     character: 'brewster',
     difficulty: 'normal',
   ),
-  // v0.182.0 The Lit Street — the twentieth delver proving. Seed 20:
+  // v0.179.0 The Lit Street — the twentieth delver proving. Seed 20:
   // the chair-number tradition holds again (bot-win pinned, unused by
   // any other delver proving).
   ProvingDef(
@@ -275,7 +275,7 @@ const List<ProvingDef> provings = [
     character: 'lamplighter',
     difficulty: 'normal',
   ),
-  // v0.183.0 The Fitted Shoe — the twenty-first delver proving. Seed
+  // v0.179.0 The Fitted Shoe — the twenty-first delver proving. Seed
   // 21: the chair-number tradition holds (bot-win pinned, unused by
   // any other delver proving).
   ProvingDef(
@@ -288,7 +288,7 @@ const List<ProvingDef> provings = [
     character: 'farrier',
     difficulty: 'normal',
   ),
-  // v0.184.0 The Even Stitch — the twenty-second delver proving. Seed
+  // v0.179.0 The Even Stitch — the twenty-second delver proving. Seed
   // 22: the chair-number tradition holds (bot-win pinned, unused by
   // any other delver proving).
   ProvingDef(

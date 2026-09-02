@@ -1,4 +1,4 @@
-// test/lamplighter_test.dart — v0.182.0 The Lamplighter: the TWENTIETH
+// test/lamplighter_test.dart — v0.179.0 The Lamplighter: the TWENTIETH
 // delver, fourth chair of the second circle, and the JACKPOT identity from
 // the second gap pass — three Glowing Embers (d6_ember, +2 whenever the
 // max face lands), an all-specialty pouch on the runesmith's precedent.

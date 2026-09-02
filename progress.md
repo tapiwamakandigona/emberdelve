@@ -5380,3 +5380,8 @@ Verification, run right after the identity commit:
   merges). `git status` clean. Nothing was in flight, so no patch to re-apply.
 - The Long Shelf: two middle honors (Codex 100, tales 40) between the old
   rungs and the new whole-catalog epithets. Honors 93.
+- The Right Numbers: 32 code/test comments labeled the brewster, lamplighter,
+  farrier, glover, their provings, weapons and the two-circle headers as
+  v0.181.0–v0.184.0 — planned numbers that never shipped; all of it went out
+  in v0.179.0 (205). Relabeled to v0.179.0. Comments only, no behavior.
+  progress.md's own "-dev" entries stay as written (they are the log).

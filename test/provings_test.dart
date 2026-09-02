@@ -33,7 +33,7 @@ void driveToTerminal(GameController c) {
 void main() {
   group('data integrity', () {
     test('twelve provings, unique ids, valid params, encodable', () {
-      expect(provings.length, 30); // v0.184.0: the glover's proving
+      expect(provings.length, 30); // v0.179.0: the glover's proving
       expect(provings.map((p) => p.id).toSet().length, 30);
       for (final p in provings) {
         expect(characters.containsKey(p.character), isTrue, reason: p.id);

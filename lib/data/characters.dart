@@ -353,7 +353,7 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d12', 'd4', 'd4'],
     unlockEmbers: 2400,
   ),
-  // v0.181.0 The Brewster: the third chair of the second circle — the
+  // v0.179.0 The Brewster: the third chair of the second circle — the
   // rest-economy identity the gap analysis flagged. A staircase pouch
   // (d8/d6/d4, the only strictly-descending set) and a Hearth Kettle:
   // thin in the fight, but every rest pays back double. The delve is
@@ -369,7 +369,7 @@ const Map<String, CharacterDef> characters = {
     startRelic: 'hearth_kettle',
     unlockEmbers: 2550,
   ),
-  // v0.182.0 The Lamplighter: the fourth chair of the second circle — the
+  // v0.179.0 The Lamplighter: the fourth chair of the second circle — the
   // JACKPOT identity, from the second gap pass. Three Glowing Embers
   // (d6_ember, +2 whenever the max face lands) and nothing else: a pouch
   // of ordinary sixes that flare. The gambler fishes with a lucky d4;
@@ -385,7 +385,7 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6_ember', 'd6_ember', 'd6_ember'],
     unlockEmbers: 2700,
   ),
-  // v0.183.0 The Farrier: the fifth chair of the second circle — the
+  // v0.179.0 The Farrier: the fifth chair of the second circle — the
   // STEADY counterpart to the lamplighter's spike, from the same gap
   // pass. Three Forged Embers (d6_forged, flat +1 attack and +1 block on
   // every roll — never started by any kit): no flare, no fishing, just
@@ -401,7 +401,7 @@ const Map<String, CharacterDef> characters = {
     startDice: ['d6_forged', 'd6_forged', 'd6_forged'],
     unlockEmbers: 2850,
   ),
-  // v0.184.0 The Glover: the sixth chair of the second circle — the
+  // v0.179.0 The Glover: the sixth chair of the second circle — the
   // SPLIT-HANDS identity, and the kit that finally starts the last two
   // unused tier-1 specialties. One Keen Ember (attack-only +1), one
   // Stout Ember (block-only +1), one bare Ember Die: the right hand

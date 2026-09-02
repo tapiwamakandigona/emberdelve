@@ -1,4 +1,4 @@
-// test/glover_test.dart — v0.184.0 The Glover: the TWENTY-SECOND delver,
+// test/glover_test.dart — v0.179.0 The Glover: the TWENTY-SECOND delver,
 // sixth chair of the second circle, and the SPLIT-HANDS identity — one
 // Keen Ember (attack-only +1), one Stout Ember (block-only +1), one bare
 // Ember Die. With this kit the LAST two unused tier-1 specialty starts
