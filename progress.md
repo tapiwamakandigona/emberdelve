@@ -5234,3 +5234,10 @@ the opening run itself (R1 brief input).
   footer links), 40-px quiet TextButton style; padding xl→l vertical;
   gaps m→s ×3, s→xs ×1. Pinned in test/shorter_title_test.dart. Plates
   critiqued at 412×915 (fits) and 320×568@1.3×.
+- Scroll audit (real fonts, 360×800): boon 0, combat 0, map 209 (layer
+  list — by design), summary(run_lost) 1001/800 with 'Delve again' 1.4
+  screens down. The Nearer Fire: 'Delve again' pinned as a footer outside
+  the scroll (key 'delve-again'); rest unchanged. test/nearer_fire_test.dart
+  ×3 sizes. Plates critiqued top/bottom. Audit harness lesson:
+  c.endToTitle() while SummaryScreen is mounted throws a null-check in
+  SummaryScreen.build (pre-existing; only reachable from tests).
