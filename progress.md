@@ -5125,3 +5125,12 @@ the opening run itself (R1 brief input).
   docs/research/owner-console-checklist.md: the five Console reads
   that turn R4/R5 inference into fact, Conversion analysis being the
   decisive one. Still no code, no tags.
+- Research: docs/research/r7-play-build-gap.md — per-stage diff of the
+  Play build (0.59.0, b69a78c) vs v0.179.0 (c4b1655), read from the
+  two tags: 236 commits, 72 lib files, tests 83→217; stage C (the R5
+  leak) is the only stage the build changed — 6→22 delvers, provings
+  10→30, Seven Hearths day-2 acknowledgement, summary next-unlock
+  tease, review ask reachable from losses (24 marks); stage A
+  unchanged by any build. Measurement guidance: listing pastes first,
+  build two weeks later, or the two effects can't be told apart at
+  n≈40. Owner's call; no code.
