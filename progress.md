@@ -5415,3 +5415,12 @@ Verification, run right after the identity commit:
   LayoutStacks on one frame; per-type censuses hide the cause. (4) The
   summary_probe's 40-frame settle now measures the entrance, not idle —
   read the timeline, not one number.
+- The Quiet Walk (perf): map marker walks by paint-only Transform.translate
+  in its own RepaintBoundary inside a tight 30×34 box, positioned once at
+  the destination — a moving Positioned relaid the map Stack and repainted
+  the route every frame (~137/frame for 650ms). map→combat entrance
+  2850→1029 paints. Pixel-diffed plates: identical outside the marker's
+  20×26 px (max Δ8). test/quiet_walk_test.dart (route Stack never paints
+  during the walk; red on old code). tool/repaint_roots_probe_test.dart kept
+  as the reusable timeline+roots probe. LESSON: animate position with
+  Transform (paint) not Positioned (layout); box the animated widget tight.

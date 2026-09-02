@@ -305,31 +305,49 @@ class _MapScreenState extends State<MapScreen>
         final hop = hopWave * 4;
         // Face the travel direction while walking; at rest face forward.
         final faceLeft = walking && f < 1 && to.dx < from.dx - 1;
+        // PERF (v0.180.0 The Quiet Walk): the marker used to WALK by
+        // re-positioning itself in the map Stack every frame, and a moving
+        // Positioned relays out the Stack — which then repainted the whole
+        // route (~137 paints/frame for the 650ms walk, repaint_roots_probe).
+        // It is now positioned once, at the destination, and the walk is a
+        // paint-only translation inside its own boundary; the 30×34 box is
+        // its natural size, so the thinning shadow relays out nothing above
+        // it. Same pixels (walk plates diffed before/after).
         return Positioned(
-          left: p.dx - 14,
-          bottom: p.dy + _nodeSize / 2 - 6 + hop,
+          left: to.dx - 14,
+          bottom: to.dy + _nodeSize / 2 - 6,
           child: IgnorePointer(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Transform.flip(flipX: faceLeft, child: child!),
-                // Grounded shadow: it stays on the path (does not ride the
-                // hop) — width and weight ease off as the delver lifts.
-                Transform.translate(
-                  offset: Offset(0, hop),
-                  child: Container(
-                    key: const ValueKey('delver-shadow'),
-                    width: 14 - hopWave * 5,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(
-                        alpha: 0.4 - hopWave * 0.18,
+            child: RepaintBoundary(
+              child: Transform.translate(
+                offset: Offset(p.dx - to.dx, -(p.dy - to.dy + hop)),
+                child: SizedBox(
+                  width: 30,
+                  height: 34,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Transform.flip(flipX: faceLeft, child: child!),
+                      // Grounded shadow: it stays on the path (does not ride
+                      // the hop) — width and weight ease off as the delver
+                      // lifts.
+                      Transform.translate(
+                        offset: Offset(0, hop),
+                        child: Container(
+                          key: const ValueKey('delver-shadow'),
+                          width: 14 - hopWave * 5,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(
+                              alpha: 0.4 - hopWave * 0.18,
+                            ),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         );
