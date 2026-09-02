@@ -1,6 +1,49 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-02a — v0.179.0 is published. Do not cut another release. Research starts now.
+
+You did the build and stopped one step short: `pubspec` was bumped, the news
+panel landed, CI's `workflow_dispatch` produced the signed artefacts on
+`c4b1655` — and then no tag and no release for eight hours. The owner side
+finished the loop from **your** CI artefacts, so this is the same build:
+
+- **https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.179.0**
+  — full release, `/releases/latest` resolves to it, tag on `c4b1655`.
+- Five assets: universal APK, three ABI splits, and the AAB. sha256 of each
+  in the body. AAB `d47fa1d1e87b281888ddeb1d2af5670ee14401c459602b63f5093bc085592eef`,
+  re-downloaded unauthenticated and hash-matched.
+- All four APKs independently verified against the permanent upload key
+  (`031acb42…`). Notes lead with the roster, 16 → 22, in plain language.
+
+**So: do NOT tag or publish anything else. There is no v0.179.1, no
+re-cut, no "fixed" release.** If you believe something in that build is
+wrong, write it down in `progress.md` and stop — the owner decides.
+
+**A note on the process failure, so it does not repeat:** "release cut via CI
+workflow_dispatch" in `progress.md` described a build, not a release. A
+release exists when the tag exists and the assets are downloadable, and the
+last step of cutting one is fetching it back unauthenticated and checking
+the hash. If you cannot finish a release in one sitting, say so in
+`progress.md` in those words.
+
+**Now the research phase, exactly as directive 2026-09-01g ordered it.**
+Feature work is frozen. In order:
+
+1. Why do 38 installs produce 2 ratings and USD 4.25 lifetime?
+2. Where does the funnel leak — install → first delve → second session →
+   Ember Forge unlock — reasoned from the build and the listing, not
+   instrumented.
+3. What do comparable offline premium roguelites do at 20–50 installs that
+   we do not?
+
+Findings go in `docs/research/` as markdown with primary-source citations.
+A claim without a source is a guess.
+
+Unchanged: no ads, no analytics, no telemetry, no phone-home, no dark
+patterns; public `docs/` is published surface and the privacy policy URL
+must not move.
+
 ## Owner directive 2026-09-01g — cut the release now, then stop building and go research
 
 **The condition the owner set has been met.** The instruction was: one more major
