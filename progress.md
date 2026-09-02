@@ -5259,3 +5259,15 @@ the opening run itself (R1 brief input).
   nothing idle), character 3.0 (WeaponPainter idle sway × 3 visible cards;
   designed motion, off under Reduce motion). No regression; census probe now
   names the painter class per RenderCustomPaint. [idle_census, 2026-09-02]
+- Scroll-drag paint census (tool/scroll_paint_probe_test.dart, 360×800, 60
+  drag frames into overscroll): roster 17.3/frame (list composite passes +
+  weapon sway; no text repaint), rest 13.2, summary 3.3, map **80.2** — the
+  whole route (HUD text, footer, backdrop) repainted every frame. Root cause:
+  stretch-overscroll setState inside the map's LayoutBuilder → relayout up the
+  Column → markNeedsPaint to the route boundary. Fix "The Still Route":
+  `SizedBox.expand → RepaintBoundary → LayoutBuilder` (tight constraints make
+  the LayoutBuilder a relayout boundary; the RepaintBoundary stops the paint
+  walk). Map drag now 16.5/frame. test/still_route_test.dart (57 HUD paints
+  → 0). LESSON: Expanded(LayoutBuilder(...scrollable)) in a Column is a
+  route-repaint trap on Android; title_screen already documents the Stack
+  variant. [scroll_paint, 2026-09-02]

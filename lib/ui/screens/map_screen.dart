@@ -85,136 +85,148 @@ class _MapScreenState extends State<MapScreen>
           children: [
             _TopBar(c),
             Expanded(
-              child: LayoutBuilder(
-                builder: (context, cns) {
-                  final h = layers * _rowH + 40;
-                  // Follow the delver: keep the marker ~45% up the viewport so
-                  // the reachable row above is always on screen (reverse list:
-                  // offset 0 == bottom of the delve).
-                  if (_scrolledForPos != position) {
-                    // First follow of a visit JUMPS (the screen mounts behind
-                    // the phase fade at its darkest, so the cut is invisible);
-                    // animating from offset 0 swept the camera up from the
-                    // delve floor on EVERY arrival mid-run — half of the
-                    // "progression glitches back and forth" owner report
-                    // (2026-08-11). Later moves within the same visit animate.
-                    final firstFollow = _scrolledForPos == null;
-                    _scrolledForPos = position;
-                    final target =
-                        ((curLayer - 1) * _rowH +
-                                20 +
-                                _nodeSize / 2 -
-                                cns.maxHeight * 0.45)
-                            .clamp(0.0, math.max(0.0, h - cns.maxHeight))
-                            .toDouble();
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!mounted || !_scroll.hasClients) return;
-                      if (firstFollow) {
-                        _scroll.jumpTo(target);
-                      } else {
-                        _scroll.animateTo(
-                          target,
-                          duration: const Duration(milliseconds: 450),
-                          curve: Curves.easeOutCubic,
-                        );
+              // PERF (2026-09-02, scroll_paint probe): a drag frame used to
+              // repaint the WHOLE route (80 paints/frame: HUD text, footer,
+              // background) because Android's stretch-overscroll indicator
+              // setStates inside this LayoutBuilder's build scope every drag
+              // frame, which schedules a relayout that walks up to the
+              // Column and marks paint all the way to the route boundary.
+              // Tight constraints make the LayoutBuilder its own relayout
+              // boundary; the RepaintBoundary stops the paint walk here.
+              child: SizedBox.expand(
+                child: RepaintBoundary(
+                  child: LayoutBuilder(
+                    builder: (context, cns) {
+                      final h = layers * _rowH + 40;
+                      // Follow the delver: keep the marker ~45% up the viewport so
+                      // the reachable row above is always on screen (reverse list:
+                      // offset 0 == bottom of the delve).
+                      if (_scrolledForPos != position) {
+                        // First follow of a visit JUMPS (the screen mounts behind
+                        // the phase fade at its darkest, so the cut is invisible);
+                        // animating from offset 0 swept the camera up from the
+                        // delve floor on EVERY arrival mid-run — half of the
+                        // "progression glitches back and forth" owner report
+                        // (2026-08-11). Later moves within the same visit animate.
+                        final firstFollow = _scrolledForPos == null;
+                        _scrolledForPos = position;
+                        final target =
+                            ((curLayer - 1) * _rowH +
+                                    20 +
+                                    _nodeSize / 2 -
+                                    cns.maxHeight * 0.45)
+                                .clamp(0.0, math.max(0.0, h - cns.maxHeight))
+                                .toDouble();
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!mounted || !_scroll.hasClients) return;
+                          if (firstFollow) {
+                            _scroll.jumpTo(target);
+                          } else {
+                            _scroll.animateTo(
+                              target,
+                              duration: const Duration(milliseconds: 450),
+                              curve: Curves.easeOutCubic,
+                            );
+                          }
+                        });
                       }
-                    });
-                  }
-                  // PERF (2026-07-26, remaining-work §5): the viewport paints
-                  // its child at the scroll offset, so without a boundary HERE
-                  // every drag frame repainted every non-boundaried child in
-                  // the Stack below (badges, delver marker, node chrome:
-                  // probe map_drag 54.5 paints/frame). With it, a drag is a
-                  // layer translation; only the pulsing medallions keep
-                  // painting inside their own boundaries.
-                  return SingleChildScrollView(
-                    reverse: true,
-                    controller: _scroll,
-                    child: RepaintBoundary(
-                      child: SizedBox(
-                        height: h,
-                        width: cns.maxWidth,
-                        child: Stack(
-                          children: [
-                            // THE DEEP WALL: far plane, parallax on scroll.
-                            IgnorePointer(
-                              child: RepaintBoundary(
-                                child: CustomPaint(
-                                  key: const ValueKey('deep-wall'),
-                                  size: Size(cns.maxWidth, h),
-                                  painter: _FarWallPainter(
-                                    _scroll,
-                                    Motion.instance.reduced,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Trails + fog-of-war + descent tint, painted once.
-                            RepaintBoundary(
-                              child: CustomPaint(
-                                size: Size(cns.maxWidth, h),
-                                painter: _MapScenePainter(
-                                  nodes,
-                                  edges,
-                                  cns.maxWidth,
-                                  layers,
-                                  position,
-                                  reachable,
-                                  curLayer,
-                                ),
-                              ),
-                            ),
-                            // v0.82.0 The Farthest Lantern: the lifetime
-                            // deepest floor, drawn where it matters — a thin
-                            // gold rule between charted ground and new depth.
-                            // Pure meta read; banks only at run end, so the
-                            // line holds still all run. A record beyond this
-                            // map's floors (short road after a long career)
-                            // has no line to draw.
-                            if (c.meta.bestFloor > 0 &&
-                                c.meta.bestFloor < layers)
-                              IgnorePointer(
-                                child: RepaintBoundary(
-                                  child: CustomPaint(
-                                    key: const ValueKey('plumb-mark'),
-                                    size: Size(cns.maxWidth, h),
-                                    painter: _FarthestLanternPainter(
-                                      c.meta.bestFloor,
+                      // PERF (2026-07-26, remaining-work §5): the viewport paints
+                      // its child at the scroll offset, so without a boundary HERE
+                      // every drag frame repainted every non-boundaried child in
+                      // the Stack below (badges, delver marker, node chrome:
+                      // probe map_drag 54.5 paints/frame). With it, a drag is a
+                      // layer translation; only the pulsing medallions keep
+                      // painting inside their own boundaries.
+                      return SingleChildScrollView(
+                        reverse: true,
+                        controller: _scroll,
+                        child: RepaintBoundary(
+                          child: SizedBox(
+                            height: h,
+                            width: cns.maxWidth,
+                            child: Stack(
+                              children: [
+                                // THE DEEP WALL: far plane, parallax on scroll.
+                                IgnorePointer(
+                                  child: RepaintBoundary(
+                                    child: CustomPaint(
+                                      key: const ValueKey('deep-wall'),
+                                      size: Size(cns.maxWidth, h),
+                                      painter: _FarWallPainter(
+                                        _scroll,
+                                        Motion.instance.reduced,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            for (final e in nodes.entries)
-                              _nodeWidget(
-                                context,
-                                e.value,
-                                cns.maxWidth,
-                                position,
-                                reachable,
-                              ),
-                            // Honest reward telegraphs: the sim pre-resolves each
-                            // fight/elite node's offers at start_run; the badge shows
-                            // its `reward_preview` verbatim (never invented here).
-                            for (final e in nodes.entries)
-                              if (e.value['reward_preview'] is String)
-                                _telegraphBadge(
-                                  e.value,
-                                  cns.maxWidth,
-                                  reachable,
+                                // Trails + fog-of-war + descent tint, painted once.
+                                RepaintBoundary(
+                                  child: CustomPaint(
+                                    size: Size(cns.maxWidth, h),
+                                    painter: _MapScenePainter(
+                                      nodes,
+                                      edges,
+                                      cns.maxWidth,
+                                      layers,
+                                      position,
+                                      reachable,
+                                      curLayer,
+                                    ),
+                                  ),
                                 ),
-                            _delverMarker(
-                              nodes,
-                              cns.maxWidth,
-                              h,
-                              position,
-                              characterId,
+                                // v0.82.0 The Farthest Lantern: the lifetime
+                                // deepest floor, drawn where it matters — a thin
+                                // gold rule between charted ground and new depth.
+                                // Pure meta read; banks only at run end, so the
+                                // line holds still all run. A record beyond this
+                                // map's floors (short road after a long career)
+                                // has no line to draw.
+                                if (c.meta.bestFloor > 0 &&
+                                    c.meta.bestFloor < layers)
+                                  IgnorePointer(
+                                    child: RepaintBoundary(
+                                      child: CustomPaint(
+                                        key: const ValueKey('plumb-mark'),
+                                        size: Size(cns.maxWidth, h),
+                                        painter: _FarthestLanternPainter(
+                                          c.meta.bestFloor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                for (final e in nodes.entries)
+                                  _nodeWidget(
+                                    context,
+                                    e.value,
+                                    cns.maxWidth,
+                                    position,
+                                    reachable,
+                                  ),
+                                // Honest reward telegraphs: the sim pre-resolves each
+                                // fight/elite node's offers at start_run; the badge shows
+                                // its `reward_preview` verbatim (never invented here).
+                                for (final e in nodes.entries)
+                                  if (e.value['reward_preview'] is String)
+                                    _telegraphBadge(
+                                      e.value,
+                                      cns.maxWidth,
+                                      reachable,
+                                    ),
+                                _delverMarker(
+                                  nodes,
+                                  cns.maxWidth,
+                                  h,
+                                  position,
+                                  characterId,
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
             Padding(
