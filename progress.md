@@ -5216,3 +5216,8 @@ the opening run itself (R1 brief input).
   per-die LIST, not an int — cost 15 min). Idle census after the UI
   changes: title 3.0 / combat 1.0 / rest 1.0 paints per frame — no
   regression [idle_census, 2026-09-02].
+- Rotation told honestly: three hearth tales said "one week in six" /
+  "once a rotation" — rewritten (no reshuffle, text only); two new tales
+  for Lean Road and Hard March appended (68; pins updated in
+  hearth_tale/fourth_cycle/fifth_cycle tests; hearthgold frozen at 10).
+  Vista/honor copy ("a doubled week") still true.

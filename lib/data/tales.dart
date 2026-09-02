@@ -71,8 +71,8 @@ const List<String> hearthTales = [
   // v0.120.0 The Third Cycle — what the deep remembers: the winter that
   // came through, the seventh chair, the book the hearth keeps. Append
   // only, as chartered.
-  'One week in six, the delve deals two rules at once. The old hands '
-      'call it the doubled week, and they plan their rests around it.',
+  'Some weeks the delve deals two rules at once. The old hands call '
+      'those the doubled weeks, and they plan their rests around them.',
   'A winter came through the delve once and never fully left. Where '
       'it settled, the stone still holds the pale light.',
   'The flintwright joined the fire last, with four dice and no '
@@ -104,10 +104,10 @@ const List<String> hearthTales = [
       'down, and came back marked. The smith has never once said '
       'whether they taught the runesmith, or the other way round.',
   'Every Monday the delve deals a rule \u2014 flint dice, elite '
-      'floors, shut shops, a short road, cold camps. Take all of them '
-      'once and you will have seen the whole rotation.',
-  'Once a rotation the delve deals two rules at once. The wardens '
-      'call that week the Cold Quarter, and they pack for it.',
+      'floors, shut shops, a short road, cold camps, and some weeks two '
+      'at once. Take them all and you will have seen the whole rotation.',
+  'The first doubled week shut the shops and put out the camp fires. '
+      'The wardens call it the Cold Quarter, and they pack for it.',
   'The Codex seals nothing that matters: every record is free. What '
       'costs embers is only the deep\u2019s own words about itself.',
   'Some walls hold their color \u2014 moon-blue, frost-pale, forge-'
@@ -198,6 +198,11 @@ const List<String> hearthTales = [
   'The glover keeps one glove keen and one glove stout, and will not '
       'say which hand the delve fears more. The bare hand, say those '
       'who have watched it deal.',
+  // v0.180.0 The Widened Rotation: two more doubled weeks, told.
+  'Lean Road is six floors with nothing for sale on any of them. The '
+      'delvers who walk it learn to want what the dark already gave.',
+  'Hard March is six floors and no hollow to sleep in. Every camp is '
+      'a fight, and the healing you find is the healing you brought.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.
