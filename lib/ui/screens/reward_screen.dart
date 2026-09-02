@@ -48,47 +48,63 @@ class _RewardScreenState extends State<RewardScreen> {
                 ),
                 // The cards: sized by the available box so 2–3 offers fit any phone
                 // (overflow probes run down to 320×568 at 1.3x text).
+                // PERF (v0.180.0 The Quiet Shell, reward): the three flips
+                // are rebuild-driven animations under this LayoutBuilder, and
+                // a LayoutBuilder flushes dirty descendants during layout —
+                // so every flip frame marked it needs-layout, walked up seven
+                // levels to the Column and repainted the whole screen (HUD,
+                // titles, Skip) for the ~1 s ceremony (~110 paints/frame,
+                // repaint_roots_probe). SizedBox.expand makes it its own
+                // relayout boundary; the RepaintBoundary keeps the contained
+                // repaint a recomposite. Center moved inside; layout unchanged.
                 Expanded(
-                  child: Center(
-                    child: LayoutBuilder(
-                      builder: (context, box) {
-                        final n = offers.length;
-                        final cardW =
-                            ((box.maxWidth - Space.l * 2) - Space.m * (n - 1))
-                                .clamp(0.0, double.infinity) /
-                            n;
-                        final w = cardW.clamp(88.0, 150.0);
-                        final h = (w * 1.5).clamp(
-                          120.0,
-                          box.maxHeight - Space.m * 2,
-                        );
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            for (var i = 0; i < n; i++) ...[
-                              if (i > 0) const SizedBox(width: Space.m),
-                              _FlipCard(
-                                key: ValueKey('reward-${offers[i]}-$i'),
-                                dieId: offers[i],
-                                skin: c.activeRunSkin,
-                                recommended: i == recIdx,
-                                width: w,
-                                height: h,
-                                // Staggered reveal reads left-to-right.
-                                flipDelayMs: 220 + i * 240,
-                                onFlip: () {
-                                  c.audio?.playSfx('event_page', volume: 0.6);
-                                  Haptics.light();
-                                },
-                                onPick: () => c.apply({
-                                  'type': 'choose_reward',
-                                  'index': i + 1,
-                                }),
-                              ),
-                            ],
-                          ],
-                        );
-                      },
+                  child: RepaintBoundary(
+                    child: SizedBox.expand(
+                      child: LayoutBuilder(
+                        builder: (context, box) {
+                          final n = offers.length;
+                          final cardW =
+                              ((box.maxWidth - Space.l * 2) - Space.m * (n - 1))
+                                  .clamp(0.0, double.infinity) /
+                              n;
+                          final w = cardW.clamp(88.0, 150.0);
+                          final h = (w * 1.5).clamp(
+                            120.0,
+                            box.maxHeight - Space.m * 2,
+                          );
+                          return Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                for (var i = 0; i < n; i++) ...[
+                                  if (i > 0) const SizedBox(width: Space.m),
+                                  _FlipCard(
+                                    key: ValueKey('reward-${offers[i]}-$i'),
+                                    dieId: offers[i],
+                                    skin: c.activeRunSkin,
+                                    recommended: i == recIdx,
+                                    width: w,
+                                    height: h,
+                                    // Staggered reveal reads left-to-right.
+                                    flipDelayMs: 220 + i * 240,
+                                    onFlip: () {
+                                      c.audio?.playSfx(
+                                        'event_page',
+                                        volume: 0.6,
+                                      );
+                                      Haptics.light();
+                                    },
+                                    onPick: () => c.apply({
+                                      'type': 'choose_reward',
+                                      'index': i + 1,
+                                    }),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

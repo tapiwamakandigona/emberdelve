@@ -154,19 +154,26 @@ void main() {
 
     c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
     await timeline(tester, 'title->${c.phase}');
-    // Walk: boon -> map -> fight -> reward -> map ... until a rest.
+    final seen0 = <String>{};
+    seen0.add('title->${c.phase}');
+    // Walk the run with the bot; time every DISTINCT transition once
+    // (boon->map, map->player_turn, player_turn->reward, reward->map, ...).
     final seen = <String>{};
     var guard = 0;
-    while (guard++ < 40 && seen.length < 4) {
+    while (guard++ < 600 && seen.length < 10) {
+      if (c.phase == 'run_won' || c.phase == 'run_lost') break;
       final cmd = botCmd(c.sim!);
       if (cmd == null) break;
       final before = c.phase;
       c.apply(cmd);
-      if (c.phase != before && !seen.contains(c.phase!)) {
-        seen.add(c.phase!);
-        await timeline(tester, '$before->${c.phase}', skip: 0);
+      final edge = '$before->${c.phase}';
+      if (c.phase != before && !seen.contains(edge)) {
+        seen.add(edge);
+        await timeline(tester, edge, skip: 0);
+      } else if (c.phase != before) {
+        await settle(tester, 60);
       } else {
-        await settle(tester, 6);
+        await settle(tester, 3);
       }
     }
     // ignore: avoid_print

@@ -5424,3 +5424,10 @@ Verification, run right after the identity commit:
   during the walk; red on old code). tool/repaint_roots_probe_test.dart kept
   as the reusable timeline+roots probe. LESSON: animate position with
   Transform (paint) not Positioned (layout); box the animated widget tight.
+- The Quiet Shell, reward: cards' LayoutBuilder boxed (RepaintBoundary +
+  SizedBox.expand, Center inside) — flips no longer relayout/repaint the
+  screen; ceremony 5655→1645 paints; pixel-identical at 3 sizes. Fourth pin
+  in quiet_shell_test (red on old code). repaint_roots_probe now walks every
+  distinct phase edge of a run; all other edges read clean (their spike is
+  the single mount frame). Remaining LayoutBuilders: title (already boxed),
+  tour/tutorial overlays (static content) — not chased.

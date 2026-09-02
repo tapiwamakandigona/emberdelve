@@ -10,6 +10,9 @@
 //      boundaries.
 //   3. The Settling Count's digits must not relayout the ledger — the number
 //      sits in a tight box (its final size) inside its own boundary.
+//   4. The reward ceremony's three card flips must not repaint the screen
+//      around them — the cards' LayoutBuilder is its own relayout/repaint
+//      boundary (a LayoutBuilder flushes dirty descendants during layout).
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -156,5 +159,36 @@ void main() {
     // No changing frame relaid the ledger: the static rows never repaint.
     // (Re-run the count by remounting is not possible; the paragraph pin
     // above is the structural guarantee.)
+  });
+
+  testWidgets('the reward flips repaint no text around the cards', (
+    tester,
+  ) async {
+    final c = GameController();
+    c.markTutorialSeen();
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+    );
+    c.startRun(character: 'kindler', seed: 1, boons: true, difficulty: 'easy');
+    var guard = 0;
+    while (guard++ < 300 && c.phase != 'reward') {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+    }
+    expect(c.phase, 'reward');
+    // Past the veil (380ms) and into the staggered flips (220 + i·240ms,
+    // 440ms each): frames 30–60 are mid-ceremony.
+    await pumpFrames(tester, 30);
+    final painted = await paintedParagraphs(
+      tester,
+      () => pumpFrames(tester, 30),
+    );
+    expect(painted, isNotEmpty, reason: 'the cards themselves paint');
+    final chrome = painted.where(
+      (t) => t == 'GOLD' || t == 'EMBERS' || t == 'Choose a die' || t == 'Skip',
+    );
+    expect(chrome, isEmpty, reason: 'chrome repainted during flips: $chrome');
+    await pumpFrames(tester, 120);
   });
 }
