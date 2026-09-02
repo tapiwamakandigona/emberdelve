@@ -53,7 +53,13 @@ class TitleScreen extends StatelessWidget {
                         ),
                         child: IntrinsicHeight(
                           child: Padding(
-                            padding: const EdgeInsets.all(Space.xl),
+                            // v0.180.0 The Shorter Title: vertical padding
+                            // l (was xl) — every logical pixel here is
+                            // scroll on a 360×800 phone.
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Space.xl,
+                              vertical: Space.l,
+                            ),
                             child: Column(
                               children: [
                                 Align(
@@ -104,13 +110,13 @@ class TitleScreen extends StatelessWidget {
                                 // Drawn logotype: glow bloom + charred-top/molten-bottom fill +
                                 // spark pinpricks (visuals.md #1 — never a plain Text).
                                 const EmberLogotype('EMBERDELVE', fontSize: 42),
-                                const SizedBox(height: Space.s),
+                                const SizedBox(height: Space.xs),
                                 const Text(
                                   'A dice-builder delve into the dark',
                                   style: EmberText.bodyDim,
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: Space.xl),
+                                const SizedBox(height: Space.l),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -171,7 +177,7 @@ class TitleScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ],
-                                const SizedBox(height: Space.xxl),
+                                const SizedBox(height: Space.xl),
                                 // Difficulty selector (v0.3.2): sticky, honest about the trade —
                                 // easier fights pay fewer embers, harder fights pay more. The
                                 // Daily Delve ignores it (shared seed, level field for everyone).
@@ -285,7 +291,7 @@ class TitleScreen extends StatelessWidget {
                                 if (!m.sevenHearthsSettled ||
                                     m.lastHearthDay ==
                                         dailyKey(DateTime.now())) ...[
-                                  const SizedBox(height: Space.m),
+                                  const SizedBox(height: Space.s),
                                   Row(
                                     key: const ValueKey('hearth-row'),
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -316,14 +322,18 @@ class TitleScreen extends StatelessWidget {
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
-                                const SizedBox(height: Space.m),
+                                const SizedBox(height: Space.s),
                                 // Weekly Delve (P3): one shared seed AND one declared
                                 // modifier per Monday-aligned week — the same challenge
                                 // for everyone. No streaks, no expiry (§Ethics).
                                 SizedBox(
                                   width: double.infinity,
                                   child: EmberButton(
-                                    'Weekly Delve — ${_weeklyModifierName()}',
+                                    // v0.180.0 The Shorter Title: "Weekly"
+                                    // alone — the rule name is the news, and
+                                    // "Weekly Delve — Cold Quarter" wrapped to
+                                    // two lines on 360-wide phones.
+                                    'Weekly — ${_weeklyModifierName()}',
                                     key: const ValueKey('weekly-delve'),
                                     icon: Icons.event_repeat,
                                     onTap: () => c.startWeeklyRun(
@@ -389,7 +399,7 @@ class TitleScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ],
-                                const SizedBox(height: Space.m),
+                                const SizedBox(height: Space.s),
                                 SizedBox(
                                   width: double.infinity,
                                   child: EmberButton(
@@ -400,29 +410,59 @@ class TitleScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: Space.s),
-                                // The Provings (v0.38.0): eight curated, exact
-                                // delves. Quiet entry beside the other
-                                // out-of-flow modes; the count is a fact, not
-                                // a nag.
-                                TextButton(
-                                  key: const ValueKey('provings-button'),
-                                  onPressed: () {
-                                    AudioService.instance?.playSfx(
-                                      'ui_confirm',
-                                    );
-                                    Navigator.of(context).push(
-                                      emberRoute((_) => ProvingsScreen(c)),
-                                    );
-                                  },
-                                  child: Text(
-                                    'The Provings — '
-                                    '${m.provingsCleared.length} of '
-                                    '${provings.length} cleared',
-                                    style: EmberText.micro.copyWith(
-                                      color: EmberColors.textDim,
+                                const SizedBox(height: Space.xs),
+                                // v0.180.0 The Shorter Title: the three quiet
+                                // links used to be three full-height text
+                                // buttons (~150 logical px on a 360×800
+                                // phone). Provings and the seed share one
+                                // compact row; the waymark keeps its own line.
+                                // Same keys, same destinations.
+                                Wrap(
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    // The Provings (v0.38.0): curated, exact
+                                    // delves. The count is a fact, not a nag.
+                                    TextButton(
+                                      key: const ValueKey('provings-button'),
+                                      style: _quietLink,
+                                      onPressed: () {
+                                        AudioService.instance?.playSfx(
+                                          'ui_confirm',
+                                        );
+                                        Navigator.of(context).push(
+                                          emberRoute((_) => ProvingsScreen(c)),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Provings — '
+                                        '${m.provingsCleared.length} of '
+                                        '${provings.length}',
+                                        style: EmberText.micro.copyWith(
+                                          color: EmberColors.textDim,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Text(
+                                      '·',
+                                      style: EmberText.micro.copyWith(
+                                        color: EmberColors.textDim,
+                                      ),
+                                    ),
+                                    // Seeded delve (v0.3.4): a shared seed IS
+                                    // a shared delve. Small, out of the flow.
+                                    TextButton(
+                                      key: const ValueKey('seeded-delve'),
+                                      style: _quietLink,
+                                      onPressed: () => _promptSeed(context),
+                                      child: Text(
+                                        'Delve a seed',
+                                        style: EmberText.micro.copyWith(
+                                          color: EmberColors.textDim,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 // The Waymark Line (v0.121.0): the nearest
                                 // unearned honor, named before the run — the
@@ -433,6 +473,7 @@ class TitleScreen extends StatelessWidget {
                                 if (ach.waymarkLine(m) != null)
                                   TextButton(
                                     key: const ValueKey('waymark-line'),
+                                    style: _quietLink,
                                     onPressed: () {
                                       AudioService.instance?.playSfx(
                                         'ui_confirm',
@@ -449,18 +490,6 @@ class TitleScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                // Seeded delve (v0.3.4): the sim is fully seed-deterministic, so a
-                                // shared seed IS a shared delve. Small, out of the main flow.
-                                TextButton(
-                                  key: const ValueKey('seeded-delve'),
-                                  onPressed: () => _promptSeed(context),
-                                  child: Text(
-                                    'Delve a seed',
-                                    style: EmberText.micro.copyWith(
-                                      color: EmberColors.textDim,
-                                    ),
-                                  ),
-                                ),
                                 // The Hearthside Post (v0.15.0): shown ONCE per
                                 // release after an update, dismissed forever with
                                 // one tap, re-readable from Settings. Fresh
@@ -677,6 +706,14 @@ class TitleScreen extends StatelessWidget {
 
   /// One-line description of this week's modifier, shown under the button.
   static String _weeklyModifierBlurb() => weeklyRuleFor(_thisWeek()).blurb;
+
+  /// v0.180.0 The Shorter Title: quiet footer links keep a 40-px touch
+  /// target but drop Material's 48-px minimum and wide padding.
+  static final ButtonStyle _quietLink = TextButton.styleFrom(
+    minimumSize: const Size(0, 40),
+    padding: const EdgeInsets.symmetric(horizontal: Space.xs),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  );
 
   /// Today's Trial line under the Daily Delve button (v0.9.0): the trial
   /// name, its rule, and — on a goal day — the ember bonus, stated as a

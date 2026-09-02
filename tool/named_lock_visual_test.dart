@@ -79,11 +79,17 @@ Future<void> capture(
     () => Future<void>.delayed(const Duration(milliseconds: 400)),
   );
   await tester.pump(const Duration(milliseconds: 600));
-  await tester.scrollUntilVisible(
-    find.byKey(const ValueKey('difficulty-hard')),
-    120,
-    scrollable: find.byType(Scrollable).first,
-  );
+  if (name.contains('top')) {
+    // no scroll
+  } else if (name.contains('bottom')) {
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -2000));
+  } else {
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('difficulty-hard')),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+  }
   await tester.pump(const Duration(milliseconds: 300));
   final boundary =
       key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
@@ -103,5 +109,10 @@ void main() {
   testWidgets('plates', (tester) async {
     await capture(tester, const Size(320, 568), 1.3, 'title_320x568_1_3x');
     await capture(tester, const Size(412, 915), 1.0, 'title_412x915');
+    await capture(tester, const Size(360, 800), 1.0, 'title_360x800');
+    await capture(tester, const Size(360, 640), 1.0, 'title_360x640');
+    await capture(tester, const Size(360, 800), 1.0, 'title_360x800_bottom');
+    await capture(tester, const Size(360, 800), 1.0, 'title_360x800_top');
+    await capture(tester, const Size(412, 915), 1.0, 'title_412x915_top');
   });
 }

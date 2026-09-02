@@ -5226,3 +5226,11 @@ the opening run itself (R1 brief input).
   — dates < 2026-09-14 hash over legacyTrialCount=11, so no morrow line
   breaks. Tests +4. News line reworded (still 4 lines).
 - Cold Camps Day caption trimmed 119→105 chars (longest daily line was 97; weekly Cold Quarter is 120 and already shipped) — caption lengths compared by script, not eyeballed.
+- The Shorter Title (UI directive 2026-08-31 18:45, scroll): title scroll
+  extent with REAL fonts (Ahem wraps differently — measure with
+  loadRealFonts): 412×915 113→0, 360×800 251→112, 320×568 536→420.
+  Weekly label "Weekly — <rule>" (one line at 360); Provings + seed share
+  a Wrap row (Row overflowed 122px at 320@1.3× — Wrap, not Row, for
+  footer links), 40-px quiet TextButton style; padding xl→l vertical;
+  gaps m→s ×3, s→xs ×1. Pinned in test/shorter_title_test.dart. Plates
+  critiqued at 412×915 (fits) and 320×568@1.3×.
