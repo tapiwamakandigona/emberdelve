@@ -91,3 +91,13 @@ Never trade the zero-crash record for an engine upgrade.
   3.44.9. No upgrade urgency: 3.44 is in the supported window and the
   pin is verified working there. An upgrade re-runs the checklist
   above first.
+
+## Re-check 2026-09-02 (GitHub API, primary)
+
+- flutter/flutter#187009 (Impeller regression on Adreno 506) — **still open**, P2, last
+  activity 2026-09-02; the latest reproduction on record is 3.44.0 (32 FPS avg, 100% jank
+  frames on Redmi 5 Plus / Android 8.1). No engine fix linked.
+- flutter/flutter#190640 (ImageDecoderImpeller SIGABRT on GLES / Android 10) — **still
+  open**, P2, "needs repro info", last activity 2026-08-27.
+- Exit criteria therefore **not met**; hold Flutter 3.44.9 + `EnableImpeller=false`. Next
+  re-check on the next stable engine tag or when either issue closes.
