@@ -34,6 +34,10 @@ class ContentClamp extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Buttons — three painted tiers: primary ember / secondary charcoal / ghost.
 // ---------------------------------------------------------------------------
+/// The Kept Line's fit answers, keyed by label, padding, text scale and
+/// room (see [_EmberButtonState.build]). Bounded; cleared past 256 entries.
+final Map<String, bool> _glyphFitCache = {};
+
 class EmberButton extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
@@ -103,13 +107,23 @@ class _EmberButtonState extends State<EmberButton> {
     var glyphFits = true;
     if (widget.icon != null) {
       final room = screenW - 2 * Space.l - 2 * hPad - 18 - Space.s;
-      final painter = TextPainter(
-        text: TextSpan(text: widget.label, style: _labelStyle(fg)),
-        textDirection: TextDirection.ltr,
-        textScaler: MediaQuery.textScalerOf(context),
-      )..layout();
-      glyphFits = painter.width <= room;
-      painter.dispose();
+      final scaler = MediaQuery.textScalerOf(context);
+      // PERF: the answer depends only on label, size, scale and room — never
+      // on color or press state — so it is laid out once per distinct
+      // question, not on every rebuild (a pressed button rebuilds twice;
+      // the combat bar's buttons rebuild with every hand refresh).
+      final key = '${widget.label}|$hPad|${scaler.scale(10)}|$room';
+      glyphFits = _glyphFitCache.putIfAbsent(key, () {
+        if (_glyphFitCache.length > 256) _glyphFitCache.clear();
+        final painter = TextPainter(
+          text: TextSpan(text: widget.label, style: _labelStyle(fg)),
+          textDirection: TextDirection.ltr,
+          textScaler: scaler,
+        )..layout();
+        final fits = painter.width <= room;
+        painter.dispose();
+        return fits;
+      });
     }
     void handleTap() {
       AudioService.instance?.playSfx('ui_tap', volume: 0.8);
