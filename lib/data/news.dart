@@ -34,8 +34,8 @@ const List<NewsEntryDef> newsEntries = [
       'Some foes do not simply attack. When one first winds up a charge, '
           'bristles into a counter, staggers, or raises a shield behind its '
           'strike, the badge now says so in words \u2014 once, unasked, the '
-          'first time you ever meet that move.',
-      'Hold any badge to hear it again. The how-to-play deck now says so.',
+          'first time you ever meet that move. Hold any badge to hear it '
+          'again.',
       'The one-time rating ask now waits until at least your second '
           'delve \u2014 a first run is a good run, but a thin opinion.',
       'The lock beside HARD now says what it holds: the Ember Forge '

@@ -5190,3 +5190,8 @@ the opening run itself (R1 brief input).
   test/named_lock_test.dart; tool/named_lock_visual_test.dart. News line
   + draft notes. Stage B remains device-blocked (cold-start stopwatch);
   stage C had nothing R7 listed as lacking.
+- MISTAKE + FIX: 73403b8 was pushed with a red suite (news_test: entry
+  capped at 4 lines, mine had 5) — I read the log tail as green without
+  checking the [E] count first. Fixed by merging the two Spoken Badge
+  lines into one; full suite rerun before this push. Rule for the
+  harness: `grep -c "\[E\]"` BEFORE `git push`, never after.
