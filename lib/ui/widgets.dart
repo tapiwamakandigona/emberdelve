@@ -118,8 +118,16 @@ class _EmberButtonState extends State<EmberButton> {
                 down: _down,
               ),
               child: Padding(
+                // v0.180.0 The Whole Word: on 320 px phones the ATTACK /
+                // BLOCK pair shares one row, and xl side padding left 90 px
+                // for icon + label — Cinzel broke "ATTACK" mid-word. Buttons
+                // on narrow screens keep l padding; nothing else moves.
+                // (MediaQuery, not LayoutBuilder: buttons sit inside
+                // IntrinsicHeight rows that ask for intrinsic sizes.)
                 padding: EdgeInsets.symmetric(
-                  horizontal: Space.xl,
+                  horizontal: MediaQuery.sizeOf(context).width < 340
+                      ? Space.l
+                      : Space.xl,
                   vertical: widget.dense ? Space.m : Space.l,
                 ),
                 child: Row(

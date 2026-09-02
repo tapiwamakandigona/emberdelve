@@ -14,7 +14,8 @@ import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
 
-const outDir = 'build/fresh_walk_visual';
+final outDir =
+    'build/fresh_walk_visual_${Platform.environment["PLATE_W"] ?? "360"}';
 
 Future<void> loadRealFonts() async {
   Future<ByteData> asset(String path) async =>
@@ -81,7 +82,9 @@ void main() {
 
   testWidgets('fresh profile walk', (tester) async {
     await loadRealFonts();
-    tester.view.physicalSize = const Size(360, 800) * 2;
+    final w = double.parse(Platform.environment["PLATE_W"] ?? "360");
+    final h = double.parse(Platform.environment["PLATE_H"] ?? "800");
+    tester.view.physicalSize = Size(w, h) * 2;
     tester.view.devicePixelRatio = 2.0;
     addTearDown(tester.view.reset);
     final dir = Directory('build/fresh_walk_visual/save');

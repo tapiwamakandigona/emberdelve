@@ -5304,3 +5304,7 @@ the opening run itself (R1 brief input).
   plate a fresh profile's path after every teaching change — the tour test
   that pre-heard the catalog "so the toast cannot float over the buttons"
   had been describing a player-facing bug since v0.84.0.
+- 320×568 fresh walk plated: The Whole Word — EmberButton side padding
+  l under 340 px so "ATTACK" no longer breaks mid-word beside BLOCK.
+  (LayoutBuilder in the button was rejected by IntrinsicHeight rows on the
+  title/boon screens — use MediaQuery width for button-level size rules.)
