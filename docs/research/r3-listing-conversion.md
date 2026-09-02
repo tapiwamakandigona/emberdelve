@@ -125,3 +125,27 @@ on apply day so the Daily Delve date matches — the R3 plate table now
 lives in the framing script itself (`tool/frame_store_screenshots.py
 --r3`, added 2026-09-01; set regenerated and verified same day). Full
 runbook: docs/store/PLAY-APPLY-DAY.md.
+
+## Addendum 2 (2026-09-02) — live state verified; two changes added from R5/R6
+
+Unauthenticated fetch of the public listing (R5 §Live check): 0.59.0, updated Aug 30 2026,
+50+ badge, no public star, **ten** phone screenshots — the five framed tagline plates plus
+five unframed raw duplicates of the same screens (raw HARD segment without its lock) — and
+no video. The proposal above assumed five; it now needs two more moves:
+
+1. **Delete the five unframed duplicates.** They add nothing and show a pre-0.6.1 HARD
+   segment. Replace with framed-r3 plates only if each says something new; otherwise fewer
+   frames with messages beat more frames without (Play's own guidance: "keep text to a
+   minimum", "highlight the best features" —
+   [Best practices for your store listing](https://support.google.com/googleplay/android-developer/answer/13393723)).
+2. **Business model in sentence one of the full description** (R6 §3.1). Every same-model
+   peer does this; ours is the last bullet. Proposed opening, replacing nothing else:
+   > The full game is free — every run, every delver, the daily and the weekly. One optional
+   > $4.99 unlock (the Ember Forge) opens HARD and the Ascension ladder. No ads, no timers,
+   > no gacha. Plays offline.
+   >
+   > Descend into the delve, one roll at a time. …
+   Then the existing text unchanged. Banned-word check: clean. Price stated because a visitor
+   deciding what "In-app purchases" means needs the number, not the adjective.
+
+Both are owner pastes under the freeze; neither touches code.

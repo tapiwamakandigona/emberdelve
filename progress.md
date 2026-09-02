@@ -5116,3 +5116,12 @@ the opening run itself (R1 brief input).
   don't; the three gaps are listing sentence one, empty asset slots,
   and the newest build not being on Play — all owner calls under the
   freeze. No code touched.
+- Research phase cont.: R5/R6 corrected against the LIVE public
+  listing (unauthenticated fetch 2026-09-02: 0.59.0, updated Aug 30,
+  50+ badge, no public star, TEN phone screenshots = 5 framed plates +
+  5 unframed duplicates showing HARD without its lock, no video). R3
+  addendum 2 adds the two resulting owner pastes (delete the five
+  duplicates; business model + $4.99 in sentence one). New
+  docs/research/owner-console-checklist.md: the five Console reads
+  that turn R4/R5 inference into fact, Conversion analysis being the
+  decisive one. Still no code, no tags.
