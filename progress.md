@@ -5095,3 +5095,24 @@ the opening run itself (R1 brief input).
   begins: (1) 38 installs → 2 ratings → $4.25; (2) funnel leak reasoned
   from build + listing; (3) 20–50-install comparables. Output:
   docs/research/, primary-source-cited.
+- RESEARCH PHASE (directive 01g/02a) — three cited notes landed in
+  docs/research/: r4-ratio-38-2-425.md ($4.25 = ONE $4.99 sale after
+  the 15% tier fee; 1/38 = 2.6% paid and 2/38 = 5.3% rated are AT the
+  published norms — Card Crawl Android week one 4.72% paid / 5.8%
+  rated, dev-stated norm 2–3%; the listing shows no star because 2 <
+  the display floor, Console's own "five or more" line cited; v0.59.0's
+  review ask needed a SECOND win and PR #98's fix is not in any Play
+  build). r5-funnel-reasoned.md (D7 = 1 device locates the leak at
+  first delve → second session; v0.59.0 summary CTAs are all "play
+  now"/"post this"; every return hook built since — Seven Hearths,
+  news, PR #98, six delvers — is on GitHub and in no player's hands;
+  Forge exposure needs a win so stage D is downstream of C).
+  r6-comparables-20-50-installs.md (Slice & Dice / Card Crawl /
+  Shattered / Void Tyrant state the model in sentence one or on the
+  title screen — Shattered's btnSupport sits beside Play in
+  TitleScene.java; published small-stage peers Asterogue 30 copies
+  ~1%, Zanardo 495→13 2.63%, Comet Rogue 62 copies/7 reviews; $4.99 is
+  mid-pack $2.99–$10). Net: nothing in-game the peers do that we
+  don't; the three gaps are listing sentence one, empty asset slots,
+  and the newest build not being on Play — all owner calls under the
+  freeze. No code touched.
