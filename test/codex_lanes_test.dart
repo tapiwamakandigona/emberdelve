@@ -1,6 +1,6 @@
 // test/codex_lanes_test.dart — Codex Lanes.
 //
-// The book is 119 entries across seven sections; reaching THE DICE was a
+// The book is 132 entries across eight sections; reaching THE DICE was a
 // marathon of scrolling. One chip per section, pinned under the app bar,
 // walks the lazy list to that section's header (widgets.dart
 // walkToAnchor — linear glide, eased settle, walks BOTH directions).
@@ -32,7 +32,7 @@ void main() {
     return c;
   }
 
-  testWidgets('seven lane chips render, one per section', (tester) async {
+  testWidgets('eight lane chips render, one per section', (tester) async {
     await pumpCodex(tester);
     for (final id in [
       'world',
@@ -41,6 +41,7 @@ void main() {
       'relics',
       'rules',
       'marks',
+      'stones',
       'dice',
     ]) {
       expect(

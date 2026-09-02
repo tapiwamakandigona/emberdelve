@@ -86,7 +86,7 @@ Future<void> capture(
   if (thenLane != null) await walk(thenLane);
   if (scrollTo != null) {
     final target = find.byKey(ValueKey('codex-$scrollTo'));
-    for (var i = 0; i < 40 && target.evaluate().isEmpty; i++) {
+    for (var i = 0; i < 160 && target.evaluate().isEmpty; i++) {
       await tester.drag(find.byType(CodexScreen), const Offset(0, -200));
       await tester.pump(const Duration(milliseconds: 50));
     }
@@ -138,6 +138,26 @@ void main() {
       'wayside_phone',
       scrollTo: 'place:the_wayside',
     );
+    // v0.180.0 The Set Stones: the keystone shelf, two of four unsealed, at
+    // phone width and at 320.
+    for (final (size, name) in const [
+      (Size(390, 844), 'stones_phone'),
+      (Size(320, 568), 'stones_narrow'),
+    ]) {
+      final stones = richMeta();
+      stones.meta.ownedCodex.addAll([
+        'keystone:ashen_edge',
+        'keystone:living_bastion',
+      ]);
+      await capture(
+        tester,
+        stones,
+        size,
+        name,
+        lane: 'stones',
+        scrollTo: 'keystone:ashen_edge',
+      );
+    }
     await capture(tester, richMeta(), const Size(320, 568), 'top_narrow');
     await capture(
       tester,

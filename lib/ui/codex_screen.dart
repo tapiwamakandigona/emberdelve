@@ -10,6 +10,7 @@ import '../data/characters.dart';
 import '../data/codex.dart';
 import '../data/dice.dart';
 import '../data/enemies.dart';
+import '../sim/keystones.dart' show keystoneDef;
 import '../sim/run_dice.dart' show runeName;
 import '../data/relics.dart';
 import '../game/controller.dart';
@@ -32,7 +33,7 @@ class CodexScreen extends StatefulWidget {
 class _CodexScreenState extends State<CodexScreen> {
   GameController get c => widget.c;
 
-  // Codex Lanes: the book is 119 entries across seven sections — reaching
+  // Codex Lanes: the book is 132 entries across eight sections — reaching
   // THE DICE was a marathon of scrolling. One chip per section, pinned
   // under the app bar, walks the lazy list to that section's header
   // (widgets.dart walkToAnchor). Chips navigate; they never filter — the
@@ -44,6 +45,7 @@ class _CodexScreenState extends State<CodexScreen> {
     ('relics', 'Relics'),
     ('rules', 'Rules'),
     ('marks', 'Marks'),
+    ('stones', 'Keystones'),
     ('dice', 'Dice'),
   ];
   final _scroll = ScrollController();
@@ -165,6 +167,11 @@ class _CodexScreenState extends State<CodexScreen> {
               final runeEntries = codexEntries
                   .where((e) => e.kind == 'rune')
                   .toList();
+              // v0.180.0 The Set Stones: the keystones' words, between the
+              // marks and the dice — the last tools of the trade.
+              final stoneEntries = codexEntries
+                  .where((e) => e.kind == 'keystone')
+                  .toList();
               return Column(
                 children: [
                   const SizedBox(height: Space.s),
@@ -251,6 +258,13 @@ class _CodexScreenState extends State<CodexScreen> {
                             const SizedBox(height: Space.m),
                           ],
                           const SizedBox(height: Space.l),
+                          _laneHeader('stones', 'THE KEYSTONES'),
+                          const SizedBox(height: Space.s),
+                          for (final e in stoneEntries) ...[
+                            _entryCard(context, e),
+                            const SizedBox(height: Space.m),
+                          ],
+                          const SizedBox(height: Space.l),
                           _laneHeader('dice', 'THE DICE'),
                           const SizedBox(height: Space.s),
                           for (final e in dieEntries) ...[
@@ -276,6 +290,7 @@ class _CodexScreenState extends State<CodexScreen> {
     'die' => dice[e.refId]?.name ?? e.refId,
     'rule' => ruleNames[e.refId] ?? e.refId,
     'rune' => runeName(e.refId),
+    'keystone' => keystoneDef(e.refId).name,
     'relic' => relics[e.refId]?.name ?? e.refId,
     _ => placeNames[e.refId] ?? e.refId,
   };
@@ -286,6 +301,7 @@ class _CodexScreenState extends State<CodexScreen> {
     if (e.kind == 'die') return 'die';
     if (e.kind == 'rule') return 'rule';
     if (e.kind == 'rune') return 'rune';
+    if (e.kind == 'keystone') return 'keystone';
     if (e.kind == 'relic') return 'relic';
     final def = enemies[e.refId];
     if (def == null) return 'enemy';

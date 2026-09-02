@@ -41,7 +41,8 @@ const List<NewsEntryDef> newsEntries = [
           'the weekly, and three new days join the daily. The Codex '
           'gains their words.',
       'Three new rooms, the Spoken Stones: a fair scale, a wall of '
-          'finished marks, and the first delver\'s lantern still lit. A '
+          'finished marks, and the first delver\'s lantern still lit. The '
+          'Codex gains the four keystones\' own words. A '
           'thirteenth vista, Obsidian, waits for whoever puts down all '
           'eight bosses; each of those bosses now leaves its own honest '
           'word on the death screen and is named when it falls; and the '

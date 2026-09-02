@@ -63,6 +63,10 @@ CodexEntryDef _rule(String refId, String text) =>
 // (the marks are tools of the trade). Names resolve via runeName().
 CodexEntryDef _runeEntry(String refId, String text) =>
     CodexEntryDef('rune:$refId', 'rune', refId, text, costEmbers: 15);
+// v0.180.0 The Set Stones: the four keystones' own words — priced like
+// dice and marks (tools of the trade). Names resolve via keystoneDef().
+CodexEntryDef _stone(String refId, String text) =>
+    CodexEntryDef('keystone:$refId', 'keystone', refId, text, costEmbers: 15);
 
 /// Display names for 'rule' entries. Five ids mirror lib/data/mutators.dart
 /// (asserted by test); 'cold_quarter' is the doubled week's own name.
@@ -872,6 +876,32 @@ final List<CodexEntryDef> codexEntries = [
     'Gold off a die face, small and steady. The peddler claims the '
         'gilt rune was their idea, and the smith has never denied it '
         'loudly enough to settle the matter.',
+  ),
+  // v0.180.0 The Set Stones: one rule for a whole delve, offered once
+  // after the first won fight. Each entry answers its keystone's own text
+  // (lib/sim/keystones.dart) without restating the numbers.
+  _stone(
+    'ashen_edge',
+    'The keenest edge is the one not yet swung. Old delvers held their '
+        'dice back and let the first blow carry the weight of every die '
+        'still in the hand.',
+  ),
+  _stone(
+    'living_bastion',
+    'A wall that remembers. Half of what you did not need tonight '
+        'stands again tomorrow \u2014 up to a point. Even stone forgets.',
+  ),
+  _stone(
+    'crown_of_twelve',
+    'The court that cut this crown seated every size of die at one '
+        'table and paid a coin for each new kind that sat down. The delve '
+        'rewards variety, not weight.',
+  ),
+  _stone(
+    'twin_bellows',
+    'Two bellows worked in turn: push, pull, push. A fire fed by '
+        'alternation burns hotter each stroke, and one stroke repeated '
+        'lets it fall.',
   ),
 ];
 

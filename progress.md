@@ -5333,3 +5333,5 @@ the opening run itself (R1 brief input).
   at 320/360.
 - The Fallen Crown: the won screen names the boss it put down, one honest
   line per crown, by seed.
+- The Set Stones: four keystone codex entries in their own lane (132
+  entries, eight lanes).
