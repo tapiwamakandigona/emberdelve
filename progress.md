@@ -5140,3 +5140,9 @@ the opening run itself (R1 brief input).
   manifest meta-data (Aug-31-2026 bar; Billing 9 due Aug-31-2027),
   16 KB page alignment on every arm64 .so + zipalign -P 16 verified
   (Feb-1-2027 hard stop). All clear; no action; not a reason to cut.
+- Research: docs/research/r8-first-run-teaching-comparables.md — how
+  Slice & Dice (tann) and Shattered PD (Debenham) teach the first run,
+  from their own posts, vs emberdelve's tour/tips/how-to-play read
+  from lib/. No new gap found; written so it is not re-asked. The one
+  thing they did that we can't: watch a real first session (owner
+  task, no telemetry).
