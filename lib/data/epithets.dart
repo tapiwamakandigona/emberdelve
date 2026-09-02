@@ -175,7 +175,7 @@ const Map<String, EpithetDef> epithets = {
     'the Weathered',
     unlockLine: 'Win a Weekly under every rule in the rotation.',
     stat: 'weekly_rules_won',
-    target: 6,
+    target: 8, // v0.180.0 The Widened Rotation: 6 → 8 (promise wording moves)
   ),
   'the_proven': EpithetDef(
     'the_proven',

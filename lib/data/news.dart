@@ -36,10 +36,11 @@ const List<NewsEntryDef> newsEntries = [
           'strike, the badge now says so in words \u2014 once, unasked, the '
           'first time you ever meet that move. Hold any badge to hear it '
           'again.',
-      'The one-time rating ask now waits until at least your second '
-          'delve \u2014 a first run is a good run, but a thin opinion.',
-      'The lock beside HARD now says what it holds: the Ember Forge '
-          'opens HARD and Ascension. One line, no popup.',
+      'Two more weeks join the shared rotation from 14 September: Lean '
+          'Road (six floors, no shops) and Hard March (six floors, no '
+          'rests). The Codex gains their words.',
+      'The lock beside HARD now says what it holds, and the one-time '
+          'rating ask waits until at least your second delve.',
       'Thank you for delving with us.',
     ],
   ),

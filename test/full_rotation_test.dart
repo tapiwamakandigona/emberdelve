@@ -24,7 +24,7 @@ void main() {
     expect(canonicalRuleLabel('no_shops+no_rests'), 'no_rests+no_shops');
     expect(canonicalRuleLabel('no_rests+no_shops'), 'no_rests+no_shops');
     expect(canonicalRuleLabel('all_d4'), 'all_d4');
-    expect(legalRuleLabels(), hasLength(6));
+    expect(legalRuleLabels(), hasLength(8));
     expect(legalRuleLabels(), contains('no_rests+no_shops'));
   });
 
@@ -109,7 +109,7 @@ void main() {
     );
     expect(
       tester.widget<Text>(line).data,
-      'Rules taken: 1 of 6',
+      'Rules taken: 1 of 8',
       reason: 'junk labels never inflate the tally',
     );
   });

@@ -15,6 +15,8 @@ void main() {
     expect(rules.map((e) => e.refId).toList(), [
       ...mutatorsOrder,
       'cold_quarter',
+      'lean_road',
+      'hard_march',
     ]);
     for (final e in rules) {
       expect(e.costEmbers, 10, reason: 'calendar words price like places');
@@ -31,6 +33,8 @@ void main() {
       );
     }
     expect(ruleNames['cold_quarter'], doubledWeek.name);
+    expect(ruleNames['lean_road'], leanRoad.name);
+    expect(ruleNames['hard_march'], hardMarch.name);
   });
 
   test('rule entries buy through the standard codex flow', () {

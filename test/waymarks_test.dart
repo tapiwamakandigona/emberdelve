@@ -17,6 +17,7 @@
 // seed 1 wins on easy; seed 18 loses on easy.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:emberdelve/game/weekly.dart';
 import 'package:emberdelve/data/achievements.dart';
 import 'package:emberdelve/data/characters.dart';
 import 'package:emberdelve/data/codex.dart';
@@ -133,14 +134,8 @@ void main() {
     m.hardWins = 999;
     m.tempersSet = 999;
     m.runesTempered.addAll({'blade', 'aegis', 'surge', 'echo', 'mend', 'gilt'});
-    m.weeklyRulesWon.addAll({
-      'all_d4',
-      'elites_only',
-      'no_shops',
-      'short_road',
-      'no_rests',
-      'no_rests+no_shops',
-    });
+    // Every rule the live rotation can deal (v0.180.0: eight).
+    m.weeklyRulesWon.addAll(legalRuleLabels());
     for (final id in characters.keys) {
       m.charWins[id] = 999;
       m.charHardWins[id] = 999;

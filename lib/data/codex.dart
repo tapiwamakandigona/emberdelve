@@ -73,6 +73,8 @@ const Map<String, String> ruleNames = {
   'short_road': 'Short Road',
   'no_rests': 'Cold Camps',
   'cold_quarter': 'Cold Quarter',
+  'lean_road': 'Lean Road', // v0.180.0 The Widened Rotation
+  'hard_march': 'Hard March',
 };
 
 /// Display names for 'place' entries — places exist only in the Codex, so
@@ -806,9 +808,21 @@ final List<CodexEntryDef> codexEntries = [
   ),
   _rule(
     'cold_quarter',
-    'Once a rotation the delve deals two rules at once: no shops, no '
-        'rests. The wardens named it the Cold Quarter and the name '
-        'stuck, the way frost does.',
+    'Some weeks the delve deals two rules at once. The first such week: '
+        'no shops, no rests. The wardens named it the Cold Quarter and '
+        'the name stuck, the way frost does.',
+  ),
+  // v0.180.0 The Widened Rotation: two more composed weeks.
+  _rule(
+    'lean_road',
+    'Six floors and not one stall. The road is short and nothing on it '
+        'is for sale, so a delver learns to want what the dark already '
+        'gave.',
+  ),
+  _rule(
+    'hard_march',
+    'Six floors and no hollow to sleep in. Every camp is a fight, and '
+        'the healing a delver finds is the healing a delver brought.',
   ),
   // the marks (v0.142.0) — the anvil's own words --------------------------
   _runeEntry(

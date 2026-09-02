@@ -84,6 +84,31 @@ const WeeklyRuleDef doubledWeek = WeeklyRuleDef(
   ['no_shops', 'no_rests'],
 );
 
+/// v0.180.0 The Widened Rotation: two more composed weeks, each vetted by
+/// bot sweep on kindler/normal against the same 150 seeds (Cold Quarter
+/// 110/150 in the same sweep; elites_only pairs 6–16/150 rejected).
+const WeeklyRuleDef leanRoad = WeeklyRuleDef(
+  'Lean Road',
+  'Six floors and no shops \u2014 a short delve where what you find is '
+      'all you carry to the bottom.',
+  ['no_shops', 'short_road'],
+);
+const WeeklyRuleDef hardMarch = WeeklyRuleDef(
+  'Hard March',
+  'Six floors and no rests \u2014 every camp is a fight; healing comes '
+      'only from shops, events and what you carry.',
+  ['no_rests', 'short_road'],
+);
+
+/// Every composed (multi-rule) week, in rotation order. Append, don't reorder.
+const List<WeeklyRuleDef> composedWeeks = [doubledWeek, leanRoad, hardMarch];
+
+/// Monday-aligned week index from which the widened cycle applies
+/// (Monday 2026-09-14; pinned by test against weekIndex). Weeks before it
+/// keep the six-week cycle, so nothing already dealt — or already promised
+/// by the "Next Monday" line — changes under a player's feet.
+const int widenedFromWeek = 2959;
+
 /// v0.127.0 The Full Rotation: the canonical banked form of a weekly rule
 /// label — ids sorted and '+'-joined, so 'no_rests+no_shops' and
 /// 'no_shops+no_rests' are one rule. The legal set is derived from the
@@ -93,7 +118,7 @@ String canonicalRuleLabel(String label) => (label.split('+')..sort()).join('+');
 /// Every label the current rotation can actually deal, canonicalized.
 Set<String> legalRuleLabels() => {
   for (final id in mutatorsOrder) id,
-  canonicalRuleLabel(doubledWeek.mutators.join('+')),
+  for (final w in composedWeeks) canonicalRuleLabel(w.mutators.join('+')),
 };
 
 /// The rule declared for a given week: the singles in [mutatorsOrder], then
@@ -103,9 +128,21 @@ Set<String> legalRuleLabels() => {
 WeeklyRuleDef weeklyRuleFor(int index) {
   // Non-negative modulo (week indices are positive for any real date, but
   // stay total anyway rather than trust the caller).
-  final n = mutatorsOrder.length + 1;
-  final i = ((index % n) + n) % n;
-  if (i == n - 1) return doubledWeek;
+  if (index < widenedFromWeek) {
+    final n = mutatorsOrder.length + 1;
+    final i = ((index % n) + n) % n;
+    if (i == n - 1) return doubledWeek;
+    final m = mutatorDef(mutatorsOrder[i]);
+    return WeeklyRuleDef(m.name, m.blurb, [m.id]);
+  }
+  // Widened cycle, phased so the singles sequence continues straight
+  // through the seam: the anchor week deals exactly what the six-week
+  // cycle would have, and the first week to differ is the seventh slot.
+  const composed = composedWeeks;
+  final n = mutatorsOrder.length + composed.length;
+  final phase = widenedFromWeek % (mutatorsOrder.length + 1);
+  final i = (index - widenedFromWeek + phase) % n;
+  if (i >= mutatorsOrder.length) return composed[i - mutatorsOrder.length];
   final m = mutatorDef(mutatorsOrder[i]);
   return WeeklyRuleDef(m.name, m.blurb, [m.id]);
 }
@@ -119,9 +156,11 @@ String weeklyRuleName(String stored) {
   if (ids.length == 1) {
     return isKnownMutator(stored) ? mutatorDef(stored).name : 'Delve';
   }
-  if (ids.toSet().length == doubledWeek.mutators.toSet().length &&
-      ids.toSet().containsAll(doubledWeek.mutators)) {
-    return doubledWeek.name;
+  for (final w in composedWeeks) {
+    if (ids.toSet().length == w.mutators.toSet().length &&
+        ids.toSet().containsAll(w.mutators)) {
+      return w.name;
+    }
   }
   final known = [
     for (final id in ids)

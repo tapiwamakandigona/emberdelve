@@ -771,7 +771,7 @@ const Map<String, AchievementDef> achievements = {
     'The Full Rotation',
     'Win a Weekly under every rule in the rotation.',
     stat: 'weekly_rules_won',
-    target: 6,
+    target: 8, // v0.180.0 The Widened Rotation: 6 → 8 (promise wording moves)
   ),
   // v0.133.0 The Six Marks: the temper collection arc, mirroring the
   // Weekly's (v0.127). The full honor is PROMISE-worded ('every rune'),

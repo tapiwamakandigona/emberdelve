@@ -5195,3 +5195,17 @@ the opening run itself (R1 brief input).
   checking the [E] count first. Fixed by merging the two Spoken Badge
   lines into one; full suite rerun before this push. Rule for the
   harness: `grep -c "\[E\]"` BEFORE `git push`, never after.
+- Backlog item 4 (content) BUILT — The Widened Rotation: weekly pairs
+  Lean Road (no_shops+short_road) and Hard March (no_rests+short_road),
+  sweep kindler/normal 150 seeds: baseline 106, Cold Quarter 110, Lean
+  Road 110, Hard March 92; elites_only pairs 6–16 rejected (elites_only
+  alone 7 — the deliberate hard rung since v0.4.4). Cycle 6→8 from
+  widenedFromWeek=2959 (Mon 2026-09-14), phased so weeks through
+  2026-10-12 are identical to the old cycle; first divergence 2026-10-19.
+  No sim change. Codex +2 rule entries (127). Tests +6, written_rules
+  extended. News entry rewritten to stay at 4 lines.
+  Push gate caught 5 red tests (full_rotation/earned_titles/honest_ledger
+  pin promise-worded honors to legalRuleLabels().length): full_rotation
+  + the_weathered target 6→8 per re-pricing doctrine (promise wording
+  moves with the catalog); title tally "of 8". AUDIT RULE honoured late
+  — should have read the honors' targets against the catalog FIRST.
