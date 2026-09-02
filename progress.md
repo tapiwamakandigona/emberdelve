@@ -5225,3 +5225,4 @@ the opening run itself (R1 brief input).
   no_rests; lean_road_day; hard_march_day), 11→14, anchored the same way
   — dates < 2026-09-14 hash over legacyTrialCount=11, so no morrow line
   breaks. Tests +4. News line reworded (still 4 lines).
+- Cold Camps Day caption trimmed 119→105 chars (longest daily line was 97; weekly Cold Quarter is 120 and already shipped) — caption lengths compared by script, not eyeballed.

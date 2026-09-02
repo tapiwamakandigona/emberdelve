@@ -105,8 +105,8 @@ const Map<String, TrialDef> trials = {
   'cold_camps_day': TrialDef(
     'cold_camps_day',
     'Cold Camps Day',
-    'No rests on the map \u2014 every camp is a fight. Healing comes only '
-        'from shops, events and what you carry.',
+    'No rests on the map \u2014 every camp is a fight, and healing is '
+        'only what you find or carry.',
     mutators: ['no_rests'],
   ),
   'lean_road_day': TrialDef(
