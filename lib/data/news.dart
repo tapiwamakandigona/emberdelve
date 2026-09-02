@@ -49,6 +49,7 @@ const List<NewsEntryDef> newsEntries = [
           'rest fire tells ten more tales \u2014 the eighth time round its '
           'book.',
       'The guided first fight holds stray taps while it asks for a die. '
+          'A ? on the title opens the how-to-play any time. '
           'The lock beside HARD says what it holds; the one-time rating '
           'ask waits until your second delve; the map drags lighter and '
           'ATTACK stays one word on the smallest phones. Thank you for '

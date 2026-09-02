@@ -68,6 +68,29 @@ class TitleScreen extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       // The Ledger (v0.3.3): lifetime stats + hearth colors.
+                                      // v0.180.0 The Open Book: the manual,
+                                      // reachable before the first delve.
+                                      // Same glyph as the fight's own "?".
+                                      // Up here it costs the fold nothing.
+                                      IconButton(
+                                        key: const ValueKey('how-to-play'),
+                                        icon: const Icon(
+                                          Icons.help_outline,
+                                          color: EmberColors.textDim,
+                                          size: 26,
+                                        ),
+                                        tooltip: 'How to play',
+                                        onPressed: () {
+                                          AudioService.instance?.playSfx(
+                                            'ui_tap',
+                                          );
+                                          Navigator.of(context).push(
+                                            emberRoute(
+                                              (_) => const PrimerScreen(),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                       IconButton(
                                         key: const ValueKey('ledger-button'),
                                         icon: const Icon(

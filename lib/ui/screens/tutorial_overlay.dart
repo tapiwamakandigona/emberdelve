@@ -5,10 +5,16 @@ class _TutorialOverlay extends StatelessWidget {
   final int step;
   final VoidCallback onNext;
   final VoidCallback onSkip;
+
+  /// v0.180.0 The Open Book: read from the title screen there is no fight
+  /// to point at, so every card sits centered.
+  final bool centered;
   const _TutorialOverlay({
+    super.key,
     required this.step,
     required this.onNext,
     required this.onSkip,
+    this.centered = false,
   });
 
   /// Number of cards — the combat screen's step handler ends the overlay
@@ -65,11 +71,13 @@ class _TutorialOverlay extends StatelessWidget {
     final (icon, title, body) = _cards[step];
     // Dim everything; the card sits near what it explains (intent up top,
     // dice tray at the bottom, combos mid-stage).
-    final align = switch (step) {
-      0 => Alignment.topCenter,
-      1 => Alignment.bottomCenter,
-      _ => Alignment.center,
-    };
+    final align = centered
+        ? Alignment.center
+        : switch (step) {
+            0 => Alignment.topCenter,
+            1 => Alignment.bottomCenter,
+            _ => Alignment.center,
+          };
     return Positioned.fill(
       child: GestureDetector(
         onTap: onNext, // tapping anywhere advances — never traps the player
@@ -78,8 +86,8 @@ class _TutorialOverlay extends StatelessWidget {
           padding: EdgeInsets.only(
             left: Space.l,
             right: Space.l,
-            top: step == 0 ? 120 : Space.l,
-            bottom: step == 1 ? 210 : Space.l,
+            top: !centered && step == 0 ? 120 : Space.l,
+            bottom: !centered && step == 1 ? 210 : Space.l,
           ),
           child: Align(
             alignment: align,
@@ -261,6 +269,52 @@ class _ContextTip extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// v0.180.0 The Open Book: the same card deck, read from the title screen.
+/// Every tester who left words asked for a manual; the deck existed, but its
+/// only door was a small "?" inside a fight. A quiet footer link now opens
+/// it before the first delve. Reading it here changes no saved state — the
+/// guided first fight and the context tips run exactly as before.
+class PrimerScreen extends StatefulWidget {
+  const PrimerScreen({super.key});
+
+  @override
+  State<PrimerScreen> createState() => _PrimerScreenState();
+}
+
+class _PrimerScreenState extends State<PrimerScreen> {
+  int _step = 0;
+
+  void _close() {
+    AudioService.instance?.playSfx('ui_back');
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: EmberColors.bg,
+      body: Stack(
+        children: [
+          const Positioned.fill(child: Vignette(strength: 0.6)),
+          _TutorialOverlay(
+            key: const ValueKey('primer-overlay'),
+            step: _step,
+            centered: true,
+            onNext: () {
+              if (_step >= _TutorialOverlay.cardCount - 1) {
+                _close();
+              } else {
+                setState(() => _step++);
+              }
+            },
+            onSkip: _close,
+          ),
+        ],
       ),
     );
   }

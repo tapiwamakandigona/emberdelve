@@ -5335,3 +5335,5 @@ the opening run itself (R1 brief input).
   line per crown, by seed.
 - The Set Stones: four keystone codex entries in their own lane (132
   entries, eight lanes).
+- The Open Book: a ? on the title opens the how-to-play deck before the
+  first delve; footer-link draft rejected on plates (wrapped).
