@@ -11,8 +11,7 @@ void main() {
   List<String> cycle7() => hearthTales.sublist(60, 70);
 
   test('seven whole cycles; hearthgold still frozen at the first', () {
-    expect(hearthTales.length, 70);
-    expect(hearthTales.length, 7 * hearthgoldTales);
+    expect(hearthTales.length, 8 * hearthgoldTales); // v0.180.0 eighth
     expect(hearthgoldTales, 10);
     expect(cycle7(), hasLength(10));
     for (final t in cycle7()) {
@@ -39,8 +38,9 @@ void main() {
     expect((cut['max_hp'] as int) > 0, isTrue, reason: 'more life to hold');
   });
 
-  test('the sequence wraps cleanly after the seventh cycle', () {
-    expect(hearthTale(70), hearthTales.first);
+  test('the sequence runs on past the seventh cycle', () {
+    // v0.180.0: the Eighth Cycle follows; tale 70 is its first line.
+    expect(hearthTale(70), hearthTales[70]);
     expect(hearthTale(69), hearthTales[69]);
   });
 }

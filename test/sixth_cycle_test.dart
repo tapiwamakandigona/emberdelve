@@ -16,7 +16,7 @@ void main() {
   List<String> cycle6() => hearthTales.sublist(50, 60);
 
   test('six full cycles, hearthgold frozen at the first', () {
-    expect(hearthTales.length, 70); // v0.180.0: rotation + Spoken Stones
+    expect(hearthTales.length, 80); // v0.180.0: the Eighth Cycle
     expect(hearthgoldTales, 10, reason: 'the vista gate never moves');
   });
 
@@ -69,9 +69,10 @@ void main() {
     expect(provings.last.id, 'ash_summit');
     expect(all.contains('summit of ash'), isTrue);
     // 'Six times round now' — the book itself.
-    // v0.180.0: the seventh cycle closed (70 tales); the sixth's own
-    // "six times round" line stays historical, like every fixed count.
-    expect(hearthTales.length ~/ hearthgoldTales, 7);
+    // v0.180.0: the seventh and eighth cycles closed (80 tales); the
+    // sixth's own "six times round" line stays historical, like every
+    // fixed count.
+    expect(hearthTales.length ~/ hearthgoldTales, 8);
     expect(all.contains('Six times round'), isTrue);
   });
 

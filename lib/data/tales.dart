@@ -172,8 +172,11 @@ const List<String> hearthTales = [
       'ember never rolls low.',
   'Sixteen chairs, and the fire is done making chairs. Whoever answers the '
       'delve now answers it as one of the sixteen.',
+  // v0.180.0 The Honest Count: the Many-Handed is promise-worded ('every
+  // delver') and moved to the live roster in v0.179.0 — so does its tale.
+  // Pinned to characters.length in test/honest_count_test.dart.
   'Win a delve from every chair and the fire has a second name waiting: the '
-      'Many-Handed. Sixteen ways down, and the name asks all of them.',
+      'Many-Handed. Twenty-two ways down, and the name asks all of them.',
   'Eight crowned things wait in the low places. The book keeps a page for '
       'each; the delve keeps the introductions.',
   'The ledger\'s ladder holds thirteen rungs, and the topmost is the '
@@ -214,6 +217,34 @@ const List<String> hearthTales = [
   'Beside some paths the wall is cut with marks, two for every delve '
       'someone finished. Cut yours and it costs blood, and leaves you '
       'a little more life to hold than you came with.',
+  // v0.180.0 The Eighth Cycle: ten more \u2014 the crowns by their habits,
+  // the black glass, the first lantern, the shared road, the spoken badge,
+  // the short road, the held hand, and the count. Every line states a
+  // fact the game can prove; test/eighth_cycle_test.dart holds each to
+  // its data. Append only, as chartered.
+  'The Ember Tyrant strikes, then walls, then does both, then strikes '
+      'hardest of all. Four beats, always in that order. Count them.',
+  'The Pyre Matriarch never guards. Three blows, each heavier than the '
+      'last, and then the first again. Whoever walls on the third lives.',
+  'The Ashen Colossus opens with its shield up. Waste nothing on that '
+      'beat, the old hands say \u2014 the swing that follows is the one to '
+      'answer.',
+  'Put down every crown in the deep and the hearth window shows a black '
+      'glass. Nothing moves in it. That is the point.',
+  'Where the tunnel narrows a lantern hangs, smoked black, an ember still '
+      'in it. Warm your hands, or pay for the coal, or leave it lit for the '
+      'next one.',
+  'Each day the delve deals one road to everyone who comes down. Same '
+      'floors, same foes, same luck \u2014 only the hands differ.',
+  'The first time a foe winds up, or bristles, or does both, the badge '
+      'above it says so in plain words. After that, the mark alone.',
+  'Ask for the short road at the top and the delve is six floors instead '
+      'of nine. The crown at the bottom waits either way.',
+  'A first delver\u2019s first fight comes with a hand on the shoulder: '
+      'five steps, roll to reroll. Shrug it off whenever you like; it does '
+      'not come back.',
+  'Eight times round now, this book of tales. The fire counts in coals, '
+      'not years, and it has not lost the count yet.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

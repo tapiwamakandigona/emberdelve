@@ -5325,3 +5325,5 @@ the opening run itself (R1 brief input).
   to the live roster. Lesson: when a catalog grows, grep every data file
   for the OLD number word — the v0.179 pass caught "Sixteen chairs" but
   not "Sixteen keep this fire".
+- The Eighth Cycle: ten tales (80), each coupled to its data; Many-Handed
+  tale re-told for twenty-two.

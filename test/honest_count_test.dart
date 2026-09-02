@@ -8,6 +8,7 @@
 // roster so the next chair trips the tale, not a player.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/characters.dart';
+import 'package:emberdelve/data/epithets.dart';
 import 'package:emberdelve/data/tales.dart';
 
 const _words = {6: 'six', 16: 'sixteen', 22: 'twenty-two', 23: 'twenty-three'};
@@ -29,5 +30,14 @@ void main() {
     expect(_words[n - 16] ?? '${n - 16}', 'six');
     expect(tale, contains('six who drew the second'));
     expect(hearthTales[4].length, lessThanOrEqualTo(200));
+  });
+
+  test('the Many-Handed tale asks as many ways down as the honor does', () {
+    final i = hearthTales.indexWhere((t) => t.contains('Many-Handed'));
+    expect(i, greaterThan(0));
+    final tale = hearthTales[i].toLowerCase();
+    final n = characters.length;
+    expect(epithets['the_six_handed']!.target, n, reason: 'promise-worded');
+    expect(tale, contains('${_words[n]} ways down'), reason: tale);
   });
 }

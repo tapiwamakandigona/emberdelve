@@ -152,7 +152,7 @@ const Map<String, EpithetDef> epithets = {
     'the Many-Handed',
     unlockLine: 'Win a delve with every delver.',
     stat: 'delvers_cleared',
-    // Promise epithets move with the live roster. v0.184.0: the glover.
+    // Promise epithets move with the live roster. v0.179.0: the glover.
     target: 22,
   ),
   // v0.59.0 The Proven: the Provings arc's summit reward. Target must
