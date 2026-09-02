@@ -11,10 +11,14 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen>
     with SingleTickerProviderStateMixin {
   // Pulse for reachable-node glow (one controller for the whole scene).
+  // v0.180.0 The Still Glow: under reduce motion the halo holds at mid
+  // glow instead of breathing — reachable nodes still read as lit, and the
+  // four medallions stop repainting every frame (idle census: 9.0 -> 1.0
+  // paints/frame with motion reduced). Same listener shape as EmberDrift.
   late final AnimationController _pulse = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1600),
-  )..repeat(reverse: true);
+  );
 
   // Where the delver marker last stood, kept across map visits so the marker
   // visibly walks node-to-node after each encounter. Keyed by run seed:
@@ -32,14 +36,27 @@ class _MapScreenState extends State<MapScreen>
   @override
   void initState() {
     super.initState();
+    Motion.instance.addListener(_onMotion);
+    _onMotion();
     // v0.30.0 The Delver's Primer: the map IS the delve, so first contact
     // with it defines the word. Fires once ever; a no-op on every later
     // visit (lib/game/tips.dart owns the once-and-suppression rules).
     widget.c.tipDirector.onMapArrival();
   }
 
+  void _onMotion() {
+    if (!mounted) return;
+    if (Motion.instance.reduced) {
+      _pulse.stop();
+      _pulse.value = 0.5;
+    } else if (!_pulse.isAnimating) {
+      _pulse.repeat(reverse: true);
+    }
+  }
+
   @override
   void dispose() {
+    Motion.instance.removeListener(_onMotion);
     _pulse.dispose();
     _scroll.dispose();
     super.dispose();

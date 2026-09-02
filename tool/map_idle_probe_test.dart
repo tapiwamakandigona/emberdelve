@@ -42,10 +42,9 @@ void main() {
     c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
     c.startRun(character: 'kindler', seed: 6, boons: false, difficulty: 'easy');
 
-    await tester.pumpWidget(MaterialApp(
-      theme: buildEmberTheme(),
-      home: MapScreen(c),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(theme: buildEmberTheme(), home: MapScreen(c)),
+    );
     // Let the intro sweep and any entrance animation finish.
     for (var i = 0; i < 180; i++) {
       await tester.pump(const Duration(milliseconds: 16));
@@ -57,7 +56,10 @@ void main() {
     final byType = <String, int>{};
     debugOnProfilePaint = (RenderObject ro) {
       paints++;
-      final t = ro.runtimeType.toString();
+      var t = ro.runtimeType.toString();
+      if (ro is RenderCustomPaint) {
+        t = '$t<${ro.painter?.runtimeType ?? ro.foregroundPainter?.runtimeType}>';
+      }
       byType[t] = (byType[t] ?? 0) + 1;
     };
     for (var i = 0; i < 120; i++) {
@@ -69,11 +71,16 @@ void main() {
     final top = byType.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     // ignore: avoid_print
-    print('MAP IDLE frames=$frames paints=$paints '
-        '(${(paints / frames).toStringAsFixed(1)}/frame)');
+    print(
+      'MAP IDLE frames=$frames paints=$paints '
+      '(${(paints / frames).toStringAsFixed(1)}/frame)',
+    );
     // ignore: avoid_print
-    print(const JsonEncoder.withIndent('  ')
-        .convert({for (final e in top.take(20)) e.key: e.value}));
+    print(
+      const JsonEncoder.withIndent(
+        '  ',
+      ).convert({for (final e in top.take(20)) e.key: e.value}),
+    );
 
     await tester.pumpWidget(const SizedBox.shrink());
   });

@@ -5316,3 +5316,7 @@ the opening run itself (R1 brief input).
   junk-proofed at the controller. Lesson re-learned: plate a new vista
   next to its nearest neighbours before accepting the numbers — the first
   grade was a Deepshale twin.
+- The Still Glow: map halo pulse honours Reduce Motion (was the one
+  repeating controller that did not). Idle census across all screens run
+  and recorded in v0.180.0.md; map is the only screen above 3.0/frame and
+  the remainder there is the drift layer + four small halos by design.
