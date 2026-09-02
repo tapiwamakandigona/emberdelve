@@ -49,8 +49,45 @@ void main() {
       );
     });
 
+    test('v0.180.0: the FIRST run never asks on any route', () {
+      final first = MetaState(runsWon: 1, runsPlayed: 1);
+      // Won daily as the very first run.
+      expect(
+        ReviewService.eligible(
+          first,
+          wonThisRun: true,
+          wonDailyOrWeekly: true,
+          tourActive: false,
+        ),
+        isFalse,
+      );
+      // Strong first clear that climbs straight into Sparktender.
+      expect(
+        ReviewService.eligible(
+          first,
+          wonThisRun: true,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 24,
+        ),
+        isFalse,
+      );
+      // The same climb on the second run asks.
+      final second = MetaState(runsWon: 1, runsPlayed: 2);
+      expect(
+        ReviewService.eligible(
+          second,
+          wonThisRun: true,
+          wonDailyOrWeekly: false,
+          tourActive: false,
+          rankedUpToMarks: 24,
+        ),
+        isTrue,
+      );
+    });
+
     test('second win asks', () {
-      final m = MetaState(runsWon: 2);
+      final m = MetaState(runsWon: 2, runsPlayed: 2);
       expect(
         ReviewService.eligible(
           m,
@@ -76,7 +113,7 @@ void main() {
     });
 
     test('a won daily/weekly asks even before the 2nd freeplay win', () {
-      final m = MetaState(runsWon: 1);
+      final m = MetaState(runsWon: 1, runsPlayed: 2);
       expect(
         ReviewService.eligible(
           m,
@@ -94,7 +131,7 @@ void main() {
       var calls = 0;
       final svc = ReviewService.instance;
       svc.backend = () async => calls++;
-      final m = MetaState(runsWon: 2);
+      final m = MetaState(runsWon: 2, runsPlayed: 2);
       final fired = svc.maybeAsk(
         m,
         wonThisRun: true,
@@ -119,7 +156,7 @@ void main() {
     test('no backend (tests/web/desktop) still stamps quietly', () {
       final svc = ReviewService.instance;
       svc.backend = null;
-      final m = MetaState(runsWon: 3);
+      final m = MetaState(runsWon: 3, runsPlayed: 3);
       expect(
         svc.maybeAsk(
           m,
@@ -149,7 +186,7 @@ void main() {
     });
 
     test('climbing into Tinderhand (8) is too early to ask', () {
-      final m = MetaState(runsPlayed: 1);
+      final m = MetaState(runsPlayed: 3);
       expect(
         ReviewService.eligible(
           m,
@@ -240,14 +277,8 @@ void main() {
       final local = MetaState(reviewAsked: true);
       final cloud = MetaState();
       expect(mergeMetaStates(local, cloud).reviewAsked, isTrue);
-      expect(
-        mergeMetaStates(cloud, local).reviewAsked,
-        isTrue,
-      );
-      expect(
-        mergeMetaStates(MetaState(), MetaState()).reviewAsked,
-        isFalse,
-      );
+      expect(mergeMetaStates(cloud, local).reviewAsked, isTrue);
+      expect(mergeMetaStates(MetaState(), MetaState()).reviewAsked, isFalse);
     });
   });
 }

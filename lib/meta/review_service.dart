@@ -25,8 +25,16 @@
 //     the climb to Sparktender (24 marks) rather than Tinderhand (8), so the
 //     ask still lands on real investment (several runs) and never on a
 //     first-run fluke.
-//   • Never while the Guided Delve tour is running, and never on a profile
-//     that hasn't finished the tour version it was shown.
+//   • v0.180.0 (directive 2026-09-02d, R10): never at the end of a
+//     profile's FIRST run. docs/research/r10-review-prompt-path.md showed
+//     both the won-daily route and the Sparktender route could fire after
+//     run one (a strong first clear banks 24+ marks about one time in six);
+//     a first session is a good run but a thin opinion. `runsPlayed >= 2`
+//     (banked before the ask, abandons included) moves every route behind
+//     at least one earlier delve.
+//   • Never while a Guided Delve beat is on screen. (The tour lives in the
+//     first fight and ends by completion or SKIP, so by bank time it is
+//     inactive; there is no separate tour-version check — see R10 §1.)
 //   • No incentives, no "only if you like it" pre-filtering, no custom
 //     rating UI — just the official API, once (Play policy).
 import 'dart:async';
@@ -52,6 +60,10 @@ class ReviewService {
   /// is too early to have an opinion worth asking for.
   static const int rankAskFloorMarks = 24;
 
+  /// Runs banked (this one included) before ANY route may ask. Two means
+  /// "not the first run": the player has come back at least once.
+  static const int minRunsPlayed = 2;
+
   /// Pure eligibility — the whole charter in one testable expression.
   /// [wonThisRun] is whether the run just banked ended in `run_won`;
   /// [wonDailyOrWeekly] is whether that run was a daily/weekly AND won;
@@ -66,6 +78,8 @@ class ReviewService {
     int? rankedUpToMarks,
   }) {
     if (meta.reviewAsked || tourActive) return false;
+    // v0.180.0: never at the end of the first run, on any route.
+    if (meta.runsPlayed < minRunsPlayed) return false;
     // "Earned pride", in the three shapes it actually takes:
     //   a 2nd+ win, any won daily/weekly (those already require a finished,
     //   won run by construction in _bankRun), or a climb into Sparktender+.

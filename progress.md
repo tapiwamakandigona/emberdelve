@@ -5176,3 +5176,9 @@ the opening run itself (R1 brief input).
   docs/releases/v0.180.0.md DRAFT. Suite 1198 green pre-bump; rerun after
   bump below. No tag, no release, no Play.
 - Post-bump full suite: 1198: All tests passed!
+- Backlog item 2 BUILT — review gate: `ReviewService.minRunsPlayed = 2`;
+  eligible() refuses any route while meta.runsPlayed < 2 (banked before
+  the ask). Header rewritten to match code (tour-version sentence was
+  aspirational). Tests: first run never asks via won-daily or Sparktender
+  climb; same climb asks on run two; existing tests given runsPlayed.
+  News line + v0.180.0 draft notes updated. No sim movement.
