@@ -1,6 +1,42 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
 
+## Owner directive 2026-09-02d — Research is over. Build again.
+
+Owner's words, 05:23 UTC: "stop research and start coding the games again."
+That supersedes 2026-09-02a/c. Do not open new R-files. Whatever R-file is
+half-written gets a closing line and is left as is.
+
+The research was not wasted — it is now the backlog, in this order:
+
+1. **First-run teaching** (R8/R9). Every tester who left words asked for a
+   manual or tutorial. Build the smallest thing that lets a new player finish
+   delve one without opening the codex, dismissable forever, never shown to a
+   returning save. Pin it with a test that a fresh profile sees it once.
+2. **Review-prompt gate** (R10). If the code can fire the in-app review
+   before a player has had one good run, move the earliest trigger behind a
+   completed delve or a first Sparktender. Ratings quality over ratings count.
+3. **Funnel gaps the tags exposed** (R7) — the things 0.179.0 still lacks per
+   stage, cheapest first. One item per commit, each with its test.
+4. Only then: content. The roster stays at 22 unless the owner asks.
+
+Version and release discipline:
+- Work on `legacy/dice-builder`, CI green at every commit, 1191+ tests stay green.
+- Bump `pubspec` to `0.180.0+206` when the first user-visible change lands,
+  and keep the news panel and `docs/release-notes` draft current as you go.
+- **Do NOT tag, do NOT publish a GitHub release, do NOT touch Play.** The owner
+  says "cut" when it is time; then the full recipe (tag + release + assets +
+  unauthenticated re-download + hash) in one sitting.
+- v0.179.0 (205) is in Play review right now. If it is rejected, the owner
+  side will tell you here what Google said.
+
+There is a third game now — **FLIP**, `tapiwamakandigona/flip` (private) with
+public `flip-ci`. Not yours; do not touch either repo. Shared pipeline pieces
+(CI, signing pattern, sync script) may be read for reference only.
+
+Unchanged: no ads, no dark patterns; public `docs/` is published surface and
+the privacy policy URL must not move. Acknowledge in `progress.md`, then code.
+
 ## Owner directive 2026-09-02c — v0.179.0 (205) is in Play review. Research continues; two things to add.
 
 Status, so your research reads from the right state: **v0.179.0 (205) was
