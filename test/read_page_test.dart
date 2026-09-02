@@ -57,11 +57,21 @@ Future<bool> walkToFight(WidgetTester tester, GameController c) async {
 
 void main() {
   setUpAll(loadRealFonts);
-  for (final size in const [Size(320, 568), Size(360, 640), Size(360, 800)]) {
-    testWidgets('the fight\'s deck fits every card at $size', (tester) async {
+  for (final (size, scale) in const [
+    (Size(320, 568), 1.0),
+    (Size(360, 640), 1.0),
+    (Size(360, 800), 1.0),
+    // Past the screen the card scrolls instead of clipping.
+    (Size(320, 568), 1.3),
+  ]) {
+    testWidgets('the fight\'s deck fits every card at $size ×$scale', (
+      tester,
+    ) async {
       tester.view.physicalSize = size * 2;
       tester.view.devicePixelRatio = 2.0;
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
       addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       final c = GameController();
       c.meta
         ..tourSeenVersion = tourVersion
@@ -80,6 +90,9 @@ void main() {
       var cards = 0;
       while (find.text('Next').evaluate().isNotEmpty && cards++ < 12) {
         expect(tester.takeException(), isNull, reason: 'card $cards $size');
+        // At 1.3× on the smallest phone the card scrolls; reach the button.
+        await tester.ensureVisible(find.text('Next'));
+        await pumpFor(tester, 300); // let the scroll settle before the tap
         await tester.tap(find.text('Next'));
         await pumpFor(tester, 200);
       }

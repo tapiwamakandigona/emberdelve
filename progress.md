@@ -5342,3 +5342,5 @@ the opening run itself (R1 brief input).
 - LESSON 2026-09-02: CI failed on 25906e7 for an analyzer info in a test
   file written AFTER my last local `flutter analyze`. Analyze runs in the
   same command as the push gate from now on (analyze is fatal on CI).
+- Read Page: deck card capped at screen height + scrolls past it (1.3× on
+  320×568 pinned).

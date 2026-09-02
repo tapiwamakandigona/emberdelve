@@ -98,50 +98,60 @@ class _TutorialOverlay extends StatelessWidget {
         child: Container(
           color: Colors.black.withValues(alpha: 0.62),
           padding: const EdgeInsets.all(Space.l),
-          child: Column(
-            children: [
-              Spacer(flex: above),
-              Panel(
-                padding: const EdgeInsets.all(Space.l),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icon, color: EmberColors.ember, size: 28),
-                    const SizedBox(height: Space.s),
-                    Text(
-                      title,
-                      style: EmberText.h2,
-                      textAlign: TextAlign.center,
+          // The can't-overflow guarantee (same as the context tips): the
+          // card may never be taller than the screen, and past that — 1.3×
+          // text on a 320×568 phone — its body scrolls rather than clips.
+          child: LayoutBuilder(
+            builder: (context, box) => Column(
+              children: [
+                Spacer(flex: above),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: box.maxHeight),
+                  child: Panel(
+                    padding: const EdgeInsets.all(Space.l),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon, color: EmberColors.ember, size: 28),
+                          const SizedBox(height: Space.s),
+                          Text(
+                            title,
+                            style: EmberText.h2,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: Space.s),
+                          Text(
+                            body,
+                            style: EmberText.bodyDim,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: Space.l),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              EmberButton('Skip', ghost: true, onTap: onSkip),
+                              const SizedBox(width: Space.m),
+                              EmberButton(
+                                step >= _cards.length - 1 ? 'Got it' : 'Next',
+                                primary: true,
+                                onTap: onNext,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: Space.s),
+                          Text(
+                            '${step + 1} / ${_cards.length}',
+                            style: EmberText.micro,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: Space.s),
-                    Text(
-                      body,
-                      style: EmberText.bodyDim,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: Space.l),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        EmberButton('Skip', ghost: true, onTap: onSkip),
-                        const SizedBox(width: Space.m),
-                        EmberButton(
-                          step >= _cards.length - 1 ? 'Got it' : 'Next',
-                          primary: true,
-                          onTap: onNext,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: Space.s),
-                    Text(
-                      '${step + 1} / ${_cards.length}',
-                      style: EmberText.micro,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              Spacer(flex: below),
-            ],
+                Spacer(flex: below),
+              ],
+            ),
           ),
         ),
       ),
