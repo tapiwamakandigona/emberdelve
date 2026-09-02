@@ -57,6 +57,9 @@ const List<String> epithetsOrder = [
   // v0.129.0 The Earned Titles — same rule: before the Proven.
   'the_tempered',
   'the_weathered',
+  // v0.180.0 The Storied and the Lettered — same rule: before the Proven.
+  'the_storied',
+  'the_lettered',
   'the_proven', // v0.59.0 — append-LAST rule
 ];
 
@@ -92,7 +95,10 @@ const Map<String, EpithetDef> epithets = {
   'the_bossbane': EpithetDef(
     'the_bossbane',
     'the Bossbane',
-    unlockLine: 'Fell all three bosses of the deep.',
+    // v0.180.0 honesty fix: said 'all three bosses' while the bestiary has
+    // held eight since v0.112. Target stays 3 — a worn title never re-locks
+    // (§Re-pricing doctrine); the text now states the real milestone.
+    unlockLine: 'Fell three different bosses of the deep.',
     stat: 'bosses_beaten',
     target: 3,
   ),
@@ -176,6 +182,25 @@ const Map<String, EpithetDef> epithets = {
     unlockLine: 'Win a Weekly under every rule in the rotation.',
     stat: 'weekly_rules_won',
     target: 8, // v0.180.0 The Widened Rotation: 6 → 8 (promise wording moves)
+  ),
+  // v0.180.0 The Storied and the Lettered. Both PROMISE-worded, so both
+  // targets track the live catalog (pinned by storied_lettered_test):
+  //   the Storied — hearthTale(heard) walks the tales in order, so leaving
+  //   hearthTales.length hollows means every tale has been heard once.
+  //   the Lettered — every Codex page unsealed (codexEntries.length).
+  'the_storied': EpithetDef(
+    'the_storied',
+    'the Storied',
+    unlockLine: 'Hear every tale the rest fire tells.',
+    stat: 'tales_heard',
+    target: 80,
+  ),
+  'the_lettered': EpithetDef(
+    'the_lettered',
+    'the Lettered',
+    unlockLine: 'Unseal every page of the Codex.',
+    stat: 'codex_unsealed',
+    target: 132,
   ),
   'the_proven': EpithetDef(
     'the_proven',

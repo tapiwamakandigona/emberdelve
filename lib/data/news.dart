@@ -47,7 +47,8 @@ const List<NewsEntryDef> newsEntries = [
           'eight bosses; each of those bosses now leaves its own honest '
           'word on the death screen and is named when it falls; and the '
           'rest fire tells ten more tales \u2014 the eighth time round its '
-          'book.',
+          'book. Two more titles to earn: the Storied, for hearing every '
+          'tale, and the Lettered, for unsealing every page.',
       'The guided first fight holds stray taps while it asks for a die. '
           'A ? on the title opens the how-to-play any time. '
           'The lock beside HARD says what it holds; the one-time rating '

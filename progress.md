@@ -5365,3 +5365,8 @@ Verification, run right after the identity commit:
   `Tapiwa Makandigona <tapiwamakandigoner@gmail.com> | Tapiwa Makandigona <tapiwamakandigoner@gmail.com>`
 - the retired-name grep from item 4 → 0 outside DEMAND.md's own directive
   lines (4 hits, all inside the directive).
+- The Storied and the Lettered: two promise-worded epithets pinned to the
+  live tale/codex catalogs; Bossbane's stale 'all three bosses' line fixed
+  (target unchanged). Mid/late/boss insight buckets audited the same way as
+  early — every line coaches a read the game offers (elite cycles are fixed
+  and repeat; guard beats show on the badge); no text changed.
