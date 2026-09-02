@@ -37,6 +37,39 @@ class TourAnchors {
   }
 }
 
+/// Four opaque, silent bands around [hole] (see The Held Hand above).
+List<Widget> _heldBands(Rect hole, Size size) {
+  Widget band({
+    double? l,
+    double? t,
+    double? r,
+    double? b,
+    double? w,
+    double? h,
+  }) {
+    return Positioned(
+      left: l,
+      top: t,
+      right: r,
+      bottom: b,
+      width: w,
+      height: h,
+      child: const AbsorbPointer(child: SizedBox.expand()),
+    );
+  }
+
+  final top = hole.top.clamp(0.0, size.height);
+  final bottom = hole.bottom.clamp(0.0, size.height);
+  final left = hole.left.clamp(0.0, size.width);
+  final right = hole.right.clamp(0.0, size.width);
+  return [
+    band(l: 0, t: 0, r: 0, h: top),
+    band(l: 0, t: bottom, r: 0, b: 0),
+    band(l: 0, t: top, w: left, h: bottom - top),
+    band(l: right, t: top, r: 0, h: bottom - top),
+  ];
+}
+
 class _TourOverlay extends StatelessWidget {
   final String beat;
   final bool isInfo;
@@ -56,11 +89,7 @@ class _TourOverlay extends StatelessWidget {
   // (icon, title, body ≤ 12 words) per beat — tested in tour_test.dart.
   static const Map<String, (IconData, String, String)> copy = {
     TourBeats.roll: (Icons.casino, 'YOUR DICE', 'Tap ROLL to throw them.'),
-    TourBeats.pick: (
-      Icons.touch_app,
-      'PICK ONE UP',
-      'Tap a die to select it.',
-    ),
+    TourBeats.pick: (Icons.touch_app, 'PICK ONE UP', 'Tap a die to select it.'),
     TourBeats.spend: (
       Icons.sports_martial_arts,
       'SPEND IT',
@@ -105,6 +134,15 @@ class _TourOverlay extends StatelessWidget {
               )
             else
               IgnorePointer(child: scrim),
+            // v0.180.0 The Held Hand: on an action beat only the spotlit
+            // anchor is live. A fresh-profile walk showed END TURN lit and
+            // tappable under "PICK ONE UP" — one stray tap handed the enemy
+            // a free turn while the card kept asking for a die. The four
+            // bands around the hole now swallow taps; the hole itself, the
+            // card's copy and SKIP (below, on top) are untouched. With no
+            // anchor laid out yet there is no hole and nothing is held —
+            // the tour must never trap a player.
+            if (!isInfo && hole != null) ..._heldBands(hole, size),
             Positioned(
               left: Space.l,
               right: Space.l,
@@ -163,9 +201,7 @@ class _TourOverlay extends StatelessWidget {
                   child: Text(
                     'Tap anywhere to continue',
                     textAlign: TextAlign.center,
-                    style: EmberText.micro.copyWith(
-                      color: EmberColors.textDim,
-                    ),
+                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
                 ),
               ),
@@ -207,9 +243,7 @@ class _TourOverlay extends StatelessWidget {
                   const SizedBox(height: Space.xs),
                   Text(
                     body,
-                    style: EmberText.body.copyWith(
-                      color: EmberColors.textDim,
-                    ),
+                    style: EmberText.body.copyWith(color: EmberColors.textDim),
                   ),
                 ],
               ),

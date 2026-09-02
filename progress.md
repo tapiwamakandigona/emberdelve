@@ -5296,3 +5296,11 @@ the opening run itself (R1 brief input).
   couples each tale to its event's effects. Tales draw no RNG — zero
   re-anchor cost, unlike deck/relic/enemy growth. Prefer tale/codex/insight
   content when a re-anchor is not worth it.
+- Fresh-profile walk plated (tool/fresh_walk_visual_test.dart, 360×800):
+  two first-run holes fixed — The Held Hand (tour action beats absorb taps
+  outside the spotlit anchor; END TURN under "PICK ONE UP" cost a turn) and
+  The Quiet First Delve (song-credit toast suppressed while runsPlayed==0;
+  it covered the boon skip button on the first decision screen). Lesson:
+  plate a fresh profile's path after every teaching change — the tour test
+  that pre-heard the catalog "so the toast cannot float over the buttons"
+  had been describing a player-facing bug since v0.84.0.

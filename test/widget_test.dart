@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/data/tracks.dart';
 import 'package:emberdelve/sim/daily.dart';
 import 'package:emberdelve/sim/sim.dart';
@@ -145,6 +146,11 @@ void main() {
     // v0.3.1 F11: the first-ever fight shows the tutorial overlay, which
     // absorbs taps; this test drives combat directly, so mark it seen.
     c.meta.tutorialSeen = true;
+    // v0.180.0 The Held Hand: the tour's action beats now hold every
+    // tap outside the spotlit anchor; this test drives combat directly,
+    // so stamp the tour seen too.
+    c.meta.tourSeenVersion = tourVersion;
+    c.tour = TourDirector(seenVersion: tourVersion);
     c.meta.tipsSeen.addAll(ContextTips.all);
     // v0.84.0: pre-hear the catalog so the once-ever song-credit toast
     // cannot float over the buttons this test taps.

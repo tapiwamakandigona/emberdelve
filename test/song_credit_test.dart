@@ -7,16 +7,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/game/controller.dart';
 
 void main() {
-  test('the first delve credits Into the Delve at the map', () {
+  test('the first delve banks Into the Delve quietly (v0.180.0)', () {
+    // The Quiet First Delve: a fresh profile's first run shows no song
+    // credit — the toast used to land on the first decision screen. The
+    // fact still banks; the summary's new-song line names the songs.
     final c = GameController();
+    expect(c.meta.runsPlayed, 0);
     expect(c.meta.heardTracks.contains('map'), isFalse);
     c.startRun(character: 'kindler', seed: 1, difficulty: 'easy');
     expect(c.meta.heardTracks.contains('map'), isTrue);
+    expect(c.runNewTracks, contains('map'));
+    expect(c.flash, isNull);
+  });
+
+  test('from the second delve on, a first hearing is credited', () {
+    final c = GameController();
+    c.meta.runsPlayed = 1;
+    expect(c.meta.heardTracks.contains('map'), isFalse);
+    c.startRun(character: 'kindler', seed: 1, difficulty: 'easy');
     expect(c.flash, '"Into the Delve" — first hearing');
   });
 
   test('a heard song is never credited again', () {
     final c = GameController();
+    c.meta.runsPlayed = 1;
     c.startRun(character: 'kindler', seed: 1, difficulty: 'easy');
     c.flash = null;
     c.endToTitle();

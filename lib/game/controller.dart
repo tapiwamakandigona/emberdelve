@@ -409,8 +409,16 @@ class GameController extends ChangeNotifier {
         // track per profile (guarded by the add above); the catalog
         // resolves the name so a retired key is never credited. The
         // summary's grouped new-song line (v0.76.0) still banks the run.
+        // v0.180.0 The Quiet First Delve: a brand-new profile's first run
+        // hears four new songs, and the credit toast landed on the very
+        // first decision screen (over the boon skip button) before the
+        // player knew what a delve was. The first delve stays quiet: the
+        // songs still bank (heardTracks above) and the summary's grouped
+        // new-song line names them; credits resume from the second delve.
         final credit = trackByKey(key)?.name;
-        if (credit != null) flash = '"$credit" — first hearing';
+        if (credit != null && meta.runsPlayed > 0) {
+          flash = '"$credit" — first hearing';
+        }
         MetaStore.save(meta);
       }
     }
