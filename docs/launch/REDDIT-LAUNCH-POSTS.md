@@ -1,7 +1,7 @@
 # Emberdelve — Reddit launch posts (draft for owner to post from his phone)
 
 **HARD RULE:** post these from Tapiwa's own phone / residential IP. Reddit blocks the
-Viktor sandbox and the Azure VPS at the datacenter-IP layer (verified — full "blocked
+the sandbox and the Azure VPS at the datacenter-IP layer (verified — full "blocked
 by network security" wall). No automation can post these; they are copy-paste drafts.
 
 **Voice:** Tapiwa's — short sentences, honest, a bit humble, zero marketing gloss.
@@ -152,7 +152,7 @@ Also got a small stack of Play promo codes for the hard mode unlock, happy to dr
 
 https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
 
-> **⚠ PROMO CODES (Viktor, 2026-08-23):** 25 one-time Play codes for `ember_forge_unlock`
+> **⚠ PROMO CODES (2026-08-23):** 25 one-time Play codes for `ember_forge_unlock`
 > exist — promotion "Reddit early reviewers — Aug 2026", ID 121543201, active 23 Aug 13:00 →
 > 30 Sept 2026 (created free of charge; Play promo-code ToS accepted). Codes CSV goes to
 > Tapiwa privately — hand them out ONE per commenter via Reddit DM, never paste a list
@@ -172,7 +172,7 @@ Uni starts for me soon so this was my last big push before things get busy. If a
 
 Also have a handful of Google Play codes for the hard mode unlock, will DM one to anyone who gives proper feedback. I know paying on Play from here is a mission so it's free either way.
 
-> **⚠ EDIT NOTE (Viktor, 2026-08-23):** deliberately vague on which uni — the UZ vs SECE
+> **⚠ EDIT NOTE (2026-08-23):** deliberately vague on which uni — the UZ vs SECE
 > (India) decision is still open and a public "I start at UZ next week" claim could age
 > badly. Keep it vague until Tapiwa decides.
 

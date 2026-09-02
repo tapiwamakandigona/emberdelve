@@ -2,7 +2,7 @@
 
 **Why manual:** Play Console's screenshot upload uses a custom asset-picker modal (not a
 standard OS file dialog), which is fragile to automate and risks leaving the live listing
-in a messy draft. Viktor verified the exact path but is not auto-uploading — safer by hand.
+in a messy draft. The exact path is verified but not auto-uploaded — safer by hand.
 
 **The improved, upload-ready files (1080×1920, Play-compliant):**
 `emberdelve/docs/store/screenshots/framed/` on the `legacy/dice-builder` branch:
@@ -11,7 +11,7 @@ in a messy draft. Viktor verified the exact path but is not auto-uploading — s
 - `03-map.png` — "Branching paths."
 - `04-title.png` — "Fair dice. No ads."
 - `05-ledger.png` — "Die forward."
-(Download them from GitHub, or ask Viktor to attach them here.)
+(Download them from GitHub.)
 
 ## Steps
 1. Play Console → **Emberdelve** → left nav **Grow users → Store presence → Store listings**.
@@ -28,6 +28,6 @@ in a messy draft. Viktor verified the exact path but is not auto-uploading — s
 So the first wave of visitors from r/roguelites hits the stronger, captioned listing that
 leads with the actual hook instead of a stats screen.
 
-## If you'd rather Viktor do it
-Viktor can attempt the modal automation, but flagged it as fragile — better to spend that
+## If you'd rather automate it
+The modal automation is possible but fragile — better to spend that
 risk budget elsewhere. Your call.

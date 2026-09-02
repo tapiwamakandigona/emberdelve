@@ -1,4 +1,4 @@
-# Store asset QA + conversion pass (2026-08-16, Viktor)
+# Store asset QA + conversion pass (2026-08-16)
 
 Applied the "criticise with screenshots" method to the live-listing assets, because
 after a Reddit click the **store page decides install-or-bounce** — it's the highest-
@@ -28,7 +28,7 @@ leverage marketing surface we control (no ad spend, pure conversion).
   5. **Die forward.** — Bank embers. Unlock delvers, dice, ascension. *(ledger)*
 - Regenerate any time the UI changes: `python tool/frame_store_screenshots.py`.
 
-## To upload (owner / Viktor when console cooperates)
+## To upload (when the console cooperates)
 Play Console → Grow users → Store presence → Main store listing → Phone screenshots →
 replace with `docs/store/screenshots/framed/*.png` (already 1080×1920, Play-compliant).
 Reversible; not a release. Do this before driving Reddit traffic so the first visitors

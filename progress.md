@@ -431,7 +431,7 @@ byte-identical by construction (no file under lib/sim/ or lib/data/ changed).
 
 ## 2026-07-25 — v0.3.11 phase 2: LFP-1 physical dice, LFP-2a die flight, LFP-4 idle life (owner-directed "fix the issues and make the update")
 
-Owner asked Viktor to implement the remaining playtest-gap workstreams and
+I set out to implement the remaining playtest-gap workstreams and
 ship a GitHub release. Everything presentation-only; sim untouched again.
 
 - LFP-1a/1b/1c: rolls now THROW the dice — launch from a bottom-center thumb
@@ -459,13 +459,13 @@ Evidence: flutter analyze clean; full flutter test green; play_session
 harness green. No lib/sim or lib/data change across the whole branch —
 golden anchors, replays and saves byte-identical.
 
-## 2026-07-25 — Release v0.3.11 published (Viktor)
+## 2026-07-25 — Release v0.3.11 published
 - PR #52 merged into legacy/dice-builder (merge head bd5d33f).
 - CI workflow_dispatch run 30153939057: tests + signed release build green (cert SHA-256 verified in CI). VERIFIED.
 - Tag v0.3.11 created on bd5d33f; GitHub Release published with emberdelve-v0.3.11.apk (38295092 B) and .aab (57191187 B) assets: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.3.11
 - Deferred: LFP-2b in-turn undo, LFP-5 settings toggle (PR #49 open questions).
 
-## 2026-07-25 — Perf: repaint storm + SFX tap latency (v0.3.12+17, Viktor)
+## 2026-07-25 — Perf: repaint storm + SFX tap latency (v0.3.12+17)
 Owner report on released v0.3.11: laggy, glitchy audio, and "when I click a
 button too quick it lags a lot".
 
@@ -734,7 +734,7 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
 
 ## 2026-08-10 — v0.4.0+24: the Ember Forge (Play Billing full unlock, spec R8)
 
-- Owner directives (Viktor app chat, 2026-08-10): production access is granted
+- Owner directives (2026-08-10): production access is granted
   (per-app; Emberdelve needs no further tester gate), monetize without
   annoying players, everything production-ready. Market research (r/roguelites,
   r/AndroidGaming pricing threads, Slice & Dice / Dicey Dungeons comps) says:
@@ -771,7 +771,7 @@ and elements rebuilt per frame via `debugOnProfilePaint` /
   tests green (`flutter analyze` + `flutter test`, sandbox run 2026-08-10).
 - features.json: added M4-2 (passes:false — needs a real license-tester
   purchase + restore on a Play build for device evidence).
-- Play Console side still needed (owner/Viktor, tracked outside the repo):
+- Play Console side still needed (tracked outside the repo):
   create one-time product `ember_forge_unlock` ($4.99 base, launch intro
   $2.99 optional), add tester emails as license testers, upload the v0.4.0
   AAB to closed testing, verify purchase+restore on-device, then M4-2 flips.
@@ -2214,7 +2214,7 @@ apply + idempotent bonus bank + share header). Version 0.9.0+35.
 - analyze clean; suite 674/674 (/work/temp/v0610_suite1.log; +6 test/deepest_mark_test.dart incl. loss-sets-the-mark and first-run-silent pins).
 - Plates critiqued clean (tool/deepest_mark_visual_test.dart: deepest_win_360x640, deepest_loss_320x568 dignity plate). PLATE LESSON: SummaryScreen pumped directly needs a Material(color: EmberColors.bg) host or every Text paints the yellow missing-DefaultTextStyle underline; the line sits below the fold — scrollUntilVisible before snap.
 - Zero sim movement, zero save-format movement (bestFloor persisted since v0.5.0). pubspec 0.61.0+87.
-- itch.io same session: android channel butler-pushed to v0.59.0 (was stale at 0.45.0 — the "CI auto-sync" note was wrong, corrected in MARKETING-SYNC.md); devlog 1640696 posted; new password + API key stored Viktor-side.
+- itch.io same session: android channel butler-pushed to v0.59.0 (was stale at 0.45.0 — the "CI auto-sync" note was wrong, corrected in MARKETING-SYNC.md); devlog 1640696 posted; new password + API key stored in the sandbox credentials file.
 
 ## 2026-08-25 — v0.62.0 "The Kept Fire" gates GREEN (push pending GitHub auth)
 - One improvement: title greets a 7+-days-away player with one warm line under the Gathered Hearth (key kept-fire-line): "N days since your last delve — the hearth kept its fire." Pure derived state from newest runHistory date (injectable clock keptFireLine helper); self-retiring on any banked run; silent for fresh/active/malformed. Scout: docs/improvements/v0.62.0-lead-scout.md (Helpshift 90-second re-entry window).
@@ -5346,3 +5346,22 @@ the opening run itself (R1 brief input).
   320×568 pinned).
 - The Honest Road: early insight no longer coaches an HP read the map does
   not offer; says what the map shows.
+
+## 2026-09-02 — Author identity (DEMAND 02L)
+
+Acknowledged and done. Local git identity for this clone is now
+`Tapiwa Makandigona <tapiwamakandigoner@gmail.com>` (author and committer);
+no `GIT_AUTHOR_*`/`GIT_COMMITTER_*` overrides are set (the sandbox's shared
+global gitconfig is read-only, so the repo-local config is what applies —
+it takes precedence). Every tracked file that named an assistant as author,
+maintainer or "who did this" was rewritten in my voice or made neutral
+(16 files, 50 lines: PROJECT.md, PROVENANCE.md, docs/launch/*, docs/store/*,
+docs/release.md, docs/improvements/*, docs/FIX_PLAN_v0.3.1.md, progress.md).
+Release notes and templates carry no "generated by"/"assistant" line
+(checked). No history rewritten.
+
+Verification, run right after the identity commit:
+- `git log -1 --format='%an <%ae> | %cn <%ce>'` →
+  `Tapiwa Makandigona <tapiwamakandigoner@gmail.com> | Tapiwa Makandigona <tapiwamakandigoner@gmail.com>`
+- the retired-name grep from item 4 → 0 outside DEMAND.md's own directive
+  lines (4 hits, all inside the directive).

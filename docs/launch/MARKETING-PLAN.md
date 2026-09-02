@@ -21,8 +21,8 @@ phone — Reddit blocks datacenter IPs), LinkedIn (dev-log), and the existing te
 
 ## Roles
 - **Tapiwa (from his phone / residential IP):** post the Reddit threads, reply to Reddit
-  comments (Reddit automation is impossible from Viktor's IPs — verified).
-- **Viktor:** everything else — drafts (done), the tester nudge, LinkedIn dev-log (when the
+  comments (Reddit automation is impossible from the sandbox/VPS IPs — verified).
+- **Me:** everything else — drafts (done), the tester nudge, LinkedIn dev-log (when the
   session is logged back in), monitoring installs/crash-free/ratings in Play Console, and
   iterating copy from what lands.
 
@@ -34,8 +34,8 @@ phone — Reddit blocks datacenter IPs), LinkedIn (dev-log), and the existing te
 1. **Nudge the 32 testers onto 0.7.0** (`TESTER-UPDATE-NUDGE.md`). Only 9% are on the newest
    build; getting the rest current + playing is the fastest path to real crash-free data.
    Channel: whatever Tapiwa actually used to recruit them (Discord/WhatsApp/friends is likely
-   more effective than the Play email list). Viktor drafted both an email and a DM version.
-2. **Viktor watches vitals daily** until a crash-free number appears. Target ≥98%.
+   more effective than the Play email list). I drafted both an email and a DM version.
+2. **Watch vitals daily** until a crash-free number appears. Target ≥98%.
 
 ### Phase 1 — soft push (once crash-free ≥98% shows, or after ~1 week of tester play)
 3. **Reddit, from Tapiwa's phone** (`REDDIT-LAUNCH-POSTS.md`, live link already embedded):
@@ -46,7 +46,7 @@ phone — Reddit blocks datacenter IPs), LinkedIn (dev-log), and the existing te
 
 ### Phase 2 — production promote (when vitals confirm quality)
 5. Console → Test & release → Production → Create new release, staged 20% → watch 24h → 100%.
-   This is a one-way public action → Viktor will confirm with Tapiwa before pressing it.
+   This is a one-way public action → it gets pressed by hand, deliberately.
 
 ### Phase 3 — sustain
 6. Reply to every review + Reddit/LinkedIn comment. Log real feedback into
@@ -55,7 +55,7 @@ phone — Reddit blocks datacenter IPs), LinkedIn (dev-log), and the existing te
 
 ---
 
-## What Viktor tracks (Play Console, weekly)
+## What I track (Play Console, weekly)
 | Metric | Where | Now (2026-08-16) | Target |
 |---|---|---|---|
 | Installs | Statistics → Installed audience | 32 | growing |
@@ -65,6 +65,6 @@ phone — Reddit blocks datacenter IPs), LinkedIn (dev-log), and the existing te
 
 ## Guardrails
 - No paid ads. No fake urgency / FOMO (breaks the game's ethics charter AND Reddit norms).
-- Never post launch threads from Viktor's IPs (sandbox/VPS) — Reddit blocks them.
+- Never post launch threads from the sandbox/VPS IPs — Reddit blocks them.
 - Production promote = confirm with Tapiwa first (one-way public action).
 - Keep the dice-game marketing on `legacy/dice-builder`; never touch `main` (Emberwood agent).

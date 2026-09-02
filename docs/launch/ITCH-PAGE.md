@@ -1,6 +1,6 @@
 # Emberdelve — itch.io page kit
 
-Status: **PAGE BUILT 2026-08-16 (by Viktor, browser-automated).** Account `tsorostudios`
+Status: **PAGE BUILT 2026-08-16 (browser-automated).** Account `tsorostudios`
 exists; page live in DRAFT at https://tsorostudios.itch.io/emberdelve with description,
 cover, 5 screenshots, tags, AI disclosure (code+text), Play link. REMAINING: (1) Tapiwa
 taps the itch verification email in Gmail, (2) butler push of the APK, (3) flip to Public. Free-only page — **itch payouts (PayPal/Payoneer) are blocked for ZW, so

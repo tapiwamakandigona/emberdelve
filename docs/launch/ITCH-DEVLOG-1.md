@@ -1,6 +1,6 @@
 # itch devlog #1 — draft (post Mon 17 or Tue 18 Aug, NOT same night as r/Zimbabwe post)
 
-Post via: itch.io → dashboard → Emberdelve → Devlog → new post. Viktor has browser
+Post via: itch.io → dashboard → Emberdelve → Devlog → new post. I have browser
 access to the tsorostudios account and can post this autonomously.
 
 GUARDRAILS before posting:

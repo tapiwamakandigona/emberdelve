@@ -6,7 +6,7 @@ fix, no code: only **9% of the 32 testers have updated to the newest 0.7.0 "Face
 build** — 48% are still on the old 0.4.2 alpha. If the rest update and play a little, the
 vitals dashboard populates from real sessions and we finally get a crash-free number.
 
-**How to reach them** (owner picks — Viktor asked which):
+**How to reach them** (owner picks):
 - Closed-testing tester email list / Google Group set up in Play Console, **or**
 - the opt-in link: `https://play.google.com/apps/testing/com.tsorostudios.emberdelve`
 - If numbers are small and personal (friends/family/Discord), a direct message beats email.
@@ -48,7 +48,7 @@ that felt off. Cheers 🎲
 
 ---
 
-## After they update — what Viktor checks
+## After they update — what to check
 - Play Console → Monitor & improve → Android vitals → crash-free / ANR rate populates.
 - Target: **≥98% crash-free** over the sessions that come in.
 - Statistics → the % of base on version code 33 should climb from 9% toward majority.
