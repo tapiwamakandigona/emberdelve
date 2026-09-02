@@ -5291,3 +5291,8 @@ the opening run itself (R1 brief input).
   Shorter Scroll: event glyph 96→56 and gaps xl/l→m/m when height < 640;
   all six longest rooms now 0 scroll at 320; 360 unchanged. Test with real
   fonts (Ahem gave 228 px — never assert extents under Ahem).
+- Seventh Cycle closed: two Spoken Stones tales (68→70 = 7×10); pins in
+  hearth_tale/fourth_cycle/fifth_cycle updated; test/seventh_cycle_test.dart
+  couples each tale to its event's effects. Tales draw no RNG — zero
+  re-anchor cost, unlike deck/relic/enemy growth. Prefer tale/codex/insight
+  content when a re-anchor is not worth it.

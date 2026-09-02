@@ -203,6 +203,14 @@ const List<String> hearthTales = [
       'delvers who walk it learn to want what the dark already gave.',
   'Hard March is six floors and no hollow to sleep in. Every camp is '
       'a fight, and the healing you find is the healing you brought.',
+  // v0.180.0 The Spoken Stones close the seventh cycle: two rooms where
+  // the price is written on the wall, told. Append only, as chartered.
+  'Some rooms keep a brass scale, both pans level. Weigh gold on it '
+      'and the deep pays embers; weigh your wounds and it pays in '
+      'healing. It has never once tipped a hidden way.',
+  'Beside some paths the wall is cut with marks, two for every delve '
+      'someone finished. Cut yours and it costs blood, and leaves you '
+      'a little more life to hold than you came with.',
 ];
 
 /// v0.100.0: the Hearthgold milestone, FROZEN at the first cycle's length.

@@ -16,7 +16,7 @@ void main() {
   List<String> cycle6() => hearthTales.sublist(50, 60);
 
   test('six full cycles, hearthgold frozen at the first', () {
-    expect(hearthTales.length, 68); // v0.180.0: the rotation tales
+    expect(hearthTales.length, 70); // v0.180.0: rotation + Spoken Stones
     expect(hearthgoldTales, 10, reason: 'the vista gate never moves');
   });
 
@@ -25,10 +25,10 @@ void main() {
     // 'an edge struck on one die and a guard on another' — the cutler.
     final cutler = characters['cutler']!;
     expect(cutler.startTempers.length, 2);
-    expect(
-      cutler.startTempers.map((t) => t['rune']).toSet(),
-      {'blade', 'aegis'},
-    );
+    expect(cutler.startTempers.map((t) => t['rune']).toSet(), {
+      'blade',
+      'aegis',
+    });
     expect(all.contains('an edge struck on one die'), isTrue);
     // 'no relic, only three small marks' — the collier.
     final collier = characters['collier']!;
@@ -69,7 +69,9 @@ void main() {
     expect(provings.last.id, 'ash_summit');
     expect(all.contains('summit of ash'), isTrue);
     // 'Six times round now' — the book itself.
-    expect(hearthTales.length ~/ hearthgoldTales, 6);
+    // v0.180.0: the seventh cycle closed (70 tales); the sixth's own
+    // "six times round" line stays historical, like every fixed count.
+    expect(hearthTales.length ~/ hearthgoldTales, 7);
     expect(all.contains('Six times round'), isTrue);
   });
 
