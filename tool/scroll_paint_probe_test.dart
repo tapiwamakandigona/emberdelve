@@ -10,6 +10,9 @@ import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/sim/autoplay.dart';
+import 'package:emberdelve/ui/codex_screen.dart';
+import 'package:emberdelve/ui/ledger_screen.dart';
+import 'package:emberdelve/ui/provings_screen.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
 
@@ -192,6 +195,29 @@ void main() {
         );
       }
       for (var i = 0; i < 90; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+    });
+  }
+
+  for (final (name, build) in <(String, Widget Function(GameController))>[
+    ('CODEX', (c) => CodexScreen(c)),
+    ('PROVINGS', (c) => ProvingsScreen(c)),
+    ('LEDGER', (c) => LedgerScreen(c)),
+  ]) {
+    testWidgets('$name scroll census', (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      final c = seasoned();
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: build(c)),
+      );
+      for (var i = 0; i < 60; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await flingCensus(tester, name, find.byType(Scrollable).last);
+      for (var i = 0; i < 60; i++) {
         await tester.pump(const Duration(milliseconds: 16));
       }
     });

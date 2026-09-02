@@ -5271,3 +5271,7 @@ the opening run itself (R1 brief input).
   → 0). LESSON: Expanded(LayoutBuilder(...scrollable)) in a Column is a
   route-repaint trap on Android; title_screen already documents the Stack
   variant. [scroll_paint, 2026-09-02]
+- Drag census extended to codex 39.9/frame (≈17 visible short rows → 17
+  cached-layer composites; text 35 paints total = rows appearing), provings
+  16.1, ledger 14.5. No route repaint on any of them; nothing to fix. Drag
+  audit round CLOSED: every scrolling surface measured. [scroll_paint, 2026-09-02]
