@@ -5275,3 +5275,14 @@ the opening run itself (R1 brief input).
   cached-layer composites; text 35 paints total = rows appearing), provings
   16.1, ledger 14.5. No route repaint on any of them; nothing to fix. Drag
   audit round CLOSED: every scrolling surface measured. [scroll_paint, 2026-09-02]
+- CONTENT (DEMAND 02d item 4): The Spoken Stones — three events appended
+  (56 rooms): the_fair_scale, the_two_marks, the_first_lantern; labels
+  checked against sim in test/spoken_stones_test.dart (option index is
+  1-based; +N max hp also lifts current hp by N). Deck growth re-rolled
+  every seeded run → EIGHTH golden re-anchor via
+  tool/reanchor_v1800_probe_test.dart: goldenV6 456904381→490989940, boss
+  goldens re-measured, 4/30 provings re-seeded (runesmith 5→6, stoker
+  12→14, fifteenth_rung 14→20, high_stakes 500→504), test-only pins re-hunted
+  (see docs/releases/v0.180.0.md). LESSON: `dart format test/` reformats
+  untouched files — format ONLY the files you edited (reverted 27 files by
+  name; never `git checkout -- .`). [reanchor, 2026-09-02]

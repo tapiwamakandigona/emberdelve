@@ -40,9 +40,11 @@ const List<NewsEntryDef> newsEntries = [
           'floors, no shops) and Hard March (six floors, no rests) join '
           'the weekly, and three new days join the daily. The Codex '
           'gains their words.',
-      'The lock beside HARD now says what it holds, and the one-time '
-          'rating ask waits until at least your second delve.',
-      'Thank you for delving with us.',
+      'Three new rooms, the Spoken Stones: a fair scale, a wall of '
+          'finished marks, and the first delver\'s lantern still lit. The '
+          'lock beside HARD now says what it holds; the one-time rating '
+          'ask waits until your second delve; the map drags lighter on '
+          'small phones. Thank you for delving with us.',
     ],
   ),
   NewsEntryDef(

@@ -119,7 +119,9 @@ const List<ProvingDef> provings = [
     blurb:
         'The Runesmith on normal floors. One mark comes worked; make '
         'the second and third count.',
-    seed: 5,
+    // v0.180.0 re-anchor (events 53->56): 5 stopped winning; 6 is the
+    // first winner after it (tool/reanchor_v1800_probe_test.dart).
+    seed: 6,
     character: 'runesmith',
     difficulty: 'normal',
   ),
@@ -199,7 +201,9 @@ const List<ProvingDef> provings = [
     blurb:
         'The Stoker on normal floors. Three big coals and sixteen points '
         'of skin \u2014 every roll is plenty, every hit is dear.',
-    seed: 12,
+    // v0.180.0 re-anchor (events 53->56): 12 stopped winning; 14 is the
+    // first winner after it.
+    seed: 14,
     character: 'stoker',
     difficulty: 'normal',
   ),
@@ -363,11 +367,13 @@ const List<ProvingDef> provings = [
   // v0.143.0 The Fifteenth Rung: the gap between the Tenth Rung and the
   // A20 badge, closed. Seed bot-win proven (hunt 2026-08-30: A15 wins
   // 14/20/24/34/36/39; 14 picked, unused across the list).
+  // v0.180.0 re-anchor (events 53->56): 14 stopped winning; 20 is the
+  // first winner after it (A15 wins 20/24/34/40/41).
   ProvingDef(
     id: 'fifteenth_rung',
     title: 'The Fifteenth Rung',
     blurb: 'The Kindler at Ascension 15. Thin air; every mistake costs.',
-    seed: 14,
+    seed: 20,
     character: 'kindler',
     difficulty: 'normal',
     ascension: 15,
@@ -376,7 +382,9 @@ const List<ProvingDef> provings = [
     id: 'high_stakes',
     title: 'The High Stakes',
     blurb: 'The Gambler on hard floors. Elite pockets, richer loot.',
-    seed: 500,
+    // v0.180.0 re-anchor (events 53->56): 500 stopped winning; 504 is the
+    // first winner after it.
+    seed: 504,
     character: 'gambler',
     difficulty: 'hard',
   ),

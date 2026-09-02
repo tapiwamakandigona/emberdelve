@@ -90,7 +90,8 @@ void main() {
 
   testWidgets('a full-HP ration is named for what it is', (tester) async {
     // v0.114.0 re-anchor: seed 6 no longer shops at full HP; seed 10 does.
-    final c = atShop(seed: 10); // hp 30/30
+    // v0.180.0 re-anchor: seed 10 no longer shops at full HP; 19 does.
+    final c = atShop(seed: 19); // hp 30/30
     await tester.pumpWidget(
       MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
     );

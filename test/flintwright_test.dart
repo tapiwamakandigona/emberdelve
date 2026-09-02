@@ -76,7 +76,8 @@ void main() {
   });
 
   test(
-    'bot viability pins: seed 1 wins easy and normal, seed 3 loses easy',
+    'bot viability pins: seed 1 wins easy and normal, seed 8 loses easy',
+    // v0.180.0 re-anchor (events 53->56): loss seed 3 -> 8 (probe-proven).
     () {
       expect(
         playRun(1, character: 'flintwright', difficulty: 'easy').sim.phase,
@@ -87,7 +88,7 @@ void main() {
         'run_won',
       );
       expect(
-        playRun(3, character: 'flintwright', difficulty: 'easy').sim.phase,
+        playRun(8, character: 'flintwright', difficulty: 'easy').sim.phase,
         'run_lost',
       );
     },

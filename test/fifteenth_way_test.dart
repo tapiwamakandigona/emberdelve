@@ -13,7 +13,7 @@ void main() {
     final p = provingById('stokers_proving')!;
     expect(p.character, 'stoker');
     expect(p.difficulty, 'normal');
-    expect(p.seed, 12);
+    expect(p.seed, 14); // v0.180.0 re-anchor: 12 -> 14
     expect(p.ascension, 0);
     expect(p.mutators, isEmpty);
     final ids = provings.map((p) => p.id).toList();
@@ -25,7 +25,7 @@ void main() {
   });
 
   test('the seed is bot-winnable exactly as declared', () {
-    final r = playRun(12, character: 'stoker', difficulty: 'normal');
+    final r = playRun(14, character: 'stoker', difficulty: 'normal');
     expect(r.sim.phase, 'run_won');
   });
 

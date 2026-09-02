@@ -49,14 +49,15 @@ void main() {
 
   test('seeded runs replay exactly (win and loss pins)', () {
     // From the HP-20 sweep: seed 17 wins on normal (the proving seed),
-    // seed 3 loses. If either flips, the identity moved — investigate,
+    // seed 3 lost (v0.180.0 re-anchor, events 53->56: 3 now wins; 5 loses).
+    // If either flips, the identity moved — investigate,
     // never re-pin blindly.
     expect(
       playRun(17, character: 'hedger', difficulty: 'normal').sim.phase,
       'run_won',
     );
     expect(
-      playRun(3, character: 'hedger', difficulty: 'normal').sim.phase,
+      playRun(5, character: 'hedger', difficulty: 'normal').sim.phase,
       'run_lost',
     );
   });

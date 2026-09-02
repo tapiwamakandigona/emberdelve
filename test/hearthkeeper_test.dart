@@ -24,16 +24,26 @@ void main() {
     final def = characters['hearthkeeper']!;
     // Index pin, not 'last': the index IS the delve-code contract.
     expect(charactersOrder.indexOf('hearthkeeper'), 15);
-    expect(charactersOrder.length, 22,
-        reason: 'v0.179.0: the second circle opened (DEMAND 2026-09-01f); '
-            'the hearthkeeper still closes the FIRST circle at index 15 — '
-            'v1 delve-code bits 31..34 stay full, index 16+ rides v2');
+    expect(
+      charactersOrder.length,
+      22,
+      reason:
+          'v0.179.0: the second circle opened (DEMAND 2026-09-01f); '
+          'the hearthkeeper still closes the FIRST circle at index 15 — '
+          'v1 delve-code bits 31..34 stay full, index 16+ rides v2',
+    );
     expect(def.maxHp, 26);
-    expect(def.startDice, ['d6_brand', 'd6_ward', 'd6_steady'],
-        reason: 'every die sworn, none of them plain');
+    expect(def.startDice, [
+      'd6_brand',
+      'd6_ward',
+      'd6_steady',
+    ], reason: 'every die sworn, none of them plain');
     expect(def.startRelic, isNull, reason: 'the sworn pouch IS the kit');
-    expect(def.startTempers, isEmpty,
-        reason: 'born to their work, not worked by the smith');
+    expect(
+      def.startTempers,
+      isEmpty,
+      reason: 'born to their work, not worked by the smith',
+    );
     expect(def.unlockEmbers, 2100, reason: 'ladder stays ascending');
 
     final sim = Sim(11)
@@ -42,8 +52,11 @@ void main() {
     final pool = (sim.player['dice'] as List).cast<String>();
     expect(pool, ['d6_brand', 'd6_ward', 'd6_steady']);
     expect(sim.run!['tempers_used'], 0);
-    expect(sim.run!['custom_dice'], anyOf(isNull, isEmpty),
-        reason: 'no smith touched this pouch');
+    expect(
+      sim.run!['custom_dice'],
+      anyOf(isNull, isEmpty),
+      reason: 'no smith touched this pouch',
+    );
   });
 
   test('seeded runs replay exactly (win and loss pins)', () {
@@ -55,7 +68,8 @@ void main() {
       'run_won',
     );
     expect(
-      playRun(3, character: 'hearthkeeper', difficulty: 'easy').sim.phase,
+      // v0.180.0 re-anchor (events 53->56): loss seed 3 -> 12.
+      playRun(12, character: 'hearthkeeper', difficulty: 'easy').sim.phase,
       'run_lost',
     );
     expect(

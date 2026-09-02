@@ -79,8 +79,9 @@ void main() {
 
   // v0.114.0 re-anchor: seed 16 easy flipped to a win when the event deck
   // grew; seed 13 loses (probe-proven, tool/reanchor_v1140_probe_test.dart).
+  // v0.180.0 (events 53->56): 13 wins again; 18 loses (reanchor_v1800 probe).
   test(
-    'bot viability pins: seed 1 wins easy and normal, seed 13 loses easy',
+    'bot viability pins: seed 1 wins easy and normal, seed 18 loses easy',
     () {
       expect(
         playRun(1, character: 'peddler', difficulty: 'easy').sim.phase,
@@ -91,7 +92,7 @@ void main() {
         'run_won',
       );
       expect(
-        playRun(13, character: 'peddler', difficulty: 'easy').sim.phase,
+        playRun(18, character: 'peddler', difficulty: 'easy').sim.phase,
         'run_lost',
       );
     },

@@ -12,7 +12,7 @@ void main() {
     expect(p.ascension, 15);
     expect(p.difficulty, 'normal');
     expect(p.character, 'kindler');
-    expect(p.seed, 14);
+    expect(p.seed, 20); // v0.180.0 re-anchor: 14 -> 20
     expect(p.mutators, isEmpty);
     final ids = provings.map((p) => p.id).toList();
     expect(
@@ -24,7 +24,7 @@ void main() {
   });
 
   test('the seed is bot-winnable exactly as declared', () {
-    final r = playRun(14, ascension: 15, difficulty: 'normal');
+    final r = playRun(20, ascension: 15, difficulty: 'normal');
     expect(r.sim.phase, 'run_won');
   });
 

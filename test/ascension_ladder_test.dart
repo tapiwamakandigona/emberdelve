@@ -72,7 +72,11 @@ void main() {
     // (tool/reanchor_v1140_probe_test.dart: kindler 20/39/40, warden
     // 4/14/20, gambler 20/40/65, ascetic 39/65/110); four DISTINCT seeds
     // kept.
-    const seeds = {'kindler': 20, 'warden': 4, 'gambler': 40, 'ascetic': 39};
+    // Re-pinned for v0.180.0 ("The Spoken Stones", events 53->56): only the
+    // ascetic pin re-rolled (tool/reanchor_v1800_probe_test.dart: kindler
+    // 20/40/91, warden 4/10/14, gambler 10/20/40, ascetic 10/91/110); four
+    // DISTINCT seeds kept.
+    const seeds = {'kindler': 20, 'warden': 4, 'gambler': 40, 'ascetic': 10};
     seeds.forEach((ch, seed) {
       final r = playRun(seed, character: ch, difficulty: 'hard', ascension: 20);
       expect(

@@ -24,8 +24,11 @@ void main() {
     final def = characters['miller']!;
     expect(charactersOrder.indexOf('miller'), 17);
     expect(def.maxHp, 27, reason: 'swept value');
-    expect(def.startDice, ['d12', 'd4', 'd4'],
-        reason: 'the millstone and the grist — the spread IS the identity');
+    expect(
+      def.startDice,
+      ['d12', 'd4', 'd4'],
+      reason: 'the millstone and the grist — the spread IS the identity',
+    );
     expect(def.startRelic, isNull, reason: 'no relic: the pouch is the kit');
     expect(def.startTempers, isEmpty);
     expect(def.unlockEmbers, 2400, reason: 'ladder stays ascending');
@@ -39,20 +42,28 @@ void main() {
 
   test('seeded runs replay exactly (win and loss pins)', () {
     // From the HP-27 sweep: seed 24 wins on normal (the proving seed),
-    // seed 25 loses. If either flips, the identity moved — investigate,
+    // seed 25 lost (v0.180.0 re-anchor, events 53->56: 25 now wins; 5 loses).
+    // If either flips, the identity moved — investigate,
     // never re-pin blindly.
-    expect(playRun(24, character: 'miller', difficulty: 'normal').sim.phase,
-        'run_won');
-    expect(playRun(25, character: 'miller', difficulty: 'normal').sim.phase,
-        'run_lost');
+    expect(
+      playRun(24, character: 'miller', difficulty: 'normal').sim.phase,
+      'run_won',
+    );
+    expect(
+      playRun(5, character: 'miller', difficulty: 'normal').sim.phase,
+      'run_lost',
+    );
   });
 
   test("the miller's proving stands second among the second circle's", () {
     final p = provingById('millers_proving')!;
     expect(p.character, 'miller');
     expect(p.difficulty, 'normal');
-    expect(p.seed, 24,
-        reason: 'chair-number seeds 18..23 lose or collide; 24 is pinned');
+    expect(
+      p.seed,
+      24,
+      reason: 'chair-number seeds 18..23 lose or collide; 24 is pinned',
+    );
     expect(p.ascension, 0);
     expect(p.mutators, isEmpty);
     final ids = provings.map((p) => p.id).toList();
@@ -83,7 +94,11 @@ void main() {
 
   test('the delve code rides the v2 long form and round-trips', () {
     final code = encodeDelveCode(
-        seed: 424242, character: 'miller', difficulty: 'hard', ascension: 2);
+      seed: 424242,
+      character: 'miller',
+      difficulty: 'hard',
+      ascension: 2,
+    );
     expect(code, isNotNull);
     expect(code!.length, 'DELVE-'.length + 11);
     final back = decodeDelveCode(code)!;

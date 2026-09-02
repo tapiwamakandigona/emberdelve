@@ -36,7 +36,11 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('the cold tales close the deck, in order, fully catalogued', () {
-    expect(eventsOrder.sublist(eventsOrder.length - 3), newIds);
+    // Appended as a contiguous block in v0.114.0; later batches (v0.180.0
+    // The Spoken Stones) sit after it — the deck is append-only.
+    final at = eventsOrder.indexOf(newIds.first);
+    expect(at, greaterThan(0));
+    expect(eventsOrder.sublist(at, at + 3), newIds);
     for (final id in newIds) {
       final e = events[id]!;
       expect(e.options, hasLength(3));

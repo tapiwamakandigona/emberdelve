@@ -84,7 +84,10 @@ import 'package:emberdelve/sim/autoplay.dart';
 // v0.25.0/v0.46.0 cause. SEVENTH re-anchor; reach re-proven per anchor
 // seed with tool/reanchor_v1140_probe_test.dart, every hash measured
 // twice. Old value: 111116111.
-const int goldenV6 = 456904381;
+// v0.180.0 ("The Spoken Stones", events 53->56): EIGHTH re-anchor, same
+// cause; tool/reanchor_v1800_probe_test.dart, measured twice. Old value:
+// 456904381.
+const int goldenV6 = 490989940;
 
 // Boss anchors: one golden per boss, so a regression in ANY boss fight trips
 // the gate. v0.5.0 took the roster from 3 to 6 bosses, which re-maps
@@ -195,15 +198,23 @@ const Map<int, String> bossAnchorSeeds = {
 //   ashfall_twins       338964903 -> 2101382001
 //   slag_regent        1367915457 ->  331996761
 //   hearthless_king     648955842 -> 1367526445
+// v0.180.0 re-anchor (events 53->56, "The Spoken Stones"), old -> new,
+// same cause as goldenV6 (tool/reanchor_v1800_probe_test.dart, each
+// measured twice): ashen_colossus 1125538006 -> 226959105, ember_tyrant
+// 237383715 -> 1049271693, pyre_matriarch unchanged (its path draws no
+// event before the boss), cinder_hierophant 456904381 -> 490989940,
+// the_bellows 1234096192 -> 438742064, ashfall_twins 2101382001 ->
+// 1397915590, slag_regent 331996761 -> 2124758186, hearthless_king
+// 1367526445 -> 2134234236.
 const Map<String, int> bossGoldens = {
-  'ashen_colossus': 1125538006,
-  'ember_tyrant': 237383715,
+  'ashen_colossus': 226959105,
+  'ember_tyrant': 1049271693,
   'pyre_matriarch': 2027004709,
-  'cinder_hierophant': 456904381,
-  'the_bellows': 1234096192,
-  'ashfall_twins': 2101382001,
-  'slag_regent': 331996761,
-  'hearthless_king': 1367526445,
+  'cinder_hierophant': 490989940,
+  'the_bellows': 438742064,
+  'ashfall_twins': 1397915590,
+  'slag_regent': 2124758186,
+  'hearthless_king': 2134234236,
 };
 
 void main() {

@@ -13,14 +13,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('a finished run banks its tempers, win or lose', () {
-    // Kindler easy seed 13 loses AND visits a rest on the pure bot walk
-    // (hunted 2026-08-30). The mid-run temper can sway the rest of the
+    // Kindler easy seed 13 lost AND visited a rest on the pure bot walk
+    // (hunted 2026-08-30); v0.180.0 re-anchor (events 53->56): 13 no longer
+    // reaches a rest, 14 does (win or lose is immaterial here). The mid-run temper can sway the rest of the
     // walk (a mend rune heals), so the pin is on BANKING at the terminal
     // — the banking site sits outside the win gate by construction, and
     // statelessly counts run['tempers_used'] whatever the outcome.
     final c = GameController();
     c.meta.tutorialSeen = true;
-    c.startRun(character: 'kindler', seed: 13, difficulty: 'easy');
+    c.startRun(character: 'kindler', seed: 14, difficulty: 'easy');
     var guard = 0;
     var tempered = false;
     while (c.phase != 'run_won' && c.phase != 'run_lost' && guard++ < 4000) {
@@ -33,7 +34,7 @@ void main() {
       if (cmd == null) break;
       c.apply(cmd);
     }
-    expect(tempered, isTrue, reason: 'seed 13 must reach a rest');
+    expect(tempered, isTrue, reason: 'seed 14 must reach a rest');
     expect(
       c.phase,
       anyOf('run_won', 'run_lost'),

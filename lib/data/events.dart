@@ -1,4 +1,4 @@
-// data/events.dart — Emberdelve event deck (v0.114.0: 53 events).
+// data/events.dart — Emberdelve event deck (v0.180.0: 56 events).
 // CONTENT AS DATA, ZERO LOGIC.
 //
 // Schema (docs/m3-contract.md §7):
@@ -67,6 +67,10 @@ const List<String> eventsOrder = [
   // Tales": the winter the doubled week (v0.111.0) put into the stone,
   // findable in any run.
   'the_frozen_stall', 'the_wintered_die', 'the_meltwater_pool',
+  // v0.180.0 additions (appended at END; never reorder) — "The Spoken
+  // Stones": the delve keeps its word. Three rooms where the price is
+  // written on the wall before you pay it.
+  'the_fair_scale', 'the_two_marks', 'the_first_lantern',
 ];
 
 const Map<String, EventDef> events = {
@@ -679,6 +683,46 @@ const Map<String, EventDef> events = {
       OptionDef('Drink deep (heal 30%)', {'heal_pct': 30}),
       OptionDef('Fish out the coins (-4 hp, +16 gold)', {'hp': -4, 'gold': 16}),
       OptionDef('Move on', {}),
+    ],
+  ),
+  // -- v0.180.0 The Spoken Stones ------------------------------------------
+  'the_fair_scale': EventDef(
+    'the_fair_scale',
+    'The Fair Scale',
+    'A brass scale set into the rock, both pans empty and level. Whoever '
+        'weighed their luck here found it honest, and left the scale to say so.',
+    [
+      OptionDef('Weigh your gold (-15 gold, +14 embers)', {
+        'gold': -15,
+        'embers': 14,
+      }),
+      OptionDef('Weigh your wounds (heal 20%)', {'heal_pct': 20}),
+      OptionDef('Leave the pans empty', {}),
+    ],
+  ),
+  'the_two_marks': EventDef(
+    'the_two_marks',
+    'The Two Marks',
+    'Two notches cut beside the path, then two more, then hundreds, each pair '
+        'a delve someone finished. There is room on the wall for yours.',
+    [
+      OptionDef('Cut your marks (-5 hp, +3 max hp)', {'hp': -5, 'max_hp': 3}),
+      OptionDef('Count the older marks (+18 gold)', {'gold': 18}),
+      OptionDef('Pass by', {}),
+    ],
+  ),
+  'the_first_lantern': EventDef(
+    'the_first_lantern',
+    'The First Lantern',
+    'A lantern hangs where the tunnel narrows, glass smoked black, and inside '
+        'it an ember that has not gone out. They say the first delver hung it here.',
+    [
+      OptionDef('Take the ember (-30 gold, random relic)', {
+        'gold': -30,
+        'gain_random_relic': 1,
+      }),
+      OptionDef('Warm your hands (heal 30%)', {'heal_pct': 30}),
+      OptionDef('Leave it burning', {}),
     ],
   ),
 };

@@ -16,7 +16,7 @@ void main() {
     final p = provingById('runesmiths_proving')!;
     expect(p.character, 'runesmith');
     expect(p.difficulty, 'normal');
-    expect(p.seed, 5);
+    expect(p.seed, 6); // v0.180.0 re-anchor: 5 -> 6
     expect(p.mutators, isEmpty, reason: 'a character proving, not a rule');
     final ids = provings.map((p) => p.id).toList();
     expect(
@@ -29,7 +29,7 @@ void main() {
   });
 
   test('the proving seed is bot-winnable as declared', () {
-    final r = playRun(5, character: 'runesmith', difficulty: 'normal');
+    final r = playRun(6, character: 'runesmith', difficulty: 'normal');
     expect(
       r.sim.phase,
       'run_won',
