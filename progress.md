@@ -5151,3 +5151,12 @@ the opening run itself (R1 brief input).
   the Skia GLES path verified present in 3.47.2, 3.48 pre and master
   source. Hold unchanged; 3.47.x is a viable pin-intact target when a
   bump is forced.
+- Research (directive 2026-09-02c): docs/research/r9-first-run-spec.md —
+  tester asks reconciled with R8 (all came from pre-tour builds; dated
+  table); real codex-only gap found: charge/counter badge words exist
+  only behind an untaught long-press from layer 5; spec "The Spoken
+  Badge" (auto first-contact call-out per intent kind, tipsSeen keys).
+  docs/research/r10-review-prompt-path.md — three triggers, earliest
+  fire = end of run one (won daily, or won first run ≥24 marks; bot
+  probe 18/120 easy), never after a lost first run; quota/dismissal
+  consequences; header-vs-code tour-version mismatch noted. No code.
