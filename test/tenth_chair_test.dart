@@ -30,7 +30,7 @@ void main() {
     // v0.164.0: amethyst stands last now — the .last pin lives in
     // amethyst_test; tenthfire keeps its seat by index.
     expect(vistasOrder[10], 'tenthfire');
-    expect(vistasOrder.length, 12);
+    expect(vistasOrder.length, 13);
     final def = vistas['tenthfire']!;
     expect(def.hueDeg, isNot(0), reason: 'a vista must actually recolor');
     expect(_unlocked(9), isFalse);

@@ -740,6 +740,9 @@ class GameController extends ChangeNotifier {
     runesMarked: meta.runesTempered.where(faceRunes.contains).length,
     charsUnlocked: meta.unlockedCharacters.length,
     delversCleared: statValue(meta, 'delvers_cleared'),
+    bossesFelled: meta.bossesBeaten
+        .where((id) => enemies[id]?.boss ?? false)
+        .length,
   );
 
   void selectVista(String id) {

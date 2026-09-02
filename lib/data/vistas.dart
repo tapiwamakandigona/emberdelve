@@ -54,7 +54,8 @@ const List<String> vistasOrder = [
   'forgelight', // v0.126.0 — append-LAST
   'runemark', // v0.134.0
   'tenthfire', // v0.152.0
-  'amethyst', // v0.164.0 — append-LAST
+  'amethyst', // v0.164.0
+  'obsidian', // v0.180.0 — append-LAST
 ];
 
 const Map<String, VistaDef> vistas = {
@@ -214,6 +215,23 @@ const Map<String, VistaDef> vistas = {
     valMul: 1.04,
     wash: Color(0x46603090),
   ),
+  // v0.180.0 The Black Glass: the bestiary's vista — every crown in the
+  // deep put down at least once. Dark volcanic glass with its green-black
+  // sheen: the embers swing to cold jade, saturation drains, and the whole
+  // delve sits a shade darker. First cut (-20°, 0.45, 0.86, plum wash) read
+  // as a second Deepshale on the plates — a vista that is not its own place
+  // is not new content.
+  'obsidian': VistaDef(
+    'obsidian',
+    'Obsidian',
+    'Black glass poured from the deep\u2019s own fire. Eight crowns went '
+        'into it. None came back out.',
+    unlockLine: 'Put down eight different bosses.',
+    hueDeg: 165,
+    satMul: 0.62,
+    valMul: 0.88,
+    wash: Color(0x4A06140F),
+  ),
 };
 
 /// Pure unlock resolver: true when [id] is available given the profile's
@@ -234,6 +252,9 @@ bool vistaUnlockedFor(
   required int runesMarked,
   required int charsUnlocked,
   required int delversCleared,
+  // v0.180.0: optional so the eleven older gates' call sites stay as they
+  // are; absent means locked, never open.
+  int bossesFelled = 0,
 }) {
   switch (id) {
     case 'emberlight':
@@ -279,6 +300,12 @@ bool vistaUnlockedFor(
     // vista the day a thirteenth delver joins (v0.100 lesson).
     case 'amethyst':
       return delversCleared >= 12;
+    // v0.180.0: fed by the junk-proofed distinct-boss count (only ids that
+    // are real bosses in the bestiary). FROZEN at eight — a gate that
+    // tracked the live bestiary would re-lock this vista the day a ninth
+    // boss is added (v0.100 lesson; milestones freeze).
+    case 'obsidian':
+      return bossesFelled >= 8;
     default:
       return false;
   }

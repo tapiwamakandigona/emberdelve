@@ -5312,3 +5312,7 @@ the opening run itself (R1 brief input).
   run_lost hashes the insight TEXT, so a text-only change to a bucket
   re-pins any boss golden whose anchor run dies to that boss (slag_regent
   here) — text-only, no RNG, note it in sim_test.dart and move on.
+- The Black Glass: Obsidian vista (13th), gate bossesFelled >= 8 frozen,
+  junk-proofed at the controller. Lesson re-learned: plate a new vista
+  next to its nearest neighbours before accepting the numbers — the first
+  grade was a Deepshale twin.

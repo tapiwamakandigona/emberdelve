@@ -14,7 +14,7 @@ void main() {
     // v0.152.0: tenthfire appended after it — the order pin moves to the
     // INDEX (append-only contract), the 'last' claim retires.
     expect(vistasOrder.indexOf('runemark'), 9);
-    expect(vistasOrder.length, 12);
+    expect(vistasOrder.length, 13);
     final def = vistas['runemark']!;
     expect(def.unlockLine, 'Temper every rune the anvil offers.');
     expect(
