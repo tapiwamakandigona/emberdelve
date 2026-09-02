@@ -1,6 +1,17 @@
 # DEMAND — Emberwood (`main`, the v2 action-platformer)
 
 
+## Owner directive 2026-09-02d — Research is over. Build again.
+
+Owner, 05:23 UTC: "stop research and start coding the games again." This
+supersedes 2026-09-02a. `main` remains the published surface (docs/, store/,
+Pages incl. the privacy policy URL, which must not move). Code work happens
+on `legacy/dice-builder` per that branch's DEMAND. On `main` the job is:
+keep the landing, store copy and press kit truthful against what actually
+ships — 22 delvers, v0.179.0 (205) in Play review, itch build #1938101 — and
+nothing else. No new research files. A third game (FLIP, repos `flip` /
+`flip-ci`) now exists; it is not yours.
+
 ## Owner directive 2026-09-02a — v0.179.0 is published. Do not cut another release. Research starts now.
 
 You did the build and stopped one step short: `pubspec` was bumped, the news
