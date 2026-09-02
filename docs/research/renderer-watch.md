@@ -101,3 +101,21 @@ Never trade the zero-crash record for an engine upgrade.
   open**, P2, "needs repro info", last activity 2026-08-27.
 - Exit criteria therefore **not met**; hold Flutter 3.44.9 + `EnableImpeller=false`. Next
   re-check on the next stable engine tag or when either issue closes.
+
+## Stable-channel check 2026-09-02 (releases_linux.json + tagged source, primary)
+
+- Stable channel: 3.44.9 (2026-08-06) was the **last 3.44.x**; stable moved to 3.47.0
+  (2026-08-12), 3.47.1 (08-19), **3.47.2 (2026-08-27, current)** — Dart 3.13.2. No 3.44.10
+  exists, so there is no point release to take without leaving the 3.44 line.
+  Source: `storage.googleapis.com/flutter_infra_release/releases/releases_linux.json`.
+- **Upgrade-checklist items 1–2 pass on 3.47.2, 3.48.0-0.3.pre and master** (raw source at
+  those refs): `FlutterEngineFlags.java:153` still has
+  `new Flag("--enable-impeller=", "EnableImpeller", true)` (release-allowed, manifest-settable);
+  `flutter_main.cc:299` still returns `kSkiaOpenGLES` when `enable_impeller` is false and
+  `:131–132` keeps `settings.enable_impeller = false` on that path. `warn_on_impeller_opt_out`
+  remains a log warning only (`:127`). The opt-out has **not** been removed as of master.
+- 3.47.0 release notes mention Impeller work on Windows/Metal/GLES Y-flip only; nothing on
+  Android Skia removal.
+- Decision unchanged: hold 3.44.9 + `EnableImpeller=false`. When a bump is eventually forced
+  (Billing 9 plugin bump by 2027-08-31 may require a newer Flutter), 3.47.x is a viable
+  target with the pin intact — re-run checklist item 3 (device probe) before adopting.

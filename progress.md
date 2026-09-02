@@ -5146,3 +5146,8 @@ the opening run itself (R1 brief input).
   from lib/. No new gap found; written so it is not re-asked. The one
   thing they did that we can't: watch a real first session (owner
   task, no telemetry).
+- Research: renderer-watch.md — stable channel check. 3.44.9 was the
+  last 3.44; stable is 3.47.2 (2026-08-27). EnableImpeller opt-out and
+  the Skia GLES path verified present in 3.47.2, 3.48 pre and master
+  source. Hold unchanged; 3.47.x is a viable pin-intact target when a
+  bump is forced.
