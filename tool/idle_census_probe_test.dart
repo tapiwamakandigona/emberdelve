@@ -50,7 +50,10 @@ Future<void> census(
   final byType = <String, int>{};
   debugOnProfilePaint = (RenderObject ro) {
     paints++;
-    final t = ro.runtimeType.toString();
+    var t = ro.runtimeType.toString();
+    if (ro is RenderCustomPaint) {
+      t = '$t<${ro.painter?.runtimeType ?? ro.foregroundPainter?.runtimeType}>';
+    }
     byType[t] = (byType[t] ?? 0) + 1;
   };
   for (var i = 0; i < 120; i++) {
@@ -61,11 +64,16 @@ Future<void> census(
   final top = byType.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
   // ignore: avoid_print
-  print('$name IDLE frames=$frames paints=$paints '
-      '(${(paints / frames).toStringAsFixed(1)}/frame)');
+  print(
+    '$name IDLE frames=$frames paints=$paints '
+    '(${(paints / frames).toStringAsFixed(1)}/frame)',
+  );
   // ignore: avoid_print
-  print(const JsonEncoder.withIndent('  ')
-      .convert({for (final e in top.take(16)) e.key: e.value}));
+  print(
+    const JsonEncoder.withIndent(
+      '  ',
+    ).convert({for (final e in top.take(16)) e.key: e.value}),
+  );
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump(const Duration(milliseconds: 50));
 }
@@ -116,5 +124,39 @@ void main() {
     // ignore: avoid_print
     print('shop reached: $ok (phase ${c.state!['phase']})');
     if (ok) await census(tester, 'SHOP', ShopScreen(c));
+  });
+
+  // v0.180.0: summary got a pinned primary footer and the roster lost its
+  // dead buttons — confirm neither screen paints while idle.
+  testWidgets('summary idle painter census', (tester) async {
+    await loadRealFonts();
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    final c = seasoned();
+    c.startRun(
+      character: 'kindler',
+      seed: 7,
+      boons: false,
+      difficulty: 'normal',
+    );
+    var guard = 0;
+    while (guard++ < 4000 && c.phase != 'run_won' && c.phase != 'run_lost') {
+      final cmd = botCmd(c.sim!);
+      if (cmd == null) break;
+      c.apply(cmd);
+    }
+    // ignore: avoid_print
+    print('summary reached: ${c.phase}');
+    await census(tester, 'SUMMARY', GameRoot(c), warmup: 400);
+  });
+
+  testWidgets('character idle painter census', (tester) async {
+    await loadRealFonts();
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    final c = seasoned();
+    await census(tester, 'CHARACTER', CharacterScreen(c), warmup: 400);
   });
 }

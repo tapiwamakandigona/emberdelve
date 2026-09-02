@@ -5252,3 +5252,10 @@ the opening run itself (R1 brief input).
   shop 308|193 (wares). Slip found: rest title left-flush in the forge-list
   (ListView) branch — The Centered Hollow: textAlign center; test added.
   Event node not reached on seed 11 — event screen unaudited this round.
+- Event screen audited (seed 5): 0 scroll at 360 and 412; two choices seated
+  at the foot. Idle-paint census after this round's UI work (360×800, 120
+  frames): title 3.0/frame (CampFire, Logotype, EmberDrift), rest 1.0
+  (EmberDrift), shop 0.0, summary 1.0 (EmberDrift — the pinned footer paints
+  nothing idle), character 3.0 (WeaponPainter idle sway × 3 visible cards;
+  designed motion, off under Reduce motion). No regression; census probe now
+  names the painter class per RenderCustomPaint. [idle_census, 2026-09-02]

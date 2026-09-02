@@ -50,8 +50,8 @@ String extent(WidgetTester tester) {
 }
 void main() {
   setUpAll(loadRealFonts);
-  for (final size in const [Size(360, 800), Size(412, 915)]) {
-  testWidgets('midrun $size', (tester) async {
+  for (final (size, seed) in const [(Size(360, 800), 11), (Size(412, 915), 11), (Size(360, 800), 5), (Size(412, 915), 5)]) {
+  testWidgets('midrun $size seed $seed', (tester) async {
     tester.view.physicalSize = size * 2; tester.view.devicePixelRatio = 2; addTearDown(tester.view.reset);
     final c = GameController();
     c.meta..tourSeenVersion = tourVersion..tutorialSeen = true..tipsSeen.addAll(ContextTips.all)..lastSeenNewsVersion = currentAppVersion..runsPlayed = 3..difficultyChosen = true;
@@ -59,14 +59,14 @@ void main() {
     await tester.pumpWidget(RepaintBoundary(key: key, child: MaterialApp(debugShowCheckedModeBanner: false, theme: buildEmberTheme(), home: MediaQuery(data: MediaQueryData(size: size), child: GameRoot(c)))));
     await tester.binding.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
     await pumpFor(tester, 400);
-    c.startRun(character: 'kindler', seed: 11, boons: true);
+    c.startRun(character: 'kindler', seed: seed, boons: true);
     await pumpFor(tester, 600);
     c.apply({'type': 'choose_boon', 'index': 1});
     // Fat pool so the rest forge list is long.
     (c.state!['player'] as Map)['dice'] = <String>[for (final d in diceOrder.take(10)) d];
     (c.state!['player'] as Map)['gold'] = 200;
     final seen = <String>{}; final r = <String>[]; var guard = 0;
-    final tag = '${size.width.toInt()}';
+    final tag = '${size.width.toInt()}_s$seed';
     while (guard++ < 3000 && c.phase != null && c.phase != 'run_won' && c.phase != 'run_lost') {
       final phase = c.phase!;
       if (!seen.contains(phase) && phase != 'player_turn' && phase != 'enemy_turn') {
