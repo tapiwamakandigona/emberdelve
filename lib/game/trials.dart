@@ -23,11 +23,26 @@ export '../data/trials.dart';
 /// same trial, on every device, forever. Namespaced apart from the daily
 /// and weekly seed domains so the trial rotation never correlates with
 /// either seed sequence.
+/// v0.180.0 The Widened Rotation: dates before [widenedTrialsFrom] keep
+/// hashing over the first [legacyTrialCount] trials, so every trial already
+/// dealt — and every "tomorrow" line already shown — stays exactly what it
+/// was. From that date the whole catalog is in the hash.
+const int legacyTrialCount = 11;
+const List<int> widenedTrialsFrom = [2026, 9, 14];
+
+bool _widened(int year, int month, int day) {
+  const a = widenedTrialsFrom;
+  if (year != a[0]) return year > a[0];
+  if (month != a[1]) return month > a[1];
+  return day >= a[2];
+}
+
 TrialDef trialForDate(int year, int month, int day) {
   final m = month.toString().padLeft(2, '0');
   final d = day.toString().padLeft(2, '0');
   final h = hashDomainString('emberdelve-trial:$year-$m-$d');
-  return trialDef(trialsOrder[h % trialsOrder.length]);
+  final n = _widened(year, month, day) ? trialsOrder.length : legacyTrialCount;
+  return trialDef(trialsOrder[h % n]);
 }
 
 /// [trialForDate] from a daily key ('YYYY-MM-DD', the dailyKey format —

@@ -5221,3 +5221,7 @@ the opening run itself (R1 brief input).
   for Lean Road and Hard March appended (68; pins updated in
   hearth_tale/fourth_cycle/fifth_cycle tests; hearthgold frozen at 10).
   Vista/honor copy ("a doubled week") still true.
+- Daily side of the Widened Rotation: trials +3 (cold_camps_day
+  no_rests; lean_road_day; hard_march_day), 11→14, anchored the same way
+  — dates < 2026-09-14 hash over legacyTrialCount=11, so no morrow line
+  breaks. Tests +4. News line reworded (still 4 lines).

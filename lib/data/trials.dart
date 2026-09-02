@@ -69,6 +69,12 @@ const List<String> trialsOrder = [
   'keepers_day',
   // v0.156.0 — append-LAST, same contract.
   'deep_day',
+  // v0.180.0 The Widened Rotation — append-LAST. These three only enter the
+  // date hash from 2026-09-14 (game/trials.dart legacyTrialCount), so no
+  // morrow line already shown becomes false.
+  'cold_camps_day',
+  'lean_road_day',
+  'hard_march_day',
 ];
 
 const Map<String, TrialDef> trials = {
@@ -92,6 +98,31 @@ const Map<String, TrialDef> trials = {
     mutators: ['no_shops'],
   ),
   // v0.49.0 The Shorter Road.
+  // v0.180.0 The Widened Rotation: the Weekly's new pairs as days, plus the
+  // one single the daily never dealt. Bot sweep kindler/normal 150 seeds:
+  // no_rests 103, no_shops+short_road 110, no_rests+short_road 92
+  // (baseline 106).
+  'cold_camps_day': TrialDef(
+    'cold_camps_day',
+    'Cold Camps Day',
+    'No rests on the map \u2014 every camp is a fight. Healing comes only '
+        'from shops, events and what you carry.',
+    mutators: ['no_rests'],
+  ),
+  'lean_road_day': TrialDef(
+    'lean_road_day',
+    'Lean Road Day',
+    'Six floors and no shops \u2014 what you find is all you carry to the '
+        'bottom.',
+    mutators: ['no_shops', 'short_road'],
+  ),
+  'hard_march_day': TrialDef(
+    'hard_march_day',
+    'Hard March Day',
+    'Six floors and no rests \u2014 every camp is a fight, all the way '
+        'down.',
+    mutators: ['no_rests', 'short_road'],
+  ),
   'short_day': TrialDef(
     'short_day',
     'Short Day',

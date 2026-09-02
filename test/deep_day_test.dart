@@ -16,14 +16,21 @@ void main() {
     expect(t.goalParam, 1);
     expect(t.emberBonus, 15, reason: 'goal days pay one flat rate');
     expect(t.mutators, isEmpty, reason: 'goal days run vanilla rules');
-    expect(trialsOrder.last, 'deep_day', reason: 'append-LAST');
+    expect(
+      trialsOrder[legacyTrialCount - 1],
+      'deep_day',
+      reason: 'append-LAST (last of the legacy eleven; v0.180.0 appends after)',
+    );
   });
 
   test('the goal judges die tiers exactly, honouring the optional key', () {
     final t = trialDef('deep_day');
     final trace = RunTrace();
-    expect(trialGoalMet(t, {}, trace), isFalse,
-        reason: 'no dice map is zero deep marks, not a crash');
+    expect(
+      trialGoalMet(t, {}, trace),
+      isFalse,
+      reason: 'no dice map is zero deep marks, not a crash',
+    );
     expect(
       trialGoalMet(t, {'custom_dice': <String, dynamic>{}}, trace),
       isFalse,
@@ -65,11 +72,17 @@ void main() {
     final sim = Sim(123)..apply({'type': 'start_run'});
     sim.phase = 'rest';
     sim.apply({'type': 'temper_face', 'die': 1, 'face': 4, 'rune': 'blade'});
-    expect(trialGoalMet(trialDef('deep_day'), sim.run!, RunTrace()), isFalse,
-        reason: 'a first temper is tier 1 — not yet deep');
+    expect(
+      trialGoalMet(trialDef('deep_day'), sim.run!, RunTrace()),
+      isFalse,
+      reason: 'a first temper is tier 1 — not yet deep',
+    );
     sim.phase = 'rest';
     sim.apply({'type': 'temper_face', 'die': 1, 'face': 4, 'rune': 'blade'});
-    expect(trialGoalMet(trialDef('deep_day'), sim.run!, RunTrace()), isTrue,
-        reason: 'the deepened mark is tier 2 and the judge sees it');
+    expect(
+      trialGoalMet(trialDef('deep_day'), sim.run!, RunTrace()),
+      isTrue,
+      reason: 'the deepened mark is tier 2 and the judge sees it',
+    );
   });
 }

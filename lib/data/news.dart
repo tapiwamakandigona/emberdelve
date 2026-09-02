@@ -36,9 +36,10 @@ const List<NewsEntryDef> newsEntries = [
           'strike, the badge now says so in words \u2014 once, unasked, the '
           'first time you ever meet that move. Hold any badge to hear it '
           'again.',
-      'Two more weeks join the shared rotation from 14 September: Lean '
-          'Road (six floors, no shops) and Hard March (six floors, no '
-          'rests). The Codex gains their words.',
+      'From 14 September the shared rotation widens: Lean Road (six '
+          'floors, no shops) and Hard March (six floors, no rests) join '
+          'the weekly, and three new days join the daily. The Codex '
+          'gains their words.',
       'The lock beside HARD now says what it holds, and the one-time '
           'rating ask waits until at least your second delve.',
       'Thank you for delving with us.',
