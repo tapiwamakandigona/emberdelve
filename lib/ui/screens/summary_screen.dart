@@ -126,6 +126,28 @@ class SummaryScreen extends StatelessWidget {
                                         );
                                       },
                                     ),
+                                    // v0.180.0 The Fallen Crown: a win names
+                                    // what was put down, in one sentence
+                                    // answering the boss's Codex entry
+                                    // (lib/data/crowns.dart). Boss by seed —
+                                    // no RNG, nothing re-anchors.
+                                    if (won && c.runSeed != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: Space.m,
+                                          left: Space.l,
+                                          right: Space.l,
+                                        ),
+                                        child: Text(
+                                          crownLines[bossForSeed(c.runSeed!)] ??
+                                              '',
+                                          key: const ValueKey('fallen-crown'),
+                                          textAlign: TextAlign.center,
+                                          style: EmberText.bodyDim.copyWith(
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
                                     const SizedBox(height: Space.xl),
                                     Panel(
                                       child: Column(

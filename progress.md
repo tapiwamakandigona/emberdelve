@@ -5331,3 +5331,5 @@ the opening run itself (R1 brief input).
 - The Kept Line: EmberButton drops its glyph only when the words would
   otherwise wrap (measured, not a char count); Rest/Forge labels one line
   at 320/360.
+- The Fallen Crown: the won screen names the boss it put down, one honest
+  line per crown, by seed.
