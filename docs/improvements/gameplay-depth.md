@@ -1,6 +1,6 @@
 # Improvement backlog — Gameplay depth ("more addictive", the fair way)
 
-**Status:** proposal, owner-reviewed direction (memorymadie, 2026-07-23 DM). Written by Viktor for
+**Status:** proposal, owner-reviewed direction (memorymadie, 2026-07-23 DM). Written by Tapiwa for
 whichever agent picks this up next. Read `PROJECT.md`, `docs/spec.md`, and `features.json` first —
 especially the ethics blacklist (spec §Ethics) and the determinism pillar: **randomness lives in
 offerings, never in resolution.** Nothing below may violate those.
