@@ -77,6 +77,57 @@ const Map<String, List<String>> insights = {
         'not the start.',
     'No shield to wait out: slow, careful play just feeds her tempo.',
   ],
+  // v0.180.0 The Named Deaths: the five bosses added since v0.22.0 fell
+  // through to the generic 'boss' bucket — a Bellows death was coached with
+  // "never swing into a raised guard", which for the Bellows is every turn.
+  // Same rules as above: number-free, block-timing honest (a shown guard
+  // walls the NEXT player turn; the very first turn always lands bare),
+  // exactly 3 lines so the loot-stream draw shape is unchanged. Each claim
+  // is pinned against the pattern in test/named_deaths_test.dart.
+  'boss_cinder_hierophant': [
+    // Pattern: attack, block, attack, attack+block, attack (heaviest).
+    'The Hierophant guards twice in five beats, never twice running: the '
+        'turn after each guard is walled, the rest land full.',
+    'Its fifth beat is the heaviest by far and follows a guard: spend that '
+        'turn on block, then the cycle starts soft again.',
+    'Five beats is a long cycle. Count it once on the first loop and spend '
+        'your damage on the second.',
+  ],
+  'boss_the_bellows': [
+    // Pattern: attack+block on every beat — no open turn exists after the first.
+    'The Bellows guards every beat — there is no open turn to wait for. '
+        'Only pips past its guard land: bring more, not later.',
+    'Your first turn is the only one that meets a bare Bellows. Open with '
+        'your best attack dice.',
+    'It swings every beat too. Block the hits you cannot afford and race '
+        'the rest — patience feeds it.',
+  ],
+  'boss_ashfall_twins': [
+    // Pattern: attack, attack, block, attack (heaviest).
+    'The Twins guard right before their heaviest swing. The turn after the '
+        'guard is walled and ends in that hit: all block, no race.',
+    'Two open beats lead each cycle. That is where your damage goes.',
+    'Their heaviest hit closes the cycle and the next beat is open — '
+        'survive the swing and the answer is already yours.',
+  ],
+  'boss_slag_regent': [
+    // Pattern: block, block, attack (heaviest).
+    'The Regent raises two guards, then swings once. Only the turn after its '
+        'swing lands on bare stone — hit then, hard.',
+    'The turn after its first guard is dead air: your dice are walled and no '
+        'hit is coming. Reroll, forge, breathe.',
+    'The turn it shows the swing, its second guard is still up. Block that '
+        'turn instead of racing it.',
+  ],
+  'boss_hearthless_king': [
+    // Pattern: attack, block.
+    'The King swings, then guards. The turn it shows its shield is your open '
+        'turn — no hit coming and no wall up yet.',
+    'The turn it shows the swing, last beat\u2019s guard still stands. Block '
+        'that turn; race the other.',
+    'Two beats, no surprises. Alternate block and attack in step with it '
+        'and the fight is a rhythm, not a gamble.',
+  ],
   'generic': [
     'Randomness picks what you roll, never how your played dice resolve.',
     'Every death banks embers — the next delve starts stronger.',

@@ -206,6 +206,12 @@ const Map<int, String> bossAnchorSeeds = {
 // the_bellows 1234096192 -> 438742064, ashfall_twins 2101382001 ->
 // 1397915590, slag_regent 331996761 -> 2124758186, hearthless_king
 // 1367526445 -> 2134234236.
+// v0.180.0 text-only re-pin ("The Named Deaths"): slag_regent 2124758186
+// -> 1454546036. Seed 20260726 dies to the Regent, and the run_lost event
+// hashes its insight line; that boss now draws from its own bucket instead
+// of the generic 'boss' one. Same draw index, no RNG consumed, every other
+// golden unchanged (the seven other anchor runs do not end in a boss
+// death, and the v6 anchor is a win).
 const Map<String, int> bossGoldens = {
   'ashen_colossus': 226959105,
   'ember_tyrant': 1049271693,
@@ -213,7 +219,7 @@ const Map<String, int> bossGoldens = {
   'cinder_hierophant': 490989940,
   'the_bellows': 438742064,
   'ashfall_twins': 1397915590,
-  'slag_regent': 2124758186,
+  'slag_regent': 1454546036,
   'hearthless_king': 2134234236,
 };
 

@@ -5308,3 +5308,7 @@ the opening run itself (R1 brief input).
   l under 340 px so "ATTACK" no longer breaks mid-word beside BLOCK.
   (LayoutBuilder in the button was rejected by IntrinsicHeight rows on the
   title/boon screens — use MediaQuery width for button-level size rules.)
+- The Named Deaths: five boss insight buckets, pattern-pinned. Lesson:
+  run_lost hashes the insight TEXT, so a text-only change to a bucket
+  re-pins any boss golden whose anchor run dies to that boss (slag_regent
+  here) — text-only, no RNG, note it in sim_test.dart and move on.
