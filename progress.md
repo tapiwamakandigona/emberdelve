@@ -5344,3 +5344,5 @@ the opening run itself (R1 brief input).
   same command as the push gate from now on (analyze is fatal on CI).
 - Read Page: deck card capped at screen height + scrolls past it (1.3× on
   320×568 pinned).
+- The Honest Road: early insight no longer coaches an HP read the map does
+  not offer; says what the map shows.

@@ -16,7 +16,14 @@ const Map<String, List<String>> insights = {
   'early': [
     'Block the turn a big hit is shown — enemy intent never lies.',
     'A die assigned to block is never wasted; survival buys damage later.',
-    'Fight the low-HP enemies first when a path branches.',
+    // v0.180.0 The Honest Road: the old line ('Fight the low-HP enemies
+    // first when a path branches') coached a read the map never offers —
+    // nodes show their KIND, never an enemy or its HP. Say what the map
+    // does show. Rest fires and events can sit on floors 2–3 (map_gen:
+    // rests have no layer gate, eventFromLayer 2); elites cannot (4+), so
+    // the early bucket never mentions them.
+    'Every room ahead is marked on the map. A road with a rest fire on it '
+        'forgives a bad fight; a road of nothing but fights does not.',
   ],
   'mid': [
     'Rest before an elite, not after — you choose the fight, so choose it healthy.',
