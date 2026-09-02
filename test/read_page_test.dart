@@ -79,7 +79,7 @@ void main() {
       await pumpFor(tester, 300);
       var cards = 0;
       while (find.text('Next').evaluate().isNotEmpty && cards++ < 12) {
-        expect(tester.takeException(), isNull, reason: 'card ${cards} $size');
+        expect(tester.takeException(), isNull, reason: 'card $cards $size');
         await tester.tap(find.text('Next'));
         await pumpFor(tester, 200);
       }

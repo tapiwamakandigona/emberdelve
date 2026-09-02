@@ -5339,3 +5339,6 @@ the opening run itself (R1 brief input).
   first delve; footer-link draft rejected on plates (wrapped).
 - The Read Page: card two names charge/counter; deck lean is flex, not
   fixed padding (overflowed at 320/360 with real fonts).
+- LESSON 2026-09-02: CI failed on 25906e7 for an analyzer info in a test
+  file written AFTER my last local `flutter analyze`. Analyze runs in the
+  same command as the push gate from now on (analyze is fatal on CI).
