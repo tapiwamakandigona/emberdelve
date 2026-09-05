@@ -5,6 +5,10 @@
 **Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built by the owner. This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
 
 ## Canonical artifacts
+Current scoped visual PR (2026-09-05): `docs/visual-polish-20260905.md`.
+Codex reading/navigation polish only; no release, version, purchase or sim changes.
+Verification is public analyzer/full suite/SFX plus real-font before/after plates.
+
 | What | Where |
 |---|---|
 | Product spec (approved) | `docs/spec.md` |

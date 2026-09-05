@@ -5431,3 +5431,25 @@ Verification, run right after the identity commit:
   distinct phase edge of a run; all other edges read clean (their spike is
   the single mount frame). Remaining LayoutBuilders: title (already boxed),
   tour/tutorial overlays (static content) — not chased.
+
+## 2026-09-05 — Codex visual/readability PR (no release)
+
+- VERIFIED source inspection: prose/section links used 11px micro text; section
+  links were gesture targets without a selected visual treatment.
+- Proposed: 13px reading text, 1.5 reading line-height, 48px focusable section
+  buttons, high-contrast selected treatment and selected semantics. Existing
+  eight anchors, lazy-list navigation, prices and purchase callbacks retained.
+- VERIFIED local: whitespace check and existing sprite-generator `--check` pass.
+  Existing 251 test-file hashes recorded before changes; no old check modified.
+- Added targeted small-phone/1.3x-text/contrast checks and an additive public
+  PR-only before/after widget-render workflow. No secrets, Android build, release
+  dispatch, asset generation, version increment or sim change.
+- ASSUMED until CI: analyzer/test/render success. Flutter unavailable locally;
+  VISUAL-20260905 remains false until public evidence exists.
+
+- Verification transport correction: managed push rejected the new workflow:
+  `refusing to allow a GitHub App to create or update workflow
+  .github/workflows/visual-review.yml without workflows permission`.
+  Nothing was pushed. Removed that workflow from the unpushed commit and use
+  additive render tests through existing CI; baseline source first for before
+  plates, then the saved source proposal. No existing check is changed.
