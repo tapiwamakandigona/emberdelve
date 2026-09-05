@@ -5466,3 +5466,10 @@ Verification, run right after the identity commit:
   `Expected: a value greater than or equal to <48>` / `Actual: <33.0>`.
   Both 360×800 and 320×568@1.3× exercised. Applying only the source proposal
   next; the corrected tests and render helpers now remain byte-identical.
+
+- VERIFIED source 3832209 / run 33950010191: analyzer clean; 1309 passed /
+  2 failed. Full failures: `A SemanticsHandle was active at the end of the test.`
+  at 360x800 and `Bad state: No element` (sealed lazy-text lookup) at 320x568.
+  These are in the additive test helper, not old tests. After plates recovered.
+  Stopping rather than editing tests/checks to pass or bending production UI to
+  a helper bug. PR #99 remains draft and VISUAL-20260905 remains false.

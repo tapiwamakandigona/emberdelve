@@ -24,7 +24,20 @@ artifact is not a physical-device usability test. A PR is not deployment.
 
 ## Evidence
 
-Pending public CI and artifact inspection. No completion claimed.
+VERIFIED: source 3832209, public [run 33950010191](https://github.com/tapiwamakandigona/emberdelve/actions/runs/33950010191)
+has clean analyzer, 1309 passing tests and two failures in the new helper.
+The existing suite's tests were not modified. This PR is **draft, not complete**.
+
+- 360x800: `A SemanticsHandle was active at the end of the test.`
+  Cleanup via `addTearDown` occurs too late for the widget-test verification.
+- 320x568: `Bad state: No element` at the sealed-text lookup. The increased
+  reading layout moves the lazy-built card beyond its initial construction range.
+
+Before/after real-font PNGs were recovered from that run. They do not turn
+failed checks green. Leave the feature false: the standing rule prohibits
+changing tests/checks merely to pass, and production UI must not be distorted
+to compensate for a test-helper lifecycle/lookup error. Follow-up needs an
+explicitly reviewed helper correction that preserves every assertion.
 
 ## Verification-plan correction before retry
 
