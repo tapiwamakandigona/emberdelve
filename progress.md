@@ -5460,3 +5460,9 @@ Verification, run right after the identity commit:
   One corrective retry changes only new-helper APIs/consts; assertions and
   thresholds are identical. Verified current Flutter docs use
   `flagsCollection.isSelected` / `Tristate`. Existing test files untouched.
+
+- VERIFIED baseline retry 33949748779: analyzer passed, actual before PNGs
+  recovered from public test logs. Readability pins failed as intended:
+  `Expected: a value greater than or equal to <48>` / `Actual: <33.0>`.
+  Both 360×800 and 320×568@1.3× exercised. Applying only the source proposal
+  next; the corrected tests and render helpers now remain byte-identical.
