@@ -9,7 +9,7 @@ other Tsoro Studios games. Rules:
    - Emberdelve — "Dice roguelite. No ads, offline." → https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
    - Fliptide — "One tap flips gravity. Same course for everyone today." → Android: Play listing
      (id=com.tsorostudios.fliptide) once public, until then https://tsorostudios.itch.io/fliptide ; web builds: the itch URL.
-   - Pyregrove — "Pixel platformer. 60 levels, no ads." → Play listing (id=com.tsorostudios.pyregrove) — show this entry
+   - Pyregrove — "Pixel platformer. Two worlds of handcrafted levels, no ads." → Play listing (id=com.tsorostudios.pyregrove) — show this entry
      ONLY once the listing is public (review pending 2026-09-05); keep the entry behind a const flag until then.
 3. Opening links: add `url_launcher` (Android + web). Try `market://details?id=…&referrer=utm_source%3D<this-game>` first
    on Android, fall back to the https URL; `LaunchMode.externalApplication`. No in-app analytics event for the tap
