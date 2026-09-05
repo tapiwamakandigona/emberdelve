@@ -5482,3 +5482,10 @@ Nothing else on the Console touched; closed-testing track left alone.
 - Details: checkpoints/2026-09-05-campfire-motion.md. Existing test files,
   features.json, dependencies, sim/economy, version and store state untouched.
   This is a bounded reviewable source fix, not a released build or completion.
+
+## 2026-09-05 11:35Z — v0.180.1 RELEASED (GitHub, full release, latest)
+- Tag `v0.180.1` @ d2e030b. Signed CI dispatch run 33962376257 green (analyze + 1312 tests before signing).
+- VERIFIED before upload (androguard): pkg com.tsorostudios.emberdelve, versionName 0.180.1, versionCodes 207 (universal
+  APK + AAB) / 1207 armeabi-v7a / 2207 arm64-v8a / 4207 x86_64; signer 031acb42…7a0d on every artifact.
+- Release id 383226237, 5 assets; every asset re-downloaded unauthenticated and sha256 matched the body table (PASS x5).
+- Play: NOT touched. 0.180.0 (206) still staged 20% in review; 0.180.1 goes to Play only after 0.180.0 has a clean day.
