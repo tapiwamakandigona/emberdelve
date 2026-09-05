@@ -3,7 +3,7 @@ description: "Emberdelve — turn-based dice-builder roguelite. Tsoro Studios."
 publish_to: 'none'
 
 # versionName+versionCode for Android.
-version: 0.180.0+206
+version: 0.180.1+207
 
 environment:
   sdk: ^3.12.0
@@ -33,6 +33,9 @@ dependencies:
   # 2026-08-23). One quiet ask per install at a moment of earned pride —
   # see lib/meta/review_service.dart header for the exact charter.
   in_app_review: ^2.0.9
+  # "More from Tsoro Studios" row in Settings (owner directive 2026-09-05b):
+  # opens the sibling games' store pages, nothing else.
+  url_launcher: ^6.3.1
   # Ed25519 verification for offline signed unlock codes (UNLOCK-CODES-SPEC,
   # the out-of-Play purchase path for sideload/ZW players). Pure Dart — the
   # verifier stays headless-testable. Public key only; signing never ships.

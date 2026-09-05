@@ -18,6 +18,7 @@ import '../telemetry/telemetry_service.dart';
 import 'credits_screen.dart';
 import 'news_screen.dart';
 import 'haptics.dart';
+import 'more_games.dart';
 import 'motion.dart';
 import 'theme.dart';
 import 'widgets.dart';
@@ -685,6 +686,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   'not with the code.',
                   style: EmberText.micro.copyWith(color: EmberColors.textDim),
                 ),
+                const SizedBox(height: Space.xl),
+                // Owner directive 2026-09-05b: one quiet row for the other
+                // Tsoro Studios games, right below the Redeem row.
+                const MoreFromTsoro(),
                 const SizedBox(height: Space.xl),
                 // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
                 // a player on a new device must never have to hunt for it.

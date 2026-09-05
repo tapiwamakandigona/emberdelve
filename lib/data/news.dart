@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.180.0';
+const String currentAppVersion = '0.180.1';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.180.1',
+    title: 'More from the Studio',
+    lines: [
+      'Settings gains one quiet row, below the unlock code: the other games '
+          'we make. Fliptide is a one-tap gravity runner, the same course for '
+          'everyone in the world each day, playable in a browser right now. '
+          'Tap it if you like; nothing here asks twice.',
+      'Nothing else changes. No ads, no tracking, no new permissions.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.180.0',
     title: 'The Spoken Badge',

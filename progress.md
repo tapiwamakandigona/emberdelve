@@ -5459,3 +5459,10 @@ Named Lock, repaint work, review-prompt gate). Staged roll-out **20%** (≈10 of
 for a perf-heavy release; raise to 100% from the console once the first day shows no crash/ANR signal. Publishing overview:
 "Send 1 change for review" → **Changes in review** (managed publishing off, so it rolls out when review passes).
 Nothing else on the Console touched; closed-testing track left alone.
+
+## 2026-09-05 10:33Z — Directive 05b ACK + DONE: "More from Tsoro Studios" row in Settings (v0.180.1+207, not cut)
+- `lib/ui/more_games.dart` + one section below the Redeem panel: Fliptide ("One tap flips gravity. Same course for everyone
+  today.") → https://tsorostudios.itch.io/fliptide until `kFliptideOnPlay`; Pyregrove hidden behind `kShowPyregrove=false`.
+  Android: market:// with utm_source=emberdelve → https fallback; web: https only. No badge, modal, telemetry or new permission.
+- `url_launcher ^6.3.1`; manifest `<queries>` for VIEW market:// + https://. News entry 0.180.1 "More from the Studio";
+  docs/releases/v0.180.1.md DRAFT. Tests 1310/1310 (4 new), analyze clean. Ships with the next normal cut — no Play touch.
