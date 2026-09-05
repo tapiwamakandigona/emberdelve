@@ -5459,3 +5459,20 @@ Named Lock, repaint work, review-prompt gate). Staged roll-out **20%** (≈10 of
 for a perf-heavy release; raise to 100% from the console once the first day shows no crash/ANR signal. Publishing overview:
 "Send 1 change for review" → **Changes in review** (managed publishing off, so it rolls out when review passes).
 Nothing else on the Console touched; closed-testing track left alone.
+
+## 2026-09-05 — campfire reduced-motion source fix, build still pending
+- VERIFIED: inspected current shipping source/progress at 82a3def; campfire
+  still repeated its controller independently of the shared Motion setting.
+  Target files unchanged since the initial 6716509 review base.
+- Added two regressions. Baseline failed verbatim `Expected: <0>` /
+  `Actual: <20>` for reduced-motion paints and `Expected: true` /
+  `Actual: <false>` for colour invalidation. Fixed production lifecycle and
+  painter invalidation; same assertions now pass. Test formatting only.
+- VERIFIED: focused 2/2, full suite 1308/1308, analyzer clean, unchanged
+  SFX headroom check passed (existing reachable -0.90 dBTP TIGHT warning).
+- Build attempt failed: `This project is not configured for the web.`
+  No web scaffolding added to hide the failure. Android toolchain absent;
+  no Android build or device playtest claimed. No paid CI dispatch.
+- Details: checkpoints/2026-09-05-campfire-motion.md. Existing test files,
+  features.json, dependencies, sim/economy, version and store state untouched.
+  This is a bounded reviewable source fix, not a released build or completion.

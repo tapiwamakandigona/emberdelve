@@ -758,13 +758,32 @@ class CampFire extends StatefulWidget {
 
 class _CampFireState extends State<CampFire>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _t = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1400),
-  )..repeat();
+  late final AnimationController _t;
+
+  @override
+  void initState() {
+    super.initState();
+    _t = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
+    Motion.instance.addListener(_syncMotion);
+    _syncMotion();
+  }
+
+  void _syncMotion() {
+    if (Motion.instance.reduced) {
+      // Keep the hearth visible, but stop its decorative motion and ticker.
+      _t.stop();
+      _t.value = 0.25;
+    } else if (!_t.isAnimating) {
+      _t.repeat();
+    }
+  }
 
   @override
   void dispose() {
+    Motion.instance.removeListener(_syncMotion);
     _t.dispose();
     super.dispose();
   }
@@ -894,7 +913,12 @@ class _CampFirePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _CampFirePainter old) => false;
+  bool shouldRepaint(covariant _CampFirePainter old) =>
+      old.t != t ||
+      old.outer != outer ||
+      old.mid != mid ||
+      old.core != core ||
+      old.glow != glow;
 }
 
 // ---------------------------------------------------------------------------
