@@ -1,4 +1,4 @@
-import 'dart:ui' show SemanticsFlag;
+import 'dart:ui' show Tristate;
 
 import 'package:emberdelve/game/controller.dart';
 import 'package:emberdelve/ui/codex_screen.dart';
@@ -18,7 +18,7 @@ void main() {
         MaterialApp(
           theme: buildEmberTheme(),
           home: MediaQuery(
-            data: MediaQueryData(size: size, textScaler: TextScaler.linear(1.3)),
+            data: MediaQueryData(size: size, textScaler: const TextScaler.linear(1.3)),
             child: CodexScreen(GameController()),
           ),
         ),
@@ -26,7 +26,7 @@ void main() {
       await tester.pump();
       final world = find.byKey(const ValueKey('codex-lane-world'));
       expect(tester.getSize(world).height, greaterThanOrEqualTo(48));
-      expect(tester.getSemantics(world).hasFlag(SemanticsFlag.isSelected), isTrue);
+      expect(tester.getSemantics(world).flagsCollection.isSelected, Tristate.isTrue);
       expect(
         tester.widget<Text>(find.text('Sealed — tap to unseal.').first).style!.fontSize,
         greaterThanOrEqualTo(13),
@@ -37,8 +37,8 @@ void main() {
       for (var i = 0; i < 40; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
-      expect(tester.getSemantics(company).hasFlag(SemanticsFlag.isSelected), isTrue);
-      expect(tester.getSemantics(world).hasFlag(SemanticsFlag.isSelected), isFalse);
+      expect(tester.getSemantics(company).flagsCollection.isSelected, Tristate.isTrue);
+      expect(tester.getSemantics(world).flagsCollection.isSelected, Tristate.isFalse);
       expect(tester.takeException(), isNull);
     });
   }
@@ -50,6 +50,6 @@ void main() {
     }
     expect(contrast(EmberColors.bg, EmberColors.ember), greaterThanOrEqualTo(4.5));
     expect(contrast(EmberColors.textDim, EmberColors.surface), greaterThanOrEqualTo(4.5));
-    expect(contrast(EmberColors.text, EmberColors.raised), greaterThanOrEqualTo(4.5));
+    expect(contrast(EmberColors.textPrimary, EmberColors.raised), greaterThanOrEqualTo(4.5));
   });
 }

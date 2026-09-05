@@ -5453,3 +5453,10 @@ Verification, run right after the identity commit:
   Nothing was pushed. Removed that workflow from the unpushed commit and use
   additive render tests through existing CI; baseline source first for before
   plates, then the saved source proposal. No existing check is changed.
+
+- Baseline CI 33949573077 stopped at analyzer, before tests: `6 issues found.`
+  New helper errors included `The getter 'text' isn't defined for the type
+  'EmberColors'`, deprecated `hasFlag`, missing const and an unnecessary `!`.
+  One corrective retry changes only new-helper APIs/consts; assertions and
+  thresholds are identical. Verified current Flutter docs use
+  `flagsCollection.isSelected` / `Tristate`. Existing test files untouched.

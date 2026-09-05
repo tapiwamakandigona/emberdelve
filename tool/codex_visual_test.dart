@@ -61,7 +61,7 @@ void main() {
       // A branch-scoped review transport through the EXISTING public test log.
       // No new workflow permissions, deployment or external upload endpoint.
       if (Platform.environment['GITHUB_HEAD_REF'] == 'feat/visual-polish-20260905') {
-        final encoded = base64Encode(bytes!.buffer.asUint8List());
+        final encoded = base64Encode(bytes.buffer.asUint8List());
         final name = 'codex_${size.width.toInt()}x${size.height.toInt()}';
         for (var start = 0; start < encoded.length; start += 512) {
           final end = (start + 512).clamp(0, encoded.length);
