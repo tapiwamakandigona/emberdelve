@@ -5448,3 +5448,14 @@ Verification, run right after the identity commit:
   (38876746). Unauthenticated re-download of all five hash-matched (PASS ×5).
 - Play: NOT touched. The AAB is the Play candidate; upload/rollout stays the
   owner's call, as before.
+
+## 2026-09-05 09:05Z — v0.180.0 (206) submitted to Play Production, staged 20%
+Owner call ("1" on the money list). State before: Production was 0.179.0 (205), Active, 177 countries, 48 installs on active
+devices (the 2 Sept submission did pass review). Uploaded the release AAB from GitHub release v0.180.0 (71,519,880 B,
+sha256 ec1b8ba3…7b485, hash checked locally before upload) via the console; it processed as 206 (0.180.0), API 24+, target 36,
+device support unchanged (12,476 phones / 6,690 tablets / 72 Chromebooks), new-install size 26.2 MB (−3 KB vs 205), update
+size 2.13 MB. Release name `0.180.0 (206)`, en-GB notes (480 chars: Spoken Badge, Lean Road + Hard March from 14 Sept,
+Named Lock, repaint work, review-prompt gate). Staged roll-out **20%** (≈10 of 48 devices) — deliberately conservative
+for a perf-heavy release; raise to 100% from the console once the first day shows no crash/ANR signal. Publishing overview:
+"Send 1 change for review" → **Changes in review** (managed publishing off, so it rolls out when review passes).
+Nothing else on the Console touched; closed-testing track left alone.
