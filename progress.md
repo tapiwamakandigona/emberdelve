@@ -5431,3 +5431,20 @@ Verification, run right after the identity commit:
   distinct phase edge of a run; all other edges read clean (their spike is
   the single mount frame). Remaining LayoutBuilders: title (already boxed),
   tour/tutorial overlays (static content) — not chased.
+
+## 2026-09-05 07:40Z — v0.180.0 "The Spoken Badge" RELEASED (owner: "yes cut releases", 2026-09-05)
+
+- Tag `v0.180.0` at c7a0247 (legacy/dice-builder HEAD, pubspec 0.180.0+206),
+  annotated, pushed. CI run 33951553095 (workflow_dispatch on the tag's
+  commit): analyze clean, **1306 tests passed**, signed APK+AAB job green.
+- Artifacts downloaded from that run and independently re-verified
+  (androguard): package com.tsorostudios.emberdelve, versionName 0.180.0,
+  versionCode 206 (universal + AAB) / 1206 / 2206 / 4206 (armeabi-v7a /
+  arm64-v8a / x86_64); every APK and the AAB signer = pin 031acb42…7a0d.
+- GitHub release 383170214 (full release, latest), body = docs/releases/
+  v0.180.0.md minus the DRAFT header + Verification + sha256/bytes table.
+  Assets: emberdelve-v0.180.0.apk (73234616 B), .aab (71519880 B),
+  -arm64-v8a.apk (37353390), -armeabi-v7a.apk (34815174), -x86_64.apk
+  (38876746). Unauthenticated re-download of all five hash-matched (PASS ×5).
+- Play: NOT touched. The AAB is the Play candidate; upload/rollout stays the
+  owner's call, as before.
