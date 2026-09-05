@@ -1,5 +1,23 @@
 # DEMAND — Emberdelve Classic (`legacy/dice-builder`)
 
+## Owner directive 2026-09-05b — "More from Tsoro Studios" cross-promotion row (2026-09-05 09:40Z)
+Every player of one game is the cheapest possible install for the other two. Add ONE quiet row that links to the
+other Tsoro Studios games. Rules:
+1. Placement: Emberdelve → Settings, below the Redeem row; Pyregrove → Settings, bottom; Fliptide → title screen
+   footer (small text link, never on the death or CLEARED cards). One row, no badge, no modal, never auto-opens.
+2. Content: game name + one-line hook + where it opens. Copy:
+   - Emberdelve — "Dice roguelite. No ads, offline." → https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve
+   - Fliptide — "One tap flips gravity. Same course for everyone today." → Android: Play listing
+     (id=com.tsorostudios.fliptide) once public, until then https://tsorostudios.itch.io/fliptide ; web builds: the itch URL.
+   - Pyregrove — "Pixel platformer. 60 levels, no ads." → Play listing (id=com.tsorostudios.pyregrove) — show this entry
+     ONLY once the listing is public (review pending 2026-09-05); keep the entry behind a const flag until then.
+3. Opening links: add `url_launcher` (Android + web). Try `market://details?id=…&referrer=utm_source%3D<this-game>` first
+   on Android, fall back to the https URL; `LaunchMode.externalApplication`. No in-app analytics event for the tap
+   (the Play install-referrer already measures it). Emberdelve/Pyregrove: no other new dependencies, no ads, no tracking.
+4. Tests: one widget test that the row renders the expected entries and one that the Pyregrove entry is hidden while
+   the flag is off. CI green. Bump patch version; the row ships with the next normal release — do NOT cut or touch Play.
+5. Ack in progress.md as usual. Lane rules from the previous directives are unchanged.
+
 
 ## Owner directive 2026-09-02N — History rewrite COMPLETE. Reset, verify, resume (2026-09-02 11:55Z)
 Every branch and tag was rewritten; all commit SHAs changed. Your local clone/worktree is now on a dead history. Do exactly this:
