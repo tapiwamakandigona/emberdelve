@@ -5,8 +5,8 @@
       "id": "VISUAL-20260905",
       "title": "Readable Codex prose and section navigation",
       "acceptance": "13px reading text, 48px section targets and selected semantics; existing checks and added readability checks green; before/after render artifacts exist; no gameplay or release change.",
-      "passes": false,
-      "evidence": "Planned in docs/visual-polish-20260905.md; implementation awaits public CI."
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-06 (local Flutter 3.44.9): full suite 1317 passed / 0 failed after correcting only the PR's own new helper (test/codex_readability_test.dart: SemanticsHandle disposed before the tester's check; sealed-text lookup scrolls the vertical ListView, not the horizontal chip row, before asserting fontSize >= 13). Every assertion kept: 48px lane chips, selected semantics flip, >= 13px prose, AA contrast. Before/after PNGs in docs/visual/2026-09-05. Source diff unchanged from PR #99 head 29d2a1d."
     },
     {
       "id": "M0-1",

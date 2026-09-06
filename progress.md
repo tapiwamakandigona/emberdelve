@@ -5530,3 +5530,11 @@ Nothing else on the Console touched; closed-testing track left alone.
   These are in the additive test helper, not old tests. After plates recovered.
   Stopping rather than editing tests/checks to pass or bending production UI to
   a helper bug. PR #99 remains draft and VISUAL-20260905 remains false.
+
+## 2026-09-06 — PR #99 merged; v0.181.0+208 prepared
+- Draft PR #99 (Codex readable prose + 48px section controls) merged onto legacy/dice-builder. Its two failing
+  new-helper cases were fixed in the helper only (SemanticsHandle disposed before the tester check; the sealed-text
+  lookup scrolled the vertical ListView instead of the horizontal chip row). No production code and no existing test
+  changed for that; every assertion kept. VISUAL-20260905 flipped true with that evidence.
+- VERIFIED locally (Flutter 3.44.9): analyzer clean; 1317 tests passed after the fix (1315 + 2 helper cases).
+- Version 0.180.1+207 → 0.181.0+208; news entry + docs/releases/v0.181.0.md.
