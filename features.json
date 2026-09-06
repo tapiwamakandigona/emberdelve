@@ -2,6 +2,13 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "VISUAL-20260905",
+      "title": "Readable Codex prose and section navigation",
+      "acceptance": "13px reading text, 48px section targets and selected semantics; existing checks and added readability checks green; before/after render artifacts exist; no gameplay or release change.",
+      "passes": false,
+      "evidence": "Planned in docs/visual-polish-20260905.md; implementation awaits public CI."
+    },
+    {
       "id": "M0-1",
       "title": "Repo scaffold with AI-handoff state files",
       "acceptance": "PROJECT.md, features.json, progress.md, init.sh, docs/spec.md, docs/architecture.md, checkpoints/ exist at repo root and describe the project accurately",

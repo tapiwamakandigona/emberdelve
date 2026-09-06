@@ -5489,3 +5489,44 @@ Nothing else on the Console touched; closed-testing track left alone.
   APK + AAB) / 1207 armeabi-v7a / 2207 arm64-v8a / 4207 x86_64; signer 031acb42…7a0d on every artifact.
 - Release id 383226237, 5 assets; every asset re-downloaded unauthenticated and sha256 matched the body table (PASS x5).
 - Play: NOT touched. 0.180.0 (206) still staged 20% in review; 0.180.1 goes to Play only after 0.180.0 has a clean day.
+## 2026-09-05 — Codex visual/readability PR (no release)
+
+- VERIFIED source inspection: prose/section links used 11px micro text; section
+  links were gesture targets without a selected visual treatment.
+- Proposed: 13px reading text, 1.5 reading line-height, 48px focusable section
+  buttons, high-contrast selected treatment and selected semantics. Existing
+  eight anchors, lazy-list navigation, prices and purchase callbacks retained.
+- VERIFIED local: whitespace check and existing sprite-generator `--check` pass.
+  Existing 251 test-file hashes recorded before changes; no old check modified.
+- Added targeted small-phone/1.3x-text/contrast checks and an additive public
+  PR-only before/after widget-render workflow. No secrets, Android build, release
+  dispatch, asset generation, version increment or sim change.
+- ASSUMED until CI: analyzer/test/render success. Flutter unavailable locally;
+  VISUAL-20260905 remains false until public evidence exists.
+
+- Verification transport correction: managed push rejected the new workflow:
+  `refusing to allow a GitHub App to create or update workflow
+  .github/workflows/visual-review.yml without workflows permission`.
+  Nothing was pushed. Removed that workflow from the unpushed commit and use
+  additive render tests through existing CI; baseline source first for before
+  plates, then the saved source proposal. No existing check is changed.
+
+- Baseline CI 33949573077 stopped at analyzer, before tests: `6 issues found.`
+  New helper errors included `The getter 'text' isn't defined for the type
+  'EmberColors'`, deprecated `hasFlag`, missing const and an unnecessary `!`.
+  One corrective retry changes only new-helper APIs/consts; assertions and
+  thresholds are identical. Verified current Flutter docs use
+  `flagsCollection.isSelected` / `Tristate`. Existing test files untouched.
+
+- VERIFIED baseline retry 33949748779: analyzer passed, actual before PNGs
+  recovered from public test logs. Readability pins failed as intended:
+  `Expected: a value greater than or equal to <48>` / `Actual: <33.0>`.
+  Both 360×800 and 320×568@1.3× exercised. Applying only the source proposal
+  next; the corrected tests and render helpers now remain byte-identical.
+
+- VERIFIED source 3832209 / run 33950010191: analyzer clean; 1309 passed /
+  2 failed. Full failures: `A SemanticsHandle was active at the end of the test.`
+  at 360x800 and `Bad state: No element` (sealed lazy-text lookup) at 320x568.
+  These are in the additive test helper, not old tests. After plates recovered.
+  Stopping rather than editing tests/checks to pass or bending production UI to
+  a helper bug. PR #99 remains draft and VISUAL-20260905 remains false.

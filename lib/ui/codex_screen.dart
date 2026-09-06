@@ -88,23 +88,31 @@ class _CodexScreenState extends State<CodexScreen> {
           for (final (i, (id, name)) in _lanes.indexed)
             Padding(
               padding: const EdgeInsets.only(right: Space.s),
-              child: GestureDetector(
+              child: Semantics(
                 key: ValueKey('codex-lane-$id'),
-                onTap: () => _toLane(i),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Space.m,
-                    vertical: 6,
+                selected: i == _laneIdx,
+                child: TextButton(
+                  onPressed: () => _toLane(i),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(48, 48),
+                    padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                    foregroundColor: i == _laneIdx
+                        ? EmberColors.bg
+                        : EmberColors.textPrimary,
+                    backgroundColor: i == _laneIdx
+                        ? EmberColors.ember
+                        : EmberColors.surface,
+                    textStyle: EmberText.label,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Space.s),
+                      side: BorderSide(
+                        color: i == _laneIdx
+                            ? EmberColors.ember
+                            : EmberColors.line,
+                      ),
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: EmberColors.surface,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: EmberColors.line),
-                  ),
-                  child: Text(
-                    name,
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
-                  ),
+                  child: Text(name),
                 ),
               ),
             ),
@@ -114,7 +122,11 @@ class _CodexScreenState extends State<CodexScreen> {
   }
 
   Widget _laneHeader(String id, String title) =>
-      Text(title, key: _laneKeys[id], style: EmberText.micro);
+      Text(
+        title,
+        key: _laneKeys[id],
+        style: EmberText.label.copyWith(color: EmberColors.gold),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -211,8 +223,9 @@ class _CodexScreenState extends State<CodexScreen> {
                             'Lore of the delve, unsealed with embers. Flavor only '
                             '— enemy intents and relic effects stay readable in '
                             'play, free, forever.',
-                            style: EmberText.micro.copyWith(
+                            style: EmberText.label.copyWith(
                               color: EmberColors.textDim,
+                              height: 1.5,
                             ),
                           ),
                           const SizedBox(height: Space.xl),
@@ -352,7 +365,7 @@ class _CodexScreenState extends State<CodexScreen> {
                 if (owned)
                   Text(
                     _entryTag(e).toUpperCase(),
-                    style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                    style: EmberText.label.copyWith(color: EmberColors.textDim),
                   )
                 else
                   Row(
@@ -383,20 +396,24 @@ class _CodexScreenState extends State<CodexScreen> {
               Text(
                 _recordLine(e)!,
                 key: ValueKey('codex-record-${e.refId}'),
-                style: EmberText.micro.copyWith(color: EmberColors.gold),
+                style: EmberText.label.copyWith(color: EmberColors.gold),
               ),
               const SizedBox(height: 4),
             ],
             if (owned)
               Text(
                 e.text,
-                style: EmberText.micro.copyWith(color: EmberColors.textDim),
+                style: EmberText.label.copyWith(
+                  color: EmberColors.textPrimary,
+                  height: 1.5,
+                ),
               )
             else
               Text(
                 'Sealed — tap to unseal.',
-                style: EmberText.micro.copyWith(
-                  color: EmberColors.textDisabled,
+                style: EmberText.label.copyWith(
+                  color: EmberColors.textDim,
+                  height: 1.5,
                 ),
               ),
           ],
