@@ -5640,3 +5640,19 @@ Nothing else on the Console touched; closed-testing track left alone.
 - VERIFIED diff of the approved new fixture: only singular->list locale
   API setup and redundant import removal, no assertion changes. Language
   coverage remains 92 interface messages per fr/es/pt, not all game text.
+
+## 2026-09-08 — iteration 9/12, quality release candidate
+
+- Candidate `0.182.0+209`: current Play highest bundle 208 / 0.181.0 was
+  freshly read; new player-facing news and release notes describe the actual
+  private Keepers feature, replacement delvers and partial localization.
+- VERIFIED release rerun: analyzer clean; 1348/1348 tests pass; character
+  asset read-only --check passes; original tests/sim/IAP/telemetry unchanged.
+  Existing SFX mix-bus gate passes all seven reachable cascades; full attack
+  is TIGHT at -0.90dBTP, not clipped.
+- Existing public CI and emulator trace workflows inspected. Explicit task
+  ref will be used; no secret enumeration/creation, key changes or paid
+  runners. Candidate must pass remote build/download/signature checks before
+  its release feature becomes true; full physical Play testing stays open.
+- An empty-heading documentation patch failed `Failed to find expected
+  lines`; inspected the actual progress tail before this single retry.

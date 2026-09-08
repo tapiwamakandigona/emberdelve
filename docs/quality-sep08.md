@@ -6,6 +6,23 @@ Canonical harness main `4fe6eb4` contains v3.0.1 and was read in full.
 Single agent; maximum 12 engineering iterations across this studio pass.
 Existing tests, sim goldens, signing pins and earlier progress stay read-only.
 
+## Iteration 9 — signed quality release candidate
+
+- Candidate `0.182.0+209`, after primary Play read confirmed highest uploaded
+  bundle 208 / 0.181.0 in full production. Recheck before upload.
+- Player-facing release/news notes accurately describe existing-owner
+  Keepers, replacement models and partial translations; no new permissions,
+  premium product, public supporter names or simulation changes.
+- Run unchanged analyzer, full suite, SFX true-peak and character asset
+  reproducibility checks; prepare PR against `legacy/dice-builder`.
+- Use existing active public CI on explicit quality branch, no main build,
+  secret enumeration, key generation, paid runner or workflow weakening.
+  Existing frame-trace dispatch can provide emulator evidence, not 2GB-phone
+  FPS or a Play-billed purchase. Preserve all original checks.
+- Verify downloadable APK/AAB hashes, package, version and signer. Do not
+  replace a Play production build with an untested candidate; prefer existing
+  internal testers while new visuals and physical purchase remain unverified.
+
 ## Iteration 3 — Keepers of the Flame
 
 Owner approved the recommendation on September 8: thank existing and new

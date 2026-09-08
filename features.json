@@ -2,6 +2,13 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "RELEASE-CANDIDATE-20260908",
+      "title": "Verified signed Android quality candidate",
+      "acceptance": "Candidate 0.182.0+209 on correct shipping ancestry; unchanged analyze/full suite/SFX/asset checks pass; existing public CI succeeds on exact source; downloaded APK/AAB package/version/upload-signer pin and SHA256 recorded. Publication and physical Play/device gates remain separately unpassed.",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "LANGUAGES-20260908",
       "title": "Statistics-led French, Spanish and Brazilian Portuguese first-session UI",
       "acceptance": "Device plus persisted manual language, safe English fallback; title navigation, core combat actions, five-page manual, comfort settings and complete private Keeper copy translated; matching catalog keys/placeholders, personal names untouched, honest partial-coverage note, real narrow-screen tests; original tests and analyzer green, no simulation or telemetry change.",

@@ -11,6 +11,14 @@ Forge entitlements and privacy promises. Keepers of the Flame is approved.
 Older development freezes do not block this pass; signing, test and Play
 verification gates still apply.
 
+Release preparation: candidate `0.182.0+209` (iteration 9); Play production
+208 verified September 8. Target source is this quality branch descended
+from `legacy/dice-builder`. Release candidate is not production approval.
+Current toolchain is Flutter 3.44.9/Dart 3.12.2; older toolchain prose below
+is historical. September 8 creative authorization supersedes the earlier
+AI-sprite restriction for the explicitly documented original roster update;
+`PROVENANCE.md` identifies generated source art, with no human-artist claim.
+
 Current scoped visual PR (2026-09-05): `docs/visual-polish-20260905.md`.
 Codex reading/navigation polish only; no release, version, purchase or sim changes.
 Verification is public analyzer/full suite/SFX plus real-font before/after plates.

@@ -23,10 +23,26 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.181.0';
+const String currentAppVersion = '0.182.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.182.0',
+    title: 'Keepers of the Flame',
+    lines: [
+      'Already own the Ember Forge? A small thank-you waits by the fire. '
+          'Choose a private name and crest, or skip it. You can change, hide '
+          'or remove them in Settings. There is nothing more to buy.',
+      'All twenty-two delvers now have their own shape, gear and stance. '
+          'The new sheets use less texture memory; your delvers, dice and '
+          'unlocks stay as they were.',
+      'French, Spanish and Brazilian Portuguese join the menus, first '
+          'lessons and main combat controls. Choose a language in Settings. '
+          'Some later descriptions remain in English.',
+      'Thank you for keeping the fire going.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.181.0',
     title: 'A Codex you can read',
