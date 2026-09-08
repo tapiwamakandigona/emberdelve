@@ -5,8 +5,8 @@
       "id": "RELEASE-CANDIDATE-20260908",
       "title": "Verified signed Android quality candidate",
       "acceptance": "Candidate 0.182.0+209 on correct shipping ancestry; unchanged analyze/full suite/SFX/asset checks pass; existing public CI succeeds on exact source; downloaded APK/AAB package/version/upload-signer pin and SHA256 recorded. Publication and physical Play/device gates remain separately unpassed.",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED: docs/releases/verification-0.182.0.md and https://github.com/tapiwamakandigona/emberdelve/actions/runs/34243188072 . Owner-authorized PAT dispatch on exact 8a9def489a748a65d343a5998ed1375d3ceb86ca; original analyze/1348 tests/SFX/art checks green; signed AAB + universal/3 ABI APKs downloaded, GitHub archive digests match, independent apksigner/jarsigner/bundletool verify package/version/permanent upload pin and inner SHA256. Play internal 209 available (legacy 12 retained). Physical purchase/device and production gates remain separately open."
     },
     {
       "id": "LANGUAGES-20260908",

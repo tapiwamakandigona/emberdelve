@@ -1,5 +1,18 @@
 # PROJECT.md — Emberdelve
 
+## September 8 verified release resume
+
+Candidate `0.182.0+209` was built from `8a9def4`, signed/independently
+verified, published as a GitHub prerelease and made available to existing
+Play internal testers. Retained internal code12 for legacy Android5–6;
+new features require Android7+. Production remains208; do not infer a
+rollout from the prerelease or testing publication.
+`docs/releases/verification-0.182.0.md` has binary hashes and actual
+emulator trace measurements. Trace flows pass, but software raster exceeds
+the frame budget; physical low-end FPS/Play purchases remain open.
+Managed GitHub App dispatch was denied; owner-authorized supplied PAT
+works through documented Actions REST. Never list/expose signing secrets.
+
 **Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Flutter. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
 
 **Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built by the owner. This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.

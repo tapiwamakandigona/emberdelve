@@ -5656,3 +5656,68 @@ Nothing else on the Console touched; closed-testing track left alone.
   its release feature becomes true; full physical Play testing stays open.
 - An empty-heading documentation patch failed `Failed to find expected
   lines`; inspected the actual progress tail before this single retry.
+
+### Iteration 9 remote gate — paused, not a signed release
+
+- VERIFIED source commit `8a9def489a748a65d343a5998ed1375d3ceb86ca` pushed;
+  PR https://github.com/tapiwamakandigona/emberdelve/pull/101 targets
+  `legacy/dice-builder`, open and mergeable.
+- Signed CI dispatch failed once, verbatim:
+  `could not create workflow dispatch event: HTTP 403: Resource not
+  accessible by integration`.
+- This is an authorization blocker, not a transient build failure. No
+  alternative credential/API, workflow-trigger change or secret listing
+  attempted to bypass it. Owner must authorize Actions dispatch or start
+  the existing CI workflow on `feat/quality-sep08` manually.
+- Ordinary PR CI starts automatically (headless + unsigned iOS). It does
+  NOT run the signed Android job. Candidate feature remains false.
+- No Android binary, tag, Play upload, tester delivery or public rollout
+  completed by this pass at this point.
+
+### Iteration 9 resumed — supplied PAT explicitly authorized
+
+- Owner explicitly directed use of the supplied PAT and continuation on
+  September 8. The previous 403 came from the GitHub App connection; it did
+  not test the separately provisioned PAT.
+- VERIFIED PAT account, public repo, existing active workflow and exact
+  quality commit before dispatch. Existing CI accepted HTTP 204:
+  https://github.com/tapiwamakandigona/emberdelve/actions/runs/34243188072
+- No direct git/gh credential override, secret enumeration, workflow
+  weakening, private Actions enablement or spending. Git/commits remain
+  managed by the SDK. Artifacts, signatures and track state remain separate
+  gates; dispatch success is not build/publication success.
+
+### Iteration 9 — signed artifacts and internal distribution verified
+
+- Signed CI 34243188072 succeeded on exact `8a9def4`; GitHub ZIP digests
+  and independent binary integrity/signature/version/package checks pass.
+  Full hashes/bytes in `docs/releases/verification-0.182.0.md`.
+- Initial browser upload failed `Cannot set buffer larger than 50Mb, please
+  write it to a file and pass its path instead.` Single retry: native File
+  assembled from chunks in remote browser, browser SHA256 equals local
+  verified AAB, regular upload input succeeded.
+- Initial Play preview: `This release no longer supports 1,921 devices that
+  were supported in your previous release.` Did not click Proceed anyway.
+  Internal code 12 has minSdk21; new candidate retains shipping minSdk24.
+  Kept old bundle as legacy fallback; re-preview Ready to release, zero
+  device losses. No check/manifest workaround.
+- VERIFIED after publish and reload: internal 209 (0.182.0), Available to
+  internal testers, 2 codes (209+12). No production/roster change. Android
+  5–6 keeps old features; new candidate Android7+.
+- RELEASE-CANDIDATE true on binary evidence. Physical gates M1-3/M4-2
+  remain false. Existing emulator trace 34245082297 running separately.
+
+- VERIFIED emulator trace 34245082297 succeeded; downloaded three timeline
+  summaries. Avg build title/combat/map 1.095/2.646/0.746ms; software raster
+  70.037/101.506/115.129ms. Runtime flows executed, NOT a 60fps/phone pass.
+- VERIFIED public prerelease v0.182.0 targets built source. Re-downloaded all
+  five binaries and checksum manifest; exact SHA256/size matches. It is a
+  prerelease, not latest stable. See verification document for full evidence.
+- Bookkeeping guard first reported `AssertionError: Progress history changed`.
+  Managed Git `show` had returned an output-file notice for the long history,
+  not the blob. Inspected primary diff (append-only), then one retry read the
+  tool-provided full output and preserved all assertions. Actual history
+  prefix matched exactly; no test/check/source criterion changed.
+- VERIFIED release bookkeeping is docs/state only; binary source, original
+  tests/workflows and open device criteria unchanged. Independent doc hashes
+  match downloaded binaries; supplied secret values absent.
