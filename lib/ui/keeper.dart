@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../meta/keeper.dart';
+import '../l10n/strings.dart';
 import 'theme.dart';
 import 'widgets.dart';
 
@@ -12,7 +13,7 @@ class KeeperCrest extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: 'Keeper of the Flame supporter crest',
+    label: tr(context, 'Keeper of the Flame supporter crest'),
     image: true,
     child: const ExcludeSemantics(
       child: SizedBox(
@@ -60,8 +61,8 @@ class _CrestPainter extends CustomPainter {
   bool shouldRepaint(covariant _CrestPainter oldDelegate) => false;
 }
 
-const _normalSubtitle = Text(
-  'A dice-builder delve into the dark',
+Widget _normalSubtitle(BuildContext context) => Text(
+  tr(context, 'A dice-builder delve into the dark'),
   style: EmberText.bodyDim,
   textAlign: TextAlign.center,
 );
@@ -86,11 +87,13 @@ class _KeeperTitleState extends State<KeeperTitle> {
   @override
   Widget build(BuildContext context) {
     final service = KeeperService.instance;
-    if (service == null) return _normalSubtitle;
+    if (service == null) return _normalSubtitle(context);
     return AnimatedBuilder(
       animation: service,
       builder: (context, _) {
-        if (!service.loaded || !service.entitled) return _normalSubtitle;
+        if (!service.loaded || !service.entitled) {
+          return _normalSubtitle(context);
+        }
         if (service.needsInvitation && !_scheduled) {
           _scheduled = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -107,14 +110,17 @@ class _KeeperTitleState extends State<KeeperTitle> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'You helped keep the Forge burning.',
+                Text(
+                  tr(context, 'You helped keep the Forge burning.'),
                   style: EmberText.body,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: Space.xs),
-                const Text(
-                  'Thank you. Leave a name by your flame, if you like.',
+                Text(
+                  tr(
+                    context,
+                    'Thank you. Leave a name by your flame, if you like.',
+                  ),
                   style: EmberText.label,
                   textAlign: TextAlign.center,
                 ),
@@ -125,7 +131,7 @@ class _KeeperTitleState extends State<KeeperTitle> {
                     TextButton(
                       key: const ValueKey('keeper-personalise'),
                       onPressed: () => _edit(service),
-                      child: const Text('Add my tribute'),
+                      child: Text(tr(context, 'Add my tribute')),
                     ),
                     TextButton(
                       key: const ValueKey('keeper-skip'),
@@ -135,13 +141,13 @@ class _KeeperTitleState extends State<KeeperTitle> {
                         setState(() => _inviting = false);
                         if (!saved) _saveWarning(context);
                       },
-                      child: const Text('No thanks'),
+                      child: Text(tr(context, 'No thanks')),
                     ),
                   ],
                 ),
                 if (_saveFailed)
-                  const Text(
-                    'This device could not save the choice yet.',
+                  Text(
+                    tr(context, 'This device could not save the choice yet.'),
                     style: EmberText.label,
                   ),
               ],
@@ -150,7 +156,7 @@ class _KeeperTitleState extends State<KeeperTitle> {
         }
         final profile = service.profile;
         final named = profile.showName && profile.name.isNotEmpty;
-        if (!named && !profile.showCrest) return _normalSubtitle;
+        if (!named && !profile.showCrest) return _normalSubtitle(context);
         return Semantics(
           container: true,
           child: Row(
@@ -164,8 +170,12 @@ class _KeeperTitleState extends State<KeeperTitle> {
               Flexible(
                 child: Text(
                   named
-                      ? 'The flame burns brighter thanks to ${profile.name}.'
-                      : 'Keeper of the Flame',
+                      ? tr(
+                          context,
+                          'The flame burns brighter thanks to {name}.',
+                          args: {'name': profile.name},
+                        )
+                      : tr(context, 'Keeper of the Flame'),
                   style: EmberText.label.copyWith(color: EmberColors.gold),
                   textAlign: TextAlign.center,
                 ),
@@ -180,9 +190,12 @@ class _KeeperTitleState extends State<KeeperTitle> {
 
 void _saveWarning(BuildContext context) {
   ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-    const SnackBar(
+    SnackBar(
       content: Text(
-        'Your choice is active, but could not be saved on this device.',
+        tr(
+          context,
+          'Your choice is active, but could not be saved on this device.',
+        ),
       ),
     ),
   );
@@ -249,21 +262,27 @@ class _KeeperEditorState extends State<_KeeperEditor> {
   Widget build(BuildContext context) => AlertDialog(
     key: const ValueKey('keeper-editor'),
     scrollable: true,
-    title: const Text('Keepers of the Flame', style: EmberText.h2),
+    title: Text(tr(context, 'Keepers of the Flame'), style: EmberText.h2),
     content: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'The Forge burns because people like you chose to support it. '
-          'Thank you.',
+        Text(
+          tr(
+            context,
+            'The Forge burns because people like you chose to support it. '
+            'Thank you.',
+          ),
           style: EmberText.body,
         ),
         const SizedBox(height: Space.m),
-        const Text(
-          'A nickname is enough. It stays on this device, is not uploaded '
-          'or added to public credits, and is not included in save codes. '
-          'You can edit, hide or remove it in Settings.',
+        Text(
+          tr(
+            context,
+            'A nickname is enough. It stays on this device, is not uploaded '
+            'or added to public credits, and is not included in save codes. '
+            'You can edit, hide or remove it in Settings.',
+          ),
           style: EmberText.label,
         ),
         const SizedBox(height: Space.m),
@@ -276,17 +295,17 @@ class _KeeperEditorState extends State<_KeeperEditor> {
           ],
           enableSuggestions: false,
           autocorrect: false,
-          decoration: const InputDecoration(
-            labelText: 'Name by your flame (optional)',
-            hintText: 'Your nickname',
+          decoration: InputDecoration(
+            labelText: tr(context, 'Name by your flame (optional)'),
+            hintText: tr(context, 'Your nickname'),
           ),
           style: EmberText.body,
         ),
         SwitchListTile(
           key: const ValueKey('keeper-show-name'),
           contentPadding: EdgeInsets.zero,
-          title: const Text(
-            'Show my name on the title',
+          title: Text(
+            tr(context, 'Show my name on the title'),
             style: EmberText.label,
           ),
           value: _showName,
@@ -295,22 +314,25 @@ class _KeeperEditorState extends State<_KeeperEditor> {
         SwitchListTile(
           key: const ValueKey('keeper-show-crest'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('Wear the supporter crest', style: EmberText.label),
+          title: Text(
+            tr(context, 'Wear the supporter crest'),
+            style: EmberText.label,
+          ),
           value: _showCrest,
           onChanged: _saving ? null : (v) => setState(() => _showCrest = v),
         ),
-        if (_error != null) Text(_error!, style: EmberText.label),
+        if (_error != null) Text(tr(context, _error!), style: EmberText.label),
       ],
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Cancel'),
+        child: Text(tr(context, 'Cancel')),
       ),
       FilledButton(
         key: const ValueKey('keeper-save'),
         onPressed: _saving ? null : _save,
-        child: Text(_saving ? 'Saving…' : 'Save tribute'),
+        child: Text(tr(context, _saving ? 'Saving…' : 'Save tribute')),
       ),
     ],
   );
@@ -336,11 +358,17 @@ class KeeperSettings extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('KEEPERS OF THE FLAME', style: EmberText.label),
+                Text(
+                  tr(context, 'KEEPERS OF THE FLAME'),
+                  style: EmberText.label,
+                ),
                 const SizedBox(height: Space.s),
-                const Text(
-                  'A personal thank-you for keeping the Forge burning. '
-                  'Your tribute stays on this device. No gameplay advantage.',
+                Text(
+                  tr(
+                    context,
+                    'A personal thank-you for keeping the Forge burning. '
+                    'Your tribute stays on this device. No gameplay advantage.',
+                  ),
                   style: EmberText.label,
                 ),
                 Wrap(
@@ -349,7 +377,7 @@ class KeeperSettings extends StatelessWidget {
                     TextButton(
                       key: const ValueKey('keeper-edit'),
                       onPressed: () => showKeeperEditor(context, service),
-                      child: const Text('Edit / hide tribute'),
+                      child: Text(tr(context, 'Edit / hide tribute')),
                     ),
                     if (service.profile.name.isNotEmpty)
                       TextButton(
@@ -358,7 +386,7 @@ class KeeperSettings extends StatelessWidget {
                           final saved = await service.removeName();
                           if (context.mounted && !saved) _saveWarning(context);
                         },
-                        child: const Text('Remove name'),
+                        child: Text(tr(context, 'Remove name')),
                       ),
                   ],
                 ),

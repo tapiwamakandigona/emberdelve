@@ -2,6 +2,13 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "LANGUAGES-20260908",
+      "title": "Statistics-led French, Spanish and Brazilian Portuguese first-session UI",
+      "acceptance": "Device plus persisted manual language, safe English fallback; title navigation, core combat actions, five-page manual, comfort settings and complete private Keeper copy translated; matching catalog keys/placeholders, personal names untouched, honest partial-coverage note, real narrow-screen tests; original tests and analyzer green, no simulation or telemetry change.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-08 Flutter 3.44.9: 92 offline messages x fr/es/pt, catalog key/placeholder parity; device fr-CA/manual/English fallback, preserved nickname, three 320px/1.3x title/manual action tests, Keeper editor tests, compact language-sheet real interaction. Analyzer clean; full suite 1348/1348. Original tests unchanged; only owner-approved new locale fixture corrected to localesTestValue, assertions intact. Advanced lore/dynamic descriptions remain English, scope note visible. Physical-device release still unverified."
+    },
+    {
       "id": "MODELS-20260908",
       "title": "Twenty-two genuinely distinct delver models at native pixel resolution",
       "acceptance": "Replace existing character sheets with independently shaped original models and two idle/two walking poses; stable roster IDs/order/kits/unlocks/saves and enemy assets; reproducible conversion with source provenance, alpha margins and unique monochrome masks; <=1.5 MiB decoded character memory and <=100 KiB PNGs; unchanged original checks and full analyzer/test suite green. Device visual QA separate.",

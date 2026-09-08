@@ -5589,3 +5589,54 @@ Nothing else on the Console touched; closed-testing track left alone.
   was denied: `gh secret is not allowed for security reasons`. No alternate
   API/path attempted; use existing authorized signing workflow without
   extracting keys, or ask for missing material if workflow unavailable.
+
+## 2026-09-08 — iteration 6/12, translations IN PROGRESS / paused
+
+- Source added: offline French/Spanish/Brazilian Portuguese interface
+  catalog (92 source messages per locale), device/manual locale selection,
+  persisted language preference, first-session/title/combat labels, five
+  manual pages, comfort settings and Keeper copy. Explicit partial-coverage
+  note; untranslated lore uses English. No personal-name translation.
+- Flutter SDK localization delegates and their pinned intl dependency
+  added; no unrelated dependency upgrades. Catalog compilation verifies
+  key/placeholder parity. New feature LANGUAGES-20260908 remains false.
+- First targeted check: 11 pass / 2 fail. Exact failures:
+  `Found 0 widgets with text "Lancer": []` in the new device-locale case;
+  `A RenderFlex overflowed by 14 pixels on the right.` in the Spanish
+  five-page manual at 320px / 1.3x text.
+- Analyzer: `2 issues found.` — curly_braces_in_flow_control_structures in
+  KeeperTitle and unnecessary_import in the new language test.
+- VERIFIED framework source: TestPlatformDispatcher.localeTestValue and
+  localesTestValue are separate overrides. The new fixture sets the
+  singular value; its intended simulated locale list is not populated.
+- Owner standing rule forbids editing tests to make them pass. Asked for
+  narrow permission to correct ONLY that new fixture's API setup, with
+  all assertions/expectations and pre-existing tests unchanged. App
+  question action: correct_new_locale_fixture_sep08. Awaiting answer.
+- One corrective retry has NOT yet been used. Spanish source layout and
+  Keeper source lint also remain unfixed at pause. Full suite not run on
+  iteration 6. No translation commit, push or release claimed.
+
+### Iteration 6 approved correction and single retry
+
+- Owner clicked `allow_fixture_only`: "Yes—fixture only; keep every assertion."
+  Corrected ONLY the new locale fixture to localesTestValue /
+  clearLocalesTestValue; removed its redundant typed-data import (services
+  already exports it). All expectations, parameters and original tests stay.
+- Source fix for `A RenderFlex overflowed by 14 pixels on the right.`:
+  manual navigation uses a centered Wrap with the same spacing; long
+  translations can stack without reducing text size or clipping controls.
+- Source braces fix for KeeperTitle. Single verification retry follows.
+- VERIFIED single retry: catalog parity, analyzer and all 13 new translation
+  tests pass. Full suite 1345 pass / 2 original Settings failures:
+  `Expected: 'on' / Actual: 'system'` and
+  `Found 0 widgets with text "UPDATES": []`.
+- Descope: remove large inline language section, retain old list content
+  positions and open language picker using app-bar globe + scrollable sheet.
+  Original tests, scroll helpers/cache extent and assertions remain intact.
+- VERIFIED reduced-scope check: analyzer clean, full suite 1348/1348.
+  Additive language-sheet test opens, changes to French, updates translated
+  content and closes cleanly on a 320px screen. Original Settings tests pass.
+- VERIFIED diff of the approved new fixture: only singular->list locale
+  API setup and redundant import removal, no assertion changes. Language
+  coverage remains 92 interface messages per fr/es/pt, not all game text.

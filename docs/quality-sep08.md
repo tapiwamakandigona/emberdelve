@@ -57,3 +57,32 @@ release/version/signature/Play validation after this feature and tests.
 - Validate alpha margins, frame geometry, unique monochrome silhouettes,
   reproducibility and every existing engine decode/asset/widget/sim test.
   Automated asset checks are not a substitute for device visual review.
+
+## Iteration 6 — statistics-led first-session translations
+
+Play device-language snapshot for September 1 (retrieved September 8):
+55 installed audience; English variants 33, French 5, Spanish 4, pt-BR 1.
+Eight are grouped "other"; German/Arabic are not separately reported.
+Ship French/Spanish and Brazilian Portuguese UI support, not a claim
+that every lore entry or dynamic content string is translated.
+
+- Device-locale selection plus persisted manual System/English/Français/
+  Español/Português (Brasil); unsupported languages fall back to English.
+- First-session navigation, five-page manual, primary combat actions,
+  comfort settings and complete Keeper privacy/editor copy.
+- English source fallback for untouched codex/story/dynamic content;
+  show an honest scope note alongside the language picker.
+- No network translation SDK, runtime fetch, translated IDs/seed codes,
+  simulation changes or personal-name translation.
+- Catalog parity and placeholder checks; actual French/Spanish/Portuguese
+  narrow-screen UI tests, current save round-trip and unchanged full suite.
+
+### Descope after the single retry
+
+The new inline language panel displaced existing Settings controls. The
+full-suite retry failed at `Expected: 'on' / Actual: 'system'` (motion
+control) and `Found 0 widgets with text "UPDATES": []` (lazy-list reach).
+All new translation tests and analyzer passed. Remove the inline panel
+from the settings list: a 48px app-bar globe opens a scrollable language
+sheet. The settings list retains its previous content positions. No
+original test, assertion, scroll helper or cache extent changes.

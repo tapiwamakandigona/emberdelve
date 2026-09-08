@@ -58,12 +58,15 @@ extension _CombatActionZoneBand on _CombatScreenState {
             ? Column(
                 children: [
                   Text(
-                    freeReroll
-                        ? 'Pick dice to reroll — FREE this turn'
-                        // LFP-6b: "each lands −1 pip" read as "−1 from the
-                        // CURRENT face"; the actual rule is reroll first,
-                        // THEN subtract 1 (a rolled 1 can come back higher).
-                        : 'Pick dice to reroll — new face −1 pip',
+                    tr(
+                      context,
+                      freeReroll
+                          ? 'Pick dice to reroll — FREE this turn'
+                          // LFP-6b: "each lands −1 pip" read as "−1 from the
+                          // CURRENT face"; the actual rule is reroll first,
+                          // THEN subtract 1 (a rolled 1 can come back higher).
+                          : 'Pick dice to reroll — new face −1 pip',
+                    ),
                     style: EmberText.micro.copyWith(
                       color: freeReroll
                           ? EmberColors.success
@@ -87,7 +90,11 @@ extension _CombatActionZoneBand on _CombatScreenState {
                       const SizedBox(width: Space.m),
                       Expanded(
                         child: EmberButton(
-                          'Reroll (${_rerollSel.length})',
+                          tr(
+                            context,
+                            'Reroll ({count})',
+                            args: {'count': _rerollSel.length},
+                          ),
                           primary: true,
                           dense: compact,
                           icon: Icons.casino,
@@ -141,7 +148,11 @@ extension _CombatActionZoneBand on _CombatScreenState {
                       if (rerolls > 0)
                         Expanded(
                           child: EmberButton(
-                            'Reroll ($rerolls)',
+                            tr(
+                              context,
+                              'Reroll ({count})',
+                              args: {'count': rerolls},
+                            ),
                             dense: compact,
                             icon: Icons.replay,
                             onTap: selected != null && !_busy

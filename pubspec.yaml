@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   # Save-file location for autosave/meta persistence (the sim core stays
   # sealed pure Dart with zero runtime deps).
   path_provider: ^2.1.4

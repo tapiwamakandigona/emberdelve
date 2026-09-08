@@ -26,6 +26,7 @@ import '../data/vistas.dart';
 import '../data/epithets.dart';
 import '../data/provings.dart';
 import '../game/controller.dart';
+import '../l10n/strings.dart';
 import '../meta/meta.dart' show MetaState;
 import '../game/tour.dart';
 import 'codex_screen.dart';
