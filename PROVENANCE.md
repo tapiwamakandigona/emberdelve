@@ -8,6 +8,25 @@ were prepared; the files now live under `assets/`.)
 
 ---
 
+## September 8, 2026 — original delver model replacement
+
+All 22 `assets/images/characters/{id}.png` sheets now use distinct original
+character designs generated with GPT Image 2, then mechanically packed by
+`tool/art/build_delvers.py`. These are AI-generated source illustrations,
+not human-drawn art and not recolours of the old 0x72 bases. Source atlases,
+prompts, generation dates and model IDs are retained in `tool/art/delvers/`;
+that directory is NOT a Flutter asset and is not shipped in the app.
+
+The generator finds actual transparent gutters rather than trusting the
+source's nominal grid, thresholds alpha, uses nearest-neighbour conversion
+to native 32x40 frames, and bounds the palette to 32 entries. Each model
+has two idle poses, two walking poses and one braced hit pose. No external
+artist, character, trademark or protected reference was requested.
+The prior character-origin rows below describe superseded historical
+files, not the September 8 replacements. Enemy and other asset provenance
+is unchanged. New source/output use follows this repository's license;
+no exclusive copyright or third-party artist authorship is claimed.
+
 # Emberdelve Art Provenance
 
 Every file under `staging/art/`. Download/creation date for all entries: **2026-07-23**.

@@ -41,3 +41,19 @@ not a public list, account system or gameplay advantage.
 
 Distinct character silhouettes and measured low-end rendering improvements;
 release/version/signature/Play validation after this feature and tests.
+
+## Iteration 5 — the roster, not a row of recolours
+
+- Replace the 22 existing character sheets in place; stable character IDs,
+  order, unlock costs, kits, save codes, simulation and enemy sheets.
+- Original pixel-art models distinguish body shape, headgear, carried
+  tools and poses: not an HSV remap of the four old source silhouettes.
+- Generate source atlases with two idle and two walking poses per model;
+  keep source art and an exact mechanical conversion recipe outside the
+  runtime asset bundle, with honest provenance.
+- Native 32x40 pixel frames, nearest-neighbour drawing, no extra textures,
+  shaders, tickers or runtime dependency. Whole-character decoded footprint
+  <=1.5 MiB; total shipped character PNG <=100 KiB.
+- Validate alpha margins, frame geometry, unique monochrome silhouettes,
+  reproducibility and every existing engine decode/asset/widget/sim test.
+  Automated asset checks are not a substitute for device visual review.

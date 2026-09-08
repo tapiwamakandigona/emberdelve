@@ -5565,3 +5565,27 @@ Nothing else on the Console touched; closed-testing track left alone.
   (1317 original + 16 additive). No original tests, simulation, entitlement
   gateway, MetaState or telemetry changes. M4-2 remains false for the
   unperformed physical-device Play purchase/restore test.
+
+## 2026-09-08 — iteration 5/12, original delver models
+
+- Replaced all 22 character PNGs with distinct GPT Image 2-generated
+  designs, native 32x40 frames and two idle/two walking poses. Source
+  illustrations and prompts retained; not human-drawn/0x72-derived claims.
+  Mechanical packing detects actual transparent gutters because generated
+  nominal grids are not exact; no clipped row boundaries.
+- VERIFIED: reproducible packing check, binary alpha/two-pixel margins,
+  unique monochrome masks (closest IoU 0.7744), distinct walking poses.
+  39127 PNG bytes; decoded RGBA 3732480 -> 675840 bytes (-81.89%).
+  This is texture memory, not process RAM or phone FPS.
+- VERIFIED: analyzer clean, 1334/1334 tests green, including an additive
+  real-engine all-model decode/mask/budget check. Existing tests, simulation,
+  data roster IDs/order/kits/unlocks, enemy sprites and dependencies unchanged.
+- Technical roster plate: docs/visual/2026-09-08/delver-roster.png.
+  Device visual playtesting remains NOT VERIFIED.
+- Draft evidence patch returned `Failed to find expected lines` at the
+  guessed progress heading; inspected the actual append-only tail and
+  applied once there. Earlier hunks had applied; verified before retry.
+- Play production 208 (0.181.0) remains live. Signing secret enumeration
+  was denied: `gh secret is not allowed for security reasons`. No alternate
+  API/path attempted; use existing authorized signing workflow without
+  extracting keys, or ask for missing material if workflow unavailable.

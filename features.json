@@ -2,6 +2,13 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "MODELS-20260908",
+      "title": "Twenty-two genuinely distinct delver models at native pixel resolution",
+      "acceptance": "Replace existing character sheets with independently shaped original models and two idle/two walking poses; stable roster IDs/order/kits/unlocks/saves and enemy assets; reproducible conversion with source provenance, alpha margins and unique monochrome masks; <=1.5 MiB decoded character memory and <=100 KiB PNGs; unchanged original checks and full analyzer/test suite green. Device visual QA separate.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-08: build_delvers.py --check reproduces 22 sheets, 39127 PNG bytes / 675840 decoded RGBA bytes (old 3732480); unique solid masks, highest pairwise IoU 0.7744, binary alpha/margins and distinct walking poses. Real engine decodes all 22; analyzer clean; 1334/1334 tests pass. Source atlases/prompts/provenance retained; gameplay IDs/order/kits unchanged. Device visual review remains NOT VERIFIED."
+    },
+    {
       "id": "KEEPERS-20260908",
       "title": "Private Keepers of the Flame recognition for old and new Forge owners",
       "acceptance": "One-time nonblocking title thank-you, optional sanitized nickname and static crest, edit/hide/remove in Settings; existing saved ownership and confirmed restore eligible without repayment; local-only data excluded from cloud/manual transfer; no mid-run prompt, gameplay/IAP/telemetry change or startup wait; additive regressions and original analyzer/full suite green.",
