@@ -22,6 +22,7 @@ import 'more_games.dart';
 import 'motion.dart';
 import 'theme.dart';
 import 'widgets.dart';
+import 'keeper.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -742,6 +743,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       style: EmberText.bodyDim,
                     ),
                   ),
+                const KeeperSettings(),
                 const SizedBox(height: Space.xl),
                 const Text('ABOUT', style: EmberText.micro),
                 const SizedBox(height: Space.s),

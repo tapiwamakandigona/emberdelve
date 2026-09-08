@@ -19,6 +19,7 @@ class _GameRootState extends State<GameRoot> {
     // first frame — the title paints instantly, and every later sprite
     // (picker, map, first combat) renders on its first frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      KeeperService.instance?.load();
       warmSpriteSheets();
     });
   }

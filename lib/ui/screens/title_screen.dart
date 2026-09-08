@@ -134,11 +134,7 @@ class TitleScreen extends StatelessWidget {
                                 // spark pinpricks (visuals.md #1 — never a plain Text).
                                 const EmberLogotype('EMBERDELVE', fontSize: 42),
                                 const SizedBox(height: Space.xs),
-                                const Text(
-                                  'A dice-builder delve into the dark',
-                                  style: EmberText.bodyDim,
-                                  textAlign: TextAlign.center,
-                                ),
+                                const KeeperTitle(),
                                 const SizedBox(height: Space.l),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

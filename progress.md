@@ -5538,3 +5538,30 @@ Nothing else on the Console touched; closed-testing track left alone.
   changed for that; every assertion kept. VISUAL-20260905 flipped true with that evidence.
 - VERIFIED locally (Flutter 3.44.9): analyzer clean; 1317 tests passed after the fix (1315 + 2 helper cases).
 - Version 0.180.1+207 → 0.181.0+208; news entry + docs/releases/v0.181.0.md.
+
+## 2026-09-08 — iteration 3/12, Keepers of the Flame
+
+- Owner approved private supporter recognition: one-time, inline thank-you,
+  optional nickname and static crest, edit/hide/remove. Existing saved Forge
+  owners and restored purchases eligible; offline-code owners retain the
+  same entitlement. No public names, new purchases or gameplay advantage.
+- Separate local-only file: not MetaState/cloud/manual save codes, and absent
+  from Android's explicit backup/transfer lists. Loaded after first frame;
+  queued atomic writes, no name in analytics or logs.
+- First verification: all 16 additive feature tests PASS. Analyzer stopped
+  with `5 issues found.`: `prefer_initializing_formals`,
+  `curly_braces_in_flow_control_structures`, two
+  `unnecessary_string_escapes`, and `prefer_const_constructors`.
+  One corrective retry: source field initialization + braces, and mechanical
+  const/quote spelling in the two NEW, already-passing test files only.
+  No assertion, matcher, behavior, gate, threshold, or original test changed.
+- During drafting, a patch match failed twice on a Unicode-escaped literal:
+  `Failed to find expected lines`. Inspected bytes; left the existing
+  correct, passing case untouched rather than retrying the same patch.
+- Owner also selected Portuguese, French, Spanish, German and Arabic.
+  Translation work is a separate scoped iteration; English fallback and
+  RTL menu support must not mirror gameplay.
+- VERIFIED retry: analyzer clean and full Flutter suite 1333/1333 PASS
+  (1317 original + 16 additive). No original tests, simulation, entitlement
+  gateway, MetaState or telemetry changes. M4-2 remains false for the
+  unperformed physical-device Play purchase/restore test.

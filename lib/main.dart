@@ -20,6 +20,7 @@ import 'meta/reminder_service.dart';
 import 'meta/review_service.dart';
 import 'meta/unlock_codes.dart';
 import 'meta/store_service.dart';
+import 'meta/keeper.dart';
 import 'meta/update_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
@@ -93,6 +94,10 @@ Future<void> main() async {
   );
   StoreService.instance = store;
   unawaited(store.init());
+  KeeperService.instance = KeeperService(
+    alreadyOwned: () => controller.meta.forgeUnlocked,
+    entitlementChanges: controller,
+  );
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     pgs.signInBackend = () async {
       await GameAuth.signIn();
