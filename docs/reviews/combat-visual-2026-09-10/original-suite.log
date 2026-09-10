@@ -1,0 +1,1355 @@
+00:00 +0: loading ./test/achievements_test.dart
+00:00 +0: ./test/achievements_test.dart: achievements: order matches map, ids self-consistent, legal stats
+00:00 +1: ./test/achievements_test.dart: achievements: char_wins params are real characters, and only they carry a param
+00:00 +2: ./test/achievements_test.dart: achievements: roster/theme/boss targets stay inside real content
+00:00 +3: ./test/achievements_test.dart: a fresh profile has earned nothing, and any starting progress is real
+00:00 +4: ./test/achievements_test.dart: progress is real, monotonic and clamped
+00:00 +5: ./test/achievements_test.dart: every stat is wired to a real counter
+00:00 +6: ./test/achievements_test.dart: delvers_cleared counts distinct roster winners, junk keys never
+00:00 +7: ./test/achievements_test.dart: a toast fires once: unseen empties after markSeen
+00:00 +8: ./test/achievements_test.dart: nearest list is ordered, deterministic and excludes earned
+00:00 +9: ./test/achievements_test.dart: ledger counters survive a save/load round trip
+00:00 +10: ./test/achievements_test.dart: a pre-v0.5.0 save migrates honestly, never generously
+00:00 +11: ./test/achievements_test.dart: earning an achievement never changes what a run may start with
+00:02 +12: ./test/amethyst_test.dart: amethyst holds the twelfth seat with a violet grade and a frozen gate
+00:02 +13: ./test/amethyst_test.dart: the controller feeds the gate the junk-proofed winners count
+00:02 +14: ./test/amethyst_test.dart: junk charWins keys can never open the gate
+00:02 +15: ./test/answered_blow_test.dart: charge — the burst check intent_shown carries the raw threshold; pattern amount adjusts
+00:02 +16: ./test/answered_blow_test.dart: charge — the burst check reaching the threshold breaks the charge live
+00:02 +17: ./test/answered_blow_test.dart: charge — the burst check an unbroken charge lands as a normal blockable attack
+00:02 +18: ./test/answered_blow_test.dart: charge — the burst check the break meter resets with the next telegraph
+00:02 +19: ./test/answered_blow_test.dart: charge — the burst check block-absorbed damage does not count toward the break
+00:02 +20: ./test/answered_blow_test.dart: counter — the riposte stance each non-killing strike costs the shown amount, block first
+00:02 +21: ./test/answered_blow_test.dart: counter — the riposte stance a killing blow resolves before the counter answers
+00:02 +22: ./test/answered_blow_test.dart: counter — the riposte stance at end of turn the stance passes without an attack
+00:02 +23: ./test/answered_blow_test.dart: roster integrity new ids are registered, ordered, and layer-gated late
+00:03 +24: ./test/ascension_ladder_test.dart: rung 0 is byte-neutral (golden anchor safety)
+00:03 +25: ./test/ascension_ladder_test.dart: attack ramp is layer-scaled and monotone in rung
+00:03 +26: ./test/ascension_ladder_test.dart: every rung changes the fight (HP term strictly climbs)
+00:03 +27: ./test/ascension_ladder_test.dart: the ladder is alive: A20 is winnable for every character
+00:03 +28: ./test/assets_test.dart: sprite_meta.json parses and every referenced sheet asset exists
+00:03 +29: ./test/assets_test.dart: every SFX and music id the audio service references exists
+00:03 +30: ./test/assets_test.dart: backgrounds, icon mappings, and credits are bundled
+00:10 +31: ./test/attire_test.dart: dye catalog is coherent; default dye is the identity
+00:10 +32: ./test/attire_test.dart: wardrobe copy honors the ethics banned-word list
+00:10 +33: ./test/attire_test.dart: dyes: buy deducts embers, refuses when broke, owned or unknown
+00:10 +34: ./test/attire_test.dart: meta json: round-trip; pre-wardrobe saves stay byte-identical
+00:10 +35: ./test/attire_test.dart: cloud merge: owned dyes union, active follows the fresher side
+00:10 +36: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:10 +37: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:10 +38: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:10 +39: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:10 +40: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +41: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +42: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +43: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +44: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +45: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +46: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +47: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:11 +48: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +49: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +50: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +51: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +52: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +53: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:12 +54: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +55: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +56: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +57: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +58: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +59: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +60: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +61: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +62: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +63: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +64: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +65: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +66: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +67: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:13 +68: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:14 +69: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:14 +70: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:14 +71: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:14 +72: ./test/attire_test.dart: character screen lists every dye; tap buys and wears
+00:14 +73: ./test/campfire_motion_test.dart: campfire is visible but stops repainting with reduced motion
+00:15 +74: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:15 +75: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +76: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +77: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +78: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +79: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +80: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +81: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +82: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +83: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +84: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +85: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +86: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +87: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:16 +88: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:17 +89: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:17 +90: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:17 +91: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:17 +92: ./test/centered_hollow_test.dart: hollow title is centered when the forge list is showing
+00:17 +93: ./test/circle_headers_test.dart: the two circle headers section the character list
+00:18 +94: ./test/circle_headers_test.dart: the two circle headers section the character list
+00:18 +95: ./test/circle_headers_test.dart: the two circle headers section the character list
+00:18 +96: ./test/circle_headers_test.dart: the two circle headers section the character list
+00:18 +97: ./test/charted_depth_test.dart: the picker tally appends the charted floor
+00:18 +98: ./test/charted_depth_test.dart: the picker tally appends the charted floor
+00:18 +99: ./test/charted_depth_test.dart: the picker tally appends the charted floor
+00:18 +100: ./test/charted_depth_test.dart: the picker tally appends the charted floor
+00:18 +101: ./test/charted_depth_test.dart: the picker tally appends the charted floor
+00:18 +102: ./test/codex_lanes_test.dart: eight lane chips render, one per section
+00:18 +103: ./test/codex_lanes_test.dart: eight lane chips render, one per section
+00:19 +104: ./test/codex_readability_test.dart: Codex readable navigation at Size(360.0, 800.0) and 1.3x text
+00:19 +105: ./test/codex_readability_test.dart: Codex readable navigation at Size(360.0, 800.0) and 1.3x text
+00:19 +106: ./test/codex_visual_capture_test.dart: real Codex plate Size(360.0, 800.0)
+00:19 +107: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:19 +108: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +109: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +110: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +111: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +112: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +113: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +114: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +115: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +116: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +117: ./test/codex_lanes_test.dart: the DICE lane walks the lazy list to THE DICE
+00:20 +118: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:20 +119: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:21 +120: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:21 +121: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:21 +122: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:21 +123: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +124: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +125: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +126: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +127: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +128: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +129: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +130: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +131: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +132: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +133: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +134: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +135: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +136: ./test/codex_lanes_test.dart: the WORLD lane walks back UP from the bottom
+00:22 +137: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:22 +138: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:22 +139: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +140: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +141: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +142: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +143: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +144: ./test/coming_rule_test.dart: title shows the coming rule only once the week is played
+00:23 +145: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:23 +146: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:23 +147: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:23 +148: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:23 +149: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +150: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +151: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +152: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +153: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +154: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +155: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +156: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +157: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:24 +158: ./test/counted_forge_test.dart: modded forge rows print before → after facts
+00:25 +159: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +160: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +161: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +162: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +163: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +164: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +165: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +166: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +167: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:25 +168: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +169: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +170: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +171: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +172: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +173: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +174: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +175: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +176: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +177: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +178: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +179: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +180: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +181: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +182: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +183: ./test/daily_record_test.dart: title shows the daily recap only on the played day
+00:26 +184: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +185: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +186: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +187: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +188: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +189: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +190: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +191: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +192: ./test/dealt_hand_test.dart: boon hand deals in staggered, then settles to identity
+00:27 +193: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:27 +194: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:27 +195: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:27 +196: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +197: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +198: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +199: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +200: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +201: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +202: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +203: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +204: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +205: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +206: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +207: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +208: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +209: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +210: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +211: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:28 +212: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:29 +213: ./test/daily_record_test.dart: summary offers Copy daily result for dailies only
+00:29 +214: ./test/deepest_mark_test.dart: a deeper run sets the mark and startRun clears it
+00:29 +215: ./test/deepest_mark_test.dart: a deeper run sets the mark and startRun clears it
+00:29 +216: ./test/deepest_mark_test.dart: a deeper run sets the mark and startRun clears it
+00:29 +217: ./test/deepest_mark_test.dart: a deeper run sets the mark and startRun clears it
+00:29 +218: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:29 +219: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +220: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +221: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +222: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +223: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +224: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:30 +225: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +226: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +227: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +228: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +229: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +230: ./test/delve_itself_test.dart: the first words: the delve entry opens the book unsealed
+00:31 +231: ./test/delver_page_test.dart: one delver remembered = no pages
+00:31 +232: ./test/delver_page_test.dart: one delver remembered = no pages
+00:31 +233: ./test/delver_page_test.dart: one delver remembered = no pages
+00:31 +234: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +235: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +236: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +237: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +238: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +239: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +240: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +241: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +242: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +243: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +244: ./test/delver_page_test.dart: one delver remembered = no pages
+00:32 +245: ./test/delver_page_test.dart: one delver remembered = no pages
+00:33 +246: ./test/deepest_mark_test.dart: the summary shows the deepest line with exact text
+00:33 +247: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:33 +248: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:33 +249: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:33 +250: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:33 +250: ./test/difficulty_test.dart: bot win rates order: easy >= normal >= hard (120 seeds)
+difficulty win rates over 120 seeds: easy=90.83333333333334% normal=65.0% hard=43.333333333333336%
+00:33 +251: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +252: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +253: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +254: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +255: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +256: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +257: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +258: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +259: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:34 +260: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +261: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +262: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +263: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +264: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +265: ./test/delvers_line_test.dart: line appears on a delver page and not on All delvers
+00:35 +266: ./test/dressed_delver_test.dart: the run record banks the title worn by the RUN delver
+00:35 +267: ./test/dressed_delver_test.dart: the run record banks the title worn by the RUN delver
+00:35 +268: ./test/dressed_delver_test.dart: the run record banks the title worn by the RUN delver
+00:35 +269: ./test/dressed_delver_test.dart: the run record banks the title worn by the RUN delver
+00:35 +270: ./test/dressed_delver_test.dart: the run record banks the title worn by the RUN delver
+00:35 +271: ./test/delver_page_test.dart: the sounding line redraws from the open page
+00:36 +272: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +273: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +274: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +275: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +276: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +277: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +278: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +279: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +280: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +281: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +282: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +283: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +284: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:36 +285: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +286: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +287: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +288: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +289: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +290: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +291: ./test/dyed_delver_test.dart: one delver unlocked: no dye chip row
+00:37 +292: ./test/dressed_delver_test.dart: the picker shows each delver their own title
+00:37 +293: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +294: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +295: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +296: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +297: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +298: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:37 +299: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +300: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +301: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +302: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +303: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +304: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +305: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +306: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +307: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:38 +308: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +309: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +310: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +311: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +312: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +313: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +314: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +315: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +316: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:39 +317: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +318: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +319: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +320: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +321: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +322: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +323: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +324: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +325: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +326: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +327: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +328: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +329: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +330: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +331: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +332: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +333: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +334: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +335: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +336: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +337: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +338: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +339: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +340: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +341: ./test/earned_name_test.dart: the summary shows the earned-name line with exact text
+00:40 +342: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +343: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +344: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +345: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +346: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +347: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +348: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +349: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +350: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +351: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +352: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +353: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +354: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:41 +355: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +356: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +357: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +358: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +359: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +360: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +361: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +362: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +363: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:43 +364: ./test/ember_sink_test.dart: ledger lists every dice skin card
+00:44 +365: ./test/fallen_crown_test.dart: the won screen names the fallen crown; the lost one does not
+00:44 +366: ./test/fallen_crown_test.dart: the won screen names the fallen crown; the lost one does not
+00:44 +367: ./test/fallen_crown_test.dart: the won screen names the fallen crown; the lost one does not
+00:44 +368: ./test/fallen_crown_test.dart: the won screen names the fallen crown; the lost one does not
+00:44 +369: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:44 +370: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +371: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +372: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +373: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +374: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +375: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +376: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +377: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +378: ./test/feel_pregate_test.dart: LFP-6c boon RECOMMENDED default boon screen renders exactly one RECOMMENDED chip
+00:45 +379: ./test/enemy_record_test.dart: codex entry shows the free record line
+00:46 +380: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:46 +381: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:46 +382: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +383: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +384: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +385: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +386: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +387: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +388: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +389: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:47 +390: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +391: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +392: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +393: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +394: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +395: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +396: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +397: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +398: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +399: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +400: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +401: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +402: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +403: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +404: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +405: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +406: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +407: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +408: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +409: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +410: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +411: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +412: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +413: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +414: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:48 +415: ./test/first_fall_test.dart: first-ever loss: the fall is framed, the fact is true
+00:49 +416: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:49 +417: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:49 +418: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:49 +419: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:49 +420: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:50 +421: ./test/first_words_test.dart: the fresh title tells the premise; the first run ends it
+00:50 +422: ./test/first_fall_test.dart: second loss: the line has said its piece
+00:50 +423: ./test/frostvein_test.dart: winning the doubled weekly banks the win and opens the vista
+00:50 +424: ./test/first_fall_test.dart: first-ever win: no fall to frame
+00:50 +425: ./test/first_fall_test.dart: first-ever win: no fall to frame
+00:50 +426: ./test/first_fall_test.dart: first-ever win: no fall to frame
+00:50 +427: ./test/first_fall_test.dart: first-ever win: no fall to frame
+00:51 +428: ./test/first_fall_test.dart: first-ever win: no fall to frame
+00:51 +429: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:51 +430: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:51 +431: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:51 +432: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:51 +433: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:51 +434: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +435: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +436: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +437: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +438: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +439: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +440: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +441: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +442: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +443: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +444: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +445: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +446: ./test/full_roster_test.dart: the roster row speaks name, title, sprite, and depth
+00:52 +447: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +448: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +449: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +450: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +451: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +452: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +453: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +454: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +455: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +456: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +457: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +458: ./test/full_rotation_test.dart: the title shows the tally only once a rule is taken
+00:53 +459: ./test/gathered_hearth_test.dart: fresh profile: exactly one delver at the hearth
+00:53 +460: ./test/gathered_hearth_test.dart: fresh profile: exactly one delver at the hearth
+00:53 +461: ./test/gathered_hearth_test.dart: fresh profile: exactly one delver at the hearth
+00:53 +462: ./test/gathered_hearth_test.dart: fresh profile: exactly one delver at the hearth
+00:53 +463: ./test/gathered_hearth_test.dart: fresh profile: exactly one delver at the hearth
+00:54 +464: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:54 +465: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:54 +466: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:54 +467: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:54 +468: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:54 +469: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +470: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +471: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +472: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +473: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +474: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +475: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +476: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +477: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +478: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +479: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +480: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +481: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:55 +482: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:56 +483: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:56 +484: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:56 +485: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:56 +486: ./test/given_name_test.dart: the picker names a delver, and gives the name back
+00:56 +487: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:56 +488: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:56 +489: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:56 +490: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:56 +491: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:56 +492: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:57 +493: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:57 +494: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:57 +495: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:57 +496: ./test/guttering_foe_test.dart: a foe inside the rule gutters gold and says so
+00:57 +497: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:57 +498: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +499: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +500: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +501: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +502: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +503: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +504: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +505: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +506: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:58 +507: ./test/gramophone_test.dart: Ledger hides unheard tracks and names heard ones
+00:59 +508: ./test/hearth_song_test.dart: the gramophone pin sets, marks gold, and gives back
+01:00 +509: ./test/held_hand_test.dart: END TURN is held while the tour asks for a die
+01:01 +510: ./test/interface_languages_test.dart: (setUpAll)
+01:01 +510: ./test/interface_languages_test.dart: catalog keys/placeholders match; unknown strings and names are safe
+01:01 +511: ./test/interface_languages_test.dart: old/corrupt preferences default to device; every manual locale persists
+01:01 +512: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:01 +513: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:01 +514: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:01 +515: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:01 +516: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +517: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +518: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +519: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +520: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +521: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +522: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +523: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +524: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +525: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +526: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +527: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +528: ./test/interface_languages_test.dart: device French-Canada resolves French; unknown locale falls back
+01:02 +529: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +530: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +531: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +532: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +533: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +534: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +535: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +536: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:03 +537: ./test/keeper_ui_test.dart: legacy owner is thanked inline once; skip never opens a modal
+01:04 +538: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +539: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +540: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +541: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +542: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +543: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +544: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +545: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +546: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +547: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +548: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +549: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +550: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +551: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +552: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +553: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +554: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +555: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +556: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +557: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:04 +558: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +559: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +560: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +561: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +562: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +563: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +564: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +565: ./test/kept_fire_test.dart: an away profile sees the line on the title
+01:05 +566: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +567: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +568: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +569: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +570: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +571: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +572: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +573: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +574: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +575: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +576: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +577: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +578: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +579: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +580: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:05 +581: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:06 +582: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:06 +583: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:06 +584: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:06 +585: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:06 +586: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +587: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +588: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +589: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +590: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +591: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +592: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +593: ./test/kindled_tale_test.dart: tale text is whole from frame one; mask drops when settled
+01:07 +594: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +595: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +596: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +597: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +598: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +599: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +600: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +601: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +602: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +603: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +604: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +605: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:07 +606: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +607: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +608: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +609: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +610: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +611: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:08 +612: ./test/language_sheet_test.dart: compact language action opens, translates and dismisses safely
+01:09 +613: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +614: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +615: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +616: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +617: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +618: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +619: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +620: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:09 +621: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +622: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +623: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +624: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +625: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +626: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +627: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +628: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +629: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +630: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +631: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +632: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +633: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +634: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +635: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:10 +636: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:11 +637: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:11 +638: ./test/ledger_card_test.dart: the Ledger offers the card on ended runs, not walkaways
+01:11 +639: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +640: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +641: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +642: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +643: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +644: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +645: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +646: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +647: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +648: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:11 +649: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +650: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +651: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +652: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +653: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +654: ./test/marked_week_test.dart: a modded row states its rule and offers no code
+01:12 +655: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:12 +656: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:12 +657: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:13 +658: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:13 +659: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:13 +660: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +661: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +662: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +663: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +664: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +665: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +666: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +667: ./test/more_games_test.dart: Settings shows the row directly below Redeem, no Pyregrove
+01:14 +668: ./test/morrow_trial_test.dart: daily summary states tomorrow's trial; normal run stays silent
+01:14 +669: ./test/morrow_trial_test.dart: daily summary states tomorrow's trial; normal run stays silent
+01:14 +670: ./test/morrow_trial_test.dart: daily summary states tomorrow's trial; normal run stays silent
+01:14 +671: ./test/morrow_trial_test.dart: daily summary states tomorrow's trial; normal run stays silent
+01:14 +672: ./test/morrow_trial_test.dart: daily summary states tomorrow's trial; normal run stays silent
+01:15 +673: ./test/named_company_test.dart: THE COMPANY sits between the world and the enemies
+01:15 +674: ./test/named_company_test.dart: THE COMPANY sits between the world and the enemies
+01:15 +675: ./test/named_company_test.dart: THE COMPANY sits between the world and the enemies
+01:16 +676: ./test/named_company_test.dart: THE COMPANY sits between the world and the enemies
+01:16 +677: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:16 +678: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:16 +679: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +680: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +681: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +682: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +683: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +684: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +685: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +686: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +687: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:17 +688: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:18 +689: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:18 +690: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:18 +691: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:18 +692: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:19 +693: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:19 +694: ./test/named_foe_test.dart: loss: the named foe row opens the codex at the killer
+01:19 +695: ./test/nearer_fire_test.dart: Delve again is on screen without scrolling at Size(320.0, 568.0)
+01:20 +696: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +697: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +698: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +699: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +700: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +701: ./test/news_ui_test.dart: stale profile sees the post once; Noted dismisses it
+01:20 +702: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:20 +703: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:20 +704: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:20 +705: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:21 +706: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:21 +707: ./test/new_song_test.dart: the summary shows the collapsed line on a first win
+01:21 +708: ./test/next_delver_test.dart: easy loss: the next delver is named with real arithmetic
+01:22 +709: ./test/normal_nudge_test.dart: easy win shows the Normal invitation; CTA starts a normal run and sets the sticky preference
+01:22 +710: ./test/normal_nudge_test.dart: easy win shows the Normal invitation; CTA starts a normal run and sets the sticky preference
+01:23 +711: ./test/normal_nudge_test.dart: easy win shows the Normal invitation; CTA starts a normal run and sets the sticky preference
+01:23 +712: ./test/obituary_test.dart: easy win: story rendered, names the boss, copy offered
+01:23 +713: ./test/obituary_test.dart: easy win: story rendered, names the boss, copy offered
+01:23 +714: ./test/obituary_test.dart: easy win: story rendered, names the boss, copy offered
+01:23 +715: ./test/open_book_test.dart: a fresh title carries the link and it opens card one
+01:24 +716: ./test/open_book_test.dart: a fresh title carries the link and it opens card one
+01:24 +717: ./test/open_book_test.dart: a fresh title carries the link and it opens card one
+01:24 +718: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:24 +719: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:24 +720: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:24 +721: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:25 +722: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:25 +723: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:25 +724: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:25 +725: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:25 +726: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +727: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +728: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +729: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +730: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +731: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +732: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +733: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +734: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +735: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:26 +736: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:27 +737: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +738: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +739: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +740: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +741: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +742: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +743: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +744: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +745: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +746: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +747: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +748: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +749: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +750: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +751: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +752: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +753: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +754: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:28 +755: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:29 +756: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:29 +757: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +758: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +759: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +760: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +761: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +762: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:30 +763: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +764: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +765: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +766: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +767: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +768: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +769: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:31 +770: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +771: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +772: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +773: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +774: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +775: ./test/overflow_probe_test.dart: no layout errors across phases at Size(320.0, 568.0)
+01:32 +776: ./test/progression_glitch_test.dart: arriving screen State survives the phase transition settling (no remount = no walk/scroll restart)
+01:33 +777: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +778: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +779: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +780: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +781: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +782: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +783: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +784: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:33 +785: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:34 +786: ./test/proven_epithet_test.dart: the shelf renders the Proven last with its honest line
+01:34 +787: ./test/provings_test.dart: the screen lists all eight; locked ones state the requirement
+01:34 +788: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:34 +789: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:34 +790: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:35 +791: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +792: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +793: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +794: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +795: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +796: ./test/quiet_shell_test.dart: a toast repaints no paragraph but its own
+01:36 +797: ./test/rank_ui_test.dart: ledger names the derived rank with real marks
+01:36 +798: ./test/rank_ui_test.dart: ledger names the derived rank with real marks
+01:37 +799: ./test/rank_ui_test.dart: ledger names the derived rank with real marks
+01:37 +800: ./test/rank_ui_test.dart: ledger names the derived rank with real marks
+01:37 +801: ./test/rank_ui_test.dart: ledger names the derived rank with real marks
+01:37 +802: ./test/ration_preview_test.dart: the shop row prints the counted heal
+01:37 +803: ./test/ration_preview_test.dart: the shop row prints the counted heal
+01:38 +804: ./test/ration_preview_test.dart: the shop row prints the counted heal
+01:38 +805: ./test/ration_preview_test.dart: the shop row prints the counted heal
+01:38 +806: ./test/ration_preview_test.dart: the shop row prints the counted heal
+01:38 +807: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:38 +808: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:39 +809: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:39 +810: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:39 +811: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +812: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +813: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +814: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +815: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +816: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +817: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +818: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:40 +819: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:41 +820: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:41 +821: ./test/read_page_test.dart: the fight's deck fits every card at Size(320.0, 568.0) ×1.0
+01:41 +822: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +823: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +824: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +825: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +826: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +827: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +828: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +829: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +830: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +831: ./test/remembered_delves_test.dart: history rows copy their Delve Code; legacy rows stay quiet
+01:41 +832: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:41 +833: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:42 +834: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:42 +835: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:42 +836: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:42 +837: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:43 +838: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:43 +839: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:43 +840: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:43 +841: ./test/remembered_fights_test.dart: a fuller record row states epithet and fights
+01:43 +842: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +843: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +844: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +845: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +846: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +847: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +848: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +849: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +850: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +851: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +852: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +853: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +854: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +855: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +856: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +857: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +858: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +859: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +860: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +861: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:43 +862: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:44 +863: ./test/rest_preview_test.dart: the rest button prints the counted heal
+01:44 +864: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:44 +865: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:44 +866: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:45 +867: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:45 +868: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:45 +869: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +870: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +871: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +872: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +873: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +874: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +875: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +876: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +877: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +878: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +879: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +880: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +881: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +882: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +883: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +884: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +885: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +886: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +887: ./test/retraced_page_test.dart: retrace starts the record's exact run
+01:46 +888: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:46 +889: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:46 +890: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:46 +891: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:46 +892: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:47 +893: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:47 +894: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:47 +895: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:47 +896: ./test/retraced_road_test.dart: easy loss: retrace restarts the exact same delve
+01:47 +897: ./test/rumor_test.dart: the boon pick shows the run's rumor
+01:47 +898: ./test/rumor_test.dart: the boon pick shows the run's rumor
+01:47 +899: ./test/rumor_test.dart: the boon pick shows the run's rumor
+01:47 +900: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 640.0), 1.3x text
+01:47 +901: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 640.0), 1.3x text
+01:48 +902: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:48 +903: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:48 +904: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:48 +905: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:48 +906: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:48 +907: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +908: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +909: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +910: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +911: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +912: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +913: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +914: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +915: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +916: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +917: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +918: ./test/run_history_test.dart: ledger renders RECENT DELVES from records
+01:49 +919: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 800.0)
+01:49 +920: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 800.0)
+01:49 +921: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 800.0)
+01:50 +922: ./test/overflow_probe_test.dart: no layout errors across phases at Size(360.0, 800.0)
+01:50 +923: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +924: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +925: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +926: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +927: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +928: ./test/save_transfer_ui_test.dart: copy puts a decodable code for the live meta on the clipboard
+01:51 +929: ./test/scoped_rebuild_test.dart: a controller notification does NOT rebuild CombatScreen
+01:51 +930: ./test/scoped_rebuild_test.dart: a controller notification does NOT rebuild CombatScreen
+01:52 +931: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +932: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +933: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +934: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +935: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +936: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +937: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:52 +938: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +939: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +940: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +941: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +942: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +943: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +944: ./test/rung_open_test.dart: Forge-owner frontier win shows the rung-open line
+01:53 +945: ./test/second_mark_test.dart: rest copy counts marks: two fresh, one after a temper
+01:53 +946: ./test/second_strike_test.dart: the card shows at a marked rest and dismisses forever
+01:54 +947: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:54 +948: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:54 +949: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:54 +950: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:54 +951: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:55 +952: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:55 +953: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:55 +954: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:55 +955: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:55 +956: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +957: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +958: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +959: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +960: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +961: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +962: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +963: ./test/seed_entry_test.dart: summary shows the seed and tapping copies it
+01:56 +964: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +965: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +966: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +967: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +968: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +969: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:56 +970: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +971: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +972: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +973: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +974: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +975: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:57 +976: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +977: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +978: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +979: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +980: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +981: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +982: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +983: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +984: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:58 +985: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:59 +986: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:59 +987: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:59 +988: ./test/semantics_probe_test.dart: every tappable control announces a label (run walk)
+01:59 +989: ./test/overflow_probe_test.dart: no layout errors across phases at Size(800.0, 1280.0)
+01:59 +990: ./test/overflow_probe_test.dart: no layout errors across phases at Size(800.0, 1280.0)
+01:59 +991: ./test/overflow_probe_test.dart: no layout errors across phases at Size(800.0, 1280.0)
+01:59 +992: ./test/overflow_probe_test.dart: no layout errors across phases at Size(800.0, 1280.0)
+01:59 +993: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+01:59 +994: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +995: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +996: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +997: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +998: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +999: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1000: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1001: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1002: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1003: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1004: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1005: ./test/shared_fire_test.dart: the title screen shows and dismisses the card
+02:00 +1006: ./test/share_card_test.dart: summary offers the card on a win and the sheet previews it
+02:00 +1007: ./test/share_card_test.dart: summary offers the card on a win and the sheet previews it
+02:01 +1008: ./test/share_card_test.dart: summary offers the card on a win and the sheet previews it
+02:01 +1009: ./test/share_card_test.dart: summary offers the card on a win and the sheet previews it
+02:01 +1010: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:01 +1011: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:01 +1012: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:01 +1013: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1014: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1015: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1016: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1017: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1018: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1019: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1020: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1021: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1022: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1023: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1024: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1025: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1026: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1027: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:02 +1028: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1029: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1030: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1031: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1032: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1033: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1034: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1035: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1036: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1037: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1038: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1039: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1040: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1041: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1042: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1043: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1044: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1045: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1046: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1047: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1048: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1049: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1050: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1051: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1052: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1053: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1054: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1055: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1056: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1057: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1058: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1059: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1060: ./test/shorter_scroll_test.dart: 320×568: the longest room fits whole; glyph is small
+02:03 +1061: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:03 +1062: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:04 +1063: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:04 +1064: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:04 +1065: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:04 +1066: ./test/shown_anvil_test.dart: the card shows at the first rest and dismisses forever
+02:04 +1067: ./test/shorter_scroll_test.dart: 360×800 keeps the full glyph
+02:04 +1068: ./test/shorter_scroll_test.dart: 360×800 keeps the full glyph
+02:04 +1069: ./test/shorter_scroll_test.dart: 360×800 keeps the full glyph
+02:04 +1070: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:04 +1071: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:04 +1072: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:04 +1073: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:04 +1074: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:05 +1075: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:05 +1076: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:05 +1077: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:05 +1078: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:06 +1079: ./test/overflow_probe_test.dart: no layout errors across phases at Size(1600.0, 2560.0), 1.3x text
+02:06 +1080: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1081: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1082: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1083: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1084: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1085: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1086: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1087: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:06 +1088: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1089: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1090: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1091: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1092: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1093: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1094: ./test/sounding_line_test.dart: the Ledger shows the line at two records, not at one
+02:07 +1095: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:07 +1096: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:08 +1097: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:08 +1098: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:09 +1099: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:09 +1100: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:09 +1101: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:09 +1102: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:09 +1103: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1104: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1105: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1106: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1107: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1108: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:10 +1109: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:11 +1110: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:11 +1111: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:11 +1112: ./test/spoken_badge_test.dart: fresh profile: first charge speaks unasked, once
+02:11 +1113: ./test/standing_delver_test.dart: a won summary shows the delver and their bare name
+02:11 +1114: ./test/standing_delver_test.dart: a won summary shows the delver and their bare name
+02:11 +1115: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:11 +1116: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:11 +1117: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:11 +1118: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:11 +1119: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1120: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1121: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1122: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1123: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1124: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1125: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1126: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1127: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1128: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1129: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1130: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:12 +1130: ./test/telemetry_test.dart: backend errors never propagate to gameplay
+telemetry: app_open failed: Bad state: boom
+02:12 +1131: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:13 +1132: ./test/still_route_test.dart: dragging the map does not repaint the HUD
+02:13 +1133: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:13 +1134: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1135: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1136: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1137: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1138: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1139: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1140: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1141: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1142: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:14 +1143: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1144: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1145: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1146: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1147: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1148: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1149: ./test/summary_achievements_test.dart: summary announces the achievements the run earned
+02:15 +1150: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:15 +1151: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1152: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1153: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1154: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1155: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1156: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1157: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:16 +1158: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1159: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1160: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1161: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1162: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1163: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1164: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1165: ./test/temper_ui_test.dart: rest offers a temper, and the sheet commits exactly one
+02:17 +1166: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1167: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1168: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1169: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1170: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1171: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1172: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1173: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1174: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1175: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1176: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1177: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1178: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1179: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1180: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1181: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1182: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1183: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1184: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1185: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1186: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1187: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1188: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1189: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1190: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1191: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:17 +1192: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1193: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1194: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1195: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1196: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1197: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1198: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1199: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1200: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1201: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1202: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1203: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1204: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1205: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1206: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1207: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1208: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:18 +1209: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1210: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1211: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1212: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1213: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1214: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1215: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1216: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1217: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1218: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1219: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1220: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1221: ./test/tinker_test.dart: character screen lists the Tinker at its real price
+02:19 +1222: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:19 +1223: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:19 +1224: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:19 +1225: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:19 +1226: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1227: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1228: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1229: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1230: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1231: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1232: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1233: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1234: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1235: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1236: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1237: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1238: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1239: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:20 +1240: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1241: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1242: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1243: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1244: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1245: ./test/tips_test.dart: every tip card fits the smallest supported screen at 1.3x text
+02:21 +1246: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1247: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1248: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1249: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1250: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1251: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1252: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1253: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1254: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1255: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:21 +1256: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:22 +1257: ./test/update_service_test.dart: settings UI section hidden when no fetcher is wired
+02:22 +1258: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:22 +1259: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:22 +1260: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1261: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1262: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1263: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1264: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1265: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:23 +1266: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1267: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1268: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1269: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1270: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1271: ./test/vistas_test.dart: picker locked vista shows milestone, tap does nothing
+02:24 +1272: ./test/walked_path_test.dart: shadow thins at the hop apex and settles back
+02:24 +1273: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1274: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1275: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1276: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1277: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1278: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1279: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1280: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1281: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1282: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1283: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1284: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1285: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1286: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1287: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1288: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1289: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1290: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:25 +1291: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1292: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1293: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1294: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1295: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1296: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1297: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1298: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1299: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1300: ./test/waymark_line_test.dart: title shows the line only with progress; tap opens Ledger
+02:26 +1301: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:26 +1302: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:26 +1303: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1304: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1305: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1306: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1307: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1308: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1309: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1310: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1311: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1312: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1313: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1314: ./test/waymarks_test.dart: easy win: waymarks panel mirrors nearestAchievements exactly
+02:27 +1315: ./test/weapons_test.dart: ImpactSlash (smear and claws) plays once and reports done
+02:27 +1316: ./test/weapons_test.dart: ImpactSlash (smear and claws) plays once and reports done
+02:27 +1317: ./test/waymarks_test.dart: easy loss: waymarks still speak (recognition, not a prod)
+02:27 +1318: ./test/waymarks_test.dart: easy loss: waymarks still speak (recognition, not a prod)
+02:27 +1319: ./test/waymarks_test.dart: easy loss: waymarks still speak (recognition, not a prod)
+02:27 +1320: ./test/waymarks_test.dart: easy loss: waymarks still speak (recognition, not a prod)
+02:28 +1321: ./test/waymarks_test.dart: easy loss: waymarks still speak (recognition, not a prod)
+02:28 +1322: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:28 +1323: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:28 +1324: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:28 +1325: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1326: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1327: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1328: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1329: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1330: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1331: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:29 +1332: ./test/widget_test.dart: title renders the logotype and Delve enters the map
+02:30 +1333: ./test/widget_test.dart: combat renders die faces and rolling triggers the tray
+02:31 +1334: ./test/widget_test.dart: boon screen offers 1-of-3 and skip enters the map
+02:32 +1335: ./test/widget_test.dart: picking a boon applies its effect and enters the map
+02:33 +1336: ./test/widget_test.dart: risky reroll: gated to unassigned dice, once per turn
+02:34 +1337: ./test/widget_test.dart: stale/corrupt autosaves are cleared; healthy v4 saves restore
+02:34 +1338: ./test/widget_test.dart: daily delve starts the shared seeded run
+02:34 +1339: ./test/widget_test.dart: summary offers a fast Delve again into the boon pick
+02:35 +1340: ./test/widget_test.dart: character screen lists all delvers
+02:35 +1341: ./test/widget_test.dart: F4: long event option labels wrap instead of clipping
+02:35 +1342: ./test/widget_test.dart: F5: event choices produce a concrete outcome toast
+02:35 +1343: ./test/widget_test.dart: F10: abandonRun discards the run without banking embers
+02:35 +1344: ./test/widget_test.dart: reward screen presents flip cards and picking one works
+02:36 +1345: ./test/widget_test.dart: rest at full HP offers an enabled exit back to the map
+02:36 +1346: ./test/widget_test.dart: damage and text pops finish without framework exceptions
+02:37 +1347: ./test/widget_test.dart: intent/burn badges never cover the enemy HP bar on squeezed screens
+02:37 +1348: All tests passed!

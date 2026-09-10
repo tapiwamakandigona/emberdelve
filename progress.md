@@ -5759,3 +5759,60 @@ functional checks, not matching weapon art or compelling attack animation.
 Offline dependency fetch initially failed:
 `Because emberdelve depends on share_plus any which doesn't exist (could not find package share_plus in cache), version solving failed.`
 One ordinary package-fetch retry succeeded with the lockfile unchanged.
+
+### Android capture descoped after permitted retry
+
+Run34534177274 also stopped before combat:
+`ValueError: too many values to unpack (expected 4)`.
+The capture parser's `{..., "bounds": parsed, **xml_attributes}` allowed the
+raw XML bounds string to overwrite its four-coordinate list. This is a
+review-tool fault, not a game defect. Stop this route; no third AVD run.
+No Android combat/visual-performance claim is justified.
+
+Descoped evidence: a separate additive local render harness will use the
+release-identical real Flutter GameRoot/CombatScreen, real assets/fonts and
+hit-tested die/action taps. Headless frames have explicit simulation-time
+timestamps and do not stand in for native frame pacing, audio or owner play.
+
+## 2026-09-10 — task 2/4, rendered combat critique evidence
+
+VERIFIED: the real GameRoot/CombatScreen render harness completed four
+delvers and560 frames at720x1280 output,25fps simulated-time sampling.
+Die and Attack taps are hit-tested. Setup uses existing public commands,
+seed1/node2; no rolls/damage edits. Capture is explicitly not Android video.
+
+The review distinguishes existing choreography from missing authored body
+poses. All22 current character sheets have idle/run/hit rows, no attack;
+the hero stays in idle state while whole-body transforms and a shared
+weapon phase sequence run. Shared grip offset has no per-pose sockets.
+High hits already scale heat/shake and can earn hit-stop; I do not falsely
+claim every pixel or effect is identical.
+
+Concrete runtime defect: selected face1 and face5 both leave WeaponView.charge
+at0.0 in all four cases, then Attack updates it to0.15/0.4166667.
+Source wiring omits the input tick from the weapon consumer. Recorded as an
+open issue, not silently fixed in a critique-only PR.
+
+Verification: unchanged original suite1348/1348; final analyzer clean; render
+harness4/4. A formatting-only correction to the additive tool passes format
+check. Original tests were never modified. Video inspection was a tool read
+of actual rendered frames; unsupported guesses (exact weapon identity from
+tiny pixels, damage-scaled slash radius) were rejected against source.
+
+Temporary native-capture workflow and broken parser removed from final diff.
+Their two failed Actions runs remain linked as failures. No third native
+attempt, signing/new APK, release, art replacement or paid asset.
+
+## 2026-09-10 — task 3/4, evidence package and preservation
+
+VERIFIED: final formatted harness ran again, four cases green. Packaged the
+previously inspected22.4-second silent recording, actual selected-state
+stills, runtime observations, phase timelines, logs and SHA256 manifests.
+The repeated run's frame hashes are labelled separately from the first
+recording. Public logs replace only local checkout-path prefixes.
+
+Byte comparisons preserve1281 original non-state files, all260 original
+Dart test files, all33 pre-existing feature objects and the complete
+original progress prefix. Temporary native capture workflow/parser absent
+from the final tree; all original workflows unchanged. Review feature stays
+false until the actual open PR is read back; implementation stays false.
