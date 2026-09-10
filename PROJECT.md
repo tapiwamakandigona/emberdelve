@@ -1,5 +1,17 @@
 # PROJECT.md — Emberdelve
 
+## Active review — combat art and die-value animation, September 10
+
+Critique only: open the actual Android game, capture representative character/
+weapon and low/high die attacks, trace the observed presentation to source,
+and open an evidence-backed PR against `legacy/dice-builder`. Do not implement
+or release changes in this pass. Existing application, assets, tests, CI checks,
+simulation, saved progression and purchases stay unchanged.
+An additive capture workflow installs the pinned, unmodified public release
+APK on a disposable emulator and drives the real UI. It is not a phone
+performance or subjective-quality pass. Four bounded tasks; one executor.
+[owner review request and scope, 2026-09-10]
+
 ## September 8 verified release resume
 
 Candidate `0.182.0+209` was built from `8a9def4`, signed/independently

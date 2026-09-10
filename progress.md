@@ -5721,3 +5721,25 @@ Nothing else on the Console touched; closed-testing track left alone.
 - VERIFIED release bookkeeping is docs/state only; binary source, original
   tests/workflows and open device criteria unchanged. Independent doc hashes
   match downloaded binaries; supplied secret values absent.
+
+## 2026-09-10 — combat visual critique, task 1 of 4
+
+The review asks whether the current character/weapon pairings and die-value
+attack animations look convincing, not for another implementation or release.
+I opened the official and itch pages: both are Android download surfaces,
+not playable web builds; itch lists the older 0.179.0 APK. Current shipping
+branch is45fce851; no open Emberdelve PR at the primary read.
+
+An additive capture job installs the unchanged public0.182.0 x86_64 APK
+(pinned SHA256) on a disposable Android34 emulator, drives actual UI taps and
+records low/high attacks for four representative delvers. No app rebuild,
+save editing, production change, purchase or physical-performance claim.
+The pure sim and existing code codec identify seed1: Kindler rolls5/1/3,
+Warden5/1/2, Gambler5/1/1, Runesmith5/1/1 against Flue Crawler after skipping
+the boon. Those are fixture predictions until the actual UI matches.
+
+Context-read failure quoted: `command timed out after 90000 milliseconds`.
+One instrumented offline-package retry completed and read the primary branch,
+release and Pages metadata. Earlier broad source listing also hit
+`command timed out after 10000 milliseconds`; narrowed paths on its retry.
+Checks and tests remain unchanged. No quality claim from source comments.
