@@ -1,0 +1,8 @@
+00:00 +0: loading ./tool/combat_review_frames_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: actual combat review frames: kindler
+00:23 +1: actual combat review frames: warden
+00:44 +2: actual combat review frames: gambler
+01:04 +3: actual combat review frames: runesmith
+01:24 +4: (tearDownAll)
+01:24 +4: All tests passed!

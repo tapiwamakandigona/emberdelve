@@ -1,0 +1,95 @@
+{
+  "status": "VERIFIED bounded review evidence, not implementation acceptance",
+  "review_date": "2026-09-10",
+  "base_commit": "45fce851797ac81ea4767469ef838a45c257a88c",
+  "release": "v0.182.0",
+  "release_source": "8a9def489a748a65d343a5998ed1375d3ceb86ca",
+  "release_identical_paths": [
+    "lib",
+    "assets",
+    "test",
+    "pubspec.yaml",
+    "pubspec.lock"
+  ],
+  "preservation": {
+    "original_non_state_files_unchanged": 1281,
+    "original_dart_test_files_unchanged": 260,
+    "original_feature_objects_unchanged": 33,
+    "original_progress_prefix_bytes": 418871,
+    "original_progress_prefix_sha256": "8785a6ec36b393fe8e4df3fdbb331067b8752fbd814ab6aeb7d2fc9b6efd8c3b",
+    "temporary_capture_workflow_removed": true,
+    "original_workflows_unchanged": true
+  },
+  "checks": {
+    "flutter": "3.44.9",
+    "dart": "3.12.2",
+    "analyzer": "No issues found",
+    "original_suite": {
+      "passed": 1348,
+      "skipped": 0
+    },
+    "additive_render_cases": {
+      "passed": 4,
+      "skipped": 0
+    },
+    "unredacted_log_sha256": {
+      "analyze.log": "1e1c9ddbfb6f3c8c826412b38f2b6cd09fc511f9c1f455c2c93e6d61610997fa",
+      "original-suite.log": "28e71dd1001070a7e15164819017ec95e5e484ac684972f19205b889dd252ead",
+      "render-cases.log": "c1ac8cc82630226d693f6f69e320afa5bdbdfc929ed88a962f9bdf08baeeffb0"
+    },
+    "public_log_redaction": "Local checkout path prefixes only"
+  },
+  "render": {
+    "method": "Real release-identical Flutter widgets and assets; headless",
+    "logical_size": [
+      360,
+      640
+    ],
+    "encoded_size": [
+      720,
+      1280
+    ],
+    "frames": 560,
+    "sample_fps": 25,
+    "duration_seconds": 22.4,
+    "audio": "none",
+    "characters_in_order": [
+      "kindler",
+      "warden",
+      "gambler",
+      "runesmith"
+    ],
+    "seed": 1,
+    "node": 2,
+    "enemy": "flue_crawler",
+    "note": "Published recording was inspected before whitespace-only formatting. Final identical-logic harness also reran 4/4; rerender-frame-hashes.json refers to that final rerun."
+  },
+  "native_attempts": [
+    {
+      "run": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/34533567314",
+      "result": "failure before combat: review tooling, not app crash",
+      "error": "RuntimeError: Seed link did not become visible",
+      "artifact_zip_sha256": "9791509ead4ad08f3dd32bea08d891d7340127ae633a95beb867485f57c92df0"
+    },
+    {
+      "run": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/34534177274",
+      "result": "failure before combat: review tooling, not app crash",
+      "error": "ValueError: too many values to unpack (expected 4)",
+      "artifact_zip_sha256": "c7af87dd3c73ca836ce35ff83fb57302f826f56f7193a557ab0c3e7f797d9281"
+    }
+  ],
+  "native_apk": {
+    "version": "0.182.0",
+    "split_version_code": 4209,
+    "sha256": "fba20f19bd4b035b866f5eef4d43781df31c715276d4b4f4f60cc7221afd0c42",
+    "bytes": 39528950
+  },
+  "not_verified": [
+    "Android combat playthrough",
+    "Owner installed version",
+    "Phone FPS",
+    "Audio quality",
+    "All-roster visual acceptance",
+    "Retention benefit"
+  ]
+}

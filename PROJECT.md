@@ -1,5 +1,21 @@
 # PROJECT.md — Emberdelve
 
+## Active review — combat art and die-value animation, September 10
+
+Critique only: review character/weapon and low/high die attacks, trace observed
+presentation to source, and open an evidence-backed PR against
+`legacy/dice-builder`. Do not implement or release changes in this pass.
+Existing application, assets, tests, CI checks, simulation, progression and
+purchases stay unchanged.
+
+Actual APK reached consent, but two capture-tool faults stopped before combat;
+that route is closed and its temporary workflow removed. Final visual evidence
+uses release-identical real Flutter GameRoot/CombatScreen, fonts/assets and
+hit-tested controls in a deterministic headless render. This is not Android
+combat play, audio, physical performance or owner quality approval. Review:
+`docs/reviews/combat-visual-critique-2026-09-10.md`.
+[scope and capture evidence, 2026-09-10]
+
 ## September 8 verified release resume
 
 Candidate `0.182.0+209` was built from `8a9def4`, signed/independently
