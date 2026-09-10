@@ -5743,3 +5743,19 @@ One instrumented offline-package retry completed and read the primary branch,
 release and Pages metadata. Earlier broad source listing also hit
 `command timed out after 10000 milliseconds`; narrowed paths on its retry.
 Checks and tests remain unchanged. No quality claim from source comments.
+
+### Actual-APK capture, one retry
+
+Run34533567314 installed the hash-matched release APK and reached the actual
+Android UI, but stopped with `RuntimeError: Seed link did not become visible`.
+Captured hierarchy/screenshot show the optional analytics consent modal with
+`Not now`/`Allow`; the harness had not dismissed `Not now`. It did not reach
+combat, so no visual-combat conclusion comes from this failed attempt.
+Single retry adds that observed opt-out control and an exact title assertion.
+Never enable analytics to get past consent. Original tests remain unchanged.
+
+Local original analyzer is clean and all1348 tests pass. That verifies
+functional checks, not matching weapon art or compelling attack animation.
+Offline dependency fetch initially failed:
+`Because emberdelve depends on share_plus any which doesn't exist (could not find package share_plus in cache), version solving failed.`
+One ordinary package-fetch retry succeeded with the lockfile unchanged.

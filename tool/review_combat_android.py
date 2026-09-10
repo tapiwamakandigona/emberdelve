@@ -97,6 +97,13 @@ def dismiss_tips():
              {"skip tour", "skip", "got it", "no thanks", "keep analytics off"}),
             None,
         )
+        consent = next(
+            (n for n in found if n["label"].strip().casefold() == "not now"),
+            None,
+        )
+        if consent:
+            tap_node(consent)
+            continue
         if skip:
             tap_node(skip)
             continue
@@ -116,8 +123,9 @@ def capture(character, code, expected):
     adb("shell", "pm", "clear", PACKAGE)
     adb("shell", "monkey", "-p", PACKAGE, "-c",
         "android.intent.category.LAUNCHER", "1")
-    assert match("Delve", attempts=40), "Android app did not reach title"
+    assert match("Delve|Help improve Emberdelve", attempts=40), "Android app did not launch"
     dismiss_tips()
+    assert match("Delve", exact=True, attempts=20), "Android app did not reach title"
     shot(character + "-title")
     for _ in range(6):
         seed = match("Delve a seed", exact=True, attempts=1)
