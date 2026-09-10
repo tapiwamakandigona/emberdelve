@@ -79,7 +79,7 @@ class TitleScreen extends StatelessWidget {
                                           color: EmberColors.textDim,
                                           size: 26,
                                         ),
-                                        tooltip: 'How to play',
+                                        tooltip: tr(context, 'How to play'),
                                         onPressed: () {
                                           AudioService.instance?.playSfx(
                                             'ui_tap',
@@ -98,7 +98,7 @@ class TitleScreen extends StatelessWidget {
                                           color: EmberColors.textDim,
                                           size: 26,
                                         ),
-                                        tooltip: 'The Ledger',
+                                        tooltip: tr(context, 'The Ledger'),
                                         onPressed: () {
                                           AudioService.instance?.playSfx(
                                             'ui_tap',
@@ -114,7 +114,7 @@ class TitleScreen extends StatelessWidget {
                                           color: EmberColors.textDim,
                                           size: 26,
                                         ),
-                                        tooltip: 'Settings',
+                                        tooltip: tr(context, 'Settings'),
                                         onPressed: () {
                                           AudioService.instance?.playSfx(
                                             'ui_tap',
@@ -134,11 +134,7 @@ class TitleScreen extends StatelessWidget {
                                 // spark pinpricks (visuals.md #1 — never a plain Text).
                                 const EmberLogotype('EMBERDELVE', fontSize: 42),
                                 const SizedBox(height: Space.xs),
-                                const Text(
-                                  'A dice-builder delve into the dark',
-                                  style: EmberText.bodyDim,
-                                  textAlign: TextAlign.center,
-                                ),
+                                const KeeperTitle(),
                                 const SizedBox(height: Space.l),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -153,7 +149,7 @@ class TitleScreen extends StatelessWidget {
                                     const SizedBox(width: Space.xl),
                                     _statText(
                                       '${m.runsWon}/${m.runsPlayed}',
-                                      'WINS',
+                                      tr(context, 'WINS'),
                                     ),
                                   ],
                                 ),
@@ -191,7 +187,7 @@ class TitleScreen extends StatelessWidget {
                                       horizontal: Space.l,
                                     ),
                                     child: Text(
-                                      firstWordsLine(m)!,
+                                      tr(context, firstWordsLine(m)!),
                                       key: const ValueKey('first-words'),
                                       style: EmberText.micro.copyWith(
                                         color: EmberColors.textDim,
@@ -232,7 +228,23 @@ class TitleScreen extends StatelessWidget {
                                 SizedBox(
                                   width: double.infinity,
                                   child: EmberButton(
-                                    'Daily Delve — ${_dailyLabel()}',
+                                    tr(
+                                      context,
+                                      'Daily Delve — {date}',
+                                      args: {
+                                        'date':
+                                            Localizations.localeOf(
+                                                  context,
+                                                ).languageCode ==
+                                                'en'
+                                            ? _dailyLabel()
+                                            : MaterialLocalizations.of(
+                                                context,
+                                              ).formatShortMonthDay(
+                                                DateTime.now(),
+                                              ),
+                                      },
+                                    ),
                                     icon: Icons.today,
                                     onTap: () => c.startDailyRun(
                                       character: defaultCharacter,
@@ -356,7 +368,11 @@ class TitleScreen extends StatelessWidget {
                                     // alone — the rule name is the news, and
                                     // "Weekly Delve — Cold Quarter" wrapped to
                                     // two lines on 360-wide phones.
-                                    'Weekly — ${_weeklyModifierName()}',
+                                    tr(
+                                      context,
+                                      'Weekly — {rule}',
+                                      args: {'rule': _weeklyModifierName()},
+                                    ),
                                     key: const ValueKey('weekly-delve'),
                                     icon: Icons.event_repeat,
                                     onTap: () => c.startWeeklyRun(
@@ -479,7 +495,7 @@ class TitleScreen extends StatelessWidget {
                                       style: _quietLink,
                                       onPressed: () => _promptSeed(context),
                                       child: Text(
-                                        'Delve a seed',
+                                        tr(context, 'Delve a seed'),
                                         style: EmberText.micro.copyWith(
                                           color: EmberColors.textDim,
                                         ),
@@ -597,17 +613,20 @@ class TitleScreen extends StatelessWidget {
           horizontal: Space.l,
           vertical: Space.xl,
         ),
-        title: const Text('Delve a seed', style: EmberText.h2),
+        title: Text(tr(context, 'Delve a seed'), style: EmberText.h2),
         // Scrollable so the rumor preview (v0.53.0) never overflows the
         // dialog on tight screens (320px @ 1.3x text scale — plate-proven).
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'A seed decides the whole delve — map, offers, rolls. '
-                'Paste a Delve Code or a number from a run summary, or '
-                'type any word.',
+              Text(
+                tr(
+                  context,
+                  'A seed decides the whole delve — map, offers, rolls. '
+                  'Paste a Delve Code or a number from a run summary, or '
+                  'type any word.',
+                ),
                 style: EmberText.bodyDim,
               ),
               const SizedBox(height: Space.m),
@@ -616,8 +635,8 @@ class TitleScreen extends StatelessWidget {
                 controller: input,
                 autofocus: true,
                 style: EmberText.body,
-                decoration: const InputDecoration(
-                  hintText: 'code, seed, or word',
+                decoration: InputDecoration(
+                  hintText: tr(context, 'code, seed, or word'),
                 ),
               ),
               // The Rumor (v0.53.0): live, honest preview — the seed already
@@ -647,7 +666,7 @@ class TitleScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Cancel', style: EmberText.bodyDim),
+            child: Text(tr(context, 'Cancel'), style: EmberText.bodyDim),
           ),
           TextButton(
             key: const ValueKey('seed-start'),
@@ -683,7 +702,7 @@ class TitleScreen extends StatelessWidget {
               );
             },
             child: Text(
-              'Delve',
+              tr(context, 'Delve'),
               style: EmberText.body.copyWith(color: EmberColors.ember),
             ),
           ),
@@ -863,7 +882,9 @@ class _ShortRoadToggle extends StatelessWidget {
               color: on ? EmberColors.ember : EmberColors.textDim,
             ),
             const SizedBox(width: Space.s),
-            const Text('SHORT DELVE', style: EmberText.label),
+            Flexible(
+              child: Text(tr(context, 'SHORT DELVE'), style: EmberText.label),
+            ),
             const SizedBox(width: Space.s),
             // Wrap freely, never ellipsize, never cap lines (title-scale
             // doctrine): the old ellipsis clipped mid-word on 320px
@@ -872,7 +893,7 @@ class _ShortRoadToggle extends StatelessWidget {
             // word survives every width and font scale.
             Expanded(
               child: Text(
-                'six floors — a shorter sit',
+                tr(context, 'six floors — a shorter sit'),
                 style: EmberText.micro.copyWith(color: EmberColors.textDim),
                 textAlign: TextAlign.right,
               ),
@@ -967,7 +988,7 @@ class _DifficultySelector extends StatelessWidget {
                               const SizedBox(width: 3),
                             ],
                             Text(
-                              label,
+                              tr(context, label),
                               textAlign: TextAlign.center,
                               style: EmberText.micro.copyWith(
                                 color: id == current
@@ -987,7 +1008,7 @@ class _DifficultySelector extends StatelessWidget {
         ),
         const SizedBox(height: Space.xs),
         Text(
-          hint.$3,
+          tr(context, hint.$3),
           style: EmberText.micro.copyWith(color: EmberColors.textDim),
         ),
         // v0.180.0 The Named Lock (R5 stage D, directive 2026-09-02d item 3):
@@ -1009,7 +1030,7 @@ class _DifficultySelector extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    'The Ember Forge opens HARD and Ascension.',
+                    tr(context, 'The Ember Forge opens HARD and Ascension.'),
                     textAlign: TextAlign.center,
                     style: EmberText.micro.copyWith(color: EmberColors.textDim),
                   ),
@@ -1065,7 +1086,7 @@ class _HearthsidePost extends StatelessWidget {
               key: const ValueKey('news-dismiss'),
               onPressed: c.dismissNews,
               child: Text(
-                'Noted',
+                tr(context, 'Noted'),
                 style: EmberText.body.copyWith(color: EmberColors.ember),
               ),
             ),

@@ -789,18 +789,18 @@
   "characters": [
     {
       "id": "kindler",
-      "source_base": "wizzard_m",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -809,23 +809,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "warden",
-      "source_base": "knight_m",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -834,23 +834,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "gambler",
-      "source_base": "elf_m",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -859,43 +859,48 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "ascetic",
-      "source_base": "doc",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "peddler",
-      "source_base": "elf_m (palette variant of gambler, v0.40.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -904,23 +909,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "tinker",
-      "source_base": "wizzard_m (palette variant of kindler, v0.50.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -929,23 +934,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "flintwright",
-      "source_base": "knight_m (palette variant of warden, v0.118.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -954,23 +959,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "bearer",
-      "source_base": "knight_m (palette variant of warden, v0.145.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -979,43 +984,48 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "mender",
-      "source_base": "palette variant of ascetic (v0.150.0)",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "shieldwright",
-      "source_base": "knight_m (palette variant of warden, v0.158.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1024,23 +1034,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "runesmith",
-      "source_base": "wizzard_m (palette variant of tinker, v0.135.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1049,23 +1059,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "gilder",
-      "source_base": "elf_m (palette variant of peddler, v0.162.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1074,43 +1084,48 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "cutler",
-      "source_base": "palette variant of ascetic (v0.168.0)",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "collier",
-      "source_base": "palette variant of kindler (v0.171.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1119,23 +1134,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "stoker",
-      "source_base": "palette variant of peddler (v0.175.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1144,43 +1159,48 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "hearthkeeper",
-      "source_base": "palette variant of ascetic (sixteenth delver)",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "hedger",
-      "source_base": "knight_m (palette variant of warden, v0.179.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1189,23 +1209,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "miller",
-      "source_base": "wizzard_m (palette variant of kindler, v0.180.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1214,43 +1234,48 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "brewster",
-      "source_base": "doc (palette variant of ascetic, v0.181.0)",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "lamplighter",
-      "source_base": "elf_m (palette variant of gambler, v0.182.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1259,23 +1284,23 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "farrier",
-      "source_base": "knight_m (palette variant of warden, v0.183.0)",
-      "frame_w": 48,
-      "frame_h": 84,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
         },
         {
@@ -1284,28 +1309,33 @@
           "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     },
     {
       "id": "glover",
-      "source_base": "doc (palette variant of ascetic, v0.184.0)",
-      "frame_w": 48,
-      "frame_h": 69,
+      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "frame_w": 32,
+      "frame_h": 40,
       "rows": [
         {
           "state": "idle",
-          "frames": 4,
+          "frames": 2,
           "row": 0
         },
         {
           "state": "run",
-          "frames": 4,
+          "frames": 2,
           "row": 1
+        },
+        {
+          "state": "hit",
+          "frames": 1,
+          "row": 2
         }
       ],
-      "fps": 8,
-      "scale": 3
+      "fps": 6,
+      "scale": 1
     }
   ]
 }

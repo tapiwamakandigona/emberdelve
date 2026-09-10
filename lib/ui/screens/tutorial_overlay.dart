@@ -116,22 +116,23 @@ class _TutorialOverlay extends StatelessWidget {
                           Icon(icon, color: EmberColors.ember, size: 28),
                           const SizedBox(height: Space.s),
                           Text(
-                            title,
+                            tr(context, title),
                             style: EmberText.h2,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: Space.s),
                           Text(
-                            body,
+                            tr(context, body),
                             style: EmberText.bodyDim,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: Space.l),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: Space.m,
+                            runSpacing: Space.s,
                             children: [
                               EmberButton('Skip', ghost: true, onTap: onSkip),
-                              const SizedBox(width: Space.m),
                               EmberButton(
                                 step >= _cards.length - 1 ? 'Got it' : 'Next',
                                 primary: true,

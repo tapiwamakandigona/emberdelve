@@ -22,6 +22,9 @@ import 'more_games.dart';
 import 'motion.dart';
 import 'theme.dart';
 import 'widgets.dart';
+import 'keeper.dart';
+import 'language_picker.dart';
+import '../l10n/strings.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -63,12 +66,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {});
   }
 
+  Future<void> _chooseLanguage() => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: EmberColors.bg,
+    builder: (_) => ValueListenableBuilder<String>(
+      valueListenable: GameLanguage.choice,
+      builder: (context, choice, _) => Localizations.override(
+        context: context,
+        locale: GameLanguage.localeFor(choice),
+        child: Builder(
+          builder: (context) => SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(Space.l),
+              child: LanguagePicker(
+                onChanged: (value) {
+                  _s.language = GameLanguage.validChoice(value);
+                  GameLanguage.choice.value = _s.language;
+                  _changed(preview: true);
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings', style: EmberText.h2),
+        title: Text(tr(context, 'Settings'), style: EmberText.h2),
         backgroundColor: EmberColors.bg,
+        actions: [
+          IconButton(
+            key: const ValueKey('open-language-picker'),
+            tooltip: tr(context, 'Language'),
+            icon: const Icon(Icons.language),
+            onPressed: _chooseLanguage,
+          ),
+        ],
         leading: BackButton(
           onPressed: () {
             AudioService.instance?.playSfx('ui_back');
@@ -83,14 +121,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListView(
               padding: const EdgeInsets.all(Space.l),
               children: [
-                const Text('AUDIO', style: EmberText.micro),
+                Text(tr(context, 'AUDIO'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
                   child: Column(
                     children: [
                       _volumeRow(
                         icon: Icons.music_note,
-                        label: 'Music',
+                        label: tr(context, 'Music'),
                         value: _s.musicVolume,
                         muted: _s.musicMuted,
                         // Live volume preview while dragging; persist once on release.
@@ -110,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const Divider(color: EmberColors.line, height: Space.xl),
                       _volumeRow(
                         icon: Icons.graphic_eq,
-                        label: 'Sound effects',
+                        label: tr(context, 'Sound effects'),
                         value: _s.sfxVolume,
                         muted: _s.sfxMuted,
                         // No SFX per drag tick; single confirm tap + save on release.
@@ -133,7 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: Space.xl),
                 // COMFORT (v0.16.0, was FEEDBACK): body-facing settings —
                 // vibration and motion. Renamed when reduce-motion joined.
-                const Text('COMFORT', style: EmberText.micro),
+                Text(tr(context, 'COMFORT'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
                   child: Column(
@@ -146,11 +184,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             size: 20,
                           ),
                           const SizedBox(width: Space.m),
-                          const Expanded(
-                            child: Text('Haptics', style: EmberText.body),
+                          Expanded(
+                            child: Text(
+                              tr(context, 'Haptics'),
+                              style: EmberText.body,
+                            ),
                           ),
                           _EmberToggle(
-                            semanticLabel: 'Haptics',
+                            semanticLabel: tr(context, 'Haptics'),
                             value: _s.haptics,
                             onChanged: (v) {
                               _s.haptics = v;
@@ -166,16 +207,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // Reduce motion (v0.16.0 The Still Flame): no screen
                       // shake, no drifting embers, damage numbers hold still.
                       // 'System' follows the OS accessibility setting.
-                      const Row(
+                      Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.waves,
                             color: EmberColors.textDim,
                             size: 20,
                           ),
-                          SizedBox(width: Space.m),
+                          const SizedBox(width: Space.m),
                           Expanded(
-                            child: Text('Reduce motion', style: EmberText.body),
+                            child: Text(
+                              tr(context, 'Reduce motion'),
+                              style: EmberText.body,
+                            ),
                           ),
                         ],
                       ),
@@ -222,7 +266,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       child: Text(
-                                        label,
+                                        tr(context, label),
                                         textAlign: TextAlign.center,
                                         style: EmberText.micro.copyWith(
                                           color: id == _s.reduceMotion
@@ -242,7 +286,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Steadies the screen: no shake, no drifting embers.',
+                          tr(
+                            context,
+                            'Steadies the screen: no shake, no drifting embers.',
+                          ),
                           style: EmberText.micro.copyWith(
                             color: EmberColors.textDim,
                           ),
@@ -252,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(height: Space.xl),
-                const Text('PRIVACY', style: EmberText.micro),
+                Text(tr(context, 'PRIVACY'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
                   child: Row(
@@ -263,14 +310,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         size: 20,
                       ),
                       const SizedBox(width: Space.m),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Gameplay analytics',
+                          tr(context, 'Gameplay analytics'),
                           style: EmberText.body,
                         ),
                       ),
                       _EmberToggle(
-                        semanticLabel: 'Gameplay analytics',
+                        semanticLabel: tr(context, 'Gameplay analytics'),
                         value: TelemetryService.instance.analyticsConsented,
                         onChanged: (v) {
                           TelemetryService.instance.logEvent(
@@ -289,7 +336,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // Hidden entirely on builds without the platform backends.
                 if (ReminderService.instance.available) ...[
                   const SizedBox(height: Space.xl),
-                  const Text('NOTIFICATIONS', style: EmberText.micro),
+                  Text(tr(context, 'NOTIFICATIONS'), style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   AnimatedBuilder(
                     animation: ReminderService.instance.tick,
@@ -338,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // when no fetcher is wired (tests, non-Android).
                 if (UpdateService.instance.available) ...[
                   const SizedBox(height: Space.xl),
-                  const Text('UPDATES', style: EmberText.micro),
+                  Text(tr(context, 'UPDATES'), style: EmberText.micro),
                   const SizedBox(height: Space.s),
                   AnimatedBuilder(
                     animation: UpdateService.instance.tick,
@@ -543,7 +590,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // guaranteed cloud save — the whole ledger travels as one
                 // pasteable code instead. Import merges (never replaces); the
                 // Forge purchase deliberately does not ride in the code.
-                const Text('CARRY YOUR EMBER', style: EmberText.micro),
+                Text(tr(context, 'CARRY YOUR EMBER'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
                   key: const ValueKey('carry-ember-panel'),
@@ -693,7 +740,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: Space.xl),
                 // Ember Forge (v0.4.0, spec R8): the restore path lives here too —
                 // a player on a new device must never have to hunt for it.
-                const Text('THE EMBER FORGE', style: EmberText.micro),
+                Text(tr(context, 'THE EMBER FORGE'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 if (StoreService.instance != null)
                   AnimatedBuilder(
@@ -742,8 +789,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       style: EmberText.bodyDim,
                     ),
                   ),
+                const KeeperSettings(),
                 const SizedBox(height: Space.xl),
-                const Text('ABOUT', style: EmberText.micro),
+                Text(tr(context, 'ABOUT'), style: EmberText.micro),
                 const SizedBox(height: Space.s),
                 Panel(
                   child: Row(

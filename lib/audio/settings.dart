@@ -13,6 +13,8 @@ class AudioSettings {
   // v0.16.0 The Still Flame: 'system' (follow OS accessibility flag) /
   // 'on' / 'off'. Resolved app-wide by lib/ui/motion.dart.
   String reduceMotion;
+  // Interface preference only; never part of a run seed or character name.
+  String language;
   AudioSettings({
     this.musicVolume = 0.7,
     this.sfxVolume = 0.9,
@@ -20,6 +22,7 @@ class AudioSettings {
     this.sfxMuted = false,
     this.haptics = true,
     this.reduceMotion = 'system',
+    this.language = 'system',
   });
 
   double get effectiveMusic => musicMuted ? 0.0 : musicVolume;
@@ -32,6 +35,7 @@ class AudioSettings {
     'sfxMuted': sfxMuted,
     'haptics': haptics,
     'reduceMotion': reduceMotion,
+    'language': language,
   };
 
   // Volumes clamped on load: an out-of-range value in a hand-edited or
@@ -46,9 +50,11 @@ class AudioSettings {
     musicMuted: j['musicMuted'] as bool? ?? false,
     sfxMuted: j['sfxMuted'] as bool? ?? false,
     haptics: j['haptics'] as bool? ?? true,
-    reduceMotion:
-        const {'system', 'on', 'off'}.contains(j['reduceMotion'])
+    reduceMotion: const {'system', 'on', 'off'}.contains(j['reduceMotion'])
         ? j['reduceMotion'] as String
+        : 'system',
+    language: const {'system', 'en', 'fr', 'es', 'pt'}.contains(j['language'])
+        ? j['language'] as String
         : 'system',
   );
 }

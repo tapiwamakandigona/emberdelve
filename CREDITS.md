@@ -11,7 +11,11 @@ Emberdelve uses the following third-party art. Thank you to these artists.
 ### Sprites & pixel animations
 - **DungeonTilesetII v1.7** by **0x72** — https://0x72.itch.io/dungeontileset-ii
   License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/).
-  Enemy, character, coin and ember-flow sprites are recolored/rearranged derivatives.
+  Enemy, coin and ember-flow sprites are recolored/rearranged derivatives.
+- **Delver models (September 2026)** — original GPT Image 2-generated source
+  designs, mechanically converted to native pixel sprites for Tsoro Studios.
+  Distinct models replace the historical character recolours. Source and
+  conversion details are recorded in `PROVENANCE.md`.
 
 ### Icons
 Icons made by **Lorc** (http://lorcblog.blogspot.com), **Delapouite** (http://delapouite.com)

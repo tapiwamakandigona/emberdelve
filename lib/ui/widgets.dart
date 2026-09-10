@@ -5,6 +5,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../audio/audio_service.dart';
+import '../l10n/strings.dart';
 import '../data/dice.dart';
 import '../data/skins.dart';
 import '../sim/run_dice.dart';
@@ -81,6 +82,7 @@ class _EmberButtonState extends State<EmberButton> {
 
   @override
   Widget build(BuildContext context) {
+    final label = tr(context, widget.label);
     final screenW = MediaQuery.sizeOf(context).width;
     final narrow = screenW < 340;
     final hPad = narrow ? Space.l : Space.xl;
@@ -112,11 +114,11 @@ class _EmberButtonState extends State<EmberButton> {
       // on color or press state — so it is laid out once per distinct
       // question, not on every rebuild (a pressed button rebuilds twice;
       // the combat bar's buttons rebuild with every hand refresh).
-      final key = '${widget.label}|$hPad|${scaler.scale(10)}|$room';
+      final key = '$label|$hPad|${scaler.scale(10)}|$room';
       glyphFits = _glyphFitCache.putIfAbsent(key, () {
         if (_glyphFitCache.length > 256) _glyphFitCache.clear();
         final painter = TextPainter(
-          text: TextSpan(text: widget.label, style: _labelStyle(fg)),
+          text: TextSpan(text: label, style: _labelStyle(fg)),
           textDirection: TextDirection.ltr,
           textScaler: scaler,
         )..layout();
@@ -135,7 +137,9 @@ class _EmberButtonState extends State<EmberButton> {
     return Semantics(
       button: true,
       enabled: enabled,
-      label: widget.semanticLabel ?? widget.label,
+      label: widget.semanticLabel == null
+          ? label
+          : tr(context, widget.semanticLabel!),
       onTap: enabled ? handleTap : null,
       excludeSemantics: true,
       child: GestureDetector(
@@ -189,7 +193,7 @@ class _EmberButtonState extends State<EmberButton> {
                     // off-screen at phone widths.
                     Flexible(
                       child: Text(
-                        widget.label,
+                        label,
                         textAlign: TextAlign.center,
                         softWrap: true,
                         style: _labelStyle(fg),
@@ -383,7 +387,7 @@ class ResourcePip extends StatelessWidget {
             style: EmberText.value.copyWith(fontSize: 18, color: color),
           ),
           const SizedBox(width: Space.xs),
-          Text(label, style: EmberText.micro),
+          Text(tr(context, label), style: EmberText.micro),
         ],
       ),
     );

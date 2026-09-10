@@ -5538,3 +5538,186 @@ Nothing else on the Console touched; closed-testing track left alone.
   changed for that; every assertion kept. VISUAL-20260905 flipped true with that evidence.
 - VERIFIED locally (Flutter 3.44.9): analyzer clean; 1317 tests passed after the fix (1315 + 2 helper cases).
 - Version 0.180.1+207 → 0.181.0+208; news entry + docs/releases/v0.181.0.md.
+
+## 2026-09-08 — iteration 3/12, Keepers of the Flame
+
+- Owner approved private supporter recognition: one-time, inline thank-you,
+  optional nickname and static crest, edit/hide/remove. Existing saved Forge
+  owners and restored purchases eligible; offline-code owners retain the
+  same entitlement. No public names, new purchases or gameplay advantage.
+- Separate local-only file: not MetaState/cloud/manual save codes, and absent
+  from Android's explicit backup/transfer lists. Loaded after first frame;
+  queued atomic writes, no name in analytics or logs.
+- First verification: all 16 additive feature tests PASS. Analyzer stopped
+  with `5 issues found.`: `prefer_initializing_formals`,
+  `curly_braces_in_flow_control_structures`, two
+  `unnecessary_string_escapes`, and `prefer_const_constructors`.
+  One corrective retry: source field initialization + braces, and mechanical
+  const/quote spelling in the two NEW, already-passing test files only.
+  No assertion, matcher, behavior, gate, threshold, or original test changed.
+- During drafting, a patch match failed twice on a Unicode-escaped literal:
+  `Failed to find expected lines`. Inspected bytes; left the existing
+  correct, passing case untouched rather than retrying the same patch.
+- Owner also selected Portuguese, French, Spanish, German and Arabic.
+  Translation work is a separate scoped iteration; English fallback and
+  RTL menu support must not mirror gameplay.
+- VERIFIED retry: analyzer clean and full Flutter suite 1333/1333 PASS
+  (1317 original + 16 additive). No original tests, simulation, entitlement
+  gateway, MetaState or telemetry changes. M4-2 remains false for the
+  unperformed physical-device Play purchase/restore test.
+
+## 2026-09-08 — iteration 5/12, original delver models
+
+- Replaced all 22 character PNGs with distinct GPT Image 2-generated
+  designs, native 32x40 frames and two idle/two walking poses. Source
+  illustrations and prompts retained; not human-drawn/0x72-derived claims.
+  Mechanical packing detects actual transparent gutters because generated
+  nominal grids are not exact; no clipped row boundaries.
+- VERIFIED: reproducible packing check, binary alpha/two-pixel margins,
+  unique monochrome masks (closest IoU 0.7744), distinct walking poses.
+  39127 PNG bytes; decoded RGBA 3732480 -> 675840 bytes (-81.89%).
+  This is texture memory, not process RAM or phone FPS.
+- VERIFIED: analyzer clean, 1334/1334 tests green, including an additive
+  real-engine all-model decode/mask/budget check. Existing tests, simulation,
+  data roster IDs/order/kits/unlocks, enemy sprites and dependencies unchanged.
+- Technical roster plate: docs/visual/2026-09-08/delver-roster.png.
+  Device visual playtesting remains NOT VERIFIED.
+- Draft evidence patch returned `Failed to find expected lines` at the
+  guessed progress heading; inspected the actual append-only tail and
+  applied once there. Earlier hunks had applied; verified before retry.
+- Play production 208 (0.181.0) remains live. Signing secret enumeration
+  was denied: `gh secret is not allowed for security reasons`. No alternate
+  API/path attempted; use existing authorized signing workflow without
+  extracting keys, or ask for missing material if workflow unavailable.
+
+## 2026-09-08 — iteration 6/12, translations IN PROGRESS / paused
+
+- Source added: offline French/Spanish/Brazilian Portuguese interface
+  catalog (92 source messages per locale), device/manual locale selection,
+  persisted language preference, first-session/title/combat labels, five
+  manual pages, comfort settings and Keeper copy. Explicit partial-coverage
+  note; untranslated lore uses English. No personal-name translation.
+- Flutter SDK localization delegates and their pinned intl dependency
+  added; no unrelated dependency upgrades. Catalog compilation verifies
+  key/placeholder parity. New feature LANGUAGES-20260908 remains false.
+- First targeted check: 11 pass / 2 fail. Exact failures:
+  `Found 0 widgets with text "Lancer": []` in the new device-locale case;
+  `A RenderFlex overflowed by 14 pixels on the right.` in the Spanish
+  five-page manual at 320px / 1.3x text.
+- Analyzer: `2 issues found.` — curly_braces_in_flow_control_structures in
+  KeeperTitle and unnecessary_import in the new language test.
+- VERIFIED framework source: TestPlatformDispatcher.localeTestValue and
+  localesTestValue are separate overrides. The new fixture sets the
+  singular value; its intended simulated locale list is not populated.
+- Owner standing rule forbids editing tests to make them pass. Asked for
+  narrow permission to correct ONLY that new fixture's API setup, with
+  all assertions/expectations and pre-existing tests unchanged. App
+  question action: correct_new_locale_fixture_sep08. Awaiting answer.
+- One corrective retry has NOT yet been used. Spanish source layout and
+  Keeper source lint also remain unfixed at pause. Full suite not run on
+  iteration 6. No translation commit, push or release claimed.
+
+### Iteration 6 approved correction and single retry
+
+- Owner clicked `allow_fixture_only`: "Yes—fixture only; keep every assertion."
+  Corrected ONLY the new locale fixture to localesTestValue /
+  clearLocalesTestValue; removed its redundant typed-data import (services
+  already exports it). All expectations, parameters and original tests stay.
+- Source fix for `A RenderFlex overflowed by 14 pixels on the right.`:
+  manual navigation uses a centered Wrap with the same spacing; long
+  translations can stack without reducing text size or clipping controls.
+- Source braces fix for KeeperTitle. Single verification retry follows.
+- VERIFIED single retry: catalog parity, analyzer and all 13 new translation
+  tests pass. Full suite 1345 pass / 2 original Settings failures:
+  `Expected: 'on' / Actual: 'system'` and
+  `Found 0 widgets with text "UPDATES": []`.
+- Descope: remove large inline language section, retain old list content
+  positions and open language picker using app-bar globe + scrollable sheet.
+  Original tests, scroll helpers/cache extent and assertions remain intact.
+- VERIFIED reduced-scope check: analyzer clean, full suite 1348/1348.
+  Additive language-sheet test opens, changes to French, updates translated
+  content and closes cleanly on a 320px screen. Original Settings tests pass.
+- VERIFIED diff of the approved new fixture: only singular->list locale
+  API setup and redundant import removal, no assertion changes. Language
+  coverage remains 92 interface messages per fr/es/pt, not all game text.
+
+## 2026-09-08 — iteration 9/12, quality release candidate
+
+- Candidate `0.182.0+209`: current Play highest bundle 208 / 0.181.0 was
+  freshly read; new player-facing news and release notes describe the actual
+  private Keepers feature, replacement delvers and partial localization.
+- VERIFIED release rerun: analyzer clean; 1348/1348 tests pass; character
+  asset read-only --check passes; original tests/sim/IAP/telemetry unchanged.
+  Existing SFX mix-bus gate passes all seven reachable cascades; full attack
+  is TIGHT at -0.90dBTP, not clipped.
+- Existing public CI and emulator trace workflows inspected. Explicit task
+  ref will be used; no secret enumeration/creation, key changes or paid
+  runners. Candidate must pass remote build/download/signature checks before
+  its release feature becomes true; full physical Play testing stays open.
+- An empty-heading documentation patch failed `Failed to find expected
+  lines`; inspected the actual progress tail before this single retry.
+
+### Iteration 9 remote gate — paused, not a signed release
+
+- VERIFIED source commit `8a9def489a748a65d343a5998ed1375d3ceb86ca` pushed;
+  PR https://github.com/tapiwamakandigona/emberdelve/pull/101 targets
+  `legacy/dice-builder`, open and mergeable.
+- Signed CI dispatch failed once, verbatim:
+  `could not create workflow dispatch event: HTTP 403: Resource not
+  accessible by integration`.
+- This is an authorization blocker, not a transient build failure. No
+  alternative credential/API, workflow-trigger change or secret listing
+  attempted to bypass it. Owner must authorize Actions dispatch or start
+  the existing CI workflow on `feat/quality-sep08` manually.
+- Ordinary PR CI starts automatically (headless + unsigned iOS). It does
+  NOT run the signed Android job. Candidate feature remains false.
+- No Android binary, tag, Play upload, tester delivery or public rollout
+  completed by this pass at this point.
+
+### Iteration 9 resumed — supplied PAT explicitly authorized
+
+- Owner explicitly directed use of the supplied PAT and continuation on
+  September 8. The previous 403 came from the GitHub App connection; it did
+  not test the separately provisioned PAT.
+- VERIFIED PAT account, public repo, existing active workflow and exact
+  quality commit before dispatch. Existing CI accepted HTTP 204:
+  https://github.com/tapiwamakandigona/emberdelve/actions/runs/34243188072
+- No direct git/gh credential override, secret enumeration, workflow
+  weakening, private Actions enablement or spending. Git/commits remain
+  managed by the SDK. Artifacts, signatures and track state remain separate
+  gates; dispatch success is not build/publication success.
+
+### Iteration 9 — signed artifacts and internal distribution verified
+
+- Signed CI 34243188072 succeeded on exact `8a9def4`; GitHub ZIP digests
+  and independent binary integrity/signature/version/package checks pass.
+  Full hashes/bytes in `docs/releases/verification-0.182.0.md`.
+- Initial browser upload failed `Cannot set buffer larger than 50Mb, please
+  write it to a file and pass its path instead.` Single retry: native File
+  assembled from chunks in remote browser, browser SHA256 equals local
+  verified AAB, regular upload input succeeded.
+- Initial Play preview: `This release no longer supports 1,921 devices that
+  were supported in your previous release.` Did not click Proceed anyway.
+  Internal code 12 has minSdk21; new candidate retains shipping minSdk24.
+  Kept old bundle as legacy fallback; re-preview Ready to release, zero
+  device losses. No check/manifest workaround.
+- VERIFIED after publish and reload: internal 209 (0.182.0), Available to
+  internal testers, 2 codes (209+12). No production/roster change. Android
+  5–6 keeps old features; new candidate Android7+.
+- RELEASE-CANDIDATE true on binary evidence. Physical gates M1-3/M4-2
+  remain false. Existing emulator trace 34245082297 running separately.
+
+- VERIFIED emulator trace 34245082297 succeeded; downloaded three timeline
+  summaries. Avg build title/combat/map 1.095/2.646/0.746ms; software raster
+  70.037/101.506/115.129ms. Runtime flows executed, NOT a 60fps/phone pass.
+- VERIFIED public prerelease v0.182.0 targets built source. Re-downloaded all
+  five binaries and checksum manifest; exact SHA256/size matches. It is a
+  prerelease, not latest stable. See verification document for full evidence.
+- Bookkeeping guard first reported `AssertionError: Progress history changed`.
+  Managed Git `show` had returned an output-file notice for the long history,
+  not the blob. Inspected primary diff (append-only), then one retry read the
+  tool-provided full output and preserved all assertions. Actual history
+  prefix matched exactly; no test/check/source criterion changed.
+- VERIFIED release bookkeeping is docs/state only; binary source, original
+  tests/workflows and open device criteria unchanged. Independent doc hashes
+  match downloaded binaries; supplied secret values absent.

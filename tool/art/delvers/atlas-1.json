@@ -1,0 +1,17 @@
+{
+  "tool": "coworker_text2im",
+  "model": "gpt-image-2",
+  "date": "2026-09-08",
+  "source_prompt": "Produce a production game sprite atlas, not concept art or a poster.\nTransparent alpha background. Precisely 4 equally spaced columns and 6 equally\nspaced rows. Each cell is exactly the same size. Every cell contains ONE complete\nfull-body side-view pixel-art adventurer FACING RIGHT. Each ROW is one different\ncharacter; columns are: neutral idle, alternate breathing idle, left foot forward\nwalking, right foot forward walking. Feet at identical baseline, identical SCALE\nand POSITION within the four cells of a row. Pixel-perfect hard edges, authentic\nlow-resolution 32x40-pixel sprite aesthetics, 12-colour palette per model, thick\nreadable one-pixel outlines and clear equipment. No text, labels, grid lines,\nfloor, cast shadow, glow blur, background objects, or particles. At least 10%\ntransparent padding around EVERY model in EVERY cell, all weapons contained.\nDark fantasy underground hearth roguelite. Primary palette: charcoal #0E090E,\nwarm ink #1A1420, pale ash #EEE6DC, ember #E8963C, gold #F0C470 and cool ash\n#8A93B5, with shade/tint derivatives. All models MUST be recognizably different\nIN SOLID BLACK SILHOUETTE. Body proportions, tools, posture, clothing outline and\nheadgear matter; DO NOT make recolours of one base body. Each walking frame\ngenuinely changes the leg/arm pose, not merely translating the image.\n\nRows, top to bottom:\n1. KINDLER: slender traveller in a bent pointed hood, long split ember cloak, carrying a small live coal on an open palm.\n2. WARDEN: broad stocky armoured sentinel, closed round visor, enormous square shield and short sword.\n3. GAMBLER: lanky trickster in a very wide flat hat, cropped coat, asymmetric stance, holding a fan of three dice-shaped ivory cards.\n4. ASCETIC: very thin bald monk, pale tied robes and long wooden staff, bare forearms.\n5. PEDDLER: short hunched merchant with towering stacked-crate backpack, rolled bedroll, walking cane and dangling satchels.\n6. TINKER: small goggled mechanic with round oversized tool belt, short apron, spanner in one hand and cog in the other.\n",
+  "characters": [
+    "kindler",
+    "warden",
+    "gambler",
+    "ascetic",
+    "peddler",
+    "tinker"
+  ],
+  "columns": 4,
+  "rows": 6,
+  "generated_source": true
+}

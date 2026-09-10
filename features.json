@@ -2,6 +2,34 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "RELEASE-CANDIDATE-20260908",
+      "title": "Verified signed Android quality candidate",
+      "acceptance": "Candidate 0.182.0+209 on correct shipping ancestry; unchanged analyze/full suite/SFX/asset checks pass; existing public CI succeeds on exact source; downloaded APK/AAB package/version/upload-signer pin and SHA256 recorded. Publication and physical Play/device gates remain separately unpassed.",
+      "passes": true,
+      "evidence": "VERIFIED: docs/releases/verification-0.182.0.md and https://github.com/tapiwamakandigona/emberdelve/actions/runs/34243188072 . Owner-authorized PAT dispatch on exact 8a9def489a748a65d343a5998ed1375d3ceb86ca; original analyze/1348 tests/SFX/art checks green; signed AAB + universal/3 ABI APKs downloaded, GitHub archive digests match, independent apksigner/jarsigner/bundletool verify package/version/permanent upload pin and inner SHA256. Play internal 209 available (legacy 12 retained). Physical purchase/device and production gates remain separately open."
+    },
+    {
+      "id": "LANGUAGES-20260908",
+      "title": "Statistics-led French, Spanish and Brazilian Portuguese first-session UI",
+      "acceptance": "Device plus persisted manual language, safe English fallback; title navigation, core combat actions, five-page manual, comfort settings and complete private Keeper copy translated; matching catalog keys/placeholders, personal names untouched, honest partial-coverage note, real narrow-screen tests; original tests and analyzer green, no simulation or telemetry change.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-08 Flutter 3.44.9: 92 offline messages x fr/es/pt, catalog key/placeholder parity; device fr-CA/manual/English fallback, preserved nickname, three 320px/1.3x title/manual action tests, Keeper editor tests, compact language-sheet real interaction. Analyzer clean; full suite 1348/1348. Original tests unchanged; only owner-approved new locale fixture corrected to localesTestValue, assertions intact. Advanced lore/dynamic descriptions remain English, scope note visible. Physical-device release still unverified."
+    },
+    {
+      "id": "MODELS-20260908",
+      "title": "Twenty-two genuinely distinct delver models at native pixel resolution",
+      "acceptance": "Replace existing character sheets with independently shaped original models and two idle/two walking poses; stable roster IDs/order/kits/unlocks/saves and enemy assets; reproducible conversion with source provenance, alpha margins and unique monochrome masks; <=1.5 MiB decoded character memory and <=100 KiB PNGs; unchanged original checks and full analyzer/test suite green. Device visual QA separate.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-08: build_delvers.py --check reproduces 22 sheets, 39127 PNG bytes / 675840 decoded RGBA bytes (old 3732480); unique solid masks, highest pairwise IoU 0.7744, binary alpha/margins and distinct walking poses. Real engine decodes all 22; analyzer clean; 1334/1334 tests pass. Source atlases/prompts/provenance retained; gameplay IDs/order/kits unchanged. Device visual review remains NOT VERIFIED."
+    },
+    {
+      "id": "KEEPERS-20260908",
+      "title": "Private Keepers of the Flame recognition for old and new Forge owners",
+      "acceptance": "One-time nonblocking title thank-you, optional sanitized nickname and static crest, edit/hide/remove in Settings; existing saved ownership and confirmed restore eligible without repayment; local-only data excluded from cloud/manual transfer; no mid-run prompt, gameplay/IAP/telemetry change or startup wait; additive regressions and original analyzer/full suite green.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-08, Flutter 3.44.9: analyzer clean; full suite 1333/1333 pass including 16 additive service/UI cases (old owner, free profile, billing statuses + restore, local round-trip/write ordering/failure, nickname hygiene, skip/edit/hide/remove, 320px/1.5x text, no active-run prompt, static crest). Existing test files unchanged. Sim, MetaState, IAP and telemetry sources unchanged. Physical Play purchase/upgrade remains separate, unverified M4-2."
+    },
+    {
       "id": "VISUAL-20260905",
       "title": "Readable Codex prose and section navigation",
       "acceptance": "13px reading text, 48px section targets and selected semantics; existing checks and added readability checks green; before/after render artifacts exist; no gameplay or release change.",

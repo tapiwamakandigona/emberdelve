@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,12 +15,14 @@ import 'package:timezone/timezone.dart' as tz;
 import 'audio/audio_service.dart';
 import 'audio/settings.dart';
 import 'game/controller.dart';
+import 'l10n/strings.dart';
 import 'meta/play_games_service.dart';
 import 'meta/save_transfer.dart';
 import 'meta/reminder_service.dart';
 import 'meta/review_service.dart';
 import 'meta/unlock_codes.dart';
 import 'meta/store_service.dart';
+import 'meta/keeper.dart';
 import 'meta/update_service.dart';
 import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
@@ -49,6 +52,7 @@ Future<void> main() async {
   await AudioService.initPlatformAudio();
   final audio = AudioService(await settingsFuture);
   AudioService.instance = audio;
+  GameLanguage.choice.value = GameLanguage.validChoice(audio.settings.language);
   // Reduce motion (v0.16.0): seed the resolver with the persisted choice;
   // the MaterialApp builder below keeps the OS flag side current.
   Motion.instance.update(setting: audio.settings.reduceMotion);
@@ -93,6 +97,10 @@ Future<void> main() async {
   );
   StoreService.instance = store;
   unawaited(store.init());
+  KeeperService.instance = KeeperService(
+    alreadyOwned: () => controller.meta.forgeUnlocked,
+    entitlementChanges: controller,
+  );
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     pgs.signInBackend = () async {
       await GameAuth.signIn();
@@ -229,11 +237,17 @@ class _EmberdelveAppState extends State<EmberdelveApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    GameLanguage.choice.addListener(_languageChanged);
+  }
+
+  void _languageChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    GameLanguage.choice.removeListener(_languageChanged);
     super.dispose();
   }
 
@@ -258,6 +272,9 @@ class _EmberdelveAppState extends State<EmberdelveApp>
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Emberdelve',
+      locale: GameLanguage.localeFor(GameLanguage.choice.value),
+      supportedLocales: gameLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       debugShowCheckedModeBanner: false,
       theme: buildEmberTheme(),
       builder: (context, child) {
