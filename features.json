@@ -5,8 +5,8 @@
       "id": "COMBAT-VISUAL-REVIEW-20260910",
       "title": "Evidence-backed critique of character, weapon and die-value presentation",
       "acceptance": "Open actual available surfaces and identify the inspected release; provide real rendered-game character and low/high attack evidence with explicit Android-capture limitations. Criticize observed attachment, pose, visual-style and die-expression gaps without claiming existing effects absent; trace concrete defects to source and specify open implementation gates. Preserve all previous feature objects, original tests/application/assets/workflows and append-only history. Open a review PR, not an implementation or release.",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED: https://github.com/tapiwamakandigona/emberdelve/pull/102 is open, not merged, against legacy/dice-builder. docs/reviews/combat-visual-critique-2026-09-10.md and its 22.4s actual Flutter-render recording, stills, observations, source anchors and checksum manifests cover four delvers, face1/face5 and the stale selection-heat defect. Native capture failed twice before combat and is explicitly not claimed. Original suite1348/1348, additive render4/4, clean analyzer; 1281 original non-state files, all260 original Dart tests, all33 old feature objects and full progress prefix preserved. This passes only the bounded critique task, not implementation, phone or art approval."
     },
     {
       "id": "COMBAT-VISUAL-IMPLEMENTATION-20260910",
