@@ -12,8 +12,8 @@
       "id": "RELEASE-0.183.0",
       "title": "Signed 0.183.0+210 production release on Google Play",
       "acceptance": "Signed CI build on the exact merged source; APK/AAB signer pin matches the permanent upload key; AAB uploaded to the Play production track and rolled out; content rating questionnaire updated to declare blood before rollout.",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "docs/releases/verification-0.183.0.md — signed CI run 34743081440 from c611e16; AAB/APK signer == permanent upload cert 031acb42…7a0d; IARC questionnaire re-answered to declare mild/limited blood (13 Sep 2026); 210 (0.183.0) uploaded to the Play production track, 100% roll-out, 0 devices losing support, submitted for Google review ('Changes in review'). GitHub release v0.183.0 published. Live-in-store confirmation pending Google review."
     },
     {
       "id": "RELEASE-CANDIDATE-20260908",

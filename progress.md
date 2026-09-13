@@ -5758,3 +5758,24 @@ single-agent harness rules for this pass.
 - ASSUMED: art quality judged from headless 360×640 renders, not a phone.
 - Rating: this build draws blood. Questionnaire must be updated before
   production (previous declaration was non-human fantasy violence).
+
+## 2026-09-13 (later) — 0.183.0+210 to Play production (in review)
+
+- VERIFIED: PR #103 merged → `c611e16`. Signed CI run 34743081440 green;
+  artifacts re-hashed, manifests read back (210 / 2210 / 1210 / 4210,
+  minSdk 24, targetSdk 36, not debuggable); AAB signer == permanent upload
+  certificate. Table in `docs/releases/verification-0.183.0.md`.
+- VERIFIED: GitHub release v0.183.0 (Latest) with the five binaries and
+  `emberdelve-SHA256SUMS`.
+- VERIFIED: IARC questionnaire re-answered to declare mild/limited blood
+  against humans and non-humans; saved 13 Sep 2026. Ratings moved: USK
+  6+→12+, ClassInd all ages→14+, Taiwan PG12→PG15, ESRB stays E10+ and adds
+  "Mild blood"; PEGI 7 unchanged. Table in the verification doc.
+- VERIFIED: 210 (0.183.0) uploaded to the production track (browser upload
+  needed the AAB assembled from 6 MB chunks into a File in-page; Playwright
+  set_input_files refuses >50 MB). Preview: 0 devices losing support.
+  Roll-out 100%, all countries. Publishing overview shows both changes
+  "in review" after quick checks. Managed publishing off → goes live when
+  Google's review passes. Production still showed 208 at the time.
+- Not done: device FPS/touch review, purchase/restore on Play. Open PR
+  #102 left as the critique record.

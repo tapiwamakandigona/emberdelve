@@ -1,5 +1,17 @@
 # PROJECT.md — Emberdelve
 
+## September 13 verified release resume
+
+`0.183.0+210` ("Bodies in the Fight", PR #103, merge `c611e16`) was built
+and signed by CI run 34743081440, published as GitHub release v0.183.0
+(Latest), and uploaded to the **Play production track at 100% roll-out**
+together with a re-answered IARC questionnaire that declares mild/limited
+blood. Both changes were **sent for Google review** on 13 September; managed
+publishing is off, so they go live when review passes. Until the production
+track page shows 210, the live production build is still 208 (0.181.0).
+Evidence and rating changes: `docs/releases/verification-0.183.0.md`.
+Physical-phone FPS/touch review and Play purchase/restore remain open.
+
 ## September 8 verified release resume
 
 Candidate `0.182.0+209` was built from `8a9def4`, signed/independently
