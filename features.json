@@ -2,6 +2,20 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "COMBAT-BODIES-20260913",
+      "title": "Bodies in the Fight: weapon-family strikes, guard stance, blood, health-linked body language",
+      "acceptance": "Selecting a die heats the weapon before the swing (red/green regression). Each weapon family (cut/crush/stab/stamp/hook/pick) has its own wind-up, arc, follow-through and contact shape; die tier is read against the die's own size. Block holds a guard stance while block > 0. Landed hits spray blood/ichor and stain the floor for the encounter; fully blocked hits do not. Wounds, slump, pallor, laboured breathing and tremor scale with remaining HP for delvers and enemies. Weapon grip pinned to a per-sheet hand socket. Reduce motion, fast-forward and the one-slot queue preserved. No simulation number changes. Analyzer, full suite and SFX gates green.",
+      "passes": true,
+      "evidence": "test/combat_bodies_test.dart (21 tests, incl. §4 regression verified red without the _uiTick wiring: charge stayed 0.0); full suite 1,369/1,369 on 2026-09-13; flutter analyze clean; tool/sfx_headroom.py clean; tool/combat_idle_probe_test.dart idle paints 1.0/frame unchanged; review frames via tool/combat_bodies_frames_test.dart (kindler, warden, gambler, runesmith). Physical-phone FPS and owner art sign-off remain separate."
+    },
+    {
+      "id": "RELEASE-0.183.0",
+      "title": "Signed 0.183.0+210 production release on Google Play",
+      "acceptance": "Signed CI build on the exact merged source; APK/AAB signer pin matches the permanent upload key; AAB uploaded to the Play production track and rolled out; content rating questionnaire updated to declare blood before rollout.",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "RELEASE-CANDIDATE-20260908",
       "title": "Verified signed Android quality candidate",
       "acceptance": "Candidate 0.182.0+209 on correct shipping ancestry; unchanged analyze/full suite/SFX/asset checks pass; existing public CI succeeds on exact source; downloaded APK/AAB package/version/upload-signer pin and SHA256 recorded. Publication and physical Play/device gates remain separately unpassed.",
@@ -193,7 +207,7 @@
     {
       "id": "LFP-4",
       "title": "Idle life on the combat stage (bob + threat sway)",
-      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count \u2014 root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
+      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count — root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
       "passes": true,
       "evidence": "lib/ui/sprites.dart _life ticker (bob/sway params), wired in combat_screen stage; analyze clean, widget suite green"
     },

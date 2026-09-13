@@ -5721,3 +5721,40 @@ Nothing else on the Console touched; closed-testing track left alone.
 - VERIFIED release bookkeeping is docs/state only; binary source, original
   tests/workflows and open device criteria unchanged. Independent doc hashes
   match downloaded binaries; supplied secret values absent.
+
+## 2026-09-13 — v0.183.0 "Bodies in the Fight" (feat/combat-bodies-sep13)
+
+Owner direction (Milon, Viktor app): keep the art/animation pass going —
+real attack and block animation, blood, damage and tiredness showing in the
+bodies — then cut a full production release. Owner also waived the pasted
+single-agent harness rules for this pass.
+
+- Implements the September 10 critique (PR #102, left open as the record).
+  New pure-Dart `lib/ui/combat_pose.dart`: StrikeFamily per weapon
+  (cut/crush/stab/stamp/hook/pick), DieTier read against die SIZE,
+  `planStrike()` (timings, lean, crouch, arc, follow-through, smear,
+  contact shape), enemy styles (bite/slam/dart/swipe), `Condition` from
+  hp/max (slump, sag, breath rate/amp, pallor, wound count, tremor),
+  ichor families, deterministic `spray()`.
+- `lib/ui/gore.dart`: BloodBurst (ballistic droplets, ≤18, ~520 ms) +
+  FloorStainsPainter (persisted per encounter, cap 24, cleared on new foe).
+- SpriteView: `condition`/`ichor` — breathing becomes the bob (integer
+  cycles so the loop never seams), heave, tremor <25%, wounds composited
+  srcATop inside a saveLayer ONLY while wounded. `hand` socket per sheet in
+  sprite_meta.json (22 delvers).
+- WeaponView: `plan` + `WeaponPhase.guard`; per-plan durations/angles,
+  tunable follow-through curve, smear intensity. ImpactSlash: `shape` +
+  `facing` (crush = shock ring + dust + shards, stab = thrust + puncture,
+  stamp = rune diamond, hook = low pull arc, pick = steep wedge).
+- Stage: `_bodyPose()` matrix about the feet (windup/strike/knock/guard/
+  idle incl. slump/sag), grip pinned to the hand socket, pallor wrap,
+  stains layer, blood fx. Hero band = choreo + ui + vitals ticks (fixes §4);
+  foe band = choreo + enemy tick. `_playerBraced` derived from block > 0.
+- VERIFIED: analyzer clean; 1,369/1,369 (1,348 original + 21 new); SFX
+  headroom clean; idle census 1.0 paints/frame. §4 regression red without
+  the `_uiTick` wiring (charge 0.0), green with it.
+- Docs: docs/releases/v0.183.0.md, news entry, features COMBAT-BODIES-
+  20260913 (true) and RELEASE-0.183.0 (false until Play evidence).
+- ASSUMED: art quality judged from headless 360×640 renders, not a phone.
+- Rating: this build draws blood. Questionnaire must be updated before
+  production (previous declaration was non-human fantasy violence).

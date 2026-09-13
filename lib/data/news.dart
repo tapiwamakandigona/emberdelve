@@ -23,10 +23,28 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.182.0';
+const String currentAppVersion = '0.183.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.183.0',
+    title: 'Bodies in the Fight',
+    lines: [
+      'Delvers now fight with their whole body. A sword is cut from the '
+          'shoulder, a maul comes down from overhead, a fang is driven '
+          'straight in, a chisel sets its mark. High rolls coil longer and '
+          'land harder; low rolls flick.',
+      'Blocking is a stance. While your guard is up the delver braces, '
+          'weapon across the body, and a hit that breaks on it sparks '
+          'instead of cuts.',
+      'Wounds show. Landed blows draw blood or ichor and leave the floor '
+          'marked for the rest of the fight. As health falls, bodies slump, '
+          'pale, breathe hard and tremble. Enemies too.',
+      'All of it is presentation: every roll, damage number and block is '
+          'exactly what the dice said. Reduce motion keeps the still cues.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.182.0',
     title: 'Keepers of the Flame',
