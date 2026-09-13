@@ -20,13 +20,21 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'build_identity.dart';
+import 'combat_pose.dart';
 import 'motion.dart';
 import 'theme.dart';
 
 /// Choreography phase for the held weapon. Drive it straight from the combat
 /// screen's existing squash/lunge flags — the weapon needs no timers of its
 /// own beyond its transition tween.
-enum WeaponPhase { idle, raise, swing }
+enum WeaponPhase {
+  idle,
+  raise,
+  swing,
+
+  /// v0.183.0: held across the body while the delver braces behind block.
+  guard,
+}
 
 /// One signature weapon. Angles are radians around the grip; 0 = blade up,
 /// positive rotates toward the enemy (screen-right for the hero).
@@ -321,6 +329,12 @@ class WeaponView extends StatefulWidget {
   /// The current pool's dominant build language. Pure presentation: this is
   /// derived from die IDs and never enters the simulation or save.
   final RunBuildIdentity? identity;
+
+  /// v0.183.0 Bodies in the Fight: the authored strike for THIS swing —
+  /// wind-up/travel/recovery timings, arc endpoints, follow-through and
+  /// smear intensity per weapon family and die tier. Null keeps the
+  /// WeaponDef's legacy fixed angles and 90/230/300 ms clock.
+  final StrikePlan? plan;
   const WeaponView(
     this.characterId, {
     super.key,
@@ -328,6 +342,7 @@ class WeaponView extends StatefulWidget {
     this.phase = WeaponPhase.idle,
     this.charge = 0.0,
     this.identity,
+    this.plan,
   });
 
   @override
@@ -351,6 +366,10 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
   bool _smearing = false;
 
   WeaponDef get _def => weaponFor(widget.characterId);
+
+  /// Guard angle: nearly upright, tipped a little toward the threat so the
+  /// flat/edge reads as a wall between the body and the enemy.
+  double get _guardAngle => 0.12;
 
   /// PERF: the idle sway + swing tween feed the painter directly through
   /// [CustomPainter.repaint]. They used to drive an AnimatedBuilder, i.e. a
@@ -411,31 +430,49 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
       _move.value = 1;
     }
     if (old.phase != widget.phase) {
+      final plan = widget.plan;
       switch (widget.phase) {
         case WeaponPhase.raise:
-          // Anticipation: quick pull back past the shoulder.
+          // Anticipation: pull back past the shoulder. A heavy blow coils
+          // further and longer (plan.windupMs), a light one barely lifts.
           _retarget(
-            _def.raiseAngle,
-            duration: const Duration(milliseconds: 90),
+            plan?.raiseAngle ?? _def.raiseAngle,
+            duration: Duration(milliseconds: plan?.windupMs ?? 90),
             curve: Curves.easeOut,
           );
           break;
         case WeaponPhase.swing:
-          // Strike: whip through the full arc, smear trailing the edge.
+          // Strike: whip through the arc, smear trailing the edge. The
+          // weapon reaches its endpoint a beat before the body's contact
+          // frame so the contact shape lands on a finished pose.
           _retarget(
-            _def.swingAngle,
-            duration: const Duration(milliseconds: 230),
+            plan?.swingAngle ?? _def.swingAngle,
+            duration: Duration(
+              milliseconds: plan == null ? 230 : (plan.travelMs * 0.92).round(),
+            ),
             curve: Curves.easeInCubic,
             smear: true,
           );
           break;
+        case WeaponPhase.guard:
+          // Brace: the weapon comes up across the body, edge toward the
+          // threat, and holds there — no smear, no sway.
+          _retarget(
+            _guardAngle,
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOutCubic,
+          );
+          break;
         case WeaponPhase.idle:
-          // Recovery: settle back to the ready pose with a little
-          // follow-through overshoot (weight lives in the deceleration).
+          // Recovery: settle back to the ready pose. Follow-through is the
+          // weight: a cut overshoots and swings back, a maul just stops.
+          final ft = plan?.followThrough ?? 0.25;
           _retarget(
             _def.idleAngle,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutBack,
+            duration: Duration(milliseconds: plan?.recoverMs ?? 300),
+            curve: ft <= 0.05
+                ? Curves.easeOutCubic
+                : _Overshoot(ft.clamp(0.05, 0.7)),
           );
           break;
       }
@@ -466,6 +503,7 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
             painter: _WeaponPainter(
               _def,
               swayAmp: widget.phase == WeaponPhase.idle ? 0.05 : 0.0,
+              smearIntensity: widget.plan?.smear ?? 0.55,
               angleOf: _angle,
               sway: _sway,
               move: _move,
@@ -493,6 +531,9 @@ class _WeaponPainter extends CustomPainter {
   final double charge; // 0..1 heat from the selected die's pips
   final RunBuildIdentity? identity;
 
+  /// 0..1 how hard the smear trail blazes (plan.smear; legacy 0.55).
+  final double smearIntensity;
+
   /// Live values, read at paint time (see [_paintClock]).
   double get angle => angleOf() + math.sin(sway.value * math.pi * 2) * swayAmp;
   double? get smearFrom => smearing() ? smearFromOf() : null;
@@ -512,6 +553,7 @@ class _WeaponPainter extends CustomPainter {
     required this.smearFromOf,
     this.charge = 0.0,
     this.identity,
+    this.smearIntensity = 0.55,
     required super.repaint,
   });
 
@@ -545,7 +587,7 @@ class _WeaponPainter extends CustomPainter {
           transform: GradientRotation(from - math.pi / 2),
           colors: [
             accent.withValues(alpha: 0.0),
-            accent.withValues(alpha: 0.55),
+            accent.withValues(alpha: smearIntensity.clamp(0.0, 1.0)),
           ],
           stops: const [0.0, 1.0],
         ).createShader(rect);
@@ -1467,18 +1509,48 @@ class _WeaponPainter extends CustomPainter {
 // crescent (player attacks) or a three-line claw rake (enemy attacks, whose
 // sheets have no attack frames), with a spark burst on the impact frame.
 // ---------------------------------------------------------------------------
+/// Ease-out with a tunable overshoot: 0.05 is a firm stop, 0.5 swings well
+/// past the ready pose and settles. Curves.easeOutBack is the fixed 1.70158
+/// version of this.
+class _Overshoot extends Curve {
+  final double amount;
+  const _Overshoot(this.amount);
+  @override
+  double transformInternal(double t) {
+    final s = 1.0 + amount * 3.4;
+    final u = t - 1.0;
+    return u * u * ((s + 1) * u + s) + 1.0;
+  }
+}
+
 class ImpactSlash extends StatefulWidget {
+  /// Legacy switch: enemy claw rake instead of the weapon crescent. Kept so
+  /// existing call sites and tests read unchanged; [shape] wins when given.
   final bool claws;
   final Color color;
   final Duration duration;
   final VoidCallback onDone;
+
+  /// v0.183.0 Bodies in the Fight: the contact shape for this weapon family
+  /// — a blade cuts, a maul shocks the ground, a fang punctures, a chisel
+  /// stamps a mark. Null → crescent (or claws when [claws]).
+  final ContactShape? shape;
+
+  /// Which side the blow came from: +1 the attacker stood screen-left (the
+  /// hero striking), -1 screen-right. Orients thrusts and rakes.
+  final int facing;
   const ImpactSlash({
     super.key,
     required this.onDone,
     this.claws = false,
     this.color = EmberColors.gold,
     this.duration = const Duration(milliseconds: 340),
+    this.shape,
+    this.facing = 1,
   });
+
+  ContactShape get resolvedShape =>
+      shape ?? (claws ? ContactShape.claws : ContactShape.cut);
 
   @override
   State<ImpactSlash> createState() => _ImpactSlashState();
@@ -1504,8 +1576,9 @@ class _ImpactSlashState extends State<ImpactSlash>
         child: CustomPaint(
           painter: _ImpactSlashPainter(
             _t,
-            claws: widget.claws,
+            shape: widget.resolvedShape,
             color: widget.color,
+            facing: widget.facing,
           ),
           size: Size.infinite,
         ),
@@ -1516,11 +1589,16 @@ class _ImpactSlashState extends State<ImpactSlash>
 
 class _ImpactSlashPainter extends CustomPainter {
   final Animation<double> t;
-  final bool claws;
+  final ContactShape shape;
   final Color color;
+  final int facing;
   final Paint _p = Paint();
-  _ImpactSlashPainter(this.t, {required this.claws, required this.color})
-    : super(repaint: t);
+  _ImpactSlashPainter(
+    this.t, {
+    required this.shape,
+    required this.color,
+    this.facing = 1,
+  }) : super(repaint: t);
 
   double _h(int i, int salt) {
     final v = math.sin(i * 157.3 + salt * 269.1) * 43758.5453;
@@ -1533,49 +1611,203 @@ class _ImpactSlashPainter extends CustomPainter {
     if (f >= 1.0) return;
     final c = Offset(size.width / 2, size.height * 0.5);
     final r = size.shortestSide * 0.42;
-    // The slash draws on in the first 40%, fades over the rest — impact
+    // The mark draws on in the first 40%, fades over the rest — impact
     // frame short and violent, decay soft (2D impact-animation anatomy).
     final grow = Curves.easeOutCubic.transform((f / 0.4).clamp(0.0, 1.0));
     final fade = f < 0.35 ? 1.0 : 1.0 - (f - 0.35) / 0.65;
+    final fx = facing.toDouble();
 
     _p
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    if (claws) {
-      // Three raked lines, upper-left to lower-right across the victim.
-      for (var i = 0; i < 3; i++) {
-        final off = (i - 1) * r * 0.34;
-        final a = Offset(c.dx - r * 0.75 + off, c.dy - r * 0.9);
-        final b = Offset(c.dx + r * 0.55 + off, c.dy + r * 0.8);
+      ..strokeCap = StrokeCap.round
+      ..shader = null;
+    switch (shape) {
+      case ContactShape.claws:
+        // Three raked lines, upper-left to lower-right across the victim.
+        for (var i = 0; i < 3; i++) {
+          final off = (i - 1) * r * 0.34;
+          final a = Offset(c.dx - r * 0.75 + off, c.dy - r * 0.9);
+          final b = Offset(c.dx + r * 0.55 + off, c.dy + r * 0.8);
+          final end = Offset.lerp(a, b, grow)!;
+          _p
+            ..strokeWidth = r * (0.09 - i * 0.015)
+            ..color = color.withValues(alpha: (0.9 - i * 0.18) * fade);
+          canvas.drawLine(a, end, _p);
+        }
+        break;
+      case ContactShape.cut:
+        // One clean crescent smear sweeping through the victim.
+        final rect = Rect.fromCircle(center: c, radius: r);
+        const start = -2.4; // upper-left
+        final sweep = 2.1 * grow;
+        _p
+          ..strokeWidth = r * 0.16
+          ..color = color.withValues(alpha: 0.85 * fade);
+        canvas.drawArc(rect, start, sweep, false, _p);
+        _p
+          ..strokeWidth = r * 0.07
+          ..color = Colors.white.withValues(alpha: 0.8 * fade);
+        canvas.drawArc(
+          rect.deflate(r * 0.02),
+          start + 0.15,
+          sweep * 0.85,
+          false,
+          _p,
+        );
+        break;
+      case ContactShape.crush:
+        // Blunt: a shock ring bursts outward from low on the body, the
+        // ground coughs dust either side, and short shards fly. No edge,
+        // no crescent — nothing about this reads as a cut.
+        final hit = Offset(c.dx, c.dy + r * 0.25);
+        final ring = r * (0.2 + 0.6 * grow);
+        _p
+          ..strokeWidth = r * 0.14 * (1.0 - grow * 0.6)
+          ..color = color.withValues(alpha: 0.9 * fade);
+        canvas.drawCircle(hit, ring, _p);
+        _p
+          ..strokeWidth = r * 0.05
+          ..color = Colors.white.withValues(alpha: 0.85 * fade * (1 - grow));
+        canvas.drawCircle(hit, ring * 0.7, _p);
+        // Shards: five stubby lines radiating up and out.
+        for (var i = 0; i < 5; i++) {
+          final ang = -math.pi * (0.15 + 0.7 * (i / 4));
+          final a = hit + Offset(math.cos(ang), math.sin(ang)) * (r * 0.3);
+          final b =
+              hit +
+              Offset(math.cos(ang), math.sin(ang)) * (r * (0.4 + 0.45 * grow));
+          _p
+            ..strokeWidth = r * 0.06
+            ..color = Colors.white.withValues(alpha: 0.7 * fade);
+          canvas.drawLine(a, b, _p);
+        }
+        // Dust puffs at the floor.
+        _p.style = PaintingStyle.fill;
+        for (var i = 0; i < 6; i++) {
+          final side = i.isEven ? 1.0 : -1.0;
+          final d = r * (0.3 + 0.9 * grow) * (0.6 + _h(i, 7) * 0.4);
+          final p = Offset(
+            c.dx + side * d,
+            size.height * 0.86 - grow * r * 0.35 * _h(i, 8),
+          );
+          _p.color = const Color(
+            0xFF9A8570,
+          ).withValues(alpha: 0.35 * fade * (1 - grow * 0.5));
+          canvas.drawCircle(p, r * (0.10 + 0.14 * grow), _p);
+        }
+        break;
+      case ContactShape.stab:
+        // A puncture: the thrust line drives in from the attacker's side to
+        // a bright point, and short spikes flare from that point only.
+        final tip = Offset(c.dx + fx * r * 0.15, c.dy - r * 0.05);
+        final from = Offset(tip.dx - fx * r * 1.3, tip.dy + r * 0.12);
+        final head = Offset.lerp(from, tip, grow)!;
+        _p
+          ..strokeWidth = r * 0.12
+          ..color = color.withValues(alpha: 0.9 * fade);
+        canvas.drawLine(from, head, _p);
+        _p
+          ..strokeWidth = r * 0.05
+          ..color = Colors.white.withValues(alpha: 0.9 * fade);
+        canvas.drawLine(Offset.lerp(from, tip, 0.35)!, head, _p);
+        if (grow > 0.6) {
+          final k = (grow - 0.6) / 0.4;
+          for (var i = 0; i < 6; i++) {
+            final ang = i * math.pi / 3 + 0.3;
+            final len = r * (0.18 + 0.32 * k);
+            _p
+              ..strokeWidth = r * 0.045
+              ..color = Colors.white.withValues(alpha: 0.85 * fade);
+            canvas.drawLine(
+              tip,
+              tip + Offset(math.cos(ang), math.sin(ang)) * len,
+              _p,
+            );
+          }
+          _p
+            ..style = PaintingStyle.fill
+            ..color = Colors.white.withValues(alpha: fade);
+          canvas.drawCircle(tip, r * 0.09 * (1 + k), _p);
+        }
+        break;
+      case ContactShape.stamp:
+        // A mark is set: a rune diamond flashes on at the contact point,
+        // then a single thin ring leaves it. Deliberate, geometric, quiet.
+        final k = grow;
+        final d = r * (0.45 + 0.25 * k);
+        final diamond = Path()
+          ..moveTo(c.dx, c.dy - d)
+          ..lineTo(c.dx + d * 0.62, c.dy)
+          ..lineTo(c.dx, c.dy + d)
+          ..lineTo(c.dx - d * 0.62, c.dy)
+          ..close();
+        _p
+          ..strokeWidth = r * 0.09
+          ..color = color.withValues(alpha: 0.95 * fade);
+        canvas.drawPath(diamond, _p);
+        _p
+          ..strokeWidth = r * 0.05
+          ..color = Colors.white.withValues(alpha: 0.9 * fade);
+        canvas.drawLine(
+          Offset(c.dx, c.dy - d * 0.55),
+          Offset(c.dx, c.dy + d * 0.55),
+          _p,
+        );
+        canvas.drawLine(
+          Offset(c.dx - d * 0.34, c.dy),
+          Offset(c.dx + d * 0.34, c.dy),
+          _p,
+        );
+        _p
+          ..strokeWidth = r * 0.04
+          ..color = color.withValues(alpha: 0.7 * fade * (1 - k));
+        canvas.drawCircle(c, r * (0.5 + 0.8 * k), _p);
+        break;
+      case ContactShape.hook:
+        // A pull: the arc comes across low and curls back toward the
+        // attacker — the catch — with a second thin rake line trailing it.
+        final rect = Rect.fromCircle(
+          center: c.translate(0, r * 0.15),
+          radius: r * 0.9,
+        );
+        final start = fx > 0 ? 2.9 : 0.25;
+        final sweep = -fx * 2.3 * grow;
+        _p
+          ..strokeWidth = r * 0.15
+          ..color = color.withValues(alpha: 0.85 * fade);
+        canvas.drawArc(rect, start, sweep, false, _p);
+        _p
+          ..strokeWidth = r * 0.06
+          ..color = Colors.white.withValues(alpha: 0.8 * fade);
+        canvas.drawArc(rect.deflate(r * 0.12), start, sweep * 0.9, false, _p);
+        break;
+      case ContactShape.pick:
+        // A chop from close in: a short, steep wedge and a spray of chips.
+        final a = Offset(c.dx - fx * r * 0.45, c.dy - r * 0.85);
+        final b = Offset(c.dx + fx * r * 0.25, c.dy + r * 0.25);
         final end = Offset.lerp(a, b, grow)!;
         _p
-          ..strokeWidth = r * (0.09 - i * 0.015)
-          ..color = color.withValues(alpha: (0.9 - i * 0.18) * fade);
+          ..strokeWidth = r * 0.14
+          ..color = color.withValues(alpha: 0.9 * fade);
         canvas.drawLine(a, end, _p);
-      }
-    } else {
-      // One clean crescent smear sweeping through the victim.
-      final rect = Rect.fromCircle(center: c, radius: r);
-      const start = -2.4; // upper-left
-      final sweep = 2.1 * grow;
-      _p
-        ..strokeWidth = r * 0.16
-        ..color = color.withValues(alpha: 0.85 * fade);
-      canvas.drawArc(rect, start, sweep, false, _p);
-      _p
-        ..strokeWidth = r * 0.07
-        ..color = Colors.white.withValues(alpha: 0.8 * fade);
-      canvas.drawArc(
-        rect.deflate(r * 0.02),
-        start + 0.15,
-        sweep * 0.85,
-        false,
-        _p,
-      );
+        _p
+          ..strokeWidth = r * 0.06
+          ..color = Colors.white.withValues(alpha: 0.85 * fade);
+        canvas.drawLine(Offset.lerp(a, b, 0.3)!, end, _p);
+        break;
     }
-    // Impact sparks: fly out from the center, cooling.
-    _p.style = PaintingStyle.fill;
-    for (var i = 0; i < 9; i++) {
+    // Impact sparks: fly out from the center, cooling. A blunt or chipping
+    // blow throws more, a stamp almost none.
+    final sparkCount = switch (shape) {
+      ContactShape.crush || ContactShape.pick => 13,
+      ContactShape.stamp => 4,
+      ContactShape.stab => 7,
+      _ => 9,
+    };
+    _p
+      ..style = PaintingStyle.fill
+      ..shader = null;
+    for (var i = 0; i < sparkCount; i++) {
       final ang = _h(i, 1) * math.pi * 2;
       final dist = (r * 0.2 + _h(i, 2) * r * 0.9) * Curves.easeOut.transform(f);
       final p = Offset(
