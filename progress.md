@@ -5779,3 +5779,8 @@ single-agent harness rules for this pass.
   Google's review passes. Production still showed 208 at the time.
 - Not done: device FPS/touch review, purchase/restore on Play. Open PR
   #102 left as the critique record.
+- VERIFIED (follow-up check): quick checks passed; publishing overview
+  "Your changes are now in review"; production track lists 210 (0.183.0)
+  "In review" and 208 (0.181.0) "Available on Google Play". Play's release
+  dashboard recommends edge-to-edge handling, bitmap downsampling and R8
+  for 210 — logged as follow-ups, not blockers.

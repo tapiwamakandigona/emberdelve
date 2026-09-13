@@ -67,8 +67,17 @@ Submit new questionnaire), sent after Google's quick checks. Managed
 publishing is off, so the build goes live automatically when Google's review
 completes (typically within seven days).
 
-Production shown to users remained **208 (0.181.0)** at the time of writing;
-do not report 210 as live until the track page shows it.
+Quick checks finished (console: "Your changes are now in review. We may
+find additional issues when reviewing your app."). The production track page
+then read: **210 (0.183.0) — In review**; **208 (0.181.0) — Available on
+Google Play** (released 6 Sept 14:31); track summary "Release 210 (0.183.0)
+in review, 177 countries/regions, 71 installs".
+
+Production shown to users remains **208 (0.181.0)** until Google's review
+passes; do not report 210 as live until the track page shows it. The
+release dashboard also lists three Play recommendations against 210
+(edge-to-edge display, bitmap downsampling, R8 optimisation) — candidates
+for a follow-up, none blocking.
 
 ## Still open
 
