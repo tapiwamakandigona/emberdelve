@@ -63,6 +63,8 @@ import 'temper_sheet.dart';
 import 'share_card.dart';
 import 'motion.dart';
 import 'theme.dart';
+import 'combat_pose.dart';
+import 'gore.dart';
 import 'weapons.dart';
 import 'widgets.dart';
 

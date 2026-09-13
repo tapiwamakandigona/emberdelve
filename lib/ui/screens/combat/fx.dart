@@ -39,14 +39,31 @@ class _Pulse extends StatelessWidget {
 
 /// One transient combat call-out (combo, burn tick, exact-kill, overkill).
 /// One transient stage contact effect (weapon smear, claw rake, guard arc).
-enum _FxKind { slash, claws, guard }
+enum _FxKind { slash, claws, guard, blood }
 
 class _Fx {
   final int id;
   final _FxKind kind;
   final bool onPlayer;
   final Color color;
-  const _Fx(this.id, this.kind, {required this.onPlayer, required this.color});
+
+  /// v0.183.0: contact shape for slash/claws (null → legacy default).
+  final ContactShape? shape;
+
+  /// v0.183.0: blood bursts only — damage / max HP, ichor family, spray seed.
+  final double severity;
+  final Ichor ichor;
+  final int seed;
+  const _Fx(
+    this.id,
+    this.kind, {
+    required this.onPlayer,
+    required this.color,
+    this.shape,
+    this.severity = 0.0,
+    this.ichor = Ichor.blood,
+    this.seed = 0,
+  });
 }
 
 class _Note {
