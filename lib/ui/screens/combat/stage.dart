@@ -139,6 +139,7 @@ extension _CombatStageBand on _CombatScreenState {
                                 ),
                                 condition: condition,
                                 ichor: Ichor.blood,
+                                showWounds: BloodEffects.enabled.value,
                               ),
                               spriteHeight: heroH,
                               spriteWidth: _spriteWidth(_characterId, heroH),
@@ -213,6 +214,7 @@ extension _CombatStageBand on _CombatScreenState {
                                         intent['kind'] == 'charge',
                                     condition: condition,
                                     ichor: ichorFor(enemyId),
+                                    showWounds: BloodEffects.enabled.value,
                                   ),
                                   spriteHeight: enemyH,
                                   spriteWidth: _spriteWidth(enemyId, enemyH),
@@ -440,9 +442,13 @@ extension _CombatStageBand on _CombatScreenState {
     _choreoTick,
     _uiTick,
     widget.c.playerVitalsTick,
+    BloodEffects.enabled,
   ]);
-  Listenable get _foeBand =>
-      _foeBandCache ??= Listenable.merge([_choreoTick, widget.c.enemyTick]);
+  Listenable get _foeBand => _foeBandCache ??= Listenable.merge([
+    _choreoTick,
+    widget.c.enemyTick,
+    BloodEffects.enabled,
+  ]);
 
   /// Sprite width for [id] at [height] from the sheet's frame aspect (the
   /// SpriteView lays itself out the same way). Falls back to square.

@@ -1,5 +1,29 @@
 # PROJECT.md — Emberdelve
 
+## September 13 current open-PR handoff — blood control + critique
+
+Branch `feat/blood-toggle-review-sep13` targets **`legacy/dice-builder`**,
+not the frozen platformer on `main`. **Leave this PR open for the next
+agent.** This pass adds a saved Blood effects preference and records
+candid current ratings: art **6/10**, animation **4/10**, depth **7/10**
+(subjective design judgment, not an automated grade or a phone playtest).
+
+Start with `docs/reviews/combat-art-depth-critique-2026-09-13.md`, its
+ranked next-agent tasks, and `docs/reviews/blood-toggle-verification-2026-09-13.md`.
+Toggle code/analyzer/main suite are verified: **1,387 tests**, original
+tests/simulation/assets unchanged. Two existing supplemental tools are
+**not green**: the art generator drops authored `hand` metadata from its
+output, and the old UI-playthrough harness omits the keystone phase.
+Do not erase sockets, disable keystones or weaken assertions to pass them.
+
+Next visual priorities: displayed HP/wounds/guard must agree with impact;
+then authored Kindler/Warden body actions with moving grip anchors.
+Larger animation, balance and art changes are critique/handoff work,
+not implemented in this PR. No merge, version bump, tag, new release,
+Play submission or content-rating change in this scope. Blood-off is a
+comfort preference, not automatic rating relief. Device/purchase gates
+below remain open.
+
 ## September 13 verified release resume
 
 `0.183.0+210` ("Bodies in the Fight", PR #103, merge `c611e16`) was built
@@ -7,8 +31,9 @@ and signed by CI run 34743081440, published as GitHub release v0.183.0
 (Latest), and uploaded to the **Play production track at 100% roll-out**
 together with a re-answered IARC questionnaire that declares mild/limited
 blood. Both changes were **sent for Google review** on 13 September; managed
-publishing is off, so they go live when review passes. Until the production
-track page shows 210, the live production build is still 208 (0.181.0).
+publishing is off, so they go live when review passes. At the last check,
+210 was **In review** and 208 (0.181.0) **Available on Google Play**.
+Do not call 210 live until the production track explicitly marks it available.
 Evidence and rating changes: `docs/releases/verification-0.183.0.md`.
 Physical-phone FPS/touch review and Play purchase/restore remain open.
 

@@ -1,0 +1,300 @@
+Emberdelve blood-control verification — 2026-09-13
+Base b8b24a759a1069bc75be83f5a0d3f74dfccd9604; Flutter 3.44.9 / Dart 3.12.2.
+Original tests/sim/assets/dependencies/workflows/version unchanged.
+Output excerpts below; full paths normalised to $REPO/$BASE/$FLUTTER,
+line-ending whitespace stripped for repository hygiene.
+This contains both green main checks and known red supplemental tools.
+
+===== analyze-shipping.log =====
+Analyzing blood-toggle-review...
+No issues found! (ran in 4.0s)
+
+===== full-test-shipping.log =====
+01:15 +1372: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: combat renders die faces and rolling triggers the tray
+01:16 +1373: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: boon screen offers 1-of-3 and skip enters the map
+01:16 +1374: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: picking a boon applies its effect and enters the map
+01:16 +1375: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: risky reroll: gated to unassigned dice, once per turn
+01:17 +1376: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: stale/corrupt autosaves are cleared; healthy v4 saves restore
+01:17 +1377: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: daily delve starts the shared seeded run
+01:17 +1378: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: summary offers a fast Delve again into the boon pick
+01:18 +1379: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: character screen lists all delvers
+01:18 +1380: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: F4: long event option labels wrap instead of clipping
+01:18 +1381: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: F5: event choices produce a concrete outcome toast
+01:18 +1382: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: F10: abandonRun discards the run without banking embers
+01:18 +1383: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: reward screen presents flip cards and picking one works
+01:18 +1384: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: rest at full HP offers an enabled exit back to the map
+01:19 +1385: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: damage and text pops finish without framework exceptions
+01:19 +1386: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/widget_test.dart: intent/burn badges never cover the enemy HP bar on squeezed screens
+01:19 +1387: All tests passed!
+
+===== green-restored.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart
+00:00 +0: old settings preserve blood on; invalid values cannot break load
+00:00 +1: both blood choices round-trip without losing other preferences
+00:00 +2: the real settings file persists off and a subsequent on across loads
+00:00 +3: preference listeners only fire on a real value change
+00:00 +4: en blood setting fits 320px/1.3x and has toggle semantics
+00:01 +5: fr blood setting fits 320px/1.3x and has toggle semantics
+00:01 +6: es blood setting fits 320px/1.3x and has toggle semantics
+00:01 +7: pt blood setting fits 320px/1.3x and has toggle semantics
+00:01 +8: blood off preserves damage and hit feedback (reduced=false)
+00:03 +9: blood off preserves damage and hit feedback (reduced=true)
+00:03 +10: off removes active bursts immediately and they cannot stain later
+00:04 +11: off clears old floor stains; on only stains from future hits
+00:04 +12: both wounded bodies keep fatigue and pallor while blood is off
+00:05 +13: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+00:05 +14: Ichor.ember hidden wound pixels equal a clean sprite; on restores them
+00:05 +15: Ichor.soot hidden wound pixels equal a clean sprite; on restores them
+00:05 +16: Ichor.ichor hidden wound pixels equal a clean sprite; on restores them
+00:05 +17: enemy landed hit remains bloodless; simulator result is unchanged
+00:06 +18: All tests passed!
+
+===== l10n-complete.log =====
+VERIFIED 95 messages x 3 locales; placeholder/key parity; offline catalog
+
+===== sfx.log =====
+SFX mix-bus headroom — sfx slider at max (1.0), voice caps {'dice_roll': 2, 'die_assign': 3, 'reroll': 2, 'enemy_hit': 3, 'player_hit': 2, 'block': 2, 'coin': 3, 'ember_gain': 2, 'whoosh': 2}
+
+| scenario | layers | sample peak | true peak | LUFS-I | clipped | verdict |
+|---|---|---|---|---|---|---|
+| `die_assign_3x_same_frame` | 3 | 5.43 dBFS | 6.00 dBTP | -15.3 | 72 | over ceiling (unreachable) |
+| `die_assign_4x_fast` | 4 | -4.11 dBFS | -3.50 dBTP | -21.0 | 0 | PASS |
+| `roll_then_assigns` | 4 | -3.52 dBFS | -3.20 dBTP | -21.4 | 0 | PASS |
+| `coin_3x_simultaneous` | 3 | 5.87 dBFS | 5.90 dBTP | -12.0 | 122 | over ceiling (unreachable) |
+| `coin_3x_spaced` | 3 | -3.40 dBFS | -3.40 dBTP | -16.6 | 0 | PASS |
+| `enemy_hit_3x_multihit` | 3 | -7.97 dBFS | -7.90 dBTP | -21.4 | 0 | PASS |
+| `full_attack_turn` | 8 | -1.00 dBFS | -0.90 dBTP | -13.7 | 0 | TIGHT |
+| `enemy_turn_block_stack` | 4 | -1.97 dBFS | -2.00 dBTP | -15.9 | 0 | PASS |
+| `ui_tap_over_cascade` | 5 | -3.46 dBFS | -2.90 dBTP | -20.4 | 0 | PASS |
+
+ceiling: FAIL above 0.0 dBTP, TIGHT above -1.0 dBTP
+
+(unreachable) `die_assign_3x_same_frame`: AudioService.handleEvents de-dupes ids within an event batch, and each assign needs its own tap — two identical voices cannot start on the same sample.
+
+(unreachable) `coin_3x_simultaneous`: gold_gained/gold_spent/bought all map to 'coin' and handleEvents plays each id at most once per batch.
+
+Every reachable cascade clears the ceiling.
+
+===== idle-probe.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/tool/combat_idle_probe_test.dart
+00:00 +0: combat idle painter census
+PHASE player_turn after 1 steps
+COMBAT IDLE frames=120 paints=120 (1.0/frame)
+{
+  "RenderCustomPaint": 120
+}
+00:01 +1: All tests passed!
+
+===== current-review-final.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/tool/art_depth_review_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: current combat review: kindler
+00:24 +1: current combat review: warden
+00:47 +2: current combat review: gambler
+01:10 +3: current combat review: runesmith
+01:33 +4: entire delver roster native-size plate
+01:33 +5: blood setting actual-font en narrow plate
+01:34 +6: blood setting actual-font fr narrow plate
+01:34 +7: blood setting actual-font es narrow plate
+01:34 +8: blood setting actual-font pt narrow plate
+01:35 +9: (tearDownAll)
+01:35 +9: All tests passed!
+
+===== depth-probe-complete.log =====
+Running build hooks...Running build hooks...{"catalog":{"characters":22,"dice":30,"enemies":42,"bosses":8,"elites":9,"relics":36,"events":51,"boons":15,"mutators":5,"keystones":4,"runes":6,"enemies_only_attack_block_combinations":39,"enemy_intent_kind_presence":{"attack":39,"attack_block":20,"block":21,"charge":2,"counter":2}},"samples":[{"character":"kindler","difficulty":"easy","seeds":"1..50","runs":50,"wins":45,"win_percent":90,"mean_combat_turns":17.16,"median_final_pool":8.5,"median_loss_floor":4,"invalid_commands":0,"nonterminal_runs":0},{"character":"kindler","difficulty":"normal","seeds":"1..50","runs":50,"wins":31,"win_percent":62,"mean_combat_turns":25.7,"median_final_pool":8.0,"median_loss_floor":5,"invalid_commands":0,"nonterminal_runs":0},{"character":"kindler","difficulty":"hard","seeds":"1..50","runs":50,"wins":22,"win_percent":44,"mean_combat_turns":26.78,"median_final_pool":6.5,"median_loss_floor":4.5,"invalid_commands":0,"nonterminal_runs":0},{"character":"warden","difficulty":"easy","seeds":"1..50","runs":50,"wins":48,"win_percent":96,"mean_combat_turns":18.1,"median_final_pool":9.0,"median_loss_floor":4.0,"invalid_commands":0,"nonterminal_runs":0},{"character":"warden","difficulty":"normal","seeds":"1..50","runs":50,"wins":44,"win_percent":88,"mean_combat_turns":27.34,"median_final_pool":8.0,"median_loss_floor":4.5,"invalid_commands":0,"nonterminal_runs":0},{"character":"warden","difficulty":"hard","seeds":"1..50","runs":50,"wins":25,"win_percent":50,"mean_combat_turns":29.88,"median_final_pool":7.0,"median_loss_floor":5,"invalid_commands":0,"nonterminal_runs":0},{"character":"gambler","difficulty":"easy","seeds":"1..50","runs":50,"wins":46,"win_percent":92,"mean_combat_turns":17.26,"median_final_pool":8.0,"median_loss_floor":4.0,"invalid_commands":0,"nonterminal_runs":0},{"character":"gambler","difficulty":"normal","seeds":"1..50","runs":50,"wins":27,"win_percent":54,"mean_combat_turns":23.16,"median_final_pool":7.0,"median_loss_floor":4,"invalid_commands":0,"nonterminal_runs":0},{"character":"gambler","difficulty":"hard","seeds":"1..50","runs":50,"wins":16,"win_percent":32,"mean_combat_turns":23.02,"median_final_pool":5.0,"median_loss_floor":4.0,"invalid_commands":0,"nonterminal_runs":0},{"character":"runesmith","difficulty":"easy","seeds":"1..50","runs":50,"wins":47,"win_percent":94,"mean_combat_turns":17.4,"median_final_pool":9.0,"median_loss_floor":4,"invalid_commands":0,"nonterminal_runs":0},{"character":"runesmith","difficulty":"normal","seeds":"1..50","runs":50,"wins":30,"win_percent":60,"mean_combat_turns":25.28,"median_final_pool":8.0,"median_loss_floor":5.0,"invalid_commands":0,"nonterminal_runs":0},{"character":"runesmith","difficulty":"hard","seeds":"1..50","runs":50,"wins":19,"win_percent":38,"mean_combat_turns":26.02,"median_final_pool":6.0,"median_loss_floor":5,"invalid_commands":0,"nonterminal_runs":0}]}
+
+===== negative-spawn.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart
+00:00 +0: blood off preserves damage and hit feedback (reduced=false)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TypeWidgetFinder:<Found 1 widget with type "BloodBurst": [
+            BloodBurst-[<'fx-1'>](state: _BloodBurstState#88f61(ticker active)),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart:266:11)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart line 266
+The test description was:
+  blood off preserves damage and hit feedback (reduced=false)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -1: blood off preserves damage and hit feedback (reduced=false) [E]
+  Test failed. See exception logs above.
+  The test description was: blood off preserves damage and hit feedback (reduced=false)
+
+00:02 +0 -1: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: blood off preserves damage and hit feedback (reduced=false)
+
+===== negative-wounds.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart
+00:00 +0: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: equals [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...]
+ordered
+  Actual: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...]
+   Which: at location [9060] is <92> instead of <93>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart:395:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart line 395
+The test description was:
+  Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:00 +0 -1: Ichor.blood hidden wound pixels equal a clean sprite; on restores them [E]
+  Test failed. See exception logs above.
+  The test description was: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+
+===== art-check-baseline.log =====
+Traceback (most recent call last):
+  File "/__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/art/build_delvers.py", line 175, in <module>
+    main()
+    ~~~~^^
+  File "/__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/art/build_delvers.py", line 155, in main
+    assert meta == new_meta, "metadata differs"
+           ^^^^^^^^^^^^^^^^
+AssertionError: metadata differs
+
+===== baseline-play.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart
+00:00 +0: interactive play session
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: empty
+  Actual: [
+            'INVARIANT step 62: illegal transition player_turn → keystone',
+            'STUCK: keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)'
+          ]
+Invariant violations — reproduce with:
+  EMBER_SESSION_SEED=1842571558 flutter test tool/play_session_test.dart
+INVARIANT step 62: illegal transition player_turn → keystone
+STUCK: keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart:582:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart line 582
+The test description was:
+  interactive play session
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +0 -1: interactive play session [E]
+  Test failed. See exception logs above.
+  The test description was: interactive play session
+
+00:09 +0 -1: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart: interactive play session
+
+===== baseline-play-retry.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart
+00:00 +0: interactive play session
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: empty
+  Actual: [
+            'INVARIANT step 62: illegal transition player_turn → keystone',
+            'STUCK: keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)'
+          ]
+Invariant violations — reproduce with:
+  EMBER_SESSION_SEED=1842571558 flutter test tool/play_session_test.dart
+INVARIANT step 62: illegal transition player_turn → keystone
+STUCK: keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart:582:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart line 582
+The test description was:
+  interactive play session
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +0 -1: interactive play session [E]
+  Test failed. See exception logs above.
+  The test description was: interactive play session
+
+00:08 +0 -1: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/tool/play_session_test.dart: interactive play session
+
+===== layout-base.log =====
+00:00 +0: loading /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/test/update_service_test.dart
+00:00 +0: settings UI manual check shows the newer line + copies link
+00:01 +1: All tests passed!
+
+===== layout-retry.log =====
+00:01 +20 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: fr blood setting fits 320px/1.3x and has toggle semantics
+00:02 +21 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/update_service_test.dart: settings UI launch toggle flips and persists
+00:02 +22 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: es blood setting fits 320px/1.3x and has toggle semantics
+00:02 +23 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: pt blood setting fits 320px/1.3x and has toggle semantics
+00:02 +24 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: blood off preserves damage and hit feedback (reduced=false)
+00:03 +25 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: blood off preserves damage and hit feedback (reduced=true)
+00:04 +26 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: off removes active bursts immediately and they cannot stain later
+00:04 +27 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: off clears old floor stains; on only stains from future hits
+00:05 +28 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: both wounded bodies keep fatigue and pallor while blood is off
+00:05 +29 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+00:05 +30 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.ember hidden wound pixels equal a clean sprite; on restores them
+00:05 +31 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.soot hidden wound pixels equal a clean sprite; on restores them
+00:05 +32 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.ichor hidden wound pixels equal a clean sprite; on restores them
+00:06 +33 -1: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: enemy landed hit remains bloodless; simulator result is unchanged
+00:06 +34 -1: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/update_service_test.dart: settings UI manual check shows the newer line + copies link
+
+===== layout-final.log =====
+00:06 +26 -4: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.blood hidden wound pixels equal a clean sprite; on restores them
+00:06 +27 -4: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.ember hidden wound pixels equal a clean sprite; on restores them
+00:06 +28 -4: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.soot hidden wound pixels equal a clean sprite; on restores them
+00:06 +29 -4: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: Ichor.ichor hidden wound pixels equal a clean sprite; on restores them
+00:06 +30 -4: /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: enemy landed hit remains bloodless; simulator result is unchanged
+00:07 +31 -4: Some tests failed.
+
+Failing tests:
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: en blood setting fits 320px/1.3x and has toggle semantics
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: es blood setting fits 320px/1.3x and has toggle semantics
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: fr blood setting fits 320px/1.3x and has toggle semantics
+  /__modal/volumes/vo-duJrVAQESqOKZQ5cau0YtL/repos/emberdelve/.worktrees/blood-toggle-review/test/blood_effects_test.dart: pt blood setting fits 320px/1.3x and has toggle semantics

@@ -1,0 +1,2821 @@
+{
+  "character": "gambler",
+  "seed": 1,
+  "difficulty": "easy",
+  "rolled": [
+    5,
+    1,
+    1
+  ],
+  "natural_health": true,
+  "frames": [
+    {
+      "frame": 0,
+      "clip_ms": 0,
+      "label": "idle",
+      "file": "gambler/000-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 1,
+      "clip_ms": 40,
+      "label": "idle",
+      "file": "gambler/001-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 2,
+      "clip_ms": 80,
+      "label": "idle",
+      "file": "gambler/002-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 3,
+      "clip_ms": 120,
+      "label": "idle",
+      "file": "gambler/003-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 4,
+      "clip_ms": 160,
+      "label": "idle",
+      "file": "gambler/004-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 5,
+      "clip_ms": 200,
+      "label": "idle",
+      "file": "gambler/005-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 6,
+      "clip_ms": 240,
+      "label": "idle",
+      "file": "gambler/006-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 7,
+      "clip_ms": 280,
+      "label": "idle",
+      "file": "gambler/007-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 8,
+      "clip_ms": 320,
+      "label": "idle",
+      "file": "gambler/008-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 9,
+      "clip_ms": 360,
+      "label": "idle",
+      "file": "gambler/009-idle.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 10,
+      "clip_ms": 400,
+      "label": "selected-low",
+      "file": "gambler/010-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 11,
+      "clip_ms": 440,
+      "label": "selected-low",
+      "file": "gambler/011-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 12,
+      "clip_ms": 480,
+      "label": "selected-low",
+      "file": "gambler/012-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 13,
+      "clip_ms": 520,
+      "label": "selected-low",
+      "file": "gambler/013-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 14,
+      "clip_ms": 560,
+      "label": "selected-low",
+      "file": "gambler/014-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 15,
+      "clip_ms": 600,
+      "label": "selected-low",
+      "file": "gambler/015-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 16,
+      "clip_ms": 640,
+      "label": "selected-low",
+      "file": "gambler/016-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 17,
+      "clip_ms": 680,
+      "label": "selected-low",
+      "file": "gambler/017-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 18,
+      "clip_ms": 720,
+      "label": "selected-low",
+      "file": "gambler/018-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 19,
+      "clip_ms": 760,
+      "label": "selected-low",
+      "file": "gambler/019-selected-low.png",
+      "player_hp": 27,
+      "enemy_hp": 19,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.0
+    },
+    {
+      "frame": 20,
+      "clip_ms": 800,
+      "label": "low-attack",
+      "file": "gambler/020-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 21,
+      "clip_ms": 840,
+      "label": "low-attack",
+      "file": "gambler/021-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 22,
+      "clip_ms": 880,
+      "label": "low-attack",
+      "file": "gambler/022-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 23,
+      "clip_ms": 920,
+      "label": "low-attack",
+      "file": "gambler/023-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 24,
+      "clip_ms": 960,
+      "label": "low-attack",
+      "file": "gambler/024-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 25,
+      "clip_ms": 1000,
+      "label": "low-attack",
+      "file": "gambler/025-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 26,
+      "clip_ms": 1040,
+      "label": "low-attack",
+      "file": "gambler/026-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 27,
+      "clip_ms": 1080,
+      "label": "low-attack",
+      "file": "gambler/027-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 28,
+      "clip_ms": 1120,
+      "label": "low-attack",
+      "file": "gambler/028-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 29,
+      "clip_ms": 1160,
+      "label": "low-attack",
+      "file": "gambler/029-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 30,
+      "clip_ms": 1200,
+      "label": "low-attack",
+      "file": "gambler/030-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.29166666666666663
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 31,
+      "clip_ms": 1240,
+      "label": "low-attack",
+      "file": "gambler/031-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 32,
+      "clip_ms": 1280,
+      "label": "low-attack",
+      "file": "gambler/032-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 33,
+      "clip_ms": 1320,
+      "label": "low-attack",
+      "file": "gambler/033-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 34,
+      "clip_ms": 1360,
+      "label": "low-attack",
+      "file": "gambler/034-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 35,
+      "clip_ms": 1400,
+      "label": "low-attack",
+      "file": "gambler/035-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 36,
+      "clip_ms": 1440,
+      "label": "low-attack",
+      "file": "gambler/036-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 37,
+      "clip_ms": 1480,
+      "label": "low-attack",
+      "file": "gambler/037-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 38,
+      "clip_ms": 1520,
+      "label": "low-attack",
+      "file": "gambler/038-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 39,
+      "clip_ms": 1560,
+      "label": "low-attack",
+      "file": "gambler/039-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 40,
+      "clip_ms": 1600,
+      "label": "low-attack",
+      "file": "gambler/040-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 41,
+      "clip_ms": 1640,
+      "label": "low-attack",
+      "file": "gambler/041-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 42,
+      "clip_ms": 1680,
+      "label": "low-attack",
+      "file": "gambler/042-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 43,
+      "clip_ms": 1720,
+      "label": "low-attack",
+      "file": "gambler/043-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 44,
+      "clip_ms": 1760,
+      "label": "low-attack",
+      "file": "gambler/044-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 45,
+      "clip_ms": 1800,
+      "label": "low-attack",
+      "file": "gambler/045-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 46,
+      "clip_ms": 1840,
+      "label": "low-attack",
+      "file": "gambler/046-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 47,
+      "clip_ms": 1880,
+      "label": "low-attack",
+      "file": "gambler/047-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 48,
+      "clip_ms": 1920,
+      "label": "low-attack",
+      "file": "gambler/048-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 49,
+      "clip_ms": 1960,
+      "label": "low-attack",
+      "file": "gambler/049-low-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 50,
+      "clip_ms": 2000,
+      "label": "selected-high",
+      "file": "gambler/050-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 51,
+      "clip_ms": 2040,
+      "label": "selected-high",
+      "file": "gambler/051-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 52,
+      "clip_ms": 2080,
+      "label": "selected-high",
+      "file": "gambler/052-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 53,
+      "clip_ms": 2120,
+      "label": "selected-high",
+      "file": "gambler/053-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 54,
+      "clip_ms": 2160,
+      "label": "selected-high",
+      "file": "gambler/054-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 55,
+      "clip_ms": 2200,
+      "label": "selected-high",
+      "file": "gambler/055-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 56,
+      "clip_ms": 2240,
+      "label": "selected-high",
+      "file": "gambler/056-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 57,
+      "clip_ms": 2280,
+      "label": "selected-high",
+      "file": "gambler/057-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 58,
+      "clip_ms": 2320,
+      "label": "selected-high",
+      "file": "gambler/058-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 59,
+      "clip_ms": 2360,
+      "label": "selected-high",
+      "file": "gambler/059-selected-high.png",
+      "player_hp": 27,
+      "enemy_hp": 17,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 0,
+      "foe_hurt": 0.030908295669922727
+    },
+    {
+      "frame": 60,
+      "clip_ms": 2400,
+      "label": "high-attack",
+      "file": "gambler/060-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 61,
+      "clip_ms": 2440,
+      "label": "high-attack",
+      "file": "gambler/061-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 62,
+      "clip_ms": 2480,
+      "label": "high-attack",
+      "file": "gambler/062-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 63,
+      "clip_ms": 2520,
+      "label": "high-attack",
+      "file": "gambler/063-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 64,
+      "clip_ms": 2560,
+      "label": "high-attack",
+      "file": "gambler/064-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 65,
+      "clip_ms": 2600,
+      "label": "high-attack",
+      "file": "gambler/065-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 66,
+      "clip_ms": 2640,
+      "label": "high-attack",
+      "file": "gambler/066-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 67,
+      "clip_ms": 2680,
+      "label": "high-attack",
+      "file": "gambler/067-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 68,
+      "clip_ms": 2720,
+      "label": "high-attack",
+      "file": "gambler/068-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 69,
+      "clip_ms": 2760,
+      "label": "high-attack",
+      "file": "gambler/069-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 70,
+      "clip_ms": 2800,
+      "label": "high-attack",
+      "file": "gambler/070-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 71,
+      "clip_ms": 2840,
+      "label": "high-attack",
+      "file": "gambler/071-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 72,
+      "clip_ms": 2880,
+      "label": "high-attack",
+      "file": "gambler/072-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "swing"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 73,
+      "clip_ms": 2920,
+      "label": "high-attack",
+      "file": "gambler/073-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 74,
+      "clip_ms": 2960,
+      "label": "high-attack",
+      "file": "gambler/074-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 75,
+      "clip_ms": 3000,
+      "label": "high-attack",
+      "file": "gambler/075-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 76,
+      "clip_ms": 3040,
+      "label": "high-attack",
+      "file": "gambler/076-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 77,
+      "clip_ms": 3080,
+      "label": "high-attack",
+      "file": "gambler/077-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 78,
+      "clip_ms": 3120,
+      "label": "high-attack",
+      "file": "gambler/078-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 79,
+      "clip_ms": 3160,
+      "label": "high-attack",
+      "file": "gambler/079-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 80,
+      "clip_ms": 3200,
+      "label": "high-attack",
+      "file": "gambler/080-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 81,
+      "clip_ms": 3240,
+      "label": "high-attack",
+      "file": "gambler/081-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 82,
+      "clip_ms": 3280,
+      "label": "high-attack",
+      "file": "gambler/082-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 83,
+      "clip_ms": 3320,
+      "label": "high-attack",
+      "file": "gambler/083-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 84,
+      "clip_ms": 3360,
+      "label": "high-attack",
+      "file": "gambler/084-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 85,
+      "clip_ms": 3400,
+      "label": "high-attack",
+      "file": "gambler/085-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 86,
+      "clip_ms": 3440,
+      "label": "high-attack",
+      "file": "gambler/086-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 87,
+      "clip_ms": 3480,
+      "label": "high-attack",
+      "file": "gambler/087-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 88,
+      "clip_ms": 3520,
+      "label": "high-attack",
+      "file": "gambler/088-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 89,
+      "clip_ms": 3560,
+      "label": "high-attack",
+      "file": "gambler/089-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 90,
+      "clip_ms": 3600,
+      "label": "guard",
+      "file": "gambler/090-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 91,
+      "clip_ms": 3640,
+      "label": "guard",
+      "file": "gambler/091-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 92,
+      "clip_ms": 3680,
+      "label": "guard",
+      "file": "gambler/092-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 93,
+      "clip_ms": 3720,
+      "label": "guard",
+      "file": "gambler/093-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 94,
+      "clip_ms": 3760,
+      "label": "guard",
+      "file": "gambler/094-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 95,
+      "clip_ms": 3800,
+      "label": "guard",
+      "file": "gambler/095-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 96,
+      "clip_ms": 3840,
+      "label": "guard",
+      "file": "gambler/096-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 97,
+      "clip_ms": 3880,
+      "label": "guard",
+      "file": "gambler/097-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 98,
+      "clip_ms": 3920,
+      "label": "guard",
+      "file": "gambler/098-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 99,
+      "clip_ms": 3960,
+      "label": "guard",
+      "file": "gambler/099-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 100,
+      "clip_ms": 4000,
+      "label": "guard",
+      "file": "gambler/100-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 101,
+      "clip_ms": 4040,
+      "label": "guard",
+      "file": "gambler/101-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 102,
+      "clip_ms": 4080,
+      "label": "guard",
+      "file": "gambler/102-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 103,
+      "clip_ms": 4120,
+      "label": "guard",
+      "file": "gambler/103-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 104,
+      "clip_ms": 4160,
+      "label": "guard",
+      "file": "gambler/104-guard.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "guard"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 105,
+      "clip_ms": 4200,
+      "label": "enemy-turn",
+      "file": "gambler/105-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 106,
+      "clip_ms": 4240,
+      "label": "enemy-turn",
+      "file": "gambler/106-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 107,
+      "clip_ms": 4280,
+      "label": "enemy-turn",
+      "file": "gambler/107-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 108,
+      "clip_ms": 4320,
+      "label": "enemy-turn",
+      "file": "gambler/108-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 109,
+      "clip_ms": 4360,
+      "label": "enemy-turn",
+      "file": "gambler/109-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 110,
+      "clip_ms": 4400,
+      "label": "enemy-turn",
+      "file": "gambler/110-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 111,
+      "clip_ms": 4440,
+      "label": "enemy-turn",
+      "file": "gambler/111-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 112,
+      "clip_ms": 4480,
+      "label": "enemy-turn",
+      "file": "gambler/112-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 113,
+      "clip_ms": 4520,
+      "label": "enemy-turn",
+      "file": "gambler/113-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 114,
+      "clip_ms": 4560,
+      "label": "enemy-turn",
+      "file": "gambler/114-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 115,
+      "clip_ms": 4600,
+      "label": "enemy-turn",
+      "file": "gambler/115-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle",
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0,
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 116,
+      "clip_ms": 4640,
+      "label": "enemy-turn",
+      "file": "gambler/116-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle",
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0,
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 117,
+      "clip_ms": 4680,
+      "label": "enemy-turn",
+      "file": "gambler/117-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 118,
+      "clip_ms": 4720,
+      "label": "enemy-turn",
+      "file": "gambler/118-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 119,
+      "clip_ms": 4760,
+      "label": "enemy-turn",
+      "file": "gambler/119-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 120,
+      "clip_ms": 4800,
+      "label": "enemy-turn",
+      "file": "gambler/120-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 121,
+      "clip_ms": 4840,
+      "label": "enemy-turn",
+      "file": "gambler/121-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 122,
+      "clip_ms": 4880,
+      "label": "enemy-turn",
+      "file": "gambler/122-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 123,
+      "clip_ms": 4920,
+      "label": "enemy-turn",
+      "file": "gambler/123-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 124,
+      "clip_ms": 4960,
+      "label": "enemy-turn",
+      "file": "gambler/124-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle",
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0,
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 125,
+      "clip_ms": 5000,
+      "label": "enemy-turn",
+      "file": "gambler/125-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle",
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0,
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 126,
+      "clip_ms": 5040,
+      "label": "enemy-turn",
+      "file": "gambler/126-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 127,
+      "clip_ms": 5080,
+      "label": "enemy-turn",
+      "file": "gambler/127-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 128,
+      "clip_ms": 5120,
+      "label": "enemy-turn",
+      "file": "gambler/128-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 129,
+      "clip_ms": 5160,
+      "label": "enemy-turn",
+      "file": "gambler/129-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 130,
+      "clip_ms": 5200,
+      "label": "enemy-turn",
+      "file": "gambler/130-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 131,
+      "clip_ms": 5240,
+      "label": "enemy-turn",
+      "file": "gambler/131-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 132,
+      "clip_ms": 5280,
+      "label": "enemy-turn",
+      "file": "gambler/132-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 133,
+      "clip_ms": 5320,
+      "label": "enemy-turn",
+      "file": "gambler/133-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 134,
+      "clip_ms": 5360,
+      "label": "enemy-turn",
+      "file": "gambler/134-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 135,
+      "clip_ms": 5400,
+      "label": "enemy-turn",
+      "file": "gambler/135-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 136,
+      "clip_ms": 5440,
+      "label": "enemy-turn",
+      "file": "gambler/136-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 137,
+      "clip_ms": 5480,
+      "label": "enemy-turn",
+      "file": "gambler/137-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 138,
+      "clip_ms": 5520,
+      "label": "enemy-turn",
+      "file": "gambler/138-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 139,
+      "clip_ms": 5560,
+      "label": "enemy-turn",
+      "file": "gambler/139-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 140,
+      "clip_ms": 5600,
+      "label": "enemy-turn",
+      "file": "gambler/140-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 141,
+      "clip_ms": 5640,
+      "label": "enemy-turn",
+      "file": "gambler/141-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 142,
+      "clip_ms": 5680,
+      "label": "enemy-turn",
+      "file": "gambler/142-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 143,
+      "clip_ms": 5720,
+      "label": "enemy-turn",
+      "file": "gambler/143-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 144,
+      "clip_ms": 5760,
+      "label": "enemy-turn",
+      "file": "gambler/144-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 145,
+      "clip_ms": 5800,
+      "label": "enemy-turn",
+      "file": "gambler/145-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 146,
+      "clip_ms": 5840,
+      "label": "enemy-turn",
+      "file": "gambler/146-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 147,
+      "clip_ms": 5880,
+      "label": "enemy-turn",
+      "file": "gambler/147-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 148,
+      "clip_ms": 5920,
+      "label": "enemy-turn",
+      "file": "gambler/148-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 149,
+      "clip_ms": 5960,
+      "label": "enemy-turn",
+      "file": "gambler/149-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 150,
+      "clip_ms": 6000,
+      "label": "enemy-turn",
+      "file": "gambler/150-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 151,
+      "clip_ms": 6040,
+      "label": "enemy-turn",
+      "file": "gambler/151-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 152,
+      "clip_ms": 6080,
+      "label": "enemy-turn",
+      "file": "gambler/152-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 153,
+      "clip_ms": 6120,
+      "label": "enemy-turn",
+      "file": "gambler/153-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 154,
+      "clip_ms": 6160,
+      "label": "enemy-turn",
+      "file": "gambler/154-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 155,
+      "clip_ms": 6200,
+      "label": "enemy-turn",
+      "file": "gambler/155-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 156,
+      "clip_ms": 6240,
+      "label": "enemy-turn",
+      "file": "gambler/156-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 157,
+      "clip_ms": 6280,
+      "label": "enemy-turn",
+      "file": "gambler/157-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 158,
+      "clip_ms": 6320,
+      "label": "enemy-turn",
+      "file": "gambler/158-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 159,
+      "clip_ms": 6360,
+      "label": "enemy-turn",
+      "file": "gambler/159-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 160,
+      "clip_ms": 6400,
+      "label": "enemy-turn",
+      "file": "gambler/160-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 161,
+      "clip_ms": 6440,
+      "label": "enemy-turn",
+      "file": "gambler/161-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 162,
+      "clip_ms": 6480,
+      "label": "enemy-turn",
+      "file": "gambler/162-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 163,
+      "clip_ms": 6520,
+      "label": "enemy-turn",
+      "file": "gambler/163-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 164,
+      "clip_ms": 6560,
+      "label": "enemy-turn",
+      "file": "gambler/164-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 165,
+      "clip_ms": 6600,
+      "label": "enemy-turn",
+      "file": "gambler/165-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 166,
+      "clip_ms": 6640,
+      "label": "enemy-turn",
+      "file": "gambler/166-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 167,
+      "clip_ms": 6680,
+      "label": "enemy-turn",
+      "file": "gambler/167-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 168,
+      "clip_ms": 6720,
+      "label": "enemy-turn",
+      "file": "gambler/168-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 169,
+      "clip_ms": 6760,
+      "label": "enemy-turn",
+      "file": "gambler/169-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 170,
+      "clip_ms": 6800,
+      "label": "enemy-turn",
+      "file": "gambler/170-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 171,
+      "clip_ms": 6840,
+      "label": "enemy-turn",
+      "file": "gambler/171-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 172,
+      "clip_ms": 6880,
+      "label": "enemy-turn",
+      "file": "gambler/172-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 173,
+      "clip_ms": 6920,
+      "label": "enemy-turn",
+      "file": "gambler/173-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    },
+    {
+      "frame": 174,
+      "clip_ms": 6960,
+      "label": "enemy-turn",
+      "file": "gambler/174-enemy-turn.png",
+      "player_hp": 20,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "idle"
+      ],
+      "weapon_charges": [
+        0.0
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    }
+  ]
+}

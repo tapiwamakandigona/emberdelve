@@ -182,6 +182,10 @@ class SpriteView extends StatefulWidget {
 
   /// What this body bleeds (colours the wound marks). Ignored while fresh.
   final Ichor ichor;
+
+  /// Comfort setting: hide bloody marks without resetting the body's
+  /// condition. Breathing, tremor, posture and pallor remain informative.
+  final bool showWounds;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -194,6 +198,7 @@ class SpriteView extends StatefulWidget {
     this.dye,
     this.condition = Condition.fresh,
     this.ichor = Ichor.blood,
+    this.showWounds = true,
   });
 
   @override
@@ -407,6 +412,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           dye: widget.dye,
           condition: widget.condition,
           ichor: widget.ichor,
+          showWounds: widget.showWounds,
           repaint: _repaintDriver,
         ),
       ),
@@ -432,6 +438,7 @@ class _SpritePainter extends CustomPainter {
   final ColorFilter? dye;
   final Condition condition;
   final Ichor ichor;
+  final bool showWounds;
   // Zero-alloc hot path (2026-09-01): this painter repaints at 60fps for
   // every idling sprite, and the painter INSTANCE survives across frames
   // (repaint rides the listenable, not a rebuild) — so the Paint is built
@@ -454,6 +461,7 @@ class _SpritePainter extends CustomPainter {
     required this.dye,
     this.condition = Condition.fresh,
     this.ichor = Ichor.blood,
+    this.showWounds = true,
     required super.repaint,
   });
 
@@ -513,7 +521,7 @@ class _SpritePainter extends CustomPainter {
       canvas.translate(size.width, 0);
       canvas.scale(-1, 1);
     }
-    final wounds = cond.wounds;
+    final wounds = showWounds ? cond.wounds : 0;
     if (wounds == 0) {
       canvas.drawImageRect(img, src, dst, _paint);
     } else {
@@ -573,5 +581,6 @@ class _SpritePainter extends CustomPainter {
       old.dye != dye ||
       old.condition.wounds != condition.wounds ||
       old.condition.hurt != condition.hurt ||
+      old.showWounds != showWounds ||
       old.ichor != ichor;
 }

@@ -62,6 +62,7 @@ import 'sprites.dart';
 import 'temper_sheet.dart';
 import 'share_card.dart';
 import 'motion.dart';
+import 'blood_effects.dart';
 import 'theme.dart';
 import 'combat_pose.dart';
 import 'gore.dart';
