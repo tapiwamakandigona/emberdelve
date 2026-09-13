@@ -259,6 +259,7 @@ class _CombatScreenState extends State<CombatScreen> {
   void initState() {
     super.initState();
     _wireBands();
+    BloodEffects.enabled.addListener(_onBloodEffectsChanged);
     // v0.10.0 The First Delve: the up-front tutorial wall is gone. The
     // fight-start moment fires the ROLL-THEN-SPEND tip on the first-ever
     // fight only; every other rule is taught at its own first contact
@@ -296,10 +297,23 @@ class _CombatScreenState extends State<CombatScreen> {
 
   @override
   void dispose() {
+    BloodEffects.enabled.removeListener(_onBloodEffectsChanged);
     _choreoTick.dispose();
     _fxTick.dispose();
     _uiTick.dispose();
     super.dispose();
+  }
+
+  /// Remove ongoing and historical gore immediately, even when Settings
+  /// covers this route. Enabling again affects future hits only; old stains
+  /// and cancelled bursts must not return. Body bands observe the same
+  /// preference independently, preserving their normal narrow rebuilds.
+  void _onBloodEffectsChanged() {
+    if (BloodEffects.enabled.value) return;
+    _fxUpdate(() {
+      _fx.removeWhere((fx) => fx.kind == _FxKind.blood);
+      _stains.clear();
+    });
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
@@ -327,6 +341,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// victim's max HP; the burst flies away from the attacker and leaves
   /// stains on the floor for the rest of the encounter.
   void _spawnBlood(double severity, {required bool onPlayer}) {
+    if (!BloodEffects.enabled.value) return;
     final ichor = onPlayer
         ? Ichor.blood
         : ichorFor((_enemy?['id'] as String?) ?? '', player: false);
@@ -349,7 +364,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// (victim-anchored) into stage fractions. Capped so a long fight never
   /// paints without bound.
   void _keepStains(List<FloorStain> landed, {required bool onPlayer}) {
-    if (landed.isEmpty || !mounted) return;
+    if (!BloodEffects.enabled.value || landed.isEmpty || !mounted) return;
     _fxUpdate(() {
       for (final s in landed) {
         // Burst boxes sit at the stage's left (player) or right (enemy)

@@ -10,8 +10,9 @@
 // a splatter show. Everything is deterministic (seeded by hit index) so
 // frames never flicker and tests can pin it. No saveLayer, no blur.
 //
-// Content rating note: this is the only place blood is drawn. The Play
-// rating questionnaire must declare it (docs/release.md).
+// Content rating note: sprites.dart also paints bloody wound marks. The
+// comfort setting suppresses both paths, but blood remains available when
+// enabled, so it must still be declared in the Play rating questionnaire.
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'combat_pose.dart';
