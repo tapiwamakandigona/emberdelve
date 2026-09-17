@@ -101,3 +101,47 @@
 - Source sheets untouched. Two cached native rig atlases add 112640 decoded
   RGBA bytes; no new asset files or dependencies. Other 20 delvers retain
   standalone sprite/weapon fallback. No visual-quality claim from green math.
+
+## Iteration 3/6 — requested character redesigns
+
+- Owner added: "also better and more suitable character designs".
+  ASSUMED design direction communicated: soot-worn firekeeper Kindler versus
+  heavy shield-bearer Warden, grounded in the game's forge-and-ash world.
+- Plan updated before implementation. Source art/Kindler/Warden PNGs and
+  matching rig/metadata are now allowed; all existing gameplay/ID/unlock
+  contracts and original tests stay protected. No blanket roster-recolour
+  claim: this is a first two-character production pass.
+- New CHARACTERS acceptance records real integration, provenance, original
+  margins/binary alpha/memory gates and the unchanged other 20 models.
+  Six-iteration hard cap remains; not resetting it for the new message.
+- First motion captures completed at commit a7359b1. Automated descriptions
+  of the footage were inconsistent about poses/colours; not used as a
+  subjective visual-quality pass. Re-evaluate final plates explicitly.
+- First generated source had fine shading and a thin forward sleeve; one
+  image refinement requested coarser clusters/clearer grip. No further image
+  retries. Kept final generated source and both prompts with candid provenance.
+- VERIFIED inherited generator failure locally before repair:
+  `AssertionError: metadata differs`. Production fix supplies authored
+  hand_anchors rather than reading expected output back into the builder;
+  original checks/assertions unchanged. Rebuild plus --check now pass.
+- VERIFIED 22 models, 38952 compressed PNG bytes, 675840 decoded RGBA bytes;
+  nearest silhouette IoU 0.7321 (Warden/Miller), below original 0.93 bound.
+  Only Kindler/Warden PNGs and sprite metadata changed among shipped assets.
+- New native cells remove baked primary weapons; updated joint positions
+  and exact wrist metadata. Deleted now-unneeded weapon-removal masks and
+  sword underpaint. Targeted original model/blood and articulation 31/31 pass.
+- Added two design tests: actual native wrist pixels are opaque and belong
+  to the hand layer; metadata matches rig coordinates, every required limb
+  has painted source pixels, and existing IDs/kits/unlocks are pinned.
+  Both pass; analyzer clean.
+- Full-suite command reached `02:58 +1413: All tests passed!` in its log,
+  but the enclosing shell reached `command timed out after 200000 milliseconds`
+  before exit-code read-back. Retry the gate once as tracked background work,
+  not repeated foreground timeouts.
+- Actual 320px Kindler phone probe and source/pose plate pass. In-app pose
+  preview delivered; no human aesthetic approval inferred from that delivery.
+- VERIFIED single tracked retry finished with exit 0: full suite 1413/1413.
+  This resolves the foreground deadline, not a product/test failure.
+- Iteration 3 complete as a source checkpoint. Final rendered shoulder,
+  wrist and shield continuity remains an iteration-4 review item; automated
+  visual descriptions are not sufficient to mark body/art acceptance true.

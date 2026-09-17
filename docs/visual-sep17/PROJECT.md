@@ -24,7 +24,12 @@ layer. Deliver an open, verified source PR with actual-render evidence.
   will initially target #104's branch, making its incremental diff reviewable.
 - Preserve original tests, all sealed sim files, dependencies, workflows,
   version, saves and entitlements. No release, tag, merge or Play action.
-- Preserve game palette/fonts, roster identities, pixel sizes and actual art.
+- Preserve game palette/fonts, roster identities and native pixel budgets.
+- September 18 owner scope addition: improve actual character designs, not
+  only animation. Redesign Kindler/Warden source art and sheets, with
+  reproducible conversion/provenance and matching grip metadata. The other
+  20 character sheets remain unchanged. This supersedes the earlier
+  assistant-selected constraint to preserve all shipped character art.
 - Authored pose means anatomy changes, not a renamed whole-sprite transform.
 - Physical phone/touch/FPS and Play billing stay explicitly unverified.
 - No authentication data in this repo or any verification artifact.
@@ -45,16 +50,18 @@ layer. Deliver an open, verified source PR with actual-render evidence.
 
 ## Current phase
 
-Iteration 2 implemented: Kindler/Warden source-pixel limb rigs and shared
-wrist/weapon clock. Analyzer clean; 63 targeted cases and full 1411/1411
-pass. Body math/live wiring verified; actual visual-quality review still
-pending in iteration 3. Baseline captures are preserved separately.
+Iteration 3 implemented: new Kindler/Warden source art, reproducible native
+conversion, matching joints/grip metadata and candid provenance. Analyzer
+clean; full 1413/1413 with exit 0. Other twenty models byte-identical.
+Iteration 4 checks rendered joint continuity and all phone-size fixtures;
+math alone does not establish gap-free anatomy or human aesthetic approval.
+Six-iteration cap unchanged.
 
 ## Iterations
 
 1. Presentation contact ledger and timed regression evidence.
 2. Shared body/grip transform and authored Kindler/Warden articulation.
-3. Visual polish at phone widths, low/high dice, blood off, guard and fatigue.
-4. Edge cases and regression sweep; no expansion into gameplay.
+3. Kindler/Warden character redesign, source conversion and matching rig.
+4. Visual polish/edge cases at phone widths; guard, fatigue, blood off.
 5. Full verification and evidence packaging.
 6. Reserved single corrective/descope iteration; do not overrun.

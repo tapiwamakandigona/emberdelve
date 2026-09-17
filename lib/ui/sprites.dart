@@ -171,23 +171,12 @@ List<ui.Image> _rigImages(SpriteSheetDef def, ui.Image source) {
           for (var y = 0; y < 40; y++) {
             var x = 0;
             while (x < 32) {
-              if (rig.partAt(x, y) != part || rig.replacesGear(x, y)) {
-                if (rig.partAt(x, y) == part) {
-                  final repair = rig.repairAt(x, y);
-                  if (repair != null) {
-                    canvas.drawRect(
-                      Rect.fromLTWH(x.toDouble(), y.toDouble(), 1, 1),
-                      paint..color = repair,
-                    );
-                  }
-                }
+              if (rig.partAt(x, y) != part) {
                 x++;
                 continue;
               }
               final start = x++;
-              while (x < 32 &&
-                  rig.partAt(x, y) == part &&
-                  !rig.replacesGear(x, y)) {
+              while (x < 32 && rig.partAt(x, y) == part) {
                 x++;
               }
               final rect = Rect.fromLTWH(

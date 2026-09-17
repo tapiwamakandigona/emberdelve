@@ -5861,3 +5861,16 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Scoped plan, acceptance and append-only details in `docs/visual-sep17/`.
   Real baseline captures preserved; body/grip and after-render work pending.
 - No merge, release, tag, signed-build dispatch or Play action.
+
+## 2026-09-18 — visual pass, iterations 2–3/6: body rigs and characters
+
+- VERIFIED separate source-pixel body layers and shared moving wrist for
+  Kindler/Warden, with low/high-die poses, fatigue and reduced-motion checks.
+- Owner requested better, more suitable character designs. Integrated a
+  firekeeper Kindler and armored shield-bearer Warden, with empty primary
+  grips for the existing runtime weapons. Other twenty model PNGs unchanged.
+- VERIFIED authored hand metadata repairs inherited builder divergence;
+  generator check, analyzer and all 1413 tests pass. Provenance records
+  generated source and deterministic native conversion without artist claims.
+- Final phone-size/articulation review pending; details and evidence in
+  `docs/visual-sep17/`. No release, merge or physical-device claim.

@@ -100,22 +100,22 @@ class CombatRig {
 
   static const kindler = CombatRig(
     id: 'kindler',
-    hip: Offset(16, 28),
-    neck: Offset(17, 14),
-    shoulder: Offset(18.5, 17.5),
-    elbow: Offset(20, 20.5),
-    wrist: Offset(23, 20.5),
+    hip: Offset(16, 27),
+    neck: Offset(17, 10),
+    shoulder: Offset(17.5, 14.5),
+    elbow: Offset(19.5, 18.5),
+    wrist: Offset(24.5, 17.5),
     rearFoot: Offset(10.5, 37.5),
-    frontFoot: Offset(17.5, 37.5),
+    frontFoot: Offset(21.5, 37.5),
   );
   static const warden = CombatRig(
     id: 'warden',
-    hip: Offset(15, 28),
-    neck: Offset(17, 12),
-    shoulder: Offset(8, 16),
-    elbow: Offset(6, 20.5),
-    wrist: Offset(6.5, 24.5),
-    rearFoot: Offset(8, 37.5),
+    hip: Offset(15, 25),
+    neck: Offset(16, 8),
+    shoulder: Offset(10, 11),
+    elbow: Offset(8.5, 15.5),
+    wrist: Offset(10.5, 18.5),
+    rearFoot: Offset(8.5, 37.5),
     frontFoot: Offset(20.5, 37.5),
   );
   static CombatRig? forId(String id) => switch (id) {
@@ -129,46 +129,27 @@ class CombatRig {
   RigPart partAt(int x, int y) {
     if (id == 'kindler') {
       if (y >= 35) return x < 14 ? RigPart.rearFoot : RigPart.frontFoot;
-      if (x >= 22 && x <= 24 && y >= 20 && y <= 21) return RigPart.hand;
-      if (x >= 20 && y >= 19 && y < 23) return RigPart.forearm;
-      if (x >= 17 && x <= 21 && y >= 16 && y <= 20) return RigPart.upperArm;
-      if (y < 15) return RigPart.head;
-      if (y >= 30 && x >= 9 && x < 14) return RigPart.rearLeg;
-      if (y >= 30 && x >= 14 && x <= 20) return RigPart.frontLeg;
-      if (x < 12 || (y >= 28 && (x < 9 || x > 20))) return RigPart.cape;
+      if (x >= 24 && y >= 16 && y <= 19) return RigPart.hand;
+      if (x >= 20 && y >= 16 && y <= 20) return RigPart.forearm;
+      if (x >= 16 && x <= 20 && y >= 14 && y <= 19) return RigPart.upperArm;
+      if (y < 10) return RigPart.head;
+      if (y >= 28 && x >= 8 && x < 15) return RigPart.rearLeg;
+      if (y >= 28 && x >= 15) return RigPart.frontLeg;
+      if (x < 10 && y < 18) return RigPart.cape;
       return RigPart.torso;
     }
-    if (x >= 21 && y >= 12 && y <= 34) return RigPart.shield;
+    if (x >= 21 && y >= 9 && y <= 30) return RigPart.shield;
     if (y >= 35) return x < 14 ? RigPart.rearFoot : RigPart.frontFoot;
-    if (x >= 4 && x <= 7 && y >= 23 && y <= 25) return RigPart.hand;
-    if (x < 11 && y >= 21 && y < 27) return RigPart.forearm;
-    if (x < 12 && y >= 11 && y < 21) return RigPart.upperArm;
-    if (x >= 12 && y < 13) return RigPart.head;
+    if (x >= 9 && x <= 12 && y >= 17 && y <= 19) return RigPart.hand;
+    if (x < 13 && y >= 15 && y < 20) return RigPart.forearm;
+    if (x < 13 && y >= 7 && y < 15) return RigPart.upperArm;
+    if (x >= 12 && y < 8) return RigPart.head;
     if (y >= 28) return x < 14 ? RigPart.rearLeg : RigPart.frontLeg;
     return RigPart.torso;
   }
 
-  /// The source Kindler carries a torch and Warden a diagonal sword.
-  /// Those are replaced in combat by the existing Ember Brand / Ward Maul;
-  /// portraits and original PNGs are never changed.
-  bool replacesGear(int x, int y) {
-    if (id == 'kindler') return (x >= 24 && y < 20) || (x >= 25 && y == 20);
-    const starts = [8, 9, 10, 12, 15, 17, 20, 20];
-    const ends = [11, 12, 15, 18, 21, 23, 24, 23];
-    if (y < 24 || y > 31) return false;
-    return x >= starts[y - 24] && x < ends[y - 24];
-  }
-
-  /// Small combat-only underpaint where the old sword hid the coat/leg.
-  /// Exact colours from Warden's existing native palette, not new art
-  /// direction. No fill outside the body or over the tower-shield outline.
-  Color? repairAt(int x, int y) {
-    if (id != 'warden' || !replacesGear(x, y)) return null;
-    if (x >= 21) return const Color(0xFF2C2634);
-    if (x < 11) return y <= 25 ? const Color(0xFF18172A) : null;
-    if (y == 25 && x >= 13 && x <= 18) return const Color(0xFF6B492F);
-    return (x + y) % 3 == 0 ? const Color(0xFF18172A) : const Color(0xFF2C2634);
-  }
+  // Redesigned models have an empty primary grip, so no destructive
+  // equipment masks or invented underpaint are needed.
 }
 
 /// Authored key pose, interpolated before solving the actual joints.
@@ -190,7 +171,11 @@ class RigPose {
     final heavy = rig.id == 'warden';
     switch (beat) {
       case RigBeat.ready:
-        return RigPose(handFromShoulder: rig.wrist - rig.shoulder);
+        return RigPose(
+          handFromShoulder: heavy
+              ? const Offset(3.5, 4)
+              : rig.wrist - rig.shoulder,
+        );
       case RigBeat.windup:
         return heavy
             ? RigPose(

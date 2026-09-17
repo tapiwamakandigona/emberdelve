@@ -12,8 +12,16 @@
     {
       "id": "BODY-GRIP",
       "title": "Articulated Kindler/Warden action with attached weapon",
-      "acceptance": "Kindler and Warden show distinct upper/lower-body and arm action, readable low/high die commitment and planted recovery. Body and weapon share a moving grip through idle, attack, guard and fatigue; original art identity and other roster fallback preserved.",
+      "acceptance": "Kindler and Warden show distinct upper/lower-body and arm action, readable low/high die commitment and planted recovery. Body and weapon share a moving grip through idle, attack, guard and fatigue; recognizable roster identity and other roster fallback preserved. Owner requested improved character designs on September 18; matching new art is allowed.",
       "verify": "flutter test test/combat_articulation_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "CHARACTERS",
+      "title": "More suitable Kindler and Warden character designs",
+      "acceptance": "Integrate redesigned Kindler and Warden in portraits and combat: distinct silhouettes, forge/ash role-appropriate costume, weapons coherent with gameplay, readable at native mobile sizes. Preserve all 22 IDs, abilities, unlocks, binary alpha, frame margins and memory budgets. Record source provenance and reproducible production build; show actual renders, not just concepts. Other 20 sheets unchanged.",
+      "verify": "python3 tool/art/build_delvers.py --check && flutter test test/delver_models_test.dart test/character_design_test.dart",
       "passes": false,
       "evidence": ""
     },
@@ -28,7 +36,7 @@
     {
       "id": "GATES",
       "title": "Green scoped verification and preserved contracts",
-      "acceptance": "Analyzer, full original-plus-additive test suite, SFX and scoped feature checks pass; original tests/sim/dependencies/workflows/assets unchanged except explicitly documented production metadata. Existing unrelated red supplemental tools and device gates are reported, not hidden.",
+      "acceptance": "Analyzer, full original-plus-additive test suite, SFX and scoped feature checks pass; original tests/sim/dependencies/workflows unchanged. Asset exceptions are the owner-requested Kindler/Warden redesign sheets and their production metadata, documented with provenance. All other shipped assets unchanged. Existing unrelated red supplemental tools and device gates are reported, not hidden.",
       "verify": "flutter analyze && flutter test && python3 tool/sfx_headroom.py",
       "passes": false,
       "evidence": ""

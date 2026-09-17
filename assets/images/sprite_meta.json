@@ -789,7 +789,7 @@
   "characters": [
     {
       "id": "kindler",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -812,13 +812,13 @@
       "fps": 6,
       "scale": 1,
       "hand": [
-        0.8,
-        0.47
+        0.765625,
+        0.4375
       ]
     },
     {
       "id": "warden",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -841,8 +841,8 @@
       "fps": 6,
       "scale": 1,
       "hand": [
-        0.8,
-        0.55
+        0.328125,
+        0.4625
       ]
     },
     {
