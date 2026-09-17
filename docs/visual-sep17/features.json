@@ -1,0 +1,37 @@
+{
+  "$comment": "Machine-readable definition of done. Only flip passes to true with evidence (a command that ran, an artifact that exists). Workers never edit verify commands or acceptance criteria — that's a spec change, report it.",
+  "features": [
+    {
+      "id": "CONTACT",
+      "title": "Visual damage and guard resolve at contact",
+      "acceptance": "Displayed health, wounds and guard retain pre-contact values during windup/travel, then update at impact, without delaying or changing simulation. Cover enemy hits, player hits, counter/riposte, terminal flow, queue, reduced motion and fast-forward.",
+      "verify": "flutter test test/combat_contact_timeline_test.dart",
+      "passes": true,
+      "evidence": "Iteration 1: 12 contact regressions fail on unchanged #104 and pass after production fix; analyzer clean; full suite 1399/1399 including existing queue and terminal coverage. See progress.md; logs retained for final evidence package."
+    },
+    {
+      "id": "BODY-GRIP",
+      "title": "Articulated Kindler/Warden action with attached weapon",
+      "acceptance": "Kindler and Warden show distinct upper/lower-body and arm action, readable low/high die commitment and planted recovery. Body and weapon share a moving grip through idle, attack, guard and fatigue; original art identity and other roster fallback preserved.",
+      "verify": "flutter test test/combat_articulation_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "RENDER",
+      "title": "Actual-render phone evidence",
+      "acceptance": "Capture real Flutter before/after timelines and pose plates at phone widths 320/360/412, including blood off, reduced motion, full/partial guard and wounded states; verify layout and source-pixel grip math. Explicitly distinguish deterministic captures from device FPS and subjective approval.",
+      "verify": "flutter test tool/visual_sep17_review_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "GATES",
+      "title": "Green scoped verification and preserved contracts",
+      "acceptance": "Analyzer, full original-plus-additive test suite, SFX and scoped feature checks pass; original tests/sim/dependencies/workflows/assets unchanged except explicitly documented production metadata. Existing unrelated red supplemental tools and device gates are reported, not hidden.",
+      "verify": "flutter analyze && flutter test && python3 tool/sfx_headroom.py",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}

@@ -1,5 +1,14 @@
 # PROJECT.md — Emberdelve
 
+## September 17 visual pass (source PR only)
+
+Current scoped plan and definition of done: `docs/visual-sep17/PROJECT.md`
+and `docs/visual-sep17/features.json`. Build on #104's `0df9d51` blood-control
+handoff; leave #102/#104 open. Prioritize contact-timed visual health/guard,
+then articulated Kindler/Warden bodies and continuous weapon grips.
+Single executor, six-iteration cap. No merge, release, version or Play action.
+Previous feature criteria and device gates remain unchanged.
+
 ## September 13 current open-PR handoff — blood control + critique
 
 Branch `feat/blood-toggle-review-sep13` targets **`legacy/dice-builder`**,

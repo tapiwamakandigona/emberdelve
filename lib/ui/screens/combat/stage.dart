@@ -120,8 +120,9 @@ extension _CombatStageBand on _CombatScreenState {
                         child: ListenableBuilder(
                           listenable: _heroBand,
                           builder: (context, _) {
-                            final player =
-                                widget.c.state?['player'] as Map? ?? const {};
+                            final player = _shownPlayer(
+                              widget.c.state?['player'] as Map? ?? const {},
+                            );
                             final condition = Condition.of(
                               (player['hp'] as int?) ?? 1,
                               (player['max_hp'] as int?) ?? 1,
@@ -192,7 +193,7 @@ extension _CombatStageBand on _CombatScreenState {
                             child: ListenableBuilder(
                               listenable: _foeBand,
                               builder: (context, _) {
-                                final live = _enemy ?? enemy;
+                                final live = _shownEnemy ?? enemy;
                                 final condition = Condition.of(
                                   (live['hp'] as int?) ?? 1,
                                   (live['max_hp'] as int?) ?? 1,
@@ -440,12 +441,14 @@ extension _CombatStageBand on _CombatScreenState {
   /// Listenables for the two bodies (cached per state; see _wireBands).
   Listenable get _heroBand => _heroBandCache ??= Listenable.merge([
     _choreoTick,
+    _contactTick,
     _uiTick,
     widget.c.playerVitalsTick,
     BloodEffects.enabled,
   ]);
   Listenable get _foeBand => _foeBandCache ??= Listenable.merge([
     _choreoTick,
+    _contactTick,
     widget.c.enemyTick,
     BloodEffects.enabled,
   ]);

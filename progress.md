@@ -5847,3 +5847,17 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Blood-off is a comfort preference, not automatic age-rating relief.
   Existing Play declaration/submission untouched. No claim this PR or
   its larger proposed changes is released.
+
+## 2026-09-17 — visual pass, iteration 1/6: contact causality
+
+- VERIFIED review of PRs and remote branches; new work stacks on open #104
+  head `0df9d51`, preserving blood comfort controls. #102/#104 left open.
+- Added a presentation-only contact ledger: displayed HP, wounds and guard
+  follow hit, riposte and burn beats while the deterministic sim stays
+  synchronous. Lethal enemy HP remains zero during the held terminal route.
+- VERIFIED 12 additive timing regressions red on unchanged #104, green
+  with the implementation; analyzer clean; full suite 1399/1399.
+  Original tests, sim, art, dependencies, workflows and version unchanged.
+- Scoped plan, acceptance and append-only details in `docs/visual-sep17/`.
+  Real baseline captures preserved; body/grip and after-render work pending.
+- No merge, release, tag, signed-build dispatch or Play action.
