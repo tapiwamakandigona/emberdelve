@@ -45,10 +45,10 @@ layer. Deliver an open, verified source PR with actual-render evidence.
 
 ## Current phase
 
-Iteration 1 verified: 12 new contact cases reproduce the defects on #104,
-then pass after production wiring; full suite 1399/1399, analyzer clean.
-Baseline real-render samples are preserved separately. Next: iteration 2,
-segmented source-pixel Kindler/Warden articulation and continuous grip.
+Iteration 2 implemented: Kindler/Warden source-pixel limb rigs and shared
+wrist/weapon clock. Analyzer clean; 63 targeted cases and full 1411/1411
+pass. Body math/live wiring verified; actual visual-quality review still
+pending in iteration 3. Baseline captures are preserved separately.
 
 ## Iterations
 

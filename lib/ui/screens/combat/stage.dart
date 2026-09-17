@@ -127,21 +127,39 @@ extension _CombatStageBand on _CombatScreenState {
                               (player['hp'] as int?) ?? 1,
                               (player['max_hp'] as int?) ?? 1,
                             );
+                            final rig = CombatRig.forId(_characterId);
                             return _combatant(
-                              sprite: SpriteView(
-                                _characterId,
-                                key: ValueKey('hero-$_characterId'),
-                                height: heroH,
-                                bob: true, // LFP-4a: the stage always breathes
-                                // v0.27.0: the delver wears their dye into
-                                // the fight; enemies are never tinted.
-                                dye: Art.dyeFilter(
-                                  widget.c.meta.dyeFor(_characterId),
-                                ),
-                                condition: condition,
-                                ichor: Ichor.blood,
-                                showWounds: BloodEffects.enabled.value,
-                              ),
+                              sprite: rig != null
+                                  ? CombatFigure(
+                                      key: ValueKey('figure-$_characterId'),
+                                      rig: rig,
+                                      height: heroH,
+                                      phase: _weaponPhase,
+                                      plan: _playerPlan,
+                                      charge: _weaponCharge,
+                                      knock: _playerKnock,
+                                      condition: condition,
+                                      showWounds: BloodEffects.enabled.value,
+                                      dye: Art.dyeFilter(
+                                        widget.c.meta.dyeFor(_characterId),
+                                      ),
+                                      identity: identity,
+                                    )
+                                  : SpriteView(
+                                      _characterId,
+                                      key: ValueKey('hero-$_characterId'),
+                                      height: heroH,
+                                      bob:
+                                          true, // LFP-4a: the stage always breathes
+                                      // v0.27.0: the delver wears their dye into
+                                      // the fight; enemies are never tinted.
+                                      dye: Art.dyeFilter(
+                                        widget.c.meta.dyeFor(_characterId),
+                                      ),
+                                      condition: condition,
+                                      ichor: Ichor.blood,
+                                      showWounds: BloodEffects.enabled.value,
+                                    ),
                               spriteHeight: heroH,
                               spriteWidth: _spriteWidth(_characterId, heroH),
                               lungeToward: 1,
@@ -153,6 +171,7 @@ extension _CombatStageBand on _CombatScreenState {
                               braced: _playerBraced,
                               condition: condition,
                               plan: _playerPlan,
+                              articulated: rig != null,
                               hand: SpriteMeta.cachedOrNull
                                   ?.sheet(_characterId)
                                   ?.hand,
@@ -160,23 +179,25 @@ extension _CombatStageBand on _CombatScreenState {
                               // hand socket, coils on the wind-up, swings
                               // with the lunge, braces across the body on
                               // guard.
-                              weapon: WeaponView(
-                                _characterId,
-                                // Keep state across pool evolution; changing
-                                // the build should morph the existing weapon,
-                                // not restart its choreography controller.
-                                key: const ValueKey('combat-weapon'),
-                                height: heroH,
-                                phase: _weaponPhase,
-                                // Die -> weapon causality made visible: the
-                                // selected die's pips heat the blade before
-                                // the swing.
-                                charge: _weaponCharge,
-                                // The weapon's edge/profile now reflects the
-                                // pool forged so far (presentation only).
-                                identity: identity,
-                                plan: _playerPlan,
-                              ),
+                              weapon: rig != null
+                                  ? null
+                                  : WeaponView(
+                                      _characterId,
+                                      // Keep state across pool evolution; changing
+                                      // the build should morph the existing weapon,
+                                      // not restart its choreography controller.
+                                      key: const ValueKey('combat-weapon'),
+                                      height: heroH,
+                                      phase: _weaponPhase,
+                                      // Die -> weapon causality made visible: the
+                                      // selected die's pips heat the blade before
+                                      // the swing.
+                                      charge: _weaponCharge,
+                                      // The weapon's edge/profile now reflects the
+                                      // pool forged so far (presentation only).
+                                      identity: identity,
+                                      plan: _playerPlan,
+                                    ),
                             );
                           },
                         ),
@@ -491,6 +512,10 @@ extension _CombatStageBand on _CombatScreenState {
 
     /// Forward-hand socket on the idle frame (frame fractions), if known.
     Offset? hand,
+
+    /// Joint rig owns anatomy/weight shift; do not also squash the whole
+    /// sprite matrix. Stage translation and terminal treatment stay shared.
+    bool articulated = false,
   }) {
     Widget w = sprite;
     final dir = lungeToward.toDouble();
@@ -616,10 +641,13 @@ extension _CombatStageBand on _CombatScreenState {
       enemyPlan: enemyPlan,
       windup: windup,
     );
-    final m = Matrix4.identity()
-      ..translateByDouble(pose.dx, -pose.lift * spriteHeight, 0.0, 1.0)
-      ..rotateZ(pose.lean)
-      ..scaleByDouble(pose.scaleX, pose.scaleY, pose.scaleX, 1.0);
+    final m = Matrix4.identity();
+    if (!articulated) {
+      m
+        ..translateByDouble(pose.dx, -pose.lift * spriteHeight, 0.0, 1.0)
+        ..rotateZ(pose.lean)
+        ..scaleByDouble(pose.scaleX, pose.scaleY, pose.scaleX, 1.0);
+    }
     w = Transform.scale(
       alignment: Alignment.bottomCenter,
       scale: depthScale,
@@ -633,7 +661,12 @@ extension _CombatStageBand on _CombatScreenState {
     );
     // Lunge toward the opponent / knockback away from them. The stab
     // travels furthest, the maul barely leaves its feet (plan.advance).
-    final advance = lunge ? (plan?.advance ?? enemyPlan?.advance ?? 1.0) : 0.0;
+    // Jointed bodies keep their weight over the feet: translate less than
+    // the old whole-sprite launch, with the distinct cut/maul advances intact.
+    final advance = lunge
+        ? (plan?.advance ?? enemyPlan?.advance ?? 1.0) *
+              (articulated ? 0.72 : 1.0)
+        : 0.0;
     final dx = lunge
         ? 1.15 * advance * lungeToward
         : knock

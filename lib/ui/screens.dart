@@ -66,6 +66,8 @@ import 'blood_effects.dart';
 import 'theme.dart';
 import 'combat_pose.dart';
 import 'combat_presentation.dart';
+import 'combat_articulation.dart';
+import 'combat_figure.dart';
 import 'gore.dart';
 import 'weapons.dart';
 import 'widgets.dart';

@@ -8,8 +8,10 @@
 import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'combat_articulation.dart';
 import 'combat_pose.dart';
 import 'motion.dart';
 
@@ -127,6 +129,11 @@ Future<void> warmSpriteSheets() async {
     for (final def in meta.enemies.values) _loadSheetImage(def.assetPath),
     for (final def in meta.characters.values) _loadSheetImage(def.assetPath),
   ]);
+  for (final def in meta.characters.values) {
+    if (CombatRig.forId(def.id) != null) {
+      _rigImages(def, _imageCache[def.assetPath]!);
+    }
+  }
 }
 
 @visibleForTesting
@@ -144,6 +151,118 @@ Future<ui.Image> _loadSheetImage(String assetPath) {
     final frame = await codec.getNextFrame();
     return _imageCache[assetPath] = frame.image;
   }();
+}
+
+// Tiny combat-only cutouts, cached once per native sheet (11 x 32 x 40).
+// Cropping on load avoids per-frame masking/saveLayers. Source PNGs, portrait
+// rows and palettes are unchanged. Only the two authored rigs use these.
+final Map<String, List<ui.Image>> _rigImageCache = {};
+List<ui.Image> _rigImages(SpriteSheetDef def, ui.Image source) {
+  return _rigImageCache.putIfAbsent(def.assetPath, () {
+    final rig = CombatRig.forId(def.id)!;
+    final paint = Paint()
+      ..filterQuality = FilterQuality.none
+      ..isAntiAlias = false;
+    return [
+      for (final part in RigPart.values)
+        () {
+          final recorder = ui.PictureRecorder();
+          final canvas = Canvas(recorder);
+          for (var y = 0; y < 40; y++) {
+            var x = 0;
+            while (x < 32) {
+              if (rig.partAt(x, y) != part || rig.replacesGear(x, y)) {
+                if (rig.partAt(x, y) == part) {
+                  final repair = rig.repairAt(x, y);
+                  if (repair != null) {
+                    canvas.drawRect(
+                      Rect.fromLTWH(x.toDouble(), y.toDouble(), 1, 1),
+                      paint..color = repair,
+                    );
+                  }
+                }
+                x++;
+                continue;
+              }
+              final start = x++;
+              while (x < 32 &&
+                  rig.partAt(x, y) == part &&
+                  !rig.replacesGear(x, y)) {
+                x++;
+              }
+              final rect = Rect.fromLTWH(
+                start.toDouble(),
+                y.toDouble(),
+                (x - start).toDouble(),
+                1,
+              );
+              canvas.drawImageRect(
+                source,
+                rect,
+                rect,
+                paint..color = Colors.white,
+              );
+            }
+          }
+          final picture = recorder.endRecording();
+          final image = picture.toImageSync(32, 40);
+          picture.dispose();
+          return image;
+        }(),
+    ];
+  });
+}
+
+/// The same native gauntlet is painted over the held tool so its shaft
+/// passes THROUGH the grip, not in front of a hand-shaped decoration.
+class SpriteGripOverlay extends StatelessWidget {
+  final String spriteId;
+  final ValueListenable<CombatRigSample> articulation;
+  final ColorFilter? dye;
+  const SpriteGripOverlay(
+    this.spriteId, {
+    super.key,
+    required this.articulation,
+    this.dye,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final def = SpriteMeta.cachedOrNull?.sheet(spriteId);
+    final images = def == null ? null : _rigImageCache[def.assetPath];
+    if (images == null) return const SizedBox.shrink();
+    return IgnorePointer(
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: _GripPainter(images[RigPart.hand.index], articulation, dye),
+        ),
+      ),
+    );
+  }
+}
+
+class _GripPainter extends CustomPainter {
+  final ui.Image image;
+  final ValueListenable<CombatRigSample> articulation;
+  final ColorFilter? dye;
+  late final Paint _paint = Paint()
+    ..filterQuality = FilterQuality.none
+    ..colorFilter = dye;
+  _GripPainter(this.image, this.articulation, this.dye)
+    : super(repaint: articulation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.height / 40);
+    canvas.transform(articulation.value.part(RigPart.hand).matrix);
+    canvas.drawImage(image, Offset.zero, _paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _GripPainter old) =>
+      old.image != image || old.articulation != articulation || old.dye != dye;
 }
 
 /// A sprite from a sheet. `animate: true` loops the row at the sheet's fps
@@ -186,6 +305,10 @@ class SpriteView extends StatefulWidget {
   /// Comfort setting: hide bloody marks without resetting the body's
   /// condition. Breathing, tremor, posture and pallor remain informative.
   final bool showWounds;
+
+  /// Combat-only first-cell joint rig. Its clock replaces both local loops.
+  /// Null retains the original sheet renderer for portraits/other delvers.
+  final ValueListenable<CombatRigSample>? articulation;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -199,6 +322,7 @@ class SpriteView extends StatefulWidget {
     this.condition = Condition.fresh,
     this.ichor = Ichor.blood,
     this.showWounds = true,
+    this.articulation,
   });
 
   @override
@@ -222,8 +346,12 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   Listenable? _repaintDriver;
   void _rebuildDriver() {
     final parts = <Listenable>[
-      if (_ctrl != null) _ctrl!,
-      if (_life != null && (widget.bob || widget.sway) && widget.animate)
+      if (widget.articulation != null) widget.articulation!,
+      if (_ctrl != null && widget.articulation == null) _ctrl!,
+      if (_life != null &&
+          widget.articulation == null &&
+          (widget.bob || widget.sway) &&
+          widget.animate)
         _life!,
     ];
     _repaintDriver = parts.isEmpty
@@ -238,6 +366,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     // separate clock and unaffected).
     final want =
         widget.animate &&
+        widget.articulation == null &&
         (widget.bob || widget.sway) &&
         !Motion.instance.reduced;
     if (want) {
@@ -264,7 +393,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   void _syncFrameLoop() {
     final c = _ctrl;
     if (c == null) return;
-    if (Motion.instance.reduced) {
+    if (Motion.instance.reduced || widget.articulation != null) {
       c
         ..stop()
         ..value = 0;
@@ -291,7 +420,9 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
   void didUpdateWidget(SpriteView old) {
     super.didUpdateWidget(old);
     _syncLife();
-    if (old.spriteId != widget.spriteId || old.state != widget.state) {
+    if (old.spriteId != widget.spriteId ||
+        old.state != widget.state ||
+        old.articulation != widget.articulation) {
       _ctrl?.dispose();
       _ctrl = null;
       _rebuildDriver();
@@ -314,11 +445,15 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
       final def = warmMeta.sheet(id);
       final img = def == null ? null : _imageCache[def.assetPath];
       if (def != null && img != null) {
+        if (widget.articulation != null) _rigImages(def, img);
         final row = def.row(widget.state) ?? def.row('idle');
         _def = def;
         _row = row;
         _img = img;
-        if (widget.animate && row != null && row.frames > 1) {
+        if (widget.animate &&
+            widget.articulation == null &&
+            row != null &&
+            row.frames > 1) {
           _ctrl = AnimationController(
             vsync: this,
             duration: Duration(
@@ -338,12 +473,16 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
       final img = await _loadSheetImage(def.assetPath);
       if (!mounted || gen != _loadGen || widget.spriteId != id) return;
       final row = def.row(widget.state) ?? def.row('idle');
+      if (widget.articulation != null) _rigImages(def, img);
       setState(() {
         _def = def;
         _row = row;
         _img = img;
       });
-      if (widget.animate && row != null && row.frames > 1) {
+      if (widget.animate &&
+          widget.articulation == null &&
+          row != null &&
+          row.frames > 1) {
         // PERF: no addListener(setState) here. The controller is handed to
         // the painter as its `repaint` Listenable, so a frame step repaints
         // the sprite's own layer only — it never rebuilds this element and
@@ -413,6 +552,10 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           condition: widget.condition,
           ichor: widget.ichor,
           showWounds: widget.showWounds,
+          articulation: widget.articulation,
+          rigImages: widget.articulation == null
+              ? null
+              : _rigImageCache[def.assetPath],
           repaint: _repaintDriver,
         ),
       ),
@@ -439,6 +582,8 @@ class _SpritePainter extends CustomPainter {
   final Condition condition;
   final Ichor ichor;
   final bool showWounds;
+  final ValueListenable<CombatRigSample>? articulation;
+  final List<ui.Image>? rigImages;
   // Zero-alloc hot path (2026-09-01): this painter repaints at 60fps for
   // every idling sprite, and the painter INSTANCE survives across frames
   // (repaint rides the listenable, not a rebuild) — so the Paint is built
@@ -462,6 +607,8 @@ class _SpritePainter extends CustomPainter {
     this.condition = Condition.fresh,
     this.ichor = Ichor.blood,
     this.showWounds = true,
+    this.articulation,
+    this.rigImages,
     required super.repaint,
   });
 
@@ -476,6 +623,12 @@ class _SpritePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final sample = articulation?.value;
+    final images = rigImages;
+    if (sample != null && images != null) {
+      _paintRig(canvas, size, sample, images);
+      return;
+    }
     final src = Rect.fromLTWH(
       (frame * def.frameW).toDouble(),
       (row * def.frameH).toDouble(),
@@ -537,6 +690,36 @@ class _SpritePainter extends CustomPainter {
     canvas.restore();
   }
 
+  void _paintRig(
+    Canvas canvas,
+    Size size,
+    CombatRigSample sample,
+    List<ui.Image> images,
+  ) {
+    canvas.save();
+    canvas.scale(size.height / 40);
+    final wounds = showWounds ? condition.wounds : 0;
+    if (wounds > 0) {
+      canvas.saveLayer(const Rect.fromLTWH(-16, -16, 72, 72), Paint());
+    }
+    for (final part in RigPart.values) {
+      canvas.save();
+      canvas.transform(sample.part(part).matrix);
+      canvas.drawImage(images[part.index], Offset.zero, _paint);
+      canvas.restore();
+    }
+    if (wounds > 0) {
+      // Marks ride the chest transform and are clipped into the composite
+      // source pixels. Blood off skips this layer, not the rig/condition.
+      canvas.save();
+      canvas.transform(sample.part(RigPart.torso).matrix);
+      _paintWounds(canvas, const Size(32, 40), wounds);
+      canvas.restore();
+      canvas.restore();
+    }
+    canvas.restore();
+  }
+
   void _paintWounds(Canvas canvas, Size size, int wounds) {
     final p = _woundPaint ??= Paint()..blendMode = BlendMode.srcATop;
     final (core, rim) = _ichorColors(ichor);
@@ -582,5 +765,6 @@ class _SpritePainter extends CustomPainter {
       old.condition.wounds != condition.wounds ||
       old.condition.hurt != condition.hurt ||
       old.showWounds != showWounds ||
+      old.articulation != articulation ||
       old.ichor != ichor;
 }

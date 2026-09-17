@@ -18,8 +18,10 @@
 // reuse Paint objects and derive per-particle randomness from index hashes
 // (same trick as fx.dart) so nothing allocates per frame.
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'build_identity.dart';
+import 'combat_articulation.dart';
 import 'combat_pose.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -335,6 +337,10 @@ class WeaponView extends StatefulWidget {
   /// smear intensity per weapon family and die tier. Null keeps the
   /// WeaponDef's legacy fixed angles and 90/230/300 ms clock.
   final StrikePlan? plan;
+
+  /// A combat figure supplies its actual moving wrist and weapon angle.
+  /// Null retains this widget's standalone/other-roster choreography.
+  final ValueListenable<CombatRigSample>? articulation;
   const WeaponView(
     this.characterId, {
     super.key,
@@ -343,6 +349,7 @@ class WeaponView extends StatefulWidget {
     this.charge = 0.0,
     this.identity,
     this.plan,
+    this.articulation,
   });
 
   @override
@@ -389,12 +396,12 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
     // neutral idle angle) and stops — the phase tween (_move) stays, it
     // communicates the attack. Frozen clock also stills the ember sparks.
     Motion.instance.addListener(_onMotion);
-    if (!Motion.instance.reduced) _sway.repeat();
+    if (!Motion.instance.reduced && widget.articulation == null) _sway.repeat();
   }
 
   void _onMotion() {
     if (!mounted) return;
-    if (Motion.instance.reduced) {
+    if (Motion.instance.reduced || widget.articulation != null) {
       _sway
         ..stop()
         ..value = 0;
@@ -425,6 +432,11 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(WeaponView old) {
     super.didUpdateWidget(old);
+    if (old.articulation != widget.articulation) _onMotion();
+    if (widget.articulation != null) {
+      _move.stop();
+      return;
+    }
     if (old.characterId != widget.characterId) {
       _from = _to = _def.idleAngle;
       _move.value = 1;
@@ -511,7 +523,8 @@ class _WeaponViewState extends State<WeaponView> with TickerProviderStateMixin {
               smearFromOf: () => _from,
               charge: charge,
               identity: widget.identity,
-              repaint: _paintClock,
+              articulation: widget.articulation,
+              repaint: widget.articulation ?? _paintClock,
             ),
           ),
         ),
@@ -530,14 +543,24 @@ class _WeaponPainter extends CustomPainter {
   final double Function() smearFromOf;
   final double charge; // 0..1 heat from the selected die's pips
   final RunBuildIdentity? identity;
+  final ValueListenable<CombatRigSample>? articulation;
 
   /// 0..1 how hard the smear trail blazes (plan.smear; legacy 0.55).
   final double smearIntensity;
 
   /// Live values, read at paint time (see [_paintClock]).
-  double get angle => angleOf() + math.sin(sway.value * math.pi * 2) * swayAmp;
-  double? get smearFrom => smearing() ? smearFromOf() : null;
-  double get sparkTime => sway.value; // sway clock reused for spark motion
+  double get angle =>
+      articulation?.value.weaponAngle ??
+      angleOf() + math.sin(sway.value * math.pi * 2) * swayAmp;
+  double? get smearFrom {
+    final sample = articulation?.value;
+    if (sample != null) {
+      return sample.smear > 0 ? sample.previousWeaponAngle : null;
+    }
+    return smearing() ? smearFromOf() : null;
+  }
+
+  double get sparkTime => articulation?.value.sparkTime ?? sway.value;
   final Paint _p = Paint();
   final Paint _outline = Paint()
     ..style = PaintingStyle.stroke
@@ -553,6 +576,7 @@ class _WeaponPainter extends CustomPainter {
     required this.smearFromOf,
     this.charge = 0.0,
     this.identity,
+    this.articulation,
     this.smearIntensity = 0.55,
     required super.repaint,
   });
@@ -566,7 +590,9 @@ class _WeaponPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final grip = Offset(size.width * 0.5, size.height * 0.66);
+    final grip =
+        articulation?.value.weaponGrip(size.height) ??
+        Offset(size.width * 0.5, size.height * 0.66);
     final tier = identity?.dominantTier ?? 1;
     final reach = size.height * def.reach * (1.0 + (tier - 1) * 0.035);
     final accent = _accent;

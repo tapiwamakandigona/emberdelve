@@ -61,3 +61,43 @@
 - Bookkeeping patch partially applied before a root-log context mismatch:
   `Failed to find expected lines`. Verified scoped hunks present; retry
   appends the new root section against the actual file tail only.
+
+- Commit call exceeded the shell's 10000ms deadline; read-back initially
+  saw staged files while the managed operation completed. One retry returned
+  `nothing to commit, working tree clean`. Reconciled against Git, rather
+  than retrying again: VERIFIED commit `92373eefd633c8028a44a4e64b181d83fc8d81f0`,
+  expected subject, clean worktree. Use longer managed-call deadlines.
+
+## Iteration 2/6 — jointed source-pixel action and shared grip
+
+- Plan: preserve the original sheets; segment the first idle cell for
+  Kindler/Warden into torso/head, two legs, upper arm/forearm, and foreground
+  shield/gauntlet. Drive these through one shared motion sample; the weapon
+  painter must use that sample's transformed wrist, not a second idle clock.
+- Authored cut versus overhead-maul poses will use different wrist paths,
+  independent chest/head rotation, weight shift and planted foot anchors.
+  The other 20 delvers retain their existing rendering fallback.
+- Source-pixel inspection finds baked primary equipment (Kindler torch,
+  Warden diagonal sword) in addition to the runtime blade/maul. Combat-only
+  masks will replace those pixels, retaining costume/shield and using the
+  existing sprite palette beneath the removed sword. Shipped PNGs unchanged.
+- Acceptance: joint/grip invariants, low/high commitment, actual live
+  consumer wiring, blood-off fatigue, reduced-motion stillness and full
+  regression. Rendered quality remains unverified until the next iteration.
+- First format pass failed at the new overlay constructor:
+  `line 210, column 69 of lib/ui/sprites.dart: Expected to find ')'`.
+  Removed the extra comma after the named-argument group; retry once.
+- Analyzer: `Undefined class 'ValueListenable'` (six references), plus two
+  `Statements in an if should be enclosed in a block` infos. Added the
+  explicit foundation import and braces; acceptance unchanged.
+- VERIFIED analyzer clean after correction; 63 targeted cases pass, full
+  suite 1411/1411 (1387 original + 12 contact + 12 articulation cases).
+- Joint tests sweep 3000 pose/condition samples and assert exact shoulder,
+  elbow, wrist and boot seams; live SpriteView/WeaponView/gauntlet consume
+  the identical sampled wrist notifier. Native-height 72/96/104 alignment.
+- VERIFIED reduced idle paints zero custom painters in the isolated figure;
+  pixel comparisons show blood on/off changes marks, fatigue persists,
+  restored blood-off pixels match, information-bearing action still moves.
+- Source sheets untouched. Two cached native rig atlases add 112640 decoded
+  RGBA bytes; no new asset files or dependencies. Other 20 delvers retain
+  standalone sprite/weapon fallback. No visual-quality claim from green math.
