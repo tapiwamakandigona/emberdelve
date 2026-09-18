@@ -29,6 +29,9 @@ art, all-character native-pixel/phone evidence and green scoped checks.
   runtime signature tools must remain coherent; no generic recolour roster.
 - Six existing tool-motion families remain meaningful. Extend explicit mapping
   to the rest of the signature tools and author matching body poses.
+- Actual render verification found that the presentation parsed tempered
+  `custom_N` dice as d6. Correct that size lookup through the existing run-die
+  resolver, with additive red/green tier/heat tests; do not change dice or sim.
 - Preserve sealed sim, gameplay/content definitions, saves, purchases,
   dependencies, workflows, version and all unrelated assets/evidence.
 - A single old acceptance assertion that only two delvers can opt into rigs is
@@ -68,4 +71,8 @@ art, all-character native-pixel/phone evidence and green scoped checks.
 
 ## Current phase
 
-Foundation / iteration 1. Baseline and source art not yet verified for this pass.
+Iterations 1–8 verified. All 22 playable rigs and six tool-family paths are
+integrated. Actual phone/picker/native capture matrix passes 72/72; a real
+tempered-die size presentation defect found there has a red/green regression.
+Iteration9 is final whole-suite/integrity/evidence closure and publication.
+Do not treat the green baseline as the final tree's result. Reserve10 unused.

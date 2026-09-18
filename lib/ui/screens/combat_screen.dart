@@ -455,7 +455,10 @@ class _CombatScreenState extends State<CombatScreen> {
     final sel = selected;
     if (rolled == null || sel == null || sel > rolled.length) return null;
     final id = ids != null && sel <= ids.length ? ids[sel - 1] : 'd6';
-    return (rolled[sel - 1], dice[id]?.size ?? sidesOfDieId(id));
+    // Tempered custom_N IDs have no numeric size in their name. Resolve the
+    // same catalog base the sim/tray use; a marked d12 is not a fallback d6.
+    final size = resolveRunDie(st?['run'] as Map?, id).def.size;
+    return (rolled[sel - 1], size);
   }
 
   /// Selected die pips -> weapon heat (0..1). Keeps glowing through the

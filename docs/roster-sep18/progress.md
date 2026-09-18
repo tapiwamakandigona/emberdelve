@@ -124,3 +124,83 @@
   the unchanged 675840-byte decoded-sheet budget and not a frame-rate claim.
 - Iteration 7 complete. Actual full-phone/portrait captures and final gates
   are still required before marking the scoped features complete.
+
+## Iteration 8 of 10 — full-phone and roster visual evidence
+
+- Plan: all 22 × 3 phone widths with actual GameRoot, attacks/guards and
+  blood-off/reduced/text fixtures; all selection portraits and particle-free
+  low/high native-size pose plates. Explicitly label controlled enemy HP and
+  rolled faces used to exercise every unchanged kit.
+- New render-tool analyzer flagged two visible-for-testing calls under
+  `tool/` rather than `test/`:
+  `The member 'reset' can only be used within 'package:emberdelve/ui/motion.dart' or a test`
+  and `The member 'debugSpriteSheetCached' can only be used within 'package:emberdelve/ui/sprites.dart' or a test`.
+  Use the public motion update; locally document the test-only cache assertion
+  without removing it or changing analyzer policy. One corrected retry.
+- VERIFIED analyzer retry clean. First narrow-phone pilot stopped with:
+  `Bad state: Too many elements`
+  at `_observe`'s global `tester.widget<WeaponView>` during incoming contact.
+  Source inspection verified the existing 60ms hit-flash AnimatedSwitcher
+  temporarily paints two complete figures. The capture probe now asserts the
+  sprite/tool/hand contract separately for EVERY painted figure, not a global
+  singleton. No production change or assertion suppression.
+- Pre-retry fixture review found three additional assumptions to correct:
+  resolve original run-local tempered dice before comparing kit IDs; honor die
+  and relic minimum faces (Tinker's legal low comes from the plain d6 with floor
+  2, not Steady Ember); use `sides - 1` for high, because a d4's ceil(80%) is
+  MAX, not high. Recompute combo flags/bonuses for the labelled forced faces.
+  Keep original kit/temper checks and exact tier expectations. One corrected
+  pilot retry follows; no game code is changed by these fixture corrections.
+- VERIFIED corrected narrow-phone pilot passed, exit 0, all 190 sampled
+  observations retained. Every transitional figure copy is checked. Start the
+  complete 72-case capture matrix; sampled clip time is separately labelled
+  from the fixture clock, because roll/setup time between actions is omitted.
+- Full capture revealed a real pre-existing presentation defect on Bearer and
+  Mender, not permission to loosen the tier assertion:
+  `Expected: DieTier:<DieTier.high>`
+  `Actual: DieTier:<DieTier.max>`.
+  `_selectedFace` parsed `custom_N` as an unknown d6 instead of resolving its
+  unchanged run-local catalog base. Their d12/d8 high rolls therefore chose a
+  max-tier body/weapon plan. Sealed simulation resolution already uses the
+  correct size; rolls/damage are not being changed.
+- Plan revision within iteration 8: after the first complete capture run,
+  add a red/green widget regression for tempered d4/d6/d8/d10/d12 relative
+  tiers/heat; change only the presentation size lookup to `resolveRunDie`,
+  then one corrected full capture retry with all tier assertions intact.
+  Include this narrowly scoped extra original-file diff in integrity/PR notes.
+- First complete run ended exit 1: 63 passed / 9 failed. Six failures are the
+  same real tempered-die defect (Bearer/Mender × three widths). The other three
+  are picker-probe ambiguity after reaching wardrobe name controls:
+  `The "getTopLeft()" method needs a single target.`
+  Scope the finder to the actual `EmberText.h2` card heading, retain every
+  portrait expectation, and add explicit viewport bounds. No production picker
+  change is needed. First-run pixels/logs are preserved as pre-fix evidence.
+- VERIFIED additive red control failed on the actual defect:
+  `Expected: a numeric value within <1e-10> of <0.9291666666666666>`
+  `Actual: <1.0>`
+  `custom d12 face 11 must not use a d6 denominator`.
+  Changed only `_selectedFace`'s size lookup to the already-imported
+  `resolveRunDie`. No simulation/gameplay mutation. Run the unchanged new
+  20-case d4/d6/d8/d10/d12 × four-tier regression as green verification.
+- VERIFIED all 20 tempered tier/heat regression cases pass after the production
+  lookup fix; the regression itself is unchanged from red. Corrected picker
+  capture passes at all three widths, all 66 portraits include bounds checks.
+  Preserve first-run output separately, then perform the one full-matrix retry.
+- VERIFIED corrected full capture exit 0, 72/72: every playable character at
+  320×568/360×640/412×892, all selection portraits, 72/96/104px native plates.
+  12540 observations, max grip error 2.842170943040401e-14 logical px; all
+  outgoing/incoming hit-flash copies checked. 4608 PNGs are fully inventoried.
+- VERIFIED evidence assembler exit 0. Source comparison uses all22 exact
+  #105 PNG hashes. Six individual 190-frame/7.6s/25fps-encoding clips plus a
+  labelled six-family comparison; roll/setup gaps explicitly omitted. Phone
+  sampling is not physical-device FPS. Curated evidence/readme committed;
+  full raw output retained separately rather than bloating the source PR.
+- Source atlases inspected directly; trade silhouettes, empty forward gloves
+  and separate boots present. Artistic approval is not inferred from tests
+  or model descriptions. Shared real captures for owner review privately.
+- Iteration 8 complete: actual-render evidence exposed and fixed the tempered
+  tier/heat presentation defect, with additive red/green regression. Final
+  whole-suite/integrity/publish remains iteration9; reserve10 unused.
+- Checkpoint wrapper did not launch because the shell parsed an unquoted
+  commit subject: `syntax error near unexpected token '('`. No managed Git
+  mutation ran. Retry once with the complete subject quoted.
