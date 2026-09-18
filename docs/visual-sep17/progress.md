@@ -188,3 +188,48 @@
   visual pixels. Existing HUD text-scale clamp is preserved.
 - Iteration 4 complete; final full regression/SFX/integrity and review
   evidence packaging are iteration 5. No physical-device FPS claim.
+
+## Iteration 5/6 — final gates, evidence and incremental PR
+
+- Plan: rerun analyzer, full test suite, native-art generator and SFX against
+  source checkpoint ddfc127. Package original #104 and final phone renders,
+  observation logs, red controls and integrity evidence with exact source
+  identities. Check the live base branch/PR before pushing.
+- Open a new review PR stacked on #104's branch; do not close or modify old
+  PRs, merge, release or trigger signed builds. CI status must be read back,
+  not inferred from local tests. Device/billing and inherited supplemental
+  play-session-tool limitations remain explicit.
+- VERIFIED final gates on ddfc127: analyzer clean, 1415/1415 tests, native
+  art build and SFX exit 0. Existing full-attack headroom remains -0.90 dBTP
+  TIGHT; all reachable cascades clear the ceiling.
+- Verification-tool correction: managed Git truncates long inventories and
+  returns a "Full output saved to:" path. The earlier credential scanner
+  read only the displayed excerpts, so its reported 8xx-file coverage was
+  incomplete (the independent protected SHA checks were not affected).
+  Read the complete saved listing and require every original file to be
+  present; rerun before push. Never treat truncated stdout as an inventory.
+- Final automated video descriptions still disagree with authored source
+  details and contain implausible claims. They are not accepted as human
+  aesthetic approval. The PR provides actual final frames/clips and
+  independently passing raster/grip/contact evidence without numeric art
+  scores or a claim of physical-device review.
+- Additive verification-only proof for the previous critique's particle-free
+  criterion: isolate the real CombatFigure at its exact 72/104 logical-pixel
+  phone sizes, low/high poses, recoil and forced 20%-HP fatigue. Keep source
+  and all existing tests untouched; this closes a proof gap, not a new
+  implementation iteration.
+- VERIFIED particle-free native probe 2/2 and subsequent analyzer clean.
+  Curated repository evidence includes both synchronized before/after clips,
+  source/pose plates, actual72/104px isolated poses, all six observation
+  logs and explicit forced fixtures. Full original renders preserved.
+- VERIFIED complete-inventory credential scan passes after truncation fix;
+  all262 original tests and all protected sim/dependency/workflow hashes
+  match #104. Only documented Kindler/Warden sheets and metadata differ
+  among protected assets. Final integrity report includes each SHA-256.
+- Re-read live #104: still OPEN/DRAFT at 0df9d51; #102 also open, shipping
+  branch unchanged. No remote version of the new branch exists yet.
+- All five scoped feature criteria now carry evidence. Root art-reproduction
+  and body-acting follow-ups marked passing with new evidence; keystone UI,
+  physical-device and Play billing follow-ups left unchanged/false.
+- Human aesthetic approval remains NOT VERIFIED. This is an evidence-backed
+  two-character implementation ready for review, not a release approval.

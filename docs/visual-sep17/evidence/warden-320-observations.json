@@ -1,0 +1,5969 @@
+{
+  "character": "warden",
+  "seed": 1,
+  "difficulty": "easy",
+  "viewport": [
+    320.0,
+    568.0
+  ],
+  "roll": [
+    5,
+    1,
+    2
+  ],
+  "interval_ms": 40,
+  "frames": [
+    {
+      "frame": 0,
+      "ms": 0,
+      "label": "idle",
+      "file": "warden-320/000-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.326120045231804
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.943728236132255
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 1,
+      "ms": 40,
+      "label": "idle",
+      "file": "warden-320/001-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.27240903929552
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.890017230195973
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 2,
+      "ms": 80,
+      "label": "idle",
+      "file": "warden-320/002-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.22316055507955
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.84076874598
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 3,
+      "ms": 120,
+      "label": "idle",
+      "file": "warden-320/003-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.179957479388374
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.797565670288826
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 4,
+      "ms": 160,
+      "label": "idle",
+      "file": "warden-320/004-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.144188394622322
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.761796585522774
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 5,
+      "ms": 200,
+      "label": "idle",
+      "file": "warden-320/005-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.117002948596674
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.734611139497126
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 6,
+      "ms": 240,
+      "label": "idle",
+      "file": "warden-320/006-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.099274903914957
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.716883094815408
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 7,
+      "ms": 280,
+      "label": "idle",
+      "file": "warden-320/007-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.09157405451992
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.709182245420372
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 8,
+      "ms": 320,
+      "label": "idle",
+      "file": "warden-320/008-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.0941479120474
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.711756102947852
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 9,
+      "ms": 360,
+      "label": "idle",
+      "file": "warden-320/009-idle.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.10691375059869
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.72452194149914
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 10,
+      "ms": 400,
+      "label": "selected-low",
+      "file": "warden-320/010-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.129461265618986
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.747069456519437
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 11,
+      "ms": 440,
+      "label": "selected-low",
+      "file": "warden-320/011-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.16106576142337
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.77867395232382
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 12,
+      "ms": 480,
+      "label": "selected-low",
+      "file": "warden-320/012-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.200711443512432
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.818319634412884
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 13,
+      "ms": 520,
+      "label": "selected-low",
+      "file": "warden-320/013-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.247124067043252
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.864732257943704
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 14,
+      "ms": 560,
+      "label": "selected-low",
+      "file": "warden-320/014-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.29881189210711
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.916420083007562
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 15,
+      "ms": 600,
+      "label": "selected-low",
+      "file": "warden-320/015-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.354113629477574
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        16.971721820378026
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 16,
+      "ms": 640,
+      "label": "selected-low",
+      "file": "warden-320/016-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.41125183581314
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        17.02886002671359
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 17,
+      "ms": 680,
+      "label": "selected-low",
+      "file": "warden-320/017-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.4683900421487
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        17.085998233049153
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 18,
+      "ms": 720,
+      "label": "selected-low",
+      "file": "warden-320/018-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.52369177951917
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        17.14129997041962
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 19,
+      "ms": 760,
+      "label": "selected-low",
+      "file": "warden-320/019-selected-low.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 19,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307989,
+        17.57537960458303
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        17.192987795483482
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 20,
+      "ms": 800,
+      "label": "low-attack",
+      "file": "warden-320/020-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "raise",
+      "native_wrist": [
+        12.363850145307989,
+        17.453359914273282
+      ],
+      "native_elbow": [
+        8.778633763507083,
+        17.070968105173733
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 21,
+      "ms": 840,
+      "label": "low-attack",
+      "file": "warden-320/021-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "raise",
+      "native_wrist": [
+        10.133122186018388,
+        9.495224934683439
+      ],
+      "native_elbow": [
+        12.763130057600206,
+        7.028839199357823
+      ],
+      "weapon_angle": -0.28428176140703265,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 22,
+      "ms": 880,
+      "label": "low-attack",
+      "file": "warden-320/022-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        9.511696244966451,
+        7.283055709531315
+      ],
+      "native_elbow": [
+        13.078432047824254,
+        6.755423534041311
+      ],
+      "weapon_angle": -0.39737661521732803,
+      "source_pixel_grip_error_logical": 7.32410687763558e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 23,
+      "ms": 920,
+      "label": "low-attack",
+      "file": "warden-320/023-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        9.624950771048054,
+        7.5044627381360325
+      ],
+      "native_elbow": [
+        13.173440677137876,
+        6.865542252959165
+      ],
+      "weapon_angle": -0.35497062163320947,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 24,
+      "ms": 960,
+      "label": "low-attack",
+      "file": "warden-320/024-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        9.840800045694749,
+        7.920990155189875
+      ],
+      "native_elbow": [
+        13.348216925333825,
+        7.0855101539792535
+      ],
+      "weapon_angle": -0.27424455190608743,
+      "source_pixel_grip_error_logical": 7.32410687763558e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 25,
+      "ms": 1000,
+      "label": "low-attack",
+      "file": "warden-320/025-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        10.302862830541661,
+        8.8101700471131
+      ],
+      "native_elbow": [
+        13.711784048818041,
+        7.635752690469779
+      ],
+      "weapon_angle": -0.10187227733783422,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 26,
+      "ms": 1040,
+      "label": "low-attack",
+      "file": "warden-320/026-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        11.267054870522754,
+        10.672659301977498
+      ],
+      "native_elbow": [
+        14.816323888095845,
+        10.038081142177031
+      ],
+      "weapon_angle": 0.25574055349151803,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 27,
+      "ms": 1080,
+      "label": "low-attack",
+      "file": "warden-320/027-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 19,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        12.936552750555979,
+        13.920081725194304
+      ],
+      "native_elbow": [
+        11.206520895572597,
+        17.08346437368038
+      ],
+      "weapon_angle": 0.8673918398453008,
+      "source_pixel_grip_error_logical": 7.105427357601002e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 28,
+      "ms": 1120,
+      "label": "low-attack",
+      "file": "warden-320/028-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.520236822653157,
+        17.01455265390361
+      ],
+      "native_elbow": [
+        10.964328850055892,
+        17.610806367031856
+      ],
+      "weapon_angle": 1.4375,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 29,
+      "ms": 1160,
+      "label": "low-attack",
+      "file": "warden-320/029-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.520236822653157,
+        17.007398836950397
+      ],
+      "native_elbow": [
+        10.964328850055892,
+        17.603652550078642
+      ],
+      "weapon_angle": 1.4375,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 30,
+      "ms": 1200,
+      "label": "low-attack",
+      "file": "warden-320/030-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.520236822653157,
+        16.998758221812164
+      ],
+      "native_elbow": [
+        10.964328850055892,
+        17.59501193494041
+      ],
+      "weapon_angle": 1.4375,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 31,
+      "ms": 1240,
+      "label": "low-attack",
+      "file": "warden-320/031-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        14.520236822653157,
+        17.099982762183064
+      ],
+      "native_elbow": [
+        10.964328850055892,
+        17.69623647531131
+      ],
+      "weapon_angle": 1.4375,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 32,
+      "ms": 1280,
+      "label": "low-attack",
+      "file": "warden-320/032-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        13.214625009031938,
+        17.280992754647883
+      ],
+      "native_elbow": [
+        9.620207405544992,
+        17.564121862553016
+      ],
+      "weapon_angle": 0.6481072817876936,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 33,
+      "ms": 1320,
+      "label": "low-attack",
+      "file": "warden-320/033-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.62717578656289,
+        17.367732884732163
+      ],
+      "native_elbow": [
+        9.024349572494188,
+        17.227578429864053
+      ],
+      "weapon_angle": 0.2845342120544754,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 34,
+      "ms": 1360,
+      "label": "low-attack",
+      "file": "warden-320/034-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.414187036360358,
+        17.368373864408248
+      ],
+      "native_elbow": [
+        8.824121073719864,
+        17.03456795689583
+      ],
+      "weapon_angle": 0.15152409128695754,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 35,
+      "ms": 1400,
+      "label": "low-attack",
+      "file": "warden-320/035-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.326120045231804
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.943728236132255
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 36,
+      "ms": 1440,
+      "label": "low-attack",
+      "file": "warden-320/036-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.27240903929552
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.890017230195973
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 37,
+      "ms": 1480,
+      "label": "low-attack",
+      "file": "warden-320/037-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.22316055507955
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.84076874598
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 38,
+      "ms": 1520,
+      "label": "low-attack",
+      "file": "warden-320/038-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.179957479388374
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.797565670288826
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 39,
+      "ms": 1560,
+      "label": "low-attack",
+      "file": "warden-320/039-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.144188394622322
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.761796585522774
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 40,
+      "ms": 1600,
+      "label": "low-attack",
+      "file": "warden-320/040-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.117002948596674
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.734611139497126
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 41,
+      "ms": 1640,
+      "label": "low-attack",
+      "file": "warden-320/041-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.099274903914957
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.716883094815408
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 42,
+      "ms": 1680,
+      "label": "low-attack",
+      "file": "warden-320/042-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.09157405451992
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.709182245420372
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 43,
+      "ms": 1720,
+      "label": "low-attack",
+      "file": "warden-320/043-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.0941479120474
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.711756102947852
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 44,
+      "ms": 1760,
+      "label": "low-attack",
+      "file": "warden-320/044-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.10691375059869
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.72452194149914
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 45,
+      "ms": 1800,
+      "label": "low-attack",
+      "file": "warden-320/045-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.129461265618982
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.747069456519434
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 46,
+      "ms": 1840,
+      "label": "low-attack",
+      "file": "warden-320/046-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.16106576142337
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.77867395232382
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 47,
+      "ms": 1880,
+      "label": "low-attack",
+      "file": "warden-320/047-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.200711443512432
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.818319634412884
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 48,
+      "ms": 1920,
+      "label": "low-attack",
+      "file": "warden-320/048-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.24712406704325
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.8647322579437
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 49,
+      "ms": 1960,
+      "label": "low-attack",
+      "file": "warden-320/049-low-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.29881189210711
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.916420083007562
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 50,
+      "ms": 2000,
+      "label": "selected-high",
+      "file": "warden-320/050-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.354113629477578
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.97172182037803
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 51,
+      "ms": 2040,
+      "label": "selected-high",
+      "file": "warden-320/051-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.41125183581314
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.02886002671359
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 52,
+      "ms": 2080,
+      "label": "selected-high",
+      "file": "warden-320/052-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.468390042148705
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.085998233049157
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 53,
+      "ms": 2120,
+      "label": "selected-high",
+      "file": "warden-320/053-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.523691779519172
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.141299970419624
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 54,
+      "ms": 2160,
+      "label": "selected-high",
+      "file": "warden-320/054-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.57537960458303
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.192987795483482
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 55,
+      "ms": 2200,
+      "label": "selected-high",
+      "file": "warden-320/055-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.621792228113847
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.2394004190143
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 56,
+      "ms": 2240,
+      "label": "selected-high",
+      "file": "warden-320/056-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.66143791020291
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.27904610110336
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 57,
+      "ms": 2280,
+      "label": "selected-high",
+      "file": "warden-320/057-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.693042406007297
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.31065059690775
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 58,
+      "ms": 2320,
+      "label": "selected-high",
+      "file": "warden-320/058-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.71558992102759
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.33319811192804
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 59,
+      "ms": 2360,
+      "label": "selected-high",
+      "file": "warden-320/059-selected-high.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 18,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.72835575957888
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.34596395047933
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 60,
+      "ms": 2400,
+      "label": "high-attack",
+      "file": "warden-320/060-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "raise",
+      "native_wrist": [
+        12.363850145307993,
+        17.475187392071785
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.092795582972236
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 61,
+      "ms": 2440,
+      "label": "high-attack",
+      "file": "warden-320/061-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "raise",
+      "native_wrist": [
+        10.847458964151668,
+        10.88408586039213
+      ],
+      "native_elbow": [
+        11.445814714193787,
+        7.328530995621861
+      ],
+      "weapon_angle": -0.3131923607343435,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 62,
+      "ms": 2480,
+      "label": "high-attack",
+      "file": "warden-320/062-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "raise",
+      "native_wrist": [
+        10.161803826476694,
+        7.906578085488356
+      ],
+      "native_elbow": [
+        13.759640869785418,
+        7.670848134494547
+      ],
+      "weapon_angle": -0.5127091193052101,
+      "source_pixel_grip_error_logical": 5.0242958677880805e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 63,
+      "ms": 2520,
+      "label": "high-attack",
+      "file": "warden-320/063-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        9.910923352083465,
+        6.812280837848766
+      ],
+      "native_elbow": [
+        13.469034019221741,
+        7.395246085866869
+      ],
+      "weapon_angle": -0.5857006314986943,
+      "source_pixel_grip_error_logical": 7.32410687763558e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 64,
+      "ms": 2560,
+      "label": "high-attack",
+      "file": "warden-320/064-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        10.057018382892043,
+        7.146300748185917
+      ],
+      "native_elbow": [
+        13.639413889863008,
+        7.554274315508919
+      ],
+      "weapon_angle": -0.5163857821727788,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 65,
+      "ms": 2600,
+      "label": "high-attack",
+      "file": "warden-320/065-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        10.411640436284008,
+        7.969827929857149
+      ],
+      "native_elbow": [
+        14.016742695926968,
+        8.026728698896058
+      ],
+      "weapon_angle": -0.34874095703157526,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 66,
+      "ms": 2640,
+      "label": "high-attack",
+      "file": "warden-320/066-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        11.354965438521978,
+        10.196492324944547
+      ],
+      "native_elbow": [
+        14.960392218474823,
+        10.226454541131746
+      ],
+      "weapon_angle": 0.0923468422838074,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 67,
+      "ms": 2680,
+      "label": "high-attack",
+      "file": "warden-320/067-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 18,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        13.341238295822617,
+        14.953602706348697
+      ],
+      "native_elbow": [
+        11.097050909909159,
+        17.775591894298735
+      ],
+      "weapon_angle": 0.9918941785861901,
+      "source_pixel_grip_error_logical": 7.105427357601002e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 68,
+      "ms": 2720,
+      "label": "high-attack",
+      "file": "warden-320/068-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.658620956052793,
+        18.105475981386178
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        18.157113270854254
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 69,
+      "ms": 2760,
+      "label": "high-attack",
+      "file": "warden-320/069-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.658620956052793,
+        18.09400214984654
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        18.145639439314614
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 70,
+      "ms": 2800,
+      "label": "high-attack",
+      "file": "warden-320/070-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.658620956052793,
+        18.082712707500086
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        18.13434999696816
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 71,
+      "ms": 2840,
+      "label": "high-attack",
+      "file": "warden-320/071-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.658620956052793,
+        18.07197050631283
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        18.123607795780906
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 72,
+      "ms": 2880,
+      "label": "high-attack",
+      "file": "warden-320/072-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "swing",
+      "native_wrist": [
+        14.658620956052793,
+        18.06212080946964
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        18.113758098937716
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 73,
+      "ms": 2920,
+      "label": "high-attack",
+      "file": "warden-320/073-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        14.658620956052793,
+        17.868444709191593
+      ],
+      "native_elbow": [
+        11.053439464042109,
+        17.92008199865967
+      ],
+      "weapon_angle": 1.5625,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 74,
+      "ms": 2960,
+      "label": "high-attack",
+      "file": "warden-320/074-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        13.257644637253804,
+        17.35753401561142
+      ],
+      "native_elbow": [
+        9.654607764511878,
+        17.49216422641898
+      ],
+      "weapon_angle": 0.6982123369857669,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 75,
+      "ms": 3000,
+      "label": "high-attack",
+      "file": "warden-320/075-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.639093718043643,
+        17.174280975525992
+      ],
+      "native_elbow": [
+        9.037860070729538,
+        16.99788308026429
+      ],
+      "weapon_angle": 0.3001446686061333,
+      "source_pixel_grip_error_logical": 7.105427357601002e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 76,
+      "ms": 3040,
+      "label": "high-attack",
+      "file": "warden-320/076-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.416375675183167,
+        17.109599510616626
+      ],
+      "native_elbow": [
+        8.826888298119078,
+        16.769628379639947
+      ],
+      "weapon_angle": 0.1545149917885662,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 77,
+      "ms": 3080,
+      "label": "high-attack",
+      "file": "warden-320/077-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.09157405451992
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.709182245420372
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 78,
+      "ms": 3120,
+      "label": "high-attack",
+      "file": "warden-320/078-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.0941479120474
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.711756102947852
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 79,
+      "ms": 3160,
+      "label": "high-attack",
+      "file": "warden-320/079-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.10691375059869
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.72452194149914
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 80,
+      "ms": 3200,
+      "label": "high-attack",
+      "file": "warden-320/080-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.129461265618986
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.747069456519437
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 81,
+      "ms": 3240,
+      "label": "high-attack",
+      "file": "warden-320/081-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.16106576142337
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.77867395232382
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 82,
+      "ms": 3280,
+      "label": "high-attack",
+      "file": "warden-320/082-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.200711443512432
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.818319634412884
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 83,
+      "ms": 3320,
+      "label": "high-attack",
+      "file": "warden-320/083-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.24712406704325
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.8647322579437
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 84,
+      "ms": 3360,
+      "label": "high-attack",
+      "file": "warden-320/084-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.29881189210711
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.916420083007562
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 85,
+      "ms": 3400,
+      "label": "high-attack",
+      "file": "warden-320/085-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.354113629477574
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.971721820378026
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 86,
+      "ms": 3440,
+      "label": "high-attack",
+      "file": "warden-320/086-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.411251835813143
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.028860026713595
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 87,
+      "ms": 3480,
+      "label": "high-attack",
+      "file": "warden-320/087-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.4683900421487
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.085998233049153
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 88,
+      "ms": 3520,
+      "label": "high-attack",
+      "file": "warden-320/088-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.523691779519172
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.141299970419624
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 89,
+      "ms": 3560,
+      "label": "high-attack",
+      "file": "warden-320/089-high-attack.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.57537960458303
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.192987795483482
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 90,
+      "ms": 3600,
+      "label": "guard",
+      "file": "warden-320/090-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.621792228113847
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.2394004190143
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 91,
+      "ms": 3640,
+      "label": "guard",
+      "file": "warden-320/091-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.66143791020291
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.27904610110336
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 92,
+      "ms": 3680,
+      "label": "guard",
+      "file": "warden-320/092-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.693042406007297
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.31065059690775
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 93,
+      "ms": 3720,
+      "label": "guard",
+      "file": "warden-320/093-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.71558992102759
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.33319811192804
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 94,
+      "ms": 3760,
+      "label": "guard",
+      "file": "warden-320/094-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.72835575957888
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.34596395047933
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 95,
+      "ms": 3800,
+      "label": "guard",
+      "file": "warden-320/095-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.73092961710636
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.34853780800681
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 96,
+      "ms": 3840,
+      "label": "guard",
+      "file": "warden-320/096-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.723228767711323
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.340836958611774
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 97,
+      "ms": 3880,
+      "label": "guard",
+      "file": "warden-320/097-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.705500723029605
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.323108913930056
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 98,
+      "ms": 3920,
+      "label": "guard",
+      "file": "warden-320/098-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.678315277003957
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.29592346790441
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 99,
+      "ms": 3960,
+      "label": "guard",
+      "file": "warden-320/099-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.642546192237905
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.260154383138357
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 100,
+      "ms": 4000,
+      "label": "guard",
+      "file": "warden-320/100-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.59934311654673
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.216951307447182
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 101,
+      "ms": 4040,
+      "label": "guard",
+      "file": "warden-320/101-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.550094632330758
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.16770282323121
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 102,
+      "ms": 4080,
+      "label": "guard",
+      "file": "warden-320/102-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.496383626394476
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.113991817294927
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 103,
+      "ms": 4120,
+      "label": "guard",
+      "file": "warden-320/103-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.439936414662238
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.05754460556269
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 104,
+      "ms": 4160,
+      "label": "guard",
+      "file": "warden-320/104-guard.png",
+      "player_hp_sim": 32,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.38256725696404
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        17.000175447864493
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 105,
+      "ms": 4200,
+      "label": "enemy-turn",
+      "file": "warden-320/105-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.326120045231804
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.943728236132255
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 106,
+      "ms": 4240,
+      "label": "enemy-turn",
+      "file": "warden-320/106-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.27240903929552
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.890017230195973
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 107,
+      "ms": 4280,
+      "label": "enemy-turn",
+      "file": "warden-320/107-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.22316055507955
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.84076874598
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 108,
+      "ms": 4320,
+      "label": "enemy-turn",
+      "file": "warden-320/108-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.179957479388374
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.797565670288826
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 109,
+      "ms": 4360,
+      "label": "enemy-turn",
+      "file": "warden-320/109-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.144188394622322
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.761796585522774
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 110,
+      "ms": 4400,
+      "label": "enemy-turn",
+      "file": "warden-320/110-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.117002948596674
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.734611139497126
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 111,
+      "ms": 4440,
+      "label": "enemy-turn",
+      "file": "warden-320/111-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.099274903914957
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.716883094815408
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 112,
+      "ms": 4480,
+      "label": "enemy-turn",
+      "file": "warden-320/112-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.09157405451992
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.709182245420372
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 113,
+      "ms": 4520,
+      "label": "enemy-turn",
+      "file": "warden-320/113-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.0941479120474
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.711756102947852
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 114,
+      "ms": 4560,
+      "label": "enemy-turn",
+      "file": "warden-320/114-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 0
+        },
+        {
+          "value": 32,
+          "max": 32,
+          "block": 4
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.363850145307993,
+        17.10691375059869
+      ],
+      "native_elbow": [
+        8.778633763507084,
+        16.72452194149914
+      ],
+      "weapon_angle": 0.1200000000000001,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 115,
+      "ms": 4600,
+      "label": "enemy-turn",
+      "file": "warden-320/115-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        11.66217261213123,
+        16.959914774054454
+      ],
+      "native_elbow": [
+        8.439087899466067,
+        15.343831566114924
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 116,
+      "ms": 4640,
+      "label": "enemy-turn",
+      "file": "warden-320/116-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        11.66217261213123,
+        17.02230157661408
+      ],
+      "native_elbow": [
+        8.439087899466067,
+        15.40621836867455
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 7.105427357601002e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 117,
+      "ms": 4680,
+      "label": "enemy-turn",
+      "file": "warden-320/117-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        11.66217261213123,
+        17.082683216007407
+      ],
+      "native_elbow": [
+        8.439087899466067,
+        15.466600008067877
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 7.105427357601002e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 118,
+      "ms": 4720,
+      "label": "enemy-turn",
+      "file": "warden-320/118-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        11.66217261213123,
+        17.139118976662154
+      ],
+      "native_elbow": [
+        8.439087899466067,
+        15.523035768722623
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 119,
+      "ms": 4760,
+      "label": "enemy-turn",
+      "file": "warden-320/119-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        11.66217261213123,
+        17.189794966795382
+      ],
+      "native_elbow": [
+        8.439087899466067,
+        15.573711758855852
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 120,
+      "ms": 4800,
+      "label": "enemy-turn",
+      "file": "warden-320/120-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        12.212243109233354,
+        16.593172427182576
+      ],
+      "native_elbow": [
+        8.686335649502439,
+        15.839530214050981
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 121,
+      "ms": 4840,
+      "label": "enemy-turn",
+      "file": "warden-320/121-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 0
+        }
+      ],
+      "phase": "idle",
+      "native_wrist": [
+        12.659449471368694,
+        16.138174451551556
+      ],
+      "native_elbow": [
+        9.055287704164767,
+        16.03808471268954
+      ],
+      "weapon_angle": 0.55,
+      "source_pixel_grip_error_logical": 7.944109290391274e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 122,
+      "ms": 4880,
+      "label": "enemy-turn",
+      "file": "warden-320/122-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.470501602301248
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.0881097932017
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 123,
+      "ms": 4920,
+      "label": "enemy-turn",
+      "file": "warden-320/123-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.53288840486087
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.150496595761325
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 124,
+      "ms": 4960,
+      "label": "enemy-turn",
+      "file": "warden-320/124-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.593270044254197
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.210878235154652
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 125,
+      "ms": 5000,
+      "label": "enemy-turn",
+      "file": "warden-320/125-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.649705804908947
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.2673139958094
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 126,
+      "ms": 5040,
+      "label": "enemy-turn",
+      "file": "warden-320/126-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.700381795042176
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.317989985942628
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 127,
+      "ms": 5080,
+      "label": "enemy-turn",
+      "file": "warden-320/127-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.743669246634653
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.361277437535108
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 128,
+      "ms": 5120,
+      "label": "enemy-turn",
+      "file": "warden-320/128-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.778176865375173
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.395785056275628
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 129,
+      "ms": 5160,
+      "label": "enemy-turn",
+      "file": "warden-320/129-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.802795548004447
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.420403738904902
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 130,
+      "ms": 5200,
+      "label": "enemy-turn",
+      "file": "warden-320/130-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.816734029806454
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.434342220706906
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 131,
+      "ms": 5240,
+      "label": "enemy-turn",
+      "file": "warden-320/131-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.819544316507447
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.4371525074079
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 132,
+      "ms": 5280,
+      "label": "enemy-turn",
+      "file": "warden-320/132-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.811136083180557
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.42874427408101
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 133,
+      "ms": 5320,
+      "label": "enemy-turn",
+      "file": "warden-320/133-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.791779577363215
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.40938776826367
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 134,
+      "ms": 5360,
+      "label": "enemy-turn",
+      "file": "warden-320/134-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.762096933078986
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.37970512397944
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 135,
+      "ms": 5400,
+      "label": "enemy-turn",
+      "file": "warden-320/135-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.723042174938122
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.340650365838577
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 136,
+      "ms": 5440,
+      "label": "enemy-turn",
+      "file": "warden-320/136-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.675870555001637
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.293478745902092
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 137,
+      "ms": 5480,
+      "label": "enemy-turn",
+      "file": "warden-320/137-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.622098207947225
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.239706398847677
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 138,
+      "ms": 5520,
+      "label": "enemy-turn",
+      "file": "warden-320/138-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.563453421253243
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.181061612153695
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 139,
+      "ms": 5560,
+      "label": "enemy-turn",
+      "file": "warden-320/139-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.501821086617134
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.11942927751759
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 140,
+      "ms": 5600,
+      "label": "enemy-turn",
+      "file": "warden-320/140-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.439182117985354
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.05679030888581
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 141,
+      "ms": 5640,
+      "label": "enemy-turn",
+      "file": "warden-320/141-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.377549783349245
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.9951579742497
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 142,
+      "ms": 5680,
+      "label": "enemy-turn",
+      "file": "warden-320/142-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.31890499665527
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        16.93651318755572
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 143,
+      "ms": 5720,
+      "label": "enemy-turn",
+      "file": "warden-320/143-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.26513264960085
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.882740840501306
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 144,
+      "ms": 5760,
+      "label": "enemy-turn",
+      "file": "warden-320/144-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.217961029664366
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.83556922056482
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 145,
+      "ms": 5800,
+      "label": "enemy-turn",
+      "file": "warden-320/145-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.178906271523502
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.796514462423957
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 146,
+      "ms": 5840,
+      "label": "enemy-turn",
+      "file": "warden-320/146-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.149223627239273
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.76683181813973
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 147,
+      "ms": 5880,
+      "label": "enemy-turn",
+      "file": "warden-320/147-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.12986712142194
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        16.74747531232239
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 148,
+      "ms": 5920,
+      "label": "enemy-turn",
+      "file": "warden-320/148-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.12145888809504
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.739067078995497
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 149,
+      "ms": 5960,
+      "label": "enemy-turn",
+      "file": "warden-320/149-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.12426917479604
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        16.741877365696492
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 150,
+      "ms": 6000,
+      "label": "enemy-turn",
+      "file": "warden-320/150-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.13820765659804
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.755815847498496
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 151,
+      "ms": 6040,
+      "label": "enemy-turn",
+      "file": "warden-320/151-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.162826339227315
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.78043453012777
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 152,
+      "ms": 6080,
+      "label": "enemy-turn",
+      "file": "warden-320/152-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.197333957967835
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.81494214886829
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 153,
+      "ms": 6120,
+      "label": "enemy-turn",
+      "file": "warden-320/153-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.24062140956032
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        16.85822960046077
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 154,
+      "ms": 6160,
+      "label": "enemy-turn",
+      "file": "warden-320/154-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.291297399693548
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        16.908905590594
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 155,
+      "ms": 6200,
+      "label": "enemy-turn",
+      "file": "warden-320/155-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.34773316034829
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        16.965341351248746
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 156,
+      "ms": 6240,
+      "label": "enemy-turn",
+      "file": "warden-320/156-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.408114799741618
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.025722990642073
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 157,
+      "ms": 6280,
+      "label": "enemy-turn",
+      "file": "warden-320/157-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.470501602301248
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.0881097932017
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 158,
+      "ms": 6320,
+      "label": "enemy-turn",
+      "file": "warden-320/158-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.53288840486087
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.150496595761325
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 159,
+      "ms": 6360,
+      "label": "enemy-turn",
+      "file": "warden-320/159-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.593270044254197
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.210878235154652
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 160,
+      "ms": 6400,
+      "label": "enemy-turn",
+      "file": "warden-320/160-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.649705804908947
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.2673139958094
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 161,
+      "ms": 6440,
+      "label": "enemy-turn",
+      "file": "warden-320/161-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.700381795042176
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.317989985942628
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 162,
+      "ms": 6480,
+      "label": "enemy-turn",
+      "file": "warden-320/162-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.743669246634653
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.361277437535108
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 163,
+      "ms": 6520,
+      "label": "enemy-turn",
+      "file": "warden-320/163-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.778176865375173
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.395785056275628
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 164,
+      "ms": 6560,
+      "label": "enemy-turn",
+      "file": "warden-320/164-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.802795548004447
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.420403738904902
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 165,
+      "ms": 6600,
+      "label": "enemy-turn",
+      "file": "warden-320/165-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.816734029806454
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.434342220706906
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 166,
+      "ms": 6640,
+      "label": "enemy-turn",
+      "file": "warden-320/166-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.819544316507447
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.4371525074079
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 167,
+      "ms": 6680,
+      "label": "enemy-turn",
+      "file": "warden-320/167-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.811136083180557
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.42874427408101
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 168,
+      "ms": 6720,
+      "label": "enemy-turn",
+      "file": "warden-320/168-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.791779577363215
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.40938776826367
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 169,
+      "ms": 6760,
+      "label": "enemy-turn",
+      "file": "warden-320/169-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.762096933078986
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.37970512397944
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 170,
+      "ms": 6800,
+      "label": "enemy-turn",
+      "file": "warden-320/170-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.723042174938122
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.340650365838577
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 171,
+      "ms": 6840,
+      "label": "enemy-turn",
+      "file": "warden-320/171-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.675870555001637
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.293478745902092
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 172,
+      "ms": 6880,
+      "label": "enemy-turn",
+      "file": "warden-320/172-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.622098207947225
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.239706398847677
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 173,
+      "ms": 6920,
+      "label": "enemy-turn",
+      "file": "warden-320/173-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.563453421253243
+      ],
+      "native_elbow": [
+        8.69492489068808,
+        17.181061612153695
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 0.0,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    },
+    {
+      "frame": 174,
+      "ms": 6960,
+      "label": "enemy-turn",
+      "file": "warden-320/174-enemy-turn.png",
+      "player_hp_sim": 27,
+      "enemy_hp_sim": 13,
+      "display_bars": [
+        {
+          "value": 13,
+          "max": 19,
+          "block": 7
+        },
+        {
+          "value": 27,
+          "max": 32,
+          "block": 2
+        }
+      ],
+      "phase": "guard",
+      "native_wrist": [
+        12.280141272488985,
+        17.501821086617134
+      ],
+      "native_elbow": [
+        8.694924890688078,
+        17.11942927751759
+      ],
+      "weapon_angle": 0.12,
+      "source_pixel_grip_error_logical": 3.552713678800501e-15,
+      "sprite_height": 72.0,
+      "blood": true,
+      "reduced": false
+    }
+  ],
+  "fixtures": "wounds 20% HP; guard 2/20 versus attack 7; forced not run-earned",
+  "device_fps": "NOT MEASURED"
+}

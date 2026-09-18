@@ -5874,3 +5874,22 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   generated source and deterministic native conversion without artist claims.
 - Final phone-size/articulation review pending; details and evidence in
   `docs/visual-sep17/`. No release, merge or physical-device claim.
+
+## 2026-09-18 — visual pass, iterations 4–5/6: raster proof and PR
+
+- VERIFIED actual raster regression exposed a Kindler ankle separation at
+  72px that mathematical joint equality missed. Small source-pixel overlaps,
+  chest-relative thigh roots and shield grip pivot fix it; unchanged raster
+  assertion passes over120 posed bodies at72/96/104px.
+- VERIFIED final analyzer, 1415/1415 tests, production-art and SFX gates.
+  Seven actual phone/source render cases and two particle-free native-size
+  cases pass. Before/after clips and all checks indexed in
+  `docs/visual-sep17/README.md`; all five scoped criteria now evidence-backed.
+- Corrected secret-scan inventory handling for managed Git stdout truncation;
+  full listing audited before publication. Protected hashes never relied on
+  the truncated inventory. Original262 tests and sim/workflows unchanged.
+- Root art-reproduction/body follow-ups now pass; keystone UI-playthrough,
+  physical-device and Play purchase/restore gates stay false.
+- Intended new PR stacks on open #104, leaving #102/#104 open. No merge,
+  release, version bump, signed build or store action. Physical-device FPS
+  and human aesthetic approval remain explicitly unverified.

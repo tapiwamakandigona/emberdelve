@@ -50,12 +50,14 @@ layer. Deliver an open, verified source PR with actual-render evidence.
 
 ## Current phase
 
-Iteration 4 implemented and verified: original-pixel joint overlaps repair
-a reproduced Kindler ankle separation; thighs follow the chest and Warden's
-shield pivots at its grip. Analyzer clean, raster/articulation 14/14 and
-phone/pose renders 7/7. Other twenty models byte-identical.
-Iteration 5 runs final full regression/SFX/integrity, packages before/after
-evidence and opens the incremental PR. Six-iteration cap unchanged.
+Iteration 5 local verification complete: analyzer clean, full 1415/1415,
+native-art and SFX gates exit 0; seven phone/source render cases and two
+particle-free native-size cases pass. Evidence and limitations indexed in
+README.md. All five scoped feature criteria have evidence; the root device,
+billing and supplemental UI-playthrough gates remain open. Human aesthetic
+approval is not inferred from automated checks.
+Publish the new incremental PR and verify its remote head/status. Base #104
+was re-read unchanged at 0df9d51 before publication. Sixth reserve unused.
 
 ## Iterations
 
