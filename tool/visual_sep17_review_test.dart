@@ -315,7 +315,7 @@ void main() {
                 return Column(
                   children: [
                     const SizedBox(height: 24),
-                    Text('EMBERDELVE / FORGE & ASH', style: EmberText.h2),
+                    const Text('EMBERDELVE / FORGE & ASH', style: EmberText.h2),
                     const SizedBox(height: 16),
                     for (final rig in [CombatRig.kindler, CombatRig.warden])
                       Expanded(

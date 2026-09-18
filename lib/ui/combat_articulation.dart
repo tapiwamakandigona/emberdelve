@@ -148,6 +148,43 @@ class CombatRig {
     return RigPart.torso;
   }
 
+  /// A cutout needs a small overlap at each hinge. Merely putting two
+  /// exclusive pixel edges at the same mathematical joint opens a crack
+  /// when those edges rotate or rasterize at a non-integer phone scale.
+  /// These caps copy the ORIGINAL pixels on both sides of the hinge; no
+  /// flat-color limbs, stretched filler or new atlas allocation.
+  bool includesPixel(RigPart part, int x, int y) {
+    if (partAt(x, y) == part) return true;
+    bool near(Offset center, double radius) {
+      final dx = x + 0.5 - center.dx, dy = y + 0.5 - center.dy;
+      return dx * dx + dy * dy <= radius * radius;
+    }
+
+    final atShoulder = near(shoulder, id == 'warden' ? 3.75 : 2.6);
+    final atElbow = near(elbow, id == 'warden' ? 2.8 : 2.2);
+    final atNeck = near(neck, 2.1);
+    final atRearHip = near(hip.translate(-2, 0), 2.6);
+    final atFrontHip = near(hip.translate(2, 0), 2.6);
+    final atRearAnkle = near(rearFoot.translate(0, -2), 2.0);
+    final atFrontAnkle = near(frontFoot.translate(0, -2), 2.0);
+    final atShieldGrip = id == 'warden' && near(shieldGrip, 2.2);
+    return switch (part) {
+      RigPart.torso =>
+        atShoulder || atNeck || atRearHip || atFrontHip || atShieldGrip,
+      RigPart.head => atNeck,
+      RigPart.upperArm => atShoulder || atElbow,
+      RigPart.forearm => atElbow,
+      RigPart.rearLeg => atRearHip || atRearAnkle,
+      RigPart.frontLeg => atFrontHip || atFrontAnkle,
+      RigPart.rearFoot => atRearAnkle,
+      RigPart.frontFoot => atFrontAnkle,
+      RigPart.shield => atShieldGrip,
+      RigPart.cape || RigPart.hand => false,
+    };
+  }
+
+  static const shieldGrip = Offset(21, 16);
+
   // Redesigned models have an empty primary grip, so no destructive
   // equipment masks or invented underpaint are needed.
 }
@@ -352,7 +389,7 @@ class CombatRigSample {
         RigTransform.bone(
           from,
           sourceFoot.translate(0, -2),
-          hips.translate(side * 2.0, 0),
+          torso.map(from),
           targetFoot.translate(0, -2),
         ),
       );
@@ -365,7 +402,8 @@ class CombatRigSample {
     );
     put(RigPart.forearm, RigTransform.bone(rig.elbow, rig.wrist, elbow, wrist));
     put(RigPart.hand, transforms[RigPart.forearm.index]);
-    const shieldPivot = Offset(23, 23);
+    // Attach at the off-hand grip, not the bottom-center of the plate.
+    const shieldPivot = CombatRig.shieldGrip;
     put(
       RigPart.shield,
       RigTransform.pivot(

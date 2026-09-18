@@ -145,3 +145,46 @@
 - Iteration 3 complete as a source checkpoint. Final rendered shoulder,
   wrist and shield continuity remains an iteration-4 review item; automated
   visual descriptions are not sufficient to mark body/art acceptance true.
+
+## Iteration 4/6 — rendered continuity and phone evidence
+
+- Plan: test the rasterized body, not only mathematical joints. The current
+  exclusive pixel partitions can expose transparent gaps as limbs turn.
+  Add a same-alpha-component check for torso/head/arm/boots across real
+  native-scaled sizes, low/high poses and healthy/wounded conditions.
+- If the raster check reproduces separation, fix production joint overlaps
+  using source pixels at the joint, not new flat-color limbs or weaker checks.
+  Check shield pivot against its actual grip. Then run the full phone probe
+  at 320/360/412 with blood-off, fatigue, guard and reduced-motion fixtures.
+- Preserve iteration-3 renders as pre-polish evidence; final evidence must
+  come from the post-polish source. No additional art-generation attempts.
+- VERIFIED raster regression on iteration-3 production:
+  `Expected: <1>` / `Actual: <2>` /
+  `kindler 72.0 DieTier.low 1.0 RigBeat.windup rear boot must connect to the torso`.
+  Warden's same-alpha-component cases pass; automated suggestions of fully
+  detached Warden anatomy are not corroborated by this stronger check.
+- Production correction: small original-pixel hinge overlaps, thigh roots
+  mapped through the actual chest transform, and shield pivot at its grip
+  instead of low in the plate. Retry the unchanged raster test once.
+- VERIFIED raster + existing articulation tests pass (14/14). Raster
+  coverage: 120 posed bodies across both delvers, heights 72/96/104, low/high
+  dies, healthy/20% HP and all five rig beats.
+- Analyzer stopped before render probe:
+  `Unused import: 'dart:ui'. Try removing the import directive`
+  and `Use 'const' with the constructor to improve performance.`
+  Removed unused test import and made the plate title const. No assertion
+  or acceptance changes. Retry analyzer once, then run the phone probe.
+- VERIFIED analyzer retry clean. All seven actual-render tests pass with
+  exit 0: both delvers at 320x568, 360x640 and 412x892 plus source/pose plate.
+  Six scenarios yield 1050 state/grip samples; 360px scenarios retain all
+  175 PNG frames each. Max sampled grip error is 2.01e-14 logical pixels.
+- VERIFIED displayed low/high enemy damage first changes at sample 28/68
+  (360ms after the corresponding tap, consistent with 340ms contact and
+  40ms sampling). Incoming HP/guard first changes 440ms into its action.
+  The tighter 330/340ms and 430/440ms assertions remain in contact tests.
+- Phone probes include forced 20% HP blood-on/off, reduced-motion and 1.3x
+  system-text fixtures, partial/full guard. Layout checks cover stat bars,
+  dice and enabled Attack/Block controls plus framework exceptions, not all
+  visual pixels. Existing HUD text-scale clamp is preserved.
+- Iteration 4 complete; final full regression/SFX/integrity and review
+  evidence packaging are iteration 5. No physical-device FPS claim.

@@ -50,12 +50,12 @@ layer. Deliver an open, verified source PR with actual-render evidence.
 
 ## Current phase
 
-Iteration 3 implemented: new Kindler/Warden source art, reproducible native
-conversion, matching joints/grip metadata and candid provenance. Analyzer
-clean; full 1413/1413 with exit 0. Other twenty models byte-identical.
-Iteration 4 checks rendered joint continuity and all phone-size fixtures;
-math alone does not establish gap-free anatomy or human aesthetic approval.
-Six-iteration cap unchanged.
+Iteration 4 implemented and verified: original-pixel joint overlaps repair
+a reproduced Kindler ankle separation; thighs follow the chest and Warden's
+shield pivots at its grip. Analyzer clean, raster/articulation 14/14 and
+phone/pose renders 7/7. Other twenty models byte-identical.
+Iteration 5 runs final full regression/SFX/integrity, packages before/after
+evidence and opens the incremental PR. Six-iteration cap unchanged.
 
 ## Iterations
 

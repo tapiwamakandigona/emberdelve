@@ -154,8 +154,8 @@ Future<ui.Image> _loadSheetImage(String assetPath) {
 }
 
 // Tiny combat-only cutouts, cached once per native sheet (11 x 32 x 40).
-// Cropping on load avoids per-frame masking/saveLayers. Source PNGs, portrait
-// rows and palettes are unchanged. Only the two authored rigs use these.
+// Cropping on load avoids per-frame masking/saveLayers. The small overlapping
+// joint caps reuse source pixels and leave portrait rows untouched.
 final Map<String, List<ui.Image>> _rigImageCache = {};
 List<ui.Image> _rigImages(SpriteSheetDef def, ui.Image source) {
   return _rigImageCache.putIfAbsent(def.assetPath, () {
@@ -171,12 +171,12 @@ List<ui.Image> _rigImages(SpriteSheetDef def, ui.Image source) {
           for (var y = 0; y < 40; y++) {
             var x = 0;
             while (x < 32) {
-              if (rig.partAt(x, y) != part) {
+              if (!rig.includesPixel(part, x, y)) {
                 x++;
                 continue;
               }
               final start = x++;
-              while (x < 32 && rig.partAt(x, y) == part) {
+              while (x < 32 && rig.includesPixel(part, x, y)) {
                 x++;
               }
               final rect = Rect.fromLTWH(
