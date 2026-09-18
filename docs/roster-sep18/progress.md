@@ -62,3 +62,16 @@
 - Native masks preserve asymmetric heat mantle, rear half-cape/key ring,
   broad low brim/shoulder mat and round flour cap/low sack distinctions.
 - Iteration 4 complete; native combat and global all-roster checks pending.
+
+## Iteration 5 of 10 — kettle, lamp, iron and leather
+
+- Plan: Brewster, Lamplighter, Farrier and Glover to complete the remaining
+  twenty source redesigns. Existing Kindler/Warden sources stay untouched.
+- VERIFIED source `66942f14...0b528b2` passes unchanged production converter/
+  validation for all four, nearest group silhouette IoU 0.7845.
+- Native masks distinguish rear kettle/wide apron, pointed hood/long split
+  coat, low square cap/heavy apron and slim asymmetric cuffs. All have painted
+  forward fists; no runtime tool is baked into a grip.
+- All five staged sources retain original prompts/hashes. Their art checks
+  passed separately; global silhouette/metadata/rig integration is next.
+- Iteration 5 complete, no source regeneration required.
