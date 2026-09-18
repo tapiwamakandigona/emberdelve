@@ -45,11 +45,14 @@ enum StrikeFamily {
 /// Which family a signature weapon belongs to. Unknown ids fall back to the
 /// Kindler's cut so a future weapon never swings blind.
 StrikeFamily familyForWeapon(String weaponId) => switch (weaponId) {
-  'ward_maul' || 'pin_wrench' => StrikeFamily.crush,
-  'lucky_fang' || 'brand_iron' => StrikeFamily.stab,
-  'rune_chisel' => StrikeFamily.stamp,
-  'coin_hook' => StrikeFamily.hook,
-  'knapping_pick' => StrikeFamily.pick,
+  'ward_maul' || 'pin_wrench' || 'stone_maul' || 'planishing_hammer' ||
+  'grain_flail' || 'long_ladle' => StrikeFamily.crush,
+  'lucky_fang' || 'brand_iron' || 'steeling_rod' || 'fire_iron' ||
+  'stitching_awl' || 'glovers_needle' => StrikeFamily.stab,
+  'rune_chisel' || 'agate_burnisher' => StrikeFamily.stamp,
+  'coin_hook' || 'coal_rake' || 'hearth_hook' || 'lamp_pole' => StrikeFamily.hook,
+  'knapping_pick' || 'shoeing_hammer' => StrikeFamily.pick,
+  'ember_brand' || 'billhook' => StrikeFamily.cut,
   _ => StrikeFamily.cut,
 };
 

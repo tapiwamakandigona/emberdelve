@@ -98,3 +98,29 @@
   generation passes. Provenance/credits updated candidly for all twenty-two.
 - Iteration 6 complete. Family-specific action/raster proof remain open;
   these source/joint checks do not establish seamless moving silhouettes.
+
+## Iteration 7 of 10 — tool-family body action and roster-wide regression
+
+- Plan: explicit signature-tool family coverage, six distinct native body
+  paths, measured shared-wrist/grounded-foot and reduced-motion contracts;
+  capture native raster continuity separately from joint math.
+- Implemented cut/crush/stab/stamp/hook/pick body poses sized to each measured
+  arm, explicit signature-tool mapping and matching windup angles. Delivered
+  Kindler/Warden poses retained. Warmed cutout-cache byte count is exposed to
+  additive tests; no runtime JSON, per-frame image creation or stage rebuild.
+- Analyzer stopped on two new fixed constructor lint infos:
+  `Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation`.
+  Added const to the two fixed Offset constructors; unchanged lint policy.
+  One corrected retry follows.
+- VERIFIED corrected analyzer clean. New/existing articulation, family,
+  body-condition and contact tests: 91/91, exit 0. New mathematical coverage
+  alone samples 33000 native joint/condition combinations across all delvers.
+- VERIFIED actual raster continuity: 22/22 tests, 3960 rendered bodies across
+  72/96/104px, low/high, healthy/20% HP, five poses and three transition
+  fractions. No disconnected anatomy in sampled cases; tolerances unchanged
+  from the prior native-pixel probe. Full per-character observation JSON kept.
+- VERIFIED full roster cutout cache: 1239040 decoded RGBA bytes (22 × 11 ×
+  32 × 40 × 4), below the explicit 1.25 MiB cutout bound. This is separate from
+  the unchanged 675840-byte decoded-sheet budget and not a frame-rate claim.
+- Iteration 7 complete. Actual full-phone/portrait captures and final gates
+  are still required before marking the scoped features complete.

@@ -62,13 +62,24 @@ class _CombatFigureState extends State<CombatFigure>
   double get _targetAngle => switch (widget.phase) {
     WeaponPhase.idle => weaponFor(widget.rig.id).idleAngle,
     // A maul is raised ABOVE the shoulder, not inverted down its back.
-    WeaponPhase.raise =>
-      widget.rig.id == 'warden'
-          ? -0.28 - tierWeight(widget.plan.tier) * 0.38
-          : -0.7 - tierWeight(widget.plan.tier) * 0.65,
+    WeaponPhase.raise => _raiseAngle,
     WeaponPhase.swing => widget.plan.swingAngle,
     WeaponPhase.guard => 0.12,
   };
+
+  double get _raiseAngle {
+    final w = tierWeight(widget.plan.tier);
+    if (widget.rig.id == 'warden') return -0.28 - w * 0.38;
+    if (widget.rig.id == 'kindler') return -0.7 - w * 0.65;
+    return switch (widget.plan.family) {
+      StrikeFamily.crush => -0.28 - w * 0.38,
+      StrikeFamily.cut => -0.7 - w * 0.65,
+      StrikeFamily.stab => 1.12,
+      StrikeFamily.stamp => 0.78,
+      StrikeFamily.hook => 0.35,
+      StrikeFamily.pick => -0.30 - w * 0.32,
+    };
+  }
 
   @override
   void initState() {
