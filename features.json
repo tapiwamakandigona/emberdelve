@@ -19,8 +19,8 @@
       "id": "NEXT-ART-REPRO-20260913",
       "title": "Next-agent follow-up: preserve hand sockets in reproducible art generation",
       "acceptance": "Reproduce current metadata-diff failure, make generator emit authored hand sockets from an explicit source without deleting current socket data or assertions, and pass unchanged image/metadata validation.",
-      "passes": false,
-      "evidence": "Existing tool/art/build_delvers.py --check fails AssertionError: metadata differs on unchanged b8b24a7 and this branch. entry_for() omits hand on all 22 delvers. See current critique, verification.txt. Not fixed in the blood preference PR."
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: reproduced inherited AssertionError: metadata differs, then repaired production entry_for() using explicit tool/art/hand_anchors.json; other20 sockets unchanged and Kindler/Warden measured on requested redesigns. Original validation assertions retained, generator --check green for all22. docs/visual-sep17/README.md and evidence/generator-red-control.txt, final-art-build.json."
     },
     {
       "id": "NEXT-UI-PLAYTHROUGH-20260913",
@@ -33,8 +33,8 @@
       "id": "NEXT-COMBAT-ACTING-20260913",
       "title": "Next-agent follow-up: contact-synchronised health/guard and believable body actions",
       "acceptance": "Presentation HP/wounds/guard transition at impact, not synchronous sim apply; authored low/high Kindler cut and Warden maul with continuous moving grip anchors, full/partial/unblocked reactions, and readable fatigue. Verify particle-free phone-size captures, proposed one-native-pixel grip tolerance, reduced-motion/queue/terminal correctness and unchanged simulation hashes before broad roster expansion.",
-      "passes": false,
-      "evidence": "Current critique A1–A5 and runtime observations: Kindler frame60 has HP13/wound1 while weapon raise; guard drops before incoming impact for three sampled characters. Bodies still use idle sheets plus whole-sprite transforms. This PR records the findings; it does not implement the larger follow-up."
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: contact-ledger regression12/12, articulated Kindler/Warden and shared grip tests12/12, raster continuity120 native-scaled poses, actual phone renders7/7 and particle-free72/104px poses2/2. Full1415 suite/analyzer/SFX green; original sim/tests unchanged. docs/visual-sep17/README.md and evidence/. Human aesthetic approval and device FPS remain separately unverified; other20 models unchanged."
     },
     {
       "id": "COMBAT-BODIES-20260913",

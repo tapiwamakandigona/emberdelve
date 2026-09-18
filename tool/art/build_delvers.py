@@ -21,6 +21,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = ROOT / "tool/art/delvers"
+REDESIGN = ROOT / "tool/art/delvers-redesign-2026-09-18"
+HAND_ANCHORS = json.loads((ROOT / "tool/art/hand_anchors.json").read_text())
 DEST = ROOT / "assets/images/characters"
 META = ROOT / "assets/images/sprite_meta.json"
 W, H = 32, 40
@@ -82,7 +84,11 @@ def pack(frames):
 def entry_for(name):
     return {
         "id": name,
-        "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+        "source_base": (
+            "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18"
+            if name in ("kindler", "warden") else
+            "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08"
+        ),
         "frame_w": W, "frame_h": H,
         "rows": [
             {"state": "idle", "frames": 2, "row": 0},
@@ -90,6 +96,7 @@ def entry_for(name):
             {"state": "hit", "frames": 1, "row": 2},
         ],
         "fps": 6, "scale": 1,
+        "hand": HAND_ANCHORS[name],
     }
 
 
@@ -142,6 +149,15 @@ def main():
         sources[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         for name, frames in frames_from_atlas(path, info["characters"]):
             sheets[name] = pack(frames)
+    # Owner-requested redesigns replace these two models only. Original
+    # source atlases remain as provenance for the untouched twenty.
+    redesign_info = json.loads((REDESIGN / "source.json").read_text())
+    redesign_source = REDESIGN / "source.png"
+    assert redesign_info["characters"] == ["kindler", "warden"]
+    sources["redesign-2026-09-18/source.png"] = hashlib.sha256(
+        redesign_source.read_bytes()).hexdigest()
+    for name, frames in frames_from_atlas(redesign_source, redesign_info["characters"]):
+        sheets[name] = pack(frames)
     assert len(sheets) == 22, "all existing models required"
     nearest = validate(sheets)
     meta = json.loads(META.read_text())
@@ -155,9 +171,14 @@ def main():
         assert meta == new_meta, "metadata differs"
     else:
         for name, sheet in sheets.items():
-            sheet.save(DEST / f"{name}.png", optimize=True)
+            output = DEST / f"{name}.png"
+            # Leave unchanged production PNGs byte-identical; don't recompress
+            # the other twenty merely because the builder was run.
+            if (not output.exists() or
+                    Image.open(output).convert("RGBA").tobytes() != sheet.convert("RGBA").tobytes()):
+                sheet.save(output, optimize=True)
         META.write_text(json.dumps(new_meta, indent=2) + "\n")
-        preview = ROOT / "docs/visual/2026-09-08"
+        preview = ROOT / "docs/visual-sep17/evidence"
         preview.mkdir(parents=True, exist_ok=True)
         contact_sheet(sheets).save(preview / "delver-roster.png")
     byte_size = sum((DEST / f"{name}.png").stat().st_size for name in sheets)

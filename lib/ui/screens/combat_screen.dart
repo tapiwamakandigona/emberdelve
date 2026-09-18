@@ -41,6 +41,44 @@ class _CombatScreenState extends State<CombatScreen> {
   final ValueNotifier<int> _choreoTick = ValueNotifier(0);
   final ValueNotifier<int> _fxTick = ValueNotifier(0);
   final ValueNotifier<int> _uiTick = ValueNotifier(0);
+  // Displayed vitals/intent move only at their presentation event, not at
+  // synchronous sim.apply(). Separate from per-motion ticks to keep HP bands
+  // off the animation clock.
+  final ValueNotifier<int> _contactTick = ValueNotifier(0);
+  CombatPresentation? _presentation;
+
+  void _beginPresentation() {
+    final st = widget.c.state;
+    final player = st?['player'] as Map?;
+    final enemy = st?['enemy'] as Map?;
+    if (player == null || enemy == null) return;
+    _presentation = CombatPresentation(
+      player: player,
+      enemy: enemy,
+      turn: st?['turn'] as int? ?? 0,
+    );
+  }
+
+  Map _shownPlayer(Map live) => _presentation?.playerView(live) ?? live;
+  Map? get _shownEnemy => _presentation?.enemy ?? _enemy;
+
+  void _present(Iterable<Map<String, Object?>> events) {
+    if (!mounted) return;
+    final presentation = _presentation;
+    if (presentation == null) return;
+    for (final event in events) {
+      presentation.apply(event);
+    }
+    // Preserve the event's corpse HP even after the sim removes the enemy.
+    _enemy = Map<String, Object?>.from(presentation.enemy);
+    _contactTick.value++;
+  }
+
+  void _finishPresentation() {
+    if (!mounted) return;
+    _presentation = null;
+    _contactTick.value++;
+  }
 
   /// Mutate choreography flags and rebuild only the combatants.
   void _choreo(VoidCallback f) {
@@ -92,12 +130,12 @@ class _CombatScreenState extends State<CombatScreen> {
     // Enemy panel: name, HP, block, turn counter. The help button reads the
     // input lock through its own inner listener, so a die tap must not drag
     // the panel along (measured: it did, +48 Text rebuilds on the die storm).
-    _enemyBand = Listenable.merge([c.enemyTick, c.turnTick]);
+    _enemyBand = Listenable.merge([c.enemyTick, c.turnTick, _contactTick]);
     // Stage: enemy sprite/intent, delver sprite (character comes from `run`).
     // Choreography and the assign preview keep their own inner listeners.
-    _stageBand = Listenable.merge([c.enemyTick, c.runTick]);
+    _stageBand = Listenable.merge([c.enemyTick, c.runTick, _contactTick]);
     // Player HP bar: hp / max_hp / block only — not the dice.
-    _vitalsBand = c.playerVitalsTick;
+    _vitalsBand = Listenable.merge([c.playerVitalsTick, _contactTick]);
     // Tray and action zone: the pool, this turn's roll, and input state.
     _diceBand = Listenable.merge([c.diceTick, _uiTick]);
   }
@@ -301,6 +339,7 @@ class _CombatScreenState extends State<CombatScreen> {
     _choreoTick.dispose();
     _fxTick.dispose();
     _uiTick.dispose();
+    _contactTick.dispose();
     super.dispose();
   }
 
@@ -399,11 +438,13 @@ class _CombatScreenState extends State<CombatScreen> {
   /// block is actually up — data-derived, so the pose and the number never
   /// disagree. Never during their own swing.
   bool get _playerBraced {
-    final player = widget.c.state?['player'] as Map?;
-    return ((player?['block'] as int?) ?? 0) > 0;
+    final player = _shownPlayer(
+      widget.c.state?['player'] as Map? ?? const {},
+    );
+    return ((player['block'] as int?) ?? 0) > 0;
   }
 
-  bool get _enemyBraced => ((_enemy?['block'] as int?) ?? 0) > 0;
+  bool get _enemyBraced => ((_shownEnemy?['block'] as int?) ?? 0) > 0;
 
   /// The selected die's face and size (null when nothing usable is selected).
   (int, int)? get _selectedFace {
@@ -718,6 +759,7 @@ class _CombatScreenState extends State<CombatScreen> {
         : null;
     // Boss deaths get a longer hold: the kill moment below needs the stage.
     final isBoss = _enemy?['boss'] == true;
+    _beginPresentation();
     final events = widget.c.apply({
       'type': 'assign',
       'die': selected,
@@ -736,6 +778,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (dmg == null) {
       // invalid command (e.g. block-only die): no swing
       _busy = false;
+      _finishPresentation();
       _ui(() {});
       return;
     }
@@ -752,6 +795,12 @@ class _CombatScreenState extends State<CombatScreen> {
     });
     await _sleep(_pace(plan.travelMs));
     if (!mounted) return;
+    _present([
+      dmg,
+      ...events.where((e) => e['type'] == 'charge_broken'),
+      if (_find(events, 'counter_struck') == null)
+        ...events.where((e) => e['type'] == 'player_healed'),
+    ]);
     final amount = dmg['amount'] as int? ?? 0;
     final absorbed = dmg['blocked'] as int? ?? 0;
     final landed = amount - absorbed;
@@ -839,6 +888,7 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     final counter = _find(events, 'counter_struck');
     if (counter != null) {
+      _present([counter]);
       final cDmg = counter['damage'] as int? ?? 0;
       _audio?.playSfx(cDmg <= 0 ? 'block' : 'player_hit', volume: 0.8);
       Haptics.light();
@@ -856,6 +906,7 @@ class _CombatScreenState extends State<CombatScreen> {
         color: cDmg <= 0 ? EmberColors.block : EmberColors.danger,
         icon: Icons.sync_alt,
       );
+      _present(events.where((e) => e['type'] == 'player_healed'));
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
         Haptics.heavy();
@@ -875,6 +926,7 @@ class _CombatScreenState extends State<CombatScreen> {
       _choreo(() => _enemyFlash = false);
     }
     _busy = false;
+    _finishPresentation();
     _ui(() {});
     _drainQueue();
   }
@@ -933,6 +985,7 @@ class _CombatScreenState extends State<CombatScreen> {
       _rerollMode = false;
       _rerollSel.clear();
     });
+    _beginPresentation();
     final events = widget.c.apply({
       'type': 'end_turn',
     }, terminalHold: const Duration(milliseconds: 1450));
@@ -960,6 +1013,10 @@ class _CombatScreenState extends State<CombatScreen> {
       });
       await _beat(_pace(plan.travelMs));
       if (!mounted) return;
+      _present([
+        atk,
+        ...events.where((e) => e['type'] == 'thorns_dealt'),
+      ]);
       final damage = atk['damage'] as int? ?? 0;
       final absorbed = atk['blocked'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
@@ -1019,6 +1076,7 @@ class _CombatScreenState extends State<CombatScreen> {
         _choreo(() => _playerFlash = false);
       }
     } else if (_find(events, 'enemy_blocked') != null) {
+      _present(events.where((e) => e['type'] == 'enemy_blocked'));
       _audio?.playSfx('block', volume: 0.5);
       _spawnFx(_FxKind.guard, onPlayer: false); // its shield visibly comes up
     } else if (_find(events, 'enemy_staggered') != null) {
@@ -1035,6 +1093,7 @@ class _CombatScreenState extends State<CombatScreen> {
     // the existing pop primitive (m4 contract §3).
     final burnTick = _find(events, 'burn_tick');
     if (burnTick != null && mounted) {
+      _present([burnTick]);
       _audio?.playSfx('enemy_hit', volume: 0.5);
       _spawnPop(burnTick['amount'] as int? ?? 0, onPlayer: false);
       _note(
@@ -1061,6 +1120,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (mounted) await _enemyDeath(events);
     _busy = false;
     _resolving = false;
+    _finishPresentation();
     _ui(() {});
     _drainQueue();
   }
@@ -1080,14 +1140,17 @@ class _CombatScreenState extends State<CombatScreen> {
       if (_enemy != null && liveEnemy['id'] != _enemy!['id']) {
         _stains.clear(); // a new foe fights on clean ground
       }
-      _enemy = liveEnemy;
+      // Do not overwrite contact-derived corpse/guard state with a
+      // post-resolution snapshot while a presentation is still playing.
+      if (_presentation == null) _enemy = Map<String, Object?>.from(liveEnemy);
     }
     final run = st['run'] as Map?;
     if (run != null && run['character'] is String) {
       _characterId = run['character'] as String;
     }
-    final enemy = _enemy;
-    final player = st['player'] as Map?;
+    final enemy = _shownEnemy;
+    final livePlayer = st['player'] as Map?;
+    final player = livePlayer == null ? null : _shownPlayer(livePlayer);
     if (enemy == null || player == null) return null;
     final dice0 = (player['dice'] as List).cast<String>();
 
@@ -1143,7 +1206,7 @@ class _CombatScreenState extends State<CombatScreen> {
       player: player,
       intent:
           (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0},
-      turn: st['turn'] as int? ?? 0,
+      turn: _presentation?.turn ?? st['turn'] as int? ?? 0,
       rolled: (player['rolled'] as List?)?.cast<int>(),
       assigned: (player['assigned'] as Map?) ?? const {},
       maxed: (player['rolled_max'] as List?)?.cast<bool>(),

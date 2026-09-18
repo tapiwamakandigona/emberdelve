@@ -1,0 +1,45 @@
+{
+  "$comment": "Machine-readable definition of done. Only flip passes to true with evidence (a command that ran, an artifact that exists). Workers never edit verify commands or acceptance criteria — that's a spec change, report it.",
+  "features": [
+    {
+      "id": "CONTACT",
+      "title": "Visual damage and guard resolve at contact",
+      "acceptance": "Displayed health, wounds and guard retain pre-contact values during windup/travel, then update at impact, without delaying or changing simulation. Cover enemy hits, player hits, counter/riposte, terminal flow, queue, reduced motion and fast-forward.",
+      "verify": "flutter test test/combat_contact_timeline_test.dart",
+      "passes": true,
+      "evidence": "Iteration 1: 12 contact regressions fail on unchanged #104 and pass after production fix; analyzer clean; full suite 1399/1399 including existing queue and terminal coverage. See progress.md; logs retained for final evidence package."
+    },
+    {
+      "id": "BODY-GRIP",
+      "title": "Articulated Kindler/Warden action with attached weapon",
+      "acceptance": "Kindler and Warden show distinct upper/lower-body and arm action, readable low/high die commitment and planted recovery. Body and weapon share a moving grip through idle, attack, guard and fatigue; recognizable roster identity and other roster fallback preserved. Owner requested improved character designs on September 18; matching new art is allowed.",
+      "verify": "flutter test test/combat_articulation_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED: 12 articulation tests include 3000 joint/condition samples, actual shared consumer wiring and reduced-idle stillness; two raster tests cover 120 native-scaled poses and reproduce/fix an ankle gap. Particle-free 72/104px low/high/recoil/fatigue plates and actual combat clips are in evidence/. Human aesthetic approval remains separate; see README.md."
+    },
+    {
+      "id": "CHARACTERS",
+      "title": "More suitable Kindler and Warden character designs",
+      "acceptance": "Integrate redesigned Kindler and Warden in portraits and combat: distinct silhouettes, forge/ash role-appropriate costume, weapons coherent with gameplay, readable at native mobile sizes. Preserve all 22 IDs, abilities, unlocks, binary alpha, frame margins and memory budgets. Record source provenance and reproducible production build; show actual renders, not just concepts. Other 20 sheets unchanged.",
+      "verify": "python3 tool/art/build_delvers.py --check && flutter test test/delver_models_test.dart test/character_design_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED: redesigned Kindler/Warden integrated into native portraits/combat; authored hand metadata; source/prompts/provenance retained. Art check passes for all22, 38952 PNG bytes / 675840 RGBA bytes, binary alpha/margins, max silhouette IoU0.7321; original model plus two new design tests pass in 1415-test suite. Other20 PNGs unchanged. Actual phone/source/particle-free plates supplied; design intent labeled ASSUMED, not human approval."
+    },
+    {
+      "id": "RENDER",
+      "title": "Actual-render phone evidence",
+      "acceptance": "Capture real Flutter before/after timelines and pose plates at phone widths 320/360/412, including blood off, reduced motion, full/partial guard and wounded states; verify layout and source-pixel grip math. Explicitly distinguish deterministic captures from device FPS and subjective approval.",
+      "verify": "flutter test tool/visual_sep17_review_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED: seven actual Flutter phone/pose tests, plus two particle-free native-size tests, all exit0. 320x568/360x640/412x892, blood-off/wounded/reduced/text/guard fixtures; 1050 grip/state samples, max mismatch2.01e-14 logical px. Before/after MP4s each175 samples at40ms; capture sampling is NOT measured phone FPS. See evidence/render-manifest.json and README.md."
+    },
+    {
+      "id": "GATES",
+      "title": "Green scoped verification and preserved contracts",
+      "acceptance": "Analyzer, full original-plus-additive test suite, SFX and scoped feature checks pass; original tests/sim/dependencies/workflows unchanged. Asset exceptions are the owner-requested Kindler/Warden redesign sheets and their production metadata, documented with provenance. All other shipped assets unchanged. Existing unrelated red supplemental tools and device gates are reported, not hidden.",
+      "verify": "flutter analyze && flutter test && python3 tool/sfx_headroom.py",
+      "passes": true,
+      "evidence": "VERIFIED ddfc127 source: analyzer clean; 1415/1415 main tests, production-art and SFX gates exit0. Additional verification-only native-pose probe2/2 and subsequent analyzer clean. All262 original tests, sim/dependencies/workflows and other assets unchanged; only three documented asset exceptions. Complete-inventory secret scan corrected for managed stdout truncation. See evidence/integrity.json and final gate logs. Device/billing and inherited keystone-unaware supplemental tool remain open."
+    }
+  ]
+}

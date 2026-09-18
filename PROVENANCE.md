@@ -8,6 +8,35 @@ were prepared; the files now live under `assets/`.)
 
 ---
 
+## September 18, 2026 — Kindler and Warden design refinement
+
+Only Kindler and Warden are replaced in this pass, at the owner's request
+for more suitable character designs. The Kindler is a soot-worn, hooded
+firekeeper with scarf, workcoat and belt coal-lantern; the Warden is a
+stocky, plate-clad threshold guard with a furnace-door tower shield.
+The other twenty September 8 models remain byte-identical.
+
+Source: `tool/art/delvers-redesign-2026-09-18/source.png`, generated with
+`coworker_text2im`, model `gpt-image-2.5-sunburst`, September 18 Harare time
+(September 17 UTC). Original and refinement prompts are in adjacent
+`source.json`. One refinement requested coarser value grouping and clearer
+grip anatomy. These are AI-generated source illustrations, not commissioned
+human pixel art; generation alone is not evidence of final pixel quality.
+
+Production conversion uses the existing alpha-threshold, gutter-discovery,
+nearest-neighbour and palette-bounding path in `tool/art/build_delvers.py`.
+Outputs remain native 32×40 cells, two idle/two walk/one hit poses in
+64×120 PNGs. Hand anchors are now authored separately in
+`tool/art/hand_anchors.json` so rebuilding cannot erase them. The generator's
+original assertion/margins/palette/memory checks remain intact.
+
+Combat partitions the first cell into limb layers without changing source
+pixels; both runtime weapon and gauntlet use the same solved moving wrist.
+These two models have no baked primary weapon, avoiding the earlier
+torch-plus-blade and sword-plus-maul duplication. No third-party artist,
+franchise, trademark or exclusive copyright claim. Existing repository
+license treatment applies. Physical-device art review remains separate.
+
 ## September 8, 2026 — original delver model replacement
 
 All 22 `assets/images/characters/{id}.png` sheets now use distinct original
