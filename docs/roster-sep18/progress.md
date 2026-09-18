@@ -27,3 +27,15 @@
   Actual combat integration and rendered visual review are later gates,
   not yet claimed. Production sheets remain unchanged during source staging.
 - Iteration 1 complete: verified baseline + first art group and frozen plan.
+
+## Iteration 2 of 10 — flint, rune, load and mend
+
+- Plan: four distinct source designs for Flintwright, Runesmith, Bearer and
+  Mender, with empty primary gloves and genuine alternate walk poses.
+- VERIFIED source `f97e7bc6...1d590` generated and mechanically reduced by the
+  unchanged production converter. All four pass existing alpha/margin/walk/
+  silhouette checks; nearest group silhouette IoU 0.8167.
+- Native masks distinguish the low dust hood/apron, upright visor, broad
+  rear stone harness and small linen hood/bandage packs. Matching art/grip
+  integration remains pending; no aesthetic-approval claim.
+- Iteration 2 complete; source is staged with full prompt and hash.
