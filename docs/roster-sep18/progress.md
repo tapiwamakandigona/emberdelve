@@ -39,3 +39,15 @@
   rear stone harness and small linen hood/bandage packs. Matching art/grip
   integration remains pending; no aesthetic-approval claim.
 - Iteration 2 complete; source is staged with full prompt and hash.
+
+## Iteration 3 of 10 — shield, gilt, edge and coal
+
+- Plan: Shieldwright, Gilder, Cutler and Collier, with trade-specific silhouettes
+  and clean forward grips rather than baked-in duplicate weapons.
+- VERIFIED source `0ba19df9...60d8c4` passes unchanged native conversion and all
+  existing art checks. Nearest group silhouette IoU 0.7810. All four have
+  different walking poses and preserved transparent margins.
+- The native cells retain broad blue smith bib, fitted gold-trimmed apron,
+  lean diagonal apron and rounded coal-basket cowl respectively. Public source
+  prompt/hash retained; source staging does not yet imply runtime completion.
+- Iteration 3 complete.
