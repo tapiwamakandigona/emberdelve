@@ -16,6 +16,13 @@ Emberdelve uses the following third-party art. Thank you to these artists.
   designs, mechanically converted to native pixel sprites for Tsoro Studios.
   Distinct models replace the historical character recolours. Source and
   conversion details are recorded in `PROVENANCE.md`.
+- **Kindler/Warden refinement (September 18, 2026)** — GPT Image 2.5-generated
+  source designs, mechanically converted at native sprite resolution with
+  shared-wrist combat articulation.
+- **Whole-roster refinement (September 18, 2026)** — the remaining twenty
+  playable delvers redesigned with GPT Image 2.5-generated sources and native
+  pixel conversion, extending shared-wrist articulation to every playable
+  model. Source prompts, hashes and authored anatomy are in `PROVENANCE.md`.
 
 ### Icons
 Icons made by **Lorc** (http://lorcblog.blogspot.com), **Delapouite** (http://delapouite.com)

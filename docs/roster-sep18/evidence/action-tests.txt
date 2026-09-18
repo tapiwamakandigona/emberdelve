@@ -1,0 +1,140 @@
+Resolving dependencies...
+Downloading packages...
+  _flutterfire_internals 1.3.59 (1.3.77 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+4 (0.3.5+5 available)
+  dbus 0.7.15 (0.8.0 available)
+  equatable 2.1.0 (3.0.0 available)
+  firebase_analytics 11.6.0 (12.6.0 available)
+  firebase_analytics_platform_interface 4.4.3 (6.0.7 available)
+  firebase_analytics_web 0.5.10+16 (0.6.1+13 available)
+  firebase_core 3.15.2 (4.15.0 available)
+  firebase_core_platform_interface 6.0.3 (8.1.1 available)
+  firebase_core_web 2.24.1 (3.12.0 available)
+  flutter_lints 5.0.0 (6.0.0 available)
+  flutter_local_notifications 22.3.0 (22.3.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  in_app_purchase_android 0.5.2 (0.5.3 available)
+  in_app_purchase_storekit 0.4.11+1 (0.4.13 available)
+  intl 0.20.2 (0.20.3 available)
+  jni_flutter 1.0.2 (1.0.3 available)
+  lints 5.1.1 (6.1.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  objective_c 9.5.0 (9.6.0 available)
+  platform 3.1.6 (3.2.0 available)
+  process 5.0.5 (5.0.6 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  shared_preferences_android 2.4.27 (2.4.28 available)
+  shared_preferences_foundation 2.5.6 (2.5.7 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  synchronized 3.4.1+2 (3.4.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  vector_math 2.2.0 (2.4.2 available)
+  webdriver 3.1.0 (3.2.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+42 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart
+00:00 +0: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: every signature tool has an intentional family, not a default cut
+00:00 +1: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: six body paths carry different tool mechanics
+00:00 +2: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler joints, source grip and grounded feet across all tiers/transitions
+00:00 +3: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler shared consumers, distinct layers, fatigue and parked idle
+00:00 +4: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler shared consumers, distinct layers, fatigue and parked idle
+00:00 +5: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler shared consumers, distinct layers, fatigue and parked idle
+00:00 +6: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler shared consumers, distinct layers, fatigue and parked idle
+00:00 +7: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/roster_articulation_test.dart: kindler shared consumers, distinct layers, fatigue and parked idle
+00:00 +8: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:00 +9: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +10: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +11: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +12: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +13: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +14: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +15: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +16: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +17: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +18: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +19: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +20: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +21: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +22: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +23: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +24: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +25: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +26: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +27: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +28: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:01 +29: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +30: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +31: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +32: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +33: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +34: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +35: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +36: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +37: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +38: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +39: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +40: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +41: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +42: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +43: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +44: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +45: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +46: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +47: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_articulation_test.dart: kindler: shared wrist is wired throughout a real attack/guard
+00:02 +48: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: kindler: HP and wounds wait for player contact
+00:03 +49: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +50: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +51: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +52: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +53: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +54: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +55: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +56: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +57: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +58: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +59: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +60: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +61: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +62: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +63: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +64: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +65: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen selecting a die heats the weapon BEFORE the swing (critique §4)
+00:03 +66: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:03 +67: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +68: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +69: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +70: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +71: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +72: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +73: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +74: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: gambler: HP and wounds wait for player contact
+00:04 +75: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen block raises the guard; the stance holds while block is up
+00:04 +76: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen block raises the guard; the stance holds while block is up
+00:04 +77: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: runesmith: HP and wounds wait for player contact
+00:04 +78: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen a landed hit bleeds and stains; a fully blocked one does not
+00:05 +79: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: incoming hit retains HP and 0 guard until impact
+00:05 +80: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: incoming hit retains HP and 0 guard until impact
+00:05 +81: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen reduced motion: fight still resolves, no exceptions
+00:05 +82: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen reduced motion: fight still resolves, no exceptions
+00:05 +83: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: incoming hit retains HP and 20 guard until impact
+00:06 +84: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_bodies_test.dart: on the real combat screen rapid queued taps still land every assign
+00:06 +85: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: riposte HP and guard wait for their own contact beat
+00:06 +86: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: riposte HP and guard wait for their own contact beat
+00:06 +87: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: burn condition advances at burn beat, after incoming hit
+00:07 +88: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: lethal contact keeps corpse at zero until held route exits
+00:07 +89: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: fast-forward preserves final contact state; reduce=false
+00:07 +90: /__modal/volumes/vo-XmeH02XMFCGiKhjZm86YDV/repos/emberdelve/.worktrees/roster-visuals-sep18/test/combat_contact_timeline_test.dart: fast-forward preserves final contact state; reduce=true
+00:08 +91: All tests passed!

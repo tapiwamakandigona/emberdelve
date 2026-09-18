@@ -113,47 +113,93 @@ extension _CombatStageBand on _CombatScreenState {
                       // not the screen. RepaintBoundary keeps the lunge's
                       // transform from dirtying the rest of the stage.
                       child: RepaintBoundary(
-                        child: ValueListenableBuilder<int>(
-                          valueListenable: _choreoTick,
-                          builder: (context, _, _) => _combatant(
-                            sprite: SpriteView(
-                              _characterId,
-                              key: ValueKey('hero-$_characterId'),
-                              height: heroH,
-                              bob: true, // LFP-4a: the stage always breathes
-                              // v0.27.0: the delver wears their dye into
-                              // the fight; enemies are never tinted.
-                              dye: Art.dyeFilter(
-                                widget.c.meta.dyeFor(_characterId),
-                              ),
-                            ),
-                            spriteHeight: heroH,
-                            lungeToward: 1,
-                            lunge: _playerLunge,
-                            knock: _playerKnock,
-                            flash: _playerFlash,
-                            dying: _playerDying,
-                            squash: _playerSquash,
-                            // The delver's signature weapon, finally visible:
-                            // idles in hand, pulls back on the squash, swings
-                            // with the lunge.
-                            weapon: WeaponView(
-                              _characterId,
-                              // Keep state across pool evolution; changing the
-                              // build should morph the existing weapon, not
-                              // restart its choreography controller.
-                              key: const ValueKey('combat-weapon'),
-                              height: heroH,
-                              phase: _weaponPhase,
-                              // Die -> weapon causality made visible: the
-                              // selected die's pips heat the blade before the
-                              // swing.
-                              charge: _weaponCharge,
-                              // The weapon's edge/profile now reflects the
-                              // pool forged so far (presentation only).
-                              identity: identity,
-                            ),
-                          ),
+                        // Also listens to the input tick (a die selection
+                        // heats the weapon BEFORE the swing — the consumer
+                        // used to miss it, critique 2026-09-10 §4) and the
+                        // vitals tick (the body carries its HP).
+                        child: ListenableBuilder(
+                          listenable: _heroBand,
+                          builder: (context, _) {
+                            final player = _shownPlayer(
+                              widget.c.state?['player'] as Map? ?? const {},
+                            );
+                            final condition = Condition.of(
+                              (player['hp'] as int?) ?? 1,
+                              (player['max_hp'] as int?) ?? 1,
+                            );
+                            final rig = CombatRig.forId(_characterId);
+                            return _combatant(
+                              sprite: rig != null
+                                  ? CombatFigure(
+                                      key: ValueKey('figure-$_characterId'),
+                                      rig: rig,
+                                      height: heroH,
+                                      phase: _weaponPhase,
+                                      plan: _playerPlan,
+                                      charge: _weaponCharge,
+                                      knock: _playerKnock,
+                                      condition: condition,
+                                      showWounds: BloodEffects.enabled.value,
+                                      dye: Art.dyeFilter(
+                                        widget.c.meta.dyeFor(_characterId),
+                                      ),
+                                      identity: identity,
+                                    )
+                                  : SpriteView(
+                                      _characterId,
+                                      key: ValueKey('hero-$_characterId'),
+                                      height: heroH,
+                                      bob:
+                                          true, // LFP-4a: the stage always breathes
+                                      // v0.27.0: the delver wears their dye into
+                                      // the fight; enemies are never tinted.
+                                      dye: Art.dyeFilter(
+                                        widget.c.meta.dyeFor(_characterId),
+                                      ),
+                                      condition: condition,
+                                      ichor: Ichor.blood,
+                                      showWounds: BloodEffects.enabled.value,
+                                    ),
+                              spriteHeight: heroH,
+                              spriteWidth: _spriteWidth(_characterId, heroH),
+                              lungeToward: 1,
+                              lunge: _playerLunge,
+                              knock: _playerKnock,
+                              flash: _playerFlash,
+                              dying: _playerDying,
+                              squash: _playerSquash,
+                              braced: _playerBraced,
+                              condition: condition,
+                              plan: _playerPlan,
+                              articulated: rig != null,
+                              hand: SpriteMeta.cachedOrNull
+                                  ?.sheet(_characterId)
+                                  ?.hand,
+                              // The delver's signature weapon: idles in the
+                              // hand socket, coils on the wind-up, swings
+                              // with the lunge, braces across the body on
+                              // guard.
+                              weapon: rig != null
+                                  ? null
+                                  : WeaponView(
+                                      _characterId,
+                                      // Keep state across pool evolution; changing
+                                      // the build should morph the existing weapon,
+                                      // not restart its choreography controller.
+                                      key: const ValueKey('combat-weapon'),
+                                      height: heroH,
+                                      phase: _weaponPhase,
+                                      // Die -> weapon causality made visible: the
+                                      // selected die's pips heat the blade before
+                                      // the swing.
+                                      charge: _weaponCharge,
+                                      // The weapon's edge/profile now reflects the
+                                      // pool forged so far (presentation only).
+                                      identity: identity,
+                                      plan: _playerPlan,
+                                    ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -165,35 +211,50 @@ extension _CombatStageBand on _CombatScreenState {
                         children: [
                           // Scoped to _choreoTick (see the delver above).
                           RepaintBoundary(
-                            child: ValueListenableBuilder<int>(
-                              valueListenable: _choreoTick,
-                              builder: (context, _, _) => _combatant(
-                                sprite: SpriteView(
-                                  enemyId,
-                                  key: ValueKey('enemy-$enemyId'),
-                                  height: enemyH,
-                                  flipX: true,
-                                  bob: true, // LFP-4a
-                                  // LFP-4b: slow lean while an attack is
-                                  // telegraphed — the badge gets body language.
-                                  sway:
-                                      intent['kind'] == 'attack' ||
-                                      intent['kind'] == 'attack_block' ||
-                                      // v0.47.0: a wind-up has body language.
-                                      intent['kind'] == 'charge',
-                                ),
-                                spriteHeight: enemyH,
-                                // Slight depth scale: the enemy stands a step
-                                // closer.
-                                depthScale: big ? 1.02 : 1.06,
-                                lungeToward: -1,
-                                lunge: _enemyLunge,
-                                knock: _enemyKnock,
-                                flash: _enemyFlash,
-                                dying: _enemyDying,
-                                squash: _enemySquash,
-                                windup: true,
-                              ),
+                            child: ListenableBuilder(
+                              listenable: _foeBand,
+                              builder: (context, _) {
+                                final live = _shownEnemy ?? enemy;
+                                final condition = Condition.of(
+                                  (live['hp'] as int?) ?? 1,
+                                  (live['max_hp'] as int?) ?? 1,
+                                );
+                                return _combatant(
+                                  sprite: SpriteView(
+                                    enemyId,
+                                    key: ValueKey('enemy-$enemyId'),
+                                    height: enemyH,
+                                    flipX: true,
+                                    bob: true, // LFP-4a
+                                    // LFP-4b: slow lean while an attack is
+                                    // telegraphed — the badge gets body
+                                    // language.
+                                    sway:
+                                        intent['kind'] == 'attack' ||
+                                        intent['kind'] == 'attack_block' ||
+                                        // v0.47.0: a wind-up has body language.
+                                        intent['kind'] == 'charge',
+                                    condition: condition,
+                                    ichor: ichorFor(enemyId),
+                                    showWounds: BloodEffects.enabled.value,
+                                  ),
+                                  spriteHeight: enemyH,
+                                  spriteWidth: _spriteWidth(enemyId, enemyH),
+                                  // Slight depth scale: the enemy stands a
+                                  // step closer.
+                                  depthScale: big ? 1.02 : 1.06,
+                                  lungeToward: -1,
+                                  lunge: _enemyLunge,
+                                  knock: _enemyKnock,
+                                  flash: _enemyFlash,
+                                  dying: _enemyDying,
+                                  squash: _enemySquash,
+                                  braced: _enemyBraced,
+                                  condition: condition,
+                                  enemyPlan: _enemyPlan,
+                                  windup: true,
+                                );
+                              },
                             ),
                           ),
                           // Intent as an icon badge floating above the enemy
@@ -299,6 +360,18 @@ extension _CombatStageBand on _CombatScreenState {
                     builder: (context, _, _) => Stack(
                       clipBehavior: Clip.none,
                       children: [
+                        // Bodies in the Fight: what has been spilled so far
+                        // this encounter stays on the floor.
+                        if (_stains.isNotEmpty)
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: CustomPaint(
+                                painter: FloorStainsPainter(
+                                  List.unmodifiable(_stains),
+                                ),
+                              ),
+                            ),
+                          ),
                         // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
                         for (final (idx, n)
                             in _notes.where((n) => n.onEnemy).toList().indexed)
@@ -325,22 +398,38 @@ extension _CombatStageBand on _CombatScreenState {
                             bottom: Space.s,
                             width: (fx.onPlayer ? heroH : enemyH) * 1.35,
                             height: (fx.onPlayer ? heroH : enemyH) * 1.35,
-                            child: fx.kind == _FxKind.guard
-                                ? GuardFlash(
-                                    key: ValueKey('fx-${fx.id}'),
-                                    facing: fx.onPlayer ? 1 : -1,
-                                    onDone: () {
-                                      _fxUpdate(() => _fx.remove(fx));
-                                    },
-                                  )
-                                : ImpactSlash(
-                                    key: ValueKey('fx-${fx.id}'),
-                                    claws: fx.kind == _FxKind.claws,
-                                    color: fx.color,
-                                    onDone: () {
-                                      _fxUpdate(() => _fx.remove(fx));
-                                    },
-                                  ),
+                            child: switch (fx.kind) {
+                              _FxKind.guard => GuardFlash(
+                                key: ValueKey('fx-${fx.id}'),
+                                facing: fx.onPlayer ? 1 : -1,
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
+                              _FxKind.blood => BloodBurst(
+                                key: ValueKey('fx-${fx.id}'),
+                                severity: fx.severity,
+                                // Droplets fly AWAY from the attacker.
+                                facing: fx.onPlayer ? -1 : 1,
+                                ichor: fx.ichor,
+                                seed: fx.seed,
+                                onStains: (landed) =>
+                                    _keepStains(landed, onPlayer: fx.onPlayer),
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
+                              _ => ImpactSlash(
+                                key: ValueKey('fx-${fx.id}'),
+                                claws: fx.kind == _FxKind.claws,
+                                shape: fx.shape,
+                                facing: fx.onPlayer ? -1 : 1,
+                                color: fx.color,
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
+                            },
                           ),
                         // Floating damage numbers (player pops left, enemy pops right).
                         for (final p in _pops)
@@ -370,6 +459,29 @@ extension _CombatStageBand on _CombatScreenState {
     );
   }
 
+  /// Listenables for the two bodies (cached per state; see _wireBands).
+  Listenable get _heroBand => _heroBandCache ??= Listenable.merge([
+    _choreoTick,
+    _contactTick,
+    _uiTick,
+    widget.c.playerVitalsTick,
+    BloodEffects.enabled,
+  ]);
+  Listenable get _foeBand => _foeBandCache ??= Listenable.merge([
+    _choreoTick,
+    _contactTick,
+    widget.c.enemyTick,
+    BloodEffects.enabled,
+  ]);
+
+  /// Sprite width for [id] at [height] from the sheet's frame aspect (the
+  /// SpriteView lays itself out the same way). Falls back to square.
+  double _spriteWidth(String id, double height) {
+    final def = SpriteMeta.cachedOrNull?.sheet(id);
+    if (def == null) return height;
+    return height * def.frameW / def.frameH;
+  }
+
   Widget _combatant({
     required Widget sprite,
     required double spriteHeight,
@@ -383,9 +495,55 @@ extension _CombatStageBand on _CombatScreenState {
     // so the incoming strike reads in the body, not just the intent badge.
     bool windup = false,
     double depthScale = 1.0,
+    double? spriteWidth,
     Widget? weapon,
+    // v0.183.0 Bodies in the Fight ------------------------------------
+    /// Guard stance while block is up.
+    bool braced = false,
+
+    /// How hurt: slump, sag, pallor (breathing/wounds live in the sprite).
+    Condition condition = Condition.fresh,
+
+    /// The hero's authored strike (timings + body amplitudes).
+    StrikePlan? plan,
+
+    /// The enemy's body-type strike.
+    EnemyStrikePlan? enemyPlan,
+
+    /// Forward-hand socket on the idle frame (frame fractions), if known.
+    Offset? hand,
+
+    /// Joint rig owns anatomy/weight shift; do not also squash the whole
+    /// sprite matrix. Stage translation and terminal treatment stay shared.
+    bool articulated = false,
   }) {
     Widget w = sprite;
+    final dir = lungeToward.toDouble();
+    final width = spriteWidth ?? spriteHeight;
+    // Pallor: the colour drains as the body is hurt. Only wraps when there
+    // is something to show, so a fresh sprite renders pixel-identical.
+    if (condition.pallor > 0.01) {
+      w = ColorFiltered(
+        colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
+        child: w,
+      );
+    }
+    // Weapon grip: pinned to the sheet's forward-hand socket (the widget's
+    // grip point is at 0.5 w / 0.66 h of its own square box). Without a
+    // socket, the legacy roster offset.
+    Widget? heldWeapon;
+    if (weapon != null) {
+      final gripDx = hand == null
+          ? spriteHeight * 0.30
+          : (hand.dx - 0.5) * width;
+      final gripBottom = hand == null
+          ? spriteHeight * 0.02 + spriteHeight * 0.34
+          : (1.0 - hand.dy) * spriteHeight;
+      heldWeapon = Positioned(
+        bottom: gripBottom - spriteHeight * 0.34,
+        child: Transform.translate(offset: Offset(gripDx, 0), child: weapon),
+      );
+    }
     // Grounding: soft shadow ellipse under the feet (+ ember dissolve cloud
     // while dying). The weapon sits inside this stack so it inherits every
     // transform — squash, lunge, hit-flash, death fade — with its grip
@@ -418,14 +576,7 @@ extension _CombatStageBand on _CombatScreenState {
           ),
         ),
         w,
-        if (weapon != null)
-          Positioned(
-            bottom: spriteHeight * 0.02,
-            child: Transform.translate(
-              offset: Offset(spriteHeight * 0.30, 0),
-              child: weapon,
-            ),
-          ),
+        if (heldWeapon != null) heldWeapon,
         if (dying)
           Positioned.fill(
             child: EmberBurst(
@@ -464,7 +615,9 @@ extension _CombatStageBand on _CombatScreenState {
     // Wind-up tint: threat reads as a heat shift on the body.
     if (windup) {
       w = AnimatedContainer(
-        duration: _CombatScreenState._enemyWindupTime,
+        duration: enemyPlan == null
+            ? _CombatScreenState._enemyWindupTime
+            : _CombatScreenState._pace(enemyPlan.windupMs),
         foregroundDecoration: BoxDecoration(
           backgroundBlendMode: BlendMode.srcATop,
           color: squash ? const Color(0x55C24040) : const Color(0x00C24040),
@@ -472,51 +625,164 @@ extension _CombatStageBand on _CombatScreenState {
         child: w,
       );
     }
-    // Anticipation squash (bottom-anchored) right before the lunge, and the
-    // slight depth scale that grounds the enemy a step closer to the camera.
-    // A wind-up leans back away from the target while it squashes.
+    // ------------------------------------------------------------------
+    // The body. One matrix about the feet: lean (rotation), crouch or
+    // stretch (scale), lift (hop). Which pose applies is decided by the
+    // same flags the choreography always used; how FAR it goes comes from
+    // the strike plan and the body's condition.
+    final pose = _bodyPose(
+      dir: dir,
+      squash: squash,
+      lunge: lunge,
+      knock: knock,
+      braced: braced,
+      condition: condition,
+      plan: plan,
+      enemyPlan: enemyPlan,
+      windup: windup,
+    );
+    final m = Matrix4.identity();
+    if (!articulated) {
+      m
+        ..translateByDouble(pose.dx, -pose.lift * spriteHeight, 0.0, 1.0)
+        ..rotateZ(pose.lean)
+        ..scaleByDouble(pose.scaleX, pose.scaleY, pose.scaleX, 1.0);
+    }
     w = Transform.scale(
       alignment: Alignment.bottomCenter,
       scale: depthScale,
       child: AnimatedContainer(
-        duration: windup && squash
-            ? _CombatScreenState._enemyWindupTime
-            : _CombatScreenState._squashTime,
-        curve: Curves.easeOut,
+        duration: pose.duration,
+        curve: pose.curve,
         transformAlignment: Alignment.bottomCenter,
-        transform: squash
-            ? (windup
-                  ? (Matrix4.identity()
-                      // vector_math deprecated the polymorphic translate/scale
-                      // in favour of the typed variants. These are the exact
-                      // desugarings of the old calls: translate(d) was
-                      // translateByDouble(d, 0, 0, 1) and scale(x, y) was
-                      // scaleByDouble(x, y, x, 1) — the z factor mirrored x.
-                      ..translateByDouble(lungeToward * -8.0, 0.0, 0.0, 1.0)
-                      ..rotateZ(
-                        lungeToward * -0.07,
-                      ) // top tips away from target
-                      ..scaleByDouble(1.06, 0.90, 1.06, 1.0))
-                  : (Matrix4.identity()..scaleByDouble(1.08, 0.86, 1.08, 1.0)))
-            : Matrix4.identity(),
+        transform: m,
         child: w,
       ),
     );
-    // Lunge toward the opponent / knockback away from them.
+    // Lunge toward the opponent / knockback away from them. The stab
+    // travels furthest, the maul barely leaves its feet (plan.advance).
+    // Jointed bodies keep their weight over the feet: translate less than
+    // the old whole-sprite launch, with the distinct cut/maul advances intact.
+    final advance = lunge
+        ? (plan?.advance ?? enemyPlan?.advance ?? 1.0) *
+              (articulated ? 0.72 : 1.0)
+        : 0.0;
     final dx = lunge
-        ? 1.15 * lungeToward
+        ? 1.15 * advance * lungeToward
         : knock
         ? -0.22 * lungeToward
+        : braced
+        ? -0.03 * lungeToward
         : 0.0;
     return AnimatedSlide(
       offset: Offset(dx, 0),
       duration: lunge
-          ? _CombatScreenState._contact
+          ? _CombatScreenState._pace(
+              plan?.travelMs ?? enemyPlan?.travelMs ?? 250,
+            )
           : _CombatScreenState._knockTime,
       curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
       child: w,
     );
   }
+
+  /// Resolve the body pose for the current flags. Pure; see [_combatant].
+  _BodyPose _bodyPose({
+    required double dir,
+    required bool squash,
+    required bool lunge,
+    required bool knock,
+    required bool braced,
+    required Condition condition,
+    StrikePlan? plan,
+    EnemyStrikePlan? enemyPlan,
+    bool windup = false,
+  }) {
+    // Baseline: the hurt body slumps toward the ground and sags.
+    final slump = condition.slump * dir;
+    final sag = condition.sag;
+    if (squash) {
+      final lean = plan?.windupLean ?? enemyPlan?.windupLean ?? -0.07;
+      final crouch = plan?.windupCrouch ?? enemyPlan?.windupCrouch ?? 0.88;
+      final ms = plan?.windupMs ?? enemyPlan?.windupMs ?? (windup ? 190 : 90);
+      return _BodyPose(
+        lean: lean * dir + slump,
+        scaleX: 1.0 + (1.0 - crouch) * 0.6, // keeps volume
+        scaleY: crouch * sag,
+        dx: -6.0 * dir,
+        lift: 0.0,
+        duration: _CombatScreenState._pace(ms),
+        curve: Curves.easeOut,
+      );
+    }
+    if (lunge) {
+      final lean = plan?.strikeLean ?? enemyPlan?.strikeLean ?? 0.12;
+      final stretch = plan?.strikeStretch ?? enemyPlan?.strikeStretch ?? 1.03;
+      final ms = plan?.travelMs ?? enemyPlan?.travelMs ?? 250;
+      return _BodyPose(
+        lean: lean * dir,
+        scaleX: 1.0 / math.sqrt(stretch),
+        scaleY: stretch,
+        dx: 0.0,
+        lift: enemyPlan?.hop ?? 0.0,
+        duration: _CombatScreenState._pace(ms),
+        curve: Curves.easeInCubic,
+      );
+    }
+    if (knock) {
+      // Head snaps back, knees give a little.
+      return _BodyPose(
+        lean: -0.10 * dir + slump,
+        scaleX: 1.02,
+        scaleY: 0.95 * sag,
+        dx: 0.0,
+        lift: 0.0,
+        duration: _CombatScreenState._knockTime,
+        curve: Curves.easeOutCubic,
+      );
+    }
+    if (braced) {
+      // Guard: weight back, knees bent, compact.
+      return _BodyPose(
+        lean: -0.06 * dir + slump * 0.5,
+        scaleX: 1.03,
+        scaleY: 0.95 * sag,
+        dx: 0.0,
+        lift: 0.0,
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOutCubic,
+      );
+    }
+    return _BodyPose(
+      lean: slump,
+      scaleX: 1.0,
+      scaleY: sag,
+      dx: 0.0,
+      lift: 0.0,
+      duration: _CombatScreenState._pace(plan?.recoverMs ?? 260),
+      curve: Curves.easeOutCubic,
+    );
+  }
+}
+
+/// One resolved body pose (see _combatant). Rotation about the feet.
+class _BodyPose {
+  final double lean; // rad, + tips toward screen-right
+  final double scaleX;
+  final double scaleY;
+  final double dx; // px, applied before rotation
+  final double lift; // fraction of height (hop)
+  final Duration duration;
+  final Curve curve;
+  const _BodyPose({
+    required this.lean,
+    required this.scaleX,
+    required this.scaleY,
+    required this.dx,
+    required this.lift,
+    required this.duration,
+    required this.curve,
+  });
 }
 
 /// Static, allocation-light combat depth. The background PNG supplies distant

@@ -1,4 +1,4 @@
-// lib/audio/settings.dart — user audio settings, persisted with the same
+// lib/audio/settings.dart — user audio/comfort settings, persisted with the same
 // best-effort JSON-file pattern as MetaStore (lib/meta/meta.dart).
 import 'dart:convert';
 import 'dart:io';
@@ -13,6 +13,9 @@ class AudioSettings {
   // v0.16.0 The Still Flame: 'system' (follow OS accessibility flag) /
   // 'on' / 'off'. Resolved app-wide by lib/ui/motion.dart.
   String reduceMotion;
+  // Presentation only: blood/ichor bursts, floor stains and bloody wounds.
+  // Does not change hit feedback, fatigue, health, damage or store ratings.
+  bool bloodEffects;
   // Interface preference only; never part of a run seed or character name.
   String language;
   AudioSettings({
@@ -22,6 +25,7 @@ class AudioSettings {
     this.sfxMuted = false,
     this.haptics = true,
     this.reduceMotion = 'system',
+    this.bloodEffects = true,
     this.language = 'system',
   });
 
@@ -35,6 +39,7 @@ class AudioSettings {
     'sfxMuted': sfxMuted,
     'haptics': haptics,
     'reduceMotion': reduceMotion,
+    'bloodEffects': bloodEffects,
     'language': language,
   };
 
@@ -53,6 +58,7 @@ class AudioSettings {
     reduceMotion: const {'system', 'on', 'off'}.contains(j['reduceMotion'])
         ? j['reduceMotion'] as String
         : 'system',
+    bloodEffects: j['bloodEffects'] is bool ? j['bloodEffects'] as bool : true,
     language: const {'system', 'en', 'fr', 'es', 'pt'}.contains(j['language'])
         ? j['language'] as String
         : 'system',

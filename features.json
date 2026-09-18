@@ -16,6 +16,55 @@
       "evidence": "OPEN: this PR documents the review only. Current headless visual evidence and functional tests do not satisfy implementation or phone-quality acceptance."
     },
     {
+      "id": "BLOOD-COMFORT-20260913",
+      "title": "Persistent blood-off comfort control without changing combat",
+      "acceptance": "Default preserves existing blood-on presentation. Persisted setting applies before first frame; off hides bursts, ichor, stains and both bodies' wound marks, immediately clears active/historical effects, and permits no delayed stain resurrection. Damage, block feedback, fatigue, simulation and other preferences unchanged. Native accessible translated switch; added regressions, analyzer and original main suite pass.",
+      "passes": true,
+      "evidence": "docs/reviews/blood-toggle-verification-2026-09-13.md; 18 new blood_effects_test.dart cases; negative spawn/wound controls fail as expected, exact source restored, 18/18 green; full suite 1387/1387, analyzer clean, SFX ceiling clear, 95-message catalog parity, nine real-font/render cases. Existing supplemental art/UI-tool failures are explicitly separate and remain open."
+    },
+    {
+      "id": "CURRENT-CRITIQUE-20260913",
+      "title": "Evidence-backed current art, animation and depth critique for next-agent handoff",
+      "acceptance": "Separate candid art/animation/depth scores with reasons; inspect current rendered fights/roster and executable gameplay source, label subjective judgments and headless/bot limitations; preserve known failures; provide prioritized next-agent tasks and measurable acceptance checks. No claim of completed physical-device playthrough, purchase test or implemented future critique work.",
+      "passes": true,
+      "evidence": "docs/reviews/combat-art-depth-critique-2026-09-13.md; four real-UI 175-frame clips, pre-contact health/guard observations, four locale plates, forced-injury comparisons and roster; depth-report.json contains 600 terminal greedy-bot runs and state/event hashes. Art 6/10, animation 4/10, depth 7/10 explicitly subjective. This is an OPEN-PR handoff, not release approval."
+    },
+    {
+      "id": "NEXT-ART-REPRO-20260913",
+      "title": "Next-agent follow-up: preserve hand sockets in reproducible art generation",
+      "acceptance": "Reproduce current metadata-diff failure, make generator emit authored hand sockets from an explicit source without deleting current socket data or assertions, and pass unchanged image/metadata validation.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: reproduced inherited AssertionError: metadata differs, then repaired production entry_for() using explicit tool/art/hand_anchors.json; other20 sockets unchanged and Kindler/Warden measured on requested redesigns. Original validation assertions retained, generator --check green for all22. docs/visual-sep17/README.md and evidence/generator-red-control.txt, final-art-build.json."
+    },
+    {
+      "id": "NEXT-UI-PLAYTHROUGH-20260913",
+      "title": "Next-agent follow-up: restore complete keystone-aware interactive UI verification",
+      "acceptance": "Repair the supplemental UI harness against actual sim phase transitions, tap real keystone choices including decline, preserve all invariants, and complete four seeded UI runs without falsely interpreting the valid keystone phase as a softlock.",
+      "passes": false,
+      "evidence": "Unchanged tool/play_session_test.dart fails twice on base at seed 1842571558: illegal player_turn → keystone, then STUCK at keystone. Tool legalNext and dispatcher omit this valid phase. Zero completed UI runs verified by the tool."
+    },
+    {
+      "id": "NEXT-COMBAT-ACTING-20260913",
+      "title": "Next-agent follow-up: contact-synchronised health/guard and believable body actions",
+      "acceptance": "Presentation HP/wounds/guard transition at impact, not synchronous sim apply; authored low/high Kindler cut and Warden maul with continuous moving grip anchors, full/partial/unblocked reactions, and readable fatigue. Verify particle-free phone-size captures, proposed one-native-pixel grip tolerance, reduced-motion/queue/terminal correctness and unchanged simulation hashes before broad roster expansion.",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: contact-ledger regression12/12, articulated Kindler/Warden and shared grip tests12/12, raster continuity120 native-scaled poses, actual phone renders7/7 and particle-free72/104px poses2/2. Full1415 suite/analyzer/SFX green; original sim/tests unchanged. docs/visual-sep17/README.md and evidence/. Human aesthetic approval and device FPS remain separately unverified; other20 models unchanged."
+    },
+    {
+      "id": "COMBAT-BODIES-20260913",
+      "title": "Bodies in the Fight: weapon-family strikes, guard stance, blood, health-linked body language",
+      "acceptance": "Selecting a die heats the weapon before the swing (red/green regression). Each weapon family (cut/crush/stab/stamp/hook/pick) has its own wind-up, arc, follow-through and contact shape; die tier is read against the die's own size. Block holds a guard stance while block > 0. Landed hits spray blood/ichor and stain the floor for the encounter; fully blocked hits do not. Wounds, slump, pallor, laboured breathing and tremor scale with remaining HP for delvers and enemies. Weapon grip pinned to a per-sheet hand socket. Reduce motion, fast-forward and the one-slot queue preserved. No simulation number changes. Analyzer, full suite and SFX gates green.",
+      "passes": true,
+      "evidence": "test/combat_bodies_test.dart (21 tests, incl. §4 regression verified red without the _uiTick wiring: charge stayed 0.0); full suite 1,369/1,369 on 2026-09-13; flutter analyze clean; tool/sfx_headroom.py clean; tool/combat_idle_probe_test.dart idle paints 1.0/frame unchanged; review frames via tool/combat_bodies_frames_test.dart (kindler, warden, gambler, runesmith). Physical-phone FPS and owner art sign-off remain separate."
+    },
+    {
+      "id": "RELEASE-0.183.0",
+      "title": "Signed 0.183.0+210 production release on Google Play",
+      "acceptance": "Signed CI build on the exact merged source; APK/AAB signer pin matches the permanent upload key; AAB uploaded to the Play production track and rolled out; content rating questionnaire updated to declare blood before rollout.",
+      "passes": true,
+      "evidence": "docs/releases/verification-0.183.0.md — signed CI run 34743081440 from c611e16; AAB/APK signer == permanent upload cert 031acb42…7a0d; IARC questionnaire re-answered to declare mild/limited blood (13 Sep 2026); 210 (0.183.0) uploaded to the Play production track, 100% roll-out, 0 devices losing support, submitted for Google review ('Changes in review'). GitHub release v0.183.0 published. Live-in-store confirmation pending Google review."
+    },
+    {
       "id": "RELEASE-CANDIDATE-20260908",
       "title": "Verified signed Android quality candidate",
       "acceptance": "Candidate 0.182.0+209 on correct shipping ancestry; unchanged analyze/full suite/SFX/asset checks pass; existing public CI succeeds on exact source; downloaded APK/AAB package/version/upload-signer pin and SHA256 recorded. Publication and physical Play/device gates remain separately unpassed.",
@@ -207,7 +256,7 @@
     {
       "id": "LFP-4",
       "title": "Idle life on the combat stage (bob + threat sway)",
-      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count \u2014 root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
+      "acceptance": "Both combatants show continuous body motion between actions (procedural ~2px bob independent of sheet frame count — root cause was 1-frame idle rows rendering fully static); enemy adds a slow lean while an attack is telegraphed",
       "passes": true,
       "evidence": "lib/ui/sprites.dart _life ticker (bob/sway params), wired in combat_screen stage; analyze clean, widget suite green"
     },

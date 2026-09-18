@@ -19,8 +19,13 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from build_roster_rigs import build as build_roster_rigs
+
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = ROOT / "tool/art/delvers"
+REDESIGN = ROOT / "tool/art/delvers-redesign-2026-09-18"
+ROSTER_REDESIGN = ROOT / "tool/art/roster-redesign-2026-09-18"
+HAND_ANCHORS = json.loads((ROOT / "tool/art/hand_anchors.json").read_text())
 DEST = ROOT / "assets/images/characters"
 META = ROOT / "assets/images/sprite_meta.json"
 W, H = 32, 40
@@ -82,7 +87,9 @@ def pack(frames):
 def entry_for(name):
     return {
         "id": name,
-        "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+        "source_base": (
+            "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18"
+        ),
         "frame_w": W, "frame_h": H,
         "rows": [
             {"state": "idle", "frames": 2, "row": 0},
@@ -90,6 +97,7 @@ def entry_for(name):
             {"state": "hit", "frames": 1, "row": 2},
         ],
         "fps": 6, "scale": 1,
+        "hand": HAND_ANCHORS[name],
     }
 
 
@@ -135,6 +143,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true")
     args = ap.parse_args()
+    build_roster_rigs(check=args.check)
     sheets = {}
     sources = {}
     for path in sorted(SOURCES.glob("atlas-*.png")):
@@ -142,6 +151,28 @@ def main():
         sources[path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         for name, frames in frames_from_atlas(path, info["characters"]):
             sheets[name] = pack(frames)
+    # Preserve the already delivered pair. The follow-up sources replace
+    # the remaining twenty; originals remain for before/after provenance.
+    redesign_info = json.loads((REDESIGN / "source.json").read_text())
+    redesign_source = REDESIGN / "source.png"
+    assert redesign_info["characters"] == ["kindler", "warden"]
+    sources["redesign-2026-09-18/source.png"] = hashlib.sha256(
+        redesign_source.read_bytes()).hexdigest()
+    for name, frames in frames_from_atlas(redesign_source, redesign_info["characters"]):
+        sheets[name] = pack(frames)
+    redesigned = {"kindler", "warden"}
+    for source in sorted(ROSTER_REDESIGN.glob("group-*/source.png")):
+        info = json.loads(source.with_suffix(".json").read_text())
+        assert info["rows"] == 4 and info["columns"] == 4, source
+        assert info["generated_source"] is True, source
+        assert not redesigned.intersection(info["characters"]), source
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()
+        assert digest == info["source_sha256"], source
+        sources[f"roster-2026-09-18/{source.parent.name}/source.png"] = digest
+        for name, frames in frames_from_atlas(source, info["characters"]):
+            sheets[name] = pack(frames)
+            redesigned.add(name)
+    assert redesigned == set(sheets), "every existing model needs a documented redesign"
     assert len(sheets) == 22, "all existing models required"
     nearest = validate(sheets)
     meta = json.loads(META.read_text())
@@ -155,9 +186,14 @@ def main():
         assert meta == new_meta, "metadata differs"
     else:
         for name, sheet in sheets.items():
-            sheet.save(DEST / f"{name}.png", optimize=True)
+            output = DEST / f"{name}.png"
+            # Leave identical production PNGs byte-identical, including the
+            # delivered Kindler/Warden pair. No needless recompression.
+            if (not output.exists() or
+                    Image.open(output).convert("RGBA").tobytes() != sheet.convert("RGBA").tobytes()):
+                sheet.save(output, optimize=True)
         META.write_text(json.dumps(new_meta, indent=2) + "\n")
-        preview = ROOT / "docs/visual/2026-09-08"
+        preview = ROOT / "docs/roster-sep18/evidence"
         preview.mkdir(parents=True, exist_ok=True)
         contact_sheet(sheets).save(preview / "delver-roster.png")
     byte_size = sum((DEST / f"{name}.png").stat().st_size for name in sheets)

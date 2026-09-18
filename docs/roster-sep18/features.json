@@ -1,0 +1,37 @@
+{
+  "$comment": "Adapted from canonical templates/features.json. Acceptance frozen before production edits; passing needs inspected artifact/command evidence.",
+  "features": [
+    {
+      "id": "ROSTER-ART",
+      "title": "Every playable delver has a suitable distinctive redesign",
+      "acceptance": "Twenty newly redesigned source models plus the two retained Kindler/Warden models cover exactly the 22 stable playable IDs. Integrated portrait/combat sheets preserve frame/alpha/margin/palette/memory budgets and distinct silhouettes; no recolour substitution. Source prompts, hashes and mechanical conversion are reproducible.",
+      "verify": "python3 tool/art/build_delvers.py --check && flutter test test/delver_models_test.dart test/roster_design_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: evidence/final-art.json reproduces all22 (40798 PNG bytes, 675840 decoded RGBA bytes, max IoU0.8822); five source groups retain prompts/hashes and retained pair PNGs are unchanged. evidence/design-tests.txt 38/38 plus final suite; whole-roster-before-after.png and all22 picker captures. Art suitability is proposed for owner review, not human aesthetic approval."
+    },
+    {
+      "id": "ROSTER-RIG",
+      "title": "All 22 bodies hold their actual tools through authored action",
+      "acceptance": "Every playable combat figure uses a native-anatomy rig with painted wrist anchors, independently moving head/chest/arm/legs, shared body/weapon/foreground grip and grounded boots. Six appropriate tool families and low/high commitment differ. Native raster continuity holds through sampled poses and transitions, not only coincident mathematical joints. Unknown IDs and standalone portrait rendering retain fallback.",
+      "verify": "flutter test test/roster_articulation_test.dart test/roster_raster_test.dart test/combat_articulation_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: evidence/action-tests.txt 91/91, 33000 joint/condition samples; evidence/raster-observations.json all22/3960 actual native rasters with no sampled disconnections and unchanged tolerances. Shared body/tool/hand and six-family paths verified; cutout cache1239040 bytes. Final suite passes; explicit stronger all22 opt-in exception preserves unknown-ID/portrait fallback."
+    },
+    {
+      "id": "ROSTER-RENDER",
+      "title": "Whole-roster actual Flutter visual evidence",
+      "acceptance": "Actual renders cover every playable delver at native combat sizes and 320/360/412 logical phone widths. Include real attacks/guards, low/high tiers, fatigue, blood off, reduced motion, text scaling, selection portraits and all six families; record layout/grip/timing observations. Deliver full roster before/after plates and representative clips. Do not claim sampled capture rate is device FPS or automated visual review is human approval.",
+      "verify": "flutter test tool/roster_review_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18: evidence/phone-render.txt 72/72, all22 at320/360/412 widths; 12540 observations, max grip error2.842170943040401e-14, 4608 PNGs, 72 particle-free72/96/104px plates and66 picker captures. evidence/render-manifest.json/capture-inventory.json identify every source/fixture/frame; whole-roster-before-after.png and seven actual-render clips. Blood-off/fatigue/reduced/text1.3 fixtures labelled; 25fps encoding is not device FPS."
+    },
+    {
+      "id": "ROSTER-GATES",
+      "title": "Regression and integrity gates stay green",
+      "acceptance": "Analyzer, full existing-plus-additive suite, production art and SFX pass. Original tests remain unchanged except the documented stronger full-roster opt-in assertion; sim/gameplay/content, saves, purchases, dependencies, workflows, version, non-character assets and prior evidence remain unchanged. Full managed-Git inventory is scanned without stdout truncation gaps. Explicitly report inherited supplemental/device/billing limits.",
+      "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-18 at production checkpoint f82d74f: analyzer clean, full1526/1526 tests, production art and SFX all exit0; evidence/verification.json and final-* logs. Tempered-die tier bug has unchanged red/green20-case regression. evidence/integrity.json complete managed inventory/secret scan, protected hashes identical, original266 test files with only declared opt-in exception. Inherited keystone UI-tool, device and purchase gates explicitly remain open."
+    }
+  ]
+}

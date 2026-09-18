@@ -5722,6 +5722,213 @@ Nothing else on the Console touched; closed-testing track left alone.
   tests/workflows and open device criteria unchanged. Independent doc hashes
   match downloaded binaries; supplied secret values absent.
 
+## 2026-09-13 — v0.183.0 "Bodies in the Fight" (feat/combat-bodies-sep13)
+
+Owner direction (Milon, Viktor app): keep the art/animation pass going —
+real attack and block animation, blood, damage and tiredness showing in the
+bodies — then cut a full production release. Owner also waived the pasted
+single-agent harness rules for this pass.
+
+- Implements the September 10 critique (PR #102, left open as the record).
+  New pure-Dart `lib/ui/combat_pose.dart`: StrikeFamily per weapon
+  (cut/crush/stab/stamp/hook/pick), DieTier read against die SIZE,
+  `planStrike()` (timings, lean, crouch, arc, follow-through, smear,
+  contact shape), enemy styles (bite/slam/dart/swipe), `Condition` from
+  hp/max (slump, sag, breath rate/amp, pallor, wound count, tremor),
+  ichor families, deterministic `spray()`.
+- `lib/ui/gore.dart`: BloodBurst (ballistic droplets, ≤18, ~520 ms) +
+  FloorStainsPainter (persisted per encounter, cap 24, cleared on new foe).
+- SpriteView: `condition`/`ichor` — breathing becomes the bob (integer
+  cycles so the loop never seams), heave, tremor <25%, wounds composited
+  srcATop inside a saveLayer ONLY while wounded. `hand` socket per sheet in
+  sprite_meta.json (22 delvers).
+- WeaponView: `plan` + `WeaponPhase.guard`; per-plan durations/angles,
+  tunable follow-through curve, smear intensity. ImpactSlash: `shape` +
+  `facing` (crush = shock ring + dust + shards, stab = thrust + puncture,
+  stamp = rune diamond, hook = low pull arc, pick = steep wedge).
+- Stage: `_bodyPose()` matrix about the feet (windup/strike/knock/guard/
+  idle incl. slump/sag), grip pinned to the hand socket, pallor wrap,
+  stains layer, blood fx. Hero band = choreo + ui + vitals ticks (fixes §4);
+  foe band = choreo + enemy tick. `_playerBraced` derived from block > 0.
+- VERIFIED: analyzer clean; 1,369/1,369 (1,348 original + 21 new); SFX
+  headroom clean; idle census 1.0 paints/frame. §4 regression red without
+  the `_uiTick` wiring (charge 0.0), green with it.
+- Docs: docs/releases/v0.183.0.md, news entry, features COMBAT-BODIES-
+  20260913 (true) and RELEASE-0.183.0 (false until Play evidence).
+- ASSUMED: art quality judged from headless 360×640 renders, not a phone.
+- Rating: this build draws blood. Questionnaire must be updated before
+  production (previous declaration was non-human fantasy violence).
+
+## 2026-09-13 (later) — 0.183.0+210 to Play production (in review)
+
+- VERIFIED: PR #103 merged → `c611e16`. Signed CI run 34743081440 green;
+  artifacts re-hashed, manifests read back (210 / 2210 / 1210 / 4210,
+  minSdk 24, targetSdk 36, not debuggable); AAB signer == permanent upload
+  certificate. Table in `docs/releases/verification-0.183.0.md`.
+- VERIFIED: GitHub release v0.183.0 (Latest) with the five binaries and
+  `emberdelve-SHA256SUMS`.
+- VERIFIED: IARC questionnaire re-answered to declare mild/limited blood
+  against humans and non-humans; saved 13 Sep 2026. Ratings moved: USK
+  6+→12+, ClassInd all ages→14+, Taiwan PG12→PG15, ESRB stays E10+ and adds
+  "Mild blood"; PEGI 7 unchanged. Table in the verification doc.
+- VERIFIED: 210 (0.183.0) uploaded to the production track (browser upload
+  needed the AAB assembled from 6 MB chunks into a File in-page; Playwright
+  set_input_files refuses >50 MB). Preview: 0 devices losing support.
+  Roll-out 100%, all countries. Publishing overview shows both changes
+  "in review" after quick checks. Managed publishing off → goes live when
+  Google's review passes. Production still showed 208 at the time.
+- Not done: device FPS/touch review, purchase/restore on Play. Open PR
+  #102 left as the critique record.
+- VERIFIED (follow-up check): quick checks passed; publishing overview
+  "Your changes are now in review"; production track lists 210 (0.183.0)
+  "In review" and 208 (0.181.0) "Available on Google Play". Play's release
+  dashboard recommends edge-to-edge handling, bitmap downsampling and R8
+  for 210 — logged as follow-ups, not blockers.
+
+## 2026-09-13 — blood comfort control and OPEN-PR critique handoff
+
+Scope: add a saved blood-off preference and candid current art, animation
+and gameplay-depth critique to one PR targeting `legacy/dice-builder`.
+Leave it OPEN for the next agent. No merge/release/Play/rating change.
+Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
+
+- Implemented default-on `AudioSettings.bloodEffects`, JSON migration,
+  startup initialisation, app-wide presentation notifier and translated
+  native switch under Settings → COMBAT VISUALS. Reuses queued atomic
+  SettingsStore. Off removes active bursts/old floor stains and prevents
+  new blood/ichor or delayed stains; both sprite wound painters obey it.
+  Fatigue/condition, contact feedback, damage and block remain. Re-enable
+  allows future bursts, not resurrection of cancelled effects.
+- VERIFIED main local gates: analyzer clean; 1,387 tests (1,369 baseline
+  + 18 new); locale compiler 95 messages × 3; SFX reachable ceiling clear
+  (full attack TIGHT −0.90 dBTP); unchanged idle census 120/120 paints.
+  Original tests, sim, assets, dependencies, CI and version unchanged.
+- Negative controls: remove spawn guard → expected BloodBurst absence
+  assertion fails; ignore showWounds → expected raw-RGBA equality fails.
+  Exact production bytes restored and all 18 new tests pass.
+- New real-render probe passes nine cases: four controlled seed1/easy
+  low/high attack/block/enemy-turn clips at 360×640 and 25 sampled fps;
+  22-delver roster; EN/FR/ES/PT Settings at 320px/1.3× with real fonts and
+  whole-panel containment. Forced 20% HP on/off plates clearly labelled.
+  Captured frames are not physical-device FPS evidence.
+- Critique: art 6/10, animation 4/10, depth 7/10 — subjective judgments.
+  Current weapon families/selection heat/guard/HP condition acknowledged,
+  not erased by repeating old PR #102. Bodies still rely on idle-sheet
+  transforms; idle sockets do not follow independently painted breathing.
+  Runtime frames verify HP/wounds during raise and guard loss before
+  incoming contact. Larger animation/depth changes are NOT implemented.
+- Depth probe: existing greedy bot, four characters × three difficulties
+  × seeds1–50; 600 terminal runs, no invalid commands. Normal wins
+  Kindler31/50, Warden44/50, Gambler27/50, Runesmith30/50. Not human
+  balance/retention evidence; no immediate nerf recommendation.
+- Existing supplemental failures kept visible:
+  `build_delvers.py --check` → `AssertionError: metadata differs`, also
+  on unchanged base. Generator omits all22 `hand` fields; do not erase
+  them with a write-mode regeneration.
+  `play_session_test.dart` twice on unchanged base → `INVARIANT step 62:
+  illegal transition player_turn → keystone`, then `STUCK:
+  keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)`.
+  Missing graph/dispatcher phase in the tool, not verified product
+  softlock; zero completed UI runs from it.
+- Iteration failures: new fixture SemanticsHandle lifetime corrected;
+  COMFORT insertion broke the original UPDATES lookup (base passed);
+  compact retry failed, moved the new panel after UPDATES without changing
+  the old test. Semantic container fixed merged labels. Review probe
+  assumed one WeaponView; changed only probe to record AnimatedSwitcher
+  incoming/outgoing lists. Analyzer import/reset warnings corrected.
+  Viewport-cropped Settings proof recaptured as a whole panel, additional
+  containment assertions retained. Original frame-probe timeout passed
+  with adequate runtime. Full failure trail in verification document.
+- Documents: `docs/reviews/combat-art-depth-critique-2026-09-13.md`,
+  `docs/reviews/blood-toggle-verification-2026-09-13.md` and exact evidence
+  under `docs/reviews/blood-toggle-2026-09-13/`. New false follow-up features
+  keep the generator, UI-playthrough and body-acting gaps explicit.
+  Existing physical-device and Play purchase/restore gates remain false.
+- Blood-off is a comfort preference, not automatic age-rating relief.
+  Existing Play declaration/submission untouched. No claim this PR or
+  its larger proposed changes is released.
+
+## 2026-09-17 — visual pass, iteration 1/6: contact causality
+
+- VERIFIED review of PRs and remote branches; new work stacks on open #104
+  head `0df9d51`, preserving blood comfort controls. #102/#104 left open.
+- Added a presentation-only contact ledger: displayed HP, wounds and guard
+  follow hit, riposte and burn beats while the deterministic sim stays
+  synchronous. Lethal enemy HP remains zero during the held terminal route.
+- VERIFIED 12 additive timing regressions red on unchanged #104, green
+  with the implementation; analyzer clean; full suite 1399/1399.
+  Original tests, sim, art, dependencies, workflows and version unchanged.
+- Scoped plan, acceptance and append-only details in `docs/visual-sep17/`.
+  Real baseline captures preserved; body/grip and after-render work pending.
+- No merge, release, tag, signed-build dispatch or Play action.
+
+## 2026-09-18 — visual pass, iterations 2–3/6: body rigs and characters
+
+- VERIFIED separate source-pixel body layers and shared moving wrist for
+  Kindler/Warden, with low/high-die poses, fatigue and reduced-motion checks.
+- Owner requested better, more suitable character designs. Integrated a
+  firekeeper Kindler and armored shield-bearer Warden, with empty primary
+  grips for the existing runtime weapons. Other twenty model PNGs unchanged.
+- VERIFIED authored hand metadata repairs inherited builder divergence;
+  generator check, analyzer and all 1413 tests pass. Provenance records
+  generated source and deterministic native conversion without artist claims.
+- Final phone-size/articulation review pending; details and evidence in
+  `docs/visual-sep17/`. No release, merge or physical-device claim.
+
+## 2026-09-18 — visual pass, iterations 4–5/6: raster proof and PR
+
+- VERIFIED actual raster regression exposed a Kindler ankle separation at
+  72px that mathematical joint equality missed. Small source-pixel overlaps,
+  chest-relative thigh roots and shield grip pivot fix it; unchanged raster
+  assertion passes over120 posed bodies at72/96/104px.
+- VERIFIED final analyzer, 1415/1415 tests, production-art and SFX gates.
+  Seven actual phone/source render cases and two particle-free native-size
+  cases pass. Before/after clips and all checks indexed in
+  `docs/visual-sep17/README.md`; all five scoped criteria now evidence-backed.
+- Corrected secret-scan inventory handling for managed Git stdout truncation;
+  full listing audited before publication. Protected hashes never relied on
+  the truncated inventory. Original262 tests and sim/workflows unchanged.
+- Root art-reproduction/body follow-ups now pass; keystone UI-playthrough,
+  physical-device and Play purchase/restore gates stay false.
+- Intended new PR stacks on open #104, leaving #102/#104 open. No merge,
+  release, version bump, signed build or store action. Physical-device FPS
+  and human aesthetic approval remain explicitly unverified.
+
+## 2026-09-18 — whole-roster follow-up, iterations 1–9/10
+
+- VERIFIED all22 playable delvers: retain Kindler/Warden; redesign remaining
+  twenty in five source groups with original prompts/hashes and deterministic
+  native conversion. Authored source anatomy/shared sprite-tool-hand grip
+  and six action families across the complete roster; stable kits/IDs/unlocks.
+- VERIFIED actual phone evidence exposed a pre-existing tempered custom-die
+  size bug in visual tier/heat. Resolve the true run-die size in presentation;
+  sealed sim unchanged. Additive20-case regression verified red before fix,
+  green after. No weakened existing assertion.
+- VERIFIED production checkpoint `f82d74f`: analyzer clean,1526/1526 tests,
+  art/SFX exit0;72/72 supplemental render cases,3960 native raster bodies,
+ 12540 phone observations. Before/after source plate, all picker portraits,
+  native poses and six-family clips in `docs/roster-sep18/README.md`.
+- Explicit original-test exception declared before edits: obsolete two-only
+  opt-in becomes exact all22 coverage; pair identity, unknown/portrait fallback
+  assertions retained. Other265 original test files unchanged. Full inventory
+  reads1,417 original paths and every addition; protected hashes/secret scan
+  pass. Device, Play-purchase and keystone UI-playthrough gates remain false.
+- Source review only; planned incremental PR stacks on #105, keeping
+  #102/#104/#105 open. No merge, release, signed dispatch, store action or
+  subagents. Fixture sampling and encoding rate are not physical-device FPS;
+  owner aesthetic approval remains unverified.
+
+
+## 2026-09-18 - PR102 historical reconciliation
+
+VERIFIED: owner authorized merging pending Emberdelve work. PR102's
+previously divergent September10 log is preserved verbatim below;
+its old scope/status is historical, not current release instruction.
+All current source, tests, feature objects and the complete current
+progress prefix are preserved. Old PROJECT snapshot is archived at
+docs/reviews/PROJECT-combat-critique-2026-09-10.md. Physical-phone and
+purchase criteria remain unpassed; no Play release in this merge.
+
 ## 2026-09-10 — combat visual critique, task 1 of 4
 
 The review asks whether the current character/weapon pairings and die-value
@@ -5823,3 +6030,14 @@ legacy/dice-builder; head b185696df4343541ab764e8e03d3dbd64d2c3338,
 analyzer/test/SFX checks; no new native-capture run and no signed-build job.
 Review feature now passes its bounded documentation/evidence acceptance.
 Implementation and original phone/purchase gates remain false.
+
+
+### PR102 reconciliation verification, September18
+
+VERIFIED runtime/tests/assets identical to merged741b439. Both feature
+sets, old PROJECT archive, current progress prefix and exact historical
+review suffix preserved. Original1526-test/analyzer/SFX/art baseline
+passes. Git whitespace diagnostic is NOT clean for immutable historical
+raw analyzer/render logs on both merge parents; their original bytes and
+hash evidence are retained rather than rewritten. No broad all-checks or
+all-features completion claim. Phone/purchase criteria remain false.

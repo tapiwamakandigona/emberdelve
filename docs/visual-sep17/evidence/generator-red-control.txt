@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "./tool/art/build_delvers.py", line 175, in <module>
+    main()
+    ~~~~^^
+  File "./tool/art/build_delvers.py", line 155, in main
+    assert meta == new_meta, "metadata differs"
+           ^^^^^^^^^^^^^^^^
+AssertionError: metadata differs

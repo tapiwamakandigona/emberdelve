@@ -41,6 +41,44 @@ class _CombatScreenState extends State<CombatScreen> {
   final ValueNotifier<int> _choreoTick = ValueNotifier(0);
   final ValueNotifier<int> _fxTick = ValueNotifier(0);
   final ValueNotifier<int> _uiTick = ValueNotifier(0);
+  // Displayed vitals/intent move only at their presentation event, not at
+  // synchronous sim.apply(). Separate from per-motion ticks to keep HP bands
+  // off the animation clock.
+  final ValueNotifier<int> _contactTick = ValueNotifier(0);
+  CombatPresentation? _presentation;
+
+  void _beginPresentation() {
+    final st = widget.c.state;
+    final player = st?['player'] as Map?;
+    final enemy = st?['enemy'] as Map?;
+    if (player == null || enemy == null) return;
+    _presentation = CombatPresentation(
+      player: player,
+      enemy: enemy,
+      turn: st?['turn'] as int? ?? 0,
+    );
+  }
+
+  Map _shownPlayer(Map live) => _presentation?.playerView(live) ?? live;
+  Map? get _shownEnemy => _presentation?.enemy ?? _enemy;
+
+  void _present(Iterable<Map<String, Object?>> events) {
+    if (!mounted) return;
+    final presentation = _presentation;
+    if (presentation == null) return;
+    for (final event in events) {
+      presentation.apply(event);
+    }
+    // Preserve the event's corpse HP even after the sim removes the enemy.
+    _enemy = Map<String, Object?>.from(presentation.enemy);
+    _contactTick.value++;
+  }
+
+  void _finishPresentation() {
+    if (!mounted) return;
+    _presentation = null;
+    _contactTick.value++;
+  }
 
   /// Mutate choreography flags and rebuild only the combatants.
   void _choreo(VoidCallback f) {
@@ -81,6 +119,9 @@ class _CombatScreenState extends State<CombatScreen> {
   late final Listenable _stageBand;
   late final Listenable _vitalsBand;
   late final Listenable _diceBand;
+  // v0.183.0: the two bodies' own bands (lazily merged in stage.dart).
+  Listenable? _heroBandCache;
+  Listenable? _foeBandCache;
 
   void _wireBands() {
     final c = widget.c;
@@ -89,12 +130,12 @@ class _CombatScreenState extends State<CombatScreen> {
     // Enemy panel: name, HP, block, turn counter. The help button reads the
     // input lock through its own inner listener, so a die tap must not drag
     // the panel along (measured: it did, +48 Text rebuilds on the die storm).
-    _enemyBand = Listenable.merge([c.enemyTick, c.turnTick]);
+    _enemyBand = Listenable.merge([c.enemyTick, c.turnTick, _contactTick]);
     // Stage: enemy sprite/intent, delver sprite (character comes from `run`).
     // Choreography and the assign preview keep their own inner listeners.
-    _stageBand = Listenable.merge([c.enemyTick, c.runTick]);
+    _stageBand = Listenable.merge([c.enemyTick, c.runTick, _contactTick]);
     // Player HP bar: hp / max_hp / block only — not the dice.
-    _vitalsBand = c.playerVitalsTick;
+    _vitalsBand = Listenable.merge([c.playerVitalsTick, _contactTick]);
     // Tray and action zone: the pool, this turn's roll, and input state.
     _diceBand = Listenable.merge([c.diceTick, _uiTick]);
   }
@@ -127,6 +168,18 @@ class _CombatScreenState extends State<CombatScreen> {
   bool _playerKnock = false, _enemyKnock = false;
   bool _playerDying = false, _enemyDying = false;
   bool _playerSquash = false, _enemySquash = false;
+
+  // v0.183.0 Bodies in the Fight: the authored strike behind the flags
+  // above. Frozen per swing so the body, weapon and contact FX all read the
+  // same plan; the enemy's plan comes from its body type.
+  StrikePlan _playerPlan = StrikePlan.fallback;
+  EnemyStrikePlan _enemyPlan = planEnemyStrike(EnemyStrikeStyle.swipe);
+
+  // Blood/ichor on the stage floor, kept for the whole encounter; the hit
+  // seed keeps each burst's spray deterministic yet different.
+  final List<FloorStain> _stains = [];
+  int _hitSeed = 0;
+  static const int _maxStains = 24;
 
   // Juice: roll generation triggers the dice tumble; shake key drives screen
   // shake; pops are floating damage numbers over the stage.
@@ -225,9 +278,10 @@ class _CombatScreenState extends State<CombatScreen> {
   static Duration _pace(int ms) =>
       Duration(milliseconds: math.max(16, ms * choreoPercent ~/ 100));
 
-  // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before contact.
-  static final _contact = _pace(250);
-  static final _squashTime = _pace(90);
+  // SYNC_POINTS.md: whoosh starts ~2 frames (8 fps => 250 ms) before
+  // contact. Since v0.183.0 the wind-up + travel envelope is authored per
+  // strike (lib/ui/combat_pose.dart) — always 340 ms in total, the same as
+  // the old 90 ms squash + 250 ms contact lead it replaces.
   // Enemy anticipation runs longer than the player's: their wind-up is the
   // player's last cue to read the incoming hit.
   static final _enemyWindupTime = _pace(190);
@@ -243,6 +297,7 @@ class _CombatScreenState extends State<CombatScreen> {
   void initState() {
     super.initState();
     _wireBands();
+    BloodEffects.enabled.addListener(_onBloodEffectsChanged);
     // v0.10.0 The First Delve: the up-front tutorial wall is gone. The
     // fight-start moment fires the ROLL-THEN-SPEND tip on the first-ever
     // fight only; every other rule is taught at its own first contact
@@ -280,10 +335,24 @@ class _CombatScreenState extends State<CombatScreen> {
 
   @override
   void dispose() {
+    BloodEffects.enabled.removeListener(_onBloodEffectsChanged);
     _choreoTick.dispose();
     _fxTick.dispose();
     _uiTick.dispose();
+    _contactTick.dispose();
     super.dispose();
+  }
+
+  /// Remove ongoing and historical gore immediately, even when Settings
+  /// covers this route. Enabling again affects future hits only; old stains
+  /// and cancelled bursts must not return. Body bands observe the same
+  /// preference independently, preserving their normal narrow rebuilds.
+  void _onBloodEffectsChanged() {
+    if (BloodEffects.enabled.value) return;
+    _fxUpdate(() {
+      _fx.removeWhere((fx) => fx.kind == _FxKind.blood);
+      _stains.clear();
+    });
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
@@ -298,10 +367,54 @@ class _CombatScreenState extends State<CombatScreen> {
     _FxKind kind, {
     required bool onPlayer,
     Color color = EmberColors.gold,
+    ContactShape? shape,
   }) {
     _fxUpdate(
-      () => _fx.add(_Fx(_fxId++, kind, onPlayer: onPlayer, color: color)),
+      () => _fx.add(
+        _Fx(_fxId++, kind, onPlayer: onPlayer, color: color, shape: shape),
+      ),
     );
+  }
+
+  /// Bodies in the Fight: a landed hit bleeds. [severity] is damage over the
+  /// victim's max HP; the burst flies away from the attacker and leaves
+  /// stains on the floor for the rest of the encounter.
+  void _spawnBlood(double severity, {required bool onPlayer}) {
+    if (!BloodEffects.enabled.value) return;
+    final ichor = onPlayer
+        ? Ichor.blood
+        : ichorFor((_enemy?['id'] as String?) ?? '', player: false);
+    _fxUpdate(
+      () => _fx.add(
+        _Fx(
+          _fxId++,
+          _FxKind.blood,
+          onPlayer: onPlayer,
+          color: EmberColors.danger,
+          severity: severity.clamp(0.0, 1.0),
+          ichor: ichor,
+          seed: _hitSeed++,
+        ),
+      ),
+    );
+  }
+
+  /// Keep the floor stains a burst reports, translating from the burst box
+  /// (victim-anchored) into stage fractions. Capped so a long fight never
+  /// paints without bound.
+  void _keepStains(List<FloorStain> landed, {required bool onPlayer}) {
+    if (!BloodEffects.enabled.value || landed.isEmpty || !mounted) return;
+    _fxUpdate(() {
+      for (final s in landed) {
+        // Burst boxes sit at the stage's left (player) or right (enemy)
+        // edge and span ~35% of its width; map into 0..1 of the stage.
+        final x = onPlayer ? s.x * 0.36 : 0.64 + s.x * 0.36;
+        _stains.add(FloorStain(x.clamp(0.0, 1.0), s.r, s.ichor));
+      }
+      while (_stains.length > _maxStains) {
+        _stains.removeAt(0);
+      }
+    });
   }
 
   /// LFP-2a: what assigning [selected] to [action] will resolve for (or -1
@@ -317,18 +430,46 @@ class _CombatScreenState extends State<CombatScreen> {
       ? WeaponPhase.raise
       : _playerLunge
       ? WeaponPhase.swing
+      : _playerBraced
+      ? WeaponPhase.guard
       : WeaponPhase.idle;
+
+  /// Bodies in the Fight: the delver holds a guard stance for as long as
+  /// block is actually up — data-derived, so the pose and the number never
+  /// disagree. Never during their own swing.
+  bool get _playerBraced {
+    final player = _shownPlayer(
+      widget.c.state?['player'] as Map? ?? const {},
+    );
+    return ((player['block'] as int?) ?? 0) > 0;
+  }
+
+  bool get _enemyBraced => ((_shownEnemy?['block'] as int?) ?? 0) > 0;
+
+  /// The selected die's face and size (null when nothing usable is selected).
+  (int, int)? get _selectedFace {
+    final st = widget.c.state;
+    final player = st?['player'] as Map?;
+    final rolled = (player?['rolled'] as List?)?.cast<int>();
+    final ids = (player?['dice'] as List?)?.cast<String>();
+    final sel = selected;
+    if (rolled == null || sel == null || sel > rolled.length) return null;
+    final id = ids != null && sel <= ids.length ? ids[sel - 1] : 'd6';
+    // Tempered custom_N IDs have no numeric size in their name. Resolve the
+    // same catalog base the sim/tray use; a marked d12 is not a fallback d6.
+    final size = resolveRunDie(st?['run'] as Map?, id).def.size;
+    return (rolled[sel - 1], size);
+  }
 
   /// Selected die pips -> weapon heat (0..1). Keeps glowing through the
   /// swing (selection is cleared after apply, but the lunge should stay hot).
   double get _weaponCharge {
     if (_playerSquash || _playerLunge) return _lastSwingCharge;
-    final st = widget.c.state;
-    final player = st?['player'] as Map?;
-    final rolled = (player?['rolled'] as List?)?.cast<int>();
-    final sel = selected;
-    if (rolled == null || sel == null || sel > rolled.length) return 0.0;
-    return (rolled[sel - 1] / 12.0).clamp(0.15, 1.0);
+    final face = _selectedFace;
+    if (face == null) return 0.0;
+    // Heat is read against the die's OWN size (a max d4 is white-hot), not
+    // the old fixed /12 that left small dice permanently cold.
+    return heatFor(face.$1, face.$2);
   }
 
   double _lastSwingCharge = 0.0;
@@ -605,6 +746,15 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     _busy = true;
     _lastSwingCharge = _weaponCharge; // freeze the heat for the swing itself
+    // Bodies in the Fight: author THIS swing from the weapon family and the
+    // die's tier against its own size. Frozen here so body, weapon and
+    // contact shape agree even though `selected` clears on apply.
+    final face = _selectedFace;
+    _playerPlan = planStrike(
+      familyForWeapon(weaponFor(_characterId).id),
+      face == null ? DieTier.mid : tierFor(face.$1, face.$2),
+    );
+    final plan = _playerPlan;
     // LFP-2a: capture the chip's slot geometry before the apply dims it.
     final assignedDie = selected!;
     final ghostFrom = _chipKeys[assignedDie] != null
@@ -612,6 +762,7 @@ class _CombatScreenState extends State<CombatScreen> {
         : null;
     // Boss deaths get a longer hold: the kill moment below needs the stage.
     final isBoss = _enemy?['boss'] == true;
+    _beginPresentation();
     final events = widget.c.apply({
       'type': 'assign',
       'die': selected,
@@ -630,20 +781,29 @@ class _CombatScreenState extends State<CombatScreen> {
     if (dmg == null) {
       // invalid command (e.g. block-only die): no swing
       _busy = false;
+      _finishPresentation();
       _ui(() {});
       return;
     }
-    // Anticipation squash before the lunge (visuals.md #9).
+    // Anticipation before the lunge (visuals.md #9): a heavy blow coils
+    // longer, a light one flicks — the wind-up + travel envelope stays the
+    // legacy 340 ms so every terminal hold still fits.
     _choreo(() => _playerSquash = true);
-    await _sleep(_squashTime);
+    await _sleep(_pace(plan.windupMs));
     if (!mounted) return;
     _audio?.playSfx('whoosh');
     _choreo(() {
       _playerSquash = false;
       _playerLunge = true;
     });
-    await _sleep(_contact);
+    await _sleep(_pace(plan.travelMs));
     if (!mounted) return;
+    _present([
+      dmg,
+      ...events.where((e) => e['type'] == 'charge_broken'),
+      if (_find(events, 'counter_struck') == null)
+        ...events.where((e) => e['type'] == 'player_healed'),
+    ]);
     final amount = dmg['amount'] as int? ?? 0;
     final absorbed = dmg['blocked'] as int? ?? 0;
     final landed = amount - absorbed;
@@ -667,16 +827,20 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     // Contact frame: the weapon's smear crosses the enemy — or glances off
     // a shield arc when the hit is fully absorbed.
+    final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
     if (landed > 0) {
       _spawnFx(
         _FxKind.slash,
         onPlayer: false,
         color: weaponFor(_characterId).accent,
+        shape: plan.contact,
       );
+      // It bleeds what it is made of; a shield that ate part of the blow
+      // leaves a smaller wound.
+      _spawnBlood(landed / enemyMax, onPlayer: false);
     } else {
       _spawnFx(_FxKind.guard, onPlayer: false);
     }
-    final enemyMax = (_enemy?['max_hp'] as int?) ?? 1;
     final bigHit = _impact(landed, enemyMax);
     _choreo(() => _enemyFlash = true);
     // Hit-stop: the frame freezes on contact before the knockback releases.
@@ -727,12 +891,16 @@ class _CombatScreenState extends State<CombatScreen> {
     }
     final counter = _find(events, 'counter_struck');
     if (counter != null) {
+      _present([counter]);
       final cDmg = counter['damage'] as int? ?? 0;
       _audio?.playSfx(cDmg <= 0 ? 'block' : 'player_hit', volume: 0.8);
       Haptics.light();
       _spawnPop(cDmg, onPlayer: true, blocked: cDmg <= 0);
       if (cDmg > 0) {
         _spawnFx(_FxKind.claws, onPlayer: true, color: EmberColors.danger);
+        final playerMax =
+            ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
+        _spawnBlood(cDmg / playerMax, onPlayer: true);
       } else {
         _spawnFx(_FxKind.guard, onPlayer: true);
       }
@@ -741,6 +909,7 @@ class _CombatScreenState extends State<CombatScreen> {
         color: cDmg <= 0 ? EmberColors.block : EmberColors.danger,
         icon: Icons.sync_alt,
       );
+      _present(events.where((e) => e['type'] == 'player_healed'));
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
         Haptics.heavy();
@@ -760,6 +929,7 @@ class _CombatScreenState extends State<CombatScreen> {
       _choreo(() => _enemyFlash = false);
     }
     _busy = false;
+    _finishPresentation();
     _ui(() {});
     _drainQueue();
   }
@@ -818,32 +988,55 @@ class _CombatScreenState extends State<CombatScreen> {
       _rerollMode = false;
       _rerollSel.clear();
     });
+    _beginPresentation();
     final events = widget.c.apply({
       'type': 'end_turn',
     }, terminalHold: const Duration(milliseconds: 1450));
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
+      // Bodies in the Fight: the body type chooses the attack — a rat coils
+      // and springs, a boss drops its mass, a wisp darts.
+      _enemyPlan = planEnemyStrike(
+        enemyStyleFor(
+          (_enemy?['id'] as String?) ?? '',
+          boss: _enemy?['boss'] == true,
+          elite: _enemy?['elite'] == true,
+        ),
+      );
+      final plan = _enemyPlan;
       // Physical wind-up: the enemy leans back and darkens for a beat before
       // the lunge — the strike telegraphs in the body, not just the badge.
       _choreo(() => _enemySquash = true);
-      await _beat(_enemyWindupTime);
+      await _beat(_pace(plan.windupMs));
       if (!mounted) return;
       _audio?.playSfx('whoosh');
       _choreo(() {
         _enemySquash = false;
         _enemyLunge = true;
       });
-      await _beat(_contact);
+      await _beat(_pace(plan.travelMs));
       if (!mounted) return;
+      _present([
+        atk,
+        ...events.where((e) => e['type'] == 'thorns_dealt'),
+      ]);
       final damage = atk['damage'] as int? ?? 0;
       final absorbed = atk['blocked'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
       Haptics.medium();
       _spawnPop(damage, onPlayer: true, blocked: damage <= 0);
-      // Contact frame: claws rake the delver — or break on the guard arc
-      // when block eats the whole hit.
+      final playerMaxHp =
+          ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
+      // Contact frame: claws rake the delver (and the delver bleeds) — or
+      // the blow breaks on the guard when block eats the whole hit.
       if (damage > 0) {
-        _spawnFx(_FxKind.claws, onPlayer: true, color: EmberColors.danger);
+        _spawnFx(
+          _FxKind.claws,
+          onPlayer: true,
+          color: EmberColors.danger,
+          shape: plan.contact,
+        );
+        _spawnBlood(damage / playerMaxHp, onPlayer: true);
       } else {
         _spawnFx(_FxKind.guard, onPlayer: true);
       }
@@ -886,6 +1079,7 @@ class _CombatScreenState extends State<CombatScreen> {
         _choreo(() => _playerFlash = false);
       }
     } else if (_find(events, 'enemy_blocked') != null) {
+      _present(events.where((e) => e['type'] == 'enemy_blocked'));
       _audio?.playSfx('block', volume: 0.5);
       _spawnFx(_FxKind.guard, onPlayer: false); // its shield visibly comes up
     } else if (_find(events, 'enemy_staggered') != null) {
@@ -902,6 +1096,7 @@ class _CombatScreenState extends State<CombatScreen> {
     // the existing pop primitive (m4 contract §3).
     final burnTick = _find(events, 'burn_tick');
     if (burnTick != null && mounted) {
+      _present([burnTick]);
       _audio?.playSfx('enemy_hit', volume: 0.5);
       _spawnPop(burnTick['amount'] as int? ?? 0, onPlayer: false);
       _note(
@@ -928,6 +1123,7 @@ class _CombatScreenState extends State<CombatScreen> {
     if (mounted) await _enemyDeath(events);
     _busy = false;
     _resolving = false;
+    _finishPresentation();
     _ui(() {});
     _drainQueue();
   }
@@ -943,13 +1139,21 @@ class _CombatScreenState extends State<CombatScreen> {
     final st = widget.c.state;
     if (st == null) return null;
     final liveEnemy = st['enemy'] as Map?;
-    if (liveEnemy != null) _enemy = liveEnemy;
+    if (liveEnemy != null) {
+      if (_enemy != null && liveEnemy['id'] != _enemy!['id']) {
+        _stains.clear(); // a new foe fights on clean ground
+      }
+      // Do not overwrite contact-derived corpse/guard state with a
+      // post-resolution snapshot while a presentation is still playing.
+      if (_presentation == null) _enemy = Map<String, Object?>.from(liveEnemy);
+    }
     final run = st['run'] as Map?;
     if (run != null && run['character'] is String) {
       _characterId = run['character'] as String;
     }
-    final enemy = _enemy;
-    final player = st['player'] as Map?;
+    final enemy = _shownEnemy;
+    final livePlayer = st['player'] as Map?;
+    final player = livePlayer == null ? null : _shownPlayer(livePlayer);
     if (enemy == null || player == null) return null;
     final dice0 = (player['dice'] as List).cast<String>();
 
@@ -1005,7 +1209,7 @@ class _CombatScreenState extends State<CombatScreen> {
       player: player,
       intent:
           (enemy['intent'] as Map?) ?? const {'kind': 'attack', 'amount': 0},
-      turn: st['turn'] as int? ?? 0,
+      turn: _presentation?.turn ?? st['turn'] as int? ?? 0,
       rolled: (player['rolled'] as List?)?.cast<int>(),
       assigned: (player['assigned'] as Map?) ?? const {},
       maxed: (player['rolled_max'] as List?)?.cast<bool>(),

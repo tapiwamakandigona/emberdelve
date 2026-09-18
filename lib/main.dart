@@ -28,6 +28,7 @@ import 'telemetry/consent_dialog.dart';
 import 'telemetry/telemetry_bootstrap.dart';
 import 'telemetry/telemetry_service.dart';
 import 'ui/motion.dart';
+import 'ui/blood_effects.dart';
 import 'ui/screens.dart';
 import 'ui/warmup.dart';
 import 'ui/theme.dart';
@@ -56,6 +57,8 @@ Future<void> main() async {
   // Reduce motion (v0.16.0): seed the resolver with the persisted choice;
   // the MaterialApp builder below keeps the OS flag side current.
   Motion.instance.update(setting: audio.settings.reduceMotion);
+  // Apply before the first frame, including when resuming a wounded run.
+  BloodEffects.enabled.value = audio.settings.bloodEffects;
   final controller = GameController()..audio = audio;
   // Decode the first-touch SFX into SoundPool in the background so the very
   // first tap doesn't pay the load. Deliberately not awaited: startup must

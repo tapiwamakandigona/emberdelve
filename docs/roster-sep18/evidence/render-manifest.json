@@ -1,0 +1,1782 @@
+{
+  "base": "8a5478447a209e764d963ea8fe05f38202d0d2fc",
+  "claim": "Actual Flutter renders, not device FPS or human aesthetic approval.",
+  "scenarios": [
+    {
+      "character": "ascetic",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "ascetic",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "ascetic",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.161031364628563e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 2.161031364628563e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.842170943040401e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0048591735576161e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0048591735576161e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.161031364628563e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 4
+        },
+        {
+          "tier": "high",
+          "raw_face": 3,
+          "effective_face": 3,
+          "sides": 4
+        }
+      ]
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 4
+        },
+        {
+          "tier": "high",
+          "raw_face": 3,
+          "effective_face": 3,
+          "sides": 4
+        }
+      ]
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.5618982671915014e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 4
+        },
+        {
+          "tier": "high",
+          "raw_face": 3,
+          "effective_face": 3,
+          "sides": 4
+        }
+      ]
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.7763568394002505e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 1.7763568394002505e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.5618982671915014e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.5618982671915014e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0658141036401503e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.0097183471152322e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 12
+        },
+        {
+          "tier": "high",
+          "raw_face": 11,
+          "effective_face": 11,
+          "sides": 12
+        }
+      ]
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 1.4210854715202004e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.1316282072803006e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 190,
+      "max_grip_error_logical_px": 1.2809491335957507e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.5618982671915014e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0048591735576161e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.0048591735576161e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 8
+        },
+        {
+          "tier": "high",
+          "raw_face": 7,
+          "effective_face": 7,
+          "sides": 8
+        }
+      ]
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 2,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 2,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 2.3832327871173822e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 2,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 7.944109290391274e-15,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 7.944109290391274e-15,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "png_frames": 50,
+      "max_grip_error_logical_px": 1.5888218580782548e-14,
+      "forced_attack_faces": [
+        {
+          "tier": "low",
+          "raw_face": 1,
+          "effective_face": 1,
+          "sides": 6
+        },
+        {
+          "tier": "high",
+          "raw_face": 5,
+          "effective_face": 5,
+          "sides": 6
+        }
+      ]
+    }
+  ],
+  "samples": 12540,
+  "max_grip_error_logical_px": 2.842170943040401e-14,
+  "rendered_figure_copies": {
+    "1": 12012,
+    "2": 528
+  },
+  "native_plates": 72,
+  "picker_captures": 66,
+  "png_captures": 4608,
+  "source_comparison_sha256": {
+    "kindler": {
+      "PR #105": "81857bfb58204a1fda63b60575342d780b49a631e2113a033608e60bd99be7ce",
+      "THIS PASS": "81857bfb58204a1fda63b60575342d780b49a631e2113a033608e60bd99be7ce"
+    },
+    "warden": {
+      "PR #105": "dfbc75a64ed5834abd437e175999c4102e8d4f602a162579bf1e5adea9532a79",
+      "THIS PASS": "dfbc75a64ed5834abd437e175999c4102e8d4f602a162579bf1e5adea9532a79"
+    },
+    "gambler": {
+      "PR #105": "522107b17298599b052193cc5f1b9296d814148a8e20988186859fa86b924bb6",
+      "THIS PASS": "a309e30bb21ca876ff4090028f8a385f6cb64b15d71cdd151a224efff4de36bd"
+    },
+    "ascetic": {
+      "PR #105": "2d98d22c981f54078e5267ebaa6c7db85b5fcec12b384e40193d417841d9397b",
+      "THIS PASS": "a937282d0d98f71d7eca4022b96e53cec27d8a1dc80337b45a5e551249d684a4"
+    },
+    "peddler": {
+      "PR #105": "cb45423a81c814e277bd5397302969c26b8de293151d7a9968c0e315443d855a",
+      "THIS PASS": "bd39d46f3f5a3368cce59ba4e6208a084415c2fc03a41c9c07926d8d9a37d227"
+    },
+    "tinker": {
+      "PR #105": "72781d1db56283ce3a200a2f15d05c70817c325cae9a7d633f0b13680ad6c1b5",
+      "THIS PASS": "e3787c6d2276f569377f4677b52212eaeea7596e08471b78870b10264408a290"
+    },
+    "flintwright": {
+      "PR #105": "4471a8d41be4d163bf27a3e11527ae0611f18f80600a017cc0f2f55d61950958",
+      "THIS PASS": "bae8fd23c71307e69f59e0094af18ede6f24262c78473933605c90732fde1a74"
+    },
+    "bearer": {
+      "PR #105": "7ea823ac54076362caaacb0d2470f81b8230036d5b1bba68c82fde2fa1b0411e",
+      "THIS PASS": "d6ddc79ccf265274fc8680bcb4b33ed85a47490afd3c958eff35182708b91647"
+    },
+    "mender": {
+      "PR #105": "9249886333620bab09de0970ddf98598c8b9ff52d9ae5e8ce769a5fd7e5ab7e5",
+      "THIS PASS": "5938568b720b6efe1812f808b083a03fbbb449fcbcae8b120594f054837f00b3"
+    },
+    "shieldwright": {
+      "PR #105": "4ba7e77caca4a3437c191514c48fbb39ede6087c6e0127c5b5cedd4d504800e3",
+      "THIS PASS": "3278fca8a1a6275d9a9dd90e1c673dafdfe1f051f28f889bfc348781dc46dee9"
+    },
+    "runesmith": {
+      "PR #105": "1bc903dbee8c27aae88102a652e835bcc2c9c5c80ace0b2c60c6b46d5706b3c3",
+      "THIS PASS": "d67fb557668dd713b28dd9374fd333cb0a98ba57bdeb10395dd8f0eaeca1efae"
+    },
+    "gilder": {
+      "PR #105": "262bf1fdaa51d9fa703a6ae9bcdabbf4e8206522a642ecf9463820ede1ebf7bf",
+      "THIS PASS": "5fdda42d48b2287a72323247798b09f228c8b36e7f7fefb3f1f91d0c8351822c"
+    },
+    "cutler": {
+      "PR #105": "313aa1e0cdaa8e019b3cc48de61b688f949cea9846b2988d3eba7eb3f6193632",
+      "THIS PASS": "c5e354143740b12aa7b209b5bf356c735849329b5eb859ddd30bf6c7e56ec13a"
+    },
+    "collier": {
+      "PR #105": "f018d7b11e4470b82acc465bbedc52afb60cef9f6bc9dbd6035453b03a82b05b",
+      "THIS PASS": "80f3962b05f9a51afd7d854009aa76ee830dae90317e5de479d6c152f8c0374f"
+    },
+    "stoker": {
+      "PR #105": "88df07fb00a99d460b00fb4a85c22ead65943449f0fc408466dddcd4d2f41f27",
+      "THIS PASS": "6779b99aa72dc1b432c5947d7875e181d91a777d60354867ec3a546735846590"
+    },
+    "hearthkeeper": {
+      "PR #105": "b16819e188c49c7b38ec24fe91a188743b0d32c8569df59d96ac184e12c20068",
+      "THIS PASS": "44896e087240de258934b783056c4564af83c780c80c21af8e58e924c1d99143"
+    },
+    "hedger": {
+      "PR #105": "3b403c707e9f678cefc3c77ea7a9c80279b1c6b5d14decdc4911f7022a79cd51",
+      "THIS PASS": "bcf9686e9d83bd3de488daab56b48f102a086a1d109504562bbe5910ff92d563"
+    },
+    "miller": {
+      "PR #105": "0e4aab663f0fd3c8abe361a2fccbbd24b300ddcf1fa7ea137f06fc4cbe7b2afd",
+      "THIS PASS": "4d0c40de96c2a11019523360b393d00a43d58a12be82659cf08d3012a11f9e6f"
+    },
+    "brewster": {
+      "PR #105": "f8e26fcd9e0fb90e35967c76b8bc3a09d2f7cc7fa4e3589e322b7ef264070937",
+      "THIS PASS": "e7224eb40c392ad6e215bbfa56ba02bea0f89ec184a2e54b87d0ff8a16fe8daa"
+    },
+    "lamplighter": {
+      "PR #105": "e0bf1d3102b1ab24c66e7405e1fe9517b160f8b02d954180454f77140b577324",
+      "THIS PASS": "f413c0e5c6bb64c3902d57f730c45dcaec66882a2828dabb4e2f67ae10d50efe"
+    },
+    "farrier": {
+      "PR #105": "88b53320ff2b0f60653d4c6171f8768253a5a1847ede9ed5fbd078edc656ec20",
+      "THIS PASS": "6be042ae02df1696c7e02871825daad7c1f3a8e5f258f8f298ee154b577f7f88"
+    },
+    "glover": {
+      "PR #105": "3e16e79ca584ab041f53f87ec191b0917718ae5d7afebeeecb7a189cadc58272",
+      "THIS PASS": "11655e525a815b79c183969c91cf80d00636b508351dee50ddacd7bc8b8fcd3f"
+    }
+  },
+  "clips": {
+    "hedger-cut.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1184492,
+      "sha256": "a3567feb1c9a44367f37623b473526e1daf537540f52c2eaf3380046c4419f32",
+      "family": "cut",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "bearer-crush.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1102443,
+      "sha256": "0aedf4e76288535243a8d294e100b60f27145706a8d3a85f06eabdeeaf3fab74",
+      "family": "crush",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "gambler-stab.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1144346,
+      "sha256": "f48e84e46cc81e36df0e0d7adeea038bf901fa0625bac0333ed4f0a660015d2a",
+      "family": "stab",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "runesmith-stamp.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1105920,
+      "sha256": "999324491ce0077e527b11afc168e9791369be9acc2f8b1ecaf870e3dc653bdc",
+      "family": "stamp",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "peddler-hook.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1124895,
+      "sha256": "93b4874352687d5451d44850c411810820ff90717c6845d1bee0aeddfa949851",
+      "family": "hook",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "flintwright-pick.mp4": {
+      "width": 720,
+      "height": 1280,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 1194223,
+      "sha256": "33b05a7da19349e23bddda06857cc641ea363a1f16a248e34373d16b73a1e8f6",
+      "family": "pick",
+      "sampling": "40ms simulated intervals; NOT device FPS",
+      "edit": "low/high action segments joined; intervening roll/setup omitted"
+    },
+    "six-tool-families.mp4": {
+      "width": 1152,
+      "height": 1568,
+      "r_frame_rate": "25/1",
+      "duration": "7.600000",
+      "nb_frames": "190",
+      "bytes": 2739385,
+      "sha256": "3cbd1e7ff3156420d008052736dc3756e70c9adf2b98f11e1eb304a6d7d77cd3"
+    }
+  },
+  "fixtures": "Seed1, easy, boon0, node2 Flue Crawler. Natural entry captured before synthetic state. Enemy HP/max999; raw attack faces 1/sides-1 with original die/relic floors and matching combo flags/burn; incoming7; HP restored between turns; fatigue20%; other natural roll-triggered effects retained. Not a balance/playthrough demo.",
+  "limits": [
+    "Capture samples are 40ms simulated steps, not measured device FPS.",
+    "Low/high clips join action segments; roll/setup gaps omitted.",
+    "All portrait unlocks are a test-only meta fixture.",
+    "Aesthetic approval and physical-phone touch/FPS remain unverified."
+  ],
+  "production_source_checkpoint": "f82d74ff134c9bc1b096bad68a29340b80bc1ce4",
+  "capture_command_exit_code": 0,
+  "capture_cases_passed": 72
+}

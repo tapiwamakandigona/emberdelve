@@ -1,0 +1,104 @@
+{
+  "source_checkpoint": "f82d74ff134c9bc1b096bad68a29340b80bc1ce4",
+  "date": "2026-09-18",
+  "flutter": "3.44.9",
+  "dart": "3.12.2",
+  "commands": [
+    {
+      "command": [
+        "flutter",
+        "analyze"
+      ],
+      "exit_code": 0,
+      "log": "final-0.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "test",
+        "--reporter",
+        "expanded"
+      ],
+      "exit_code": 0,
+      "log": "final-1.log"
+    },
+    {
+      "command": [
+        "python",
+        "tool/art/build_delvers.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "final-2.log"
+    },
+    {
+      "command": [
+        "python",
+        "tool/sfx_headroom.py"
+      ],
+      "exit_code": 0,
+      "log": "final-3.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "test",
+        "tool/roster_review_test.dart",
+        "--reporter",
+        "expanded"
+      ],
+      "exit_code": 0,
+      "log": "review-full-retry-0.log"
+    }
+  ],
+  "main_tests": 1526,
+  "baseline_tests": 1415,
+  "additive_tests": 111,
+  "phone_review_cases": 72,
+  "raster_bodies": 3960,
+  "proof_files": {
+    "final-analyze.txt": {
+      "sha256": "cc16c33c883d3a914ea7c2f2ff3a5bf3b67140875379b611c22d883856e4978d"
+    },
+    "final-tests.txt": {
+      "sha256": "e1c534d3cbf059c6c4ff253bddc4b9b3bd45aa1db91106e2a2a3f63d02cef835"
+    },
+    "final-art.json": {
+      "sha256": "87ed4c16517a7b8d9135b4dcf7e2f609267db8e74e84f2edc147efa77bb253b7"
+    },
+    "final-sfx.txt": {
+      "sha256": "25906f1a6483ab0c214378ccdd4c59cf98e260b62ca69764fe12ba488e3287ae"
+    },
+    "phone-render.txt": {
+      "sha256": "55deabbe1329d3905e93b67e375cf832bba98ca9b837d7c062755aa94b639eae"
+    },
+    "phone-render-first-failures.txt": {
+      "sha256": "68ede78ffecae15a3a3ed54e785f945ab4d4152d4d397c2d5f6bbce82691489b"
+    },
+    "tempered-tier-red.txt": {
+      "sha256": "55a6badff1eb8f96badeb4b057e8d64377b416384ab22f03e89c7a11ff547e58"
+    },
+    "tempered-tier-green.txt": {
+      "sha256": "33f3d1c9154c2292e9bf63af891357c609e6f9e0829b43258dc2f7104a70fc56"
+    },
+    "raster-tests.txt": {
+      "sha256": "45cb3fd42f915f8d2d0263ba0d371c79fb9fb5d9908d9f00683477f5b5ecbe73"
+    },
+    "action-tests.txt": {
+      "sha256": "272bd541ca50128c08780fbc48a709a4458bab9c65b58069fed702c53e0d84ca"
+    },
+    "design-tests.txt": {
+      "sha256": "e2eb1de571a6710f966f1679e2a84b2285208b6f117ee97c1ef61e3d635990b0"
+    },
+    "phone-pilot-failure.txt": {
+      "sha256": "6db829c47eddab921d6adf6e1488008a2e2a9e6e2153b4b0c00a617bc2b1dffc"
+    },
+    "phone-pilot-retry.txt": {
+      "sha256": "c92f069f8aa9bbf19c51efc2e0ddcf5d7631238d7f11ae2837d008b3a092299a"
+    }
+  },
+  "ci_and_unsigned_ios": "NOT YET READ; see eventual PR checks, not local inference",
+  "physical_device_fps_touch": "NOT VERIFIED",
+  "human_aesthetic_approval": "NOT VERIFIED",
+  "actual_play_purchase_restore": "NOT VERIFIED"
+}

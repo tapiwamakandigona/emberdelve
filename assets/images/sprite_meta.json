@@ -789,7 +789,7 @@
   "characters": [
     {
       "id": "kindler",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -810,11 +810,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.765625,
+        0.4375
+      ]
     },
     {
       "id": "warden",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -835,11 +839,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.328125,
+        0.4625
+      ]
     },
     {
       "id": "gambler",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -860,11 +868,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.796875,
+        0.4625
+      ]
     },
     {
       "id": "ascetic",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -885,11 +897,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.734375,
+        0.4375
+      ]
     },
     {
       "id": "peddler",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -910,11 +926,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4375
+      ]
     },
     {
       "id": "tinker",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -935,11 +955,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.796875,
+        0.4125
+      ]
     },
     {
       "id": "flintwright",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -960,11 +984,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.5375
+      ]
     },
     {
       "id": "bearer",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -985,11 +1013,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.859375,
+        0.5125
+      ]
     },
     {
       "id": "mender",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1010,11 +1042,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.796875,
+        0.4625
+      ]
     },
     {
       "id": "shieldwright",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1035,11 +1071,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4625
+      ]
     },
     {
       "id": "runesmith",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1060,11 +1100,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.765625,
+        0.4375
+      ]
     },
     {
       "id": "gilder",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1085,11 +1129,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.734375,
+        0.4375
+      ]
     },
     {
       "id": "cutler",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1110,11 +1158,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.734375,
+        0.4375
+      ]
     },
     {
       "id": "collier",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1135,11 +1187,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4375
+      ]
     },
     {
       "id": "stoker",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1160,11 +1216,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.765625,
+        0.4375
+      ]
     },
     {
       "id": "hearthkeeper",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1185,11 +1245,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4125
+      ]
     },
     {
       "id": "hedger",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1210,11 +1274,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.796875,
+        0.4375
+      ]
     },
     {
       "id": "miller",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1235,11 +1303,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4125
+      ]
     },
     {
       "id": "brewster",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1260,11 +1332,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.859375,
+        0.4625
+      ]
     },
     {
       "id": "lamplighter",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1285,11 +1361,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.796875,
+        0.4625
+      ]
     },
     {
       "id": "farrier",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1310,11 +1390,15 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.828125,
+        0.4625
+      ]
     },
     {
       "id": "glover",
-      "source_base": "Original delver model, GPT Image 2 source, native pixel conversion 2026-09-08",
+      "source_base": "Forge-and-ash redesign, GPT Image 2.5 source, native pixel conversion 2026-09-18",
       "frame_w": 32,
       "frame_h": 40,
       "rows": [
@@ -1335,7 +1419,11 @@
         }
       ],
       "fps": 6,
-      "scale": 1
+      "scale": 1,
+      "hand": [
+        0.765625,
+        0.4375
+      ]
     }
   ]
 }

@@ -1,0 +1,95 @@
+# PROJECT.md — Emberdelve
+
+## Active review — combat art and die-value animation, September 10
+
+Critique only: review character/weapon and low/high die attacks, trace observed
+presentation to source, and open an evidence-backed PR against
+`legacy/dice-builder`. Do not implement or release changes in this pass.
+Existing application, assets, tests, CI checks, simulation, progression and
+purchases stay unchanged.
+
+Actual APK reached consent, but two capture-tool faults stopped before combat;
+that route is closed and its temporary workflow removed. Final visual evidence
+uses release-identical real Flutter GameRoot/CombatScreen, fonts/assets and
+hit-tested controls in a deterministic headless render. This is not Android
+combat play, audio, physical performance or owner quality approval. Review:
+`docs/reviews/combat-visual-critique-2026-09-10.md`.
+[scope and capture evidence, 2026-09-10]
+
+## September 8 verified release resume
+
+Candidate `0.182.0+209` was built from `8a9def4`, signed/independently
+verified, published as a GitHub prerelease and made available to existing
+Play internal testers. Retained internal code12 for legacy Android5–6;
+new features require Android7+. Production remains208; do not infer a
+rollout from the prerelease or testing publication.
+`docs/releases/verification-0.182.0.md` has binary hashes and actual
+emulator trace measurements. Trace flows pass, but software raster exceeds
+the frame budget; physical low-end FPS/Play purchases remain open.
+Managed GitHub App dispatch was denied; owner-authorized supplied PAT
+works through documented Actions REST. Never list/expose signing secrets.
+
+**Goal:** A turn-based **dice-builder roguelite** for Android (Google Play), built with Flutter. Mobile-first: portrait, one-thumb, 3–7 minute play units inside 15–30 minute runs. Free download + one-time full-unlock IAP ($3.99–4.99), no forced ads. Quality bar: "fair-addictive" — addictive through quality, never through dark patterns.
+
+**Owner:** memorymadie (Tsoro Studios, Play developer ID 6318480192689304537, GitHub `tapiwamakandigona`). Built by the owner. This repo is designed so **any AI agent can resume the project from these files alone** — read this file, `features.json`, the tail of `progress.md`, then run `init.sh`.
+
+## Canonical artifacts
+Active owner-authorized quality pass (2026-09-08):
+`docs/quality-sep08.md`. Develop from `legacy/dice-builder`; preserve existing
+Forge entitlements and privacy promises. Keepers of the Flame is approved.
+Older development freezes do not block this pass; signing, test and Play
+verification gates still apply.
+
+Release preparation: candidate `0.182.0+209` (iteration 9); Play production
+208 verified September 8. Target source is this quality branch descended
+from `legacy/dice-builder`. Release candidate is not production approval.
+Current toolchain is Flutter 3.44.9/Dart 3.12.2; older toolchain prose below
+is historical. September 8 creative authorization supersedes the earlier
+AI-sprite restriction for the explicitly documented original roster update;
+`PROVENANCE.md` identifies generated source art, with no human-artist claim.
+
+Current scoped visual PR (2026-09-05): `docs/visual-polish-20260905.md`.
+Codex reading/navigation polish only; no release, version, purchase or sim changes.
+Verification is public analyzer/full suite/SFX plus real-font before/after plates.
+
+| What | Where |
+|---|---|
+| Product spec (approved) | `docs/spec.md` |
+| Architecture (interfaces frozen) | `docs/architecture.md` |
+| Definition of done | `features.json` (machine-readable; workers only flip `passes` + `evidence`) |
+| History / decisions | `progress.md` (append-only), `checkpoints/` |
+| Dev environment | `init.sh` |
+
+## Standing decisions (do not relitigate without owner)
+1. **Engine:** **Flutter/Dart** (stable 3.32.7, Dart ≥3.8.1). *Changed by owner
+   2026-07-23 ("remember we making this using flutter") for consistency with
+   their other apps (lanlink, quick bucks). Supersedes the original Defold
+   decision.* The sim core is a **sealed pure-Dart library** under `lib/sim/`
+   (no Flutter imports) so it stays deterministic and headless-testable — same
+   seam discipline as before. CI: `flutter analyze` + `flutter test` → `flutter
+   build apk`. The Defold-era Lua core was ported to Dart with proven 1:1 hash
+   parity (commit history), so the deterministic guarantees carry over.
+2. **Repo:** public (all shipped assets are CC0/CC-BY with attribution shipped in-app — see PROVENANCE.md; no license forbids redistribution). Releases are public on GitHub Releases.
+3. **Architecture:** sealed pure-Dart simulation core (`lib/sim/`) — commands in, events out, zero Flutter APIs inside. Flutter presentation renders events only. Never violate this seam. The Lua/Defold descriptions in old milestone evidence are historical.
+4. **Determinism:** all simulation randomness via the existing per-domain seeded streams. Same seed + same commands ⇒ identical event/state hashes. Existing Dart golden/parity checks stay unchanged.
+5. **Mechanic:** dice-builder combat (roll dice pool → assign dice to actions; grow/upgrade dice across the run). Enemy intent always visible; randomness in *offerings*, never in *resolution*.
+6. **Monetization:** free + one-time unlock IAP. **Banned:** energy timers, decaying streaks, rigged near-misses, FOMO-expiring content, loss-framed notifications (see `docs/spec.md` §Ethics).
+7. **Art direction (M2+):** dark high-contrast cartoony pixel-painterly, 48–64px sprites, portrait. No AI-generated animated sprites. Paid packs need owner budget approval BEFORE purchase.
+8. **Audio (M2+):** real recorded SFX only (Sonniss GDC bundles / Leohpaz / Kenney CC0). No AI audio. Licensed (non-CC0) assets must never enter a public repo.
+9. **Milestones:** M0 skeleton → M1 prototype (full seeded run) → M2 vertical slice → M3 content → M4 release. One milestone per work session; gate via `features.json` + checkpoint.
+
+## Play publishing status (updated 2026-08-10)
+- **PRODUCTION ACCESS GRANTED 2026-08-09** (Play Console email): the 12-tester/14-day gate is permanently cleared for this app. Store: https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve · opt-in: https://play.google.com/apps/testing/com.tsorostudios.emberdelve · tester group: emberdelve@googlegroups.com.
+- Play tracks still carry old builds (internal 12/v0.3.9, alpha 19/v0.3.14); testers are 6 releases behind. **Target-API deadline 2026-08-31** is against the old v0.3.9 build — uploading any current AAB (targetSdk 36) clears it.
+- The tutorial promised to testers shipped in v0.3.9+ (first-fight overlay, F11). No open public commitments.
+- **Monetization (v0.4.0): the Ember Forge** — free forever: full easy/normal runs, all delvers, Daily Delve; one-time IAP `ember_forge_unlock` ($4.99) opens HARD + Ascension + future acts. See progress.md 2026-08-10 and features.json M4-2 (device evidence pending).
+- Details + verified Play mechanics: `docs/release.md` §"Google Play closed testing" and the tail of `progress.md`.
+
+## Session-start ritual (for any AI/human resuming)
+1. Read this file, `features.json`, tail of `progress.md`, latest `checkpoints/*.md`.
+2. `git log --oneline -20` for recent history.
+3. `./init.sh` to bring the environment up and run the test suite.
+4. Work the next unfinished feature; update `features.json` (evidence required) and append to `progress.md`.
+
+## Research provenance
+Decisions above come from a 5-track research run (market, core-build, art, audio, psychology), 2026-07-23, synthesized in the owner's records. Key conclusions are embedded in `docs/spec.md` and `docs/architecture.md`; trust these files over memory.

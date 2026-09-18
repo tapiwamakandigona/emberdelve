@@ -8,6 +8,66 @@ were prepared; the files now live under `assets/`.)
 
 ---
 
+## September 18, 2026 — whole-playable-roster follow-up
+
+The owner requested the direction across all playable characters after the
+Kindler/Warden pass. Those two production sheets remain byte-identical.
+The remaining twenty are new GPT Image 2.5 (`gpt-image-2.5-sunburst`) source
+designs, made September 18 UTC/Harare, in five groups of four. Source images,
+complete prompts, model/date and SHA-256 values are retained in
+`tool/art/roster-redesign-2026-09-18/group-{1..5}/`.
+The delivered pair was used as an art-style reference, not a copied body.
+
+The ordinary-tradespeople direction (hat/pack/apron/cowl/kit silhouettes) is
+documented in `docs/roster-sep18/design-matrix.md`. These are generated source
+illustrations, not commissioned human pixel art. No third-party artist,
+franchise or exclusive-copyright claim. The prior source atlases below stay
+in the repository as historical provenance and before/after references.
+
+The same gutter discovery, binary-alpha threshold, nearest-neighbour native
+conversion, palette cap, two-pixel margins and memory/silhouette assertions
+apply. `tool/art/build_delvers.py --check` also verifies each new source hash
+and reproducible static rig definitions. Explicit anatomical coordinates and
+regions live in `roster_rigs.json`; `build_roster_rigs.py` emits static Dart.
+All primary fists are empty so the runtime signature tool can be gripped
+without a second baked-in weapon. Portraits use native sprite frames, combat
+uses source-pixel cutouts plus shared solved wrists.
+
+All playable IDs/order/kits/unlocks are unchanged. Enemy/boss/other asset
+provenance is unchanged. Generated source folders are not bundled Flutter
+assets. Physical-device performance and human aesthetic approval remain
+separate evidence requirements.
+
+## September 18, 2026 — Kindler and Warden design refinement
+
+Only Kindler and Warden are replaced in this pass, at the owner's request
+for more suitable character designs. The Kindler is a soot-worn, hooded
+firekeeper with scarf, workcoat and belt coal-lantern; the Warden is a
+stocky, plate-clad threshold guard with a furnace-door tower shield.
+At that earlier checkpoint the other twenty September 8 models remained
+byte-identical; the subsequent whole-roster section above supersedes that scope.
+
+Source: `tool/art/delvers-redesign-2026-09-18/source.png`, generated with
+`coworker_text2im`, model `gpt-image-2.5-sunburst`, September 18 Harare time
+(September 17 UTC). Original and refinement prompts are in adjacent
+`source.json`. One refinement requested coarser value grouping and clearer
+grip anatomy. These are AI-generated source illustrations, not commissioned
+human pixel art; generation alone is not evidence of final pixel quality.
+
+Production conversion uses the existing alpha-threshold, gutter-discovery,
+nearest-neighbour and palette-bounding path in `tool/art/build_delvers.py`.
+Outputs remain native 32×40 cells, two idle/two walk/one hit poses in
+64×120 PNGs. Hand anchors are now authored separately in
+`tool/art/hand_anchors.json` so rebuilding cannot erase them. The generator's
+original assertion/margins/palette/memory checks remain intact.
+
+Combat partitions the first cell into limb layers without changing source
+pixels; both runtime weapon and gauntlet use the same solved moving wrist.
+These two models have no baked primary weapon, avoiding the earlier
+torch-plus-blade and sword-plus-maul duplication. No third-party artist,
+franchise, trademark or exclusive copyright claim. Existing repository
+license treatment applies. Physical-device art review remains separate.
+
 ## September 8, 2026 — original delver model replacement
 
 All 22 `assets/images/characters/{id}.png` sheets now use distinct original
