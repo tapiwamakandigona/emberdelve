@@ -157,6 +157,14 @@ Future<ui.Image> _loadSheetImage(String assetPath) {
 // Cropping on load avoids per-frame masking/saveLayers. The small overlapping
 // joint caps reuse source pixels and leave portrait rows untouched.
 final Map<String, List<ui.Image>> _rigImageCache = {};
+
+/// Explicit decoded budget for the whole roster's source-pixel cutouts.
+/// Each cached part is 32x40 RGBA; no allocation is performed per frame.
+@visibleForTesting
+int get debugCombatRigCacheBytes => _rigImageCache.values.fold(
+  0, (total, parts) => total + parts.fold(0, (n, p) => n + p.width * p.height * 4),
+);
+
 List<ui.Image> _rigImages(SpriteSheetDef def, ui.Image source) {
   return _rigImageCache.putIfAbsent(def.assetPath, () {
     final rig = CombatRig.forId(def.id)!;

@@ -1,0 +1,123 @@
+{
+  "_provenance": "Authored against the native first idle cells of the five 2026-09-18 roster source groups. Pixel-center coordinates in 32x40; explicit anatomy, not inferred at runtime. Kindler/Warden remain in their original rig.",
+  "gambler": {
+    "hip": [16, 27], "neck": [17, 10], "shoulder": [18.5, 13.5], "elbow": [20.5, 18.5], "wrist": [25.5, 18.5],
+    "rearFoot": [10.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 28, "legSplit": 16, "footTop": 35, "capeLeft": 10,
+    "handRect": [24, 16, 28, 21], "forearmRect": [21, 16, 28, 21], "upperArmRect": [17, 12, 22, 20]
+  },
+  "ascetic": {
+    "hip": [15, 27], "neck": [16, 10], "shoulder": [18.5, 13.5], "elbow": [20.5, 17.5], "wrist": [23.5, 17.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [20.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 34, "capeLeft": 7,
+    "handRect": [23, 15, 26, 20], "forearmRect": [20, 15, 26, 20], "upperArmRect": [17, 12, 21, 19]
+  },
+  "peddler": {
+    "hip": [16, 27], "neck": [19, 11], "shoulder": [20.5, 12.5], "elbow": [22.5, 17.5], "wrist": [26.5, 17.5],
+    "rearFoot": [10.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 28, "legSplit": 16, "footTop": 35, "capeLeft": 9,
+    "handRect": [25, 15, 29, 20], "forearmRect": [22, 15, 29, 20], "upperArmRect": [19, 11, 23, 19]
+  },
+  "tinker": {
+    "hip": [16, 26], "neck": [18, 11], "shoulder": [18.5, 13.5], "elbow": [20.5, 17.5], "wrist": [25.5, 16.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 27, "legSplit": 16, "footTop": 34, "capeLeft": 8,
+    "handRect": [24, 14, 28, 19], "forearmRect": [21, 15, 28, 19], "upperArmRect": [17, 12, 22, 19]
+  },
+  "flintwright": {
+    "hip": [15, 28], "neck": [18, 14], "shoulder": [19.5, 16.5], "elbow": [21.5, 21.5], "wrist": [26.5, 21.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [19.5, 37.5],
+    "legTop": 30, "legSplit": 15, "footTop": 35, "capeLeft": 7,
+    "handRect": [25, 18, 29, 24], "forearmRect": [21, 19, 29, 24], "upperArmRect": [18, 15, 23, 22]
+  },
+  "runesmith": {
+    "hip": [15, 27], "neck": [16, 10], "shoulder": [17.5, 12.5], "elbow": [19.5, 17.5], "wrist": [24.5, 17.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [19.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 35, "capeLeft": 8,
+    "handRect": [23, 15, 27, 20], "forearmRect": [20, 16, 27, 20], "upperArmRect": [16, 11, 21, 19]
+  },
+  "bearer": {
+    "hip": [16, 27], "neck": [20, 10], "shoulder": [21.5, 12.5], "elbow": [23.5, 19.5], "wrist": [27.5, 20.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 29, "legSplit": 16, "footTop": 35, "capeLeft": 8,
+    "handRect": [26, 17, 30, 22], "forearmRect": [23, 18, 30, 22], "upperArmRect": [20, 11, 25, 21]
+  },
+  "mender": {
+    "hip": [15, 25], "neck": [17, 11], "shoulder": [18.5, 13.5], "elbow": [20.5, 18.5], "wrist": [25.5, 18.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [20.5, 37.5],
+    "legTop": 27, "legSplit": 15, "footTop": 35, "capeLeft": 8,
+    "handRect": [24, 16, 28, 21], "forearmRect": [21, 17, 28, 21], "upperArmRect": [17, 12, 22, 20]
+  },
+  "shieldwright": {
+    "hip": [16, 27], "neck": [18, 10], "shoulder": [19.5, 12.5], "elbow": [21.5, 17.5], "wrist": [26.5, 18.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [21.5, 37.5],
+    "legTop": 28, "legSplit": 16, "footTop": 35, "capeLeft": 8,
+    "handRect": [25, 16, 29, 20], "forearmRect": [22, 16, 29, 20], "upperArmRect": [18, 11, 23, 19]
+  },
+  "gilder": {
+    "hip": [15, 27], "neck": [16, 11], "shoulder": [17.5, 13.5], "elbow": [19.5, 17.5], "wrist": [23.5, 17.5],
+    "rearFoot": [10.5, 37.5], "frontFoot": [18.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 35, "capeLeft": 8,
+    "handRect": [23, 15, 26, 19], "forearmRect": [20, 16, 26, 19], "upperArmRect": [16, 12, 21, 19]
+  },
+  "cutler": {
+    "hip": [15, 27], "neck": [17, 11], "shoulder": [17.5, 13.5], "elbow": [19.5, 17.5], "wrist": [23.5, 17.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [19.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 35, "capeLeft": 8,
+    "handRect": [23, 15, 26, 20], "forearmRect": [20, 16, 26, 20], "upperArmRect": [16, 12, 21, 19]
+  },
+  "collier": {
+    "hip": [16, 26], "neck": [18, 11], "shoulder": [19.5, 12.5], "elbow": [21.5, 17.5], "wrist": [26.5, 17.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 28, "legSplit": 16, "footTop": 35, "capeLeft": 9,
+    "handRect": [25, 15, 29, 20], "forearmRect": [22, 16, 29, 20], "upperArmRect": [18, 11, 23, 19]
+  },
+  "stoker": {
+    "hip": [15, 27], "neck": [17, 10], "shoulder": [17.5, 12.5], "elbow": [19.5, 17.5], "wrist": [24.5, 17.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [21.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 35, "capeLeft": 9,
+    "handRect": [23, 15, 27, 20], "forearmRect": [20, 15, 27, 20], "upperArmRect": [16, 11, 21, 19]
+  },
+  "hearthkeeper": {
+    "hip": [17, 28], "neck": [18, 11], "shoulder": [20.5, 12.5], "elbow": [22.5, 17.5], "wrist": [26.5, 16.5],
+    "rearFoot": [10.5, 37.5], "frontFoot": [23.5, 37.5],
+    "legTop": 31, "legSplit": 17, "footTop": 35, "capeLeft": 10,
+    "handRect": [25, 14, 29, 19], "forearmRect": [22, 15, 29, 19], "upperArmRect": [19, 11, 24, 19]
+  },
+  "hedger": {
+    "hip": [16, 25], "neck": [17, 11], "shoulder": [18.5, 13.5], "elbow": [20.5, 18.5], "wrist": [25.5, 17.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 27, "legSplit": 16, "footTop": 35, "capeLeft": 8,
+    "handRect": [24, 15, 28, 20], "forearmRect": [21, 16, 28, 20], "upperArmRect": [17, 12, 22, 20]
+  },
+  "miller": {
+    "hip": [16, 28], "neck": [19, 11], "shoulder": [20.5, 13.5], "elbow": [22.5, 17.5], "wrist": [26.5, 16.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 30, "legSplit": 16, "footTop": 35, "capeLeft": 8,
+    "handRect": [25, 14, 29, 19], "forearmRect": [22, 15, 29, 19], "upperArmRect": [19, 12, 24, 19]
+  },
+  "brewster": {
+    "hip": [15, 27], "neck": [18, 11], "shoulder": [20.5, 13.5], "elbow": [22.5, 18.5], "wrist": [27.5, 18.5],
+    "rearFoot": [9.5, 37.5], "frontFoot": [21.5, 37.5],
+    "legTop": 30, "legSplit": 15, "footTop": 35, "capeLeft": 7,
+    "handRect": [26, 16, 30, 21], "forearmRect": [23, 16, 30, 21], "upperArmRect": [19, 12, 24, 20]
+  },
+  "lamplighter": {
+    "hip": [15, 27], "neck": [17, 11], "shoulder": [18.5, 13.5], "elbow": [20.5, 18.5], "wrist": [25.5, 18.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [21.5, 37.5],
+    "legTop": 29, "legSplit": 15, "footTop": 35, "capeLeft": 8,
+    "handRect": [24, 16, 28, 21], "forearmRect": [21, 17, 28, 21], "upperArmRect": [17, 12, 22, 20]
+  },
+  "farrier": {
+    "hip": [14, 28], "neck": [16, 12], "shoulder": [18.5, 14.5], "elbow": [20.5, 19.5], "wrist": [26.5, 18.5],
+    "rearFoot": [7.5, 37.5], "frontFoot": [22.5, 37.5],
+    "legTop": 31, "legSplit": 14, "footTop": 35, "capeLeft": 6,
+    "handRect": [25, 16, 29, 21], "forearmRect": [21, 17, 29, 22], "upperArmRect": [17, 13, 22, 22]
+  },
+  "glover": {
+    "hip": [14, 24], "neck": [16, 11], "shoulder": [17.5, 13.5], "elbow": [19.5, 17.5], "wrist": [24.5, 17.5],
+    "rearFoot": [8.5, 37.5], "frontFoot": [21.5, 37.5],
+    "legTop": 25, "legSplit": 14, "footTop": 35, "capeLeft": 7,
+    "handRect": [23, 15, 27, 20], "forearmRect": [20, 16, 27, 20], "upperArmRect": [16, 12, 21, 19]
+  }
+}

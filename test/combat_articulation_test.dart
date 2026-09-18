@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:emberdelve/data/characters.dart';
 import 'package:emberdelve/ui/combat_articulation.dart';
 import 'package:emberdelve/ui/combat_figure.dart';
 import 'package:emberdelve/ui/combat_pose.dart';
@@ -92,11 +93,13 @@ void main() {
   tearDown(() => Motion.instance.update(setting: 'system', systemFlag: false));
 
   test(
-    'only the two authored delvers opt in; roster/portrait fallback stays',
+    'all playable delvers opt in; unknown IDs and portrait fallback stay',
     () {
       expect(CombatRig.forId('kindler'), same(CombatRig.kindler));
       expect(CombatRig.forId('warden'), same(CombatRig.warden));
-      expect(CombatRig.forId('gambler'), isNull);
+      for (final id in charactersOrder) {
+        expect(CombatRig.forId(id)?.id, id, reason: '$id needs authored anatomy');
+      }
       expect(CombatRig.forId('not-a-delver'), isNull);
       expect(const SpriteView('kindler', height: 96).articulation, isNull);
       expect(const WeaponView('kindler', height: 96).articulation, isNull);
