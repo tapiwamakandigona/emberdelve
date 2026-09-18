@@ -75,3 +75,26 @@
 - All five staged sources retain original prompts/hashes. Their art checks
   passed separately; global silhouette/metadata/rig integration is next.
 - Iteration 5 complete, no source regeneration required.
+
+## Iteration 6 of 10 — native sheets and full-roster anatomical wiring
+
+- Plan: integrate all staged sources; author measured native joints/cut regions,
+  reproduce static Dart definitions and hand metadata; opt every playable
+  combat figure in while keeping unknown-ID/portrait fallback.
+- Production art builder now covers the twenty new sources and keeps existing
+  Kindler/Warden PNGs byte-identical. All old validation assertions retained.
+- VERIFIED first all-roster production write: 22 models, 40798 PNG bytes,
+  675840 decoded RGBA bytes, nearest global silhouette IoU 0.8822.
+- Explicit per-character anatomy in `roster_rigs.json` generates static Dart
+  data; runtime never reads JSON or guesses joint positions.
+- Acceptance update called out before implementation: the old assertion that
+  Gambler has no rig is replaced by exact all-22 ID coverage, while unknown-ID
+  and standalone SpriteView/WeaponView fallback checks are retained.
+- Added source/rig coverage and painted-anatomy tests; these have not yet run.
+- VERIFIED new + existing art/design/articulation tests: 38/38, exit 0.
+  Every painted wrist and all required anatomical layers are present; hand
+  metadata agrees with source-center coordinates for all twenty-two.
+- VERIFIED analyzer clean and production `--check` including static rig
+  generation passes. Provenance/credits updated candidly for all twenty-two.
+- Iteration 6 complete. Family-specific action/raster proof remain open;
+  these source/joint checks do not establish seamless moving silhouettes.

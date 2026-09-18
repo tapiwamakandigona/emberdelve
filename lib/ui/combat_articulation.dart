@@ -6,6 +6,8 @@ import 'dart:ui';
 
 import 'combat_pose.dart';
 
+part 'combat_roster.g.dart';
+
 enum RigBeat { ready, windup, strike, guard, recoil }
 
 enum RigPart {
@@ -84,9 +86,42 @@ class RigTransform {
   ]);
 }
 
+/// Source-specific anatomical regions. The twenty follow-up rigs use authored
+/// cut lines, not one bounding-box costume scaled across the entire roster.
+class RigCutout {
+  final int legTop, legSplit, footTop, capeLeft;
+  final Rect handRect, forearmRect, upperArmRect;
+  const RigCutout({
+    required this.legTop,
+    required this.legSplit,
+    required this.footTop,
+    required this.capeLeft,
+    required this.handRect,
+    required this.forearmRect,
+    required this.upperArmRect,
+  });
+
+  RigPart partAt(int x, int y, double neckY) {
+    if (y >= footTop) {
+      return x < legSplit ? RigPart.rearFoot : RigPart.frontFoot;
+    }
+    final pixel = Offset(x + 0.5, y + 0.5);
+    if (handRect.contains(pixel)) return RigPart.hand;
+    if (forearmRect.contains(pixel)) return RigPart.forearm;
+    if (upperArmRect.contains(pixel)) return RigPart.upperArm;
+    if (x < capeLeft && y < legTop) return RigPart.cape;
+    if (y < neckY) return RigPart.head;
+    if (y >= legTop) {
+      return x < legSplit ? RigPart.rearLeg : RigPart.frontLeg;
+    }
+    return RigPart.torso;
+  }
+}
+
 class CombatRig {
   final String id;
   final Offset hip, neck, shoulder, elbow, wrist, rearFoot, frontFoot;
+  final RigCutout? cutout;
   const CombatRig({
     required this.id,
     required this.hip,
@@ -96,6 +131,7 @@ class CombatRig {
     required this.wrist,
     required this.rearFoot,
     required this.frontFoot,
+    this.cutout,
   });
 
   static const kindler = CombatRig(
@@ -121,12 +157,14 @@ class CombatRig {
   static CombatRig? forId(String id) => switch (id) {
     'kindler' => kindler,
     'warden' => warden,
-    _ => null,
+    _ => _rosterRigs[id],
   };
 
   /// Partition the shipped first idle cell, not bounding-box copies of
   /// the entire sprite. A pixel belongs to one anatomical layer only.
   RigPart partAt(int x, int y) {
+    final regions = cutout;
+    if (regions != null) return regions.partAt(x, y, neck.dy);
     if (id == 'kindler') {
       if (y >= 35) return x < 14 ? RigPart.rearFoot : RigPart.frontFoot;
       if (x >= 24 && y >= 16 && y <= 19) return RigPart.hand;
