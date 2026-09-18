@@ -1,5 +1,14 @@
 # PROJECT.md — Emberdelve
 
+## September 18 — whole-playable-roster follow-up (source PR only)
+
+Owner requested all characters after delivery of #105. Current scoped plan:
+`docs/roster-sep18/PROJECT.md` and `features.json`. Build on #105 at `8a54784`,
+keep #102/#104/#105 open. Redesign the remaining twenty delvers and extend
+native articulation/shared grip/tool-family action to all twenty-two.
+Single executor, ten-iteration cap for this new task. No merge/release/Play action.
+Previous evidence remains historical; device/purchase gates remain unchanged.
+
 ## September 17 visual pass (source PR only)
 
 Current scoped plan and definition of done: `docs/visual-sep17/PROJECT.md`

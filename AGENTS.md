@@ -25,7 +25,7 @@ flutter run
 - `lib/ui/` — presentation and choreography; `assets/` — shipped art/fonts.
 - State: `PROJECT.md` (decisions), `features.json` (definition of done),
   `progress.md` (append-only log). Read these first every session.
-- Current scoped state: `docs/visual-sep17/PROJECT.md`, `features.json`,
+- Current scoped state: `docs/roster-sep18/PROJECT.md`, `features.json`,
   `progress.md`. Preserve previous root feature criteria and evidence.
 
 ## Boundaries
@@ -48,4 +48,5 @@ Generated assets are reproducible outputs, not a place to patch over checks.
 
 - `docs/reviews/combat-art-depth-critique-2026-09-13.md` — current defects.
 - `docs/design-system.md` — preserve visual identity.
-- `docs/visual-sep17/PROJECT.md` — this pass's plan and hard cap.
+- `docs/roster-sep18/PROJECT.md` — whole-roster pass's plan and hard cap.
+- `docs/visual-sep17/README.md` — completed two-character base and evidence.

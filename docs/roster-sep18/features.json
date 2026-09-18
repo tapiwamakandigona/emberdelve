@@ -1,0 +1,37 @@
+{
+  "$comment": "Adapted from canonical templates/features.json. Acceptance frozen before production edits; passing needs inspected artifact/command evidence.",
+  "features": [
+    {
+      "id": "ROSTER-ART",
+      "title": "Every playable delver has a suitable distinctive redesign",
+      "acceptance": "Twenty newly redesigned source models plus the two retained Kindler/Warden models cover exactly the 22 stable playable IDs. Integrated portrait/combat sheets preserve frame/alpha/margin/palette/memory budgets and distinct silhouettes; no recolour substitution. Source prompts, hashes and mechanical conversion are reproducible.",
+      "verify": "python3 tool/art/build_delvers.py --check && flutter test test/delver_models_test.dart test/roster_design_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "ROSTER-RIG",
+      "title": "All 22 bodies hold their actual tools through authored action",
+      "acceptance": "Every playable combat figure uses a native-anatomy rig with painted wrist anchors, independently moving head/chest/arm/legs, shared body/weapon/foreground grip and grounded boots. Six appropriate tool families and low/high commitment differ. Native raster continuity holds through sampled poses and transitions, not only coincident mathematical joints. Unknown IDs and standalone portrait rendering retain fallback.",
+      "verify": "flutter test test/roster_articulation_test.dart test/roster_raster_test.dart test/combat_articulation_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "ROSTER-RENDER",
+      "title": "Whole-roster actual Flutter visual evidence",
+      "acceptance": "Actual renders cover every playable delver at native combat sizes and 320/360/412 logical phone widths. Include real attacks/guards, low/high tiers, fatigue, blood off, reduced motion, text scaling, selection portraits and all six families; record layout/grip/timing observations. Deliver full roster before/after plates and representative clips. Do not claim sampled capture rate is device FPS or automated visual review is human approval.",
+      "verify": "flutter test tool/roster_review_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "ROSTER-GATES",
+      "title": "Regression and integrity gates stay green",
+      "acceptance": "Analyzer, full existing-plus-additive suite, production art and SFX pass. Original tests remain unchanged except the documented stronger full-roster opt-in assertion; sim/gameplay/content, saves, purchases, dependencies, workflows, version, non-character assets and prior evidence remain unchanged. Full managed-Git inventory is scanned without stdout truncation gaps. Explicitly report inherited supplemental/device/billing limits.",
+      "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}
