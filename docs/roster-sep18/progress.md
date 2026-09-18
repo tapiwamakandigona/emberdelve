@@ -51,3 +51,14 @@
   lean diagonal apron and rounded coal-basket cowl respectively. Public source
   prompt/hash retained; source staging does not yet imply runtime completion.
 - Iteration 3 complete.
+
+## Iteration 4 of 10 — fire, hearth, hedge and grain
+
+- Plan: Stoker, Hearthkeeper, Hedger and Miller source designs; preserve separate
+  short-costume legs and attachable gloves despite their outer gear.
+- VERIFIED source `d2e59b30...ce59a35`, unchanged production converter/checks.
+  Four complete models and different walk poses; nearest group silhouette
+  IoU 0.8822, below the unchanged 0.93 guard. Not an aesthetic score.
+- Native masks preserve asymmetric heat mantle, rear half-cape/key ring,
+  broad low brim/shoulder mat and round flour cap/low sack distinctions.
+- Iteration 4 complete; native combat and global all-roster checks pending.
