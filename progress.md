@@ -5917,3 +5917,127 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+
+## 2026-09-18 - PR102 historical reconciliation
+
+VERIFIED: owner authorized merging pending Emberdelve work. PR102's
+previously divergent September10 log is preserved verbatim below;
+its old scope/status is historical, not current release instruction.
+All current source, tests, feature objects and the complete current
+progress prefix are preserved. Old PROJECT snapshot is archived at
+docs/reviews/PROJECT-combat-critique-2026-09-10.md. Physical-phone and
+purchase criteria remain unpassed; no Play release in this merge.
+
+## 2026-09-10 — combat visual critique, task 1 of 4
+
+The review asks whether the current character/weapon pairings and die-value
+attack animations look convincing, not for another implementation or release.
+I opened the official and itch pages: both are Android download surfaces,
+not playable web builds; itch lists the older 0.179.0 APK. Current shipping
+branch is45fce851; no open Emberdelve PR at the primary read.
+
+An additive capture job installs the unchanged public0.182.0 x86_64 APK
+(pinned SHA256) on a disposable Android34 emulator, drives actual UI taps and
+records low/high attacks for four representative delvers. No app rebuild,
+save editing, production change, purchase or physical-performance claim.
+The pure sim and existing code codec identify seed1: Kindler rolls5/1/3,
+Warden5/1/2, Gambler5/1/1, Runesmith5/1/1 against Flue Crawler after skipping
+the boon. Those are fixture predictions until the actual UI matches.
+
+Context-read failure quoted: `command timed out after 90000 milliseconds`.
+One instrumented offline-package retry completed and read the primary branch,
+release and Pages metadata. Earlier broad source listing also hit
+`command timed out after 10000 milliseconds`; narrowed paths on its retry.
+Checks and tests remain unchanged. No quality claim from source comments.
+
+### Actual-APK capture, one retry
+
+Run34533567314 installed the hash-matched release APK and reached the actual
+Android UI, but stopped with `RuntimeError: Seed link did not become visible`.
+Captured hierarchy/screenshot show the optional analytics consent modal with
+`Not now`/`Allow`; the harness had not dismissed `Not now`. It did not reach
+combat, so no visual-combat conclusion comes from this failed attempt.
+Single retry adds that observed opt-out control and an exact title assertion.
+Never enable analytics to get past consent. Original tests remain unchanged.
+
+Local original analyzer is clean and all1348 tests pass. That verifies
+functional checks, not matching weapon art or compelling attack animation.
+Offline dependency fetch initially failed:
+`Because emberdelve depends on share_plus any which doesn't exist (could not find package share_plus in cache), version solving failed.`
+One ordinary package-fetch retry succeeded with the lockfile unchanged.
+
+### Android capture descoped after permitted retry
+
+Run34534177274 also stopped before combat:
+`ValueError: too many values to unpack (expected 4)`.
+The capture parser's `{..., "bounds": parsed, **xml_attributes}` allowed the
+raw XML bounds string to overwrite its four-coordinate list. This is a
+review-tool fault, not a game defect. Stop this route; no third AVD run.
+No Android combat/visual-performance claim is justified.
+
+Descoped evidence: a separate additive local render harness will use the
+release-identical real Flutter GameRoot/CombatScreen, real assets/fonts and
+hit-tested die/action taps. Headless frames have explicit simulation-time
+timestamps and do not stand in for native frame pacing, audio or owner play.
+
+## 2026-09-10 — task 2/4, rendered combat critique evidence
+
+VERIFIED: the real GameRoot/CombatScreen render harness completed four
+delvers and560 frames at720x1280 output,25fps simulated-time sampling.
+Die and Attack taps are hit-tested. Setup uses existing public commands,
+seed1/node2; no rolls/damage edits. Capture is explicitly not Android video.
+
+The review distinguishes existing choreography from missing authored body
+poses. All22 current character sheets have idle/run/hit rows, no attack;
+the hero stays in idle state while whole-body transforms and a shared
+weapon phase sequence run. Shared grip offset has no per-pose sockets.
+High hits already scale heat/shake and can earn hit-stop; I do not falsely
+claim every pixel or effect is identical.
+
+Concrete runtime defect: selected face1 and face5 both leave WeaponView.charge
+at0.0 in all four cases, then Attack updates it to0.15/0.4166667.
+Source wiring omits the input tick from the weapon consumer. Recorded as an
+open issue, not silently fixed in a critique-only PR.
+
+Verification: unchanged original suite1348/1348; final analyzer clean; render
+harness4/4. A formatting-only correction to the additive tool passes format
+check. Original tests were never modified. Video inspection was a tool read
+of actual rendered frames; unsupported guesses (exact weapon identity from
+tiny pixels, damage-scaled slash radius) were rejected against source.
+
+Temporary native-capture workflow and broken parser removed from final diff.
+Their two failed Actions runs remain linked as failures. No third native
+attempt, signing/new APK, release, art replacement or paid asset.
+
+## 2026-09-10 — task 3/4, evidence package and preservation
+
+VERIFIED: final formatted harness ran again, four cases green. Packaged the
+previously inspected22.4-second silent recording, actual selected-state
+stills, runtime observations, phase timelines, logs and SHA256 manifests.
+The repeated run's frame hashes are labelled separately from the first
+recording. Public logs replace only local checkout-path prefixes.
+
+Byte comparisons preserve1281 original non-state files, all260 original
+Dart test files, all33 pre-existing feature objects and the complete
+original progress prefix. Temporary native capture workflow/parser absent
+from the final tree; all original workflows unchanged. Review feature stays
+false until the actual open PR is read back; implementation stays false.
+
+VERIFIED primary readback: PR102 is OPEN, not merged, against
+legacy/dice-builder; head b185696df4343541ab764e8e03d3dbd64d2c3338,
+25 changed files. Original PR CI34536461181 started its normal
+analyzer/test/SFX checks; no new native-capture run and no signed-build job.
+Review feature now passes its bounded documentation/evidence acceptance.
+Implementation and original phone/purchase gates remain false.
+
+
+### PR102 reconciliation verification, September18
+
+VERIFIED runtime/tests/assets identical to merged741b439. Both feature
+sets, old PROJECT archive, current progress prefix and exact historical
+review suffix preserved. Original1526-test/analyzer/SFX/art baseline
+passes. Git whitespace diagnostic is NOT clean for immutable historical
+raw analyzer/render logs on both merge parents; their original bytes and
+hash evidence are retained rather than rewritten. No broad all-checks or
+all-features completion claim. Phone/purchase criteria remain false.

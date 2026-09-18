@@ -1,65 +1,20 @@
 # PROJECT.md — Emberdelve
 
-## September 18 — whole-playable-roster follow-up (source PR only)
+## Active review — combat art and die-value animation, September 10
 
-Owner requested all characters after delivery of #105. Current scoped plan:
-`docs/roster-sep18/PROJECT.md` and `features.json`. Build on #105 at `8a54784`,
-keep #102/#104/#105 open. Redesign the remaining twenty delvers and extend
-native articulation/shared grip/tool-family action to all twenty-two.
-Single executor, ten-iteration cap for this new task. No merge/release/Play action.
-Previous evidence remains historical; device/purchase gates remain unchanged.
-VERIFIED production checkpoint `f82d74f`: all22 designs/rigs integrated,
-72/72 actual render cases and1526/1526 main tests; analyzer/art/SFX green.
-Read `docs/roster-sep18/README.md` for evidence, fixtures and the declared
-original-test exception. Tempered dice now use their true size for visual
-heat/tier only. Source PR publication/remote checks are tracked separately;
-this is not a release or physical-device/aesthetic approval.
+Critique only: review character/weapon and low/high die attacks, trace observed
+presentation to source, and open an evidence-backed PR against
+`legacy/dice-builder`. Do not implement or release changes in this pass.
+Existing application, assets, tests, CI checks, simulation, progression and
+purchases stay unchanged.
 
-## September 17 visual pass (source PR only)
-
-Current scoped plan and definition of done: `docs/visual-sep17/PROJECT.md`
-and `docs/visual-sep17/features.json`. Build on #104's `0df9d51` blood-control
-handoff; leave #102/#104 open. Prioritize contact-timed visual health/guard,
-then articulated Kindler/Warden bodies and continuous weapon grips.
-Single executor, six-iteration cap. No merge, release, version or Play action.
-Previous feature criteria and device gates remain unchanged.
-
-## September 13 current open-PR handoff — blood control + critique
-
-Branch `feat/blood-toggle-review-sep13` targets **`legacy/dice-builder`**,
-not the frozen platformer on `main`. **Leave this PR open for the next
-agent.** This pass adds a saved Blood effects preference and records
-candid current ratings: art **6/10**, animation **4/10**, depth **7/10**
-(subjective design judgment, not an automated grade or a phone playtest).
-
-Start with `docs/reviews/combat-art-depth-critique-2026-09-13.md`, its
-ranked next-agent tasks, and `docs/reviews/blood-toggle-verification-2026-09-13.md`.
-Toggle code/analyzer/main suite are verified: **1,387 tests**, original
-tests/simulation/assets unchanged. Two existing supplemental tools are
-**not green**: the art generator drops authored `hand` metadata from its
-output, and the old UI-playthrough harness omits the keystone phase.
-Do not erase sockets, disable keystones or weaken assertions to pass them.
-
-Next visual priorities: displayed HP/wounds/guard must agree with impact;
-then authored Kindler/Warden body actions with moving grip anchors.
-Larger animation, balance and art changes are critique/handoff work,
-not implemented in this PR. No merge, version bump, tag, new release,
-Play submission or content-rating change in this scope. Blood-off is a
-comfort preference, not automatic rating relief. Device/purchase gates
-below remain open.
-
-## September 13 verified release resume
-
-`0.183.0+210` ("Bodies in the Fight", PR #103, merge `c611e16`) was built
-and signed by CI run 34743081440, published as GitHub release v0.183.0
-(Latest), and uploaded to the **Play production track at 100% roll-out**
-together with a re-answered IARC questionnaire that declares mild/limited
-blood. Both changes were **sent for Google review** on 13 September; managed
-publishing is off, so they go live when review passes. At the last check,
-210 was **In review** and 208 (0.181.0) **Available on Google Play**.
-Do not call 210 live until the production track explicitly marks it available.
-Evidence and rating changes: `docs/releases/verification-0.183.0.md`.
-Physical-phone FPS/touch review and Play purchase/restore remain open.
+Actual APK reached consent, but two capture-tool faults stopped before combat;
+that route is closed and its temporary workflow removed. Final visual evidence
+uses release-identical real Flutter GameRoot/CombatScreen, fonts/assets and
+hit-tested controls in a deterministic headless render. This is not Android
+combat play, audio, physical performance or owner quality approval. Review:
+`docs/reviews/combat-visual-critique-2026-09-10.md`.
+[scope and capture evidence, 2026-09-10]
 
 ## September 8 verified release resume
 
@@ -138,13 +93,3 @@ Verification is public analyzer/full suite/SFX plus real-font before/after plate
 
 ## Research provenance
 Decisions above come from a 5-track research run (market, core-build, art, audio, psychology), 2026-07-23, synthesized in the owner's records. Key conclusions are embedded in `docs/spec.md` and `docs/architecture.md`; trust these files over memory.
-
-
-## September18 authorized release integration
-
-VERIFIED: PRs104/105/106 merged into shipping741b439; owner now
-authorizes pending Emberdelve merges and production preparation.
-Earlier leave-open scope above is historical. PR102's critique,
-feature criteria and exact divergent log are being preserved,
-not treated as new defects or physical-device approval. Read the
-release handoff before acting; no Play action from this docs merge.

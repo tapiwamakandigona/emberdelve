@@ -2,6 +2,20 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "COMBAT-VISUAL-REVIEW-20260910",
+      "title": "Evidence-backed critique of character, weapon and die-value presentation",
+      "acceptance": "Open actual available surfaces and identify the inspected release; provide real rendered-game character and low/high attack evidence with explicit Android-capture limitations. Criticize observed attachment, pose, visual-style and die-expression gaps without claiming existing effects absent; trace concrete defects to source and specify open implementation gates. Preserve all previous feature objects, original tests/application/assets/workflows and append-only history. Open a review PR, not an implementation or release.",
+      "passes": true,
+      "evidence": "VERIFIED: https://github.com/tapiwamakandigona/emberdelve/pull/102 is open, not merged, against legacy/dice-builder. docs/reviews/combat-visual-critique-2026-09-10.md and its 22.4s actual Flutter-render recording, stills, observations, source anchors and checksum manifests cover four delvers, face1/face5 and the stale selection-heat defect. Native capture failed twice before combat and is explicitly not claimed. Original suite1348/1348, additive render4/4, clean analyzer; 1281 original non-state files, all260 original Dart tests, all33 old feature objects and full progress prefix preserved. This passes only the bounded critique task, not implementation, phone or art approval."
+    },
+    {
+      "id": "COMBAT-VISUAL-IMPLEMENTATION-20260910",
+      "title": "Coherent weapon grip, attack poses and die-value expression",
+      "acceptance": "Implement and verify the attachment, body-expression, die-tier, selection-feedback, contact, accessibility, pacing and real-device criteria in docs/reviews/combat-visual-critique-2026-09-10.md. Preserve simulation, save, purchase and original checks; before/after normal-speed phone review required. The critique alone cannot pass this feature.",
+      "passes": false,
+      "evidence": "OPEN: this PR documents the review only. Current headless visual evidence and functional tests do not satisfy implementation or phone-quality acceptance."
+    },
+    {
       "id": "BLOOD-COMFORT-20260913",
       "title": "Persistent blood-off comfort control without changing combat",
       "acceptance": "Default preserves existing blood-on presentation. Persisted setting applies before first frame; off hides bursts, ichor, stains and both bodies' wound marks, immediately clears active/historical effects, and permits no delayed stain resurrection. Damage, block feedback, fatigue, simulation and other preferences unchanged. Native accessible translated switch; added regressions, analyzer and original main suite pass.",
