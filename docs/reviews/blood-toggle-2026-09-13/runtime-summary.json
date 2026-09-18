@@ -1,0 +1,126 @@
+{
+  "kindler": {
+    "first_roll": [
+      5,
+      1,
+      3
+    ],
+    "initial_enemy_hp": 19,
+    "final_enemy_hp": 13,
+    "low_selection_heat": [
+      0.29166666666666663
+    ],
+    "high_selection_heat": [
+      0.8583333333333334
+    ],
+    "high_attack_first_sample": {
+      "frame": 60,
+      "clip_ms": 2400,
+      "label": "high-attack",
+      "file": "kindler/060-high-attack.png",
+      "player_hp": 30,
+      "enemy_hp": 13,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 1,
+      "foe_hurt": 0.23618603294940949
+    }
+  },
+  "warden": {
+    "first_roll": [
+      5,
+      1,
+      2
+    ],
+    "initial_enemy_hp": 19,
+    "final_enemy_hp": 13,
+    "low_selection_heat": [
+      0.29166666666666663
+    ],
+    "high_selection_heat": [
+      0.8583333333333334
+    ],
+    "high_attack_first_sample": {
+      "frame": 60,
+      "clip_ms": 2400,
+      "label": "high-attack",
+      "file": "warden/060-high-attack.png",
+      "player_hp": 32,
+      "enemy_hp": 13,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 1,
+      "foe_hurt": 0.23618603294940949
+    }
+  },
+  "gambler": {
+    "first_roll": [
+      5,
+      1,
+      1
+    ],
+    "initial_enemy_hp": 19,
+    "final_enemy_hp": 12,
+    "low_selection_heat": [
+      0.29166666666666663
+    ],
+    "high_selection_heat": [
+      0.8583333333333334
+    ],
+    "high_attack_first_sample": {
+      "frame": 60,
+      "clip_ms": 2400,
+      "label": "high-attack",
+      "file": "gambler/060-high-attack.png",
+      "player_hp": 27,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    }
+  },
+  "runesmith": {
+    "first_roll": [
+      5,
+      1,
+      1
+    ],
+    "initial_enemy_hp": 19,
+    "final_enemy_hp": 12,
+    "low_selection_heat": [
+      0.29166666666666663
+    ],
+    "high_selection_heat": [
+      0.8583333333333334
+    ],
+    "high_attack_first_sample": {
+      "frame": 60,
+      "clip_ms": 2400,
+      "label": "high-attack",
+      "file": "runesmith/060-high-attack.png",
+      "player_hp": 26,
+      "enemy_hp": 12,
+      "weapon_phases": [
+        "raise"
+      ],
+      "weapon_charges": [
+        0.8583333333333334
+      ],
+      "foe_wounds": 2,
+      "foe_hurt": 0.3071876366817321
+    }
+  }
+}

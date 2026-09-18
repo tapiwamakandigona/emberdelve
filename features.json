@@ -2,6 +2,41 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "BLOOD-COMFORT-20260913",
+      "title": "Persistent blood-off comfort control without changing combat",
+      "acceptance": "Default preserves existing blood-on presentation. Persisted setting applies before first frame; off hides bursts, ichor, stains and both bodies' wound marks, immediately clears active/historical effects, and permits no delayed stain resurrection. Damage, block feedback, fatigue, simulation and other preferences unchanged. Native accessible translated switch; added regressions, analyzer and original main suite pass.",
+      "passes": true,
+      "evidence": "docs/reviews/blood-toggle-verification-2026-09-13.md; 18 new blood_effects_test.dart cases; negative spawn/wound controls fail as expected, exact source restored, 18/18 green; full suite 1387/1387, analyzer clean, SFX ceiling clear, 95-message catalog parity, nine real-font/render cases. Existing supplemental art/UI-tool failures are explicitly separate and remain open."
+    },
+    {
+      "id": "CURRENT-CRITIQUE-20260913",
+      "title": "Evidence-backed current art, animation and depth critique for next-agent handoff",
+      "acceptance": "Separate candid art/animation/depth scores with reasons; inspect current rendered fights/roster and executable gameplay source, label subjective judgments and headless/bot limitations; preserve known failures; provide prioritized next-agent tasks and measurable acceptance checks. No claim of completed physical-device playthrough, purchase test or implemented future critique work.",
+      "passes": true,
+      "evidence": "docs/reviews/combat-art-depth-critique-2026-09-13.md; four real-UI 175-frame clips, pre-contact health/guard observations, four locale plates, forced-injury comparisons and roster; depth-report.json contains 600 terminal greedy-bot runs and state/event hashes. Art 6/10, animation 4/10, depth 7/10 explicitly subjective. This is an OPEN-PR handoff, not release approval."
+    },
+    {
+      "id": "NEXT-ART-REPRO-20260913",
+      "title": "Next-agent follow-up: preserve hand sockets in reproducible art generation",
+      "acceptance": "Reproduce current metadata-diff failure, make generator emit authored hand sockets from an explicit source without deleting current socket data or assertions, and pass unchanged image/metadata validation.",
+      "passes": false,
+      "evidence": "Existing tool/art/build_delvers.py --check fails AssertionError: metadata differs on unchanged b8b24a7 and this branch. entry_for() omits hand on all 22 delvers. See current critique, verification.txt. Not fixed in the blood preference PR."
+    },
+    {
+      "id": "NEXT-UI-PLAYTHROUGH-20260913",
+      "title": "Next-agent follow-up: restore complete keystone-aware interactive UI verification",
+      "acceptance": "Repair the supplemental UI harness against actual sim phase transitions, tap real keystone choices including decline, preserve all invariants, and complete four seeded UI runs without falsely interpreting the valid keystone phase as a softlock.",
+      "passes": false,
+      "evidence": "Unchanged tool/play_session_test.dart fails twice on base at seed 1842571558: illegal player_turn → keystone, then STUCK at keystone. Tool legalNext and dispatcher omit this valid phase. Zero completed UI runs verified by the tool."
+    },
+    {
+      "id": "NEXT-COMBAT-ACTING-20260913",
+      "title": "Next-agent follow-up: contact-synchronised health/guard and believable body actions",
+      "acceptance": "Presentation HP/wounds/guard transition at impact, not synchronous sim apply; authored low/high Kindler cut and Warden maul with continuous moving grip anchors, full/partial/unblocked reactions, and readable fatigue. Verify particle-free phone-size captures, proposed one-native-pixel grip tolerance, reduced-motion/queue/terminal correctness and unchanged simulation hashes before broad roster expansion.",
+      "passes": false,
+      "evidence": "Current critique A1–A5 and runtime observations: Kindler frame60 has HP13/wound1 while weapon raise; guard drops before incoming impact for three sampled characters. Bodies still use idle sheets plus whole-sprite transforms. This PR records the findings; it does not implement the larger follow-up."
+    },
+    {
       "id": "COMBAT-BODIES-20260913",
       "title": "Bodies in the Fight: weapon-family strikes, guard stance, blood, health-linked body language",
       "acceptance": "Selecting a die heats the weapon before the swing (red/green regression). Each weapon family (cut/crush/stab/stamp/hook/pick) has its own wind-up, arc, follow-through and contact shape; die tier is read against the die's own size. Block holds a guard stance while block > 0. Landed hits spray blood/ichor and stain the floor for the encounter; fully blocked hits do not. Wounds, slump, pallor, laboured breathing and tremor scale with remaining HP for delvers and enemies. Weapon grip pinned to a per-sheet hand socket. Reduce motion, fast-forward and the one-slot queue preserved. No simulation number changes. Analyzer, full suite and SFX gates green.",

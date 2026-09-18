@@ -20,6 +20,7 @@ import 'news_screen.dart';
 import 'haptics.dart';
 import 'more_games.dart';
 import 'motion.dart';
+import 'blood_effects.dart';
 import 'theme.dart';
 import 'widgets.dart';
 import 'keeper.dart';
@@ -497,6 +498,58 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     },
                   ),
                 ],
+                // A separate visual-content preference. Keep the established
+                // audio/comfort/privacy/update blocks in place rather than
+                // displacing their controls with more rows in COMFORT.
+                const SizedBox(height: Space.xl),
+                Text(tr(context, 'COMBAT VISUALS'), style: EmberText.micro),
+                const SizedBox(height: Space.s),
+                Panel(
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.visibility_outlined,
+                        color: EmberColors.textDim,
+                        size: 20,
+                      ),
+                      const SizedBox(width: Space.m),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tr(context, 'Blood effects'),
+                              style: EmberText.body,
+                            ),
+                            Text(
+                              tr(
+                                context,
+                                'Off hides blood, ichor and wound marks. Damage and fatigue stay visible.',
+                              ),
+                              style: EmberText.label,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Native keyboard activation, toggled semantics and
+                      // a full touch target; colours from the existing theme.
+                      Semantics(
+                        container: true,
+                        label: tr(context, 'Blood effects'),
+                        child: Switch(
+                          key: const ValueKey('blood-effects-toggle'),
+                          value: _s.bloodEffects,
+                          activeThumbColor: EmberColors.ember,
+                          onChanged: (value) {
+                            _s.bloodEffects = value;
+                            BloodEffects.enabled.value = value;
+                            _changed(preview: true);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 // Play Games (v0.5.0, P4+P5): opt-in connect. Hidden entirely on
                 // builds without the platform backends (tests, web, desktop).
                 if (PlayGamesService.instance.available) ...[

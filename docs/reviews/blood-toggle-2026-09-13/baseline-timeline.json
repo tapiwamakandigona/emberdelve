@@ -1,0 +1,38 @@
+[
+  {
+    "character": "kindler",
+    "start_seconds": 0,
+    "end_seconds": 2.8,
+    "frames": 70,
+    "fixture": "seed 1; easy; boon skipped; node 2; hero HP 30%, foe HP 50%",
+    "actions": "low die block then high die attack then end turn",
+    "gap": "After frame 67, 3000ms are pumped uncaptured; last 2 frames show settled state."
+  },
+  {
+    "character": "warden",
+    "start_seconds": 2.8,
+    "end_seconds": 5.6,
+    "frames": 70,
+    "fixture": "seed 1; easy; boon skipped; node 2; hero HP 30%, foe HP 50%",
+    "actions": "low die block then high die attack then end turn",
+    "gap": "After frame 67, 3000ms are pumped uncaptured; last 2 frames show settled state."
+  },
+  {
+    "character": "gambler",
+    "start_seconds": 5.6,
+    "end_seconds": 8.399999999999999,
+    "frames": 70,
+    "fixture": "seed 1; easy; boon skipped; node 2; hero HP 30%, foe HP 50%",
+    "actions": "low die block then high die attack then end turn",
+    "gap": "After frame 67, 3000ms are pumped uncaptured; last 2 frames show settled state."
+  },
+  {
+    "character": "runesmith",
+    "start_seconds": 8.399999999999999,
+    "end_seconds": 11.2,
+    "frames": 70,
+    "fixture": "seed 1; easy; boon skipped; node 2; hero HP 30%, foe HP 50%",
+    "actions": "low die block then high die attack then end turn",
+    "gap": "After frame 67, 3000ms are pumped uncaptured; last 2 frames show settled state."
+  }
+]

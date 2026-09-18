@@ -5784,3 +5784,66 @@ single-agent harness rules for this pass.
   "In review" and 208 (0.181.0) "Available on Google Play". Play's release
   dashboard recommends edge-to-edge handling, bitmap downsampling and R8
   for 210 — logged as follow-ups, not blockers.
+
+## 2026-09-13 — blood comfort control and OPEN-PR critique handoff
+
+Scope: add a saved blood-off preference and candid current art, animation
+and gameplay-depth critique to one PR targeting `legacy/dice-builder`.
+Leave it OPEN for the next agent. No merge/release/Play/rating change.
+Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
+
+- Implemented default-on `AudioSettings.bloodEffects`, JSON migration,
+  startup initialisation, app-wide presentation notifier and translated
+  native switch under Settings → COMBAT VISUALS. Reuses queued atomic
+  SettingsStore. Off removes active bursts/old floor stains and prevents
+  new blood/ichor or delayed stains; both sprite wound painters obey it.
+  Fatigue/condition, contact feedback, damage and block remain. Re-enable
+  allows future bursts, not resurrection of cancelled effects.
+- VERIFIED main local gates: analyzer clean; 1,387 tests (1,369 baseline
+  + 18 new); locale compiler 95 messages × 3; SFX reachable ceiling clear
+  (full attack TIGHT −0.90 dBTP); unchanged idle census 120/120 paints.
+  Original tests, sim, assets, dependencies, CI and version unchanged.
+- Negative controls: remove spawn guard → expected BloodBurst absence
+  assertion fails; ignore showWounds → expected raw-RGBA equality fails.
+  Exact production bytes restored and all 18 new tests pass.
+- New real-render probe passes nine cases: four controlled seed1/easy
+  low/high attack/block/enemy-turn clips at 360×640 and 25 sampled fps;
+  22-delver roster; EN/FR/ES/PT Settings at 320px/1.3× with real fonts and
+  whole-panel containment. Forced 20% HP on/off plates clearly labelled.
+  Captured frames are not physical-device FPS evidence.
+- Critique: art 6/10, animation 4/10, depth 7/10 — subjective judgments.
+  Current weapon families/selection heat/guard/HP condition acknowledged,
+  not erased by repeating old PR #102. Bodies still rely on idle-sheet
+  transforms; idle sockets do not follow independently painted breathing.
+  Runtime frames verify HP/wounds during raise and guard loss before
+  incoming contact. Larger animation/depth changes are NOT implemented.
+- Depth probe: existing greedy bot, four characters × three difficulties
+  × seeds1–50; 600 terminal runs, no invalid commands. Normal wins
+  Kindler31/50, Warden44/50, Gambler27/50, Runesmith30/50. Not human
+  balance/retention evidence; no immediate nerf recommendation.
+- Existing supplemental failures kept visible:
+  `build_delvers.py --check` → `AssertionError: metadata differs`, also
+  on unchanged base. Generator omits all22 `hand` fields; do not erase
+  them with a write-mode regeneration.
+  `play_session_test.dart` twice on unchanged base → `INVARIANT step 62:
+  illegal transition player_turn → keystone`, then `STUCK:
+  keystone|t10|r3,2,6|a1|hp25|ehp0 after 40 identical steps (run 0)`.
+  Missing graph/dispatcher phase in the tool, not verified product
+  softlock; zero completed UI runs from it.
+- Iteration failures: new fixture SemanticsHandle lifetime corrected;
+  COMFORT insertion broke the original UPDATES lookup (base passed);
+  compact retry failed, moved the new panel after UPDATES without changing
+  the old test. Semantic container fixed merged labels. Review probe
+  assumed one WeaponView; changed only probe to record AnimatedSwitcher
+  incoming/outgoing lists. Analyzer import/reset warnings corrected.
+  Viewport-cropped Settings proof recaptured as a whole panel, additional
+  containment assertions retained. Original frame-probe timeout passed
+  with adequate runtime. Full failure trail in verification document.
+- Documents: `docs/reviews/combat-art-depth-critique-2026-09-13.md`,
+  `docs/reviews/blood-toggle-verification-2026-09-13.md` and exact evidence
+  under `docs/reviews/blood-toggle-2026-09-13/`. New false follow-up features
+  keep the generator, UI-playthrough and body-acting gaps explicit.
+  Existing physical-device and Play purchase/restore gates remain false.
+- Blood-off is a comfort preference, not automatic age-rating relief.
+  Existing Play declaration/submission untouched. No claim this PR or
+  its larger proposed changes is released.
