@@ -71,8 +71,10 @@ art, all-character native-pixel/phone evidence and green scoped checks.
 
 ## Current phase
 
-Iterations 1–8 verified. All 22 playable rigs and six tool-family paths are
-integrated. Actual phone/picker/native capture matrix passes 72/72; a real
-tempered-die size presentation defect found there has a red/green regression.
-Iteration9 is final whole-suite/integrity/evidence closure and publication.
-Do not treat the green baseline as the final tree's result. Reserve10 unused.
+Iterations 1–8 verified and committed. Iteration9 local gates are VERIFIED:
+1526/1526 main tests, analyzer/art/SFX exit0 at production checkpoint `f82d74f`;
+72/72 phone/picker/native capture matrix and complete inventory/secret scan.
+All four scoped criteria now have proof. Live #105 remains open at `8a54784`,
+so publication targets `feat/combat-visuals-sep17`; #102/#104/#105 stay open.
+Only documentation/evidence changed since the production checkpoint.
+Publish and read exact-head automatic checks; no merge/release. Reserve10 unused.

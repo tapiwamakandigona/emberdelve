@@ -1,0 +1,77 @@
+{
+  "baseline": "8a5478447a209e764d963ea8fe05f38202d0d2fc",
+  "scan_method": "managed ls-files cached+others; complete stdout resolved; every file read",
+  "files_scanned": 1504,
+  "baseline_files": 1417,
+  "changed_original": [
+    "AGENTS.md",
+    "CREDITS.md",
+    "PROJECT.md",
+    "PROVENANCE.md",
+    "assets/images/characters/ascetic.png",
+    "assets/images/characters/bearer.png",
+    "assets/images/characters/brewster.png",
+    "assets/images/characters/collier.png",
+    "assets/images/characters/cutler.png",
+    "assets/images/characters/farrier.png",
+    "assets/images/characters/flintwright.png",
+    "assets/images/characters/gambler.png",
+    "assets/images/characters/gilder.png",
+    "assets/images/characters/glover.png",
+    "assets/images/characters/hearthkeeper.png",
+    "assets/images/characters/hedger.png",
+    "assets/images/characters/lamplighter.png",
+    "assets/images/characters/mender.png",
+    "assets/images/characters/miller.png",
+    "assets/images/characters/peddler.png",
+    "assets/images/characters/runesmith.png",
+    "assets/images/characters/shieldwright.png",
+    "assets/images/characters/stoker.png",
+    "assets/images/characters/tinker.png",
+    "assets/images/sprite_meta.json",
+    "lib/ui/combat_articulation.dart",
+    "lib/ui/combat_figure.dart",
+    "lib/ui/combat_pose.dart",
+    "lib/ui/screens/combat_screen.dart",
+    "lib/ui/sprites.dart",
+    "progress.md",
+    "test/combat_articulation_test.dart",
+    "tool/art/build_delvers.py",
+    "tool/art/hand_anchors.json"
+  ],
+  "original_test_files": 266,
+  "original_test_changes": [
+    "test/combat_articulation_test.dart"
+  ],
+  "test_exception": "predeclared exact all22 opt-in replaces obsolete two-only assertion; fallbacks retained",
+  "protected_groups": {
+    "sealed_sim": {
+      "files": 13,
+      "sha256_equal": true
+    },
+    "gameplay_content": {
+      "files": 22,
+      "sha256_equal": true
+    },
+    "meta_purchase_saves": {
+      "files": 25,
+      "sha256_equal": true
+    },
+    "original_workflows": {
+      "files": 3,
+      "sha256_equal": true
+    },
+    "previous_review_evidence": {
+      "files": 109,
+      "sha256_equal": true
+    }
+  },
+  "dependencies_version_lints_unchanged": true,
+  "noncharacter_assets_unchanged": true,
+  "kindler_warden_pngs_unchanged": true,
+  "original_files_missing": [],
+  "unexpected_changes": [],
+  "provisioned_secret_value_scan": "PASS; no values recorded",
+  "device_purchase_ui_playthrough_gates_remain_false": true,
+  "self_reference": "manifest and this report are completed before final checkpoint rescan"
+}

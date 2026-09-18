@@ -76,9 +76,28 @@ approval inferred from an IoU threshold or an automated description.
 | Capture observations | **12,540** samples; max shared-grip error **2.842170943040401e-14 logical px**; every outgoing/incoming hit-flash figure checked |
 | Raw render artifacts | **4,608 PNGs**, including **72** native pose plates and **66** picker captures |
 
-The baseline's **1,415 passing tests are not the final-tree gate result**.
-Final regression/integrity results will be recorded separately after the
-complete gates run. Until then `ROSTER-GATES` remains false.
+### Final local gates
+
+**VERIFIED at production checkpoint
+`f82d74ff134c9bc1b096bad68a29340b80bc1ce4`:**
+analyzer clean, **1,526/1,526 tests**, production art and SFX all exit **0**.
+This is **111 additive tests** above the **1,415-test** baseline; no removed or
+skipped baseline cases. See [verification manifest](evidence/verification.json),
+[analyzer](evidence/final-analyze.txt), [full suite](evidence/final-tests.txt),
+[art](evidence/final-art.json) and [SFX](evidence/final-sfx.txt).
+
+SFX retains the existing **−0.90dBTP TIGHT** full-attack boundary; every reachable
+cascade clears the ceiling. Artificial unreachable same-frame overloads remain
+reported, not hidden or relabelled. Audio assets/mix code are unchanged.
+
+[Integrity evidence](evidence/integrity.json) covers the complete managed-Git
+inventory, not an output excerpt: all **1,417 original files** remain, all
+protected hashes match, the provisioned-secret-value scan passes, and the only
+original test-file change is the declared all-roster opt-in update among
+**266 original test files**. Final checkpoint rescans after documentation
+closure. Scoped criteria are evidence-backed; broader device/purchase/UI-run
+gates below remain open. Remote CI/unsigned iOS results belong to the eventual
+PR's exact head and are **not inferred from these local passes**.
 
 ### Fixture honesty
 

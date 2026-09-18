@@ -5893,3 +5893,27 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Intended new PR stacks on open #104, leaving #102/#104 open. No merge,
   release, version bump, signed build or store action. Physical-device FPS
   and human aesthetic approval remain explicitly unverified.
+
+## 2026-09-18 — whole-roster follow-up, iterations 1–9/10
+
+- VERIFIED all22 playable delvers: retain Kindler/Warden; redesign remaining
+  twenty in five source groups with original prompts/hashes and deterministic
+  native conversion. Authored source anatomy/shared sprite-tool-hand grip
+  and six action families across the complete roster; stable kits/IDs/unlocks.
+- VERIFIED actual phone evidence exposed a pre-existing tempered custom-die
+  size bug in visual tier/heat. Resolve the true run-die size in presentation;
+  sealed sim unchanged. Additive20-case regression verified red before fix,
+  green after. No weakened existing assertion.
+- VERIFIED production checkpoint `f82d74f`: analyzer clean,1526/1526 tests,
+  art/SFX exit0;72/72 supplemental render cases,3960 native raster bodies,
+ 12540 phone observations. Before/after source plate, all picker portraits,
+  native poses and six-family clips in `docs/roster-sep18/README.md`.
+- Explicit original-test exception declared before edits: obsolete two-only
+  opt-in becomes exact all22 coverage; pair identity, unknown/portrait fallback
+  assertions retained. Other265 original test files unchanged. Full inventory
+  reads1,417 original paths and every addition; protected hashes/secret scan
+  pass. Device, Play-purchase and keystone UI-playthrough gates remain false.
+- Source review only; planned incremental PR stacks on #105, keeping
+  #102/#104/#105 open. No merge, release, signed dispatch, store action or
+  subagents. Fixture sampling and encoding rate are not physical-device FPS;
+  owner aesthetic approval remains unverified.

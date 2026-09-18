@@ -1775,5 +1775,8 @@
     "Low/high clips join action segments; roll/setup gaps omitted.",
     "All portrait unlocks are a test-only meta fixture.",
     "Aesthetic approval and physical-phone touch/FPS remain unverified."
-  ]
+  ],
+  "production_source_checkpoint": "f82d74ff134c9bc1b096bad68a29340b80bc1ce4",
+  "capture_command_exit_code": 0,
+  "capture_cases_passed": 72
 }

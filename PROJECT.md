@@ -8,6 +8,12 @@ keep #102/#104/#105 open. Redesign the remaining twenty delvers and extend
 native articulation/shared grip/tool-family action to all twenty-two.
 Single executor, ten-iteration cap for this new task. No merge/release/Play action.
 Previous evidence remains historical; device/purchase gates remain unchanged.
+VERIFIED production checkpoint `f82d74f`: all22 designs/rigs integrated,
+72/72 actual render cases and1526/1526 main tests; analyzer/art/SFX green.
+Read `docs/roster-sep18/README.md` for evidence, fixtures and the declared
+original-test exception. Tempered dice now use their true size for visual
+heat/tier only. Source PR publication/remote checks are tracked separately;
+this is not a release or physical-device/aesthetic approval.
 
 ## September 17 visual pass (source PR only)
 

@@ -1,0 +1,134 @@
+[
+  {
+    "character": "ascetic",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "bearer",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "brewster",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "collier",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "cutler",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "farrier",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "flintwright",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "gambler",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "gilder",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "glover",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "hearthkeeper",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "hedger",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "kindler",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "lamplighter",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "mender",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "miller",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "peddler",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "runesmith",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "shieldwright",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "stoker",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "tinker",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  },
+  {
+    "character": "warden",
+    "rendered_bodies": 180,
+    "failures": [],
+    "device_fps": "NOT MEASURED"
+  }
+]

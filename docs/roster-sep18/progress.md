@@ -204,3 +204,32 @@
 - Checkpoint wrapper did not launch because the shell parsed an unquoted
   commit subject: `syntax error near unexpected token '('`. No managed Git
   mutation ran. Retry once with the complete subject quoted.
+
+## Iteration 9 of 10 — final gates, integrity and incremental PR
+
+- VERIFIED iteration8 committed as `f82d74ff134c9bc1b096bad68a29340b80bc1ce4`,
+  worktree clean. Complete managed inventory: 1488 files, secret scan passed;
+  only original test diff is the pre-declared stronger all-roster opt-in check.
+- Plan: run analyzer/full test suite/art/SFX on this production checkpoint;
+  inventory every original protected file and all new files; preserve full
+  command evidence. Mark scoped features only with those results. Re-read
+  live base/PRs, push the new branch, create incremental PR and verify exact
+  remote head/automatic checks. No merge, release or signed dispatch.
+- VERIFIED final local gate runner exit 0 on production checkpoint `f82d74f`:
+  analyzer clean,1526/1526 tests (111 additive over baseline), production art
+  check and SFX. Existing full-attack -0.90dBTP TIGHT boundary retained; all
+  reachable cascades clear ceiling, impossible same-frame overloads remain
+  reported. Full sanitized command logs/red controls committed as evidence.
+- VERIFIED complete inventory scan of1503 files before this report's addition:
+  all1417 original paths present;13 sim,22 content,25 meta/game,3 workflow and
+ 109 prior-review/evidence files hash-identical.266 original test files, only
+  declared opt-in update. Kindler/Warden PNGs, non-character assets, dependencies,
+  version and lint settings unchanged. Provisioned-secret-value scan passes.
+- All four frozen scoped features now have evidence-backed passes. Root
+  keystone UI-playthrough, physical-device and actual Play purchase/restore
+  criteria remain false. No claim of aesthetic approval or measured device FPS.
+- VERIFIED live pre-publication read: #105 OPEN/MERGEABLE at unchanged
+  `8a54784`, #104 OPEN/DRAFT, #102 OPEN with inherited conflicts. No new PR on
+  this branch. Target remains `feat/combat-visuals-sep17`; existing PRs untouched.
+  Final docs/evidence-only closure follows the fully tested production
+  checkpoint. Every scoped passes flag has inspected command/artifact evidence.
