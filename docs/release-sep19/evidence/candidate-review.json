@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-09-19T13:57:04.607455+00:00",
+  "candidate": "0.184.0+211",
+  "analyzer": "clean",
+  "tests_passed": 1526,
+  "art": "pass",
+  "reachable_sfx": "pass",
+  "baseline_files": 582,
+  "unchanged_baseline_files": 580,
+  "declared_version_news_changes": [
+    {
+      "file": "lib/data/news.dart",
+      "before_sha256": "62f418c2c2eb8b86698c9566d47851ddeef93bea8a544c3f97616e65e91d1719",
+      "after_sha256": "dd5e536148a5b6392429b789727f89d38cc681d52d71a31964af95cf588b93b9"
+    },
+    {
+      "file": "pubspec.yaml",
+      "before_sha256": "fef696889d33a95651d33a70d5bb65b289ea96fe4227aceb5f908f6e9ce31695",
+      "after_sha256": "241e4a3bcae340b01fd42d856c22e9e97344012deac82b8a25929e7ac2b8fdfe"
+    }
+  ],
+  "immutable_tests_checks_sim_android_lock_diff": "empty",
+  "notes_characters": 366,
+  "root_feature_objects_preserved": true,
+  "audit_wrapper_failure_preserved": "AssertionError: ['lib/data/news.dart', 'pubspec.yaml']",
+  "visual_runtime_changes_since_render_checkpoint": false
+}

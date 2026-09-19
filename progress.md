@@ -5917,3 +5917,44 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+## 2026-09-19 — authorized production release, iterations 1–3/8
+
+- VERIFIED fresh canonical harness main/tagv3.0.1 read. Reviewed Everything,
+  shipping branch741b439, merged PR104/105/106, open historical PR102 and
+  latest release210/0.183.0. Main remains the frozen platformer.
+- VERIFIED authenticated Play210 Available on Google Play, full rollout,
+ 177countries. Candidate0.184.0+211 packages merged visuals; not yet signed
+  or submitted at this checkpoint.
+- VERIFIED original analyzer/1526tests/art/SFX after version/news changes;
+  unchanged render72/72,12540 observations,4608 PNGs decoded/hashed.
+  Two planned baseline differences: pubspec version and additive release
+  news;580 other hashes match. Original checks/sim/purchases/dependencies/
+  signing unchanged. Direct aesthetic and physical-device QA not claimed.
+- VERIFIED itch remains blocked at Cloudflare after one fallback, before
+  password input. No reset/page edit. Device/purchase/keystone root gates
+  remain false. Full evidence and failures: `docs/release-sep19/`.
+
+## 2026-09-19 — authorized release, iterations 4–7/8
+
+- VERIFIED exact84f973f signed by CI35447309873; all5 APK/AAB signatures,
+  package/version,SDK24/36,permanent certificate and hashes checked. All22
+  character sheets/fonts/meta match source inside every binary;permission
+  set matches production210. AAB verifier advisories explicitly recorded.
+- VERIFIED GitHub v0.184.0 published14:15:43UTC; public asset digests match.
+  PR107 remains open against legacy/dice-builder;no PR merged. Evidence
+  commits after84f973f change documentation only,not signed release source.
+- VERIFIED final Play send accepted14:24:21UTC for exactly one intended
+  Production211/Start full rollout change. Preview100%,177targeted countries,
+  zero device loss. Final readback14:34UTC:211 In review;210 still Available
+  on Google Play. Quick-check banner absent;managed publishing off.
+  Approval will publish automatically;211 is not verified live.
+- VERIFIED itch publication remains blocked before password form;no further
+  challenge retries. Public page still0.179.0/69MB. Prepared page/devlog,
+  truthful generated-art disclosure,3 source-matched captures and exact
+  verified APK package. Eight links checked;prepared does not mean published.
+- Original feature objects and append-only progress preserved. Open device,
+  Play purchase/restore and keystone UI-harness gates stay false. REL-ITCH
+  stays false;overall scope is partial. No subjective best-visuals/phone
+  performance claim,no subagents and no recurring jobs. Full evidence:
+  `docs/releases/verification-0.184.0.md` and `docs/release-sep19/`.

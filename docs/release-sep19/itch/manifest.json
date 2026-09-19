@@ -1,0 +1,86 @@
+{
+  "prepared_at": "2026-09-19T14:32:43.012911+00:00",
+  "publication_status": "PREPARED_NOT_PUBLISHED_TO_ITCH",
+  "itch_url": "https://tsorostudios.itch.io/emberdelve",
+  "itch_game_id": 4903556,
+  "version": "0.184.0",
+  "version_code": 211,
+  "source": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9",
+  "release_url": "https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.184.0",
+  "apk": {
+    "package_filename": "emberdelve-v0.184.0.apk",
+    "upstream_filename": "app-release.apk",
+    "download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-release.apk",
+    "bytes": 75707508,
+    "sha256": "a882b12c4a1e127fef78ec0b12ca0d64005653f20807a329b1bf5bf906c2766f",
+    "signature_verified": true,
+    "source_of_signature_proof": "../evidence/binary/manifest.json"
+  },
+  "content": {
+    "README.md": {
+      "bytes": 3932,
+      "sha256": "0b6c6a3453927cefe210517542ea1de287721f8e7e35e64e7355751d94c7dc7e"
+    },
+    "devlog.html": {
+      "bytes": 2103,
+      "sha256": "646c74793fd3135c00f77ef468cb6603a7d8e59e66811a7523f75fe9ac43a8d0"
+    },
+    "page.html": {
+      "bytes": 4882,
+      "sha256": "03ef0354f426e2219e3ec169a9acafd8908c116933151cb4b48a084e4b0a39a7"
+    },
+    "screenshots/hedger-360-natural-ready.png": {
+      "bytes": 219781,
+      "sha256": "bbea4daedfd0f6b4d9a72574e7f7c317239f20d38fb579d05201c1de0b6a29ac"
+    },
+    "screenshots/kindler-360-natural-ready.png": {
+      "bytes": 117846,
+      "sha256": "1997dfc640223ebec557a5e95640bb5a5a49b1a3e9bfd3e73d74d8f56fc89f63"
+    },
+    "screenshots/warden-360-natural-ready.png": {
+      "bytes": 235714,
+      "sha256": "015526fc15bc8d4e710c505b377d059ef26fe1dff68c1dd5b3e0a472f438a65a"
+    }
+  },
+  "link_checks": [
+    {
+      "url": "https://raw.githubusercontent.com/tapiwamakandigona/emberdelve/84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9/docs/release-sep19/evidence/kindler-360-natural-ready.png",
+      "status": 200,
+      "sha256": "1997dfc640223ebec557a5e95640bb5a5a49b1a3e9bfd3e73d74d8f56fc89f63",
+      "matches_local_source": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tapiwamakandigona/emberdelve/84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9/docs/release-sep19/evidence/warden-360-natural-ready.png",
+      "status": 200,
+      "sha256": "015526fc15bc8d4e710c505b377d059ef26fe1dff68c1dd5b3e0a472f438a65a",
+      "matches_local_source": true
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tapiwamakandigona/emberdelve/84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9/docs/release-sep19/evidence/hedger-360-natural-ready.png",
+      "status": 200,
+      "sha256": "bbea4daedfd0f6b4d9a72574e7f7c317239f20d38fb579d05201c1de0b6a29ac",
+      "matches_local_source": true
+    },
+    {
+      "url": "https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.184.0",
+      "status": 200
+    },
+    {
+      "url": "https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve",
+      "status": 200
+    },
+    {
+      "url": "https://tapiwa.me/emberdelve/",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/tapiwamakandigona/emberdelve/blob/84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9/PROVENANCE.md",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/tapiwamakandigona/emberdelve/blob/84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9/CREDITS.md",
+      "status": 200
+    }
+  ],
+  "visual_review": "Source/hash/PNG integrity verified. Actual headless Flutter captures, not direct aesthetic inspection or physical-device approval."
+}

@@ -1,5 +1,37 @@
 # PROJECT.md — Emberdelve
 
+## September 19 — owner-authorized production release
+
+Current scoped state: `docs/release-sep19/PROJECT.md`, `features.json` and
+append-only `progress.md`. The owner explicitly requested production and
+itch.io publication. This supersedes the earlier source-PR-only scope below,
+not the protected simulation/purchase/test or device-evidence boundaries.
+
+VERIFIED release0.184.0+211 packages merged PR104/105/106 on shipping base
+741b439. Exact binary/tag source84f973f, signed CI35447309873, all5 binaries
+independently verified; GitHub v0.184.0 published September19 at14:15:43UTC.
+PR107 remains open against `legacy/dice-builder`; PR102 remains historical.
+No merge or runtime change since the signed commit. Later commits are
+documentation/evidence only; do not rebuild or reuse code211 for those.
+
+VERIFIED final Play readback September19 at14:34UTC:211(0.184.0) In review,
+100% production rollout across177 targeted countries,zero device loss.
+Only Production211/Start full rollout was submitted. Quick-check banner is
+no longer present;managed publishing remains off.210(0.183.0) is still
+Available on Google Play. Do not call211 live or submit it again.
+Local analyzer,1526 tests, art/SFX and72 roster-render cases passed with
+original checks unchanged. `docs/releases/verification-0.184.0.md` records
+source,hashes,store status and limits.
+
+VERIFIED itch authentication is blocked by Cloudflare before password entry
+after one permitted proxy fallback. No reset, guessed credential or page
+edit. Public download remains0.179.0. Ready copy,devlog,accurate AI disclosure,
+3 source-matched captures and verified APK package: `docs/release-sep19/itch/`.
+REL-ITCH stays false;need authorised editor access. Existing physical-device,
+purchase/restore and keystone-aware UI-run feature gates remain false.
+Do not infer aesthetic approval from render logs. Overall scope is partial,
+not all acceptance complete. No subagents or schedules were created.
+
 ## September 18 — whole-playable-roster follow-up (source PR only)
 
 Owner requested all characters after delivery of #105. Current scoped plan:

@@ -1,0 +1,263 @@
+{
+  "conclusion": "success",
+  "event": "workflow_dispatch",
+  "headSha": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9",
+  "jobs": [
+    {
+      "completedAt": "2026-09-19T14:04:40Z",
+      "conclusion": "success",
+      "databaseId": 105908367089,
+      "name": "Analyze + test (headless)",
+      "startedAt": "2026-09-19T13:58:21Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-19T13:58:22Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-19T13:58:21Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T13:58:26Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-09-19T13:58:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T13:59:18Z",
+          "conclusion": "success",
+          "name": "Run subosito/flutter-action@v2",
+          "number": 3,
+          "startedAt": "2026-09-19T13:58:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T13:59:27Z",
+          "conclusion": "success",
+          "name": "Pub get",
+          "number": 4,
+          "startedAt": "2026-09-19T13:59:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T13:59:44Z",
+          "conclusion": "success",
+          "name": "Analyze (fatal on warnings)",
+          "number": 5,
+          "startedAt": "2026-09-19T13:59:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:03:51Z",
+          "conclusion": "success",
+          "name": "Test (sim determinism, map, content, autoplay balance, UI smoke)",
+          "number": 6,
+          "startedAt": "2026-09-19T13:59:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:28Z",
+          "conclusion": "success",
+          "name": "SFX mix-bus headroom (true-peak ceiling)",
+          "number": 7,
+          "startedAt": "2026-09-19T14:03:51Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:39Z",
+          "conclusion": "success",
+          "name": "Post Run subosito/flutter-action@v2",
+          "number": 13,
+          "startedAt": "2026-09-19T14:04:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:39Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 14,
+          "startedAt": "2026-09-19T14:04:39Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:39Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 15,
+          "startedAt": "2026-09-19T14:04:39Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447309873/job/105908367089"
+    },
+    {
+      "completedAt": "2026-09-19T14:13:59Z",
+      "conclusion": "success",
+      "databaseId": 105909217405,
+      "name": "Build signed Android release (APK + AAB)",
+      "startedAt": "2026-09-19T14:04:42Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-09-19T14:04:45Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-09-19T14:04:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:49Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "startedAt": "2026-09-19T14:04:45Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:04:50Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-java@v4",
+          "number": 3,
+          "startedAt": "2026-09-19T14:04:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:05:14Z",
+          "conclusion": "success",
+          "name": "Run subosito/flutter-action@v2",
+          "number": 4,
+          "startedAt": "2026-09-19T14:04:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:05:15Z",
+          "conclusion": "success",
+          "name": "Pub get",
+          "number": 5,
+          "startedAt": "2026-09-19T14:05:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:05:15Z",
+          "conclusion": "success",
+          "name": "Materialize signing config (from repo secrets)",
+          "number": 6,
+          "startedAt": "2026-09-19T14:05:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:12:07Z",
+          "conclusion": "success",
+          "name": "Build release APK (universal fallback)",
+          "number": 7,
+          "startedAt": "2026-09-19T14:05:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:00Z",
+          "conclusion": "success",
+          "name": "Build release APKs (split per ABI)",
+          "number": 8,
+          "startedAt": "2026-09-19T14:12:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:40Z",
+          "conclusion": "success",
+          "name": "Build release AAB",
+          "number": 9,
+          "startedAt": "2026-09-19T14:13:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:41Z",
+          "conclusion": "success",
+          "name": "Verify APK signing certificates (must be the permanent upload key)",
+          "number": 10,
+          "startedAt": "2026-09-19T14:13:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:41Z",
+          "conclusion": "success",
+          "name": "Clean up signing material",
+          "number": 11,
+          "startedAt": "2026-09-19T14:13:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:46Z",
+          "conclusion": "success",
+          "name": "Upload release APK artifact",
+          "number": 12,
+          "startedAt": "2026-09-19T14:13:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:50Z",
+          "conclusion": "success",
+          "name": "Upload split-per-ABI APK artifacts",
+          "number": 13,
+          "startedAt": "2026-09-19T14:13:46Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:53Z",
+          "conclusion": "success",
+          "name": "Upload release AAB artifact",
+          "number": 14,
+          "startedAt": "2026-09-19T14:13:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:54Z",
+          "conclusion": "success",
+          "name": "Upload debug symbols (for crash symbolication; not shipped)",
+          "number": 15,
+          "startedAt": "2026-09-19T14:13:53Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:56Z",
+          "conclusion": "success",
+          "name": "Post Run subosito/flutter-action@v2",
+          "number": 28,
+          "startedAt": "2026-09-19T14:13:54Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-java@v4",
+          "number": 29,
+          "startedAt": "2026-09-19T14:13:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:56Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 30,
+          "startedAt": "2026-09-19T14:13:56Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-09-19T14:13:56Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 31,
+          "startedAt": "2026-09-19T14:13:56Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447309873/job/105909217405"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447309873"
+}
