@@ -1,0 +1,45 @@
+{
+  "$comment": "Canonical template adapted before release edits. Frozen acceptance; evidence only. Passing this scoped ledger does not supersede existing false root device/purchase/UI-harness features.",
+  "features": [
+    {
+      "id": "REL-AUDIT",
+      "title": "Correct branch, changes, release and store state",
+      "acceptance": "Read canonical v3.0.1 harness, everything handoff, shipping repository and PRs; identify live production and exact unreleased source without treating main or old reports as current.",
+      "verify": "Managed GitHub PR/ref/release readbacks plus authenticated Play releases overview",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19: main harness tagv3.0.1; shipping741b439; PR104/105/106 merged Sep18; PR102 open. Primary Play overview shows210/0.183.0 Available on Google Play, Full roll-out,177/177; internal/Alpha209. evidence/audit.json."
+    },
+    {
+      "id": "REL-CHECKS",
+      "title": "Fresh immutable regression, art and visual review",
+      "acceptance": "Pinned Flutter analyzer and complete existing test suite pass; art reproduction and SFX pass; current actual phone-size render evidence and source identities reviewed. Existing tests/checks unchanged and inherited supplemental/device limits explicitly recorded.",
+      "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL-BINARY",
+      "title": "Versioned, signed and independently verified artifacts",
+      "acceptance": "0.184.0+211 comes from the exact release commit with green CI; AAB/APK downloaded with SHA256 and package/version/permanent-certificate verification; no debug signing or new upload key.",
+      "verify": "GitHub CI exact-head evidence plus independent artifact hash, manifest and signature checks",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL-PLAY",
+      "title": "Authorized Play production submission",
+      "acceptance": "Verified candidate added to correct existing production track, release notes accurate, device-support preview checked and only intended changes submitted. Read back Google review/live status separately; never call In review live.",
+      "verify": "Authenticated Play production/publishing readback of package com.tsorostudios.emberdelve and versionCode211",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL-ITCH",
+      "title": "itch.io page and Android download updated",
+      "acceptance": "Authenticated correct game4903556 updated with accurate current release copy, actual source-matched visuals and verified signed APK or canonical download link; public page readback confirms change.",
+      "verify": "Authenticated save plus independent public itch.io page/download readback",
+      "passes": false,
+      "evidence": "BLOCKED at Cloudflare verification before password form; ordinary session and one permitted proxy fallback both challenged. No page edit or password attempt."
+    }
+  ]
+}

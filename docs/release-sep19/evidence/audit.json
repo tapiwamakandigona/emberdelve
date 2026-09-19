@@ -1,0 +1,41 @@
+{
+  "verified_at": "2026-09-19",
+  "harness": {
+    "branch": "main",
+    "tag": "v3.0.1",
+    "read_full": true
+  },
+  "shipping_ref": "legacy/dice-builder",
+  "source_sha": "741b439d2250e141a3e68f096774f3f482a7b29e",
+  "latest_github_release": "v0.183.0",
+  "merged_visual_prs": [
+    104,
+    105,
+    106
+  ],
+  "open_review_pr": 102,
+  "production": {
+    "versionName": "0.183.0",
+    "versionCode": 210,
+    "status": "Available on Google Play",
+    "rollout": "Full roll-out",
+    "countries": "177 of 177"
+  },
+  "baseline_ci": {
+    "id": 35327651857,
+    "conclusion": "success",
+    "tests_passed": 1526,
+    "signed_build": "skipped"
+  },
+  "itch": "Cloudflare verification blocked initial normal and single proxy fallback; no credentials tested",
+  "open_root_gates": [
+    "NEXT-UI-PLAYTHROUGH-20260913",
+    "M1-3",
+    "M4-2"
+  ],
+  "evidence_sources": [
+    "GitHub PR/API/Actions exact-head responses",
+    "authenticated Play releases/overview",
+    "itch.io login DOM"
+  ]
+}
