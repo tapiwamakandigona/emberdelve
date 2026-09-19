@@ -51,5 +51,10 @@ gates from headless evidence.
 
 ## Current phase
 
-Release — audit complete. Local pinned SDK installed from the official archive
-and SHA256 checked. Iteration2 verification next; no version/store edit yet.
+Release — iterations1–2 complete. Original analyzer/full suite/art/SFX passed;
+unchanged whole-roster render retry passed72/72 in18minutes. All4608 PNGs
+decoded/hashed,12540 observations and source identities reviewed. This is
+mechanical/source verification, not direct aesthetic or physical-device QA.
+Portable official Android signature/manifest tools are installed and their
+archive hashes verified; no system/root changes. Iteration3 version/news/docs
+next; no version/store edit yet.
