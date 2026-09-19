@@ -132,3 +132,50 @@
 - VERIFIED GitHub release v0.184.0 published from exact84f973f at
   2026-09-19T14:15:43Z. All5 public asset digests/sizes match independently
   verified local files; SHA256SUMS published. This is not Play availability.
+
+## Iteration 5/8 — authorized Play production submission
+
+- Plan: create211 only in the existing Emberdelve production track, upload
+  independently verified AAB after browser-side size/SHA256 match, enter
+  the366-character en-GB notes, inspect processed bundle/device-support
+  preview and every pending change before saving/submitting.
+- Preserve existing targeting/content ratings/privacy/purchases. If preview
+  loses device support or exposes unrelated pending changes, stop and resolve
+  without dropping legacy coverage. Distinguish staged, in review and live.
+- Create click succeeded; post-click broad file selector failed:
+  `strict mode violation: locator("input[type=file]") resolved to 2 elements`.
+  Read-only inspection confirms production draft release8, not a failed
+  creation. Continue using observed `input[type=file][accept=".aab"]`;
+  never click create again or upload to the expansion-file input.
+- VERIFIED browser-received AAB size/SHA256 matched the independently
+  signed binary before assignment to the ordinary .aab file input.
+  Processed row211/0.184.0,min24,target36 and366-character notes matched.
+  Preview showed100% rollout/all targeted countries and zero device loss
+  across every form factor. Saved once, then inspected Publishing overview.
+- Pre-submit guard failure: `AssertionError` at
+  `get_by_role('button',name='Save for later',exact=True).count()==1`.
+  DOM showed the visible button's inner span has `aria-label="button"`;
+  the role/name locator is not its visible text. Read actual change rows
+  instead; exactly Production211/Start full rollout, no unrelated changes.
+  This failed before a submit click. No original product check changed.
+- VERIFIED single final `Send changes for review` click at
+  2026-09-19T14:24:21Z returned `1 change sent for review`.
+  Publishing overview then showed Changes in review with quick checks
+  still running; it says review follows successful checks. Do not treat
+  the heading alone as completed pre-review checks or live availability.
+- Post-submit readback selector failure:
+  `Locator.wait_for: Timeout 60000ms exceeded.`
+  `waiting for get_by_text("211 (0.184.0)", exact=True).first to be visible`.
+  Production landed on Release dashboard with the version inside a longer
+  summary. Single corrected continuation selected the observed Releases
+  tab. No repeated submission. A transient overview notification read
+  `An unexpected error has occurred. Please try again. (73C9342D)`;
+  independent production and release-details reads succeeded.
+- VERIFIED primary production readback14:26UTC:211 In review,177countries;
+  210 remains Available on Google Play. Release8 details confirms exact
+  notes,bundle211,min24,target36. Managed publishing off. Existing
+  edge-to-edge/R8 suggestions are documented, not hidden or patched by
+  changing release code after signing.
+- VERIFIED exact-source PR CI35447297307 and unsigned iOS35447297322
+  succeeded. Signed binary proof remains the separate dispatch35447309873.
+  Binary source/tag stays84f973f; later evidence commits are docs-only.

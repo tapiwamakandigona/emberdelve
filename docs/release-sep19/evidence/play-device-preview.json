@@ -1,0 +1,25 @@
+{
+  "verified_at": "2026-09-19T14:20:01.997503+00:00",
+  "review_url": "https://play.google.com/console/u/0/developers/6318480192689304537/app/4975656702157671885/tracks/4697290488477961690/releases/8/review",
+  "package": "com.tsorostudios.emberdelve",
+  "versionCode": 211,
+  "versionName": "0.184.0",
+  "previous": 210,
+  "rollout_percentage": 100,
+  "country_availability": "all existing targeted countries",
+  "device_counts_before_after": {
+    "Phone": "12,348",
+    "Tablet": "6,727",
+    "TV": "7",
+    "Wearable": "0",
+    "Car": "26",
+    "Chromebook": "72",
+    "Android XR": "1"
+  },
+  "devices_no_longer_supported": 0,
+  "newly_supported_devices": 0,
+  "new_install_size": "26.6 MB",
+  "update_size": "2.34 MB",
+  "release_notes": "The whole company moves: all 22 delvers have refreshed designs, articulated strikes and tools held in moving hands. Health, wounds and guard now follow the impact. A saved Blood effects switch hides blood, ichor and wound marks. Tempered dice show the right swing strength for their size. Dice, damage, saves and unlocks are unchanged. Thank you for delving with us.",
+  "state": "reviewed, not yet saved or submitted"
+}

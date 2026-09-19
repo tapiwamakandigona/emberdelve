@@ -30,8 +30,8 @@
       "title": "Authorized Play production submission",
       "acceptance": "Verified candidate added to correct existing production track, release notes accurate, device-support preview checked and only intended changes submitted. Read back Google review/live status separately; never call In review live.",
       "verify": "Authenticated Play production/publishing readback of package com.tsorostudios.emberdelve and versionCode211",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19 14:24UTC final send accepted exactly one Production211/Start full rollout change. Preview100%/all targeted countries,zero device losses,correct AAB hash/notes. Primary production readback14:26UTC:211(0.184.0) In review,177countries;210 remains Available on Google Play. Publishing overview still runs quick checks before review;managed publishing off. Not live. evidence/play-submission.json,play-upload.json,play-device-preview.json."
     },
     {
       "id": "REL-ITCH",

@@ -62,4 +62,10 @@ The broad582-file baseline now has exactly two reviewed planned exceptions
 (version and news); all580 other files match. Iteration4 complete: exact
 source84f973f signed by CI35447309873, all5 artifacts independently verified,
 GitHub v0.184.0 published with matching hashes. PR107 remains open; no merge.
-Iteration5 Play production submission next; no Play store edit yet.
+Iteration5 complete: exact211 AAB uploaded,100% rollout across all177 existing
+targeted countries,zero supported-device loss. Final send accepted one
+Production211/Start full rollout change at14:24UTC. Primary production
+readback14:26UTC marks211 In review;210 remains Available on Google Play.
+Publishing overview still shows quick checks before review. Managed
+publishing remains off; do not call211 live. Iteration6: prepare itch package
+without another challenge retry. No authenticated itch write has occurred.

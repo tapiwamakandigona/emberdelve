@@ -60,6 +60,37 @@ Available on Google Play**, full rollout in 177 countries. Managed publishing
 was off and no changes were pending. **211 is not yet submitted at this
 checkpoint**. Subsequent submission/review/live readback will be appended.
 
+### VERIFIED submission — September 19, 14:24–14:27 UTC
+
+The independently verified AAB was uploaded to the existing production
+track and processed as **211 (0.184.0)**. Browser-received bytes and SHA-256
+matched before upload. The preview retained support for every device
+previously supported: zero losses and zero additions across all form factors.
+New-install estimate **26.6 MB**, update **2.34 MB**.
+
+Saved **100% rollout, all 177 existing targeted countries**; Publishing
+overview contained exactly one intended change:
+**Production → 211 (0.184.0) → Start full rollout**.
+Final send was accepted at **14:24:21 UTC**.
+
+Authenticated readback:
+- Publishing overview: **Changes in review**, with quick checks still
+  running and review queued after successful checks.
+- Production and release8: **211 (0.184.0) — In review**.
+- Live predecessor: **210 (0.183.0) — Available on Google Play**.
+- Managed publishing remains **off**: approval publishes automatically.
+
+**211 is not verified live.** No listing, privacy, rating, monetisation or
+unrelated pending change was submitted. Play's non-blocking recommendations
+about edge-to-edge display and R8 optimisation remain documented follow-ups,
+not reasons to mutate an already-signed release.
+
+Evidence: `docs/release-sep19/evidence/play-submission.json`,
+`play-upload.json`, `play-device-preview.json`. Public transcripts omit
+private install counts. Exact-source PR headless CI and unsigned iOS build
+also passed; `candidate-pr-checks.json` records them separately from the
+signed Android dispatch.
+
 ## itch.io and remaining limits
 
 Authentication stops at Cloudflare before password entry, including the one
