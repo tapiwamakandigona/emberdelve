@@ -59,5 +59,7 @@ Portable official Android signature/manifest tools are installed and their
 archive hashes verified; no system/root changes. Iteration3 version/news/docs
 complete:0.184.0+211 passes the original analyzer,1526tests,art and SFX again.
 The broad582-file baseline now has exactly two reviewed planned exceptions
-(version and news); all580 other files match. Iteration4 signed CI and
-independent binary verification next; no store edit yet.
+(version and news); all580 other files match. Iteration4 complete: exact
+source84f973f signed by CI35447309873, all5 artifacts independently verified,
+GitHub v0.184.0 published with matching hashes. PR107 remains open; no merge.
+Iteration5 Play production submission next; no Play store edit yet.

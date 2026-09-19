@@ -22,8 +22,8 @@
       "title": "Versioned, signed and independently verified artifacts",
       "acceptance": "0.184.0+211 comes from the exact release commit with green CI; AAB/APK downloaded with SHA256 and package/version/permanent-certificate verification; no debug signing or new upload key.",
       "verify": "GitHub CI exact-head evidence plus independent artifact hash, manifest and signature checks",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED source84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9, signed CI35447309873 success. All5 downloaded APK/AAB signatures, permanent cert, package/version,min24,target36,not-debuggable and hashes checked. All22 character sheets/fonts/meta match source inside every binary; permissions identical to production210. Published GitHub v0.184.0 asset digests match. evidence/binary/manifest.json, binary-source-proof.json, signed-ci.json and github-release.json."
     },
     {
       "id": "REL-PLAY",

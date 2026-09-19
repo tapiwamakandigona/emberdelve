@@ -90,3 +90,45 @@
 - Documentation patch rejected before application:
   `Update hunk does not contain any lines`. Single corrected patch removed
   the empty root-progress hunk; no acceptance check changed.
+
+## Iteration 4/8 — exact-head signed CI and binary verification
+
+- VERIFIED release branch pushed at84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9.
+  PR107 opened against legacy/dice-builder; no PR merged.
+- Managed existing CI dispatch failed exactly:
+  `could not create workflow dispatch event: HTTP 403: Resource not accessible by integration (https://api.github.com/repos/tapiwamakandigona/emberdelve/actions/workflows/318731966/dispatches)`.
+  One authorized fallback read the provisioned token from protected storage
+  and dispatched the same unchanged workflow/ref through Actions REST,
+  HTTP204. Token values were not printed or committed.
+- VERIFIED run35447309873 is workflow_dispatch on exact84f973f. Waiting
+  for both headless checks and signed Android job, not inferring signed
+  artifacts from PR checks. Native artifact verification tools ready.
+- Read-only publishing preflight selector failure:
+  `Locator.wait_for: Timeout 60000ms exceeded.`
+  `waiting for get_by_text("Managed publishing").first to be visible`
+  `locator resolved to hidden <span ...>`.
+  Page was already rendered; single read-only inspection confirmed
+  `Managed publishing off` and no pending changes. Corrected future wait
+  to the exact observed text, not another navigation/retry.
+- VERIFIED signed CI35447309873 completed successfully on84f973f; all
+  five APK/AAB files downloaded. AAB structure/manifest/JAR signature and
+  universal APK signature verified independently.
+- Local binary-adapter failure: `assert "sdkVersion:'24'" in manifest`
+  raised `AssertionError`. Actual official aapt2 output is
+  `minSdkVersion:'24'`; target remains36 and package/version match.
+  One corrected adapter retry uses the observed field name, still requires
+  exactly24. No expected SDK value, repository test/check or binary changed.
+- VERIFIED corrected binary adapter passes all5 files: permanent cert,
+  package/version,SDK24/36,not-debuggable,APK cryptographic verification,
+  AAB JAR signature/structure. AAB self-signed/no-timestamp/ZIP-order warnings
+  recorded, not hidden. All22 sheets/fonts/meta match current source inside
+  every binary; permission set identical to published210.
+- Evidence-extraction assertion initially expected local expanded-reporter
+  text; CI actually emits `1526 tests passed.`. Single corrected primary-log
+  read verified that line and all other checks. This shell invocation did
+  not stop before the following publication command; the release was still
+  gated by its own already-passing signed-CI/binary assertions. Subsequent
+  command batches use `set -e`; do not rely on last-command exit status.
+- VERIFIED GitHub release v0.184.0 published from exact84f973f at
+  2026-09-19T14:15:43Z. All5 public asset digests/sizes match independently
+  verified local files; SHA256SUMS published. This is not Play availability.
