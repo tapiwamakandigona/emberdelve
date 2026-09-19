@@ -61,3 +61,32 @@
 - VERIFIED brand lint has0 errors and1 advisory (no primary alias). No
   generated colours or new brand values were introduced; existing palette,
   actual screenshots and existing fonts are retained.
+
+## Iteration 3/8 — version and release documentation
+
+- Plan: package0.184.0+211 and matching four-line in-game news, correct
+  source-backed README roster/download facts, keep IARC history honest,
+  then rerun all original analyzer/tests/art/SFX and integrity gates.
+- VERIFIED news tests inspected before edits: newest-first/version-match,
+  2–4lines, banned-word charter, show-once and archive semantics preserved.
+- Version/news and documentation edits only. No test/sim/purchase/dependency
+  or signing/workflow changes. Candidate is not yet signed or submitted.
+- VERIFIED post-version original analyzer,1526/1526tests, art reproduction
+  and reachable SFX all exited0. Evidence: `candidate-*`.
+- Audit-wrapper failure (not an original game check):
+  `AssertionError: ['lib/data/news.dart', 'pubspec.yaml']`.
+  The broad pre-release hash inventory includes the two files this
+  iteration explicitly must change. Do not alter that wrapper assertion or
+  claim all582 hashes still match. Review the exact version/news diff and
+  record the580 unchanged protected files plus the two declared exceptions.
+- VERIFIED managed Git exact diff shows only the planned version line and
+  additive four-line release news in the two baseline exceptions. All
+  original tests/checks, integration tests, tool scripts, CI, Android, sim
+  and lockfile have empty diffs against741b439. The wrapper remains
+  unmodified; evidence/candidate-review.json records the actual outcome.
+- VERIFIED release notes366characters (en-GB, maximum500); no runtime/art
+  change since the72-case render checkpoint. Next: commit/push and release
+  PR, then existing signed CI dispatch against the exact candidate ref.
+- Documentation patch rejected before application:
+  `Update hunk does not contain any lines`. Single corrected patch removed
+  the empty root-progress hunk; no acceptance check changed.

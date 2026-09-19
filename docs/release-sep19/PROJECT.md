@@ -57,4 +57,7 @@ decoded/hashed,12540 observations and source identities reviewed. This is
 mechanical/source verification, not direct aesthetic or physical-device QA.
 Portable official Android signature/manifest tools are installed and their
 archive hashes verified; no system/root changes. Iteration3 version/news/docs
-next; no version/store edit yet.
+complete:0.184.0+211 passes the original analyzer,1526tests,art and SFX again.
+The broad582-file baseline now has exactly two reviewed planned exceptions
+(version and news); all580 other files match. Iteration4 signed CI and
+independent binary verification next; no store edit yet.

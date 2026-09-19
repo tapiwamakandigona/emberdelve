@@ -5917,3 +5917,20 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+## 2026-09-19 — authorized production release, iterations 1–3/8
+
+- VERIFIED fresh canonical harness main/tagv3.0.1 read. Reviewed Everything,
+  shipping branch741b439, merged PR104/105/106, open historical PR102 and
+  latest release210/0.183.0. Main remains the frozen platformer.
+- VERIFIED authenticated Play210 Available on Google Play, full rollout,
+ 177countries. Candidate0.184.0+211 packages merged visuals; not yet signed
+  or submitted at this checkpoint.
+- VERIFIED original analyzer/1526tests/art/SFX after version/news changes;
+  unchanged render72/72,12540 observations,4608 PNGs decoded/hashed.
+  Two planned baseline differences: pubspec version and additive release
+  news;580 other hashes match. Original checks/sim/purchases/dependencies/
+  signing unchanged. Direct aesthetic and physical-device QA not claimed.
+- VERIFIED itch remains blocked at Cloudflare after one fallback, before
+  password input. No reset/page edit. Device/purchase/keystone root gates
+  remain false. Full evidence and failures: `docs/release-sep19/`.

@@ -1,5 +1,25 @@
 # PROJECT.md — Emberdelve
 
+## September 19 — owner-authorized production release
+
+Current scoped state: `docs/release-sep19/PROJECT.md`, `features.json` and
+append-only `progress.md`. The owner explicitly requested production and
+itch.io publication. This supersedes the earlier source-PR-only scope below,
+not the protected simulation/purchase/test or device-evidence boundaries.
+
+VERIFIED primary reads: PR104/105/106 are already merged into
+`legacy/dice-builder` at741b439; PR102 remains open. Play production210
+(0.183.0) is Available on Google Play at full rollout in177countries.
+Candidate0.184.0+211 packages the merged improvements without new gameplay.
+Local analyzer,1526 tests, art/SFX and72 roster-render cases pass with
+original checks unchanged. Version packaging is in progress; no211 signed
+build, GitHub release or Play submission is implied yet.
+
+VERIFIED itch authentication is blocked by Cloudflare before password entry
+after one permitted proxy fallback. No reset, guessed credential or page
+edit. Existing physical-device, purchase/restore and keystone-aware UI-run
+feature gates remain false. Do not infer aesthetic approval from render logs.
+
 ## September 18 — whole-playable-roster follow-up (source PR only)
 
 Owner requested all characters after delivery of #105. Current scoped plan:

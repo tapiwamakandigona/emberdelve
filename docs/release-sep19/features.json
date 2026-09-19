@@ -15,7 +15,7 @@
       "acceptance": "Pinned Flutter analyzer and complete existing test suite pass; art reproduction and SFX pass; current actual phone-size render evidence and source identities reviewed. Existing tests/checks unchanged and inherited supplemental/device limits explicitly recorded.",
       "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
       "passes": true,
-      "evidence": "VERIFIED 2026-09-19: pinned analyzer clean;1526/1526 unchanged tests;art reproduction22 models and reachable SFX pass. Unchanged renderer72/72,66 phone combinations,12540 observations,4608 PNGs decoded/hashed;132 outgoing contact sequences independently checked;582 protected hashes unchanged. evidence/render-review.json and local-* logs. Review is source/runtime/artifact integrity, NOT direct aesthetic inspection, human approval, physical FPS/touch, purchase/restore or complete natural UI run."
+      "evidence": "VERIFIED 2026-09-19: candidate0.184.0+211 analyzer clean;1526/1526 unchanged tests;art reproduction22 models and reachable SFX pass. Unchanged visual-source renderer72/72,66 phone combinations,12540 observations,4608 PNGs decoded/hashed;132 outgoing contact sequences checked. Original tests/checks/sim/signing/dependencies unchanged;580/582 baseline hashes match, two declared version/news edits reviewed in evidence/candidate-review.json and version-news.diff. Review is source/runtime/artifact integrity, NOT direct aesthetic inspection, human approval, physical FPS/touch, purchase/restore or complete natural UI run."
     },
     {
       "id": "REL-BINARY",
