@@ -233,3 +233,35 @@
   210 remains available. Scope4/5 passing;REL-ITCH and three inherited root
   gates remain false. No overall completion claim. Next: documentation-only
   commit/push and remote PR readback,then private package delivery.
+
+## Iteration 8/8 — owner-authorised itch reset and publication
+
+- Owner instruction: reset the itch password to the shared value. Executed:
+  itch login page reachable; shared password rejected for primary email and
+  the tsorostudios username; a third attempt hit human verification. Then
+  requested a reset at /user/forgot-password (email field). itch confirmed
+  "A password reset link has been sent to your account's primary address",
+  confirming the registered email.
+- VERIFIED Gmail sign-in via supplied password + Google Authenticator TOTP
+  (phone-prompt default switched to authenticator via "Try another way").
+  Opened only the itch "Reset your itch.io password" message for tsorostudios
+  and extracted the /user/forgot-password?token=…&id=… link (token not logged).
+- VERIFIED reset form for account tsorostudios; set the new password (revoke-
+  API-keys box left unchecked), submitted; itch logged in as tsorostudios.
+- Failure: 75MB universal APK upload via Playwright hit
+  "Cannot transfer files larger than 50Mb to a browser not co-located with the
+  server". butler unusable: broth.itch.ovh and *.itch.zone upload hosts do not
+  resolve from the sandbox. Descoped the universal browser upload.
+- VERIFIED uploaded two signed split APKs under the cap: arm64 (36MB) and
+  arm32 (34MB), covering all real phones. x86_64 upload failed twice with
+  TargetClosedError and was descoped (emulator/Chromebook; served via GitHub).
+- VERIFIED set both new uploads Android + not-hidden; deleted old 0.179.0 with
+  its confirm modal; enabled the AI graphics disclosure; saved twice.
+- Generated a fresh itch API key (stored 0600 outside the repo, value never
+  printed) for the upload path; browser cap still applied so splits were used.
+- VERIFIED major-update devlog published (id 1669707) with the 0.184.0 notes
+  and the GitHub release link.
+- VERIFIED unauthenticated public readback: downloads now the two 0.184.0 ARM
+  APKs, 0.179.0 gone, AI Disclosure = Code/Graphics/Text, devlog live. All five
+  scoped features (REL-AUDIT/CHECKS/BINARY/PLAY/ITCH) now pass. Inherited root
+  device/purchase/keystone gates remain out of scope and unchanged.

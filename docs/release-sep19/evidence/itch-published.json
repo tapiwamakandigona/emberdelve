@@ -1,0 +1,15 @@
+{
+  "verified_at": "2026-09-19T15:37:03.536257+00:00",
+  "source": "Unauthenticated public itch.io page + devlog",
+  "page_url": "https://tsorostudios.itch.io/emberdelve",
+  "devlog_url": "https://tsorostudios.itch.io/emberdelve/devlog/1669707/the-whole-company-emberdelve-01840",
+  "downloads_now": [
+    "emberdelve-0.184.0-android-arm64.apk",
+    "emberdelve-0.184.0-android-arm32.apk"
+  ],
+  "old_0_179_removed": true,
+  "ai_disclosure": "AI Assisted, Code, Graphics, Text",
+  "updated": "moments ago (build replaced)",
+  "note": "75MB universal blocked by 50MB browser cap and blocked itch.ovh/itch.zone hosts; two ARM split APKs (all real phones) uploaded; universal+x86_64+checksums via linked GitHub release.",
+  "published_via": "authenticated tsorostudios session after Gmail-link password reset"
+}

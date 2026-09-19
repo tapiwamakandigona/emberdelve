@@ -1,11 +1,26 @@
 # Emberdelve 0.184.0 — itch.io publication package
 
-**VERIFIED preparation, NOT a published itch.io update.**
+**UPDATE 2026-09-19 15:37 UTC — PUBLISHED.** After an owner-authorised
+password reset (link retrieved from the registered Gmail), the page was
+updated while signed in as `tsorostudios`. Public readback now shows
+`emberdelve-0.184.0-android-arm64.apk` (36 MB) and
+`emberdelve-0.184.0-android-arm32.apk` (34 MB); the old `0.179.0` file is
+removed; AI Disclosure now reads Code, Graphics, Text; and a major-update
+devlog is live at
+`/emberdelve/devlog/1669707/the-whole-company-emberdelve-01840`.
 
-Public readback on September 19 still lists `emberdelve-v0.179.0.apk`,
-version 0.179.0, 69 MB. Authentication is blocked by Cloudflare before the
-password form; the ordinary session and one permitted proxy fallback both
-stopped there. No password was tested, reset requested or page saved.
+The 75 MB universal APK could not be uploaded: it exceeds the 50 MB
+browser-transfer cap and itch's butler/upload hosts (`*.itch.ovh`,
+`*.itch.zone`) are unreachable from the sandbox. The two ARM split APKs
+cover every real phone; the linked GitHub release carries the universal
+APK, the x86_64 split and SHA-256 checksums. Evidence:
+`../evidence/itch-published.json`.
+
+The material below documents the prepared copy/assets used.
+
+---
+
+**Original note (superseded): prepared, not yet published.**
 
 ## Ready to publish
 

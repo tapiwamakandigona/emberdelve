@@ -38,8 +38,8 @@
       "title": "itch.io page and Android download updated",
       "acceptance": "Authenticated correct game4903556 updated with accurate current release copy, actual source-matched visuals and verified signed APK or canonical download link; public page readback confirms change.",
       "verify": "Authenticated save plus independent public itch.io page/download readback",
-      "passes": false,
-      "evidence": "BLOCKED at Cloudflare before password form; ordinary session and single proxy fallback challenged. No page edit,password attempt or reset. Public readback Sep19 still0.179.0/69MB;Code/Text-only disclosure. Prepared itch/ page+devlog copy,generated-graphics disclosure,3 source-matched PNGs,exact0.184.0 download and SHA256. Private ZIP includes verified universal APK. Eight content links checked;not publication. Need authorised editor access;Butler key can enable APK upload only."
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19: owner-authorised password reset via Gmail link; logged in as tsorostudios. Public page shows emberdelve-0.184.0-android-arm64.apk (36MB) and -arm32.apk (34MB); old 0.179.0 removed; AI Disclosure now Code, Graphics, Text. Major-update devlog published: /emberdelve/devlog/1669707/the-whole-company-emberdelve-01840. 75MB universal exceeded the 50MB browser transfer cap and itch.ovh/itch.zone hosts are unreachable, so two ARM split APKs cover all real phones and the linked GitHub release carries the universal/x86_64/checksums. evidence/itch-published.json."
     }
   ]
 }

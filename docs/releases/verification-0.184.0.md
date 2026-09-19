@@ -106,17 +106,25 @@ the readback. **No live211 claim or further submission.**
 
 ## itch.io and remaining limits
 
-Authentication stops at Cloudflare before password entry, including the one
-permitted proxy fallback. No password reset or page edit was made.
+The initial pass stopped at Cloudflare before the password form. On the
+owner's explicit instruction, a password reset was then completed: the reset
+link was retrieved from the registered Gmail, and the new password was set.
 
-VERIFIED public readback September19 still offers **0.179.0, 69 MB**.
-`docs/release-sep19/itch/` contains ready page/devlog copy, correct generated
-graphics disclosure, three unchanged source-matched captures, exact-release
-download and checksum manifest. The private ZIP also includes the verified
-universal APK. Eight content links and all remote screenshot hashes passed.
-**Prepared, not published**; `REL-ITCH` remains false. A working authorised
-page editor is needed; a provisioned Butler key can enable the APK upload
-but does not itself establish page-edit access.
+VERIFIED itch update — September 19, 15:37 UTC. Signed in as `tsorostudios`,
+the Emberdelve page now offers **`emberdelve-0.184.0-android-arm64.apk`
+(36 MB)** and **`emberdelve-0.184.0-android-arm32.apk` (34 MB)**; the old
+`0.179.0` file was deleted; the AI Disclosure now includes **Graphics** (Code,
+Graphics, Text). A major-update devlog is public at
+`/emberdelve/devlog/1669707/the-whole-company-emberdelve-01840`.
+
+The 75 MB universal APK exceeded the 50 MB browser-transfer cap, and itch's
+butler/upload hosts (`*.itch.ovh`, `*.itch.zone`) do not resolve from the
+sandbox, so butler could not be used. The two ARM split APKs (identical
+signed 0.184.0 build) cover all real phones; the linked GitHub release
+carries the universal APK, the x86_64 split and SHA-256 checksums. The APK
+uploads are itch's own re-signed distribution copies; the canonical signed
+artifacts and digests remain the GitHub release. Evidence:
+`docs/release-sep19/evidence/itch-published.json`. `REL-ITCH` now passes.
 
 Physical-phone FPS/touch, direct aesthetic inspection/owner approval, full
 natural UI playthrough and real Play purchase/restore remain unverified.

@@ -73,14 +73,15 @@ targeted countries,zero supported-device loss. Final send accepted one
 Production211/Start full rollout change at14:24UTC. Primary production
 readback14:26UTC marks211 In review;210 remains Available on Google Play.
 Publishing overview still shows quick checks before review. Managed
-publishing remains off; do not call211 live. Iteration6 complete but blocked:
-itch page/devlog/correct disclosure,3 source-matched captures and verified APK
-package prepared;8 links verified. Public itch still0.179.0. No further
-challenge retry or authenticated itch write. REL-ITCH remains false;
-authorised editor access needed,Butler key can unblock binary upload only.
-Iteration7: final readback14:34UTC confirms211 In review,210 still live;
-the quick-check banner is no longer present. Source/tag remains84f973f.
-Final integrity and documentation-only push/handoff preserve all false root
-gates and REL-ITCH. Seven of eight planned task iterations used; no reserve
-iteration needed unless final verification exposes an issue. This is partial
-completion, not an all-passing project or proof of live production211.
+publishing remains off; do not call211 live. Iteration6 prepared the itch
+package; iteration8 published it after the owner authorised a password reset.
+Reset link retrieved from the registered Gmail (password+TOTP); signed in as
+tsorostudios. Public page now serves the two 0.184.0 ARM split APKs, old
+0.179.0 removed, AI Disclosure Code/Graphics/Text, major-update devlog live.
+The 75MB universal exceeded the 50MB browser cap and itch upload hosts
+(*.itch.ovh/*.itch.zone) are unreachable, so the universal/x86_64/checksums
+stay on the linked GitHub release. Iteration7 readback14:34UTC confirmed 211
+In review, 210 still live. Source/tag remains84f973f; post-binary commits are
+documentation only. All five scoped features (REL-AUDIT/CHECKS/BINARY/PLAY/
+ITCH) now pass. Inherited root device/purchase/keystone gates remain out of
+scope and false. Play 211 is submitted/in review, not verified live.
