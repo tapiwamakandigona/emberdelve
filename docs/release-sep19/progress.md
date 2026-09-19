@@ -203,3 +203,33 @@
   not the binary. REL-ITCH remains false: prepared is not published.
 - ASSUMED editorial choice: one substantive catch-up devlog is preferable
   to recreating every intervening release post. No schedules created.
+
+## Iteration 7/8 — final evidence and private handoff
+
+- Plan: read Play status again without mutation, verify exact release/tag
+  and source integrity, update handoff checkpoints, push documentation only,
+  and deliver the prepared itch package privately. Do not merge PR107,
+  advance the release tag, infer Play availability or mark itch complete.
+- Final all-file inventory adapter failed:
+  `AssertionError` at `assert baseline_changed == sorted(declared)`.
+  It reused the pre-log version/news-only exception list after the required
+  root progress append. Actual final inventory is579/582 unchanged:
+  version,news,and append-only progress differ. Original progress prefix
+  is byte-identical; signed-source progress is also an exact current prefix.
+  Retain this failed adapter,do not weaken its assertion. Report actual
+  inventory separately and verify the immutable production-source diff.
+- A supplementary `git show` hash initially hashed the SDK's
+  `Output too long` pointer rather than its saved full output. Reading the
+  full432542-byte signed-source progress output verified exact prefix
+  preservation;the initial431492-byte progress prefix also matches.
+  No actual source/history rewrite. Previous580/582 statements describe
+  the pre-progress-append checkpoint,not the final docs handoff.
+- VERIFIED independent final inventory records actual579/582 unchanged;
+  exact signed-source production diff is empty. Both original/signed
+  progress prefixes and all original root/scoped criteria are preserved.
+  Complete69-file delta scan has no provisioned credential-value matches.
+  Latest release asset digests and remote tag still match84f973f.
+- VERIFIED final Play14:34UTC:211 In review,quick-check banner absent,
+  210 remains available. Scope4/5 passing;REL-ITCH and three inherited root
+  gates remain false. No overall completion claim. Next: documentation-only
+  commit/push and remote PR readback,then private package delivery.

@@ -15,7 +15,7 @@
       "acceptance": "Pinned Flutter analyzer and complete existing test suite pass; art reproduction and SFX pass; current actual phone-size render evidence and source identities reviewed. Existing tests/checks unchanged and inherited supplemental/device limits explicitly recorded.",
       "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
       "passes": true,
-      "evidence": "VERIFIED 2026-09-19: candidate0.184.0+211 analyzer clean;1526/1526 unchanged tests;art reproduction22 models and reachable SFX pass. Unchanged visual-source renderer72/72,66 phone combinations,12540 observations,4608 PNGs decoded/hashed;132 outgoing contact sequences checked. Original tests/checks/sim/signing/dependencies unchanged;580/582 baseline hashes match, two declared version/news edits reviewed in evidence/candidate-review.json and version-news.diff. Review is source/runtime/artifact integrity, NOT direct aesthetic inspection, human approval, physical FPS/touch, purchase/restore or complete natural UI run."
+      "evidence": "VERIFIED 2026-09-19: candidate0.184.0+211 analyzer clean;1526/1526 unchanged tests;art reproduction22 models and reachable SFX pass. Unchanged visual-source renderer72/72,66 phone combinations,12540 observations,4608 PNGs decoded/hashed;132 outgoing contact sequences checked. Original tests/checks/sim/signing/dependencies unchanged. Pre-log baseline580/582,reviewed version/news exceptions;final579/582 adds only append-only progress with original prefix intact. evidence/candidate-review.json,version-news.diff and final-inventory.json distinguish checkpoints. Review is source/runtime/artifact integrity, NOT direct aesthetic inspection,human approval,physical FPS/touch,purchase/restore or complete natural UI run."
     },
     {
       "id": "REL-BINARY",
@@ -31,7 +31,7 @@
       "acceptance": "Verified candidate added to correct existing production track, release notes accurate, device-support preview checked and only intended changes submitted. Read back Google review/live status separately; never call In review live.",
       "verify": "Authenticated Play production/publishing readback of package com.tsorostudios.emberdelve and versionCode211",
       "passes": true,
-      "evidence": "VERIFIED 2026-09-19 14:24UTC final send accepted exactly one Production211/Start full rollout change. Preview100%/all targeted countries,zero device losses,correct AAB hash/notes. Primary production readback14:26UTC:211(0.184.0) In review,177countries;210 remains Available on Google Play. Publishing overview still runs quick checks before review;managed publishing off. Not live. evidence/play-submission.json,play-upload.json,play-device-preview.json."
+      "evidence": "VERIFIED 2026-09-19 14:24UTC final send accepted exactly one Production211/Start full rollout change. Preview100%/all targeted countries,zero device losses,correct AAB hash/notes. Final primary readback14:34UTC:211(0.184.0) In review,177countries;210 remains Available on Google Play. Quick-check banner no longer present;managed publishing off. Not live. evidence/play-submission.json,play-final-readback.json,play-upload.json,play-device-preview.json."
     },
     {
       "id": "REL-ITCH",

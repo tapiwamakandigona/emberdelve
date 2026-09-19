@@ -15,8 +15,11 @@ remains open; no PR merged by this release pass.
   observations, 4,608 PNGs decoded and hashed. All source/runtime/fixture
   limits: `docs/release-sep19/evidence/README.md`.
 - No original test/check, sealed simulation, purchase logic, dependency,
-  Android configuration or signing-key change. 580 of 582 baseline hashes
-  match; two declared exceptions are the version and additive release news.
+  Android configuration or signing-key change. Before the required root
+  progress append,580 of582 baseline hashes matched (version and news were
+  the two reviewed exceptions). Final documentation handoff matches579/582:
+  the third difference is append-only progress,whose entire original prefix
+  remains byte-identical. No additional production-code difference.
 
 ## Signed binary verification
 
@@ -91,6 +94,16 @@ private install counts. Exact-source PR headless CI and unsigned iOS build
 also passed; `candidate-pr-checks.json` records them separately from the
 signed Android dispatch.
 
+### VERIFIED final store readback — September 19, 14:34 UTC
+
+Publishing overview and Production Releases both still show **211 (0.184.0)
+In review**. The quick-check banner is no longer present; no separate
+successful-checks banner was captured. The one change remains
+**Production → 211 (0.184.0) → Start full rollout**. Managed publishing is
+off, country coverage177, and **210 (0.183.0) remains available**.
+`play-final-readback.json` and its accompanying redacted text excerpt record
+the readback. **No live211 claim or further submission.**
+
 ## itch.io and remaining limits
 
 Authentication stops at Cloudflare before password entry, including the one
@@ -109,3 +122,24 @@ Physical-phone FPS/touch, direct aesthetic inspection/owner approval, full
 natural UI playthrough and real Play purchase/restore remain unverified.
 Original root false gates stay false. A headless render pass is not evidence
 of “best visuals,” and GitHub publication is not Google Play availability.
+
+## VERIFIED final source and acceptance inventory
+
+`docs/release-sep19/evidence/final-inventory.json` records the complete
+release delta and a credential-value scan with no matches. Exact remote tag
+and latest-release assets still match source84f973f and the verified bytes.
+All production code, assets, checks, Android/signing and dependencies are
+unchanged from that signed source.
+
+Final broad inventory is **579/582 unchanged**, not580/582: the two reviewed
+version/news edits plus the required append-only root progress entry.
+Both the original431,492-byte progress prefix and signed432,542-byte prefix
+are preserved exactly. The fixed pre-log audit assertion remains failed and
+unmodified; the final report records the real differences instead of
+relabeling that failure as a pass.
+
+Scoped release criteria: **4 of5 passing**. `REL-ITCH` remains false.
+Original root objects are unchanged, including open
+`NEXT-UI-PLAYTHROUGH-20260913`, `M1-3` and `M4-2`.
+This is a verified GitHub release and Play submission with a blocked itch
+publication, **not overall project completion**.

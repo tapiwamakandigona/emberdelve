@@ -24,9 +24,11 @@ gates from headless evidence.
 - VERIFIED shipping source: legacy/dice-builder at 741b439; main is frozen.
   PR104/105/106 are already merged, not work to implement again.
   PR102 is an open historical critique; leave it open.
-- VERIFIED Play currently serves 0.183.0 (210), full production rollout,
+- VERIFIED Play initially served 0.183.0 (210), full production rollout,
   177/177 countries. No unpublished changes at initial authenticated read.
-- The next unused code is 211; retain the permanent package/upload key,
+  Final September19 14:34UTC readback still shows210 available and211 In review.
+- Code211 was verified unused, then consumed by this release; do not reuse it.
+  Retain the permanent package/upload key,
   entitlements, saves, all sealed simulation, dependencies and existing tests.
 - Use existing integrated visuals, not unreviewed replacement art.
   Existing brand values and actual-render evidence govern store copy/assets.
@@ -51,7 +53,8 @@ gates from headless evidence.
 
 ## Current phase
 
-Release — iterations1–2 complete. Original analyzer/full suite/art/SFX passed;
+Release — iterations1–6 complete as tasks, with itch publication blocked.
+Original analyzer/full suite/art/SFX passed;
 unchanged whole-roster render retry passed72/72 in18minutes. All4608 PNGs
 decoded/hashed,12540 observations and source identities reviewed. This is
 mechanical/source verification, not direct aesthetic or physical-device QA.
@@ -59,7 +62,10 @@ Portable official Android signature/manifest tools are installed and their
 archive hashes verified; no system/root changes. Iteration3 version/news/docs
 complete:0.184.0+211 passes the original analyzer,1526tests,art and SFX again.
 The broad582-file baseline now has exactly two reviewed planned exceptions
-(version and news); all580 other files match. Iteration4 complete: exact
+(version and news); all580 other files matched at that pre-log checkpoint.
+The final required append-only root progress update makes579/582 match;
+the third difference is history appended without altering its original prefix.
+Iteration4 complete: exact
 source84f973f signed by CI35447309873, all5 artifacts independently verified,
 GitHub v0.184.0 published with matching hashes. PR107 remains open; no merge.
 Iteration5 complete: exact211 AAB uploaded,100% rollout across all177 existing
@@ -72,4 +78,9 @@ itch page/devlog/correct disclosure,3 source-matched captures and verified APK
 package prepared;8 links verified. Public itch still0.179.0. No further
 challenge retry or authenticated itch write. REL-ITCH remains false;
 authorised editor access needed,Butler key can unblock binary upload only.
-Iteration7: final readback,integrity,docs-only push and private handoff.
+Iteration7: final readback14:34UTC confirms211 In review,210 still live;
+the quick-check banner is no longer present. Source/tag remains84f973f.
+Final integrity and documentation-only push/handoff preserve all false root
+gates and REL-ITCH. Seven of eight planned task iterations used; no reserve
+iteration needed unless final verification exposes an issue. This is partial
+completion, not an all-passing project or proof of live production211.
