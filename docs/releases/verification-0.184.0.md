@@ -96,6 +96,15 @@ signed Android dispatch.
 Authentication stops at Cloudflare before password entry, including the one
 permitted proxy fallback. No password reset or page edit was made.
 
+VERIFIED public readback September19 still offers **0.179.0, 69 MB**.
+`docs/release-sep19/itch/` contains ready page/devlog copy, correct generated
+graphics disclosure, three unchanged source-matched captures, exact-release
+download and checksum manifest. The private ZIP also includes the verified
+universal APK. Eight content links and all remote screenshot hashes passed.
+**Prepared, not published**; `REL-ITCH` remains false. A working authorised
+page editor is needed; a provisioned Butler key can enable the APK upload
+but does not itself establish page-edit access.
+
 Physical-phone FPS/touch, direct aesthetic inspection/owner approval, full
 natural UI playthrough and real Play purchase/restore remain unverified.
 Original root false gates stay false. A headless render pass is not evidence

@@ -67,5 +67,9 @@ targeted countries,zero supported-device loss. Final send accepted one
 Production211/Start full rollout change at14:24UTC. Primary production
 readback14:26UTC marks211 In review;210 remains Available on Google Play.
 Publishing overview still shows quick checks before review. Managed
-publishing remains off; do not call211 live. Iteration6: prepare itch package
-without another challenge retry. No authenticated itch write has occurred.
+publishing remains off; do not call211 live. Iteration6 complete but blocked:
+itch page/devlog/correct disclosure,3 source-matched captures and verified APK
+package prepared;8 links verified. Public itch still0.179.0. No further
+challenge retry or authenticated itch write. REL-ITCH remains false;
+authorised editor access needed,Butler key can unblock binary upload only.
+Iteration7: final readback,integrity,docs-only push and private handoff.

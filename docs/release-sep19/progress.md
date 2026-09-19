@@ -179,3 +179,27 @@
 - VERIFIED exact-source PR CI35447297307 and unsigned iOS35447297322
   succeeded. Signed binary proof remains the separate dispatch35447309873.
   Binary source/tag stays84f973f; later evidence commits are docs-only.
+
+## Iteration 6/8 — itch.io publication package, access blocked
+
+- Plan: refresh the public-page readback, prepare current page/devlog copy,
+  unchanged actual-render screenshots, exact-release download and checksum.
+  Do not retry authentication or treat a public read as editor access.
+  Keep REL-ITCH false unless an authenticated save and public readback occur.
+- Packaging-path failure:
+  `FileNotFoundError: [Errno 2] No such file or directory: '/work/temp/emberdelve-0.184.0-artifacts/app-release.apk'`.
+  Artifact inspection found the existing APK in its named CI artifact
+  subdirectory. One path-only correction; size/hash/signature gates unchanged.
+- VERIFIED public itch page still0.179.0/69MB with AI-assisted Code/Text
+  disclosure only. It already links GitHub latest; that link now reaches
+  0.184.0, but no itch edit is implied. No further login attempt.
+- VERIFIED prepared description,one catch-up devlog,generated-graphics
+  disclosure,3 unchanged source-matched720×1280 PNGs,exact-release APK link
+  and checksums. Eight content links responded successfully; remote image
+  bytes match source PNG hashes. No new theme,art or visual claim.
+- VERIFIED private ZIP contains11 files,including exact75,707,508-byte
+  signed universal APK renamed for itch; extracted hash matches signed
+  release and ZIP CRC check passes. Git contains copy/manifest/screenshots,
+  not the binary. REL-ITCH remains false: prepared is not published.
+- ASSUMED editorial choice: one substantive catch-up devlog is preferable
+  to recreating every intervening release post. No schedules created.

@@ -39,7 +39,7 @@
       "acceptance": "Authenticated correct game4903556 updated with accurate current release copy, actual source-matched visuals and verified signed APK or canonical download link; public page readback confirms change.",
       "verify": "Authenticated save plus independent public itch.io page/download readback",
       "passes": false,
-      "evidence": "BLOCKED at Cloudflare verification before password form; ordinary session and one permitted proxy fallback both challenged. No page edit or password attempt."
+      "evidence": "BLOCKED at Cloudflare before password form; ordinary session and single proxy fallback challenged. No page edit,password attempt or reset. Public readback Sep19 still0.179.0/69MB;Code/Text-only disclosure. Prepared itch/ page+devlog copy,generated-graphics disclosure,3 source-matched PNGs,exact0.184.0 download and SHA256. Private ZIP includes verified universal APK. Eight content links checked;not publication. Need authorised editor access;Butler key can enable APK upload only."
     }
   ]
 }
