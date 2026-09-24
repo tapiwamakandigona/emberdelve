@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.184.102';
+const String currentAppVersion = '0.184.103';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.184.103',
+    title: 'Experimental: The Last Blow',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Beating the final boss no longer turns the whole screen white. A warm '
+          'glow rises from the boss so you can watch it fall.',
+      'Once a fight is decided, the dice and End turn go quiet, and the game '
+          'no longer points you to a next foe after the last one.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.184.102',
     title: 'Experimental: Clear Kills',
