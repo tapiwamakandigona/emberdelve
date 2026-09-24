@@ -857,6 +857,12 @@ class _CombatScreenState extends State<CombatScreen> {
     final exact = _find(events, 'exact_kill');
     if (exact != null) {
       _audio?.playSfx('ember_gain');
+      // v0.184.0 Clean Cut: the signature exact kill (a die spent for exactly
+      // lethal damage) earns a distinct contact read — a crisp ember-white
+      // ring + precise glint over the foe — so mastery is visible, not just a
+      // number. Presentation-only and non-blocking: the death choreography's
+      // timing is unchanged; overkills and ordinary kills are untouched.
+      _spawnFx(_FxKind.cleanCut, onPlayer: false, color: EmberColors.gold);
       _note(
         '+${exact['embers']} EMBERS — EXACT!',
         icon: Icons.local_fire_department,

@@ -419,6 +419,13 @@ extension _CombatStageBand on _CombatScreenState {
                                   _fxUpdate(() => _fx.remove(fx));
                                 },
                               ),
+                              _FxKind.cleanCut => CleanCutFlash(
+                                key: ValueKey('fx-${fx.id}'),
+                                color: fx.color,
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
                               _ => ImpactSlash(
                                 key: ValueKey('fx-${fx.id}'),
                                 claws: fx.kind == _FxKind.claws,

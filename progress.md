@@ -5917,3 +5917,28 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+## 2026-09-24 — exact-kill "clean cut" (presentation-only, source PR)
+
+- Owner ask (Viktor app, Tapiwa): "improve the models and animations to be more
+  enjoyable" + a test APK. Tree was fully green on entry (analyzer, 1526/1526,
+  art/SFX), and the Sept-13 critique's P1 items (contact-sync A3/A4, hand
+  metadata, all-22 articulation) plus the combat-feel backlog were already
+  shipped — so this is an ADDITIVE gain, not a red-gate fix.
+- Gap: the signature exact kill (a die spent for exactly-lethal damage) paid off
+  only as a floating `EXACT!` call-out; its death body read identically to a
+  sloppy overkill. Design-system §5 ("visible mastery is presentation").
+- Shipped `CleanCutFlash` (lib/ui/weapons.dart): crisp ember-white ring + glint
+  over the foe on the `exact_kill` event, via the existing contact-FX system
+  (`_FxKind.cleanCut`). Spawn is NON-BLOCKING, so the death choreography's timing
+  is unchanged and the contact-timeline contract holds. Reduce-motion matches the
+  other contact FX (always plays; displacement stays in the self-gating ShakeBox).
+- VERIFIED 2026-09-24: analyzer clean; new test/exact_kill_clean_cut_test.dart
+  3/3 (exact->flourish, overkill->none negative control, widget lifecycle); full
+  suite 1529/1529 (1526 inherited + 3 additive, none weakened); build_delvers.py
+  --check pass; sfx_headroom.py clear. git diff touches only four lib/ui files —
+  ZERO lib/sim edits; sealed sim, hashes and contact-timeline contract unchanged.
+- Scope docs in docs/exact-kill-clean-cut-2026-09-24/. Root features.json left
+  unchanged (worker protocol). Source PR only: no merge, release, version bump,
+  signed store dispatch or Play action. Owner aesthetic approval PENDING via the
+  test APK; physical-device FPS and Play gates remain out of scope and open.
