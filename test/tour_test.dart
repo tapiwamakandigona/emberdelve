@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:emberdelve/data/tracks.dart';
 import 'package:emberdelve/game/controller.dart';
+import 'package:emberdelve/game/tips.dart';
 import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/meta/cloud_merge.dart';
 import 'package:emberdelve/meta/meta.dart';
 import 'package:emberdelve/ui/screens.dart';
 import 'package:emberdelve/ui/theme.dart';
+import 'package:emberdelve/ui/widgets.dart';
 
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   const step = 50;
@@ -186,6 +188,68 @@ void main() {
       expect(c.tour.running, isFalse);
       expect(c.meta.tourSeenVersion, tourVersion);
       expect(find.text('SKIP'), findsNothing);
+    });
+
+    // Experimental loop C0-02 (critic round 0): walking all five beats and
+    // then getting the 26-word ROLL, THEN SPEND card is the same lesson
+    // twice, and the second time as a wall of text a young child can't
+    // read. A completed tour has taught roll/pick/spend and the badge.
+    testWidgets('completed tour: no tip card repeats what it just taught', (
+      tester,
+    ) async {
+      final c = GameController();
+      c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
+      // walkToFight drives the map through the controller, so nobody taps
+      // the map's THIS IS A DELVE card away; a real player's first tap does.
+      c.meta.tipsSeen.add(ContextTips.whatsADelve);
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      if (!await walkToFight(tester, c)) return;
+      await pumpFor(tester, 400);
+      expect(c.tour.active, TourBeats.roll);
+      await tester.tap(find.text('Roll'), warnIfMissed: false);
+      await pumpFor(tester, 900);
+      expect(c.tour.active, TourBeats.pick);
+      await tester.tap(find.byType(DieChip).first, warnIfMissed: false);
+      await pumpFor(tester, 300);
+      expect(c.tour.active, TourBeats.spend);
+      await tester.tap(find.text('Attack'), warnIfMissed: false);
+      await pumpFor(tester, 1200);
+      expect(c.tour.active, TourBeats.intent);
+      await tester.tapAt(const Offset(200, 300));
+      await pumpFor(tester, 700);
+      expect(c.tour.active, TourBeats.reroll);
+      await tester.tapAt(const Offset(200, 300));
+      await pumpFor(tester, 900);
+      expect(c.tour.running, isFalse);
+      expect(c.meta.tourSeenVersion, tourVersion);
+      // The lessons the beats covered are marked learned, nothing is up.
+      expect(c.tipDirector.active, isNull);
+      expect(c.meta.tipsSeen, contains(ContextTips.rollSpend));
+      expect(c.meta.tipsSeen, contains(ContextTips.intentFair));
+      expect(find.text('ROLL, THEN SPEND'), findsNothing);
+    });
+
+    testWidgets('skipped tour: the roll-then-spend card is the fallback', (
+      tester,
+    ) async {
+      final c = GameController();
+      c.meta.heardTracks.addAll([for (final t in gramophoneTracks) t.key]);
+      // walkToFight drives the map through the controller, so nobody taps
+      // the map's THIS IS A DELVE card away; a real player's first tap does.
+      c.meta.tipsSeen.add(ContextTips.whatsADelve);
+      await tester.pumpWidget(
+        MaterialApp(theme: buildEmberTheme(), home: GameRoot(c)),
+      );
+      if (!await walkToFight(tester, c)) return;
+      await pumpFor(tester, 400);
+      await tester.tap(find.text('SKIP'));
+      await pumpFor(tester, 300);
+      expect(c.tour.running, isFalse);
+      // A player who skipped saw none of the beats: the card still teaches.
+      expect(c.meta.tipsSeen, isNot(contains(ContextTips.rollSpend)));
+      expect(c.tipDirector.active, ContextTips.rollSpend);
     });
 
     testWidgets('stamped profile: no tour, tips run as before', (tester) async {

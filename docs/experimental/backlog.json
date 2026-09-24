@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24T17:43:15+00:00",
+ "updated": "2026-09-24T17:48:27+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -56,7 +56,7 @@
    "fix_direction": "When the guided tour completes or is skipped, mark the tips it already taught (roll_spend; intent_fair is taught by the intent beat) as seen so no card repeats it; keep the manual help deck intact.",
    "acceptance": "Fresh-walk plate right after beat 5 shows the live board with no tip card at 320/360/412; unit test: tour completion and skip both leave roll_spend seen and TipDirector.active null.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 2,
    "history": [
@@ -89,8 +89,15 @@
       "effort": "M"
      },
      "note": "Critic's 'tour dies after beat 2' was the harness tapping SKIP (VERIFIED by diagnostic run); residual real defect seen in 05_tour_after_done."
+    },
+    {
+     "at": "2026-09-24T17:48:27+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.2",
+     "note": "Completed tour marks roll_spend + intent_fair learned (TipDirector.markTaught); skip keeps the card as fallback. Red->green widget test; plates 05_tour_after_done at 320/360/412 show the live board with no card."
     }
-   ]
+   ],
+   "fixed_in": "exp.2"
   },
   {
    "id": "C0-03",

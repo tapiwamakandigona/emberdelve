@@ -1155,12 +1155,21 @@ class GameController extends ChangeNotifier {
   /// persist when it finishes. While the tour is on screen the contextual
   /// tips stay quiet (same suppression rule as the manual how-to-play).
   void tourMoment(TourMoment m) {
-    if (tour.onMoment(m)) _stampTour();
+    if (tour.onMoment(m)) _completeTour();
   }
 
   /// Tap-to-continue on an info beat.
   void tourAdvanceInfo() {
-    if (tour.advanceInfo()) _stampTour();
+    if (tour.advanceInfo()) _completeTour();
+  }
+
+  /// Every beat walked: the tips the beats already taught are learned, so
+  /// no card repeats the lesson the moment the tour ends (experimental
+  /// loop C0-02). Skip deliberately does NOT do this — see [tourTaughtTips].
+  void _completeTour() {
+    tipDirector.markTaught(tourTaughtTips);
+    if (tipDirector.allSeen) meta.tutorialSeen = true;
+    _stampTour();
   }
 
   /// SKIP: always available, stamps exactly like completion (§Ethics —
