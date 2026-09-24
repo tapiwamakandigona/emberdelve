@@ -471,6 +471,20 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             ),
                           ),
+                        // C1-01 boss kill: a warm bloom from the boss,
+                        // clipped to the stage and capped so the dissolve
+                        // stays visible (a dim tint under reduced motion).
+                        Positioned.fill(
+                          key: const ValueKey('boss-kill-flash'),
+                          child: ClipRect(
+                            child: BossKillFlash(
+                              on: _bossKillFlash,
+                              reduced: Motion.instance.reduced,
+                              focus: plan.geometry.enemyBody.center,
+                              stage: plan.geometry.stage,
+                            ),
+                          ),
+                        ),
                         // Enemy-anchored call-outs: burn ticks, exact-kill,
                         // overkill — each in its planned slot (C0-03).
                         for (final n in _notes.where((n) => n.onEnemy))

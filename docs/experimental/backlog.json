@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24T18:47:56+00:00",
+ "updated": "2026-09-24T20:16:14+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -384,7 +384,7 @@
    "fix_direction": "Suppress carry-over toast when encounter_won ends the run; show a 'RUN WON' beat.",
    "acceptance": "Boss-kill plate without the toast; unit test on toast selection.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 12,
    "history": [
@@ -402,8 +402,20 @@
      "at": "2026-09-24T18:47:56+00:00",
      "event": "maker:open",
      "note": "Folded into C1-01 (critic round 1: ship with the boss-kill fix; C1-01 acceptance includes the toast-selection unit test)."
+    },
+    {
+     "at": "2026-09-24T20:06:11+00:00",
+     "event": "maker:in_progress",
+     "note": "folded into C1-01"
+    },
+    {
+     "at": "2026-09-24T20:16:14+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.3",
+     "note": "fixed with C1-01: overkillCallout() drops NEXT FOE on run-ending kills"
     }
-   ]
+   ],
+   "fixed_in": "exp.3"
   },
   {
    "id": "C0-13",
@@ -493,7 +505,7 @@
    "fix_direction": "Limit the flash to the stage rect at <=0.45 opacity with a radial falloff from the boss (none under reduce, where a 200 ms colour tint is enough). Keep the boss dissolve visible. On encounter_won, disable and dim the tray and End turn within 1 frame and hold the hero's victory pose until the summary. Fix C0-12 toast selection in the same pass.",
    "acceptance": "Boss-kill strip at 40 ms at 360x800: no frame has >50% of pixels at luma >230; the boss dissolve is visible on >=4 sampled frames; under reduce, 0 frames above that luma; the +1200 ms plate shows a disabled tray and no NEXT FOE toast (unit test on toast selection).",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 1,
    "critic_rank": 1,
    "rank_round": 1,
@@ -502,8 +514,19 @@
      "at": "2026-09-24T18:47:56+00:00",
      "round": 1,
      "event": "opened"
+    },
+    {
+     "at": "2026-09-24T20:06:11+00:00",
+     "event": "maker:in_progress"
+    },
+    {
+     "at": "2026-09-24T20:16:14+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.3",
+     "note": "stage-scoped radial bloom <=0.45 alpha, reduced-motion tint; tray+End turn inert on encounter end; test/boss_kill_moment_test.dart red->green"
     }
-   ]
+   ],
+   "fixed_in": "exp.3"
   },
   {
    "id": "C1-02",

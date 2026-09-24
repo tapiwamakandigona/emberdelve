@@ -208,8 +208,13 @@ class _CombatScreenState extends State<CombatScreen> {
   final List<_Fx> _fx = [];
   int _fxId = 0;
 
-  // Boss kill moment: a full-screen white-hot flash held over the stage.
+  // Boss kill moment: a warm bloom from the boss, scoped to the stage
+  // (C1-01: it used to be a full-screen opaque white-out that hid the kill).
   bool _bossKillFlash = false;
+
+  // C1-01: set the frame a blow/turn ends the encounter — the tray and the
+  // action zone dim and stop taking taps until the screen moves on.
+  bool _encounterOver = false;
 
   // LFP-5: resolution pacing control. END TURN choreography is fixed-length
   // (~2.5–3.5s to next input; design-system §5 wants ≤400ms input blocks) —
@@ -815,6 +820,7 @@ class _CombatScreenState extends State<CombatScreen> {
       'action': 'attack',
     }, terminalHold: Duration(milliseconds: isBoss ? 1900 : 1300));
     selected = null;
+    if (encounterEnds(events)) _ui(() => _encounterOver = true);
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
     if (da != null) {
@@ -915,10 +921,12 @@ class _CombatScreenState extends State<CombatScreen> {
         onEnemy: true,
       );
     }
-    final over = _find(events, 'overkill');
-    if (over != null) {
+    // C0-12: the surplus splashes into the NEXT foe — a run-ending kill
+    // has none, so it gets no promise.
+    final overText = overkillCallout(events, bossKill: isBoss);
+    if (overText != null) {
       _note(
-        'OVERKILL +${over['surplus']} → NEXT FOE',
+        overText,
         color: EmberColors.ember,
         icon: Icons.double_arrow,
         onEnemy: true,
@@ -1044,6 +1052,7 @@ class _CombatScreenState extends State<CombatScreen> {
     final events = widget.c.apply({
       'type': 'end_turn',
     }, terminalHold: const Duration(milliseconds: 1450));
+    if (encounterEnds(events)) _ui(() => _encounterOver = true);
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
       // Bodies in the Fight: the body type chooses the attack — a rat coils
@@ -1296,9 +1305,9 @@ class _CombatScreenState extends State<CombatScreen> {
         Expanded(child: _band(_stageBand, _stageSection)),
         _band(_vitalsBand, _playerVitals),
         SizedBox(height: compact ? Space.s : Space.m),
-        _band(_diceBand, _traySection),
+        _band(_diceBand, (c, h) => _inertIfOver(_traySection(c, h))),
         SizedBox(height: compact ? Space.s : Space.m),
-        _band(_diceBand, _actionZone),
+        _band(_diceBand, (c, h) => _inertIfOver(_actionZone(c, h))),
       ],
     );
 
@@ -1388,20 +1397,6 @@ class _CombatScreenState extends State<CombatScreen> {
                               );
                             },
                           ),
-                        // Boss kill flash: white-out that decays into the ember dissolve.
-                        IgnorePointer(
-                          child: AnimatedOpacity(
-                            opacity: _bossKillFlash ? 1.0 : 0.0,
-                            duration: Duration(
-                              milliseconds: _bossKillFlash ? 60 : 420,
-                            ),
-                            curve: Curves.easeOut,
-                            child: const ColoredBox(
-                              color: Color(0xFFFFE9C4),
-                              child: SizedBox.expand(),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -1467,6 +1462,13 @@ class _CombatScreenState extends State<CombatScreen> {
           },
         ),
       );
+
+  /// C1-01: once the encounter is decided the controls stop inviting input
+  /// — dimmed and inert from the same frame, so the kill reads as the end.
+  Widget _inertIfOver(Widget child) => IgnorePointer(
+    ignoring: _encounterOver,
+    child: Opacity(opacity: _encounterOver ? 0.35 : 1.0, child: child),
+  );
 
   /// Layer of the node the delver stands on (for the boss name-plate).
   int _currentLayer(Map st) {
