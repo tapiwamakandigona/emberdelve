@@ -1,0 +1,434 @@
+{
+ "updated": "2026-09-24T17:43:15+00:00",
+ "scores_history": [
+  {
+   "round": 0,
+   "build": "exp.1",
+   "at": "2026-09-24T17:43:15+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 4,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  }
+ ],
+ "issues": [
+  {
+   "id": "C0-01",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Foes strike from where they stand — no approach, no contact travel",
+   "observed": "All four C_anim_*_enemy-turn strips: foe x-position at frame 028 equals 020; '-9' already on screen at 030; wind-up is a brightness/heat pulse only.",
+   "why_it_matters": "Without travel there is no anticipation or weight; every attack reads as a UI event, not a hit.",
+   "fix_direction": "120–160 ms dash using the existing 'run' row (sprite_meta.json) to a strike mark ~40 dp from the hero, 1 contact frame with 2-frame squash, 200 ms ease-back; family variants (wisp dart, brute hop, maw low lunge); reduced-motion keeps a 2-frame lean.",
+   "acceptance": "Enemy-turn strips for 4 foes show foe centroid ≥90 px @2x closer to hero on the contact frame; reduced-motion strip shows no dash.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 1,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-02",
+   "dimension": "onboarding",
+   "severity": "P1",
+   "title": "Tour completion is instantly followed by the 26-word ROLL, THEN SPEND card that repeats the tour",
+   "observed": "B_fresh_walk 320/360/412: '1 of 5' (04), '2 of 5' (05_tour_beat_pick), then plates 05_tour_beat_spend_null and 05_tour_beat_intent_null show no overlay/counter; a 'ROLL, THEN SPEND' ContextTip (30 words) appears instead. Harness taps every GestureDetector until active != tour_pick and SKIP is a GestureDetector.",
+   "why_it_matters": "A 7–9-year-old loses the hand-holding exactly at ATTACK/BLOCK and gets a reading-level-8 card instead.",
+   "fix_direction": "When the guided tour completes or is skipped, mark the tips it already taught (roll_spend; intent_fair is taught by the intent beat) as seen so no card repeats it; keep the manual help deck intact.",
+   "acceptance": "Fresh-walk plate right after beat 5 shows the live board with no tip card at 320/360/412; unit test: tour completion and skip both leave roll_spend seen and TipDirector.active null.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 2,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "event": "maker:rescoped",
+     "from": {
+      "title": "Guided tour disappears after beat 2; 30-word tip cards take over (verify harness vs product)",
+      "severity": "P1",
+      "effort": "M"
+     },
+     "note": "Critic's 'tour dies after beat 2' was the harness tapping SKIP (VERIFIED by diagnostic run); residual real defect seen in 05_tour_after_done."
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T17:43:15+00:00",
+     "event": "maker:rescoped",
+     "from": {
+      "title": "Guided tour disappears after beat 2; 30-word tip cards take over (verify harness vs product)",
+      "severity": "P1",
+      "effort": "M"
+     },
+     "note": "Critic's 'tour dies after beat 2' was the harness tapping SKIP (VERIFIED by diagnostic run); residual real defect seen in 05_tour_after_done."
+    }
+   ]
+  },
+  {
+   "id": "C0-03",
+   "dimension": "gameplay",
+   "severity": "P1",
+   "title": "Kill-moment readout collides: toasts over HP label, damage number over intent badge, stale badge and ghost bar on dead foe",
+   "observed": "008: '+5 EMBERS — EXACT!' overprints '-2' and live '⊕7' badge; 016: '-6' on '🛡11' badge with foe at 0/19 and grey HP stub; 021/040: 'OVERKILL +3 → NEXT FOE' / '+5 EMBERS — EXACT!' overprint 'ENEMY HP · TURN'.",
+   "why_it_matters": "The most rewarding moment in the loop is unreadable.",
+   "fix_direction": "Single toast lane above the enemy card with 90 ms stagger; hide intent badge and drain ghost bar when HP hits 0; damage number anchored to foe centroid.",
+   "acceptance": "Kill plates for 3 foes with zero overlapping text rects (golden/rect test).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 3,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-04",
+   "dimension": "art",
+   "severity": "P1",
+   "title": "Enemy sprites are 16-px outlined blobs beside a 32×60 outline-less hero",
+   "observed": "C_*_idle strips and assets/images/enemies/*.png (slag_brute 192×138, flue_crawler 192×96, source_base imp/tiny_zombie, scale 3): brute = brown rectangle with red band, crawler = beige ∩, wisp = red square; 2-px black outlines; hero (kindler.png 64×120) has none and is ~1.7× taller than a 'Brute'.",
+   "why_it_matters": "Silhouettes are unreadable and the two styles never look like one game.",
+   "fix_direction": "Match foe pixel scale to the hero, thin outlines to 1-px palette rim-light, replace the three floor-1 foes with 32-px CC0 sprites (credited) or originals.",
+   "acceptance": "360 plate where 1 foe px = 1 hero px; three first foes identifiable from silhouette; CREDITS updated.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 4,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-05",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Player hit reaction is a 300 ms frozen white silhouette with a static slash decal",
+   "observed": "C_*_enemy-turn 032–038: hero fully white for 4 sampled frames (~280–320 ms), pose identical, red slash lines unchanged, no recoil.",
+   "why_it_matters": "Reads as a render glitch rather than pain; no weight transfer.",
+   "fix_direction": "White 60–80 ms → red tint 120 ms; 6–8 dp knockback + 1-frame squash; slash decal fades by 120 ms; shake scaled by damage/HP.",
+   "acceptance": "Strip shows ≤2 white sampled frames and measurable x-offset on 032/034.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 5,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-06",
+   "dimension": "onboarding",
+   "severity": "P1",
+   "title": "First five minutes are written for adults (dice notation, 50–60-word cards)",
+   "observed": "B_fresh_walk 02: 'd6 · +1 block', 'd4 · min 2 · block only · +10 gold', 'SKIP — DELVE UNAIDED', 'Rumor has it…'; 03/006 primer 58 words incl. 'ledger'; 024 'THE SMITH IS IN' 62 words.",
+   "why_it_matters": "A slow-reading child cannot make the very first decision or understand the map.",
+   "fix_direction": "First-run copy variant: boon cards = icon + ≤5 words, primer ≤12 words with a picture, rest tip ≤12 words; keep the choice.",
+   "acceptance": "All first-run card bodies ≤12 words (string test); FK grade ≤3 for those strings; plates at 320.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 6,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-07",
+   "dimension": "menus_layout",
+   "severity": "P1",
+   "title": "Title screen is a two-screen scroll with five stacked CTAs",
+   "observed": "412 fresh 01: Delve, Daily, Weekly, Choose a delver, Provings + six captions; 320 fresh 01: Daily cut at fold; 'six floors — a / shorter sit' orphan wrap at 320 and 412.",
+   "why_it_matters": "Children and first-timers must find one button; five plus lore is a wall.",
+   "fix_direction": "One screen at 320×640: logo, hero+fire, difficulty chips, Delve; Daily/Weekly/Provings as one icon-chip row; lore to help sheet; caption '6 floors'.",
+   "acceptance": "Title plates at 320×640/360×800/412×915 with no scroll, Delve above fold, no wrapped caption.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 7,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-08",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "Tip cards are translucent — body text bleeds through",
+   "observed": "024_run2_rest: italic quote and 'MOVE ON — FULLY RESTED' legible through 'THE SMITH IS IN' card.",
+   "why_it_matters": "Readability and perceived quality.",
+   "fix_direction": "Card surface alpha 1.0 (or 0.96 over blurred scrim) for ContextTips and the map primer.",
+   "acceptance": "Rest and map primer plates with no legible text behind the card.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 8,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-09",
+   "dimension": "audio",
+   "severity": "P1",
+   "title": "One sample per event, no foe voices, no telegraph cue, exact kill reuses ember_gain",
+   "observed": "audio_service.dart: enemy_hit/player_hit/whoosh/block single samples shared by all foes and both sides; no SFX during wind-up frames 020–028; boss_death −14.2 LUFS vs enemy_death −13.3 (audio_report.md). Judged from code/report only.",
+   "why_it_matters": "Every fight sounds identical; the biggest moments have no sonic signature.",
+   "fix_direction": "CC0 only: 3 round-robin variants each for enemy_hit/player_hit/whoosh with ±3 st pitch jitter; 300 ms wind-up riser at contact −250 ms; distinct Clean Cut chime; per-family death for 4 families; boss_death +3 dB.",
+   "acceptance": "audio_report lists new files ≤ −1 dBTP; sfx_headroom.py passes; choreography log shows riser 250 ms before contact.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 9,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-10",
+   "dimension": "art",
+   "severity": "P2",
+   "title": "Stage backdrop is a wireframe perspective grid on empty dark",
+   "observed": "004/008/016 full-res: thin orange grid lines, flat mountain silhouette, fighters on ellipses, ~60 % of stage empty.",
+   "why_it_matters": "Placeholder look undermines the otherwise cohesive UI.",
+   "fix_direction": "Two-layer ember floor (CC0 texture) + haze bands, sprite-sized contact shadows, 2–3 dp parallax on lunges; boss variant.",
+   "acceptance": "Normal/elite/boss stage plates with no straight grid lines and a visible ground plane.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 10,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-11",
+   "dimension": "loop",
+   "severity": "P2",
+   "title": "First meta unlock (120 embers) is ~10 Easy wins away (verify)",
+   "observed": "004_character: 'NEXT UNLOCK — THE WARDEN 0/120'; banks observed: 3, 9, 4, 1 on losses (011/012/030/031), 12 on fresh-walk Easy win (B 06), 107 on run-1 win (021).",
+   "why_it_matters": "A child sees nothing new for many sessions; no reason to return.",
+   "fix_direction": "Meta-only: first unlock ≤30 embers or guaranteed unlock after first completed run; no sim change.",
+   "acceptance": "Ledger plate after one Easy win shows a new unlock; meta unit test on threshold.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 11,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-12",
+   "dimension": "gameplay",
+   "severity": "P2",
+   "title": "'OVERKILL +3 → NEXT FOE' toast fires on the final boss kill",
+   "observed": "021_summary_run_won: Hearthless King 0/78 (run 1's announced bottom boss) with '→ NEXT FOE'.",
+   "why_it_matters": "Wrong information at the run's climax.",
+   "fix_direction": "Suppress carry-over toast when encounter_won ends the run; show a 'RUN WON' beat.",
+   "acceptance": "Boss-kill plate without the toast; unit test on toast selection.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 12,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-13",
+   "dimension": "animation",
+   "severity": "P2",
+   "title": "Player attack has no lunge; slash trail is a 500 ms decal drawn at the foe",
+   "observed": "C_*_kill 050→054: hero x unchanged; arc trail painted around the foe far from the blade and persists 054–066 (~500 ms).",
+   "why_it_matters": "No sense of reach or contact; trail reads as a sticker.",
+   "fix_direction": "80 ms lunge to mid-stage, trail from blade tip living ≤120 ms, 160 ms return.",
+   "acceptance": "Strip shows hero displaced on 052 and trail gone by 058.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 13,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-14",
+   "dimension": "animation",
+   "severity": "P3",
+   "title": "Brute and crawler idles are near-static",
+   "observed": "C_anim_slag_brute_idle / flue_crawler_idle 000–018: ≤1 px change; wisp bobs, maw pulses.",
+   "why_it_matters": "Living idles were claimed; two of four foes look paused.",
+   "fix_direction": "2-frame breath scale (1.00→1.04 y) at 1.2 s plus a 3–4 s random micro-action.",
+   "acceptance": "Idle strip shows ≥3 px bbox change over 18 frames for all 4 foes.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 14,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-15",
+   "dimension": "accessibility",
+   "severity": "P2",
+   "title": "Micro text ≈10–11 sp in dim grey across map footer, captions and die labels",
+   "observed": "006 footer 'Floor 1 of 9 · Tap a glowing node…'; 000 'recommended for your first delve'; 'd6' die labels; shop sublines.",
+   "why_it_matters": "Slow readers and low-vision players cannot use the guidance that exists.",
+   "fix_direction": "Floor micro style to 12 sp, textDim ≥4.5:1 on bg, map footer as one 14 sp line.",
+   "acceptance": "Contrast audit table + plates at 320.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 15,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  }
+ ]
+}
