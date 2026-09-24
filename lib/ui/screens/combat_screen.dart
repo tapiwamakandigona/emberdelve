@@ -283,8 +283,8 @@ class _CombatScreenState extends State<CombatScreen> {
   // strike (lib/ui/combat_pose.dart) — always 340 ms in total, the same as
   // the old 90 ms squash + 250 ms contact lead it replaces.
   // Enemy anticipation runs longer than the player's: their wind-up is the
-  // player's last cue to read the incoming hit.
-  static final _enemyWindupTime = _pace(190);
+  // player's last cue to read the incoming hit (EnemyStrikePlan.windupMs,
+  // never below the legacy 190 ms telegraph; it also times the wind-up heat).
   static final _hitStop = _pace(80);
   static final _knockTime = _pace(140);
   static final _flashTail = _pace(120);

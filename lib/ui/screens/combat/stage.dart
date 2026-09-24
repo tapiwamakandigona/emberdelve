@@ -241,41 +241,64 @@ extension _CombatStageBand on _CombatScreenState {
                                           duration:
                                               _CombatScreenState._deathTime,
                                         )
-                                      : SpriteView(
-                                          enemyId,
-                                          key: ValueKey('enemy-$enemyId'),
-                                          height: enemyH,
-                                          flipX: true,
-                                          // Charging foes (2026-09-24): the
-                                          // lunge plays the sheet's authored
-                                          // run cycle, so legs and wings drive
-                                          // the strike instead of an idle
-                                          // pose sliding across the stage.
-                                          // No run row -> idle (SpriteView).
-                                          state: _enemyLunge ? 'run' : 'idle',
-                                          fps: _enemyLunge ? 14 : null,
-                                          // Living idles: wisps hover off
-                                          // their shadow, brutes heave,
-                                          // crawlers scuttle.
-                                          idle: enemyIdleFor(
-                                            enemyId,
-                                            boss: enemy['boss'] == true,
-                                            elite: enemy['elite'] == true,
+                                      : TweenAnimationBuilder<double>(
+                                          // Wind-up heat: the telegraph
+                                          // warms the body's own pixels
+                                          // (the sprite paint's srcATop
+                                          // filter), never the stage
+                                          // around it. Same timing as the
+                                          // old box tint.
+                                          tween: Tween<double>(
+                                            end: _enemySquash ? 1.0 : 0.0,
                                           ),
-                                          bob: true, // LFP-4a
-                                          // LFP-4b: slow lean while an attack is
-                                          // telegraphed — the badge gets body
-                                          // language.
-                                          sway:
-                                              intent['kind'] == 'attack' ||
-                                              intent['kind'] ==
-                                                  'attack_block' ||
-                                              // v0.47.0: a wind-up has body language.
-                                              intent['kind'] == 'charge',
-                                          condition: condition,
-                                          ichor: ichorFor(enemyId),
-                                          showWounds:
-                                              BloodEffects.enabled.value,
+                                          duration: _CombatScreenState._pace(
+                                            _enemyPlan.windupMs,
+                                          ),
+                                          builder: (context, heat, _) => SpriteView(
+                                            enemyId,
+                                            key: ValueKey('enemy-$enemyId'),
+                                            height: enemyH,
+                                            flipX: true,
+                                            // Charging foes (2026-09-24): the
+                                            // lunge plays the sheet's authored
+                                            // run cycle, so legs and wings drive
+                                            // the strike instead of an idle
+                                            // pose sliding across the stage.
+                                            // No run row -> idle (SpriteView).
+                                            state: _enemyLunge ? 'run' : 'idle',
+                                            fps: _enemyLunge ? 14 : null,
+                                            // Living idles: wisps hover off
+                                            // their shadow, brutes heave,
+                                            // crawlers scuttle.
+                                            idle: enemyIdleFor(
+                                              enemyId,
+                                              boss: enemy['boss'] == true,
+                                              elite: enemy['elite'] == true,
+                                            ),
+                                            bob: true, // LFP-4a
+                                            // LFP-4b: slow lean while an attack is
+                                            // telegraphed — the badge gets body
+                                            // language.
+                                            sway:
+                                                intent['kind'] == 'attack' ||
+                                                intent['kind'] ==
+                                                    'attack_block' ||
+                                                // v0.47.0: a wind-up has body language.
+                                                intent['kind'] == 'charge',
+                                            condition: condition,
+                                            ichor: ichorFor(enemyId),
+                                            showWounds:
+                                                BloodEffects.enabled.value,
+                                            dye: heat <= 0.001
+                                                ? null
+                                                : ColorFilter.mode(
+                                                    _windupHeat.withValues(
+                                                      alpha:
+                                                          _windupHeat.a * heat,
+                                                    ),
+                                                    BlendMode.srcATop,
+                                                  ),
+                                          ),
                                         ),
                                   spriteHeight: enemyH,
                                   spriteWidth: _spriteWidth(enemyId, enemyH),
@@ -664,19 +687,11 @@ extension _CombatStageBand on _CombatScreenState {
         child: w,
       ),
     );
-    // Wind-up tint: threat reads as a heat shift on the body.
-    if (windup) {
-      w = AnimatedContainer(
-        duration: enemyPlan == null
-            ? _CombatScreenState._enemyWindupTime
-            : _CombatScreenState._pace(enemyPlan.windupMs),
-        foregroundDecoration: BoxDecoration(
-          backgroundBlendMode: BlendMode.srcATop,
-          color: squash ? const Color(0x55C24040) : const Color(0x00C24040),
-        ),
-        child: w,
-      );
-    }
+    // Wind-up tint: threat reads as a heat shift on the body. Since
+    // 2026-09-24 it is painted by the foe's own sprite (see the enemy
+    // SpriteView's windup heat above): the old foregroundDecoration blended
+    // srcATop over the whole box, stage background included, so every
+    // enemy wind-up showed a translucent red rectangle around the foe.
     // ------------------------------------------------------------------
     // The body. One matrix about the feet: lean (rotation), crouch or
     // stretch (scale), lift (hop). Which pose applies is decided by the
@@ -816,6 +831,9 @@ extension _CombatStageBand on _CombatScreenState {
     );
   }
 }
+
+/// The enemy wind-up heat at full strength (danger red, ~1/3 over the body).
+const Color _windupHeat = Color(0x55C24040);
 
 /// One resolved body pose (see _combatant). Rotation about the feet.
 class _BodyPose {
