@@ -39,6 +39,28 @@ Future<void> loadRealFonts() async {
   }
 }
 
+/// Decode every bundled PNG before the first plate (same approach as
+/// tool/play_session_test.dart). Widget tests decode images asynchronously,
+/// so without this the plates showed blank map-node and boon-die art — a
+/// harness artifact, not a game defect (experimental loop, 2026-09-24).
+Future<void> precacheAllImages(WidgetTester tester) async {
+  final manifest = await tester.binding.runAsync(
+    () => AssetManifest.loadFromAssetBundle(rootBundle),
+  );
+  final keys = manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final context = tester.element(find.byType(MaterialApp));
+  await tester.binding.runAsync(() async {
+    for (final k in keys) {
+      try {
+        await precacheImage(AssetImage(k), context);
+      } catch (_) {
+        /* non-image or corrupt asset: ignore */
+      }
+    }
+  });
+  await tester.pump();
+}
+
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   for (var t = 0; t < ms; t += 50) {
     await tester.pump(const Duration(milliseconds: 50));
@@ -100,6 +122,7 @@ void main() {
         home: RepaintBoundary(key: key, child: GameRoot(c)),
       ),
     );
+    await precacheAllImages(tester);
     await pumpFor(tester, 1500);
     await snap(tester, key, '01_title_fresh');
 
