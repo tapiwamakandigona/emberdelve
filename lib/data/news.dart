@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.184.101';
+const String currentAppVersion = '0.184.102';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.184.102',
+    title: 'Experimental: Clear Kills',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'The finishing blow reads cleanly now: the number sits on the foe, the '
+          'ember reward gets its own line, and a slain foe drops its badge.',
+      'After the guided first fight, the lesson is not repeated as a long '
+          'card. You go straight into the fight.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.184.101',
     title: 'Experimental: Living Foes',
