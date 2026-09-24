@@ -5942,3 +5942,28 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   unchanged (worker protocol). Source PR only: no merge, release, version bump,
   signed store dispatch or Play action. Owner aesthetic approval PENDING via the
   test APK; physical-device FPS and Play gates remain out of scope and open.
+
+## 2026-09-24 — living foes (presentation-only, same source PR #108)
+
+- Same owner ask ("improve the models and animations to be more enjoyable").
+  After the Clean Cut, the least-alive layer was the 42 enemies: one shared
+  2px bob, fade-and-sink deaths, 31 authored run rows never played, and a
+  wind-up tint that blended srcATop over the whole combatant box (a red
+  rectangle over the stage on every enemy attack; seen in real-render
+  captures at 741b439).
+- VERIFIED four commits, one feature each: `5c4a2d4` Ashfall (slain foes
+  crumble into their own art pixels inside the unchanged 700 ms beat; reduce
+  motion keeps the legacy fade), `ad51b5e` charging foes (run row at 14 fps
+  during the lunge), `508960b` living idles (hover/heave/scuttle; default
+  breathe pixel-identical), `ed0f710` wind-up heat fix (sprite-paint srcATop
+  tint; red-on-old / green-on-new pixel test).
+- VERIFIED gates at ed0f710: analyzer clean; 1553/1553 tests (24 additive
+  living-foes tests, each mutation-checked; no inherited test edited);
+  build_delvers.py --check pass; sfx_headroom clear; lib/sim, pubspec,
+  android, workflows and assets unchanged versus 741b439.
+- Evidence and reproduction: docs/living-foes-2026-09-24/ (README, features,
+  real-render before/after plates) and tool/living_foes_frames_test.dart.
+- Local debug-signed release APK for owner review only (no key.properties,
+  never Play). Build warns integration_test/jni want NDK 28.2 vs pinned 27.0
+  (warning only; not changed). No merge, release, version bump or store
+  action. Owner aesthetic approval and physical-device FPS remain open.
