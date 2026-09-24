@@ -328,6 +328,10 @@ class SpriteView extends StatefulWidget {
   /// Frame-rate override for the current row; null plays the sheet's fps.
   /// Charging foes run their authored run cycle faster than their idle.
   final int? fps;
+
+  /// Idle personality layered on the bob (combat foes). The default
+  /// [IdleStyle.breathe] renders exactly the original bob.
+  final IdleStyle idle;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -343,6 +347,7 @@ class SpriteView extends StatefulWidget {
     this.showWounds = true,
     this.articulation,
     this.fps,
+    this.idle = IdleStyle.breathe,
   });
 
   @override
@@ -569,6 +574,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           life: life,
           bob: widget.bob,
           sway: widget.sway,
+          idle: widget.idle,
           flipX: widget.flipX,
           dye: widget.dye,
           condition: widget.condition,
@@ -599,6 +605,7 @@ class _SpritePainter extends CustomPainter {
   final Animation<double>? life;
   final bool bob;
   final bool sway;
+  final IdleStyle idle;
   final bool flipX;
   final ColorFilter? dye;
   final Condition condition;
@@ -624,6 +631,7 @@ class _SpritePainter extends CustomPainter {
     required this.life,
     required this.bob,
     required this.sway,
+    this.idle = IdleStyle.breathe,
     required this.flipX,
     required this.dye,
     this.condition = Condition.fresh,
@@ -689,6 +697,15 @@ class _SpritePainter extends CustomPainter {
         final heave = 1.0 + breath * 0.012 * cond.breathAmp;
         canvas.translate(size.width / 2, size.height);
         canvas.scale(1.0, heave);
+        canvas.translate(-size.width / 2, -size.height);
+      }
+      if (bob && idle != IdleStyle.breathe) {
+        // Living foes: the body's own idle personality on top of the bob.
+        final p = idleLife(idle, t);
+        canvas.translate(p.dx, p.dy);
+        canvas.translate(size.width / 2, size.height);
+        canvas.rotate(p.rot);
+        canvas.scale(1.0, p.scaleY);
         canvas.translate(-size.width / 2, -size.height);
       }
     }
@@ -779,6 +796,7 @@ class _SpritePainter extends CustomPainter {
       old.life != life ||
       old.bob != bob ||
       old.sway != sway ||
+      old.idle != idle ||
       old.frames != frames ||
       old.row != row ||
       old.img != img ||

@@ -254,6 +254,14 @@ extension _CombatStageBand on _CombatScreenState {
                                           // No run row -> idle (SpriteView).
                                           state: _enemyLunge ? 'run' : 'idle',
                                           fps: _enemyLunge ? 14 : null,
+                                          // Living idles: wisps hover off
+                                          // their shadow, brutes heave,
+                                          // crawlers scuttle.
+                                          idle: enemyIdleFor(
+                                            enemyId,
+                                            boss: enemy['boss'] == true,
+                                            elite: enemy['elite'] == true,
+                                          ),
                                           bob: true, // LFP-4a
                                           // LFP-4b: slow lean while an attack is
                                           // telegraphed — the badge gets body
