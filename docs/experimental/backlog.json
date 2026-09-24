@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24T18:26:48+00:00",
+ "updated": "2026-09-24T18:47:56+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -13,6 +13,23 @@
     "loop": 6,
     "menus_layout": 6,
     "onboarding": 4,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 1,
+   "build": "exp.2",
+   "at": "2026-09-24T18:47:56+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
     "accessibility": 6,
     "stability": 7,
     "overall": 5
@@ -56,7 +73,7 @@
    "fix_direction": "When the guided tour completes or is skipped, mark the tips it already taught (roll_spend; intent_fair is taught by the intent beat) as seen so no card repeats it; keep the manual help deck intact.",
    "acceptance": "Fresh-walk plate right after beat 5 shows the live board with no tip card at 320/360/412; unit test: tour completion and skip both leave roll_spend seen and TipDirector.active null.",
    "effort": "S",
-   "status": "fixed_pending_review",
+   "status": "closed",
    "round_opened": 0,
    "critic_rank": 2,
    "history": [
@@ -95,23 +112,29 @@
      "event": "maker:fixed_pending_review",
      "build": "exp.2",
      "note": "Completed tour marks roll_spend + intent_fair learned (TipDirector.markTaught); skip keeps the card as fallback. Red->green widget test; plates 05_tour_after_done at 320/360/412 show the live board with no card."
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "closed_by_critic"
     }
    ],
-   "fixed_in": "exp.2"
+   "fixed_in": "exp.2",
+   "round_closed": 1
   },
   {
    "id": "C0-03",
-   "dimension": "gameplay",
+   "dimension": "menus_layout",
    "severity": "P1",
-   "title": "Kill-moment readout collides: toasts over HP label, damage number over intent badge, stale badge and ghost bar on dead foe",
-   "observed": "008: '+5 EMBERS — EXACT!' overprints '-2' and live '⊕7' badge; 016: '-6' on '🛡11' badge with foe at 0/19 and grey HP stub; 021/040: 'OVERKILL +3 → NEXT FOE' / '+5 EMBERS — EXACT!' overprint 'ENEMY HP · TURN'.",
-   "why_it_matters": "The most rewarding moment in the loop is unreadable.",
-   "fix_direction": "Single toast lane above the enemy card with 90 ms stagger; hide intent badge and drain ghost bar when HP hits 0; damage number anchored to foe centroid.",
-   "acceptance": "Kill plates for 3 foes with zero overlapping text rects (golden/rect test).",
+   "title": "(rescoped) Tray-lane call-outs still stack on each other and on the player HP row",
+   "observed": "026_run2_keystone: 'FREE REROLL NEXT TURN' overlaps the foe ring, the burn chip and the hero's feet; 'STRAIGHT!' sits on the HP bar next to '21 / 30'. C_*_kill 044-056 (all 4 foes): the 'ATTACK +5 · BLOCK +5' chip, FREE REROLL and STRAIGHT! overlap each other and the HP numerals, and FREE REROLL ghosts over the dying foe at 054-056.",
+   "why_it_matters": "The combo and reward reads that make a turn feel good are illegible exactly when they fire.",
+   "fix_direction": "Give the tray lane the same ReadoutLanes slot plan as the stage: stack call-outs vertically in reserved slots above the HP label (or queue them 250 ms apart), never over sprites or the HP row. Include the assignment-preview chip in the plan.",
+   "acceptance": "kill_readout-style rect test extended to tray-lane call-outs for 3 foes at 320x568/360x800/412x915: zero overlapping text rects, including against the HP label and the sprite bbox. Plate 026 equivalent shows both call-outs fully legible.",
    "effort": "S",
-   "status": "fixed_pending_review",
+   "status": "reopened",
    "round_opened": 0,
-   "critic_rank": 3,
+   "critic_rank": 2,
    "history": [
     {
      "at": "2026-09-24T17:42:45+00:00",
@@ -128,9 +151,20 @@
      "event": "maker:fixed_pending_review",
      "build": "exp.2",
      "note": "ReadoutLanes plan: planned number zone, call-out slots, badge fades at 0 HP, ghost drains fast at 0, overlay children keyed (fixed number/slash restarts). kill_readout_test red->green at 320x568/320x640/360x800/412x915."
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "not_confirmed_by_critic"
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "relisted"
     }
    ],
-   "fixed_in": "exp.2"
+   "fixed_in": "exp.2",
+   "rank_round": 1
   },
   {
    "id": "C0-04",
@@ -363,6 +397,11 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "event": "maker:open",
+     "note": "Folded into C1-01 (critic round 1: ship with the boss-kill fix; C1-01 acceptance includes the toast-selection unit test)."
     }
    ]
   },
@@ -441,6 +480,182 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C1-01",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Final-boss kill is a full-screen opaque white-out, then a live-looking board with no victory beat",
+   "observed": "020_run1_run_won and 039_run3_run_won are 100% flat #FFE9C4 frames (combat_screen.dart:1391-1403, opacity 1.0 for >=260 ms, not gated by Motion.instance.reduced). At +1200 ms (021, 040) the boss is simply gone, the dice tray and End turn are fully lit as if the fight continues, and 021 shows 'OVERKILL +3 -> NEXT FOE'.",
+   "why_it_matters": "The run's climax is a blank screen that hides the boss's death. A full-field bright flash also ignores the reduced-motion/photosensitivity preference. Then the game looks as if it wants another turn.",
+   "fix_direction": "Limit the flash to the stage rect at <=0.45 opacity with a radial falloff from the boss (none under reduce, where a 200 ms colour tint is enough). Keep the boss dissolve visible. On encounter_won, disable and dim the tray and End turn within 1 frame and hold the hero's victory pose until the summary. Fix C0-12 toast selection in the same pass.",
+   "acceptance": "Boss-kill strip at 40 ms at 360x800: no frame has >50% of pixels at luma >230; the boss dissolve is visible on >=4 sampled frames; under reduce, 0 frames above that luma; the +1200 ms plate shows a disabled tray and no NEXT FOE toast (unit test on toast selection).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 1,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-02",
+   "dimension": "accessibility",
+   "severity": "P1",
+   "title": "On short stages call-outs are shrunk to ~5 dp and drawn over the hero sprite",
+   "observed": "kill_readout exact_320x568_t720/t1200: '+5 EMBERS — EXACT!' is about 9 px @2x cap height (~5 dp) and sits across the hero's helmet and sword. overkill_320x568_t960: 'OVERKILL +1 -> NEXT FOE' has the same size and position. readout_lanes.dart:116-133 scales call-outs down to fit the band with no minimum.",
+   "why_it_matters": "320x568-class phones get unreadable reward text. The rect test passes only because text-over-sprite is not counted and shrinking is allowed.",
+   "fix_direction": "Set a floor on call-out scale so text never goes below 12 sp. When the band cannot fit at that size, move the call-out to the top-bar/tray slot. Add the hero and foe sprite bboxes to the overlap test.",
+   "acceptance": "At 320x568 every call-out renders >=12 sp and its rect does not intersect the hero or foe sprite bbox (test + t720/t1200 plates).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 3,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-03",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Intent tour beat: typo, adult wording, and the two numbers are never explained",
+   "observed": "05_tour_beat_intent_tour_intent at 320/360/412: title 'ITS NEXT MOVE' (missing apostrophe); body 'The badge always resolves exactly as shown.' The highlighted badge shows red 9 and blue 7, but nothing says the foe will hit for 9 and guard 7.",
+   "why_it_matters": "'Resolves' is well above a 7-9-year-old's reading level. The one fairness idea the game depends on (the foe does exactly what the badge shows) is not actually taught.",
+   "fix_direction": "Copy only (no layout change): title \"IT'S NEXT MOVE\"; body \"It will hit you for 9 and guard 7.\" with inline target/shield icons, filled from the live intent values. Keep it <=12 words.",
+   "acceptance": "String test: intent beat body <=12 words, FK grade <=3, apostrophe present, numbers match the live intent. Plates at 320/360/412.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 4,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-04",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "'Tap anywhere to continue' is printed over the dimmed End turn label",
+   "observed": "05_tour_beat_intent_tour_intent and 05_tour_beat_next_tour_reroll at 320/360/412: the hint text overlaps the scrimmed 'END TURN' glyphs (clear in the 320 full-res crop).",
+   "why_it_matters": "Text on text on the one instruction a non-reader needs. It also looks broken.",
+   "fix_direction": "Put the hint inside the tip card (last line), or replace it with a pulsing tap-hand icon in the card corner. Never place it over another control.",
+   "acceptance": "Tour plates for all 5 beats at 320/360/412: the hint rect does not intersect any button label rect (rect test).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 5,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-05",
+   "dimension": "art",
+   "severity": "P2",
+   "title": "Burn status chip stays on the dead foe and the blood pool is painted over it",
+   "observed": "040_summary_run_won: the '🔥 11' chip at the foe's feet has its digits half-covered by a dark red pool decal. 021: the '🔥 9' chip is fully smeared. 026: '🔥 1' sits on the dissolving foe. stage.dart:386-404 fades the intent badge at 0 HP, but the burn chip has no such rule.",
+   "why_it_matters": "Stale UI on a corpse and a z-order bug. It reads as dirt on the final-boss victory frames.",
+   "fix_direction": "Drive the burn chip from the same `dead` flag as the intent badge (140 ms fade, 0 under reduce), and make sure gore decals paint below status chips.",
+   "acceptance": "Kill strips for all 4 foes with burn >0: the chip is gone by the frame the badge is gone. 040-equivalent plate has no chip and no decal over any text.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 6,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-06",
+   "dimension": "animation",
+   "severity": "P2",
+   "title": "Player damage number now lands on the hero's face instead of above it",
+   "observed": "C_*_enemy-turn 032-036 (all 4 foes): '-9' sits over the hero's head and white silhouette. In round-00 it rose clear above the head (round-00 slag_brute enemy-turn 032-038).",
+   "why_it_matters": "The hit number collides with the hit reaction, so both read worse. Side effect of the C0-03 re-layout.",
+   "fix_direction": "Plan the player-side number with the same ReadoutLanes zone: above the hero bbox with >=6 dp clearance, not over the sprite.",
+   "acceptance": "Enemy-turn strips: the '-N' rect does not intersect the hero sprite bbox on any frame 030-042 at 320x568/360x800/412x915.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 7,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-07",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Spend beat shows unexplained 'ATTACK +6 · BLOCK +6' and 'PAIR +2' chips over the hero",
+   "observed": "05_tour_beat_spend_tour_spend at 320/360/412: under the scrim, the assignment-preview chip and a gold 'PAIR +2' combo label float across the hero sprite and the '30 / 30' HP numerals, beside a card that says only 'ATTACK deals its value. BLOCK absorbs hits.'",
+   "why_it_matters": "Two new numbers and a combo word the child was never taught appear in the step meant to teach one idea.",
+   "fix_direction": "Hide the combo label and the preview chip while any tour beat is active, or make the preview chip part of the spotlight and word the card around it. Simplify the body to e.g. 'ATTACK hurts it. BLOCK keeps you safe.'",
+   "acceptance": "Spend-beat plates at 320/360/412 with no text outside the card and spotlight except the dimmed board. Body <=12 words, FK <=3.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 8,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-08",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "The tour never teaches End turn or that the foe answers",
+   "observed": "Beats are roll, pick, spend, intent, reroll (05_tour_beat_* plates). In 05_tour_after_done, End turn and the 'Risky reroll · new face −1' bar are equally bright, and no step says that ending the turn lets the foe act.",
+   "why_it_matters": "A child who has spent their dice has no cue what to do next, and the first foe hit comes as a surprise, which undercuts the intent lesson.",
+   "fix_direction": "After beat 5, pulse End turn once (a glow ring, no card), or add a <=6-word beat 'Done? End turn. Then it moves.' anchored to End turn. Make the reroll bar visually secondary to End turn after the tour.",
+   "acceptance": "Fresh-walk plates at 320/360/412 immediately after the tour show End turn highlighted as the single primary action. Tour test covers the new cue. Harness shows no stuck state.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 9,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
     }
    ]
   }

@@ -6008,3 +6008,56 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   never Play). Build warns integration_test/jni want NDK 28.2 vs pinned 27.0
   (warning only; not changed). No merge, release, version bump or store
   action. Owner aesthetic approval and physical-device FPS remain open.
+
+## 2026-09-24 — experimental polish loop: iteration 0 (exp.1) and iteration 1 (exp.2)
+
+- Owner ask (Viktor app, 2026-09-24): polish visuals/animation, audio, gameplay
+  loop, menus that fit every screen and onboarding a young child can follow,
+  with a super-strict critic; build → commit → push → GitHub pre-release →
+  critic → iterate, "experimental build until I order otherwise". Scoped plan,
+  versioning and guards: docs/experimental/PROJECT.md. Branch
+  experimental/polish-loop (= PR #108 head + release/production-sep19), draft
+  tracking PR #109. Other agents' branches/PRs (#102, #107, #108) untouched.
+- Iteration 0: harness repairs so the critic sees the whole game —
+  play_session legal transitions include the keystone phase (4/4 runs, 581
+  steps, 0 violations; was 0/4) and fresh-walk plates precache art (blank
+  node/die art was a capture artefact). VERIFIED.
+- exp.1 = 0.184.101+212 "Living Foes" (#108's presentation work, first signed
+  build): signed CI run 36034550059 green; local 1553/1553; every APK checked
+  for the permanent upload cert and version before upload. Published as a
+  PRE-RELEASE (v0.184.101-exp.1, latest=false); /releases/latest still
+  v0.184.0, so the in-app update check never offers it. VERIFIED.
+- Critic round 0 (read-only, Fable 5.1 "ultra"): overall 5/10 — art 5,
+  animation 5, audio 5, gameplay 7, loop 6, menus 6, onboarding 4, a11y 6,
+  stability 7; 15 issues → docs/experimental/backlog.json,
+  docs/experimental/critic/round-00.md (maker verification appended).
+- C0-02 VERIFIED harness artefact: the fresh walk's "tap every
+  GestureDetector" loop hit the tour's SKIP pill (diagnostic trace), so "the
+  tour dies after beat 2" was the harness. Fixed the harness (tap a DieChip);
+  all five beats render at 320/360/412. The real residual defect it exposed —
+  the 26-word ROLL, THEN SPEND card right after beat 5 — is fixed
+  (TipDirector.markTaught on tour completion only). Red→green widget test.
+- C0-03 kill readout: new lib/ui/readout_lanes.dart plans number zones and
+  call-out slots per stage shape; badge fades at 0 HP; HP ghost drains fast at
+  0. Found and fixed a latent bug while verifying: unkeyed fx-overlay children
+  restarted the damage number and slash whenever a call-out was inserted.
+  test/kill_readout_test.dart (real kills at 4 phone sizes, every 40 ms frame)
+  was red at all 4 sizes on the old code, green now; readout_lanes_test sweeps
+  stage shapes. VERIFIED.
+- exp.2 = 0.184.102+213 "Clear Kills": analyzer clean, full suite 1575/1575
+  (1553 + 22 new, none weakened). Signed CI run 36041589850 green (both jobs);
+  published as PRE-RELEASE v0.184.102-exp.2 (latest=false; /releases/latest
+  still v0.184.0; all 4 APKs re-checked: permanent cert, 0.184.102 with codes
+  213/1213/2213/4213). VERIFIED.
+- Critic round 1 (read-only, Opus 5.5 "smart") on exp.2: overall 5 (=),
+  onboarding 4 → 5, other dimensions unchanged. Closed C0-02. C0-03 partly
+  fixed: stage lane clean at 360+; re-listed for the tray lane. 8 new issues
+  C1-01…C1-08. Maker verified each claim on the plates (notes in
+  docs/experimental/critic/round-01.md). C1-06 is a regression from my C0-03
+  re-layout (player "-9" now on the hero's head); C1-08's "equally bright"
+  detail is not supported by the plate. C0-12 is folded into C1-01.
+  backlog.py `next` now prefers the most recent critic ranking. Next item:
+  C1-01, the final-boss white-out plus live-looking board.
+- ASSUMED / not verified: physical-device FPS, touch feel and audio as heard;
+  all plates are headless renders. Budget note: critic rounds alternate Opus
+  5.5 (incremental) and Fable 5.1 (every 4th round) to stretch credits.

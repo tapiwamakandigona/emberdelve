@@ -35,13 +35,17 @@ until I order otherwise."
 5. **Checks:** `flutter analyze` clean + full `flutter test` green (CI) + art/SFX tools.
    Never weaken or delete an existing assertion; a test/harness diff is only allowed
    when the task IS that check, and is called out in the commit and progress entry.
-6. **Critic:** independent read-only reviewer (`emberdelve-critic`, Ultra preset) — an
-   owner-requested exception to the harness's no-subagent rule. It never writes code;
-   the maker verifies every critic claim against the images before acting.
+6. **Critic:** independent read-only reviewer (`emberdelve-critic`), an owner-requested
+   exception to the harness's no-subagent rule. Model: Opus 5.5 for incremental rounds,
+   Fable 5.1 ("ultra") every 4th round as a full re-baseline (owner allowed Opus 5.5 /
+   GPT-6 Astra / Fable 5.1 / ultra; the alternation stretches credits). It never writes
+   code; the maker verifies every critic claim against the images before acting.
 
 ## Iteration protocol (one backlog item per iteration)
 1. Read this file, `backlog.json`, the tail of root `progress.md`, latest `critic/round-*.md`.
-2. Pick the highest-ranked open item (P0 → P1 → …; ties: smallest effort).
+2. Pick the highest-ranked open item (P0 → P1 → …; ties: smallest effort, then the most
+   recent critic ranking). Items the critic says to ship together are folded (noted in
+   the item history) and closed in the same iteration.
 3. Implement with a test (red before, green after) where behaviour is testable.
 4. Gates: analyze, targeted tests, before/after render plates.
 5. Commit + push; bump version; dispatch signed CI; verify cert; publish pre-release.
