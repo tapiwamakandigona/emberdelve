@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24T17:48:27+00:00",
+ "updated": "2026-09-24T18:26:48+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -109,7 +109,7 @@
    "fix_direction": "Single toast lane above the enemy card with 90 ms stagger; hide intent badge and drain ghost bar when HP hits 0; damage number anchored to foe centroid.",
    "acceptance": "Kill plates for 3 foes with zero overlapping text rects (golden/rect test).",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 3,
    "history": [
@@ -122,8 +122,15 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T18:26:48+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.2",
+     "note": "ReadoutLanes plan: planned number zone, call-out slots, badge fades at 0 HP, ghost drains fast at 0, overlay children keyed (fixed number/slash restarts). kill_readout_test red->green at 320x568/320x640/360x800/412x915."
     }
-   ]
+   ],
+   "fixed_in": "exp.2"
   },
   {
    "id": "C0-04",

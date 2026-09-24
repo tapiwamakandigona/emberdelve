@@ -72,6 +72,7 @@ import 'combat_figure.dart';
 import 'gore.dart';
 import 'weapons.dart';
 import 'widgets.dart';
+import 'readout_lanes.dart';
 
 part 'screens/game_root.dart';
 part 'screens/title_screen.dart';

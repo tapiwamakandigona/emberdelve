@@ -79,6 +79,18 @@ extension _CombatStageBand on _CombatScreenState {
           // shorter than the sprite itself — never up over the HP panel.
           final headroom = box.maxHeight - Space.s - enemyH;
           final badgeLift = headroom.isFinite ? math.min(44.0, headroom) : 44.0;
+          // Experimental loop C0-03: one plan decides where every transient
+          // stage text rests (lib/ui/readout_lanes.dart), so a kill's number,
+          // its call-out and the badge can never print over each other or
+          // climb out of the stage — at any stage height.
+          final plan = _planReadout(
+            context,
+            Size(box.maxWidth, box.maxHeight),
+            enemyId: enemyId,
+            enemyH: enemyH,
+            heroH: heroH,
+            badgeLift: badgeLift,
+          );
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -340,11 +352,34 @@ extension _CombatStageBand on _CombatScreenState {
                             // at 360px this lands within a few px of the old
                             // centered position.
                             right: -(Space.xl - Space.s),
-                            child: KeyedSubtree(
-                              key: TourAnchors.of(TourBeats.intent),
-                              child: _IntentBadge(
-                                intent,
-                                onLongPress: () => _explainIntent(intent),
+                            // C0-03: a foe at 0 HP has no next move — the
+                            // badge fades the moment the lethal blow lands
+                            // (contact-timed HP), instead of lingering over
+                            // the kill's readout.
+                            child: ListenableBuilder(
+                              listenable: _foeBand,
+                              builder: (context, child) {
+                                final live = _shownEnemy ?? enemy;
+                                final dead =
+                                    _enemyDying ||
+                                    ((live['hp'] as int?) ?? 1) <= 0;
+                                return IgnorePointer(
+                                  ignoring: dead,
+                                  child: AnimatedOpacity(
+                                    opacity: dead ? 0 : 1,
+                                    duration: Motion.instance.reduced
+                                        ? Duration.zero
+                                        : const Duration(milliseconds: 140),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: KeyedSubtree(
+                                key: TourAnchors.of(TourBeats.intent),
+                                child: _IntentBadge(
+                                  intent,
+                                  onLongPress: () => _explainIntent(intent),
+                                ),
                               ),
                             ),
                           ),
@@ -427,6 +462,7 @@ extension _CombatStageBand on _CombatScreenState {
                         // this encounter stays on the floor.
                         if (_stains.isNotEmpty)
                           Positioned.fill(
+                            key: const ValueKey('stains'),
                             child: IgnorePointer(
                               child: CustomPaint(
                                 painter: FloorStainsPainter(
@@ -435,27 +471,45 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             ),
                           ),
-                        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
-                        for (final (idx, n)
-                            in _notes.where((n) => n.onEnemy).toList().indexed)
-                          Positioned(
-                            right: 12,
-                            bottom: 150.0 + idx * 24,
-                            child: TextPop(
-                              key: ValueKey('note-${n.id}'),
-                              text: n.text,
-                              color: n.color,
-                              icon: n.icon,
-                              fontSize: 15,
-                              duration: n.life,
-                              onDone: () {
-                                _fxUpdate(() => _notes.remove(n));
-                              },
+                        // Enemy-anchored call-outs: burn ticks, exact-kill,
+                        // overkill — each in its planned slot (C0-03).
+                        for (final n in _notes.where((n) => n.onEnemy))
+                          _placed(
+                            plan.placeNote(
+                              n.slot,
+                              TextPop.measure(
+                                n.text,
+                                fontSize: _enemyNoteSize,
+                                hasIcon: n.icon != null,
+                                textScaler: MediaQuery.textScalerOf(context),
+                              ),
                             ),
+                            (p) => FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: TextPop(
+                                key: ValueKey('note-${n.id}'),
+                                text: n.text,
+                                color: n.color,
+                                icon: n.icon,
+                                fontSize: _enemyNoteSize,
+                                duration: n.life,
+                                rise: p.rise,
+                                overshoot: p.overshoot,
+                                onDone: () {
+                                  _fxUpdate(() => _notes.remove(n));
+                                },
+                              ),
+                            ),
+                            key: ValueKey('note-slot-${n.id}'),
+                            fitted: true,
                           ),
                         // Contact FX: weapon smear / claw rake / guard arc over the victim.
+                        // Keyed at the Stack level: inserting a call-out or
+                        // number before a slash must not re-match it by
+                        // index and restart its animation (C0-03 finding).
                         for (final fx in _fx)
                           Positioned(
+                            key: ValueKey('fx-slot-${fx.id}'),
                             left: fx.onPlayer ? 0 : null,
                             right: fx.onPlayer ? null : 0,
                             bottom: Space.s,
@@ -501,17 +555,28 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             },
                           ),
-                        // Floating damage numbers (player pops left, enemy pops right).
+                        // Floating damage numbers over the body that took
+                        // the hit, in planned zones (C0-03).
                         for (final p in _pops)
-                          Positioned(
-                            left: p.onPlayer ? 24 : null,
-                            right: p.onPlayer ? null : 24,
-                            bottom: 120,
-                            child: DamagePop(
+                          _placed(
+                            () {
+                              final size = _popSize(
+                                context,
+                                p.amount,
+                                blocked: p.blocked,
+                              );
+                              return p.onPlayer
+                                  ? plan.placeHeroPop(size, lane: p.lane)
+                                  : plan.placeEnemyPop(size, lane: p.lane);
+                            }(),
+                            key: ValueKey('pop-slot-${p.id}'),
+                            (at) => DamagePop(
                               key: ValueKey('pop-${p.id}'),
                               amount: p.amount,
                               blocked: p.blocked,
                               onPlayer: p.onPlayer,
+                              rise: at.rise,
+                              drift: at.drift,
                               onDone: () {
                                 _fxUpdate(() => _pops.remove(p));
                               },
@@ -527,6 +592,127 @@ extension _CombatStageBand on _CombatScreenState {
         },
       ),
     );
+  }
+
+  static const double _enemyNoteSize = 15;
+
+  /// A readout piece at its planned resting box (stage coordinates).
+  /// Call-outs are fitted INTO the box (it may be a scaled-down band slot);
+  /// numbers size themselves (the box is their measured natural size), so
+  /// they overflow it rather than ever wrapping.
+  Widget _placed(
+    ReadoutPlacement at,
+    Widget Function(ReadoutPlacement at) child, {
+    required Key key,
+    bool fitted = false,
+  }) => Positioned(
+    key: key,
+    left: at.box.left,
+    top: at.box.top,
+    width: at.box.width,
+    height: at.box.height,
+    child: fitted
+        ? child(at)
+        : OverflowBox(
+            maxWidth: double.infinity,
+            maxHeight: double.infinity,
+            child: child(at),
+          ),
+  );
+
+  Size _popSize(BuildContext context, int amount, {required bool blocked}) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: blocked ? 'BLOCKED' : '-$amount',
+        style: DamagePop.styleFor(blocked: blocked),
+      ),
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final size = tp.size;
+    tp.dispose();
+    return size;
+  }
+
+  /// Stage geometry → readout plan (memoised per geometry in ReadoutLanes).
+  ReadoutPlan _planReadout(
+    BuildContext context,
+    Size stage, {
+    required String enemyId,
+    required double enemyH,
+    required double heroH,
+    required double badgeLift,
+  }) {
+    final spriteW = _spriteWidth(enemyId, enemyH);
+    final enemyBody = Rect.fromLTWH(
+      stage.width - spriteW,
+      stage.height - Space.s - enemyH,
+      spriteW,
+      enemyH,
+    );
+    final heroBody = Rect.fromLTWH(
+      0,
+      stage.height - Space.s - heroH,
+      heroH * 0.62,
+      heroH,
+    );
+    // Reserve the largest badge laid out so far in this fight (measured
+    // after layout — size can't be read during build), or a two-chip badge
+    // at the current text scale before the first frame. It only ever grows,
+    // so a narrower next intent never shuffles the plan.
+    final k = MediaQuery.textScalerOf(context).scale(14) / 14;
+    final badgeSize = _badgeSeen == Size.zero
+        ? Size(112 * k, 40 * k)
+        : _badgeSeen;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = TourAnchors.of(TourBeats.intent).currentContext;
+      final ro = ctx?.findRenderObject();
+      if (ro is RenderBox && ro.hasSize) {
+        final sz = ro.size;
+        if (sz.width > _badgeSeen.width || sz.height > _badgeSeen.height) {
+          _badgeSeen = Size(
+            math.max(sz.width, _badgeSeen.width),
+            math.max(sz.height, _badgeSeen.height),
+          );
+        }
+      }
+    });
+    final badgeRight = stage.width + (Space.xl - Space.s);
+    final badge = Rect.fromLTWH(
+      badgeRight - badgeSize.width,
+      stage.height - Space.s - enemyH - badgeLift,
+      badgeSize.width,
+      badgeSize.height,
+    );
+    final scaler = MediaQuery.textScalerOf(context);
+    final longNote = TextPop.measure(
+      'OVERKILL +3 → NEXT FOE',
+      fontSize: _enemyNoteSize,
+      hasIcon: true,
+      textScaler: scaler,
+    );
+    final plan = ReadoutLanes.plan(
+      StageGeometry(
+        stage: stage,
+        enemyBody: enemyBody,
+        heroBody: heroBody,
+        badge: badge,
+      ),
+      // The widest likely number: a two-digit hit or the BLOCKED stamp.
+      typicalPop: () {
+        final hit = _popSize(context, 88, blocked: false);
+        final stamp = _popSize(context, 0, blocked: true);
+        return Size(
+          math.max(hit.width, stamp.width),
+          math.max(hit.height, stamp.height),
+        );
+      }(),
+      noteHeight: longNote.height,
+      typicalNoteWidth: longNote.width,
+    );
+    _readoutPlan = plan;
+    return plan;
   }
 
   /// Listenables for the two bodies (cached per state; see _wireBands).

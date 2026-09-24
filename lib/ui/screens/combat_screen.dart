@@ -192,6 +192,13 @@ class _CombatScreenState extends State<CombatScreen> {
   final Map<int, int> _reflyGen = {};
   final GlobalKey<ShakeBoxState> _shakeKey = GlobalKey<ShakeBoxState>();
   final List<_Pop> _pops = [];
+
+  /// The stage's current readout plan (lib/ui/readout_lanes.dart), kept so
+  /// spawns can pick a slot the stage actually has.
+  ReadoutPlan? _readoutPlan;
+
+  /// Largest intent badge laid out so far (see _planReadout).
+  Size _badgeSeen = Size.zero;
   int _popId = 0;
 
   // Contact FX on the stage: weapon smear on the enemy when the delver's
@@ -356,11 +363,27 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
-    _fxUpdate(
-      () => _pops.add(
-        _Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked),
-      ),
-    );
+    _fxUpdate(() {
+      // Lowest lane free on this side (C0-03): numbers alive together sit
+      // side by side instead of printing over each other.
+      final used = {
+        for (final p in _pops)
+          if (p.onPlayer == onPlayer) p.lane,
+      };
+      var lane = 0;
+      while (used.contains(lane)) {
+        lane++;
+      }
+      _pops.add(
+        _Pop(
+          _popId++,
+          amount,
+          onPlayer: onPlayer,
+          blocked: blocked,
+          lane: lane,
+        ),
+      );
+    });
   }
 
   void _spawnFx(
@@ -438,9 +461,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// block is actually up — data-derived, so the pose and the number never
   /// disagree. Never during their own swing.
   bool get _playerBraced {
-    final player = _shownPlayer(
-      widget.c.state?['player'] as Map? ?? const {},
-    );
+    final player = _shownPlayer(widget.c.state?['player'] as Map? ?? const {});
     return ((player['block'] as int?) ?? 0) > 0;
   }
 
@@ -503,11 +524,36 @@ class _CombatScreenState extends State<CombatScreen> {
     final life = _resolving && _ffwd > 0
         ? const Duration(milliseconds: 1000)
         : _noteLife;
-    _fxUpdate(
-      () => _notes.add(
-        _Note(_noteId++, text, color, icon, onEnemy: onEnemy, life: life),
-      ),
-    );
+    _fxUpdate(() {
+      var slot = 0;
+      if (onEnemy) {
+        // Experimental loop C0-03: enemy call-outs own a fixed stage slot
+        // for life. With every slot busy the oldest yields its slot now —
+        // two call-outs never share one.
+        final slots = _readoutPlan?.slots.length ?? 1;
+        final live = _notes.where((n) => n.onEnemy).toList();
+        final used = {for (final n in live) n.slot};
+        slot = List.generate(slots, (i) => i).firstWhere(
+          (i) => !used.contains(i),
+          orElse: () {
+            final oldest = live.first;
+            _notes.remove(oldest);
+            return oldest.slot.clamp(0, slots - 1);
+          },
+        );
+      }
+      _notes.add(
+        _Note(
+          _noteId++,
+          text,
+          color,
+          icon,
+          onEnemy: onEnemy,
+          life: life,
+          slot: slot,
+        ),
+      );
+    });
   }
 
   /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
@@ -1022,10 +1068,7 @@ class _CombatScreenState extends State<CombatScreen> {
       });
       await _beat(_pace(plan.travelMs));
       if (!mounted) return;
-      _present([
-        atk,
-        ...events.where((e) => e['type'] == 'thorns_dealt'),
-      ]);
+      _present([atk, ...events.where((e) => e['type'] == 'thorns_dealt')]);
       final damage = atk['damage'] as int? ?? 0;
       final absorbed = atk['blocked'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');

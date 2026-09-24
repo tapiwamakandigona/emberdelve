@@ -478,8 +478,13 @@ class _StatBarState extends State<StatBar> {
           const SizedBox(height: Space.xs),
           TweenAnimationBuilder<double>(
             tween: Tween(begin: _ghost, end: frac),
-            duration: const Duration(milliseconds: 700),
-            curve: const Interval(0.45, 1.0, curve: Curves.easeOut),
+            // Experimental loop C0-03: at 0 HP the chip-away trail drains
+            // fast — a grey stub lingering on a dead foe's bar read as HP
+            // still left. Every other hit keeps the slower trail.
+            duration: Duration(milliseconds: frac <= 0 ? 420 : 700),
+            curve: frac <= 0
+                ? const Interval(0.2, 1.0, curve: Curves.easeOut)
+                : const Interval(0.45, 1.0, curve: Curves.easeOut),
             builder: (context, ghost, _) => TweenAnimationBuilder<double>(
               tween: Tween(end: frac),
               duration: const Duration(milliseconds: 250),
