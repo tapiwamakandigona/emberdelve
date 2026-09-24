@@ -246,6 +246,14 @@ extension _CombatStageBand on _CombatScreenState {
                                           key: ValueKey('enemy-$enemyId'),
                                           height: enemyH,
                                           flipX: true,
+                                          // Charging foes (2026-09-24): the
+                                          // lunge plays the sheet's authored
+                                          // run cycle, so legs and wings drive
+                                          // the strike instead of an idle
+                                          // pose sliding across the stage.
+                                          // No run row -> idle (SpriteView).
+                                          state: _enemyLunge ? 'run' : 'idle',
+                                          fps: _enemyLunge ? 14 : null,
                                           bob: true, // LFP-4a
                                           // LFP-4b: slow lean while an attack is
                                           // telegraphed — the badge gets body

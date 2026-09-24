@@ -324,6 +324,10 @@ class SpriteView extends StatefulWidget {
   /// Combat-only first-cell joint rig. Its clock replaces both local loops.
   /// Null retains the original sheet renderer for portraits/other delvers.
   final ValueListenable<CombatRigSample>? articulation;
+
+  /// Frame-rate override for the current row; null plays the sheet's fps.
+  /// Charging foes run their authored run cycle faster than their idle.
+  final int? fps;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -338,6 +342,7 @@ class SpriteView extends StatefulWidget {
     this.ichor = Ichor.blood,
     this.showWounds = true,
     this.articulation,
+    this.fps,
   });
 
   @override
@@ -437,6 +442,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     _syncLife();
     if (old.spriteId != widget.spriteId ||
         old.state != widget.state ||
+        old.fps != widget.fps ||
         old.articulation != widget.articulation) {
       _ctrl?.dispose();
       _ctrl = null;
@@ -472,7 +478,8 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           _ctrl = AnimationController(
             vsync: this,
             duration: Duration(
-              milliseconds: (row.frames * 1000 / def.fps).round(),
+              milliseconds: (row.frames * 1000 / (widget.fps ?? def.fps))
+                  .round(),
             ),
           );
           _syncFrameLoop();
@@ -508,7 +515,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
         _ctrl = AnimationController(
           vsync: this,
           duration: Duration(
-            milliseconds: (row.frames * 1000 / def.fps).round(),
+            milliseconds: (row.frames * 1000 / (widget.fps ?? def.fps)).round(),
           ),
         );
         _syncFrameLoop();
