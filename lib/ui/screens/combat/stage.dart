@@ -219,25 +219,48 @@ extension _CombatStageBand on _CombatScreenState {
                                   (live['hp'] as int?) ?? 1,
                                   (live['max_hp'] as int?) ?? 1,
                                 );
+                                // Ashfall (2026-09-24): the slain foe
+                                // crumbles into its own art pixels inside
+                                // the unchanged death beat. Reduce motion,
+                                // or a sheet not yet decoded, keeps the
+                                // legacy fade-and-sink below.
+                                final ashfall =
+                                    _enemyDying &&
+                                    !Motion.instance.reduced &&
+                                    SpriteAshfall.ready(enemyId);
                                 return _combatant(
-                                  sprite: SpriteView(
-                                    enemyId,
-                                    key: ValueKey('enemy-$enemyId'),
-                                    height: enemyH,
-                                    flipX: true,
-                                    bob: true, // LFP-4a
-                                    // LFP-4b: slow lean while an attack is
-                                    // telegraphed — the badge gets body
-                                    // language.
-                                    sway:
-                                        intent['kind'] == 'attack' ||
-                                        intent['kind'] == 'attack_block' ||
-                                        // v0.47.0: a wind-up has body language.
-                                        intent['kind'] == 'charge',
-                                    condition: condition,
-                                    ichor: ichorFor(enemyId),
-                                    showWounds: BloodEffects.enabled.value,
-                                  ),
+                                  sprite: ashfall
+                                      ? SpriteAshfall(
+                                          enemyId,
+                                          key: ValueKey('ashfall-$enemyId'),
+                                          height: enemyH,
+                                          flipX: true,
+                                          // The blow came from the delver's
+                                          // side: ash drifts away from it.
+                                          away: 1,
+                                          duration:
+                                              _CombatScreenState._deathTime,
+                                        )
+                                      : SpriteView(
+                                          enemyId,
+                                          key: ValueKey('enemy-$enemyId'),
+                                          height: enemyH,
+                                          flipX: true,
+                                          bob: true, // LFP-4a
+                                          // LFP-4b: slow lean while an attack is
+                                          // telegraphed — the badge gets body
+                                          // language.
+                                          sway:
+                                              intent['kind'] == 'attack' ||
+                                              intent['kind'] ==
+                                                  'attack_block' ||
+                                              // v0.47.0: a wind-up has body language.
+                                              intent['kind'] == 'charge',
+                                          condition: condition,
+                                          ichor: ichorFor(enemyId),
+                                          showWounds:
+                                              BloodEffects.enabled.value,
+                                        ),
                                   spriteHeight: enemyH,
                                   spriteWidth: _spriteWidth(enemyId, enemyH),
                                   // Slight depth scale: the enemy stands a
@@ -253,6 +276,7 @@ extension _CombatStageBand on _CombatScreenState {
                                   condition: condition,
                                   enemyPlan: _enemyPlan,
                                   windup: true,
+                                  dissolve: ashfall,
                                 );
                               },
                             ),
@@ -523,13 +547,18 @@ extension _CombatStageBand on _CombatScreenState {
     /// Joint rig owns anatomy/weight shift; do not also squash the whole
     /// sprite matrix. Stage translation and terminal treatment stay shared.
     bool articulated = false,
+
+    /// Ashfall owns this death: [sprite] crumbles in place, so the legacy
+    /// fade/sink and the pallor drain (which would grey the heat glow) are
+    /// skipped. Shadow fade and the ember burst still play.
+    bool dissolve = false,
   }) {
     Widget w = sprite;
     final dir = lungeToward.toDouble();
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if (condition.pallor > 0.01) {
+    if (condition.pallor > 0.01 && !dissolve) {
       w = ColorFiltered(
         colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
         child: w,
@@ -609,11 +638,11 @@ extension _CombatStageBand on _CombatScreenState {
     );
     // Death: fade out while sinking (collapse) into the ember cloud.
     w = AnimatedOpacity(
-      opacity: dying ? 0.0 : 1.0,
+      opacity: dying && !dissolve ? 0.0 : 1.0,
       duration: _CombatScreenState._deathTime,
       curve: Curves.easeIn,
       child: AnimatedSlide(
-        offset: dying ? const Offset(0, 0.35) : Offset.zero,
+        offset: dying && !dissolve ? const Offset(0, 0.35) : Offset.zero,
         duration: _CombatScreenState._deathTime,
         curve: Curves.easeIn,
         child: w,

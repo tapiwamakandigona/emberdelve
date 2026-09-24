@@ -51,6 +51,7 @@ import '../sim/run_layer.dart' show bossForSeed, healPreview, restHealPreview;
 import 'forge_sheet.dart';
 import 'keeper.dart';
 import 'art.dart';
+import 'ashfall.dart';
 import 'build_identity.dart';
 import 'fx.dart';
 import 'haptics.dart';

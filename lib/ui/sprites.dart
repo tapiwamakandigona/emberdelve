@@ -37,6 +37,12 @@ class SpriteSheetDef {
   /// pins the weapon's grip here instead of one shared roster offset.
   /// Null on sheets that never hold anything (enemies).
   final Offset? hand;
+
+  /// Sheet pixels per authored art pixel (sprite_meta.json `scale`): the
+  /// enemy sheets are 16x16 / 16x23 / 32x36 art upscaled 2-3x with uniform
+  /// blocks. Ashfall crumbles a body into these true art pixels. Defaults to
+  /// 1 (the delver sheets are authored at native size).
+  final int pixelScale;
   const SpriteSheetDef({
     required this.id,
     required this.assetPath,
@@ -45,6 +51,7 @@ class SpriteSheetDef {
     required this.rows,
     required this.fps,
     this.hand,
+    this.pixelScale = 1,
   });
 
   SpriteRowDef? row(String state) => rows[state];
@@ -102,6 +109,7 @@ class SpriteMeta {
                   (hand[0] as num).toDouble(),
                   (hand[1] as num).toDouble(),
                 ),
+          pixelScale: math.max(1, (e['scale'] as num?)?.toInt() ?? 1),
         );
       }
       return out;
@@ -134,6 +142,16 @@ Future<void> warmSpriteSheets() async {
       _rigImages(def, _imageCache[def.assetPath]!);
     }
   }
+}
+
+/// Warm-cache read of a decoded sheet: its definition and image, or null
+/// until [warmSpriteSheets] (or a [SpriteView]) has decoded it. Never starts
+/// a load, so callers can choose a fallback on the same frame.
+({SpriteSheetDef def, ui.Image image})? cachedSheet(String id) {
+  final def = SpriteMeta.cachedOrNull?.sheet(id);
+  final image = def == null ? null : _imageCache[def.assetPath];
+  if (def == null || image == null) return null;
+  return (def: def, image: image);
 }
 
 @visibleForTesting
