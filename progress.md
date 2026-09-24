@@ -6061,3 +6061,29 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - ASSUMED / not verified: physical-device FPS, touch feel and audio as heard;
   all plates are headless renders. Budget note: critic rounds alternate Opus
   5.5 (incremental) and Fable 5.1 (every 4th round) to stretch credits.
+
+## 2026-09-24 — experimental polish loop, iteration 2 (cron): exp.3 "The Last Blow"
+- C1-01 (+ C0-12 folded in): the final-boss kill was a full-screen opaque
+  #FFE9C4 layer (opacity 1.0 for >=260 ms, reduced motion ignored). It is now
+  a radial bloom from the boss, clipped to the stage, peak alpha 0.45, with
+  a dim ember tint under reduced motion (lib/ui/kill_moment.dart). On
+  encounter_won/lost the tray and action zone drop to 0.35 opacity and
+  ignore taps from the same frame, and End turn is disabled.
+  overkillCallout() drops "NEXT FOE" when the blow ends the run.
+  lib/sim untouched. VERIFIED: test/boss_kill_moment_test.dart (real boss
+  overkill at 360x800, every 40 ms frame rasterised) was red on the old
+  code (peak 100% luma>230, End turn and tray live) and is green now.
+- exp.3 = 0.184.103+214: analyzer clean, full suite 1581/1581 (1575 + 6
+  new, none weakened). Signed CI run 36054037747 green (both jobs).
+  Published as PRE-RELEASE v0.184.103-exp.3. /releases/latest is still
+  v0.184.0. All 4 APKs carry the permanent cert, 0.184.103, codes
+  214/1214/2214/4214. VERIFIED.
+- Critic round 2 (smart) on exp.3: every score unchanged (overall 5).
+  C0-12 closed. C1-01 re-listed for evidence gaps: no 40 ms boss-kill strip
+  and no reduced-motion strip in the pack.
+  - Its "tray at full brightness" claim is contradicted by the pixels
+    (tray mean luma 99 → 49 on 021). Maker notes are in critic/round-02.md.
+  - 8 new issues, C2-01…C2-06 plus rescopes of C1-01 and C0-13.
+  - Next item: C2-01, the floating toast covering the primary CTA.
+- ASSUMED / not verified: device FPS, touch feel, audio as heard. No hero
+  victory pose yet (now tracked as C2-02).
