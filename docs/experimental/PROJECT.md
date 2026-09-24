@@ -20,9 +20,12 @@ until I order otherwise."
    `latest=false`**. `lib/meta/update_service.dart` polls `/releases/latest`, which
    ignores pre-releases — so real sideload players are never prompted. Never create a
    non-prerelease from this branch. No Play, itch.io or store action of any kind.
-2. **Versioning:** `0.185.0-exp.N+<211+N>` in pubspec, `currentAppVersion` and a
-   news entry (test/news_test.dart pins all three). Tag `v0.185.0-exp.N`. Before any
-   production release the release owner replaces the exp news entries.
+2. **Versioning:** experimental build N ships as version name `0.184.(100+N)`,
+   versionCode `211+N`, tag `v0.184.(100+N)-exp.N`. Names must stay purely numeric
+   (test/news_test.dart parses `[0-9.]+`), and pubspec, `currentAppVersion` and a
+   news entry move together. Any production 0.185.0 supersedes every experimental
+   build in the update checker; the next production release must use a versionCode
+   above the highest experimental one and should replace the experimental news entries.
 3. **Signed builds** come only from CI `workflow_dispatch` on this branch (permanent
    upload key, cert check in CI). Verify the downloaded APK cert SHA-256 before
    attaching. Never touch signing config or `EXPECTED_CERT_SHA256`.
