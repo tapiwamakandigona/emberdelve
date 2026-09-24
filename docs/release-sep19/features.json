@@ -1,0 +1,45 @@
+{
+  "$comment": "Canonical template adapted before release edits. Frozen acceptance; evidence only. Passing this scoped ledger does not supersede existing false root device/purchase/UI-harness features.",
+  "features": [
+    {
+      "id": "REL-AUDIT",
+      "title": "Correct branch, changes, release and store state",
+      "acceptance": "Read canonical v3.0.1 harness, everything handoff, shipping repository and PRs; identify live production and exact unreleased source without treating main or old reports as current.",
+      "verify": "Managed GitHub PR/ref/release readbacks plus authenticated Play releases overview",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19: main harness tagv3.0.1; shipping741b439; PR104/105/106 merged Sep18; PR102 open. Primary Play overview shows210/0.183.0 Available on Google Play, Full roll-out,177/177; internal/Alpha209. evidence/audit.json."
+    },
+    {
+      "id": "REL-CHECKS",
+      "title": "Fresh immutable regression, art and visual review",
+      "acceptance": "Pinned Flutter analyzer and complete existing test suite pass; art reproduction and SFX pass; current actual phone-size render evidence and source identities reviewed. Existing tests/checks unchanged and inherited supplemental/device limits explicitly recorded.",
+      "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19: candidate0.184.0+211 analyzer clean;1526/1526 unchanged tests;art reproduction22 models and reachable SFX pass. Unchanged visual-source renderer72/72,66 phone combinations,12540 observations,4608 PNGs decoded/hashed;132 outgoing contact sequences checked. Original tests/checks/sim/signing/dependencies unchanged. Pre-log baseline580/582,reviewed version/news exceptions;final579/582 adds only append-only progress with original prefix intact. evidence/candidate-review.json,version-news.diff and final-inventory.json distinguish checkpoints. Review is source/runtime/artifact integrity, NOT direct aesthetic inspection,human approval,physical FPS/touch,purchase/restore or complete natural UI run."
+    },
+    {
+      "id": "REL-BINARY",
+      "title": "Versioned, signed and independently verified artifacts",
+      "acceptance": "0.184.0+211 comes from the exact release commit with green CI; AAB/APK downloaded with SHA256 and package/version/permanent-certificate verification; no debug signing or new upload key.",
+      "verify": "GitHub CI exact-head evidence plus independent artifact hash, manifest and signature checks",
+      "passes": true,
+      "evidence": "VERIFIED source84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9, signed CI35447309873 success. All5 downloaded APK/AAB signatures, permanent cert, package/version,min24,target36,not-debuggable and hashes checked. All22 character sheets/fonts/meta match source inside every binary; permissions identical to production210. Published GitHub v0.184.0 asset digests match. evidence/binary/manifest.json, binary-source-proof.json, signed-ci.json and github-release.json."
+    },
+    {
+      "id": "REL-PLAY",
+      "title": "Authorized Play production submission",
+      "acceptance": "Verified candidate added to correct existing production track, release notes accurate, device-support preview checked and only intended changes submitted. Read back Google review/live status separately; never call In review live.",
+      "verify": "Authenticated Play production/publishing readback of package com.tsorostudios.emberdelve and versionCode211",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19 14:24UTC final send accepted exactly one Production211/Start full rollout change. Preview100%/all targeted countries,zero device losses,correct AAB hash/notes. Final primary readback14:34UTC:211(0.184.0) In review,177countries;210 remains Available on Google Play. Quick-check banner no longer present;managed publishing off. Not live. evidence/play-submission.json,play-final-readback.json,play-upload.json,play-device-preview.json."
+    },
+    {
+      "id": "REL-ITCH",
+      "title": "itch.io page and Android download updated",
+      "acceptance": "Authenticated correct game4903556 updated with accurate current release copy, actual source-matched visuals and verified signed APK or canonical download link; public page readback confirms change.",
+      "verify": "Authenticated save plus independent public itch.io page/download readback",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-19: owner-authorised password reset via Gmail link; logged in as tsorostudios. Public page shows emberdelve-0.184.0-android-arm64.apk (36MB) and -arm32.apk (34MB); old 0.179.0 removed; AI Disclosure now Code, Graphics, Text. Major-update devlog published: /emberdelve/devlog/1669707/the-whole-company-emberdelve-01840. 75MB universal exceeded the 50MB browser transfer cap and itch.ovh/itch.zone hosts are unreachable, so two ARM split APKs cover all real phones and the linked GitHub release carries the universal/x86_64/checksums. evidence/itch-published.json."
+    }
+  ]
+}

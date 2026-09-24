@@ -1,0 +1,47 @@
+{
+  "assets": [
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-arm64-v8a-release.apk",
+      "digest": "sha256:7a21f1de6a36aeb75884c2b5236e58dda47c84f56aca898e907c69602934a330",
+      "name": "app-arm64-v8a-release.apk",
+      "size": 38138738
+    },
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-armeabi-v7a-release.apk",
+      "digest": "sha256:e72925bbff333324c2b00d1807586f89ad0491722cbd37253918746bd2ecffa0",
+      "name": "app-armeabi-v7a-release.apk",
+      "size": 35715206
+    },
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-release.aab",
+      "digest": "sha256:ae60d8c8507c843fa830d21f9daf071f2f6420601f2a104ef12988e95bbfebad",
+      "name": "app-release.aab",
+      "size": 73728918
+    },
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-release.apk",
+      "digest": "sha256:a882b12c4a1e127fef78ec0b12ca0d64005653f20807a329b1bf5bf906c2766f",
+      "name": "app-release.apk",
+      "size": 75707508
+    },
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/app-x86_64-release.apk",
+      "digest": "sha256:d7615bcf29d65ca49ac5012f9103a12b784053adde11fc95419d189ffc6406a3",
+      "name": "app-x86_64-release.apk",
+      "size": 39662094
+    },
+    {
+      "browser_download_url": "https://github.com/tapiwamakandigona/emberdelve/releases/download/v0.184.0/emberdelve-SHA256SUMS",
+      "digest": "sha256:1139067cb621c23ba2d4ece7e29583420e184dbedd727fc4cc885ad2027fc9b4",
+      "name": "emberdelve-SHA256SUMS",
+      "size": 439
+    }
+  ],
+  "draft": false,
+  "html_url": "https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.184.0",
+  "id": 392095307,
+  "prerelease": false,
+  "published_at": "2026-09-19T14:15:43Z",
+  "tag_name": "v0.184.0",
+  "target_commitish": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9"
+}

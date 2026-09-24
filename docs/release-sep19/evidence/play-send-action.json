@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-19T14:24:20.857785+00:00",
+  "app": "4975656702157671885",
+  "production_track": "4697290488477961690",
+  "version": "0.184.0",
+  "version_code": 211,
+  "intended_changes": [
+    "Item changed\nDescription",
+    "rocket_launch\nProduction\nSave for later",
+    "211 (0.184.0)\nStart full rollout\nmore_vert"
+  ],
+  "status": "final_click_returned_not_yet_review_status",
+  "click_returned": "2026-09-19T14:24:21.508950+00:00"
+}

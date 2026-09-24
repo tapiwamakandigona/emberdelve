@@ -1,0 +1,34 @@
+{
+  "verified_at": "2026-09-19",
+  "binary_assets": [
+    {
+      "file": "app-release.aab",
+      "all22_character_sheets_match_source": true,
+      "fonts_and_sprite_metadata_match_source": true
+    },
+    {
+      "file": "app-release.apk",
+      "all22_character_sheets_match_source": true,
+      "fonts_and_sprite_metadata_match_source": true
+    },
+    {
+      "file": "app-arm64-v8a-release.apk",
+      "all22_character_sheets_match_source": true,
+      "fonts_and_sprite_metadata_match_source": true
+    },
+    {
+      "file": "app-armeabi-v7a-release.apk",
+      "all22_character_sheets_match_source": true,
+      "fonts_and_sprite_metadata_match_source": true
+    },
+    {
+      "file": "app-x86_64-release.apk",
+      "all22_character_sheets_match_source": true,
+      "fonts_and_sprite_metadata_match_source": true
+    }
+  ],
+  "permissions_vs_production210": "identical",
+  "ci_log_sha256": "ec2c247599f951105cc6f73abe39644f7be370b1f7bf87a9445c58b0a1c465eb",
+  "ci_log_summary": "1526 tests passed.",
+  "github_published_asset_digests_match": true
+}
