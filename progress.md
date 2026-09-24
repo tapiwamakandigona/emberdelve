@@ -5917,3 +5917,53 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+## 2026-09-24 — exact-kill "clean cut" (presentation-only, source PR)
+
+- Owner ask (Viktor app, Tapiwa): "improve the models and animations to be more
+  enjoyable" + a test APK. Tree was fully green on entry (analyzer, 1526/1526,
+  art/SFX), and the Sept-13 critique's P1 items (contact-sync A3/A4, hand
+  metadata, all-22 articulation) plus the combat-feel backlog were already
+  shipped — so this is an ADDITIVE gain, not a red-gate fix.
+- Gap: the signature exact kill (a die spent for exactly-lethal damage) paid off
+  only as a floating `EXACT!` call-out; its death body read identically to a
+  sloppy overkill. Design-system §5 ("visible mastery is presentation").
+- Shipped `CleanCutFlash` (lib/ui/weapons.dart): crisp ember-white ring + glint
+  over the foe on the `exact_kill` event, via the existing contact-FX system
+  (`_FxKind.cleanCut`). Spawn is NON-BLOCKING, so the death choreography's timing
+  is unchanged and the contact-timeline contract holds. Reduce-motion matches the
+  other contact FX (always plays; displacement stays in the self-gating ShakeBox).
+- VERIFIED 2026-09-24: analyzer clean; new test/exact_kill_clean_cut_test.dart
+  3/3 (exact->flourish, overkill->none negative control, widget lifecycle); full
+  suite 1529/1529 (1526 inherited + 3 additive, none weakened); build_delvers.py
+  --check pass; sfx_headroom.py clear. git diff touches only four lib/ui files —
+  ZERO lib/sim edits; sealed sim, hashes and contact-timeline contract unchanged.
+- Scope docs in docs/exact-kill-clean-cut-2026-09-24/. Root features.json left
+  unchanged (worker protocol). Source PR only: no merge, release, version bump,
+  signed store dispatch or Play action. Owner aesthetic approval PENDING via the
+  test APK; physical-device FPS and Play gates remain out of scope and open.
+
+## 2026-09-24 — living foes (presentation-only, same source PR #108)
+
+- Same owner ask ("improve the models and animations to be more enjoyable").
+  After the Clean Cut, the least-alive layer was the 42 enemies: one shared
+  2px bob, fade-and-sink deaths, 31 authored run rows never played, and a
+  wind-up tint that blended srcATop over the whole combatant box (a red
+  rectangle over the stage on every enemy attack; seen in real-render
+  captures at 741b439).
+- VERIFIED four commits, one feature each: `5c4a2d4` Ashfall (slain foes
+  crumble into their own art pixels inside the unchanged 700 ms beat; reduce
+  motion keeps the legacy fade), `ad51b5e` charging foes (run row at 14 fps
+  during the lunge), `508960b` living idles (hover/heave/scuttle; default
+  breathe pixel-identical), `ed0f710` wind-up heat fix (sprite-paint srcATop
+  tint; red-on-old / green-on-new pixel test).
+- VERIFIED gates at ed0f710: analyzer clean; 1553/1553 tests (24 additive
+  living-foes tests, each mutation-checked; no inherited test edited);
+  build_delvers.py --check pass; sfx_headroom clear; lib/sim, pubspec,
+  android, workflows and assets unchanged versus 741b439.
+- Evidence and reproduction: docs/living-foes-2026-09-24/ (README, features,
+  real-render before/after plates) and tool/living_foes_frames_test.dart.
+- Local debug-signed release APK for owner review only (no key.properties,
+  never Play). Build warns integration_test/jni want NDK 28.2 vs pinned 27.0
+  (warning only; not changed). No merge, release, version bump or store
+  action. Owner aesthetic approval and physical-device FPS remain open.

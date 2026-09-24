@@ -219,25 +219,87 @@ extension _CombatStageBand on _CombatScreenState {
                                   (live['hp'] as int?) ?? 1,
                                   (live['max_hp'] as int?) ?? 1,
                                 );
+                                // Ashfall (2026-09-24): the slain foe
+                                // crumbles into its own art pixels inside
+                                // the unchanged death beat. Reduce motion,
+                                // or a sheet not yet decoded, keeps the
+                                // legacy fade-and-sink below.
+                                final ashfall =
+                                    _enemyDying &&
+                                    !Motion.instance.reduced &&
+                                    SpriteAshfall.ready(enemyId);
                                 return _combatant(
-                                  sprite: SpriteView(
-                                    enemyId,
-                                    key: ValueKey('enemy-$enemyId'),
-                                    height: enemyH,
-                                    flipX: true,
-                                    bob: true, // LFP-4a
-                                    // LFP-4b: slow lean while an attack is
-                                    // telegraphed — the badge gets body
-                                    // language.
-                                    sway:
-                                        intent['kind'] == 'attack' ||
-                                        intent['kind'] == 'attack_block' ||
-                                        // v0.47.0: a wind-up has body language.
-                                        intent['kind'] == 'charge',
-                                    condition: condition,
-                                    ichor: ichorFor(enemyId),
-                                    showWounds: BloodEffects.enabled.value,
-                                  ),
+                                  sprite: ashfall
+                                      ? SpriteAshfall(
+                                          enemyId,
+                                          key: ValueKey('ashfall-$enemyId'),
+                                          height: enemyH,
+                                          flipX: true,
+                                          // The blow came from the delver's
+                                          // side: ash drifts away from it.
+                                          away: 1,
+                                          duration:
+                                              _CombatScreenState._deathTime,
+                                        )
+                                      : TweenAnimationBuilder<double>(
+                                          // Wind-up heat: the telegraph
+                                          // warms the body's own pixels
+                                          // (the sprite paint's srcATop
+                                          // filter), never the stage
+                                          // around it. Same timing as the
+                                          // old box tint.
+                                          tween: Tween<double>(
+                                            end: _enemySquash ? 1.0 : 0.0,
+                                          ),
+                                          duration: _CombatScreenState._pace(
+                                            _enemyPlan.windupMs,
+                                          ),
+                                          builder: (context, heat, _) => SpriteView(
+                                            enemyId,
+                                            key: ValueKey('enemy-$enemyId'),
+                                            height: enemyH,
+                                            flipX: true,
+                                            // Charging foes (2026-09-24): the
+                                            // lunge plays the sheet's authored
+                                            // run cycle, so legs and wings drive
+                                            // the strike instead of an idle
+                                            // pose sliding across the stage.
+                                            // No run row -> idle (SpriteView).
+                                            state: _enemyLunge ? 'run' : 'idle',
+                                            fps: _enemyLunge ? 14 : null,
+                                            // Living idles: wisps hover off
+                                            // their shadow, brutes heave,
+                                            // crawlers scuttle.
+                                            idle: enemyIdleFor(
+                                              enemyId,
+                                              boss: enemy['boss'] == true,
+                                              elite: enemy['elite'] == true,
+                                            ),
+                                            bob: true, // LFP-4a
+                                            // LFP-4b: slow lean while an attack is
+                                            // telegraphed — the badge gets body
+                                            // language.
+                                            sway:
+                                                intent['kind'] == 'attack' ||
+                                                intent['kind'] ==
+                                                    'attack_block' ||
+                                                // v0.47.0: a wind-up has body language.
+                                                intent['kind'] == 'charge',
+                                            condition: condition,
+                                            ichor: ichorFor(enemyId),
+                                            showWounds:
+                                                BloodEffects.enabled.value,
+                                            dye: heat <= 0.001
+                                                ? null
+                                                : ColorFilter.mode(
+                                                    _windupHeat.withValues(
+                                                      alpha:
+                                                          _windupHeat.a * heat,
+                                                    ),
+                                                    BlendMode.srcATop,
+                                                  ),
+                                          ),
+                                        ),
                                   spriteHeight: enemyH,
                                   spriteWidth: _spriteWidth(enemyId, enemyH),
                                   // Slight depth scale: the enemy stands a
@@ -253,6 +315,7 @@ extension _CombatStageBand on _CombatScreenState {
                                   condition: condition,
                                   enemyPlan: _enemyPlan,
                                   windup: true,
+                                  dissolve: ashfall,
                                 );
                               },
                             ),
@@ -419,6 +482,13 @@ extension _CombatStageBand on _CombatScreenState {
                                   _fxUpdate(() => _fx.remove(fx));
                                 },
                               ),
+                              _FxKind.cleanCut => CleanCutFlash(
+                                key: ValueKey('fx-${fx.id}'),
+                                color: fx.color,
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
                               _ => ImpactSlash(
                                 key: ValueKey('fx-${fx.id}'),
                                 claws: fx.kind == _FxKind.claws,
@@ -516,13 +586,18 @@ extension _CombatStageBand on _CombatScreenState {
     /// Joint rig owns anatomy/weight shift; do not also squash the whole
     /// sprite matrix. Stage translation and terminal treatment stay shared.
     bool articulated = false,
+
+    /// Ashfall owns this death: [sprite] crumbles in place, so the legacy
+    /// fade/sink and the pallor drain (which would grey the heat glow) are
+    /// skipped. Shadow fade and the ember burst still play.
+    bool dissolve = false,
   }) {
     Widget w = sprite;
     final dir = lungeToward.toDouble();
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if (condition.pallor > 0.01) {
+    if (condition.pallor > 0.01 && !dissolve) {
       w = ColorFiltered(
         colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
         child: w,
@@ -602,29 +677,21 @@ extension _CombatStageBand on _CombatScreenState {
     );
     // Death: fade out while sinking (collapse) into the ember cloud.
     w = AnimatedOpacity(
-      opacity: dying ? 0.0 : 1.0,
+      opacity: dying && !dissolve ? 0.0 : 1.0,
       duration: _CombatScreenState._deathTime,
       curve: Curves.easeIn,
       child: AnimatedSlide(
-        offset: dying ? const Offset(0, 0.35) : Offset.zero,
+        offset: dying && !dissolve ? const Offset(0, 0.35) : Offset.zero,
         duration: _CombatScreenState._deathTime,
         curve: Curves.easeIn,
         child: w,
       ),
     );
-    // Wind-up tint: threat reads as a heat shift on the body.
-    if (windup) {
-      w = AnimatedContainer(
-        duration: enemyPlan == null
-            ? _CombatScreenState._enemyWindupTime
-            : _CombatScreenState._pace(enemyPlan.windupMs),
-        foregroundDecoration: BoxDecoration(
-          backgroundBlendMode: BlendMode.srcATop,
-          color: squash ? const Color(0x55C24040) : const Color(0x00C24040),
-        ),
-        child: w,
-      );
-    }
+    // Wind-up tint: threat reads as a heat shift on the body. Since
+    // 2026-09-24 it is painted by the foe's own sprite (see the enemy
+    // SpriteView's windup heat above): the old foregroundDecoration blended
+    // srcATop over the whole box, stage background included, so every
+    // enemy wind-up showed a translucent red rectangle around the foe.
     // ------------------------------------------------------------------
     // The body. One matrix about the feet: lean (rotation), crouch or
     // stretch (scale), lift (hop). Which pose applies is decided by the
@@ -764,6 +831,9 @@ extension _CombatStageBand on _CombatScreenState {
     );
   }
 }
+
+/// The enemy wind-up heat at full strength (danger red, ~1/3 over the body).
+const Color _windupHeat = Color(0x55C24040);
 
 /// One resolved body pose (see _combatant). Rotation about the feet.
 class _BodyPose {

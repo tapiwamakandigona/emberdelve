@@ -39,7 +39,7 @@ class _Pulse extends StatelessWidget {
 
 /// One transient combat call-out (combo, burn tick, exact-kill, overkill).
 /// One transient stage contact effect (weapon smear, claw rake, guard arc).
-enum _FxKind { slash, claws, guard, blood }
+enum _FxKind { slash, claws, guard, blood, cleanCut }
 
 class _Fx {
   final int id;

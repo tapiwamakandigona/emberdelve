@@ -283,8 +283,8 @@ class _CombatScreenState extends State<CombatScreen> {
   // strike (lib/ui/combat_pose.dart) — always 340 ms in total, the same as
   // the old 90 ms squash + 250 ms contact lead it replaces.
   // Enemy anticipation runs longer than the player's: their wind-up is the
-  // player's last cue to read the incoming hit.
-  static final _enemyWindupTime = _pace(190);
+  // player's last cue to read the incoming hit (EnemyStrikePlan.windupMs,
+  // never below the legacy 190 ms telegraph; it also times the wind-up heat).
   static final _hitStop = _pace(80);
   static final _knockTime = _pace(140);
   static final _flashTail = _pace(120);
@@ -857,6 +857,12 @@ class _CombatScreenState extends State<CombatScreen> {
     final exact = _find(events, 'exact_kill');
     if (exact != null) {
       _audio?.playSfx('ember_gain');
+      // v0.184.0 Clean Cut: the signature exact kill (a die spent for exactly
+      // lethal damage) earns a distinct contact read — a crisp ember-white
+      // ring + precise glint over the foe — so mastery is visible, not just a
+      // number. Presentation-only and non-blocking: the death choreography's
+      // timing is unchanged; overkills and ordinary kills are untouched.
+      _spawnFx(_FxKind.cleanCut, onPlayer: false, color: EmberColors.gold);
       _note(
         '+${exact['embers']} EMBERS — EXACT!',
         icon: Icons.local_fire_department,
