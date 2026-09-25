@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25T00:13:08+00:00",
+ "updated": "2026-09-25T00:38:09+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -39,6 +39,23 @@
    "round": 2,
    "build": "exp.3",
    "at": "2026-09-24T20:42:10+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 3,
+   "build": "exp.4",
+   "at": "2026-09-25T00:38:09+00:00",
    "scores": {
     "art": 5,
     "animation": 5,
@@ -731,7 +748,7 @@
    "fix_direction": "Anchor the toast to the top, under the HUD bar, or give it a bottom margin equal to the bottom CTA height + 16 dp. Make it IgnorePointer so taps pass through. Restyle it as an in-theme pill (no black frame).",
    "acceptance": "Widget test over every play_session screen: the toast rect does not intersect any button rect at 320x568/360x800/412x915. Re-shot 011, 025 and 029 show the CTA fully visible with the toast present.",
    "effort": "S",
-   "status": "fixed_pending_review",
+   "status": "closed",
    "round_opened": 2,
    "critic_rank": 1,
    "rank_round": 2,
@@ -750,9 +767,15 @@
      "event": "maker:fixed_pending_review",
      "build": "exp.4",
      "note": "Top-anchored tap-through pill; test/toast_clear_of_buttons_test.dart red->green at 3 sizes"
+    },
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "closed_by_critic"
     }
    ],
-   "fixed_in": "exp.4"
+   "fixed_in": "exp.4",
+   "round_closed": 3
   },
   {
    "id": "C2-02",
@@ -860,6 +883,94 @@
     {
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-01",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "Top toast pill sits on the screen title / foe name and wraps to two lines at 360",
+   "observed": "360x800 @2x: 011/012 '\"Ashes, Gently\" — first hearing' wraps to 2 lines and hides 'DARK CLAIMS' of the title. 009/036 'Twin Bellows set' and 017/027 'Ashen Edge set' cover the middle of 'CHOOSE A DIE' and the subtitle. 029 'Nothing changed' covers 'ASHMONGER'. 025 'Forged into a stronger die' hides the foe name, leaving only 'FLUE' visible at fight start. Cause (flash_toast.dart): Positioned(top: safeTop + 72, left/right: 64) is the title band on every screen, and the 64 dp gutters leave 232 dp at 360 and 192 dp at 320.",
+   "why_it_matters": "For 1.4 s the player loses the one line that says where they are or who they are fighting, at the start of every fight after a forge and on every reward/shop screen. A two-line pill doubles the covered area.",
+   "fix_direction": "Give the toast a lane that holds no text. Run screens: anchor it just under the header block, i.e. the bottom of the title/subtitle or enemy panel + 8 dp, via a per-screen GlobalKey anchor the host reads. Fall back to the current top value when there is no anchor. In combat that lands in the empty sky band above the actors. Cut the gutters to 24 dp (the '?' corner button is already cleared by sitting below the panel). Set maxLines: 1 and shorten any string that does not fit in one line at 320.",
+   "acceptance": "Extend toast_clear_of_buttons_test: at 320x568/360x800/412x915 on all 10 screen kinds, the toast rect intersects no Text rect of the screen title, subtitle, enemy name or enemy HP, and no button rect. Every flash string renders on one line at 320 (string/layout test). Re-shot 011, 025, 029 and 036 show the full title/foe name plus the toast.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 1,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-02",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Toast reports the previous screen's action and holds 1.4 s regardless of length",
+   "observed": "009/036: 'Twin Bellows set' confirms a keystone picked on the previous screen (008/035) but appears over the unrelated reward screen. 029: 'Nothing changed' (the outcome of the 028 event choice 'Admire and move on') appears over the shop, so it reads as if the shop did nothing. kFlashToastHold = 1400 ms fixed. controller.dart _eventSummary joins several parts ('−15 gold', '+14 embers', 'Relic: …', 'Gained …') and the pill clips at maxLines 2 with an ellipsis. Clipping at 320 is inferred from the code; verify with a plate.",
+   "why_it_matters": "A 7–9-year-old reads about 1–1.5 words/s. A 5-word message needs 3–5 s, and one that names a screen they have already left is confusing ('nothing changed' in a shop?). Event outcomes are the only concrete feedback for event choices (F5 rule), so clipping them loses information.",
+   "fix_direction": "(a) Hold = clamp(1200 + 350 ms × words, 1600, 4000). Under reduced motion hold the upper value. (b) Show event outcomes and keystone confirmations on the screen where the choice was made: delay the phase transition until the toast has been visible ≥1.2 s, or show the outcome inline on the event card before 'Continue'. At minimum, drop keystone_taken/'Nothing changed' toasts once the screen has changed. (c) Replace the ellipsis with shorter summary parts ('+14 embers, −15 gold').",
+   "acceptance": "Unit test: hold duration for 'Relic acquired' (2 words) ≥1.6 s and for a 6-word summary ≥3.3 s. Harness plates: the keystone confirmation and 'Nothing changed' appear on the keystone/event screen, not on 009/029/036 equivalents. A string test renders every _eventSummary combination from the event table without ellipsis at 320.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 2,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-03",
+   "dimension": "gameplay",
+   "severity": "P2",
+   "title": "Invalid-move feedback now appears ~550 dp away from the tapped die/button",
+   "observed": "Inferred from flash_toast.dart plus the 025 geometry: refusals ('Assigned dice can't be rerolled', 'Pick at least one die to reroll', 'Roll first', 'Risky reroll already spent this turn') render at safeTop + 72 dp over the enemy panel. The tapped die or button sits at y≈1260–1540 @2x on 025, about 550 dp from the pill. No plate in the pack shows an invalid tap; verify.",
+   "why_it_matters": "Children look at their finger. A refusal they don't see reads as 'the game is broken' and leads to repeated tapping. Refusals are the most important toasts to notice.",
+   "fix_direction": "For invalid_command in combat, add a local cue: a 160 ms horizontal shake (±4 dp, 3 cycles; no shake under reduced motion, a 2-pulse red outline instead) on the offending die/button, plus the reason as a small label directly above the tray, IgnorePointer and not over any button. Keep the top pill for non-error toasts only. Presentation only; sim untouched.",
+   "acceptance": "Harness: a scripted invalid tap (reroll an assigned die) at 320x568/360x800/412x915 produces plates at +80 and +400 ms showing the cue within 48 dp of the tapped die, with no button rect intersected. Reduced-motion plate shows the outline pulse and no displacement. Test asserts that invalid_command no longer routes to the top host during combat.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 3,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-04",
+   "dimension": "menus_layout",
+   "severity": "P3",
+   "title": "Half-faded clipped line behind the summary CTA reads as broken copy",
+   "observed": "011/012_run_lost at 360x800: a line ('A first fall — every delve ends in one…') is visible at ~15% opacity with its lower half cut behind the top edge of the DELVE AGAIN button. Same pattern at the bottom of 030/031 (the codex/tip card is cut by the CTA).",
+   "why_it_matters": "It looks like a rendering bug, and it is the encouragement line a first-time loser should actually read.",
+   "fix_direction": "Either end the scroll content above the CTA (bottom padding = CTA height + 24 dp, so the last line is fully visible when scrolled) and make the fade a solid gradient that fully hides text under it, or move the encouragement line above the stats card so it is read first.",
+   "acceptance": "Plates of run_lost/run_won summaries at 320x568/360x800/412x915: no text line is partially visible between 5% and 95% opacity at the CTA edge. The encouragement line is fully legible without scrolling at 360x800.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 4,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
      "event": "opened"
     }
    ]

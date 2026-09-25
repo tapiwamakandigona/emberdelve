@@ -6087,3 +6087,33 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   - Next item: C2-01, the floating toast covering the primary CTA.
 - ASSUMED / not verified: device FPS, touch feel, audio as heard. No hero
   victory pose yet (now tracked as C2-02).
+
+## 2026-09-25 — experimental polish loop, iteration 3 (cron): exp.4 "Clear Buttons"
+- C2-01: the in-run toast was a stock floating SnackBar in the bottom
+  zone. For 1.4 s it hid DELVE AGAIN, LEAVE SHOP and ROLL and took the tap.
+  It is now an in-theme pill (lib/ui/flash_toast.dart, hosted by GameRoot):
+  top-anchored at safe inset + 72 dp with 64 dp gutters, IgnorePointer,
+  fade in/out in its own RepaintBoundary, and no slide under reduced
+  motion. The TalkBack live region is kept. lib/sim is untouched.
+  VERIFIED: test/toast_clear_of_buttons_test.dart covers 10 screen kinds at
+  320x568/360x800/412x915, checking toast vs button rects plus a
+  tap-through hit test. It was red on the old code and is green now.
+- Failure, fixed in the same run: the first full suite failed 139 widget
+  tests ("Looking up a deactivated widget's ancestor is unsafe"). A lazy
+  `late final` AnimationController was first built in dispose(), so it
+  is now built in initState (7eb9ded). VERIFIED.
+- exp.4 = 0.184.104+215: analyzer clean, full suite 1584/1584 (1581 + 3
+  new, none weakened). Signed CI run 36077074055 is green on both jobs.
+  Published as PRE-RELEASE v0.184.104-exp.4, and /releases/latest is still
+  v0.184.0. All 4 APKs carry the permanent cert, 0.184.104, with codes
+  215/1215/2215/4215. VERIFIED.
+- Critic round 3 (smart) on exp.4: every score unchanged (overall 5). C2-01
+  is closed.
+  - 4 new issues. C3-01 (the pill covers the screen title or foe name and
+    wraps at 360; disclosed trade-off) and C3-02 (the toast names the
+    previous screen; fixed 1.4 s hold) are VERIFIED on plates.
+  - C3-03 (refusals shown far from the finger) is ASSUMED.
+  - C3-04 (clipped ghost line behind DELVE AGAIN) is VERIFIED.
+  - Next item: C1-01 (boss-kill evidence strips), with C2-02 to fold in.
+- ASSUMED / not verified: device FPS, touch feel, audio as heard. There
+  are no 320/412 toast plates in the pack (play_session is 360 only).
