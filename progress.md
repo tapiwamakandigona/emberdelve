@@ -6134,3 +6134,45 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Budget: the owner runs on reward credits; about three more builds fit before the
   loop's credit floor. ASSUMED estimate from per-run credit readings.
 - No code, test, version or release change in this entry.
+
+## 2026-09-25 — experimental polish loop, iteration 4 (cron): exp.5 "Victory!"
+- Bundle from the build-order pin, all three ids in one build:
+  - C2-05: no song-credit toast on a new player's first defeat or victory screen.
+  - C2-02: a victory beat on the run-ending boss kill.
+  - C1-01: boss-kill evidence strips.
+- C2-05: the run-end track is first heard after banking has already set
+  runsPlayed to 1, so the first delve's own end screen got the toast. It is
+  now gated in controller.dart (`firstDelve`). VERIFIED: 3 new tests were red
+  on the old code ('"The Climb Home" — first hearing') and are green now.
+  Plate 011 shows no toast.
+- C2-02: new lib/ui/victory_beat.dart. A stage-scoped "VICTORY!" banner
+  (34 px, 250 ms ease-out-back), embers rising from the boss, and a 300 ms
+  raised-weapon lift. The tray and action zone ease to 0.35 over 200 ms.
+  Reduced motion gives a fade only. lib/sim is untouched.
+  VERIFIED: test/victory_beat_test.dart covers 320/360/412 plus reduced
+  motion. The banner stays inside the stage at +600 and +1200 ms. Each tray
+  die's mean luma is 46–48% of its live value.
+- C1-01: new tool/boss_kill_frames_test.dart. It makes 40 ms strips of two
+  bosses (normal and reduced) plus victory plates, and it is wired into
+  capture_all. VERIFIED: 0 of 40 frames per strip have more than half their
+  pixels at luma > 230.
+- Failure, fixed with one retry: CI run 36093852842 failed "Analyze (fatal
+  on warnings)" on an unnecessary `dart:typed_data` import in the new
+  harness. The local analyze had run before that file existed. Fixed in
+  04c4281. Run 36094260391 is green on both jobs.
+- exp.5 = 0.184.105+216. Full suite 1592/1592 (1584 + 8 new, none
+  weakened). Published as PRE-RELEASE v0.184.105-exp.5. /releases/latest is
+  still v0.184.0. All 4 APKs carry the permanent cert, with codes
+  216/1216/2216/4216. VERIFIED.
+- Critic round 4 (smart) on exp.5: every score unchanged (overall 5, the
+  "fight is untouched" verdict). C1-01, C2-02 and C2-05 are closed; no
+  regressions.
+  - 5 new issues: C4-01 (text pile-up at the victory moment), C4-02 (the
+    boss is a white block for ~400 ms), C4-03 (the sting lands on the
+    summary cut), C4-04 (the shake moves the HUD), C4-05 (the strips use
+    the crawler, not real bosses). All are VERIFIED on plates, PIL or code;
+    C4-03 as heard is ASSUMED.
+  - The pin was re-set from the critic's fix_next. Next is C0-01+C0-05
+    (the enemy turn: approach plus hit reaction).
+- ASSUMED / not verified: audio as heard, device FPS, touch feel. The
+  victory sting is not re-timed.
