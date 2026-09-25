@@ -23,10 +23,21 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.184.103';
+const String currentAppVersion = '0.184.104';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.184.104',
+    title: 'Experimental: Clear Buttons',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Little messages like "Healed 4" now pop up near the top of the '
+          'screen, so they never hide the big button at the bottom.',
+      'You can tap straight through a message while it is showing.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.184.103',
     title: 'Experimental: The Last Blow',
