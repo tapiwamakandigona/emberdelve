@@ -41,16 +41,28 @@ until I order otherwise."
    GPT-6 Astra / Fable 5.1 / ultra; the alternation stretches credits). It never writes
    code; the maker verifies every critic claim against the images before acting.
 
-## Iteration protocol (one backlog item per iteration)
+## Iteration protocol (one task per iteration: a backlog item or a pinned bundle)
 1. Read this file, `backlog.json`, the tail of root `progress.md`, latest `critic/round-*.md`.
-2. Pick the highest-ranked open item (P0 → P1 → …; ties: smallest effort, then the most
-   recent critic ranking). Items the critic says to ship together are folded (noted in
-   the item history) and closed in the same iteration.
+2. Pick the task with `backlog.py next`: the first group of the backlog **pin** that
+   still has an open item. The pin is the critic's latest `fix_next` build order (set
+   by `merge`; the maker may set it with `backlog.py pin`); ids joined by `+` ship in
+   the same build. With no pin: highest-ranked open item (P0 → P1 → …; ties: smallest
+   effort, then the most recent critic ranking). Items the critic says to ship together
+   are folded (noted in the item history) and closed in the same iteration. A bundle
+   may be split only when its gates cannot all go green in one run: ship the finished
+   ids; the rest stay first in line.
 3. Implement with a test (red before, green after) where behaviour is testable.
 4. Gates: analyze, targeted tests, before/after render plates.
 5. Commit + push; bump version; dispatch signed CI; verify cert; publish pre-release.
 6. Capture the evidence pack; run the critic; merge its JSON into `backlog.json`;
    save `critic/round-NN.md`; append root `progress.md`.
+
+**Pick-rule change, 2026-09-25 (maker, after round 3).** Overall stayed at 5 for rounds
+0–3. The severity/effort rule kept choosing small layout fixes; the critic's round-3
+verdict was "no change a player would feel in the fight". The owner runs on a fixed
+credit budget, so the loop now builds in the critic's impact order and bundles related
+items into one build: C2-05+C2-02+C1-01 (run end), C0-01+C0-05 (enemy turn),
+C0-06+C1-03+C1-07 (child-facing copy), C0-07 (title screen), C0-03+C1-02 (call-outs).
 
 ## Guards
 - Stall: two consecutive iterations with no diff → stop the loop and report.

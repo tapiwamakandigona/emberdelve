@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25T00:38:09+00:00",
+ "updated": "2026-09-25T02:23:42+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -975,5 +975,34 @@
     }
    ]
   }
- ]
+ ],
+ "pin": {
+  "groups": [
+   [
+    "C2-05",
+    "C2-02",
+    "C1-01"
+   ],
+   [
+    "C0-01",
+    "C0-05"
+   ],
+   [
+    "C0-06",
+    "C1-03",
+    "C1-07"
+   ],
+   [
+    "C0-07"
+   ],
+   [
+    "C0-03",
+    "C1-02"
+   ]
+  ],
+  "source": "maker",
+  "round": 3,
+  "at": "2026-09-25T02:23:42+00:00",
+  "note": "Critic round 3 'What to fix next' order (C2-05; C2-02+C1-01; C0-01; C0-05; C0-06/C1-03/C1-07; C0-07; C0-03/C1-02). Maker bundles: C2-05 with the run-end work, C0-01 with C0-05 (one enemy-turn build). Reason: overall flat at 5 for rounds 0-3 while the severity/effort rule kept picking S items; credit budget allows about 3 more builds."
+ }
 }

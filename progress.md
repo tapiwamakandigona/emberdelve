@@ -6117,3 +6117,20 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   - Next item: C1-01 (boss-kill evidence strips), with C2-02 to fold in.
 - ASSUMED / not verified: device FPS, touch feel, audio as heard. There
   are no 320/412 toast plates in the pack (play_session is 360 only).
+
+## 2026-09-25 — experimental polish loop: pick-rule change (maker, between iterations 3 and 4)
+- Why: overall score 5 in all four critic rounds (0–3). The severity/effort pick rule
+  chose small P1/S fixes (the toast, the boss white-out); the critic confirmed them, but
+  round 3's verdict was "no change a player would feel in the fight". None of the P1/M
+  items it names as score movers had been started. VERIFIED from
+  docs/experimental/critic/round-00..03.md and backlog.json.
+- Change: `backlog.json` now carries a build-order pin taken from critic round 3's
+  "What to fix next" list. Related items ship together in one build:
+  C2-05+C2-02+C1-01 (run end: victory beat, boss-kill evidence strips, no credit toast
+  on a first defeat), C0-01+C0-05 (enemy turn: approach + hit reaction),
+  C0-06+C1-03+C1-07 (child-facing copy), C0-07 (title screen fits), C0-03+C1-02
+  (call-outs). From round 4 the critic returns a `fix_next` list and the merge re-pins
+  from it. Protocol text: docs/experimental/PROJECT.md step 2.
+- Budget: the owner runs on reward credits; about three more builds fit before the
+  loop's credit floor. ASSUMED estimate from per-run credit readings.
+- No code, test, version or release change in this entry.
