@@ -36,10 +36,12 @@ until I order otherwise."
    Never weaken or delete an existing assertion; a test/harness diff is only allowed
    when the task IS that check, and is called out in the commit and progress entry.
 6. **Critic:** independent read-only reviewer (`emberdelve-critic`), an owner-requested
-   exception to the harness's no-subagent rule. Model: Opus 5.5 for incremental rounds,
-   Fable 5.1 ("ultra") every 4th round as a full re-baseline (owner allowed Opus 5.5 /
-   GPT-6 Astra / Fable 5.1 / ultra; the alternation stretches credits). It never writes
-   code; the maker verifies every critic claim against the images before acting.
+   exception to the harness's no-subagent rule (owner allowed Opus 5.5 / GPT-6 Astra /
+   Fable 5.1 / ultra). Model: Opus 5.5 every round while the owner is on the fixed
+   reward-credit budget (2026-09-25). The Fable 5.1 ("ultra") re-baseline, planned for
+   every 4th round, waits until credits allow (round 0 on ultra cost about 1.9k).
+   It never writes code; the maker verifies every critic claim against the images
+   before acting.
 
 ## Iteration protocol (one task per iteration: a backlog item or a pinned bundle)
 1. Read this file, `backlog.json`, the tail of root `progress.md`, latest `critic/round-*.md`.
