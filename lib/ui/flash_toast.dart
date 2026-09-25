@@ -55,25 +55,32 @@ class FlashToastHostState extends State<FlashToastHost>
   static final Duration _total =
       kFlashToastFade + kFlashToastHold + kFlashToastFade;
 
-  late final AnimationController _anim = AnimationController(
-    vsync: this,
-    duration: _total,
-  )..addStatusListener(_onStatus);
+  // Built eagerly in initState: a lazy `late final` controller would be
+  // created for the first time inside dispose() on screens that never
+  // toasted, and a ticker cannot be created on a deactivated element.
+  late final AnimationController _anim;
+  late final Animation<double> _opacity;
 
-  late final Animation<double> _opacity = TweenSequence<double>([
-    TweenSequenceItem(
-      tween: Tween(begin: 0.0, end: 1.0),
-      weight: kFlashToastFade.inMilliseconds.toDouble(),
-    ),
-    TweenSequenceItem(
-      tween: ConstantTween(1.0),
-      weight: kFlashToastHold.inMilliseconds.toDouble(),
-    ),
-    TweenSequenceItem(
-      tween: Tween(begin: 1.0, end: 0.0),
-      weight: kFlashToastFade.inMilliseconds.toDouble(),
-    ),
-  ]).animate(_anim);
+  @override
+  void initState() {
+    super.initState();
+    _anim = AnimationController(vsync: this, duration: _total)
+      ..addStatusListener(_onStatus);
+    _opacity = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 1.0),
+        weight: kFlashToastFade.inMilliseconds.toDouble(),
+      ),
+      TweenSequenceItem(
+        tween: ConstantTween(1.0),
+        weight: kFlashToastHold.inMilliseconds.toDouble(),
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 0.0),
+        weight: kFlashToastFade.inMilliseconds.toDouble(),
+      ),
+    ]).animate(_anim);
+  }
 
   String? _message;
 
