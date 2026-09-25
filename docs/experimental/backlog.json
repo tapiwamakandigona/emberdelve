@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-24T20:42:10+00:00",
+ "updated": "2026-09-25T00:13:08+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -731,7 +731,7 @@
    "fix_direction": "Anchor the toast to the top, under the HUD bar, or give it a bottom margin equal to the bottom CTA height + 16 dp. Make it IgnorePointer so taps pass through. Restyle it as an in-theme pill (no black frame).",
    "acceptance": "Widget test over every play_session screen: the toast rect does not intersect any button rect at 320x568/360x800/412x915. Re-shot 011, 025 and 029 show the CTA fully visible with the toast present.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 2,
    "critic_rank": 1,
    "rank_round": 2,
@@ -740,8 +740,19 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "opened"
+    },
+    {
+     "at": "2026-09-25T00:13:08+00:00",
+     "event": "maker:in_progress"
+    },
+    {
+     "at": "2026-09-25T00:13:08+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.4",
+     "note": "Top-anchored tap-through pill; test/toast_clear_of_buttons_test.dart red->green at 3 sizes"
     }
-   ]
+   ],
+   "fixed_in": "exp.4"
   },
   {
    "id": "C2-02",

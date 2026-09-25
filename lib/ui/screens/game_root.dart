@@ -67,6 +67,7 @@ class _GameRootState extends State<GameRoot> {
   // exactly the old whole-screen rebuild. Opt in per screen, after measuring.
   Widget? _scopedScreen;
   String? _scopedKey;
+  final GlobalKey<FlashToastHostState> _flashHost = GlobalKey();
 
   Widget _scoped(String key, Widget Function() create) {
     if (_scopedKey != key || _scopedScreen == null) {
@@ -88,7 +89,14 @@ class _GameRootState extends State<GameRoot> {
         final f = c.flash;
         if (f != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) showFlash(context, f);
+            // C2-01: the toast lives in a top-anchored, tap-through host,
+            // clear of the bottom-zone primary button.
+            final host = _flashHost.currentState;
+            if (host != null) {
+              host.show(f);
+            } else if (context.mounted) {
+              showFlash(context, f);
+            }
             c.flash = null;
           });
         }
@@ -147,23 +155,26 @@ class _GameRootState extends State<GameRoot> {
           // frames relaid the Scaffold and re-rasterized the whole body with
           // it (summary_probe: ~300 paints on each toast frame; the same
           // held for every combat toast). Boxed, a toast frame is the toast.
-          body: RepaintBoundary(
-            child: PhaseSwitcher(
-              phaseKey: phase ?? 'title',
-              flameWipe: phase == 'player_turn',
-              child: ScreenBackground(
-                asset: Art.backgroundForPhase(phase, bossFight: bossFight),
-                // v0.28.0 The Shifting Strata: the rock changes as you
-                // descend (depth 0 = identity, so the title never grades).
-                // v0.35.0 The Vistas: player-selected grade composed with
-                // the strata depth grade in a single matrix.
-                // v0.115.0: the delve wears the RUN DELVER's vista.
-                grade: Art.backgroundGrade(c.mapDepth, c.activeRunVista),
-                wash: Art.backgroundWash(c.mapDepth, c.activeRunVista),
-                child: SafeArea(
-                  child: KeyedSubtree(
-                    key: ValueKey(phase ?? 'title'),
-                    child: screen,
+          body: FlashToastHost(
+            key: _flashHost,
+            child: RepaintBoundary(
+              child: PhaseSwitcher(
+                phaseKey: phase ?? 'title',
+                flameWipe: phase == 'player_turn',
+                child: ScreenBackground(
+                  asset: Art.backgroundForPhase(phase, bossFight: bossFight),
+                  // v0.28.0 The Shifting Strata: the rock changes as you
+                  // descend (depth 0 = identity, so the title never grades).
+                  // v0.35.0 The Vistas: player-selected grade composed with
+                  // the strata depth grade in a single matrix.
+                  // v0.115.0: the delve wears the RUN DELVER's vista.
+                  grade: Art.backgroundGrade(c.mapDepth, c.activeRunVista),
+                  wash: Art.backgroundWash(c.mapDepth, c.activeRunVista),
+                  child: SafeArea(
+                    child: KeyedSubtree(
+                      key: ValueKey(phase ?? 'title'),
+                      child: screen,
+                    ),
                   ),
                 ),
               ),

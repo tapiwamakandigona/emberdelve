@@ -9,6 +9,7 @@ import '../l10n/strings.dart';
 import '../data/dice.dart';
 import '../data/skins.dart';
 import '../sim/run_dice.dart';
+import 'flash_toast.dart';
 import 'theme.dart';
 
 // ---------------------------------------------------------------------------
@@ -1458,6 +1459,14 @@ class _PanelPainter extends CustomPainter {
 }
 
 void showFlash(BuildContext context, String msg) {
+  // C2-01: inside the game shell the toast is the top-anchored, tap-through
+  // pill (flash_toast.dart). The SnackBar below is only the fallback for a
+  // context with no host.
+  final host = FlashToastHost.maybeOf(context);
+  if (host != null) {
+    host.show(msg);
+    return;
+  }
   final messenger = ScaffoldMessenger.of(context);
   messenger.clearSnackBars();
   messenger.showSnackBar(

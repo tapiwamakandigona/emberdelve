@@ -30,6 +30,7 @@ import '../l10n/strings.dart';
 import '../meta/meta.dart' show MetaState;
 import '../game/tour.dart';
 import 'kill_moment.dart';
+import 'flash_toast.dart';
 import 'codex_screen.dart';
 import '../game/daily_share.dart';
 import '../game/hearths.dart';
