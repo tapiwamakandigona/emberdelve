@@ -289,18 +289,97 @@ class ShakeBoxState extends State<ShakeBox>
 // ---------------------------------------------------------------------------
 // Damage pop — a number that pops, arcs, and fades. Spawned in a Stack.
 // ---------------------------------------------------------------------------
+/// Bound a pop's painted box over its visible life by sampling its motion
+/// (scale about the box centre, then translate — the same order the widgets
+/// paint). Frames at opacity < 0.05 are invisible and ignored.
+EdgeInsets _sweep(
+  Size size,
+  ({Offset offset, double scale, double alpha}) Function(double f) motion,
+) {
+  var l = 0.0, t = 0.0, r = 0.0, b = 0.0;
+  for (var i = 0; i <= 200; i++) {
+    final m = motion(i / 200);
+    if (m.alpha < 0.05) continue;
+    final gx = (m.scale - 1) * size.width / 2;
+    final gy = (m.scale - 1) * size.height / 2;
+    l = math.max(l, gx - m.offset.dx);
+    r = math.max(r, gx + m.offset.dx);
+    t = math.max(t, gy - m.offset.dy);
+    b = math.max(b, gy + m.offset.dy);
+  }
+  return EdgeInsets.fromLTRB(l, t, r, b);
+}
+
 class DamagePop extends StatefulWidget {
   final int amount;
   final bool blocked;
   final bool onPlayer; // arcs left for player hits, right for enemy hits
   final VoidCallback onDone;
+
+  /// How far the number climbs (logical px) and drifts sideways. The stage
+  /// shrinks these on short screens so the arc never leaves its lane
+  /// (experimental loop C0-03); the defaults are the original arc.
+  final double rise;
+  final double drift;
   const DamagePop({
     super.key,
     required this.amount,
     required this.onDone,
     this.blocked = false,
     this.onPlayer = false,
+    this.rise = defaultRise,
+    this.drift = defaultDrift,
   });
+
+  static const double defaultRise = 46;
+  static const double defaultDrift = 26;
+  static const Duration life = Duration(milliseconds: 650);
+
+  static TextStyle styleFor({required bool blocked}) => TextStyle(
+    fontFamily: 'Inter',
+    fontSize: blocked ? 14 : 26,
+    fontWeight: FontWeight.w800,
+  );
+
+  /// The arc at progress [f] (0..1): offset, scale and opacity. The ONE
+  /// definition of the motion — [build] paints it and [sweep] bounds it.
+  static ({Offset offset, double scale, double alpha}) motion(
+    double f, {
+    double rise = defaultRise,
+    double drift = defaultDrift,
+    bool onPlayer = false,
+  }) {
+    // Pop in (overshoot), arc up-and-away, fade in the last 40%.
+    final scale = f < 0.18
+        ? 0.4 +
+              (f / 0.18) *
+                  0.9 // 0.4 -> 1.3
+        // Clamp: at f == 1.0 the division can land a hair above 1.0
+        // (1.0000000000000002), which trips Curve.transform's assert on
+        // the pop's final frame — every damage pop, every debug frame.
+        : 1.3 -
+              Curves.easeOut.transform(((f - 0.18) / 0.82).clamp(0.0, 1.0)) *
+                  0.3;
+    final dir = onPlayer ? -1.0 : 1.0;
+    final e = Curves.easeOut.transform(f.clamp(0.0, 1.0));
+    final dx = dir * drift * e;
+    // Gravity keeps the original 18/46 ratio at any rise.
+    final dy = -rise * e + rise * (18 / 46) * f * f;
+    final alpha = f < 0.6 ? 1.0 : 1.0 - (f - 0.6) / 0.4;
+    return (offset: Offset(dx, dy), scale: scale, alpha: alpha.clamp(0, 1));
+  }
+
+  /// How far the painted number can stray outside its resting box of
+  /// [size] over its whole visible life (frames with opacity >= 0.05).
+  static EdgeInsets sweep(
+    Size size, {
+    double rise = defaultRise,
+    double drift = defaultDrift,
+    bool onPlayer = false,
+  }) => _sweep(
+    size,
+    (f) => motion(f, rise: rise, drift: drift, onPlayer: onPlayer),
+  );
 
   @override
   State<DamagePop> createState() => _DamagePopState();
@@ -310,7 +389,7 @@ class _DamagePopState extends State<DamagePop>
     with SingleTickerProviderStateMixin {
   late final AnimationController _t = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 650),
+    duration: DamagePop.life,
   )..forward().whenComplete(widget.onDone);
 
   @override
@@ -353,29 +432,18 @@ class _DamagePopState extends State<DamagePop>
             ),
           );
         }
-        // Pop in (overshoot), arc up-and-away, fade in the last 40%.
-        final scale = f < 0.18
-            ? 0.4 +
-                  (f / 0.18) *
-                      0.9 // 0.4 -> 1.3
-            // Clamp: at f == 1.0 the division can land a hair above 1.0
-            // (1.0000000000000002), which trips Curve.transform's assert on
-            // the pop's final frame — every damage pop, every debug frame.
-            : 1.3 -
-                  Curves.easeOut.transform(
-                        ((f - 0.18) / 0.82).clamp(0.0, 1.0),
-                      ) *
-                      0.3;
-        final dir = widget.onPlayer ? -1.0 : 1.0;
-        final dx = dir * 26 * Curves.easeOut.transform(f);
-        final dy = -46 * Curves.easeOut.transform(f) + 18 * f * f;
-        final alpha = f < 0.6 ? 1.0 : 1.0 - (f - 0.6) / 0.4;
+        final m = DamagePop.motion(
+          f,
+          rise: widget.rise,
+          drift: widget.drift,
+          onPlayer: widget.onPlayer,
+        );
         return Transform.translate(
-          offset: Offset(dx, dy),
+          offset: m.offset,
           child: Transform.scale(
-            scale: scale,
+            scale: m.scale,
             child: Opacity(
-              opacity: alpha.clamp(0.0, 1.0),
+              opacity: m.alpha,
               child: Text(
                 text,
                 style: TextStyle(
@@ -416,6 +484,12 @@ class TextPop extends StatefulWidget {
   // read it". Combat call-outs now pass ~2s; the float/fade curve is a
   // fraction of the duration, so longer pops drift and fade proportionally.
   final Duration duration;
+
+  /// Drift-up distance and pop-in overshoot. The stage passes smaller values
+  /// when a call-out's lane is short or narrow (experimental loop C0-03);
+  /// the defaults are the original motion.
+  final double rise;
+  final double overshoot;
   const TextPop({
     super.key,
     required this.text,
@@ -424,7 +498,68 @@ class TextPop extends StatefulWidget {
     this.fontSize = 18,
     this.duration = const Duration(milliseconds: 1000),
     this.icon,
+    this.rise = defaultRise,
+    this.overshoot = defaultOvershoot,
   });
+
+  static const double defaultRise = 34;
+  static const double defaultOvershoot = 1.25;
+
+  static TextStyle styleFor(double fontSize) => TextStyle(
+    fontFamily: 'Inter',
+    fontSize: fontSize,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 1.2,
+  );
+
+  /// The call-out at progress [f] (0..1). The ONE definition of the motion
+  /// — [build] paints it and [sweep] bounds it.
+  static ({Offset offset, double scale, double alpha}) motion(
+    double f, {
+    double rise = defaultRise,
+    double overshoot = defaultOvershoot,
+  }) {
+    // Pop in (overshoot), drift up, fade in the last 35%.
+    final scale = f < 0.16
+        ? 0.5 + (f / 0.16) * (overshoot - 0.5)
+        // Same float-overshoot clamp as DamagePop above.
+        : overshoot -
+              Curves.easeOut.transform(((f - 0.16) / 0.84).clamp(0.0, 1.0)) *
+                  (overshoot - 1.0);
+    final dy = -rise * Curves.easeOut.transform(f.clamp(0.0, 1.0));
+    final alpha = f < 0.65 ? 1.0 : 1.0 - (f - 0.65) / 0.35;
+    return (offset: Offset(0, dy), scale: scale, alpha: alpha.clamp(0, 1));
+  }
+
+  /// Natural (unscaled) size of a call-out: icon + gap + text.
+  static Size measure(
+    String text, {
+    double fontSize = 18,
+    bool hasIcon = false,
+    TextScaler textScaler = TextScaler.noScaling,
+  }) {
+    final tp = TextPainter(
+      text: TextSpan(text: text, style: styleFor(fontSize)),
+      textDirection: TextDirection.ltr,
+      textScaler: textScaler,
+      maxLines: 1,
+    )..layout();
+    final iconW = hasIcon ? fontSize + 2 + 4 : 0.0;
+    final size = Size(
+      tp.width + iconW,
+      hasIcon ? math.max(tp.height, fontSize + 2) : tp.height,
+    );
+    tp.dispose();
+    return size;
+  }
+
+  /// How far the painted call-out can stray outside its resting box of
+  /// [size] over its visible life (frames with opacity >= 0.05).
+  static EdgeInsets sweep(
+    Size size, {
+    double rise = defaultRise,
+    double overshoot = defaultOvershoot,
+  }) => _sweep(size, (f) => motion(f, rise: rise, overshoot: overshoot));
 
   @override
   State<TextPop> createState() => _TextPopState();
@@ -448,25 +583,17 @@ class _TextPopState extends State<TextPop> with SingleTickerProviderStateMixin {
       animation: _t,
       builder: (context, _) {
         final f = _t.value;
-        // Pop in (overshoot), drift up, fade in the last 35%.
-        final scale = f < 0.16
-            ? 0.5 +
-                  (f / 0.16) *
-                      0.75 // 0.5 -> 1.25
-            // Same float-overshoot clamp as DamagePop above.
-            : 1.25 -
-                  Curves.easeOut.transform(
-                        ((f - 0.16) / 0.84).clamp(0.0, 1.0),
-                      ) *
-                      0.25;
-        final dy = -34 * Curves.easeOut.transform(f);
-        final alpha = f < 0.65 ? 1.0 : 1.0 - (f - 0.65) / 0.35;
+        final m = TextPop.motion(
+          f,
+          rise: widget.rise,
+          overshoot: widget.overshoot,
+        );
         return Transform.translate(
-          offset: Offset(0, dy),
+          offset: m.offset,
           child: Transform.scale(
-            scale: scale,
+            scale: m.scale,
             child: Opacity(
-              opacity: alpha.clamp(0.0, 1.0),
+              opacity: m.alpha,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

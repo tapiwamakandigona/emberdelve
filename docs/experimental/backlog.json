@@ -1,0 +1,1210 @@
+{
+ "updated": "2026-09-25T11:39:20+00:00",
+ "scores_history": [
+  {
+   "round": 0,
+   "build": "exp.1",
+   "at": "2026-09-24T17:43:15+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 4,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 1,
+   "build": "exp.2",
+   "at": "2026-09-24T18:47:56+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 2,
+   "build": "exp.3",
+   "at": "2026-09-24T20:42:10+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 3,
+   "build": "exp.4",
+   "at": "2026-09-25T00:38:09+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  },
+  {
+   "round": 4,
+   "build": "exp.5",
+   "at": "2026-09-25T04:30:35+00:00",
+   "scores": {
+    "art": 5,
+    "animation": 5,
+    "audio": 5,
+    "gameplay": 7,
+    "loop": 6,
+    "menus_layout": 6,
+    "onboarding": 5,
+    "accessibility": 6,
+    "stability": 7,
+    "overall": 5
+   }
+  }
+ ],
+ "issues": [
+  {
+   "id": "C0-01",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Foes strike from where they stand — no approach, no contact travel",
+   "observed": "All four C_anim_*_enemy-turn strips: foe x-position at frame 028 equals 020; '-9' already on screen at 030; wind-up is a brightness/heat pulse only.",
+   "why_it_matters": "Without travel there is no anticipation or weight; every attack reads as a UI event, not a hit.",
+   "fix_direction": "120–160 ms dash using the existing 'run' row (sprite_meta.json) to a strike mark ~40 dp from the hero, 1 contact frame with 2-frame squash, 200 ms ease-back; family variants (wisp dart, brute hop, maw low lunge); reduced-motion keeps a 2-frame lean.",
+   "acceptance": "Enemy-turn strips for 4 foes show foe centroid ≥90 px @2x closer to hero on the contact frame; reduced-motion strip shows no dash.",
+   "effort": "M",
+   "status": "fixed_pending_review",
+   "round_opened": 0,
+   "critic_rank": 1,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T11:39:20+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.6",
+     "note": "exp.6: foe dash to a measured strike mark + white/red hit reaction; test/enemy_dash_test.dart red on old code, green on new"
+    }
+   ],
+   "fixed_in": "exp.6"
+  },
+  {
+   "id": "C0-02",
+   "dimension": "onboarding",
+   "severity": "P1",
+   "title": "Tour completion is instantly followed by the 26-word ROLL, THEN SPEND card that repeats the tour",
+   "observed": "B_fresh_walk 320/360/412: '1 of 5' (04), '2 of 5' (05_tour_beat_pick), then plates 05_tour_beat_spend_null and 05_tour_beat_intent_null show no overlay/counter; a 'ROLL, THEN SPEND' ContextTip (30 words) appears instead. Harness taps every GestureDetector until active != tour_pick and SKIP is a GestureDetector.",
+   "why_it_matters": "A 7–9-year-old loses the hand-holding exactly at ATTACK/BLOCK and gets a reading-level-8 card instead.",
+   "fix_direction": "When the guided tour completes or is skipped, mark the tips it already taught (roll_spend; intent_fair is taught by the intent beat) as seen so no card repeats it; keep the manual help deck intact.",
+   "acceptance": "Fresh-walk plate right after beat 5 shows the live board with no tip card at 320/360/412; unit test: tour completion and skip both leave roll_spend seen and TipDirector.active null.",
+   "effort": "S",
+   "status": "closed",
+   "round_opened": 0,
+   "critic_rank": 2,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "event": "maker:rescoped",
+     "from": {
+      "title": "Guided tour disappears after beat 2; 30-word tip cards take over (verify harness vs product)",
+      "severity": "P1",
+      "effort": "M"
+     },
+     "note": "Critic's 'tour dies after beat 2' was the harness tapping SKIP (VERIFIED by diagnostic run); residual real defect seen in 05_tour_after_done."
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T17:43:15+00:00",
+     "event": "maker:rescoped",
+     "from": {
+      "title": "Guided tour disappears after beat 2; 30-word tip cards take over (verify harness vs product)",
+      "severity": "P1",
+      "effort": "M"
+     },
+     "note": "Critic's 'tour dies after beat 2' was the harness tapping SKIP (VERIFIED by diagnostic run); residual real defect seen in 05_tour_after_done."
+    },
+    {
+     "at": "2026-09-24T17:48:27+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.2",
+     "note": "Completed tour marks roll_spend + intent_fair learned (TipDirector.markTaught); skip keeps the card as fallback. Red->green widget test; plates 05_tour_after_done at 320/360/412 show the live board with no card."
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.2",
+   "round_closed": 1
+  },
+  {
+   "id": "C0-03",
+   "dimension": "menus_layout",
+   "severity": "P1",
+   "title": "(rescoped) Tray-lane call-outs still stack on each other and on the player HP row",
+   "observed": "026_run2_keystone: 'FREE REROLL NEXT TURN' overlaps the foe ring, the burn chip and the hero's feet; 'STRAIGHT!' sits on the HP bar next to '21 / 30'. C_*_kill 044-056 (all 4 foes): the 'ATTACK +5 · BLOCK +5' chip, FREE REROLL and STRAIGHT! overlap each other and the HP numerals, and FREE REROLL ghosts over the dying foe at 054-056.",
+   "why_it_matters": "The combo and reward reads that make a turn feel good are illegible exactly when they fire.",
+   "fix_direction": "Give the tray lane the same ReadoutLanes slot plan as the stage: stack call-outs vertically in reserved slots above the HP label (or queue them 250 ms apart), never over sprites or the HP row. Include the assignment-preview chip in the plan.",
+   "acceptance": "kill_readout-style rect test extended to tray-lane call-outs for 3 foes at 320x568/360x800/412x915: zero overlapping text rects, including against the HP label and the sprite bbox. Plate 026 equivalent shows both call-outs fully legible.",
+   "effort": "S",
+   "status": "reopened",
+   "round_opened": 0,
+   "critic_rank": 2,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T18:26:48+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.2",
+     "note": "ReadoutLanes plan: planned number zone, call-out slots, badge fades at 0 HP, ghost drains fast at 0, overlay children keyed (fixed number/slash restarts). kill_readout_test red->green at 320x568/320x640/360x800/412x915."
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "not_confirmed_by_critic"
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "relisted"
+    }
+   ],
+   "fixed_in": "exp.2",
+   "rank_round": 1
+  },
+  {
+   "id": "C0-04",
+   "dimension": "art",
+   "severity": "P1",
+   "title": "Enemy sprites are 16-px outlined blobs beside a 32×60 outline-less hero",
+   "observed": "C_*_idle strips and assets/images/enemies/*.png (slag_brute 192×138, flue_crawler 192×96, source_base imp/tiny_zombie, scale 3): brute = brown rectangle with red band, crawler = beige ∩, wisp = red square; 2-px black outlines; hero (kindler.png 64×120) has none and is ~1.7× taller than a 'Brute'.",
+   "why_it_matters": "Silhouettes are unreadable and the two styles never look like one game.",
+   "fix_direction": "Match foe pixel scale to the hero, thin outlines to 1-px palette rim-light, replace the three floor-1 foes with 32-px CC0 sprites (credited) or originals.",
+   "acceptance": "360 plate where 1 foe px = 1 hero px; three first foes identifiable from silhouette; CREDITS updated.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 4,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-05",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Player hit reaction is a 300 ms frozen white silhouette with a static slash decal",
+   "observed": "C_*_enemy-turn 032–038: hero fully white for 4 sampled frames (~280–320 ms), pose identical, red slash lines unchanged, no recoil.",
+   "why_it_matters": "Reads as a render glitch rather than pain; no weight transfer.",
+   "fix_direction": "White 60–80 ms → red tint 120 ms; 6–8 dp knockback + 1-frame squash; slash decal fades by 120 ms; shake scaled by damage/HP.",
+   "acceptance": "Strip shows ≤2 white sampled frames and measurable x-offset on 032/034.",
+   "effort": "S",
+   "status": "fixed_pending_review",
+   "round_opened": 0,
+   "critic_rank": 5,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T11:39:20+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.6",
+     "note": "exp.6: foe dash to a measured strike mark + white/red hit reaction; test/enemy_dash_test.dart red on old code, green on new"
+    }
+   ],
+   "fixed_in": "exp.6"
+  },
+  {
+   "id": "C0-06",
+   "dimension": "onboarding",
+   "severity": "P1",
+   "title": "First five minutes are written for adults (dice notation, 50–60-word cards)",
+   "observed": "B_fresh_walk 02: 'd6 · +1 block', 'd4 · min 2 · block only · +10 gold', 'SKIP — DELVE UNAIDED', 'Rumor has it…'; 03/006 primer 58 words incl. 'ledger'; 024 'THE SMITH IS IN' 62 words.",
+   "why_it_matters": "A slow-reading child cannot make the very first decision or understand the map.",
+   "fix_direction": "First-run copy variant: boon cards = icon + ≤5 words, primer ≤12 words with a picture, rest tip ≤12 words; keep the choice.",
+   "acceptance": "All first-run card bodies ≤12 words (string test); FK grade ≤3 for those strings; plates at 320.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 6,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-07",
+   "dimension": "menus_layout",
+   "severity": "P1",
+   "title": "Title screen is a two-screen scroll with five stacked CTAs",
+   "observed": "412 fresh 01: Delve, Daily, Weekly, Choose a delver, Provings + six captions; 320 fresh 01: Daily cut at fold; 'six floors — a / shorter sit' orphan wrap at 320 and 412.",
+   "why_it_matters": "Children and first-timers must find one button; five plus lore is a wall.",
+   "fix_direction": "One screen at 320×640: logo, hero+fire, difficulty chips, Delve; Daily/Weekly/Provings as one icon-chip row; lore to help sheet; caption '6 floors'.",
+   "acceptance": "Title plates at 320×640/360×800/412×915 with no scroll, Delve above fold, no wrapped caption.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 7,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-08",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "Tip cards are translucent — body text bleeds through",
+   "observed": "024_run2_rest: italic quote and 'MOVE ON — FULLY RESTED' legible through 'THE SMITH IS IN' card.",
+   "why_it_matters": "Readability and perceived quality.",
+   "fix_direction": "Card surface alpha 1.0 (or 0.96 over blurred scrim) for ContextTips and the map primer.",
+   "acceptance": "Rest and map primer plates with no legible text behind the card.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 8,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-09",
+   "dimension": "audio",
+   "severity": "P1",
+   "title": "One sample per event, no foe voices, no telegraph cue, exact kill reuses ember_gain",
+   "observed": "audio_service.dart: enemy_hit/player_hit/whoosh/block single samples shared by all foes and both sides; no SFX during wind-up frames 020–028; boss_death −14.2 LUFS vs enemy_death −13.3 (audio_report.md). Judged from code/report only.",
+   "why_it_matters": "Every fight sounds identical; the biggest moments have no sonic signature.",
+   "fix_direction": "CC0 only: 3 round-robin variants each for enemy_hit/player_hit/whoosh with ±3 st pitch jitter; 300 ms wind-up riser at contact −250 ms; distinct Clean Cut chime; per-family death for 4 families; boss_death +3 dB.",
+   "acceptance": "audio_report lists new files ≤ −1 dBTP; sfx_headroom.py passes; choreography log shows riser 250 ms before contact.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 9,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-10",
+   "dimension": "art",
+   "severity": "P2",
+   "title": "Stage backdrop is a wireframe perspective grid on empty dark",
+   "observed": "004/008/016 full-res: thin orange grid lines, flat mountain silhouette, fighters on ellipses, ~60 % of stage empty.",
+   "why_it_matters": "Placeholder look undermines the otherwise cohesive UI.",
+   "fix_direction": "Two-layer ember floor (CC0 texture) + haze bands, sprite-sized contact shadows, 2–3 dp parallax on lunges; boss variant.",
+   "acceptance": "Normal/elite/boss stage plates with no straight grid lines and a visible ground plane.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 10,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-11",
+   "dimension": "loop",
+   "severity": "P2",
+   "title": "First meta unlock (120 embers) is ~10 Easy wins away (verify)",
+   "observed": "004_character: 'NEXT UNLOCK — THE WARDEN 0/120'; banks observed: 3, 9, 4, 1 on losses (011/012/030/031), 12 on fresh-walk Easy win (B 06), 107 on run-1 win (021).",
+   "why_it_matters": "A child sees nothing new for many sessions; no reason to return.",
+   "fix_direction": "Meta-only: first unlock ≤30 embers or guaranteed unlock after first completed run; no sim change.",
+   "acceptance": "Ledger plate after one Easy win shows a new unlock; meta unit test on threshold.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 11,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-12",
+   "dimension": "gameplay",
+   "severity": "P2",
+   "title": "'OVERKILL +3 → NEXT FOE' toast fires on the final boss kill",
+   "observed": "021_summary_run_won: Hearthless King 0/78 (run 1's announced bottom boss) with '→ NEXT FOE'.",
+   "why_it_matters": "Wrong information at the run's climax.",
+   "fix_direction": "Suppress carry-over toast when encounter_won ends the run; show a 'RUN WON' beat.",
+   "acceptance": "Boss-kill plate without the toast; unit test on toast selection.",
+   "effort": "S",
+   "status": "closed",
+   "round_opened": 0,
+   "critic_rank": 12,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "event": "maker:open",
+     "note": "Folded into C1-01 (critic round 1: ship with the boss-kill fix; C1-01 acceptance includes the toast-selection unit test)."
+    },
+    {
+     "at": "2026-09-24T20:06:11+00:00",
+     "event": "maker:in_progress",
+     "note": "folded into C1-01"
+    },
+    {
+     "at": "2026-09-24T20:16:14+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.3",
+     "note": "fixed with C1-01: overkillCallout() drops NEXT FOE on run-ending kills"
+    },
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.3",
+   "round_closed": 2
+  },
+  {
+   "id": "C0-13",
+   "dimension": "animation",
+   "severity": "P2",
+   "title": "(rescoped) Lunge exists; slash trail is still a foe-side decal living ~280 ms",
+   "observed": "C_*_kill 052–056: hero displaced forward (lunge present). The arc trail is drawn around the foe, far from the blade tip, and is still visible on 058 and 060. It is gone on 062.",
+   "why_it_matters": "The trail reads as a sticker on the foe rather than the blade's path, which softens the contact.",
+   "fix_direction": "Emit the trail from the blade tip along the swing (3–4 fading samples), total life ≤120 ms. Remove the foe-side arc.",
+   "acceptance": "Kill strips for 4 foes: trail pixels overlap the blade on 052–054 and are fully gone by 058.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 7,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "relisted"
+    }
+   ],
+   "rank_round": 2
+  },
+  {
+   "id": "C0-14",
+   "dimension": "animation",
+   "severity": "P3",
+   "title": "Brute and crawler idles are near-static",
+   "observed": "C_anim_slag_brute_idle / flue_crawler_idle 000–018: ≤1 px change; wisp bobs, maw pulses.",
+   "why_it_matters": "Living idles were claimed; two of four foes look paused.",
+   "fix_direction": "2-frame breath scale (1.00→1.04 y) at 1.2 s plus a 3–4 s random micro-action.",
+   "acceptance": "Idle strip shows ≥3 px bbox change over 18 frames for all 4 foes.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 14,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C0-15",
+   "dimension": "accessibility",
+   "severity": "P2",
+   "title": "Micro text ≈10–11 sp in dim grey across map footer, captions and die labels",
+   "observed": "006 footer 'Floor 1 of 9 · Tap a glowing node…'; 000 'recommended for your first delve'; 'd6' die labels; shop sublines.",
+   "why_it_matters": "Slow readers and low-vision players cannot use the guidance that exists.",
+   "fix_direction": "Floor micro style to 12 sp, textDim ≥4.5:1 on bg, map footer as one 14 sp line.",
+   "acceptance": "Contrast audit table + plates at 320.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 0,
+   "critic_rank": 15,
+   "history": [
+    {
+     "at": "2026-09-24T17:42:45+00:00",
+     "round": 0,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T17:42:58+00:00",
+     "round": 0,
+     "event": "relisted"
+    }
+   ]
+  },
+  {
+   "id": "C1-01",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "(rescoped) Boss-kill fix is unverified: no boss strip, no reduced-motion strip, tray dice still lit",
+   "observed": "Pass: 020/039 luma>230 = 2.0%/1.8%, no NEXT FOE, buttons dimmed on 021/040. The pack has no 40 ms boss-kill strip or reduced-motion strip (the C_*_kill strips are normal foes). On 020/039 the boss is a single flat white silhouette, so 'dissolve on ≥4 frames' is unproven. The tray dice stay fully lit (021/040).",
+   "why_it_matters": "The acceptance was written for the boss; the normal-foe dissolve does not prove the boss path, which has a different sprite and size.",
+   "fix_direction": "Add a C_anim_boss_kill strip (both final bosses) and a reduced-motion variant to the evidence pack. Dim the tray dice with the buttons (overlaps C2-02; take whichever ships first).",
+   "acceptance": "40 ms boss strip at 360x800: no frame with >50% of pixels at luma>230, boss gold dissolve on ≥4 sampled frames. Reduced-motion strip: 0 such frames. +1200 plate: all tray dice dimmed.",
+   "effort": "S",
+   "status": "closed",
+   "round_opened": 1,
+   "critic_rank": 3,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-24T20:06:11+00:00",
+     "event": "maker:in_progress"
+    },
+    {
+     "at": "2026-09-24T20:16:14+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.3",
+     "note": "stage-scoped radial bloom <=0.45 alpha, reduced-motion tint; tray+End turn inert on encounter end; test/boss_kill_moment_test.dart red->green"
+    },
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "not_confirmed_by_critic"
+    },
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
+    },
+    {
+     "at": "2026-09-25T04:15:06+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.5",
+     "note": "commit ddeb943; see commit message for VERIFIED evidence"
+    },
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.5",
+   "round_closed": 4
+  },
+  {
+   "id": "C1-02",
+   "dimension": "accessibility",
+   "severity": "P1",
+   "title": "On short stages call-outs are shrunk to ~5 dp and drawn over the hero sprite",
+   "observed": "kill_readout exact_320x568_t720/t1200: '+5 EMBERS — EXACT!' is about 9 px @2x cap height (~5 dp) and sits across the hero's helmet and sword. overkill_320x568_t960: 'OVERKILL +1 -> NEXT FOE' has the same size and position. readout_lanes.dart:116-133 scales call-outs down to fit the band with no minimum.",
+   "why_it_matters": "320x568-class phones get unreadable reward text. The rect test passes only because text-over-sprite is not counted and shrinking is allowed.",
+   "fix_direction": "Set a floor on call-out scale so text never goes below 12 sp. When the band cannot fit at that size, move the call-out to the top-bar/tray slot. Add the hero and foe sprite bboxes to the overlap test.",
+   "acceptance": "At 320x568 every call-out renders >=12 sp and its rect does not intersect the hero or foe sprite bbox (test + t720/t1200 plates).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 3,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-03",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Intent tour beat: typo, adult wording, and the two numbers are never explained",
+   "observed": "05_tour_beat_intent_tour_intent at 320/360/412: title 'ITS NEXT MOVE' (missing apostrophe); body 'The badge always resolves exactly as shown.' The highlighted badge shows red 9 and blue 7, but nothing says the foe will hit for 9 and guard 7.",
+   "why_it_matters": "'Resolves' is well above a 7-9-year-old's reading level. The one fairness idea the game depends on (the foe does exactly what the badge shows) is not actually taught.",
+   "fix_direction": "Copy only (no layout change): title \"IT'S NEXT MOVE\"; body \"It will hit you for 9 and guard 7.\" with inline target/shield icons, filled from the live intent values. Keep it <=12 words.",
+   "acceptance": "String test: intent beat body <=12 words, FK grade <=3, apostrophe present, numbers match the live intent. Plates at 320/360/412.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 4,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-04",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "'Tap anywhere to continue' is printed over the dimmed End turn label",
+   "observed": "05_tour_beat_intent_tour_intent and 05_tour_beat_next_tour_reroll at 320/360/412: the hint text overlaps the scrimmed 'END TURN' glyphs (clear in the 320 full-res crop).",
+   "why_it_matters": "Text on text on the one instruction a non-reader needs. It also looks broken.",
+   "fix_direction": "Put the hint inside the tip card (last line), or replace it with a pulsing tap-hand icon in the card corner. Never place it over another control.",
+   "acceptance": "Tour plates for all 5 beats at 320/360/412: the hint rect does not intersect any button label rect (rect test).",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 5,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-05",
+   "dimension": "art",
+   "severity": "P2",
+   "title": "Burn status chip stays on the dead foe and the blood pool is painted over it",
+   "observed": "040_summary_run_won: the '🔥 11' chip at the foe's feet has its digits half-covered by a dark red pool decal. 021: the '🔥 9' chip is fully smeared. 026: '🔥 1' sits on the dissolving foe. stage.dart:386-404 fades the intent badge at 0 HP, but the burn chip has no such rule.",
+   "why_it_matters": "Stale UI on a corpse and a z-order bug. It reads as dirt on the final-boss victory frames.",
+   "fix_direction": "Drive the burn chip from the same `dead` flag as the intent badge (140 ms fade, 0 under reduce), and make sure gore decals paint below status chips.",
+   "acceptance": "Kill strips for all 4 foes with burn >0: the chip is gone by the frame the badge is gone. 040-equivalent plate has no chip and no decal over any text.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 6,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-06",
+   "dimension": "animation",
+   "severity": "P2",
+   "title": "Player damage number now lands on the hero's face instead of above it",
+   "observed": "C_*_enemy-turn 032-036 (all 4 foes): '-9' sits over the hero's head and white silhouette. In round-00 it rose clear above the head (round-00 slag_brute enemy-turn 032-038).",
+   "why_it_matters": "The hit number collides with the hit reaction, so both read worse. Side effect of the C0-03 re-layout.",
+   "fix_direction": "Plan the player-side number with the same ReadoutLanes zone: above the hero bbox with >=6 dp clearance, not over the sprite.",
+   "acceptance": "Enemy-turn strips: the '-N' rect does not intersect the hero sprite bbox on any frame 030-042 at 320x568/360x800/412x915.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 7,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-07",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Spend beat shows unexplained 'ATTACK +6 · BLOCK +6' and 'PAIR +2' chips over the hero",
+   "observed": "05_tour_beat_spend_tour_spend at 320/360/412: under the scrim, the assignment-preview chip and a gold 'PAIR +2' combo label float across the hero sprite and the '30 / 30' HP numerals, beside a card that says only 'ATTACK deals its value. BLOCK absorbs hits.'",
+   "why_it_matters": "Two new numbers and a combo word the child was never taught appear in the step meant to teach one idea.",
+   "fix_direction": "Hide the combo label and the preview chip while any tour beat is active, or make the preview chip part of the spotlight and word the card around it. Simplify the body to e.g. 'ATTACK hurts it. BLOCK keeps you safe.'",
+   "acceptance": "Spend-beat plates at 320/360/412 with no text outside the card and spotlight except the dimmed board. Body <=12 words, FK <=3.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 8,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C1-08",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "The tour never teaches End turn or that the foe answers",
+   "observed": "Beats are roll, pick, spend, intent, reroll (05_tour_beat_* plates). In 05_tour_after_done, End turn and the 'Risky reroll · new face −1' bar are equally bright, and no step says that ending the turn lets the foe act.",
+   "why_it_matters": "A child who has spent their dice has no cue what to do next, and the first foe hit comes as a surprise, which undercuts the intent lesson.",
+   "fix_direction": "After beat 5, pulse End turn once (a glow ring, no card), or add a <=6-word beat 'Done? End turn. Then it moves.' anchored to End turn. Make the reroll bar visually secondary to End turn after the tour.",
+   "acceptance": "Fresh-walk plates at 320/360/412 immediately after the tour show End turn highlighted as the single primary action. Tour test covers the new cue. Harness shows no stuck state.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 1,
+   "critic_rank": 9,
+   "rank_round": 1,
+   "history": [
+    {
+     "at": "2026-09-24T18:47:56+00:00",
+     "round": 1,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C2-01",
+   "dimension": "menus_layout",
+   "severity": "P1",
+   "title": "Floating toast covers the screen's primary button",
+   "observed": "011/012_run_lost: '\"Ashes, Gently\" — first hearing' fully hides the DELVE AGAIN button (only its orange top edge shows). 029_run2_shop: 'Nothing changed' covers LEAVE SHOP. 025_run2_player_turn: 'Forged into a stronger die' covers ROLL. 009/036_reward: 'Twin Bellows set' sits over the bottom button. The toast is a default floating SnackBar (widgets.dart ~l.1463, 1400 ms) with a heavy black frame.",
+   "why_it_matters": "For 1.4 s the one button the player needs is hidden or intercepts the tap, at the moments of highest intent (retry after a death, leave shop, roll). A child taps the toast and nothing happens.",
+   "fix_direction": "Anchor the toast to the top, under the HUD bar, or give it a bottom margin equal to the bottom CTA height + 16 dp. Make it IgnorePointer so taps pass through. Restyle it as an in-theme pill (no black frame).",
+   "acceptance": "Widget test over every play_session screen: the toast rect does not intersect any button rect at 320x568/360x800/412x915. Re-shot 011, 025 and 029 show the CTA fully visible with the toast present.",
+   "effort": "S",
+   "status": "closed",
+   "round_opened": 2,
+   "critic_rank": 1,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-25T00:13:08+00:00",
+     "event": "maker:in_progress"
+    },
+    {
+     "at": "2026-09-25T00:13:08+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.4",
+     "note": "Top-anchored tap-through pill; test/toast_clear_of_buttons_test.dart red->green at 3 sizes"
+    },
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.4",
+   "round_closed": 3
+  },
+  {
+   "id": "C2-02",
+   "dimension": "animation",
+   "severity": "P1",
+   "title": "Final-boss kill has no victory beat — the board just goes still",
+   "observed": "021 and 040 (+1200 ms after run_won): boss gone, hero in the same idle pose, dice tray at full brightness with gold 'MAX' rings and purple special rings still lit. Only the four buttons are dimmed. No word, banner or pose says the run is won. 040 still shows the stale '+5 EMBERS — EXACT!'.",
+   "why_it_matters": "The climax of a 15–25 minute run lands as a paused fight. Slay the Spire and Balatro spend 1–2 s celebrating. Here the payoff is deferred to a stats screen.",
+   "fix_direction": "On encounter end with the run won: fade the whole tray (dice too) to about 35% over 200 ms. Show a stage-scoped banner (e.g. 'THE KING FALLS', ≥22 sp, ember glow, 250 ms scale-in with ease-out-back). Hero plays a 300 ms raise-sword pose (2–3 frames or a transform on the existing sprite) and ember particles rise from the boss spot. Sync the victory sting to the banner. Reduced motion: banner fades in, no scale, no particles.",
+   "acceptance": "Boss-kill plates at +600 and +1200 ms at 320/360/412 show the banner fully inside the stage. Every tray die has mean luma ≤50% of its live value. The reduced-motion plate shows the banner with no particles. A widget test asserts the tray is inert and dimmed on run_won.",
+   "effort": "M",
+   "status": "closed",
+   "round_opened": 2,
+   "critic_rank": 2,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
+    },
+    {
+     "at": "2026-09-25T04:15:06+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.5",
+     "note": "commit ddeb943; see commit message for VERIFIED evidence"
+    },
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.5",
+   "round_closed": 4
+  },
+  {
+   "id": "C2-03",
+   "dimension": "gameplay",
+   "severity": "P2",
+   "title": "Enemy HP reads 0 before the blow lands",
+   "observed": "exact_320x568_t360 (and the same at 320x640/360x800/412x915, both exact and overkill): the enemy panel already reads '0 / 19' while the Flue Crawler is standing with its intent badge up. The '-5' is a ~5 dp spawn near the hero's feet. The hit and dissolve arrive at t520–t720.",
+   "why_it_matters": "The number spoils the kill before the contact frame, so the strike reads as a replay of something already decided and loses its punch.",
+   "fix_direction": "Hold the displayed HP numeral at its pre-hit value until the contact frame, then tick it down with the bar-drain. Spawn the damage number at the foe on contact, not mid-stage. Presentation only; sim untouched.",
+   "acceptance": "t360 plates show the pre-hit HP ('5 / 19'); t520 shows 0. Widget test: the displayed HP equals the sim HP only at/after the contact timestamp. Determinism hashes unchanged.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 2,
+   "critic_rank": 4,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C2-04",
+   "dimension": "accessibility",
+   "severity": "P2",
+   "title": "Yellow damage number drawn over the white hit-flash silhouette",
+   "observed": "020: '-6' yellow sits on the boss's pure-white flash body. 039: '-4' the same, inside the exact ring. C_slag_brute_kill / C_molten_maw_kill 054–056: '-5' overlaps the white foe. Yellow on white is about 1.5:1.",
+   "why_it_matters": "The damage readout, the most important number of the hit, is least legible on the exact frame it appears.",
+   "fix_direction": "Give damage numerals a 2 dp dark outline or shadow (#1a1016) and anchor them above the sprite bbox top + 8 dp, the same lane as the kill readout.",
+   "acceptance": "Rect test on the kill strips for 4 foes + boss: the damage-number rect does not intersect the sprite bbox on any frame. A contrast sample of the number's fill vs its local background is ≥3:1 on 020/039 equivalents.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 2,
+   "critic_rank": 5,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C2-05",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Song-credit toast fires on a brand-new player's first defeat screen",
+   "observed": "011_run0_run_lost (the profile's first delve): '\"Ashes, Gently\" — first hearing' pops over the summary. controller.dart ~l.407–420 intends 'The Quiet First Delve' (no credits on run 1), but the defeat track is first heard after runsPlayed has already become 1.",
+   "why_it_matters": "The first failure a child sees gets an unexplained adult jargon toast over the retry button. It is noise at the moment encouragement matters most.",
+   "fix_direction": "Gate credits on a 'first delve finished and summary dismissed' flag (or runsPlayed > 1 when phase is run end), not on runsPlayed > 0.",
+   "acceptance": "Unit test: a fresh profile losing or winning run 1 produces no credit flash. Fresh-profile defeat plate shows no toast. The credit appears on the run-2 map.",
+   "effort": "S",
+   "status": "closed",
+   "round_opened": 2,
+   "critic_rank": 6,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
+    },
+    {
+     "at": "2026-09-25T04:15:06+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.5",
+     "note": "commit ddeb943; see commit message for VERIFIED evidence"
+    },
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "closed_by_critic"
+    }
+   ],
+   "fixed_in": "exp.5",
+   "round_closed": 4
+  },
+  {
+   "id": "C2-06",
+   "dimension": "art",
+   "severity": "P2",
+   "title": "Tall phones: stage is mostly empty sky; actors crammed into the bottom band on a hard-edged black slab",
+   "observed": "exact_412x915_t720: the stage spans ~y300–940 @2x, but hero and foe occupy only ~y740–930. The upper ~60% is empty mountains, with the call-out floating far above. A black rectangle with hard vertical edges sits behind both actors (also visible left of the hero on 020/021).",
+   "why_it_matters": "On the most common modern aspect the fight is small and bottom-heavy. The hard slab edge reads as an unfinished layer.",
+   "fix_direction": "Scale the actor size from stage height (clamped), or cap the stage height and give the space to the tray. Replace the black slab with a feathered ground plane (can ship with C0-10).",
+   "acceptance": "412x915 and 360x800 combat plates: actor bbox height ≥28% of stage height, no visible straight slab edge. 320x568 is unchanged or better.",
+   "effort": "M",
+   "status": "open",
+   "round_opened": 2,
+   "critic_rank": 8,
+   "rank_round": 2,
+   "history": [
+    {
+     "at": "2026-09-24T20:42:10+00:00",
+     "round": 2,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-01",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "Top toast pill sits on the screen title / foe name and wraps to two lines at 360",
+   "observed": "360x800 @2x: 011/012 '\"Ashes, Gently\" — first hearing' wraps to 2 lines and hides 'DARK CLAIMS' of the title. 009/036 'Twin Bellows set' and 017/027 'Ashen Edge set' cover the middle of 'CHOOSE A DIE' and the subtitle. 029 'Nothing changed' covers 'ASHMONGER'. 025 'Forged into a stronger die' hides the foe name, leaving only 'FLUE' visible at fight start. Cause (flash_toast.dart): Positioned(top: safeTop + 72, left/right: 64) is the title band on every screen, and the 64 dp gutters leave 232 dp at 360 and 192 dp at 320.",
+   "why_it_matters": "For 1.4 s the player loses the one line that says where they are or who they are fighting, at the start of every fight after a forge and on every reward/shop screen. A two-line pill doubles the covered area.",
+   "fix_direction": "Give the toast a lane that holds no text. Run screens: anchor it just under the header block, i.e. the bottom of the title/subtitle or enemy panel + 8 dp, via a per-screen GlobalKey anchor the host reads. Fall back to the current top value when there is no anchor. In combat that lands in the empty sky band above the actors. Cut the gutters to 24 dp (the '?' corner button is already cleared by sitting below the panel). Set maxLines: 1 and shorten any string that does not fit in one line at 320.",
+   "acceptance": "Extend toast_clear_of_buttons_test: at 320x568/360x800/412x915 on all 10 screen kinds, the toast rect intersects no Text rect of the screen title, subtitle, enemy name or enemy HP, and no button rect. Every flash string renders on one line at 320 (string/layout test). Re-shot 011, 025, 029 and 036 show the full title/foe name plus the toast.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 1,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-02",
+   "dimension": "onboarding",
+   "severity": "P2",
+   "title": "Toast reports the previous screen's action and holds 1.4 s regardless of length",
+   "observed": "009/036: 'Twin Bellows set' confirms a keystone picked on the previous screen (008/035) but appears over the unrelated reward screen. 029: 'Nothing changed' (the outcome of the 028 event choice 'Admire and move on') appears over the shop, so it reads as if the shop did nothing. kFlashToastHold = 1400 ms fixed. controller.dart _eventSummary joins several parts ('−15 gold', '+14 embers', 'Relic: …', 'Gained …') and the pill clips at maxLines 2 with an ellipsis. Clipping at 320 is inferred from the code; verify with a plate.",
+   "why_it_matters": "A 7–9-year-old reads about 1–1.5 words/s. A 5-word message needs 3–5 s, and one that names a screen they have already left is confusing ('nothing changed' in a shop?). Event outcomes are the only concrete feedback for event choices (F5 rule), so clipping them loses information.",
+   "fix_direction": "(a) Hold = clamp(1200 + 350 ms × words, 1600, 4000). Under reduced motion hold the upper value. (b) Show event outcomes and keystone confirmations on the screen where the choice was made: delay the phase transition until the toast has been visible ≥1.2 s, or show the outcome inline on the event card before 'Continue'. At minimum, drop keystone_taken/'Nothing changed' toasts once the screen has changed. (c) Replace the ellipsis with shorter summary parts ('+14 embers, −15 gold').",
+   "acceptance": "Unit test: hold duration for 'Relic acquired' (2 words) ≥1.6 s and for a 6-word summary ≥3.3 s. Harness plates: the keystone confirmation and 'Nothing changed' appear on the keystone/event screen, not on 009/029/036 equivalents. A string test renders every _eventSummary combination from the event table without ellipsis at 320.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 2,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-03",
+   "dimension": "gameplay",
+   "severity": "P2",
+   "title": "Invalid-move feedback now appears ~550 dp away from the tapped die/button",
+   "observed": "Inferred from flash_toast.dart plus the 025 geometry: refusals ('Assigned dice can't be rerolled', 'Pick at least one die to reroll', 'Roll first', 'Risky reroll already spent this turn') render at safeTop + 72 dp over the enemy panel. The tapped die or button sits at y≈1260–1540 @2x on 025, about 550 dp from the pill. No plate in the pack shows an invalid tap; verify.",
+   "why_it_matters": "Children look at their finger. A refusal they don't see reads as 'the game is broken' and leads to repeated tapping. Refusals are the most important toasts to notice.",
+   "fix_direction": "For invalid_command in combat, add a local cue: a 160 ms horizontal shake (±4 dp, 3 cycles; no shake under reduced motion, a 2-pulse red outline instead) on the offending die/button, plus the reason as a small label directly above the tray, IgnorePointer and not over any button. Keep the top pill for non-error toasts only. Presentation only; sim untouched.",
+   "acceptance": "Harness: a scripted invalid tap (reroll an assigned die) at 320x568/360x800/412x915 produces plates at +80 and +400 ms showing the cue within 48 dp of the tapped die, with no button rect intersected. Reduced-motion plate shows the outline pulse and no displacement. Test asserts that invalid_command no longer routes to the top host during combat.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 3,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C3-04",
+   "dimension": "menus_layout",
+   "severity": "P3",
+   "title": "Half-faded clipped line behind the summary CTA reads as broken copy",
+   "observed": "011/012_run_lost at 360x800: a line ('A first fall — every delve ends in one…') is visible at ~15% opacity with its lower half cut behind the top edge of the DELVE AGAIN button. Same pattern at the bottom of 030/031 (the codex/tip card is cut by the CTA).",
+   "why_it_matters": "It looks like a rendering bug, and it is the encouragement line a first-time loser should actually read.",
+   "fix_direction": "Either end the scroll content above the CTA (bottom padding = CTA height + 24 dp, so the last line is fully visible when scrolled) and make the fade a solid gradient that fully hides text under it, or move the encouragement line above the stats card so it is read first.",
+   "acceptance": "Plates of run_lost/run_won summaries at 320x568/360x800/412x915: no text line is partially visible between 5% and 95% opacity at the CTA edge. The encouragement line is fully legible without scrolling at 360x800.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 3,
+   "critic_rank": 4,
+   "rank_round": 3,
+   "history": [
+    {
+     "at": "2026-09-25T00:38:09+00:00",
+     "round": 3,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C4-01",
+   "dimension": "menus_layout",
+   "severity": "P2",
+   "title": "Victory moment stacks banner, damage number, exact-kill line, tray call-outs and burn chip in one 158 dp stage",
+   "observed": "play_session/039_run3_run_won (360x800 @2x): '+5 EMBERS — EXACT!' at y≈440, 'VICTORY!' at y≈520 with '-4' butted against its right edge so it reads 'VICTORY! -4', 'STRAIGHT!/TRIPLE!/PAIR +2' stacked at y≈620–715 across the stage floor and HP bar, the burn chip '11' at x≈640 y≈652 and a gold impact ring around the boss. 020 is the same with '-6' and chip '9'. boss_kill/victory_320x568_t0600: the '-5' sits on the lower middle of the banner and the banner's 'V' overlaps the hero's sword arm; t1200: the 'V' still covers the hero's forearm.",
+   "why_it_matters": "The payoff of a whole run should read as one word. Right now it is a word salad, and at 320 the banner hides the hero doing the victory pose.",
+   "fix_direction": "When _victoryBeat turns on: fade out over 150 ms, on the banner's first frame, the damage number, the tray-lane call-outs (_noteLife pops), the kill-readout line and every status chip. Place the banner by rect: centre it in the free stage area above the actors' heads (stage top + 8 dp to hero bbox top − 4 dp), and step the font down from 34 to 22 sp until it fits without intersecting the hero or boss bbox. Presentation only.",
+   "acceptance": "Rect test at 320x568/360x800/412x915 at +600 and +1200 ms: the banner rect intersects no other visible Text rect (opacity >0.1) and not the hero sprite bbox. Re-shot 039/020 show only 'VICTORY!' plus the HUD numbers. Reduced-motion variant passes the same test.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 4,
+   "critic_rank": 1,
+   "rank_round": 4,
+   "history": [
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C4-02",
+   "dimension": "animation",
+   "severity": "P2",
+   "title": "Boss death holds a flat pure-white block ~400 ms, then hard-cuts to particles",
+   "observed": "boss_kill/ember_tyrant_normal_360x800 and ashen_colossus_normal_360x800: 19–22k px at luma>235 in the boss rect (x420–720, y600–880 @2x) on every sample t0440–t0840, then 0 at t0880, where the gold dissolve starts with no mixed frame. ember_tyrant_reduced_360x800: identical 400 ms white hold. victory_360x800_t0600 shows it as a featureless white rectangle with '-5' on it.",
+   "why_it_matters": "A 400 ms solid white box reads as a missing texture, not an impact. It is the last image of the boss the player sees, and reduced-motion players get the same bright slab.",
+   "fix_direction": "Cap the white hold at ≤120 ms (3 frames at 40 ms), then over 160 ms lerp the silhouette from white to the sprite tinted ember orange (ColorFilter lerp), then start the dissolve from the tinted sprite. Reduced motion: no white; the sprite desaturates and fades over 300 ms. Presentation only.",
+   "acceptance": "Boss strips (normal): ≤3 sampled frames with >10k px luma>235 in the boss rect, and ≥2 frames showing sprite pixels and dissolve particles together. Reduced strip: 0 frames with >2k px luma>235 in the boss rect.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 4,
+   "critic_rank": 2,
+   "rank_round": 4,
+   "history": [
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C4-03",
+   "dimension": "audio",
+   "severity": "P2",
+   "title": "Victory beat lasts ~1.1 s and its sting fires later, on the summary cut",
+   "observed": "combat_screen.dart _enemyDeath: 260 ms + _deathTime (_pace(700)) + 150 ms, then the phase switch. The run_won music sting plays at the phase switch (maker's own 'Not verified' note in ddeb943). So the banner (visible from t0640) plays over boss_death only, and the fanfare lands with the summary. Inferred from code plus the maker note; verify.",
+   "why_it_matters": "The emotional peak is split in two: a silent banner, then a sting over a stats screen. A slow child barely registers a 1.1 s banner before the summary cuts in.",
+   "fix_direction": "Start the victory sting on the banner's first frame (duck boss_combat music over 200 ms) and do not replay it on the summary. Hold the beat to ≥1.8 s after the banner lands (a tap anywhere skips to the summary), then crossfade 250 ms to the summary. Presentation and audio only.",
+   "acceptance": "Choreography log: victory sting start within ±50 ms of the banner intro start; no second sting at the summary. Harness: summary appears ≥1800 ms after the banner's first frame unless tapped. sfx_headroom.py passes with boss_death + victory overlapped.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 4,
+   "critic_rank": 3,
+   "rank_round": 4,
+   "history": [
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C4-04",
+   "dimension": "animation",
+   "severity": "P3",
+   "title": "Boss-kill screen shake moves the HUD and exposes the screen edge",
+   "observed": "ember_tyrant_normal_360x800: best-match offsets vs t1600 are t0480 (−8,−2), t0560 (0,+12), t0600 (−10,+2), t0640 (−12,−8), t0680 (−10,−2) px @2x for the whole frame. At t0640 the top bar ends at x≈692 with a dark sliver to the right. The reduced strip correctly shows 0 offset.",
+   "why_it_matters": "Shaking the gold/embers bar and the tray makes the UI feel loose. The exposed edge looks like a rendering bug on a phone.",
+   "fix_direction": "Apply the shake transform to the stage (actors + backdrop) only, or overscan the background by 16 dp so no edge is revealed. Keep the HUD and tray fixed.",
+   "acceptance": "Boss strips t0440–t0840: top bar, enemy panel and tray rects have 0 px offset vs t1600; stage content may move. No frame shows a background sliver at any screen edge.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 4,
+   "critic_rank": 4,
+   "rank_round": 4,
+   "history": [
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "opened"
+    }
+   ]
+  },
+  {
+   "id": "C4-05",
+   "dimension": "art",
+   "severity": "P3",
+   "title": "Boss-kill review strips re-dress the seed-1 crawler, so no real boss silhouette or dissolve has been reviewed",
+   "observed": "C_anim_boss_kill_*: both bosses show the same crawler sprite (tinted), HP '/19', and identical white-pixel counts frame by frame between ember_tyrant and ashen_colossus normal strips. The only real-boss frames (020 Hearthless King /78, 039 Ember Tyrant /81) catch the boss as a white block.",
+   "why_it_matters": "The final boss is the most important sprite in the run and the one players screenshot. Its death has never been judged.",
+   "fix_direction": "In tool/boss_kill_frames_test.dart, load the real boss encounter's sprite key and max HP (a presentation fixture; no sim change), and add the third boss (Hearthless King).",
+   "acceptance": "Three boss strips whose t0000 frames differ in silhouette and show the real max HP (/78–/81 class). The C4-02 acceptance numbers are re-measured on these.",
+   "effort": "S",
+   "status": "open",
+   "round_opened": 4,
+   "critic_rank": 5,
+   "rank_round": 4,
+   "history": [
+    {
+     "at": "2026-09-25T04:30:35+00:00",
+     "round": 4,
+     "event": "opened"
+    }
+   ]
+  }
+ ],
+ "pin": {
+  "groups": [
+   [
+    "C0-01",
+    "C0-05"
+   ],
+   [
+    "C0-06",
+    "C1-03",
+    "C1-07"
+   ],
+   [
+    "C0-03",
+    "C1-02",
+    "C4-01"
+   ],
+   [
+    "C0-07"
+   ],
+   [
+    "C4-02",
+    "C4-03",
+    "C4-05"
+   ],
+   [
+    "C2-03",
+    "C2-04"
+   ],
+   [
+    "C1-08"
+   ]
+  ],
+  "source": "critic round 4",
+  "round": 4,
+  "at": "2026-09-25T04:30:35+00:00",
+  "note": ""
+ }
+}

@@ -39,7 +39,7 @@ class _Pulse extends StatelessWidget {
 
 /// One transient combat call-out (combo, burn tick, exact-kill, overkill).
 /// One transient stage contact effect (weapon smear, claw rake, guard arc).
-enum _FxKind { slash, claws, guard, blood }
+enum _FxKind { slash, claws, guard, blood, cleanCut }
 
 class _Fx {
   final int id;
@@ -73,6 +73,10 @@ class _Note {
   final IconData? icon;
   final bool onEnemy; // anchors near the enemy instead of the dice tray
   final Duration life; // LFP-5: 1s while fast-forwarding, 2s otherwise
+
+  /// Stage call-out slot (enemy notes), fixed for the note's whole life so
+  /// it never jumps when another note expires (experimental loop C0-03).
+  final int slot;
   _Note(
     this.id,
     this.text,
@@ -80,6 +84,7 @@ class _Note {
     this.icon, {
     required this.onEnemy,
     this.life = const Duration(milliseconds: 2000),
+    this.slot = 0,
   });
 }
 
@@ -89,5 +94,15 @@ class _Pop {
   final int amount;
   final bool onPlayer;
   final bool blocked;
-  _Pop(this.id, this.amount, {required this.onPlayer, required this.blocked});
+
+  /// Lane among numbers alive on the same side at spawn (0 = the planned
+  /// zone); fixed for life (experimental loop C0-03).
+  final int lane;
+  _Pop(
+    this.id,
+    this.amount, {
+    required this.onPlayer,
+    required this.blocked,
+    this.lane = 0,
+  });
 }

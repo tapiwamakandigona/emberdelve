@@ -142,6 +142,32 @@ void main() {
     });
   });
 
+  // Experimental loop C0-02: the guided tour teaches some tips' whole
+  // lesson; a completed tour marks those learned so no card repeats it.
+  group('TipDirector.markTaught', () {
+    test('clears the pending card it taught and marks it seen', () {
+      final d = TipDirector(<String>{});
+      expect(d.onFightStart(), ContextTips.rollSpend);
+      d.markTaught(tourTaughtTips);
+      expect(d.active, isNull);
+      expect(d.seen, containsAll(tourTaughtTips));
+      // Once taught, the trigger never fires the card again.
+      expect(d.onFightStart(), isNull);
+    });
+
+    test('leaves an unrelated pending card alone', () {
+      final d = TipDirector(<String>{});
+      expect(d.onMapArrival(), ContextTips.whatsADelve);
+      d.markTaught(tourTaughtTips);
+      expect(d.active, ContextTips.whatsADelve);
+      expect(d.seen, isNot(contains(ContextTips.whatsADelve)));
+    });
+
+    test('the tour only claims lessons its beats actually cover', () {
+      expect(tourTaughtTips, [ContextTips.rollSpend, ContextTips.intentFair]);
+    });
+  });
+
   group('MetaState persistence', () {
     test('tipsSeen round-trips through json, sorted', () {
       final m = MetaState(

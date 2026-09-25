@@ -1,0 +1,136 @@
+{
+  "verified_at": "2026-09-19T14:15:18.682919+00:00",
+  "tools": "Official Android build-tools36, Temurin JDK17, Google bundletool1.18.3; published archive digests verified",
+  "files": [
+    {
+      "file": "app-release.aab",
+      "bytes": 73728918,
+      "sha256": "ae60d8c8507c843fa830d21f9daf071f2f6420601f2a104ef12988e95bbfebad",
+      "package": "com.tsorostudios.emberdelve",
+      "versionName": "0.184.0",
+      "versionCode": 211,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "debuggable": false,
+      "certificate_sha256": "031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d",
+      "signature_verified": true,
+      "signature_notes": [
+        "Expected self-signed Android upload certificate; pinned SHA256 is checked independently.",
+        "AAB ZIP puts the manifest late; jarsigner verifies JarFile entries but warns about sequential JarInputStream. The same warning occurs in published210.",
+        "Upload signature is not timestamped; permanent certificate expires2066-07-13."
+      ],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.android.vending.BILLING",
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "com.tsorostudios.emberdelve.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ]
+    },
+    {
+      "file": "app-release.apk",
+      "bytes": 75707508,
+      "sha256": "a882b12c4a1e127fef78ec0b12ca0d64005653f20807a329b1bf5bf906c2766f",
+      "package": "com.tsorostudios.emberdelve",
+      "versionName": "0.184.0",
+      "versionCode": 211,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "debuggable": false,
+      "certificate_sha256": "031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d",
+      "signature_verified": true,
+      "signature_notes": [],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.android.vending.BILLING",
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "com.tsorostudios.emberdelve.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ]
+    },
+    {
+      "file": "app-arm64-v8a-release.apk",
+      "bytes": 38138738,
+      "sha256": "7a21f1de6a36aeb75884c2b5236e58dda47c84f56aca898e907c69602934a330",
+      "package": "com.tsorostudios.emberdelve",
+      "versionName": "0.184.0",
+      "versionCode": 2211,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "debuggable": false,
+      "certificate_sha256": "031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d",
+      "signature_verified": true,
+      "signature_notes": [],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.android.vending.BILLING",
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "com.tsorostudios.emberdelve.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ]
+    },
+    {
+      "file": "app-armeabi-v7a-release.apk",
+      "bytes": 35715206,
+      "sha256": "e72925bbff333324c2b00d1807586f89ad0491722cbd37253918746bd2ecffa0",
+      "package": "com.tsorostudios.emberdelve",
+      "versionName": "0.184.0",
+      "versionCode": 1211,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "debuggable": false,
+      "certificate_sha256": "031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d",
+      "signature_verified": true,
+      "signature_notes": [],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.android.vending.BILLING",
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "com.tsorostudios.emberdelve.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ]
+    },
+    {
+      "file": "app-x86_64-release.apk",
+      "bytes": 39662094,
+      "sha256": "d7615bcf29d65ca49ac5012f9103a12b784053adde11fc95419d189ffc6406a3",
+      "package": "com.tsorostudios.emberdelve",
+      "versionName": "0.184.0",
+      "versionCode": 4211,
+      "minSdk": 24,
+      "targetSdk": 36,
+      "debuggable": false,
+      "certificate_sha256": "031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d",
+      "signature_verified": true,
+      "signature_notes": [],
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK",
+        "com.android.vending.BILLING",
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "com.tsorostudios.emberdelve.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+      ]
+    }
+  ],
+  "limits": "Signature/manifest verification is not on-device purchase, restore, visual or performance testing."
+}

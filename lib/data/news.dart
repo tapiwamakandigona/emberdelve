@@ -23,10 +23,99 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.183.0';
+const String currentAppVersion = '0.184.106';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.184.106',
+    title: 'Experimental: Foes Strike Back',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Monsters now dash across the floor to hit you, and big ones hop in '
+          'and land with a thump.',
+      'When you get hit, your hero flashes, stumbles back and glows red for '
+          'a moment instead of freezing white.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.105',
+    title: 'Experimental: Victory!',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Beat the final boss and a big VICTORY! sign lights up, embers float '
+          'away and your hero lifts their weapon.',
+      'Your very first delve now ends quietly, with no song name popping up '
+          'over the buttons.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.104',
+    title: 'Experimental: Clear Buttons',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Little messages like "Healed 4" now pop up near the top of the '
+          'screen, so they never hide the big button at the bottom.',
+      'You can tap straight through a message while it is showing.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.103',
+    title: 'Experimental: The Last Blow',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Beating the final boss no longer turns the whole screen white. A warm '
+          'glow rises from the boss so you can watch it fall.',
+      'Once a fight is decided, the dice and End turn go quiet, and the game '
+          'no longer points you to a next foe after the last one.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.102',
+    title: 'Experimental: Clear Kills',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'The finishing blow reads cleanly now: the number sits on the foe, the '
+          'ember reward gets its own line, and a slain foe drops its badge.',
+      'After the guided first fight, the lesson is not repeated as a long '
+          'card. You go straight into the fight.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.101',
+    title: 'Experimental: Living Foes',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Foes move with their own bodies now: some hover, some heave, some '
+          'scuttle, and charging foes run into the strike.',
+      'A slain foe crumbles into embers of its own art, and an exact kill '
+          'earns a clean ember-white cut.',
+      'Enemy wind-ups heat the foe itself instead of a red box. Every roll '
+          'and number is exactly what the dice said.',
+    ],
+  ),
+  NewsEntryDef(
+    version: '0.184.0',
+    title: 'The Whole Company',
+    lines: [
+      'All twenty-two delvers have their own working silhouette. Arms, '
+          'boots and bodies move through each strike, with the tool held '
+          'in the moving hand.',
+      'Health, wounds and guard now change when the blow lands, not '
+          'before. Tempered dice show the right strength of swing for '
+          'their true size.',
+      'A saved Blood effects switch in Settings hides blood, ichor and '
+          'wound marks. Damage, guard and fatigue stay readable.',
+      'Your dice, damage, saves and unlocks stay as they were. Thank you '
+          'for keeping the whole company by the fire.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.183.0',
     title: 'Bodies in the Fight',

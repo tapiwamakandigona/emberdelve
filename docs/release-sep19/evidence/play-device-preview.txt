@@ -1,0 +1,163 @@
+VERIFIED authenticated Play UI transcript. Private install counts omitted where present; release facts unchanged.
+
+Loading Google Play Console
+notifications_unread
+Unread notifications
+Emberdelve: Dice Roguelite
+keyboard_backspace
+All apps
+dashboard
+Dashboard
+bar_chart
+Statistics
+overview
+Publishing overview
+shield
+Protected with Play
+rocket_launch
+Test and release
+Latest releases and bundles
+Production
+Early access
+Testing
+expand_more
+Pre-registration
+App integrity
+Advanced settings
+vital_signs
+Monitor and improve
+finance_mode
+Grow users
+sell
+Monetise with Play
+Create production release
+check_circle
+Ready to release
+check
+Create release
+2
+Preview and confirm
+Discard draft release
+Changes to your supported devices
+Reasons for changes to your supported devices may include changes to your manifest or a missing app bundle. Devices excluded in device catalogue are not shown here.
+Form factor
+Devices supported by last release
+help_outline
+Devices no longer supported
+help_outline
+Newly supported devices
+help_outline
+Total devices supported by this release
+help_outline
+Phone
+12,348
+0
+0
+12,348
+Tablet
+6,727
+0
+0
+6,727
+TV
+7
+0
+0
+7
+Wearable
+0
+0
+0
+0
+Car
+26
+0
+0
+26
+Chromebook
+72
+0
+0
+72
+Android XR
+1
+0
+0
+1
+Release delivery
+Size for new installs
+26.6 MB
+arrow_right_alt
+24.4 KB
+vs previous release
+Time to download
+8 s
+0 s
+vs previous release
+Size for updates
+2.34 MB
+New app bundles
+File type
+Version
+API levels
+Target SDK
+Screen layouts
+ABIs
+Required features
+App bundle
+attachment
+211 (0.184.0)
+24+
+36
+4
+3
+1
+arrow_right_alt
+Previous release
+Included
+rocket_launch
+
+No app bundles from your previous release will be included in this release
+
+Not included
+These versions from your previous release won't be included in this release
+File type
+Version
+API levels
+Target SDK
+Screen layouts
+ABIs
+Required features
+App bundle
+attachment
+210 (0.183.0)
+24+
+36
+4
+3
+1
+arrow_right_alt
+Release notes
+Default language – en-GB
+The whole company moves: all 22 delvers have refreshed designs, articulated strikes and tools held in moving hands. Health, wounds and guard now follow the impact. A saved Blood effects switch hides blood, ichor and wound marks. Tempered dice show the right swing strength for their size. Dice, damage, saves and unlocks are unchanged. Thank you for delving with us.
+Staged roll-out
+Enter the percentage of your user base for which you want to roll-out this release
+Installs on active devices
+[private count omitted]
+Roll-out percentage *
+%
+Country availability
+Available in all targeted countries
+Select specific countries/regions
+Installations targeted by roll-out
+[private count omitted]
+If you save, changes will be saved in Publishing overview, ready for you to send for review.
+Back
+Save
+Product updates
+Status dashboard
+Help
+© 2026 Google
+Privacy
+Developer Distribution Agreement
+Terms of Service

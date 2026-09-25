@@ -1858,6 +1858,117 @@ class _ImpactSlashPainter extends CustomPainter {
 // with overshoot, shimmers block-blue, fades. Block finally LOOKS like
 // something happened.
 // ---------------------------------------------------------------------------
+/// v0.184.0 "Clean Cut" — the exact-kill contact read.
+///
+/// The game's signature tactic is spending a die for *exactly* lethal damage
+/// (drop the foe to 0, not below). Until now that paid off only as a floating
+/// "EXACT!" call-out; the killing blow read identically to a sloppy overkill.
+/// This is a distinct, surgical flourish over the foe on an exact kill: a
+/// crisp ember-white ring snaps outward and a four-point glint flares at the
+/// contact point, then both fade. It makes mastery *visible* — design-system
+/// §5: "visible mastery is presentation, not math."
+///
+/// Presentation-only and non-blocking (spawned without an await, so the death
+/// choreography's timing is unchanged). Like the other contact FX (ImpactSlash,
+/// GuardFlash) it carries information and always plays; the vestibular-safe
+/// screen displacement lives in ShakeBox, which self-gates on reduce-motion.
+class CleanCutFlash extends StatefulWidget {
+  final Color color;
+  final Duration duration;
+  final VoidCallback onDone;
+  const CleanCutFlash({
+    super.key,
+    required this.onDone,
+    this.color = EmberColors.gold,
+    this.duration = const Duration(milliseconds: 440),
+  });
+
+  @override
+  State<CleanCutFlash> createState() => _CleanCutFlashState();
+}
+
+class _CleanCutFlashState extends State<CleanCutFlash>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  )..forward().whenComplete(widget.onDone);
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: _CleanCutPainter(_t, color: widget.color),
+          size: Size.infinite,
+        ),
+      ),
+    );
+  }
+}
+
+class _CleanCutPainter extends CustomPainter {
+  final Animation<double> t;
+  final Color color;
+  final Paint _p = Paint();
+  _CleanCutPainter(this.t, {required this.color}) : super(repaint: t);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final f = t.value;
+    if (f >= 1.0) return;
+    final c = Offset(size.width / 2, size.height * 0.5);
+    final maxR = size.shortestSide * 0.46;
+    // Ring: snaps out in the first 45%, then holds and fades — a clean
+    // shockwave, not a lingering bloom. Impact frame short, decay soft.
+    final grow = Curves.easeOutCubic.transform((f / 0.45).clamp(0.0, 1.0));
+    final fade = f < 0.30 ? 1.0 : (1.0 - (f - 0.30) / 0.70).clamp(0.0, 1.0);
+    final r = maxR * (0.34 + 0.66 * grow);
+
+    _p
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..shader = null;
+    // Ember ring (outer) + a white-hot inner edge — the "clean" read.
+    _p
+      ..strokeWidth = maxR * 0.05
+      ..color = color.withValues(alpha: 0.80 * fade);
+    canvas.drawCircle(c, r, _p);
+    _p
+      ..strokeWidth = maxR * 0.02
+      ..color = Colors.white.withValues(alpha: 0.85 * fade);
+    canvas.drawCircle(c, r * 0.93, _p);
+
+    // Precise glint: a four-point star that flares early and contracts —
+    // "you hit it exactly". Lives only in the first half of the beat.
+    final glint = (1.0 - f / 0.5).clamp(0.0, 1.0);
+    if (glint > 0) {
+      final g = maxR * 0.44 * Curves.easeOut.transform(glint);
+      _p
+        ..strokeWidth = maxR * 0.03
+        ..color = Colors.white.withValues(alpha: 0.90 * glint);
+      canvas.drawLine(Offset(c.dx - g, c.dy), Offset(c.dx + g, c.dy), _p);
+      canvas.drawLine(Offset(c.dx, c.dy - g), Offset(c.dx, c.dy + g), _p);
+      final d = g * 0.58;
+      _p
+        ..strokeWidth = maxR * 0.018
+        ..color = color.withValues(alpha: 0.80 * glint);
+      canvas.drawLine(Offset(c.dx - d, c.dy - d), Offset(c.dx + d, c.dy + d), _p);
+      canvas.drawLine(Offset(c.dx - d, c.dy + d), Offset(c.dx + d, c.dy - d), _p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CleanCutPainter old) =>
+      old.t != t || old.color != color;
+}
+
 class GuardFlash extends StatefulWidget {
   /// +1: shield faces right (the player guarding); -1: faces left (enemy).
   final int facing;

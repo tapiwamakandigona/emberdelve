@@ -210,7 +210,8 @@ extension _CombatActionZoneBand on _CombatScreenState {
                       'End turn',
                       primary: true,
                       dense: compact,
-                      onTap: _endTurn,
+                      // C1-01: a decided encounter has no next turn.
+                      onTap: _encounterOver ? null : _endTurn,
                     ),
                   ),
                 ],

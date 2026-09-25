@@ -5917,3 +5917,278 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102/#104/#105 open. No merge, release, signed dispatch, store action or
   subagents. Fixture sampling and encoding rate are not physical-device FPS;
   owner aesthetic approval remains unverified.
+
+## 2026-09-19 — authorized production release, iterations 1–3/8
+
+- VERIFIED fresh canonical harness main/tagv3.0.1 read. Reviewed Everything,
+  shipping branch741b439, merged PR104/105/106, open historical PR102 and
+  latest release210/0.183.0. Main remains the frozen platformer.
+- VERIFIED authenticated Play210 Available on Google Play, full rollout,
+ 177countries. Candidate0.184.0+211 packages merged visuals; not yet signed
+  or submitted at this checkpoint.
+- VERIFIED original analyzer/1526tests/art/SFX after version/news changes;
+  unchanged render72/72,12540 observations,4608 PNGs decoded/hashed.
+  Two planned baseline differences: pubspec version and additive release
+  news;580 other hashes match. Original checks/sim/purchases/dependencies/
+  signing unchanged. Direct aesthetic and physical-device QA not claimed.
+- VERIFIED itch remains blocked at Cloudflare after one fallback, before
+  password input. No reset/page edit. Device/purchase/keystone root gates
+  remain false. Full evidence and failures: `docs/release-sep19/`.
+
+## 2026-09-19 — authorized release, iterations 4–7/8
+
+- VERIFIED exact84f973f signed by CI35447309873; all5 APK/AAB signatures,
+  package/version,SDK24/36,permanent certificate and hashes checked. All22
+  character sheets/fonts/meta match source inside every binary;permission
+  set matches production210. AAB verifier advisories explicitly recorded.
+- VERIFIED GitHub v0.184.0 published14:15:43UTC; public asset digests match.
+  PR107 remains open against legacy/dice-builder;no PR merged. Evidence
+  commits after84f973f change documentation only,not signed release source.
+- VERIFIED final Play send accepted14:24:21UTC for exactly one intended
+  Production211/Start full rollout change. Preview100%,177targeted countries,
+  zero device loss. Final readback14:34UTC:211 In review;210 still Available
+  on Google Play. Quick-check banner absent;managed publishing off.
+  Approval will publish automatically;211 is not verified live.
+- VERIFIED itch publication remains blocked before password form;no further
+  challenge retries. Public page still0.179.0/69MB. Prepared page/devlog,
+  truthful generated-art disclosure,3 source-matched captures and exact
+  verified APK package. Eight links checked;prepared does not mean published.
+- Original feature objects and append-only progress preserved. Open device,
+  Play purchase/restore and keystone UI-harness gates stay false. REL-ITCH
+  stays false;overall scope is partial. No subjective best-visuals/phone
+  performance claim,no subagents and no recurring jobs. Full evidence:
+  `docs/releases/verification-0.184.0.md` and `docs/release-sep19/`.
+
+## 2026-09-24 — exact-kill "clean cut" (presentation-only, source PR)
+
+- Owner ask (Viktor app, Tapiwa): "improve the models and animations to be more
+  enjoyable" + a test APK. Tree was fully green on entry (analyzer, 1526/1526,
+  art/SFX), and the Sept-13 critique's P1 items (contact-sync A3/A4, hand
+  metadata, all-22 articulation) plus the combat-feel backlog were already
+  shipped — so this is an ADDITIVE gain, not a red-gate fix.
+- Gap: the signature exact kill (a die spent for exactly-lethal damage) paid off
+  only as a floating `EXACT!` call-out; its death body read identically to a
+  sloppy overkill. Design-system §5 ("visible mastery is presentation").
+- Shipped `CleanCutFlash` (lib/ui/weapons.dart): crisp ember-white ring + glint
+  over the foe on the `exact_kill` event, via the existing contact-FX system
+  (`_FxKind.cleanCut`). Spawn is NON-BLOCKING, so the death choreography's timing
+  is unchanged and the contact-timeline contract holds. Reduce-motion matches the
+  other contact FX (always plays; displacement stays in the self-gating ShakeBox).
+- VERIFIED 2026-09-24: analyzer clean; new test/exact_kill_clean_cut_test.dart
+  3/3 (exact->flourish, overkill->none negative control, widget lifecycle); full
+  suite 1529/1529 (1526 inherited + 3 additive, none weakened); build_delvers.py
+  --check pass; sfx_headroom.py clear. git diff touches only four lib/ui files —
+  ZERO lib/sim edits; sealed sim, hashes and contact-timeline contract unchanged.
+- Scope docs in docs/exact-kill-clean-cut-2026-09-24/. Root features.json left
+  unchanged (worker protocol). Source PR only: no merge, release, version bump,
+  signed store dispatch or Play action. Owner aesthetic approval PENDING via the
+  test APK; physical-device FPS and Play gates remain out of scope and open.
+
+## 2026-09-24 — living foes (presentation-only, same source PR #108)
+
+- Same owner ask ("improve the models and animations to be more enjoyable").
+  After the Clean Cut, the least-alive layer was the 42 enemies: one shared
+  2px bob, fade-and-sink deaths, 31 authored run rows never played, and a
+  wind-up tint that blended srcATop over the whole combatant box (a red
+  rectangle over the stage on every enemy attack; seen in real-render
+  captures at 741b439).
+- VERIFIED four commits, one feature each: `5c4a2d4` Ashfall (slain foes
+  crumble into their own art pixels inside the unchanged 700 ms beat; reduce
+  motion keeps the legacy fade), `ad51b5e` charging foes (run row at 14 fps
+  during the lunge), `508960b` living idles (hover/heave/scuttle; default
+  breathe pixel-identical), `ed0f710` wind-up heat fix (sprite-paint srcATop
+  tint; red-on-old / green-on-new pixel test).
+- VERIFIED gates at ed0f710: analyzer clean; 1553/1553 tests (24 additive
+  living-foes tests, each mutation-checked; no inherited test edited);
+  build_delvers.py --check pass; sfx_headroom clear; lib/sim, pubspec,
+  android, workflows and assets unchanged versus 741b439.
+- Evidence and reproduction: docs/living-foes-2026-09-24/ (README, features,
+  real-render before/after plates) and tool/living_foes_frames_test.dart.
+- Local debug-signed release APK for owner review only (no key.properties,
+  never Play). Build warns integration_test/jni want NDK 28.2 vs pinned 27.0
+  (warning only; not changed). No merge, release, version bump or store
+  action. Owner aesthetic approval and physical-device FPS remain open.
+
+## 2026-09-24 — experimental polish loop: iteration 0 (exp.1) and iteration 1 (exp.2)
+
+- Owner ask (Viktor app, 2026-09-24): polish visuals/animation, audio, gameplay
+  loop, menus that fit every screen and onboarding a young child can follow,
+  with a super-strict critic; build → commit → push → GitHub pre-release →
+  critic → iterate, "experimental build until I order otherwise". Scoped plan,
+  versioning and guards: docs/experimental/PROJECT.md. Branch
+  experimental/polish-loop (= PR #108 head + release/production-sep19), draft
+  tracking PR #109. Other agents' branches/PRs (#102, #107, #108) untouched.
+- Iteration 0: harness repairs so the critic sees the whole game —
+  play_session legal transitions include the keystone phase (4/4 runs, 581
+  steps, 0 violations; was 0/4) and fresh-walk plates precache art (blank
+  node/die art was a capture artefact). VERIFIED.
+- exp.1 = 0.184.101+212 "Living Foes" (#108's presentation work, first signed
+  build): signed CI run 36034550059 green; local 1553/1553; every APK checked
+  for the permanent upload cert and version before upload. Published as a
+  PRE-RELEASE (v0.184.101-exp.1, latest=false); /releases/latest still
+  v0.184.0, so the in-app update check never offers it. VERIFIED.
+- Critic round 0 (read-only, Fable 5.1 "ultra"): overall 5/10 — art 5,
+  animation 5, audio 5, gameplay 7, loop 6, menus 6, onboarding 4, a11y 6,
+  stability 7; 15 issues → docs/experimental/backlog.json,
+  docs/experimental/critic/round-00.md (maker verification appended).
+- C0-02 VERIFIED harness artefact: the fresh walk's "tap every
+  GestureDetector" loop hit the tour's SKIP pill (diagnostic trace), so "the
+  tour dies after beat 2" was the harness. Fixed the harness (tap a DieChip);
+  all five beats render at 320/360/412. The real residual defect it exposed —
+  the 26-word ROLL, THEN SPEND card right after beat 5 — is fixed
+  (TipDirector.markTaught on tour completion only). Red→green widget test.
+- C0-03 kill readout: new lib/ui/readout_lanes.dart plans number zones and
+  call-out slots per stage shape; badge fades at 0 HP; HP ghost drains fast at
+  0. Found and fixed a latent bug while verifying: unkeyed fx-overlay children
+  restarted the damage number and slash whenever a call-out was inserted.
+  test/kill_readout_test.dart (real kills at 4 phone sizes, every 40 ms frame)
+  was red at all 4 sizes on the old code, green now; readout_lanes_test sweeps
+  stage shapes. VERIFIED.
+- exp.2 = 0.184.102+213 "Clear Kills": analyzer clean, full suite 1575/1575
+  (1553 + 22 new, none weakened). Signed CI run 36041589850 green (both jobs);
+  published as PRE-RELEASE v0.184.102-exp.2 (latest=false; /releases/latest
+  still v0.184.0; all 4 APKs re-checked: permanent cert, 0.184.102 with codes
+  213/1213/2213/4213). VERIFIED.
+- Critic round 1 (read-only, Opus 5.5 "smart") on exp.2: overall 5 (=),
+  onboarding 4 → 5, other dimensions unchanged. Closed C0-02. C0-03 partly
+  fixed: stage lane clean at 360+; re-listed for the tray lane. 8 new issues
+  C1-01…C1-08. Maker verified each claim on the plates (notes in
+  docs/experimental/critic/round-01.md). C1-06 is a regression from my C0-03
+  re-layout (player "-9" now on the hero's head); C1-08's "equally bright"
+  detail is not supported by the plate. C0-12 is folded into C1-01.
+  backlog.py `next` now prefers the most recent critic ranking. Next item:
+  C1-01, the final-boss white-out plus live-looking board.
+- ASSUMED / not verified: physical-device FPS, touch feel and audio as heard;
+  all plates are headless renders. Budget note: critic rounds alternate Opus
+  5.5 (incremental) and Fable 5.1 (every 4th round) to stretch credits.
+
+## 2026-09-24 — experimental polish loop, iteration 2 (cron): exp.3 "The Last Blow"
+- C1-01 (+ C0-12 folded in): the final-boss kill was a full-screen opaque
+  #FFE9C4 layer (opacity 1.0 for >=260 ms, reduced motion ignored). It is now
+  a radial bloom from the boss, clipped to the stage, peak alpha 0.45, with
+  a dim ember tint under reduced motion (lib/ui/kill_moment.dart). On
+  encounter_won/lost the tray and action zone drop to 0.35 opacity and
+  ignore taps from the same frame, and End turn is disabled.
+  overkillCallout() drops "NEXT FOE" when the blow ends the run.
+  lib/sim untouched. VERIFIED: test/boss_kill_moment_test.dart (real boss
+  overkill at 360x800, every 40 ms frame rasterised) was red on the old
+  code (peak 100% luma>230, End turn and tray live) and is green now.
+- exp.3 = 0.184.103+214: analyzer clean, full suite 1581/1581 (1575 + 6
+  new, none weakened). Signed CI run 36054037747 green (both jobs).
+  Published as PRE-RELEASE v0.184.103-exp.3. /releases/latest is still
+  v0.184.0. All 4 APKs carry the permanent cert, 0.184.103, codes
+  214/1214/2214/4214. VERIFIED.
+- Critic round 2 (smart) on exp.3: every score unchanged (overall 5).
+  C0-12 closed. C1-01 re-listed for evidence gaps: no 40 ms boss-kill strip
+  and no reduced-motion strip in the pack.
+  - Its "tray at full brightness" claim is contradicted by the pixels
+    (tray mean luma 99 → 49 on 021). Maker notes are in critic/round-02.md.
+  - 8 new issues, C2-01…C2-06 plus rescopes of C1-01 and C0-13.
+  - Next item: C2-01, the floating toast covering the primary CTA.
+- ASSUMED / not verified: device FPS, touch feel, audio as heard. No hero
+  victory pose yet (now tracked as C2-02).
+
+## 2026-09-25 — experimental polish loop, iteration 3 (cron): exp.4 "Clear Buttons"
+- C2-01: the in-run toast was a stock floating SnackBar in the bottom
+  zone. For 1.4 s it hid DELVE AGAIN, LEAVE SHOP and ROLL and took the tap.
+  It is now an in-theme pill (lib/ui/flash_toast.dart, hosted by GameRoot):
+  top-anchored at safe inset + 72 dp with 64 dp gutters, IgnorePointer,
+  fade in/out in its own RepaintBoundary, and no slide under reduced
+  motion. The TalkBack live region is kept. lib/sim is untouched.
+  VERIFIED: test/toast_clear_of_buttons_test.dart covers 10 screen kinds at
+  320x568/360x800/412x915, checking toast vs button rects plus a
+  tap-through hit test. It was red on the old code and is green now.
+- Failure, fixed in the same run: the first full suite failed 139 widget
+  tests ("Looking up a deactivated widget's ancestor is unsafe"). A lazy
+  `late final` AnimationController was first built in dispose(), so it
+  is now built in initState (7eb9ded). VERIFIED.
+- exp.4 = 0.184.104+215: analyzer clean, full suite 1584/1584 (1581 + 3
+  new, none weakened). Signed CI run 36077074055 is green on both jobs.
+  Published as PRE-RELEASE v0.184.104-exp.4, and /releases/latest is still
+  v0.184.0. All 4 APKs carry the permanent cert, 0.184.104, with codes
+  215/1215/2215/4215. VERIFIED.
+- Critic round 3 (smart) on exp.4: every score unchanged (overall 5). C2-01
+  is closed.
+  - 4 new issues. C3-01 (the pill covers the screen title or foe name and
+    wraps at 360; disclosed trade-off) and C3-02 (the toast names the
+    previous screen; fixed 1.4 s hold) are VERIFIED on plates.
+  - C3-03 (refusals shown far from the finger) is ASSUMED.
+  - C3-04 (clipped ghost line behind DELVE AGAIN) is VERIFIED.
+  - Next item: C1-01 (boss-kill evidence strips), with C2-02 to fold in.
+- ASSUMED / not verified: device FPS, touch feel, audio as heard. There
+  are no 320/412 toast plates in the pack (play_session is 360 only).
+
+## 2026-09-25 — experimental polish loop: pick-rule change (maker, between iterations 3 and 4)
+- Why: overall score 5 in all four critic rounds (0–3). The severity/effort pick rule
+  chose small P1/S fixes (the toast, the boss white-out); the critic confirmed them, but
+  round 3's verdict was "no change a player would feel in the fight". None of the P1/M
+  items it names as score movers had been started. VERIFIED from
+  docs/experimental/critic/round-00..03.md and backlog.json.
+- Change: `backlog.json` now carries a build-order pin taken from critic round 3's
+  "What to fix next" list. Related items ship together in one build:
+  C2-05+C2-02+C1-01 (run end: victory beat, boss-kill evidence strips, no credit toast
+  on a first defeat), C0-01+C0-05 (enemy turn: approach + hit reaction),
+  C0-06+C1-03+C1-07 (child-facing copy), C0-07 (title screen fits), C0-03+C1-02
+  (call-outs). From round 4 the critic returns a `fix_next` list and the merge re-pins
+  from it. Protocol text: docs/experimental/PROJECT.md step 2.
+- Budget: the owner runs on reward credits; about three more builds fit before the
+  loop's credit floor. ASSUMED estimate from per-run credit readings.
+- No code, test, version or release change in this entry.
+
+## 2026-09-25 — experimental polish loop, iteration 4 (cron): exp.5 "Victory!"
+- Bundle from the build-order pin, all three ids in one build:
+  - C2-05: no song-credit toast on a new player's first defeat or victory screen.
+  - C2-02: a victory beat on the run-ending boss kill.
+  - C1-01: boss-kill evidence strips.
+- C2-05: the run-end track is first heard after banking has already set
+  runsPlayed to 1, so the first delve's own end screen got the toast. It is
+  now gated in controller.dart (`firstDelve`). VERIFIED: 3 new tests were red
+  on the old code ('"The Climb Home" — first hearing') and are green now.
+  Plate 011 shows no toast.
+- C2-02: new lib/ui/victory_beat.dart. A stage-scoped "VICTORY!" banner
+  (34 px, 250 ms ease-out-back), embers rising from the boss, and a 300 ms
+  raised-weapon lift. The tray and action zone ease to 0.35 over 200 ms.
+  Reduced motion gives a fade only. lib/sim is untouched.
+  VERIFIED: test/victory_beat_test.dart covers 320/360/412 plus reduced
+  motion. The banner stays inside the stage at +600 and +1200 ms. Each tray
+  die's mean luma is 46–48% of its live value.
+- C1-01: new tool/boss_kill_frames_test.dart. It makes 40 ms strips of two
+  bosses (normal and reduced) plus victory plates, and it is wired into
+  capture_all. VERIFIED: 0 of 40 frames per strip have more than half their
+  pixels at luma > 230.
+- Failure, fixed with one retry: CI run 36093852842 failed "Analyze (fatal
+  on warnings)" on an unnecessary `dart:typed_data` import in the new
+  harness. The local analyze had run before that file existed. Fixed in
+  04c4281. Run 36094260391 is green on both jobs.
+- exp.5 = 0.184.105+216. Full suite 1592/1592 (1584 + 8 new, none
+  weakened). Published as PRE-RELEASE v0.184.105-exp.5. /releases/latest is
+  still v0.184.0. All 4 APKs carry the permanent cert, with codes
+  216/1216/2216/4216. VERIFIED.
+- Critic round 4 (smart) on exp.5: every score unchanged (overall 5, the
+  "fight is untouched" verdict). C1-01, C2-02 and C2-05 are closed; no
+  regressions.
+  - 5 new issues: C4-01 (text pile-up at the victory moment), C4-02 (the
+    boss is a white block for ~400 ms), C4-03 (the sting lands on the
+    summary cut), C4-04 (the shake moves the HUD), C4-05 (the strips use
+    the crawler, not real bosses). All are VERIFIED on plates, PIL or code;
+    C4-03 as heard is ASSUMED.
+  - The pin was re-set from the critic's fix_next. Next is C0-01+C0-05
+    (the enemy turn: approach plus hit reaction).
+- ASSUMED / not verified: audio as heard, device FPS, touch feel. The
+  victory sting is not re-timed.
+
+## 2026-09-25 — experimental build 6 (C0-01 + C0-05, owner "lock in")
+- Run by the maker thread on the owner's "lock in" (the 08:00 cron run had
+  stopped at the credit floor). Bundle from the round-4 pin: C0-01 + C0-05.
+- C0-01: foe dash now targets a measured strike mark beside the delver
+  (120-160 ms, run row, 2-frame contact squash, 200 ms ease-back; brute hop,
+  crawler pounce, wisp dart, low lunge for the rest). Reduce Motion: no dash.
+- C0-05: hit reaction = ~70 ms white, 8 px jolt + 1-frame squash, ~120 ms
+  red tint; claw rake on the delver fades in 130 ms.
+- Failure, fixed in-run: the first cut shortened wind-up + dash to 330 ms and
+  broke 3 pinned tests in test/combat_contact_timeline_test.dart ("Expected:
+  <30> Actual: <23>" at 430 ms). Fix: the wind-up absorbs the time the dash
+  gave back (envelope stays 440 ms); the test was not touched.
+- VERIFIED: new test/enemy_dash_test.dart red on old code, green on new;
+  analyze clean; full suite 1598/1598; frames checked by eye.
+- ASSUMED: device feel. Critic round 5 on exp.6 pending (credit budget).
