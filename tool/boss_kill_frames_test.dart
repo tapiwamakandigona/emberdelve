@@ -12,7 +12,6 @@
 // luma > 230 (the old white-out) so the numbers go into the pack.
 //   flutter test tool/boss_kill_frames_test.dart
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:emberdelve/sim/assignment.dart';
