@@ -5,6 +5,14 @@
 // unchanged and no public API moved.
 part of '../../screens.dart';
 
+/// Experimental loop C0-01: a painted body fills about the middle 60% of its
+/// frame, so its front sits this fraction of the frame width off-centre.
+const double _foeBodyHalf = 0.30;
+
+/// C0-01: floor left between the foe's front and the delver's front when the
+/// foe's dash lands on its strike mark (logical px).
+const double _foeStrikeGap = 10.0;
+
 extension _CombatStageBand on _CombatScreenState {
   Widget _stageSection(BuildContext context, _Hud h) {
     final enemy = h.enemy;
@@ -91,6 +99,24 @@ extension _CombatStageBand on _CombatScreenState {
             heroH: heroH,
             badgeLift: badgeLift,
           );
+          // Experimental loop C0-01: the foe's dash ends on a strike mark
+          // beside the delver. It used to travel a fixed 1.15x its own
+          // width, which stopped it mid-floor, swinging at air. The row pins
+          // both bodies to the stage ends, so the mark is measured: it leaves
+          // [_foeStrikeGap] of floor between the two painted fronts. Reduce
+          // Motion: no dash at all - the strike stays a lean in place.
+          final heroW = _spriteWidth(_characterId, heroH);
+          final foeW = _spriteWidth(enemyId, enemyH);
+          final foeDepth = big ? 1.02 : 1.06;
+          final foeReach = Motion.instance.reduced
+              ? 0.0
+              : math.max(
+                  0.0,
+                  box.maxWidth -
+                      heroW * (0.5 + _foeBodyHalf) -
+                      foeW * (0.5 + _foeBodyHalf * foeDepth) -
+                      _foeStrikeGap,
+                );
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -200,6 +226,11 @@ extension _CombatStageBand on _CombatScreenState {
                                 condition: condition,
                                 plan: _playerPlan,
                                 articulated: rig != null,
+                                // C0-05: white beat, then a red hurt tint;
+                                // an 8 px jolt back with a one-frame squash.
+                                hurt: _playerHurt,
+                                jolt: _playerJolt,
+                                knockDp: 8.0,
                                 hand: SpriteMeta.cachedOrNull
                                     ?.sheet(_characterId)
                                     ?.hand,
@@ -294,8 +325,14 @@ extension _CombatStageBand on _CombatScreenState {
                                             // the strike instead of an idle
                                             // pose sliding across the stage.
                                             // No run row -> idle (SpriteView).
-                                            state: _enemyLunge ? 'run' : 'idle',
-                                            fps: _enemyLunge ? 14 : null,
+                                            // C0-01: the legs stop when the
+                                            // blow lands on the mark.
+                                            state: _enemyLunge && !_enemyStruck
+                                                ? 'run'
+                                                : 'idle',
+                                            fps: _enemyLunge && !_enemyStruck
+                                                ? 14
+                                                : null,
                                             // Living idles: wisps hover off
                                             // their shadow, brutes heave,
                                             // crawlers scuttle.
@@ -345,6 +382,10 @@ extension _CombatStageBand on _CombatScreenState {
                                   enemyPlan: _enemyPlan,
                                   windup: true,
                                   dissolve: ashfall,
+                                  reach: foeReach,
+                                  struck: _enemyStruck,
+                                  jolt: _enemyJolt,
+                                  recover: _CombatScreenState._pace(200),
                                 );
                               },
                             ),
@@ -589,6 +630,13 @@ extension _CombatStageBand on _CombatScreenState {
                               _ => ImpactSlash(
                                 key: ValueKey('fx-${fx.id}'),
                                 claws: fx.kind == _FxKind.claws,
+                                // C0-05: the rake on the delver is gone
+                                // within ~130 ms instead of hanging through
+                                // the whole hit reaction.
+                                duration:
+                                    fx.onPlayer && fx.kind == _FxKind.claws
+                                    ? const Duration(milliseconds: 130)
+                                    : const Duration(milliseconds: 340),
                                 shape: fx.shape,
                                 facing: fx.onPlayer ? -1 : 1,
                                 color: fx.color,
@@ -820,6 +868,29 @@ extension _CombatStageBand on _CombatScreenState {
     /// fade/sink and the pallor drain (which would grey the heat glow) are
     /// skipped. Shadow fade and the ember burst still play.
     bool dissolve = false,
+
+    /// Experimental loop C0-01: how far the lunge carries the body, in
+    /// logical px (the stage measures the gap to a strike mark beside the
+    /// opponent). Null keeps the legacy advance x body width.
+    double? reach,
+
+    /// C0-01: the lunge has landed - a hop comes down onto the mark.
+    bool struck = false,
+
+    /// C0-01/C0-05: contact squash, applied instantly (never tweened) for
+    /// the frame or two it is set.
+    bool jolt = false,
+
+    /// C0-05: the red hurt tint that follows the white contact flash.
+    bool hurt = false,
+
+    /// C0-05: knockback in logical px, snapped in fast (null keeps the
+    /// legacy 22%-of-width slide).
+    double? knockDp,
+
+    /// C0-01: how long the body eases back to its mark after a lunge (null
+    /// keeps the legacy knock time).
+    Duration? recover,
   }) {
     Widget w = sprite;
     final dir = lungeToward.toDouble();
@@ -902,6 +973,17 @@ extension _CombatStageBand on _CombatScreenState {
               ),
               child: w,
             )
+          // C0-05: after one white beat the hurt body burns red, so the hit
+          // reads as pain instead of a frozen white cut-out.
+          : hurt
+          ? ColorFiltered(
+              key: const ValueKey('hurt'),
+              colorFilter: ColorFilter.mode(
+                EmberColors.danger.withValues(alpha: 0.55),
+                BlendMode.srcATop,
+              ),
+              child: w,
+            )
           : KeyedSubtree(key: const ValueKey('plain'), child: w),
     );
     // Death: fade out while sinking (collapse) into the ember cloud.
@@ -936,6 +1018,7 @@ extension _CombatStageBand on _CombatScreenState {
       plan: plan,
       enemyPlan: enemyPlan,
       windup: windup,
+      struck: struck,
     );
     final m = Matrix4.identity();
     if (!articulated) {
@@ -944,9 +1027,15 @@ extension _CombatStageBand on _CombatScreenState {
         ..rotateZ(pose.lean)
         ..scaleByDouble(pose.scaleX, pose.scaleY, pose.scaleX, 1.0);
     }
-    w = Transform.scale(
+    // C0-01/C0-05: the contact squash rides the depth scale, so toggling it
+    // never changes the tree (no state or animation restarts).
+    w = Transform(
       alignment: Alignment.bottomCenter,
-      scale: depthScale,
+      transform: Matrix4.diagonal3Values(
+        depthScale * (jolt ? 1.08 : 1.0),
+        depthScale * (jolt ? 0.90 : 1.0),
+        1.0,
+      ),
       child: AnimatedContainer(
         duration: pose.duration,
         curve: pose.curve,
@@ -963,10 +1052,13 @@ extension _CombatStageBand on _CombatScreenState {
         ? (plan?.advance ?? enemyPlan?.advance ?? 1.0) *
               (articulated ? 0.72 : 1.0)
         : 0.0;
+    // C0-01: a measured reach becomes the slide's width fraction (the
+    // slide's child is exactly the body's box). C0-05: a knockback given in
+    // px snaps in over ~60 ms instead of sliding for 140.
     final dx = lunge
-        ? 1.15 * advance * lungeToward
+        ? (reach != null ? reach / width : 1.15 * advance) * lungeToward
         : knock
-        ? -0.22 * lungeToward
+        ? (knockDp != null ? -knockDp / width : -0.22) * lungeToward
         : braced
         ? -0.03 * lungeToward
         : 0.0;
@@ -976,8 +1068,16 @@ extension _CombatStageBand on _CombatScreenState {
           ? _CombatScreenState._pace(
               plan?.travelMs ?? enemyPlan?.travelMs ?? 250,
             )
-          : _CombatScreenState._knockTime,
-      curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
+          : knock
+          ? (knockDp != null
+                ? _CombatScreenState._pace(60)
+                : _CombatScreenState._knockTime)
+          : recover ?? _CombatScreenState._knockTime,
+      // The measured dash still accelerates into contact, but shows its
+      // travel on the frames before it (the cubic hid it: critic C0-01).
+      curve: lunge
+          ? (reach != null ? Curves.easeInQuad : Curves.easeInCubic)
+          : Curves.easeOutCubic,
       child: w,
     );
   }
@@ -993,6 +1093,7 @@ extension _CombatStageBand on _CombatScreenState {
     StrikePlan? plan,
     EnemyStrikePlan? enemyPlan,
     bool windup = false,
+    bool struck = false,
   }) {
     // Baseline: the hurt body slumps toward the ground and sags.
     final slump = condition.slump * dir;
@@ -1015,14 +1116,22 @@ extension _CombatStageBand on _CombatScreenState {
       final lean = plan?.strikeLean ?? enemyPlan?.strikeLean ?? 0.12;
       final stretch = plan?.strikeStretch ?? enemyPlan?.strikeStretch ?? 1.03;
       final ms = plan?.travelMs ?? enemyPlan?.travelMs ?? 250;
+      // C0-01: a foe's body commits to the strike early (ease-out) while
+      // the slide accelerates under it, so a hop rises through the dash and
+      // comes down on the mark at contact ([struck]).
+      final foe = plan == null && enemyPlan != null;
       return _BodyPose(
         lean: lean * dir,
         scaleX: 1.0 / math.sqrt(stretch),
         scaleY: stretch,
         dx: 0.0,
-        lift: enemyPlan?.hop ?? 0.0,
-        duration: _CombatScreenState._pace(ms),
-        curve: Curves.easeInCubic,
+        lift: struck ? 0.0 : enemyPlan?.hop ?? 0.0,
+        duration: _CombatScreenState._pace(struck ? 60 : ms),
+        curve: struck
+            ? Curves.easeIn
+            : foe
+            ? Curves.easeOutCubic
+            : Curves.easeInCubic,
       );
     }
     if (knock) {

@@ -168,6 +168,11 @@ class _CombatScreenState extends State<CombatScreen> {
   bool _playerKnock = false, _enemyKnock = false;
   bool _playerDying = false, _enemyDying = false;
   bool _playerSquash = false, _enemySquash = false;
+  // Experimental loop C0-01/C0-05: the foe lands on its strike mark
+  // (struck) with a contact squash (jolt); the delver's hit reaction is a
+  // white beat, then a red hurt tint, with a one-frame squash.
+  bool _enemyStruck = false, _enemyJolt = false;
+  bool _playerHurt = false, _playerJolt = false;
 
   // v0.183.0 Bodies in the Fight: the authored strike behind the flags
   // above. Frozen per swing so the body, weapon and contact FX all read the
@@ -1078,9 +1083,15 @@ class _CombatScreenState extends State<CombatScreen> {
       // Physical wind-up: the enemy leans back and darkens for a beat before
       // the lunge — the strike telegraphs in the body, not just the badge.
       _choreo(() => _enemySquash = true);
-      await _beat(_pace(plan.windupMs));
+      // C0-01: the dash itself is short (120-160 ms), so the whoosh starts
+      // inside the wind-up to keep its SYNC_POINTS lead (~250 ms before
+      // contact).
+      final whooshLead = math.max(0, 250 - plan.travelMs);
+      await _beat(_pace(plan.windupMs - whooshLead));
       if (!mounted) return;
       _audio?.playSfx('whoosh');
+      await _beat(_pace(whooshLead));
+      if (!mounted) return;
       _choreo(() {
         _enemySquash = false;
         _enemyLunge = true;
@@ -1123,21 +1134,44 @@ class _CombatScreenState extends State<CombatScreen> {
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
       final bigHit = _impact(damage, playerMax);
-      _choreo(() => _playerFlash = true);
-      if (bigHit) await _beat(_hitStop);
+      // Experimental loop C0-01/C0-05: contact. The foe lands on its mark
+      // with a two-frame squash; the delver snaps back 8 px with a
+      // one-frame squash under ONE white beat (~70 ms), then burns red for
+      // ~120 ms. It used to hold a frozen white silhouette for ~300 ms.
+      // A big hit (>= 25% max HP) holds the red beat for the old hit-stop.
+      _choreo(() {
+        _enemyStruck = true;
+        _enemyJolt = true;
+        _playerFlash = true;
+        _playerJolt = true;
+        _playerKnock = true;
+      });
+      await _beat(_pace(40));
       if (!mounted) return;
-      _choreo(() => _playerKnock = true);
-      await _beat(_knockTime);
+      _choreo(() => _playerJolt = false);
+      await _beat(_pace(30));
+      if (!mounted) return;
+      _choreo(() {
+        _playerFlash = false;
+        _playerHurt = true;
+      });
+      await _beat(_pace(16));
+      if (!mounted) return;
+      _choreo(() => _enemyJolt = false);
+      await _beat(_pace(104) + (bigHit ? _hitStop : Duration.zero));
       if (!mounted) return;
       _choreo(() {
         _enemyLunge = false;
+        _enemyStruck = false;
         _playerKnock = false;
+        _playerHurt = false;
       });
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
         Haptics.heavy();
         _choreo(() {
           _playerFlash = false;
+          _playerHurt = false;
           _playerDying = true;
         });
         // The run-ending moment keeps its full weight — never fast-forwarded.

@@ -45,12 +45,23 @@ enum StrikeFamily {
 /// Which family a signature weapon belongs to. Unknown ids fall back to the
 /// Kindler's cut so a future weapon never swings blind.
 StrikeFamily familyForWeapon(String weaponId) => switch (weaponId) {
-  'ward_maul' || 'pin_wrench' || 'stone_maul' || 'planishing_hammer' ||
-  'grain_flail' || 'long_ladle' => StrikeFamily.crush,
-  'lucky_fang' || 'brand_iron' || 'steeling_rod' || 'fire_iron' ||
-  'stitching_awl' || 'glovers_needle' => StrikeFamily.stab,
+  'ward_maul' ||
+  'pin_wrench' ||
+  'stone_maul' ||
+  'planishing_hammer' ||
+  'grain_flail' ||
+  'long_ladle' => StrikeFamily.crush,
+  'lucky_fang' ||
+  'brand_iron' ||
+  'steeling_rod' ||
+  'fire_iron' ||
+  'stitching_awl' ||
+  'glovers_needle' => StrikeFamily.stab,
   'rune_chisel' || 'agate_burnisher' => StrikeFamily.stamp,
-  'coin_hook' || 'coal_rake' || 'hearth_hook' || 'lamp_pole' => StrikeFamily.hook,
+  'coin_hook' ||
+  'coal_rake' ||
+  'hearth_hook' ||
+  'lamp_pole' => StrikeFamily.hook,
   'knapping_pick' || 'shoeing_hammer' => StrikeFamily.pick,
   'ember_brand' || 'billhook' => StrikeFamily.cut,
   _ => StrikeFamily.cut,
@@ -325,6 +336,11 @@ EnemyStrikeStyle enemyStyleFor(
   for (final b in biters) {
     if (enemyId.contains(b)) return EnemyStrikeStyle.bite;
   }
+  // Experimental loop C0-01: heavy brutes hop in and drop their whole mass.
+  const hoppers = {'brute', 'ogre', 'hulk'};
+  for (final h in hoppers) {
+    if (enemyId.contains(h)) return EnemyStrikeStyle.slam;
+  }
   if (elite) return EnemyStrikeStyle.slam;
   return EnemyStrikeStyle.swipe;
 }
@@ -444,6 +460,15 @@ double _tanh(double x) {
 /// Enemy body choreography per style. The wind-up is always the player's
 /// last read of the incoming hit, so it never gets shorter than the legacy
 /// 190 ms telegraph.
+///
+/// Experimental loop C0-01 (2026-09-25): [travelMs] is a 120-160 ms dash
+/// that the combat stage aims at a strike mark beside the delver (it
+/// measures the gap), so a foe crosses the floor to land its blow instead
+/// of swinging at air from where it stood. The wind-up grew by what the
+/// dash gave back, so wind-up + dash stays the 440 ms envelope that contact
+/// timing is pinned to (test/combat_contact_timeline_test.dart): a longer,
+/// easier-to-read telegraph, then a snap. [advance] only scales the legacy
+/// fallback when no strike distance is given.
 class EnemyStrikePlan {
   final EnemyStrikeStyle style;
   final int windupMs;
@@ -470,10 +495,11 @@ class EnemyStrikePlan {
 }
 
 EnemyStrikePlan planEnemyStrike(EnemyStrikeStyle style) => switch (style) {
+  // A crawler coils low and pounces: a short hop that lands on the delver.
   EnemyStrikeStyle.bite => const EnemyStrikePlan(
     style: EnemyStrikeStyle.bite,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 290,
+    travelMs: 150,
     windupLean: -0.06,
     windupCrouch: 0.84, // coils low
     strikeLean: 0.18,
@@ -482,40 +508,43 @@ EnemyStrikePlan planEnemyStrike(EnemyStrikeStyle style) => switch (style) {
     hop: 0.18,
     contact: ContactShape.claws,
   ),
+  // Bosses, elites and brutes hop in and drop their whole mass.
   EnemyStrikeStyle.slam => const EnemyStrikePlan(
     style: EnemyStrikeStyle.slam,
-    windupMs: 230,
-    travelMs: 210,
+    windupMs: 280,
+    travelMs: 160,
     windupLean: -0.12,
-    windupCrouch: 0.88,
+    windupCrouch: 0.86,
     strikeLean: 0.22,
     strikeStretch: 0.94, // lands compressed
     advance: 0.85,
-    hop: 0.10,
+    hop: 0.22,
     contact: ContactShape.crush,
   ),
+  // A wisp darts flat and fast, straight through the guard.
   EnemyStrikeStyle.dart => const EnemyStrikePlan(
     style: EnemyStrikeStyle.dart,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 320,
+    travelMs: 120,
     windupLean: -0.04,
     windupCrouch: 0.96,
     strikeLean: 0.10,
-    strikeStretch: 1.06,
-    advance: 1.3, // flickers right through the guard
+    strikeStretch: 1.08,
+    advance: 1.3,
     hop: 0.0,
     contact: ContactShape.claws,
   ),
+  // Everything else (maws, golems) lunges low along the floor.
   EnemyStrikeStyle.swipe => const EnemyStrikePlan(
     style: EnemyStrikeStyle.swipe,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 300,
+    travelMs: 140,
     windupLean: -0.08,
-    windupCrouch: 0.90,
-    strikeLean: 0.14,
-    strikeStretch: 1.02,
+    windupCrouch: 0.86,
+    strikeLean: 0.16,
+    strikeStretch: 1.06,
     advance: 1.0,
-    hop: 0.05,
+    hop: 0.0,
     contact: ContactShape.claws,
   ),
 };
