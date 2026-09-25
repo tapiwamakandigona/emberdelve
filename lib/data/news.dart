@@ -23,10 +23,22 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.184.105';
+const String currentAppVersion = '0.184.106';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.184.106',
+    title: 'Experimental: Foes Strike Back',
+    lines: [
+      'This is an experimental test build, not the regular release. Thank '
+          'you for trying it early.',
+      'Monsters now dash across the floor to hit you, and big ones hop in '
+          'and land with a thump.',
+      'When you get hit, your hero flashes, stumbles back and glows red for '
+          'a moment instead of freezing white.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.184.105',
     title: 'Experimental: Victory!',

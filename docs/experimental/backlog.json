@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25T04:30:35+00:00",
+ "updated": "2026-09-25T11:39:20+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -98,7 +98,7 @@
    "fix_direction": "120–160 ms dash using the existing 'run' row (sprite_meta.json) to a strike mark ~40 dp from the hero, 1 contact frame with 2-frame squash, 200 ms ease-back; family variants (wisp dart, brute hop, maw low lunge); reduced-motion keeps a 2-frame lean.",
    "acceptance": "Enemy-turn strips for 4 foes show foe centroid ≥90 px @2x closer to hero on the contact frame; reduced-motion strip shows no dash.",
    "effort": "M",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 1,
    "history": [
@@ -111,8 +111,15 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T11:39:20+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.6",
+     "note": "exp.6: foe dash to a measured strike mark + white/red hit reaction; test/enemy_dash_test.dart red on old code, green on new"
     }
-   ]
+   ],
+   "fixed_in": "exp.6"
   },
   {
    "id": "C0-02",
@@ -253,7 +260,7 @@
    "fix_direction": "White 60–80 ms → red tint 120 ms; 6–8 dp knockback + 1-frame squash; slash decal fades by 120 ms; shake scaled by damage/HP.",
    "acceptance": "Strip shows ≤2 white sampled frames and measurable x-offset on 032/034.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 5,
    "history": [
@@ -266,8 +273,15 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T11:39:20+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "exp.6",
+     "note": "exp.6: foe dash to a measured strike mark + white/red hit reaction; test/enemy_dash_test.dart red on old code, green on new"
     }
-   ]
+   ],
+   "fixed_in": "exp.6"
   },
   {
    "id": "C0-06",

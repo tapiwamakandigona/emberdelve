@@ -6176,3 +6176,19 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
     (the enemy turn: approach plus hit reaction).
 - ASSUMED / not verified: audio as heard, device FPS, touch feel. The
   victory sting is not re-timed.
+
+## 2026-09-25 — experimental build 6 (C0-01 + C0-05, owner "lock in")
+- Run by the maker thread on the owner's "lock in" (the 08:00 cron run had
+  stopped at the credit floor). Bundle from the round-4 pin: C0-01 + C0-05.
+- C0-01: foe dash now targets a measured strike mark beside the delver
+  (120-160 ms, run row, 2-frame contact squash, 200 ms ease-back; brute hop,
+  crawler pounce, wisp dart, low lunge for the rest). Reduce Motion: no dash.
+- C0-05: hit reaction = ~70 ms white, 8 px jolt + 1-frame squash, ~120 ms
+  red tint; claw rake on the delver fades in 130 ms.
+- Failure, fixed in-run: the first cut shortened wind-up + dash to 330 ms and
+  broke 3 pinned tests in test/combat_contact_timeline_test.dart ("Expected:
+  <30> Actual: <23>" at 430 ms). Fix: the wind-up absorbs the time the dash
+  gave back (envelope stays 440 ms); the test was not touched.
+- VERIFIED: new test/enemy_dash_test.dart red on old code, green on new;
+  analyze clean; full suite 1598/1598; frames checked by eye.
+- ASSUMED: device feel. Critic round 5 on exp.6 pending (credit budget).
