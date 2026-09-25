@@ -415,8 +415,15 @@ class GameController extends ChangeNotifier {
         // player knew what a delve was. The first delve stays quiet: the
         // songs still bank (heardTracks above) and the summary's grouped
         // new-song line names them; credits resume from the second delve.
+        // exp.5 (critic C2-05): the run-end track is first heard AFTER
+        // banking moved runsPlayed to 1, so the first defeat/victory screen
+        // still got a toast over its buttons. The first delve's own end
+        // screen belongs to that delve and stays quiet too.
+        final firstDelve =
+            meta.runsPlayed == 0 ||
+            (meta.runsPlayed == 1 && _terminal.contains(phase));
         final credit = trackByKey(key)?.name;
-        if (credit != null && meta.runsPlayed > 0) {
+        if (credit != null && !firstDelve) {
           flash = '"$credit" — first hearing';
         }
         MetaStore.save(meta);

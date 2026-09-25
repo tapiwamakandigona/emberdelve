@@ -140,76 +140,93 @@ extension _CombatStageBand on _CombatScreenState {
                               (player['max_hp'] as int?) ?? 1,
                             );
                             final rig = CombatRig.forId(_characterId);
-                            return _combatant(
-                              sprite: rig != null
-                                  ? CombatFigure(
-                                      key: ValueKey('figure-$_characterId'),
-                                      rig: rig,
-                                      height: heroH,
-                                      phase: _weaponPhase,
-                                      plan: _playerPlan,
-                                      charge: _weaponCharge,
-                                      knock: _playerKnock,
-                                      condition: condition,
-                                      showWounds: BloodEffects.enabled.value,
-                                      dye: Art.dyeFilter(
-                                        widget.c.meta.dyeFor(_characterId),
+                            // C2-02: on the run-ending kill the delver rises
+                            // and leans back — a 300 ms raised-weapon pose
+                            // (a still lift under reduced motion).
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(end: _victoryBeat ? 1.0 : 0.0),
+                              duration: Motion.instance.reduced
+                                  ? Duration.zero
+                                  : const Duration(milliseconds: 300),
+                              curve: Curves.easeOutBack,
+                              builder: (context, v, child) => Transform(
+                                alignment: Alignment.bottomCenter,
+                                transform: Matrix4.identity()
+                                  ..translateByDouble(0, -10 * v, 0, 1)
+                                  ..rotateZ(-0.08 * v),
+                                child: child,
+                              ),
+                              child: _combatant(
+                                sprite: rig != null
+                                    ? CombatFigure(
+                                        key: ValueKey('figure-$_characterId'),
+                                        rig: rig,
+                                        height: heroH,
+                                        phase: _weaponPhase,
+                                        plan: _playerPlan,
+                                        charge: _weaponCharge,
+                                        knock: _playerKnock,
+                                        condition: condition,
+                                        showWounds: BloodEffects.enabled.value,
+                                        dye: Art.dyeFilter(
+                                          widget.c.meta.dyeFor(_characterId),
+                                        ),
+                                        identity: identity,
+                                      )
+                                    : SpriteView(
+                                        _characterId,
+                                        key: ValueKey('hero-$_characterId'),
+                                        height: heroH,
+                                        bob:
+                                            true, // LFP-4a: the stage always breathes
+                                        // v0.27.0: the delver wears their dye into
+                                        // the fight; enemies are never tinted.
+                                        dye: Art.dyeFilter(
+                                          widget.c.meta.dyeFor(_characterId),
+                                        ),
+                                        condition: condition,
+                                        ichor: Ichor.blood,
+                                        showWounds: BloodEffects.enabled.value,
                                       ),
-                                      identity: identity,
-                                    )
-                                  : SpriteView(
-                                      _characterId,
-                                      key: ValueKey('hero-$_characterId'),
-                                      height: heroH,
-                                      bob:
-                                          true, // LFP-4a: the stage always breathes
-                                      // v0.27.0: the delver wears their dye into
-                                      // the fight; enemies are never tinted.
-                                      dye: Art.dyeFilter(
-                                        widget.c.meta.dyeFor(_characterId),
+                                spriteHeight: heroH,
+                                spriteWidth: _spriteWidth(_characterId, heroH),
+                                lungeToward: 1,
+                                lunge: _playerLunge,
+                                knock: _playerKnock,
+                                flash: _playerFlash,
+                                dying: _playerDying,
+                                squash: _playerSquash,
+                                braced: _playerBraced,
+                                condition: condition,
+                                plan: _playerPlan,
+                                articulated: rig != null,
+                                hand: SpriteMeta.cachedOrNull
+                                    ?.sheet(_characterId)
+                                    ?.hand,
+                                // The delver's signature weapon: idles in the
+                                // hand socket, coils on the wind-up, swings
+                                // with the lunge, braces across the body on
+                                // guard.
+                                weapon: rig != null
+                                    ? null
+                                    : WeaponView(
+                                        _characterId,
+                                        // Keep state across pool evolution; changing
+                                        // the build should morph the existing weapon,
+                                        // not restart its choreography controller.
+                                        key: const ValueKey('combat-weapon'),
+                                        height: heroH,
+                                        phase: _weaponPhase,
+                                        // Die -> weapon causality made visible: the
+                                        // selected die's pips heat the blade before
+                                        // the swing.
+                                        charge: _weaponCharge,
+                                        // The weapon's edge/profile now reflects the
+                                        // pool forged so far (presentation only).
+                                        identity: identity,
+                                        plan: _playerPlan,
                                       ),
-                                      condition: condition,
-                                      ichor: Ichor.blood,
-                                      showWounds: BloodEffects.enabled.value,
-                                    ),
-                              spriteHeight: heroH,
-                              spriteWidth: _spriteWidth(_characterId, heroH),
-                              lungeToward: 1,
-                              lunge: _playerLunge,
-                              knock: _playerKnock,
-                              flash: _playerFlash,
-                              dying: _playerDying,
-                              squash: _playerSquash,
-                              braced: _playerBraced,
-                              condition: condition,
-                              plan: _playerPlan,
-                              articulated: rig != null,
-                              hand: SpriteMeta.cachedOrNull
-                                  ?.sheet(_characterId)
-                                  ?.hand,
-                              // The delver's signature weapon: idles in the
-                              // hand socket, coils on the wind-up, swings
-                              // with the lunge, braces across the body on
-                              // guard.
-                              weapon: rig != null
-                                  ? null
-                                  : WeaponView(
-                                      _characterId,
-                                      // Keep state across pool evolution; changing
-                                      // the build should morph the existing weapon,
-                                      // not restart its choreography controller.
-                                      key: const ValueKey('combat-weapon'),
-                                      height: heroH,
-                                      phase: _weaponPhase,
-                                      // Die -> weapon causality made visible: the
-                                      // selected die's pips heat the blade before
-                                      // the swing.
-                                      charge: _weaponCharge,
-                                      // The weapon's edge/profile now reflects the
-                                      // pool forged so far (presentation only).
-                                      identity: identity,
-                                      plan: _playerPlan,
-                                    ),
+                              ),
                             );
                           },
                         ),
@@ -485,6 +502,18 @@ extension _CombatStageBand on _CombatScreenState {
                             ),
                           ),
                         ),
+                        // C2-02: the run-ending kill's victory beat —
+                        // banner + rising embers, scoped to the stage.
+                        if (_victoryBeat)
+                          Positioned.fill(
+                            key: const ValueKey('victory-beat'),
+                            child: ClipRect(
+                              child: VictoryBeat(
+                                source: plan.geometry.enemyBody,
+                                reduced: Motion.instance.reduced,
+                              ),
+                            ),
+                          ),
                         // Enemy-anchored call-outs: burn ticks, exact-kill,
                         // overkill — each in its planned slot (C0-03).
                         for (final n in _notes.where((n) => n.onEnemy))

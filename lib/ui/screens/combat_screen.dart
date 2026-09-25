@@ -212,6 +212,11 @@ class _CombatScreenState extends State<CombatScreen> {
   // (C1-01: it used to be a full-screen opaque white-out that hid the kill).
   bool _bossKillFlash = false;
 
+  // C2-02: the run-ending boss kill gets a victory beat — a stage banner,
+  // rising embers and the delver's raised-weapon pose — instead of a board
+  // that just goes still until the summary.
+  bool _victoryBeat = false;
+
   // C1-01: set the frame a blow/turn ends the encounter — the tray and the
   // action zone dim and stop taking taps until the screen moves on.
   bool _encounterOver = false;
@@ -771,6 +776,11 @@ class _CombatScreenState extends State<CombatScreen> {
       _shakeKey.currentState?.shake(1.0);
       _choreo(() => _enemyFlash = true);
       _fxUpdate(() => _bossKillFlash = true);
+      // C2-02: the run-ending kill's banner lands with the blow.
+      if (events.any((e) => e['type'] == 'run_won')) {
+        _choreo(() => _victoryBeat = true);
+        _fxTick.value++;
+      }
       await _sleep(const Duration(milliseconds: 260));
       if (!mounted) return;
     }
@@ -1465,9 +1475,17 @@ class _CombatScreenState extends State<CombatScreen> {
 
   /// C1-01: once the encounter is decided the controls stop inviting input
   /// — dimmed and inert from the same frame, so the kill reads as the end.
+  /// C2-02: the dim eases in over 200 ms (it used to snap) so the kill's
+  /// end reads as a beat, not a glitch.
   Widget _inertIfOver(Widget child) => IgnorePointer(
     ignoring: _encounterOver,
-    child: Opacity(opacity: _encounterOver ? 0.35 : 1.0, child: child),
+    child: AnimatedOpacity(
+      opacity: _encounterOver ? dimmedControls : 1.0,
+      duration: Motion.instance.reduced
+          ? Duration.zero
+          : const Duration(milliseconds: 200),
+      child: child,
+    ),
   );
 
   /// Layer of the node the delver stands on (for the boss name-plate).

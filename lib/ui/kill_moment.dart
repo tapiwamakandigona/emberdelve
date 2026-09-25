@@ -31,6 +31,10 @@ String? overkillCallout(
   return 'OVERKILL +${over['surplus']} → NEXT FOE';
 }
 
+/// Opacity of the tray and action zone once the encounter is decided
+/// (C1-01 / C2-02: dice included, so none of them reads as live).
+const double dimmedControls = 0.35;
+
 /// True when [events] end the encounter (either way): from that frame on
 /// the board must stop inviting input.
 bool encounterEnds(Iterable<Map<String, Object?>> events) => events.any(

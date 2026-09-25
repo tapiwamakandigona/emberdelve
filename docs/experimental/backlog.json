@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-25T02:23:42+00:00",
+ "updated": "2026-09-25T04:14:47+00:00",
  "scores_history": [
   {
    "round": 0,
@@ -551,7 +551,7 @@
    "fix_direction": "Add a C_anim_boss_kill strip (both final bosses) and a reduced-motion variant to the evidence pack. Dim the tray dice with the buttons (overlaps C2-02; take whichever ships first).",
    "acceptance": "40 ms boss strip at 360x800: no frame with >50% of pixels at luma>230, boss gold dissolve on ≥4 sampled frames. Reduced-motion strip: 0 such frames. +1200 plate: all tray dice dimmed.",
    "effort": "S",
-   "status": "reopened",
+   "status": "in_progress",
    "round_opened": 1,
    "critic_rank": 3,
    "rank_round": 2,
@@ -580,6 +580,11 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "relisted"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
     }
    ],
    "fixed_in": "exp.3"
@@ -787,7 +792,7 @@
    "fix_direction": "On encounter end with the run won: fade the whole tray (dice too) to about 35% over 200 ms. Show a stage-scoped banner (e.g. 'THE KING FALLS', ≥22 sp, ember glow, 250 ms scale-in with ease-out-back). Hero plays a 300 ms raise-sword pose (2–3 frames or a transform on the existing sprite) and ember particles rise from the boss spot. Sync the victory sting to the banner. Reduced motion: banner fades in, no scale, no particles.",
    "acceptance": "Boss-kill plates at +600 and +1200 ms at 320/360/412 show the banner fully inside the stage. Every tray die has mean luma ≤50% of its live value. The reduced-motion plate shows the banner with no particles. A widget test asserts the tray is inert and dimmed on run_won.",
    "effort": "M",
-   "status": "open",
+   "status": "in_progress",
    "round_opened": 2,
    "critic_rank": 2,
    "rank_round": 2,
@@ -796,6 +801,11 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "opened"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
     }
    ]
   },
@@ -853,7 +863,7 @@
    "fix_direction": "Gate credits on a 'first delve finished and summary dismissed' flag (or runsPlayed > 1 when phase is run end), not on runsPlayed > 0.",
    "acceptance": "Unit test: a fresh profile losing or winning run 1 produces no credit flash. Fresh-profile defeat plate shows no toast. The credit appears on the run-2 map.",
    "effort": "S",
-   "status": "open",
+   "status": "in_progress",
    "round_opened": 2,
    "critic_rank": 6,
    "rank_round": 2,
@@ -862,6 +872,11 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "opened"
+    },
+    {
+     "at": "2026-09-25T04:14:47+00:00",
+     "event": "maker:in_progress",
+     "note": "picked by pin (run 4)"
     }
    ]
   },
