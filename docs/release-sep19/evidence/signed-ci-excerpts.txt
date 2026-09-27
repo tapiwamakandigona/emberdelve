@@ -1,0 +1,14 @@
+Analyze + test (headless)	Analyze (fatal on warnings)	2026-09-19T13:59:44.0972638Z No issues found! (ran in 15.4s)
+Analyze + test (headless)	Test (sim determinism, map, content, autoplay balance, UI smoke)	2026-09-19T14:03:51.4152694Z 🎉 1526 tests passed.
+Analyze + test (headless)	SFX mix-bus headroom (true-peak ceiling)	2026-09-19T14:04:28.2472408Z Every reachable cascade clears the ceiling.
+Build signed Android release (APK + AAB)	Build release APK (universal fallback)	2026-09-19T14:12:07.1867100Z ✓ Built build/app/outputs/flutter-apk/app-release.apk (75.7MB)
+Build signed Android release (APK + AAB)	Build release APKs (split per ABI)	2026-09-19T14:13:00.3985541Z ✓ Built build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk (35.7MB)
+Build signed Android release (APK + AAB)	Build release APKs (split per ABI)	2026-09-19T14:13:00.6676855Z ✓ Built build/app/outputs/flutter-apk/app-arm64-v8a-release.apk (38.1MB)
+Build signed Android release (APK + AAB)	Build release APKs (split per ABI)	2026-09-19T14:13:00.9319143Z ✓ Built build/app/outputs/flutter-apk/app-x86_64-release.apk (39.7MB)
+Build signed Android release (APK + AAB)	Build release AAB	2026-09-19T14:13:40.4104920Z ✓ Built build/app/outputs/bundle/release/app-release.aab (73.7MB)
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:40.4295887Z ^[[36;1m  ACTUAL="$(grep -m1 'certificate SHA-256 digest' apksigner-out.txt | awk '{print $NF}')"^[[0m
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:40.9841423Z V2 Signer: certificate SHA-256 digest: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:41.2352138Z V2 Signer: certificate SHA-256 digest: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:41.5711621Z V2 Signer: certificate SHA-256 digest: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:41.8317351Z V2 Signer: certificate SHA-256 digest: 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d
+Build signed Android release (APK + AAB)	Verify APK signing certificates (must be the permanent upload key)	2026-09-19T14:13:41.8562718Z Signature OK: all 4 APKs are signed with the permanent upload key.

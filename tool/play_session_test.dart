@@ -51,14 +51,18 @@ final int baseSeed =
 /// map → player_turn|rest|shop|event (263-465, combatBegin), event may also
 /// start a fight (events.dart combatBegin) or return to map (497),
 /// rest|shop → map (338/356/452), reward → map (328), combat resolution →
-/// reward|run_won|run_lost|map (587-666). 'title' is the controller-level
+/// reward|run_won|run_lost|map (587-666). v7: the FIRST won fight of a run
+/// offers keystones before its reward (run_layer.dart `sim.phase = 'keystone'`),
+/// and choose_keystone (pick or decline) always resumes at the reward
+/// (`_offerReward` → 'reward'). 'title' is the controller-level
 /// null-sim state; a finished run restarts via startRun (→ boon|map).
 const Map<String, Set<String>> legalNext = {
   'title': {'boon', 'map'},
   'idle': {'boon', 'map'},
   'boon': {'map'},
   'map': {'player_turn', 'rest', 'shop', 'event'},
-  'player_turn': {'reward', 'map', 'run_won', 'run_lost'},
+  'player_turn': {'reward', 'map', 'run_won', 'run_lost', 'keystone'},
+  'keystone': {'reward'},
   'reward': {'map'},
   'rest': {'map'},
   'shop': {'map'},
@@ -475,6 +479,28 @@ void main() {
             default:
               await pumpFor(tester, 500);
           }
+          break;
+        case 'keystone':
+          // v7 keystone pick (keystone_screen.dart): real hit-tested taps on
+          // the dealt cards ('keystone-<1..3>') or 'Take none'
+          // ('keystone-skip'), following the bot's deterministic choice.
+          await pumpFor(tester, 900); // DealtIn cards settle
+          final kcmd = botCmd(c.sim!);
+          final kidx = (kcmd?['type'] == 'choose_keystone')
+              ? kcmd!['index'] as int
+              : 0;
+          final kf = find.byKey(
+            ValueKey(kidx == 0 ? 'keystone-skip' : 'keystone-$kidx'),
+          );
+          if (kf.evaluate().isEmpty) {
+            problems.add('keystone: control for index $kidx not on screen');
+            c.apply({'type': 'choose_keystone', 'index': kidx});
+          } else {
+            await tester.ensureVisible(kf);
+            await pumpFor(tester, 200);
+            await tester.tap(kf, warnIfMissed: false);
+          }
+          await pumpFor(tester, 800);
           break;
         case 'reward':
           final offers = (c.state!['offers'] as List?)?.cast<String>() ?? [];

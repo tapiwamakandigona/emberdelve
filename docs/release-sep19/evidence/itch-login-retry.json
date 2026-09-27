@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-19T15:13:51.872011+00:00",
+  "source": "Authenticated login attempts at https://itch.io/login (values never printed)",
+  "cloudflare_page_block": "cleared this time; login form reached",
+  "attempts": [
+    {
+      "identifier": "primary email (google login)",
+      "result": "Incorrect username or password"
+    },
+    {
+      "identifier": "tsorostudios username",
+      "result": "Incorrect username or password"
+    },
+    {
+      "identifier": "alternate email (appwrite login)",
+      "result": "Please complete the human verification to continue"
+    }
+  ],
+  "twofa_prompt": false,
+  "account_edited": false,
+  "password_reset": false,
+  "conclusion": "The shared password does not authenticate the itch account; further attempts now hit human verification. Stopped to avoid lockout.",
+  "github_oauth_option_present": true,
+  "rel_itch": false
+}

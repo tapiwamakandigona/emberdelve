@@ -1,0 +1,625 @@
+{
+  "verified_at": "2026-09-19T13:52:23.330075+00:00",
+  "render_test_cases_passed": 72,
+  "phone_combinations": 66,
+  "characters": 22,
+  "actual_pngs_decoded_and_hashed": 4608,
+  "pose_and_picker_case_count": 6,
+  "observations": 12540,
+  "outgoing_contact_sequences_checked": 132,
+  "max_shared_grip_error_logical_px": 2.842170943040401e-14,
+  "tool_families": [
+    "crush",
+    "cut",
+    "hook",
+    "pick",
+    "stab",
+    "stamp"
+  ],
+  "protected_files": 582,
+  "protected_changes": [],
+  "source": "Unchanged tool/roster_review_test.dart against shipping 741b439 with documentation-only release plan commit",
+  "natural_captures": [
+    {
+      "file": "ascetic-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "076aa4a3d8d44eb46d62064c4061f527b79a8c39d6dfe3fc29554615c951cc32",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "ascetic-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "3171d1d1eb4c0c5abdb70d47e93f3e0ab0273090e2c0ee048151fd0e01ad5d96",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "ascetic-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "4599ebdb9b6eb26abb907ceecca4dcba1a83419b64eb0b91c7e09de2cf45b071",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "bearer-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "a2b44cf667c8ac450004c4f670b7bc71afd52c9af8803e3b7f904ac2dbd476a6",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "bearer-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "705d98578d976cfcc23e9dcbbd30e461457c068b8274579adf1da709b33e84f5",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "bearer-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "69225c9190628a8ec4f2efcda474d78f3c6dbf55ee49430368cd8512e43c5906",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "brewster-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "6a5caf98e957ad4527d4b18f8220ed618c91b2b70be821c777b34e9b41844fcd",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "brewster-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "0d2c869daefc018ced53a930377dee6c740f389f03603a1d16a7c76b5c211c81",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "brewster-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "f380575ee617243519cdadac4a92ce69150e2d8a8d272974e1943444b5005d13",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "collier-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "911a8ee4ac0a5fb1993680e0ceab69ec3328eab3559edc8d537e23ff3ebe67db",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "collier-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "efa1ce2663602caff1e1c2d5193bea535f84099cbdb6acdf0d9f23dd440e0876",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "collier-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "ff43ae144b0efbc9a8e2531074507dba77921337b85da6413bd7baa394627099",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "cutler-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "feaa8e67d49ecd0a0786cbdd2b3dbcae5634ccf3152d1f3c53272d3ba352a47e",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "cutler-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "b85df40dfa336f6a9197b623399ba48141aec3c0b89474575d954ba19c1cc33f",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "cutler-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "627e44481bd83e136c40bcc9987f307f77cd99bb26cc8a69818647ccf09f6d65",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "farrier-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "d3232a33a241aaeb4ed3ac488ed65aa6005b64b6e912d77dd051a4a0c6ffa86c",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "farrier-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "606d9276159cc63c83a93aaf1b488f51f42aec48853911f313bf990c4d053cb8",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "farrier-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "010d88e9c8b0503bb0ef313de60b91ab8b32ba2cf075043429621a703da25782",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "flintwright-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "0d36e64d283bcb2525a942422f8d1527e79fad2c0cb877dfa34b756e0d7662d0",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "flintwright-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "be4cc707ad64eecc956bef3df3873030256cb84116199a7e8afae21d31ead4f6",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "flintwright-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "fd8597950697aed99c0b0958d8c0c9a19836e7f7517261bad31e41089afb16df",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gambler-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "76775d5c95e48e25b36c480a9683567ac42f57091747169305fcef88f1ebcddf",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gambler-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "919ede8c3c645df3af8fd6d121a1d4dcd6d42a2b4fc24c656d14d1007f742aab",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gambler-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "06f9593912cf0d17a125977651a39539a3e123fd4b1be62f91167ff0728160c3",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gilder-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "b30c2ce2621700cf4717ed558ce5c4a083026a6a8d19de98deadfa93bf1b72cf",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gilder-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "e3b13afa353938faf926e6f2cfd3ec6dc112de0b5d1954e66a30a75d155577e2",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "gilder-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "6d137065e6c29d7dfaf534c3c4ded2b45872f87b995d60555dfaa784b437ec7e",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "glover-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "8a807e48c5286eaacd398f1ce73b0ee0d053d6b40e5eb49c084078ad0f9f3357",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "glover-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "e1bf5951b1ea14a143558b4f46f1fd0bb8c9d9e2e48357fc80f7fcf440a01efa",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "glover-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "978e56ad90e5f24e2156369aa07f6b9c0bde29daac498b5a32aa333eeb75f813",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hearthkeeper-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "435c2dc4a581d39814449cbd3b29f4be486fb25de1ad0dbcc805ff252ee57069",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hearthkeeper-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "1f03864d42b90b408278007486bdd4c4d8e65ccb1714fee919985fd3cfeb1835",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hearthkeeper-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "616c205a322f2c2f67abeb372de36e2522c36a9d11b5d67610df15882f88aaf0",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hedger-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "49fc2f4b952777d6a1b0e6f0d658b28973eb21fa3eecebb91d4e492d96bc4495",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hedger-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "bbea4daedfd0f6b4d9a72574e7f7c317239f20d38fb579d05201c1de0b6a29ac",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "hedger-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "47ce45a97681b49c3a810c1208cf90bc931cf8c203f5b0a300b6ada00f068b68",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "kindler-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "617ae6a0e8eefa3c9247f5ad3da4106cf533b15161b636f1cfd4e0f0c0391246",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "kindler-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "1997dfc640223ebec557a5e95640bb5a5a49b1a3e9bfd3e73d74d8f56fc89f63",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "kindler-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "7024b84aa2dacea65c455db61e5ce4c89a2e468a6f2d989c81e035a500289edc",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "lamplighter-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "050d9c8804fa64bce261a6c1f64c25e957bbae82751edcc0478dc5f40a75ea67",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "lamplighter-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "e750d516fdb6aa9270194b67a33b622ab712e2dc36e6283c02b398bec83dfb55",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "lamplighter-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "039ad3ef2f5bce33eea55708f9847530d0b57467c6e3b3a684d78cb466fea17d",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "mender-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "b97a11beb4698eac3564fe3e8cfe631feb16c297fcd9771b140173a66a9a807e",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "mender-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "7bf9df9bf0946a9f3c24ad8a3fda5ac4fcec56b09212093d0d74f4ce73b1df00",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "mender-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "e348896ae2fdf32ad223add013c4abda56c286cf110ba1347d81210e814399cd",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "miller-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "97136cfc5568a1039a2d54d73371a9855f3693b7152a970955d8afd05e031b60",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "miller-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "5d7cb470217098e995ec71e26c1665c06aeb6576f070f608f9d964c813fced7a",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "miller-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "72a870178d5bf5822622bcebd00e354e46e98638e1cb7066ca8be52c44e3b0fc",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "peddler-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "176a7a36339df5a8b6f8e4ad34b7ed5c09f9932f846e1a56c48aada2265286bf",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "peddler-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "d142251f05e4cd29a1b04c803ba44d7da9c35b560b81a5a1b7283c50ed8a19de",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "peddler-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "bd11a67fc473916faca009bb719cc491bdaa0a151fa8dbac653ede99a689b09f",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "runesmith-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "9ef137a93fcba67b7cc6dbabecc0beaa03691f89f7888d5db8e953806117c408",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "runesmith-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "f22061311c2e2ed0fee7aa3ec4283402473928d091492b9bcf4e6db7802e6569",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "runesmith-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "29baf62e77eae146a15c26104e1a1afb62b0e8d2d6acc7e18593c8a38e2f25e1",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "shieldwright-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "1e1ddf02a845e91fa0aee05e18e40f55249b2fefd84187fe42c3b0f6dd16080d",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "shieldwright-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "004022bcfd9a89238876d26dc3c9cdb5bc514327d7305a4d6e7ae6803a6ad036",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "shieldwright-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "d994f1e4dd1d2f54bf4bc2aec322e65bc1e1ce50eae5ac6c6dcc3f2efb02385c",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "stoker-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "c479f39870f3dbed4d41536d1f3e80b0e7d633557088c23b2d64466f300ec77a",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "stoker-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "0dc6e007f349c20667ac13c46048e22c5a85250c183dff1b641cc12ec2a9d291",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "stoker-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "7353c3102293fed352ef77ab79a90485f68ed94197e4e7f3582f4b88f1903523",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "tinker-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "31f65891fd92fafea35b20815801d1b832098a605278e178a731d181020fdb25",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "tinker-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "c769c0b0f672f0b19d69879045dd179402a84bbb4aaf9fc0e55328f526c37d37",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "tinker-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "99952a6c78b9c5785bd1d5df6007106401d0ee91c97db29593ccdf3e3038ddd7",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "warden-320-natural-ready.png",
+      "dimensions": [
+        640,
+        1136
+      ],
+      "sha256": "013db11e6e603d6075a2d468fd85081bb71459d313ef0dff135578c0550cab6e",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "warden-360-natural-ready.png",
+      "dimensions": [
+        720,
+        1280
+      ],
+      "sha256": "015526fc15bc8d4e710c505b377d059ef26fe1dff68c1dd5b3e0a472f438a65a",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    },
+    {
+      "file": "warden-412-natural-ready.png",
+      "dimensions": [
+        824,
+        1784
+      ],
+      "sha256": "a5ecf1e0d708c697a51b43c6fc226ae5082c412c9894f0f54946e6f90dd91688",
+      "source": "Real Flutter GameRoot before combat fixture mutation"
+    }
+  ],
+  "limits": [
+    "No direct aesthetic image inspection or human aesthetic approval in this run.",
+    "Phone-size headless Flutter captures are not physical-device touch/FPS evidence.",
+    "Combat low/high sequences extend enemy HP to999 and force legal die values; not naturally earned playthrough.",
+    "Natural-ready captures precede the controlled combat mutations but use selected characters/seed.",
+    "Inherited keystone UI-run and real Play purchase/restore acceptance remain open."
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "candidate-pr-ci": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "headSha": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9",
+    "jobs": [
+      {
+        "completedAt": "2026-09-19T14:02:49Z",
+        "conclusion": "success",
+        "databaseId": 105908331573,
+        "name": "Analyze + test (headless)",
+        "startedAt": "2026-09-19T13:58:03Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-09-19T13:58:04Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-09-19T13:58:03Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:07Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-09-19T13:58:04Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:28Z",
+            "conclusion": "success",
+            "name": "Run subosito/flutter-action@v2",
+            "number": 3,
+            "startedAt": "2026-09-19T13:58:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:30Z",
+            "conclusion": "success",
+            "name": "Pub get",
+            "number": 4,
+            "startedAt": "2026-09-19T13:58:28Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:44Z",
+            "conclusion": "success",
+            "name": "Analyze (fatal on warnings)",
+            "number": 5,
+            "startedAt": "2026-09-19T13:58:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:24Z",
+            "conclusion": "success",
+            "name": "Test (sim determinism, map, content, autoplay balance, UI smoke)",
+            "number": 6,
+            "startedAt": "2026-09-19T13:58:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:47Z",
+            "conclusion": "success",
+            "name": "SFX mix-bus headroom (true-peak ceiling)",
+            "number": 7,
+            "startedAt": "2026-09-19T14:02:24Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:47Z",
+            "conclusion": "success",
+            "name": "Post Run subosito/flutter-action@v2",
+            "number": 13,
+            "startedAt": "2026-09-19T14:02:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:48Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 14,
+            "startedAt": "2026-09-19T14:02:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:48Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-09-19T14:02:48Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447297307/job/105908331573"
+      },
+      {
+        "completedAt": "2026-09-19T14:02:50Z",
+        "conclusion": "skipped",
+        "databaseId": 105908973179,
+        "name": "Build signed Android release (APK + AAB)",
+        "startedAt": "2026-09-19T14:02:50Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447297307/job/105908973179"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447297307"
+  },
+  "candidate-ios-ci": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "headSha": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9",
+    "jobs": [
+      {
+        "completedAt": "2026-09-19T14:02:37Z",
+        "conclusion": "success",
+        "databaseId": 105908331550,
+        "name": "build-ios",
+        "startedAt": "2026-09-19T13:58:06Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-09-19T13:58:07Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-09-19T13:58:06Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:11Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v4",
+            "number": 2,
+            "startedAt": "2026-09-19T13:58:07Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:39Z",
+            "conclusion": "success",
+            "name": "Run subosito/flutter-action@v2",
+            "number": 3,
+            "startedAt": "2026-09-19T13:58:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T13:58:41Z",
+            "conclusion": "success",
+            "name": "Pub get",
+            "number": 4,
+            "startedAt": "2026-09-19T13:58:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:29Z",
+            "conclusion": "success",
+            "name": "Build iOS (unsigned)",
+            "number": 5,
+            "startedAt": "2026-09-19T13:58:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:31Z",
+            "conclusion": "success",
+            "name": "Upload Runner.app",
+            "number": 6,
+            "startedAt": "2026-09-19T14:02:29Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:34Z",
+            "conclusion": "success",
+            "name": "Post Run subosito/flutter-action@v2",
+            "number": 11,
+            "startedAt": "2026-09-19T14:02:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v4",
+            "number": 12,
+            "startedAt": "2026-09-19T14:02:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-09-19T14:02:36Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 13,
+            "startedAt": "2026-09-19T14:02:34Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447297322/job/105908331550"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/tapiwamakandigona/emberdelve/actions/runs/35447297322"
+  }
+}

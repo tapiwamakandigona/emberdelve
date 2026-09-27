@@ -91,6 +91,18 @@ class SpokenBadges {
   };
 }
 
+/// Tips whose whole lesson the guided tour (lib/game/tour.dart) teaches
+/// beat by beat: ROLL/PICK/SPEND/REROLL cover roll_spend, and the intent
+/// beat covers intent_fair. Experimental loop C0-02 (critic round 0): a
+/// child who walked all five beats was immediately handed the 26-word
+/// ROLL, THEN SPEND card — the same lesson twice, the second time as a
+/// wall of text. Completing the tour marks these learned; a SKIPPED tour
+/// does not, because then these cards are the only lesson the player gets.
+const List<String> tourTaughtTips = [
+  ContextTips.rollSpend,
+  ContextTips.intentFair,
+];
+
 /// An incoming telegraphed attack at or above this is a "big hit" — the
 /// teachable moment for block. d6 max is 6; 4+ is worth blocking.
 const int bigHitThreshold = 4;
@@ -198,6 +210,15 @@ class TipDirector {
     seen.add(a);
     active = null;
     return allSeen;
+  }
+
+  /// The player just learned [ids] some other way (the guided tour): mark
+  /// them seen forever, and drop the pending card if it is one of them.
+  /// Unrelated pending cards stay up. The caller persists, as with
+  /// [dismiss].
+  void markTaught(Iterable<String> ids) {
+    seen.addAll(ids);
+    if (active != null && seen.contains(active)) active = null;
   }
 
   String? _fire(String id) {

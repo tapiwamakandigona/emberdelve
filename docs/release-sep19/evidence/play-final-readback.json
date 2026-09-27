@@ -1,0 +1,28 @@
+{
+  "verified_at": "2026-09-19T14:34:01.824030+00:00",
+  "source": "Authenticated Play Publishing overview and Production Releases",
+  "package": "com.tsorostudios.emberdelve",
+  "version": "0.184.0",
+  "version_code": 211,
+  "publishing_read_at": "2026-09-19T14:33:57.429672+00:00",
+  "publishing_heading": "Changes in review",
+  "quick_checks_running": false,
+  "quick_checks_success_banner_observed": false,
+  "quick_checks_note": "No running-checks banner in this readback. The current state is Changes in review; absence of a success banner is not a failure.",
+  "intended_rows": [
+    "Item changed\nDescription",
+    "rocket_launch\nProduction",
+    "211 (0.184.0)\nStart full rollout\nmore_vert"
+  ],
+  "production_status": "In review",
+  "is_live": false,
+  "live_predecessor_210_still_available": true,
+  "managed_publishing": "off",
+  "country_count": 177,
+  "rollout_percent": 100,
+  "rollout_evidence": "play-device-preview.json and Start full rollout submission row",
+  "readback_digests": {
+    "publishing_sha256": "5338030a487774ffc669cdf3a216ad4e9b614d2312f372009e9632993c1ef2b0",
+    "production_sha256": "2a39f1cd384c3a5cd17cda232d2ae7b46b9621ab6f050f8b4b6ad489b6744b5e"
+  }
+}

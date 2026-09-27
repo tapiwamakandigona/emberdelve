@@ -1,5 +1,11 @@
 # Emberdelve — Google Play listing draft
 
+> **September19 correction:** the copy below is a historical0.34.0 draft,
+> not a readback of today's live listing. Production210/0.183.0 was verified
+> live today; candidate211/0.184.0 release notes are in
+> `docs/releases/v0.184.0.md`. The roster has22 delvers and the game includes
+> optional blood. Do not reuse old counts or “no gore” rating answers.
+
 > **0.34.0 REFRESH (2026-08-25, ready to paste):** copy updated to match the build actually
 > LIVE IN PRODUCTION on Play (0.34.0+60 "The Delver's Card", 177 countries). Every feature
 > below is traced to a shipped release note in `docs/releases/` — floor trace & Delver's Card
@@ -114,10 +120,15 @@ player opts in (`lib/telemetry/`). Two consequences for this listing:
 - Category: Games > Card (or Games > Strategy)
 - Tags: roguelite, dice, turn-based, offline, single player
 
-## Content rating questionnaire (IARC) — expected answers
+## Content rating questionnaire (IARC) — superseded draft warning
 
-- Violence: mild fantasy violence (stylized pixel creatures, no gore) → likely
-  Everyone 10+ / PEGI 7
+VERIFIED historical primary evidence: the September13 questionnaire declared
+mild/limited blood and gore. See `docs/releases/verification-0.183.0.md` for
+the submitted answers and authority-specific ratings. The Blood effects
+switch is a comfort preference; it does not remove the declaration need.
+Do not infer a lower rating from the switch or an old expected rating.
+
+- Violence: stylized fantasy violence with mild/limited blood available.
 - No user interaction/communication, no data sharing
 - Digital purchases: YES — one optional one-time unlock (the Ember Forge,
   v0.4.0+); no loot boxes, no gambling mechanics, no subscriptions

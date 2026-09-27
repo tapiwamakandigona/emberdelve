@@ -1,0 +1,60 @@
+VERIFIED authenticated Play UI transcript. Private install counts omitted where present; release facts unchanged.
+
+Loading Google Play Console
+notifications_unread
+Unread notifications
+Emberdelve: Dice Roguelite
+keyboard_backspace
+All apps
+dashboard
+Dashboard
+bar_chart
+Statistics
+overview
+Publishing overview
+shield
+Protected with Play
+rocket_launch
+Test and release
+vital_signs
+Monitor and improve
+finance_mode
+Grow users
+sell
+Monetise with Play
+Publishing overview
+See an overview of the changes made to your app and control when changes are sent for review or published. Show more
+sync_disabled
+Managed publishing off
+arrow_drop_down
+history
+Last published on 13 September 2026
+Submission activity
+arrow_right_alt
+Changes in review
+help
+Remove changes
+Hide
+expand_less
+Running quick checks for commonly found issues
+
+These checks help to find certain policy and app quality issues, so that you can fix them before review. Changes will be sent for review as soon as checks complete successfully. Learn more
+
+Up to 10 minutes remaining
+
+Item changed
+Description
+rocket_launch
+Production
+211 (0.184.0)
+Start full rollout
+more_vert
+Product updates
+Status dashboard
+Help
+© 2026 Google
+Privacy
+Developer Distribution Agreement
+Terms of Service
+1 change sent for review
+1 change sent for review

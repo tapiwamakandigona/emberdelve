@@ -1,0 +1,21 @@
+SFX mix-bus headroom — sfx slider at max (1.0), voice caps {'dice_roll': 2, 'die_assign': 3, 'reroll': 2, 'enemy_hit': 3, 'player_hit': 2, 'block': 2, 'coin': 3, 'ember_gain': 2, 'whoosh': 2}
+
+| scenario | layers | sample peak | true peak | LUFS-I | clipped | verdict |
+|---|---|---|---|---|---|---|
+| `die_assign_3x_same_frame` | 3 | 5.43 dBFS | 6.00 dBTP | -15.3 | 72 | over ceiling (unreachable) |
+| `die_assign_4x_fast` | 4 | -4.11 dBFS | -3.50 dBTP | -21.0 | 0 | PASS |
+| `roll_then_assigns` | 4 | -3.52 dBFS | -3.20 dBTP | -21.4 | 0 | PASS |
+| `coin_3x_simultaneous` | 3 | 5.87 dBFS | 5.90 dBTP | -12.0 | 122 | over ceiling (unreachable) |
+| `coin_3x_spaced` | 3 | -3.40 dBFS | -3.40 dBTP | -16.6 | 0 | PASS |
+| `enemy_hit_3x_multihit` | 3 | -7.97 dBFS | -7.90 dBTP | -21.4 | 0 | PASS |
+| `full_attack_turn` | 8 | -1.00 dBFS | -0.90 dBTP | -13.7 | 0 | TIGHT |
+| `enemy_turn_block_stack` | 4 | -1.97 dBFS | -2.00 dBTP | -15.9 | 0 | PASS |
+| `ui_tap_over_cascade` | 5 | -3.46 dBFS | -2.90 dBTP | -20.4 | 0 | PASS |
+
+ceiling: FAIL above 0.0 dBTP, TIGHT above -1.0 dBTP
+
+(unreachable) `die_assign_3x_same_frame`: AudioService.handleEvents de-dupes ids within an event batch, and each assign needs its own tap — two identical voices cannot start on the same sample.
+
+(unreachable) `coin_3x_simultaneous`: gold_gained/gold_spent/bought all map to 'coin' and handleEvents plays each id at most once per batch.
+
+Every reachable cascade clears the ceiling.

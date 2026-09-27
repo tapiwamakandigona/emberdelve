@@ -37,6 +37,12 @@ class SpriteSheetDef {
   /// pins the weapon's grip here instead of one shared roster offset.
   /// Null on sheets that never hold anything (enemies).
   final Offset? hand;
+
+  /// Sheet pixels per authored art pixel (sprite_meta.json `scale`): the
+  /// enemy sheets are 16x16 / 16x23 / 32x36 art upscaled 2-3x with uniform
+  /// blocks. Ashfall crumbles a body into these true art pixels. Defaults to
+  /// 1 (the delver sheets are authored at native size).
+  final int pixelScale;
   const SpriteSheetDef({
     required this.id,
     required this.assetPath,
@@ -45,6 +51,7 @@ class SpriteSheetDef {
     required this.rows,
     required this.fps,
     this.hand,
+    this.pixelScale = 1,
   });
 
   SpriteRowDef? row(String state) => rows[state];
@@ -102,6 +109,7 @@ class SpriteMeta {
                   (hand[0] as num).toDouble(),
                   (hand[1] as num).toDouble(),
                 ),
+          pixelScale: math.max(1, (e['scale'] as num?)?.toInt() ?? 1),
         );
       }
       return out;
@@ -134,6 +142,16 @@ Future<void> warmSpriteSheets() async {
       _rigImages(def, _imageCache[def.assetPath]!);
     }
   }
+}
+
+/// Warm-cache read of a decoded sheet: its definition and image, or null
+/// until [warmSpriteSheets] (or a [SpriteView]) has decoded it. Never starts
+/// a load, so callers can choose a fallback on the same frame.
+({SpriteSheetDef def, ui.Image image})? cachedSheet(String id) {
+  final def = SpriteMeta.cachedOrNull?.sheet(id);
+  final image = def == null ? null : _imageCache[def.assetPath];
+  if (def == null || image == null) return null;
+  return (def: def, image: image);
 }
 
 @visibleForTesting
@@ -306,6 +324,14 @@ class SpriteView extends StatefulWidget {
   /// Combat-only first-cell joint rig. Its clock replaces both local loops.
   /// Null retains the original sheet renderer for portraits/other delvers.
   final ValueListenable<CombatRigSample>? articulation;
+
+  /// Frame-rate override for the current row; null plays the sheet's fps.
+  /// Charging foes run their authored run cycle faster than their idle.
+  final int? fps;
+
+  /// Idle personality layered on the bob (combat foes). The default
+  /// [IdleStyle.breathe] renders exactly the original bob.
+  final IdleStyle idle;
   const SpriteView(
     this.spriteId, {
     super.key,
@@ -320,6 +346,8 @@ class SpriteView extends StatefulWidget {
     this.ichor = Ichor.blood,
     this.showWounds = true,
     this.articulation,
+    this.fps,
+    this.idle = IdleStyle.breathe,
   });
 
   @override
@@ -419,6 +447,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
     _syncLife();
     if (old.spriteId != widget.spriteId ||
         old.state != widget.state ||
+        old.fps != widget.fps ||
         old.articulation != widget.articulation) {
       _ctrl?.dispose();
       _ctrl = null;
@@ -454,7 +483,8 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           _ctrl = AnimationController(
             vsync: this,
             duration: Duration(
-              milliseconds: (row.frames * 1000 / def.fps).round(),
+              milliseconds: (row.frames * 1000 / (widget.fps ?? def.fps))
+                  .round(),
             ),
           );
           _syncFrameLoop();
@@ -490,7 +520,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
         _ctrl = AnimationController(
           vsync: this,
           duration: Duration(
-            milliseconds: (row.frames * 1000 / def.fps).round(),
+            milliseconds: (row.frames * 1000 / (widget.fps ?? def.fps)).round(),
           ),
         );
         _syncFrameLoop();
@@ -544,6 +574,7 @@ class _SpriteViewState extends State<SpriteView> with TickerProviderStateMixin {
           life: life,
           bob: widget.bob,
           sway: widget.sway,
+          idle: widget.idle,
           flipX: widget.flipX,
           dye: widget.dye,
           condition: widget.condition,
@@ -574,6 +605,7 @@ class _SpritePainter extends CustomPainter {
   final Animation<double>? life;
   final bool bob;
   final bool sway;
+  final IdleStyle idle;
   final bool flipX;
   final ColorFilter? dye;
   final Condition condition;
@@ -599,6 +631,7 @@ class _SpritePainter extends CustomPainter {
     required this.life,
     required this.bob,
     required this.sway,
+    this.idle = IdleStyle.breathe,
     required this.flipX,
     required this.dye,
     this.condition = Condition.fresh,
@@ -664,6 +697,15 @@ class _SpritePainter extends CustomPainter {
         final heave = 1.0 + breath * 0.012 * cond.breathAmp;
         canvas.translate(size.width / 2, size.height);
         canvas.scale(1.0, heave);
+        canvas.translate(-size.width / 2, -size.height);
+      }
+      if (bob && idle != IdleStyle.breathe) {
+        // Living foes: the body's own idle personality on top of the bob.
+        final p = idleLife(idle, t);
+        canvas.translate(p.dx, p.dy);
+        canvas.translate(size.width / 2, size.height);
+        canvas.rotate(p.rot);
+        canvas.scale(1.0, p.scaleY);
         canvas.translate(-size.width / 2, -size.height);
       }
     }
@@ -754,6 +796,7 @@ class _SpritePainter extends CustomPainter {
       old.life != life ||
       old.bob != bob ||
       old.sway != sway ||
+      old.idle != idle ||
       old.frames != frames ||
       old.row != row ||
       old.img != img ||

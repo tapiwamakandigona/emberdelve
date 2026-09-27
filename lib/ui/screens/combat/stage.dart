@@ -5,6 +5,14 @@
 // unchanged and no public API moved.
 part of '../../screens.dart';
 
+/// Experimental loop C0-01: a painted body fills about the middle 60% of its
+/// frame, so its front sits this fraction of the frame width off-centre.
+const double _foeBodyHalf = 0.30;
+
+/// C0-01: floor left between the foe's front and the delver's front when the
+/// foe's dash lands on its strike mark (logical px).
+const double _foeStrikeGap = 10.0;
+
 extension _CombatStageBand on _CombatScreenState {
   Widget _stageSection(BuildContext context, _Hud h) {
     final enemy = h.enemy;
@@ -79,6 +87,36 @@ extension _CombatStageBand on _CombatScreenState {
           // shorter than the sprite itself — never up over the HP panel.
           final headroom = box.maxHeight - Space.s - enemyH;
           final badgeLift = headroom.isFinite ? math.min(44.0, headroom) : 44.0;
+          // Experimental loop C0-03: one plan decides where every transient
+          // stage text rests (lib/ui/readout_lanes.dart), so a kill's number,
+          // its call-out and the badge can never print over each other or
+          // climb out of the stage — at any stage height.
+          final plan = _planReadout(
+            context,
+            Size(box.maxWidth, box.maxHeight),
+            enemyId: enemyId,
+            enemyH: enemyH,
+            heroH: heroH,
+            badgeLift: badgeLift,
+          );
+          // Experimental loop C0-01: the foe's dash ends on a strike mark
+          // beside the delver. It used to travel a fixed 1.15x its own
+          // width, which stopped it mid-floor, swinging at air. The row pins
+          // both bodies to the stage ends, so the mark is measured: it leaves
+          // [_foeStrikeGap] of floor between the two painted fronts. Reduce
+          // Motion: no dash at all - the strike stays a lean in place.
+          final heroW = _spriteWidth(_characterId, heroH);
+          final foeW = _spriteWidth(enemyId, enemyH);
+          final foeDepth = big ? 1.02 : 1.06;
+          final foeReach = Motion.instance.reduced
+              ? 0.0
+              : math.max(
+                  0.0,
+                  box.maxWidth -
+                      heroW * (0.5 + _foeBodyHalf) -
+                      foeW * (0.5 + _foeBodyHalf * foeDepth) -
+                      _foeStrikeGap,
+                );
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -128,76 +166,98 @@ extension _CombatStageBand on _CombatScreenState {
                               (player['max_hp'] as int?) ?? 1,
                             );
                             final rig = CombatRig.forId(_characterId);
-                            return _combatant(
-                              sprite: rig != null
-                                  ? CombatFigure(
-                                      key: ValueKey('figure-$_characterId'),
-                                      rig: rig,
-                                      height: heroH,
-                                      phase: _weaponPhase,
-                                      plan: _playerPlan,
-                                      charge: _weaponCharge,
-                                      knock: _playerKnock,
-                                      condition: condition,
-                                      showWounds: BloodEffects.enabled.value,
-                                      dye: Art.dyeFilter(
-                                        widget.c.meta.dyeFor(_characterId),
+                            // C2-02: on the run-ending kill the delver rises
+                            // and leans back — a 300 ms raised-weapon pose
+                            // (a still lift under reduced motion).
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(end: _victoryBeat ? 1.0 : 0.0),
+                              duration: Motion.instance.reduced
+                                  ? Duration.zero
+                                  : const Duration(milliseconds: 300),
+                              curve: Curves.easeOutBack,
+                              builder: (context, v, child) => Transform(
+                                alignment: Alignment.bottomCenter,
+                                transform: Matrix4.identity()
+                                  ..translateByDouble(0, -10 * v, 0, 1)
+                                  ..rotateZ(-0.08 * v),
+                                child: child,
+                              ),
+                              child: _combatant(
+                                sprite: rig != null
+                                    ? CombatFigure(
+                                        key: ValueKey('figure-$_characterId'),
+                                        rig: rig,
+                                        height: heroH,
+                                        phase: _weaponPhase,
+                                        plan: _playerPlan,
+                                        charge: _weaponCharge,
+                                        knock: _playerKnock,
+                                        condition: condition,
+                                        showWounds: BloodEffects.enabled.value,
+                                        dye: Art.dyeFilter(
+                                          widget.c.meta.dyeFor(_characterId),
+                                        ),
+                                        identity: identity,
+                                      )
+                                    : SpriteView(
+                                        _characterId,
+                                        key: ValueKey('hero-$_characterId'),
+                                        height: heroH,
+                                        bob:
+                                            true, // LFP-4a: the stage always breathes
+                                        // v0.27.0: the delver wears their dye into
+                                        // the fight; enemies are never tinted.
+                                        dye: Art.dyeFilter(
+                                          widget.c.meta.dyeFor(_characterId),
+                                        ),
+                                        condition: condition,
+                                        ichor: Ichor.blood,
+                                        showWounds: BloodEffects.enabled.value,
                                       ),
-                                      identity: identity,
-                                    )
-                                  : SpriteView(
-                                      _characterId,
-                                      key: ValueKey('hero-$_characterId'),
-                                      height: heroH,
-                                      bob:
-                                          true, // LFP-4a: the stage always breathes
-                                      // v0.27.0: the delver wears their dye into
-                                      // the fight; enemies are never tinted.
-                                      dye: Art.dyeFilter(
-                                        widget.c.meta.dyeFor(_characterId),
+                                spriteHeight: heroH,
+                                spriteWidth: _spriteWidth(_characterId, heroH),
+                                lungeToward: 1,
+                                lunge: _playerLunge,
+                                knock: _playerKnock,
+                                flash: _playerFlash,
+                                dying: _playerDying,
+                                squash: _playerSquash,
+                                braced: _playerBraced,
+                                condition: condition,
+                                plan: _playerPlan,
+                                articulated: rig != null,
+                                // C0-05: white beat, then a red hurt tint;
+                                // an 8 px jolt back with a one-frame squash.
+                                hurt: _playerHurt,
+                                jolt: _playerJolt,
+                                knockDp: 8.0,
+                                hand: SpriteMeta.cachedOrNull
+                                    ?.sheet(_characterId)
+                                    ?.hand,
+                                // The delver's signature weapon: idles in the
+                                // hand socket, coils on the wind-up, swings
+                                // with the lunge, braces across the body on
+                                // guard.
+                                weapon: rig != null
+                                    ? null
+                                    : WeaponView(
+                                        _characterId,
+                                        // Keep state across pool evolution; changing
+                                        // the build should morph the existing weapon,
+                                        // not restart its choreography controller.
+                                        key: const ValueKey('combat-weapon'),
+                                        height: heroH,
+                                        phase: _weaponPhase,
+                                        // Die -> weapon causality made visible: the
+                                        // selected die's pips heat the blade before
+                                        // the swing.
+                                        charge: _weaponCharge,
+                                        // The weapon's edge/profile now reflects the
+                                        // pool forged so far (presentation only).
+                                        identity: identity,
+                                        plan: _playerPlan,
                                       ),
-                                      condition: condition,
-                                      ichor: Ichor.blood,
-                                      showWounds: BloodEffects.enabled.value,
-                                    ),
-                              spriteHeight: heroH,
-                              spriteWidth: _spriteWidth(_characterId, heroH),
-                              lungeToward: 1,
-                              lunge: _playerLunge,
-                              knock: _playerKnock,
-                              flash: _playerFlash,
-                              dying: _playerDying,
-                              squash: _playerSquash,
-                              braced: _playerBraced,
-                              condition: condition,
-                              plan: _playerPlan,
-                              articulated: rig != null,
-                              hand: SpriteMeta.cachedOrNull
-                                  ?.sheet(_characterId)
-                                  ?.hand,
-                              // The delver's signature weapon: idles in the
-                              // hand socket, coils on the wind-up, swings
-                              // with the lunge, braces across the body on
-                              // guard.
-                              weapon: rig != null
-                                  ? null
-                                  : WeaponView(
-                                      _characterId,
-                                      // Keep state across pool evolution; changing
-                                      // the build should morph the existing weapon,
-                                      // not restart its choreography controller.
-                                      key: const ValueKey('combat-weapon'),
-                                      height: heroH,
-                                      phase: _weaponPhase,
-                                      // Die -> weapon causality made visible: the
-                                      // selected die's pips heat the blade before
-                                      // the swing.
-                                      charge: _weaponCharge,
-                                      // The weapon's edge/profile now reflects the
-                                      // pool forged so far (presentation only).
-                                      identity: identity,
-                                      plan: _playerPlan,
-                                    ),
+                              ),
                             );
                           },
                         ),
@@ -219,25 +279,93 @@ extension _CombatStageBand on _CombatScreenState {
                                   (live['hp'] as int?) ?? 1,
                                   (live['max_hp'] as int?) ?? 1,
                                 );
+                                // Ashfall (2026-09-24): the slain foe
+                                // crumbles into its own art pixels inside
+                                // the unchanged death beat. Reduce motion,
+                                // or a sheet not yet decoded, keeps the
+                                // legacy fade-and-sink below.
+                                final ashfall =
+                                    _enemyDying &&
+                                    !Motion.instance.reduced &&
+                                    SpriteAshfall.ready(enemyId);
                                 return _combatant(
-                                  sprite: SpriteView(
-                                    enemyId,
-                                    key: ValueKey('enemy-$enemyId'),
-                                    height: enemyH,
-                                    flipX: true,
-                                    bob: true, // LFP-4a
-                                    // LFP-4b: slow lean while an attack is
-                                    // telegraphed — the badge gets body
-                                    // language.
-                                    sway:
-                                        intent['kind'] == 'attack' ||
-                                        intent['kind'] == 'attack_block' ||
-                                        // v0.47.0: a wind-up has body language.
-                                        intent['kind'] == 'charge',
-                                    condition: condition,
-                                    ichor: ichorFor(enemyId),
-                                    showWounds: BloodEffects.enabled.value,
-                                  ),
+                                  sprite: ashfall
+                                      ? SpriteAshfall(
+                                          enemyId,
+                                          key: ValueKey('ashfall-$enemyId'),
+                                          height: enemyH,
+                                          flipX: true,
+                                          // The blow came from the delver's
+                                          // side: ash drifts away from it.
+                                          away: 1,
+                                          duration:
+                                              _CombatScreenState._deathTime,
+                                        )
+                                      : TweenAnimationBuilder<double>(
+                                          // Wind-up heat: the telegraph
+                                          // warms the body's own pixels
+                                          // (the sprite paint's srcATop
+                                          // filter), never the stage
+                                          // around it. Same timing as the
+                                          // old box tint.
+                                          tween: Tween<double>(
+                                            end: _enemySquash ? 1.0 : 0.0,
+                                          ),
+                                          duration: _CombatScreenState._pace(
+                                            _enemyPlan.windupMs,
+                                          ),
+                                          builder: (context, heat, _) => SpriteView(
+                                            enemyId,
+                                            key: ValueKey('enemy-$enemyId'),
+                                            height: enemyH,
+                                            flipX: true,
+                                            // Charging foes (2026-09-24): the
+                                            // lunge plays the sheet's authored
+                                            // run cycle, so legs and wings drive
+                                            // the strike instead of an idle
+                                            // pose sliding across the stage.
+                                            // No run row -> idle (SpriteView).
+                                            // C0-01: the legs stop when the
+                                            // blow lands on the mark.
+                                            state: _enemyLunge && !_enemyStruck
+                                                ? 'run'
+                                                : 'idle',
+                                            fps: _enemyLunge && !_enemyStruck
+                                                ? 14
+                                                : null,
+                                            // Living idles: wisps hover off
+                                            // their shadow, brutes heave,
+                                            // crawlers scuttle.
+                                            idle: enemyIdleFor(
+                                              enemyId,
+                                              boss: enemy['boss'] == true,
+                                              elite: enemy['elite'] == true,
+                                            ),
+                                            bob: true, // LFP-4a
+                                            // LFP-4b: slow lean while an attack is
+                                            // telegraphed — the badge gets body
+                                            // language.
+                                            sway:
+                                                intent['kind'] == 'attack' ||
+                                                intent['kind'] ==
+                                                    'attack_block' ||
+                                                // v0.47.0: a wind-up has body language.
+                                                intent['kind'] == 'charge',
+                                            condition: condition,
+                                            ichor: ichorFor(enemyId),
+                                            showWounds:
+                                                BloodEffects.enabled.value,
+                                            dye: heat <= 0.001
+                                                ? null
+                                                : ColorFilter.mode(
+                                                    _windupHeat.withValues(
+                                                      alpha:
+                                                          _windupHeat.a * heat,
+                                                    ),
+                                                    BlendMode.srcATop,
+                                                  ),
+                                          ),
+                                        ),
                                   spriteHeight: enemyH,
                                   spriteWidth: _spriteWidth(enemyId, enemyH),
                                   // Slight depth scale: the enemy stands a
@@ -253,6 +381,11 @@ extension _CombatStageBand on _CombatScreenState {
                                   condition: condition,
                                   enemyPlan: _enemyPlan,
                                   windup: true,
+                                  dissolve: ashfall,
+                                  reach: foeReach,
+                                  struck: _enemyStruck,
+                                  jolt: _enemyJolt,
+                                  recover: _CombatScreenState._pace(200),
                                 );
                               },
                             ),
@@ -277,11 +410,34 @@ extension _CombatStageBand on _CombatScreenState {
                             // at 360px this lands within a few px of the old
                             // centered position.
                             right: -(Space.xl - Space.s),
-                            child: KeyedSubtree(
-                              key: TourAnchors.of(TourBeats.intent),
-                              child: _IntentBadge(
-                                intent,
-                                onLongPress: () => _explainIntent(intent),
+                            // C0-03: a foe at 0 HP has no next move — the
+                            // badge fades the moment the lethal blow lands
+                            // (contact-timed HP), instead of lingering over
+                            // the kill's readout.
+                            child: ListenableBuilder(
+                              listenable: _foeBand,
+                              builder: (context, child) {
+                                final live = _shownEnemy ?? enemy;
+                                final dead =
+                                    _enemyDying ||
+                                    ((live['hp'] as int?) ?? 1) <= 0;
+                                return IgnorePointer(
+                                  ignoring: dead,
+                                  child: AnimatedOpacity(
+                                    opacity: dead ? 0 : 1,
+                                    duration: Motion.instance.reduced
+                                        ? Duration.zero
+                                        : const Duration(milliseconds: 140),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: KeyedSubtree(
+                                key: TourAnchors.of(TourBeats.intent),
+                                child: _IntentBadge(
+                                  intent,
+                                  onLongPress: () => _explainIntent(intent),
+                                ),
                               ),
                             ),
                           ),
@@ -364,6 +520,7 @@ extension _CombatStageBand on _CombatScreenState {
                         // this encounter stays on the floor.
                         if (_stains.isNotEmpty)
                           Positioned.fill(
+                            key: const ValueKey('stains'),
                             child: IgnorePointer(
                               child: CustomPaint(
                                 painter: FloorStainsPainter(
@@ -372,27 +529,71 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             ),
                           ),
-                        // Enemy-anchored call-outs: burn ticks, exact-kill, overkill.
-                        for (final (idx, n)
-                            in _notes.where((n) => n.onEnemy).toList().indexed)
-                          Positioned(
-                            right: 12,
-                            bottom: 150.0 + idx * 24,
-                            child: TextPop(
-                              key: ValueKey('note-${n.id}'),
-                              text: n.text,
-                              color: n.color,
-                              icon: n.icon,
-                              fontSize: 15,
-                              duration: n.life,
-                              onDone: () {
-                                _fxUpdate(() => _notes.remove(n));
-                              },
+                        // C1-01 boss kill: a warm bloom from the boss,
+                        // clipped to the stage and capped so the dissolve
+                        // stays visible (a dim tint under reduced motion).
+                        Positioned.fill(
+                          key: const ValueKey('boss-kill-flash'),
+                          child: ClipRect(
+                            child: BossKillFlash(
+                              on: _bossKillFlash,
+                              reduced: Motion.instance.reduced,
+                              focus: plan.geometry.enemyBody.center,
+                              stage: plan.geometry.stage,
                             ),
                           ),
+                        ),
+                        // C2-02: the run-ending kill's victory beat —
+                        // banner + rising embers, scoped to the stage.
+                        if (_victoryBeat)
+                          Positioned.fill(
+                            key: const ValueKey('victory-beat'),
+                            child: ClipRect(
+                              child: VictoryBeat(
+                                source: plan.geometry.enemyBody,
+                                reduced: Motion.instance.reduced,
+                              ),
+                            ),
+                          ),
+                        // Enemy-anchored call-outs: burn ticks, exact-kill,
+                        // overkill — each in its planned slot (C0-03).
+                        for (final n in _notes.where((n) => n.onEnemy))
+                          _placed(
+                            plan.placeNote(
+                              n.slot,
+                              TextPop.measure(
+                                n.text,
+                                fontSize: _enemyNoteSize,
+                                hasIcon: n.icon != null,
+                                textScaler: MediaQuery.textScalerOf(context),
+                              ),
+                            ),
+                            (p) => FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: TextPop(
+                                key: ValueKey('note-${n.id}'),
+                                text: n.text,
+                                color: n.color,
+                                icon: n.icon,
+                                fontSize: _enemyNoteSize,
+                                duration: n.life,
+                                rise: p.rise,
+                                overshoot: p.overshoot,
+                                onDone: () {
+                                  _fxUpdate(() => _notes.remove(n));
+                                },
+                              ),
+                            ),
+                            key: ValueKey('note-slot-${n.id}'),
+                            fitted: true,
+                          ),
                         // Contact FX: weapon smear / claw rake / guard arc over the victim.
+                        // Keyed at the Stack level: inserting a call-out or
+                        // number before a slash must not re-match it by
+                        // index and restart its animation (C0-03 finding).
                         for (final fx in _fx)
                           Positioned(
+                            key: ValueKey('fx-slot-${fx.id}'),
                             left: fx.onPlayer ? 0 : null,
                             right: fx.onPlayer ? null : 0,
                             bottom: Space.s,
@@ -419,9 +620,23 @@ extension _CombatStageBand on _CombatScreenState {
                                   _fxUpdate(() => _fx.remove(fx));
                                 },
                               ),
+                              _FxKind.cleanCut => CleanCutFlash(
+                                key: ValueKey('fx-${fx.id}'),
+                                color: fx.color,
+                                onDone: () {
+                                  _fxUpdate(() => _fx.remove(fx));
+                                },
+                              ),
                               _ => ImpactSlash(
                                 key: ValueKey('fx-${fx.id}'),
                                 claws: fx.kind == _FxKind.claws,
+                                // C0-05: the rake on the delver is gone
+                                // within ~130 ms instead of hanging through
+                                // the whole hit reaction.
+                                duration:
+                                    fx.onPlayer && fx.kind == _FxKind.claws
+                                    ? const Duration(milliseconds: 130)
+                                    : const Duration(milliseconds: 340),
                                 shape: fx.shape,
                                 facing: fx.onPlayer ? -1 : 1,
                                 color: fx.color,
@@ -431,17 +646,28 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             },
                           ),
-                        // Floating damage numbers (player pops left, enemy pops right).
+                        // Floating damage numbers over the body that took
+                        // the hit, in planned zones (C0-03).
                         for (final p in _pops)
-                          Positioned(
-                            left: p.onPlayer ? 24 : null,
-                            right: p.onPlayer ? null : 24,
-                            bottom: 120,
-                            child: DamagePop(
+                          _placed(
+                            () {
+                              final size = _popSize(
+                                context,
+                                p.amount,
+                                blocked: p.blocked,
+                              );
+                              return p.onPlayer
+                                  ? plan.placeHeroPop(size, lane: p.lane)
+                                  : plan.placeEnemyPop(size, lane: p.lane);
+                            }(),
+                            key: ValueKey('pop-slot-${p.id}'),
+                            (at) => DamagePop(
                               key: ValueKey('pop-${p.id}'),
                               amount: p.amount,
                               blocked: p.blocked,
                               onPlayer: p.onPlayer,
+                              rise: at.rise,
+                              drift: at.drift,
                               onDone: () {
                                 _fxUpdate(() => _pops.remove(p));
                               },
@@ -457,6 +683,127 @@ extension _CombatStageBand on _CombatScreenState {
         },
       ),
     );
+  }
+
+  static const double _enemyNoteSize = 15;
+
+  /// A readout piece at its planned resting box (stage coordinates).
+  /// Call-outs are fitted INTO the box (it may be a scaled-down band slot);
+  /// numbers size themselves (the box is their measured natural size), so
+  /// they overflow it rather than ever wrapping.
+  Widget _placed(
+    ReadoutPlacement at,
+    Widget Function(ReadoutPlacement at) child, {
+    required Key key,
+    bool fitted = false,
+  }) => Positioned(
+    key: key,
+    left: at.box.left,
+    top: at.box.top,
+    width: at.box.width,
+    height: at.box.height,
+    child: fitted
+        ? child(at)
+        : OverflowBox(
+            maxWidth: double.infinity,
+            maxHeight: double.infinity,
+            child: child(at),
+          ),
+  );
+
+  Size _popSize(BuildContext context, int amount, {required bool blocked}) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: blocked ? 'BLOCKED' : '-$amount',
+        style: DamagePop.styleFor(blocked: blocked),
+      ),
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final size = tp.size;
+    tp.dispose();
+    return size;
+  }
+
+  /// Stage geometry → readout plan (memoised per geometry in ReadoutLanes).
+  ReadoutPlan _planReadout(
+    BuildContext context,
+    Size stage, {
+    required String enemyId,
+    required double enemyH,
+    required double heroH,
+    required double badgeLift,
+  }) {
+    final spriteW = _spriteWidth(enemyId, enemyH);
+    final enemyBody = Rect.fromLTWH(
+      stage.width - spriteW,
+      stage.height - Space.s - enemyH,
+      spriteW,
+      enemyH,
+    );
+    final heroBody = Rect.fromLTWH(
+      0,
+      stage.height - Space.s - heroH,
+      heroH * 0.62,
+      heroH,
+    );
+    // Reserve the largest badge laid out so far in this fight (measured
+    // after layout — size can't be read during build), or a two-chip badge
+    // at the current text scale before the first frame. It only ever grows,
+    // so a narrower next intent never shuffles the plan.
+    final k = MediaQuery.textScalerOf(context).scale(14) / 14;
+    final badgeSize = _badgeSeen == Size.zero
+        ? Size(112 * k, 40 * k)
+        : _badgeSeen;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = TourAnchors.of(TourBeats.intent).currentContext;
+      final ro = ctx?.findRenderObject();
+      if (ro is RenderBox && ro.hasSize) {
+        final sz = ro.size;
+        if (sz.width > _badgeSeen.width || sz.height > _badgeSeen.height) {
+          _badgeSeen = Size(
+            math.max(sz.width, _badgeSeen.width),
+            math.max(sz.height, _badgeSeen.height),
+          );
+        }
+      }
+    });
+    final badgeRight = stage.width + (Space.xl - Space.s);
+    final badge = Rect.fromLTWH(
+      badgeRight - badgeSize.width,
+      stage.height - Space.s - enemyH - badgeLift,
+      badgeSize.width,
+      badgeSize.height,
+    );
+    final scaler = MediaQuery.textScalerOf(context);
+    final longNote = TextPop.measure(
+      'OVERKILL +3 → NEXT FOE',
+      fontSize: _enemyNoteSize,
+      hasIcon: true,
+      textScaler: scaler,
+    );
+    final plan = ReadoutLanes.plan(
+      StageGeometry(
+        stage: stage,
+        enemyBody: enemyBody,
+        heroBody: heroBody,
+        badge: badge,
+      ),
+      // The widest likely number: a two-digit hit or the BLOCKED stamp.
+      typicalPop: () {
+        final hit = _popSize(context, 88, blocked: false);
+        final stamp = _popSize(context, 0, blocked: true);
+        return Size(
+          math.max(hit.width, stamp.width),
+          math.max(hit.height, stamp.height),
+        );
+      }(),
+      noteHeight: longNote.height,
+      typicalNoteWidth: longNote.width,
+    );
+    _readoutPlan = plan;
+    return plan;
   }
 
   /// Listenables for the two bodies (cached per state; see _wireBands).
@@ -516,13 +863,41 @@ extension _CombatStageBand on _CombatScreenState {
     /// Joint rig owns anatomy/weight shift; do not also squash the whole
     /// sprite matrix. Stage translation and terminal treatment stay shared.
     bool articulated = false,
+
+    /// Ashfall owns this death: [sprite] crumbles in place, so the legacy
+    /// fade/sink and the pallor drain (which would grey the heat glow) are
+    /// skipped. Shadow fade and the ember burst still play.
+    bool dissolve = false,
+
+    /// Experimental loop C0-01: how far the lunge carries the body, in
+    /// logical px (the stage measures the gap to a strike mark beside the
+    /// opponent). Null keeps the legacy advance x body width.
+    double? reach,
+
+    /// C0-01: the lunge has landed - a hop comes down onto the mark.
+    bool struck = false,
+
+    /// C0-01/C0-05: contact squash, applied instantly (never tweened) for
+    /// the frame or two it is set.
+    bool jolt = false,
+
+    /// C0-05: the red hurt tint that follows the white contact flash.
+    bool hurt = false,
+
+    /// C0-05: knockback in logical px, snapped in fast (null keeps the
+    /// legacy 22%-of-width slide).
+    double? knockDp,
+
+    /// C0-01: how long the body eases back to its mark after a lunge (null
+    /// keeps the legacy knock time).
+    Duration? recover,
   }) {
     Widget w = sprite;
     final dir = lungeToward.toDouble();
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if (condition.pallor > 0.01) {
+    if (condition.pallor > 0.01 && !dissolve) {
       w = ColorFiltered(
         colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
         child: w,
@@ -598,33 +973,36 @@ extension _CombatStageBand on _CombatScreenState {
               ),
               child: w,
             )
+          // C0-05: after one white beat the hurt body burns red, so the hit
+          // reads as pain instead of a frozen white cut-out.
+          : hurt
+          ? ColorFiltered(
+              key: const ValueKey('hurt'),
+              colorFilter: ColorFilter.mode(
+                EmberColors.danger.withValues(alpha: 0.55),
+                BlendMode.srcATop,
+              ),
+              child: w,
+            )
           : KeyedSubtree(key: const ValueKey('plain'), child: w),
     );
     // Death: fade out while sinking (collapse) into the ember cloud.
     w = AnimatedOpacity(
-      opacity: dying ? 0.0 : 1.0,
+      opacity: dying && !dissolve ? 0.0 : 1.0,
       duration: _CombatScreenState._deathTime,
       curve: Curves.easeIn,
       child: AnimatedSlide(
-        offset: dying ? const Offset(0, 0.35) : Offset.zero,
+        offset: dying && !dissolve ? const Offset(0, 0.35) : Offset.zero,
         duration: _CombatScreenState._deathTime,
         curve: Curves.easeIn,
         child: w,
       ),
     );
-    // Wind-up tint: threat reads as a heat shift on the body.
-    if (windup) {
-      w = AnimatedContainer(
-        duration: enemyPlan == null
-            ? _CombatScreenState._enemyWindupTime
-            : _CombatScreenState._pace(enemyPlan.windupMs),
-        foregroundDecoration: BoxDecoration(
-          backgroundBlendMode: BlendMode.srcATop,
-          color: squash ? const Color(0x55C24040) : const Color(0x00C24040),
-        ),
-        child: w,
-      );
-    }
+    // Wind-up tint: threat reads as a heat shift on the body. Since
+    // 2026-09-24 it is painted by the foe's own sprite (see the enemy
+    // SpriteView's windup heat above): the old foregroundDecoration blended
+    // srcATop over the whole box, stage background included, so every
+    // enemy wind-up showed a translucent red rectangle around the foe.
     // ------------------------------------------------------------------
     // The body. One matrix about the feet: lean (rotation), crouch or
     // stretch (scale), lift (hop). Which pose applies is decided by the
@@ -640,6 +1018,7 @@ extension _CombatStageBand on _CombatScreenState {
       plan: plan,
       enemyPlan: enemyPlan,
       windup: windup,
+      struck: struck,
     );
     final m = Matrix4.identity();
     if (!articulated) {
@@ -648,9 +1027,15 @@ extension _CombatStageBand on _CombatScreenState {
         ..rotateZ(pose.lean)
         ..scaleByDouble(pose.scaleX, pose.scaleY, pose.scaleX, 1.0);
     }
-    w = Transform.scale(
+    // C0-01/C0-05: the contact squash rides the depth scale, so toggling it
+    // never changes the tree (no state or animation restarts).
+    w = Transform(
       alignment: Alignment.bottomCenter,
-      scale: depthScale,
+      transform: Matrix4.diagonal3Values(
+        depthScale * (jolt ? 1.08 : 1.0),
+        depthScale * (jolt ? 0.90 : 1.0),
+        1.0,
+      ),
       child: AnimatedContainer(
         duration: pose.duration,
         curve: pose.curve,
@@ -667,10 +1052,13 @@ extension _CombatStageBand on _CombatScreenState {
         ? (plan?.advance ?? enemyPlan?.advance ?? 1.0) *
               (articulated ? 0.72 : 1.0)
         : 0.0;
+    // C0-01: a measured reach becomes the slide's width fraction (the
+    // slide's child is exactly the body's box). C0-05: a knockback given in
+    // px snaps in over ~60 ms instead of sliding for 140.
     final dx = lunge
-        ? 1.15 * advance * lungeToward
+        ? (reach != null ? reach / width : 1.15 * advance) * lungeToward
         : knock
-        ? -0.22 * lungeToward
+        ? (knockDp != null ? -knockDp / width : -0.22) * lungeToward
         : braced
         ? -0.03 * lungeToward
         : 0.0;
@@ -680,8 +1068,16 @@ extension _CombatStageBand on _CombatScreenState {
           ? _CombatScreenState._pace(
               plan?.travelMs ?? enemyPlan?.travelMs ?? 250,
             )
-          : _CombatScreenState._knockTime,
-      curve: lunge ? Curves.easeInCubic : Curves.easeOutCubic,
+          : knock
+          ? (knockDp != null
+                ? _CombatScreenState._pace(60)
+                : _CombatScreenState._knockTime)
+          : recover ?? _CombatScreenState._knockTime,
+      // The measured dash still accelerates into contact, but shows its
+      // travel on the frames before it (the cubic hid it: critic C0-01).
+      curve: lunge
+          ? (reach != null ? Curves.easeInQuad : Curves.easeInCubic)
+          : Curves.easeOutCubic,
       child: w,
     );
   }
@@ -697,6 +1093,7 @@ extension _CombatStageBand on _CombatScreenState {
     StrikePlan? plan,
     EnemyStrikePlan? enemyPlan,
     bool windup = false,
+    bool struck = false,
   }) {
     // Baseline: the hurt body slumps toward the ground and sags.
     final slump = condition.slump * dir;
@@ -719,14 +1116,22 @@ extension _CombatStageBand on _CombatScreenState {
       final lean = plan?.strikeLean ?? enemyPlan?.strikeLean ?? 0.12;
       final stretch = plan?.strikeStretch ?? enemyPlan?.strikeStretch ?? 1.03;
       final ms = plan?.travelMs ?? enemyPlan?.travelMs ?? 250;
+      // C0-01: a foe's body commits to the strike early (ease-out) while
+      // the slide accelerates under it, so a hop rises through the dash and
+      // comes down on the mark at contact ([struck]).
+      final foe = plan == null && enemyPlan != null;
       return _BodyPose(
         lean: lean * dir,
         scaleX: 1.0 / math.sqrt(stretch),
         scaleY: stretch,
         dx: 0.0,
-        lift: enemyPlan?.hop ?? 0.0,
-        duration: _CombatScreenState._pace(ms),
-        curve: Curves.easeInCubic,
+        lift: struck ? 0.0 : enemyPlan?.hop ?? 0.0,
+        duration: _CombatScreenState._pace(struck ? 60 : ms),
+        curve: struck
+            ? Curves.easeIn
+            : foe
+            ? Curves.easeOutCubic
+            : Curves.easeInCubic,
       );
     }
     if (knock) {
@@ -764,6 +1169,9 @@ extension _CombatStageBand on _CombatScreenState {
     );
   }
 }
+
+/// The enemy wind-up heat at full strength (danger red, ~1/3 over the body).
+const Color _windupHeat = Color(0x55C24040);
 
 /// One resolved body pose (see _combatant). Rotation about the feet.
 class _BodyPose {

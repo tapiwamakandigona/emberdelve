@@ -1,0 +1,13 @@
+{
+  "$comment": "Scoped, adapted from templates/features.json. Presentation-only pass; acceptance frozen before edits. 'passes' flips true only with inspected command/artifact evidence. Root features.json is unchanged (worker protocol).",
+  "features": [
+    {
+      "id": "EXACT-KILL-CLEANCUT",
+      "title": "The signature exact kill earns a distinct contact read",
+      "acceptance": "An exact kill (a die spent for exactly-lethal damage, enemy to 0) spawns a distinct CleanCutFlash flourish over the foe; ordinary kills and overkills do not. Presentation-only: no lib/sim change, sim state/hashes and the contact-timeline contract unchanged; the death choreography's timing is unchanged (spawn is non-blocking). Reduce-motion behaviour matches the other contact FX (always plays; displacement stays in the self-gating ShakeBox). Analyzer, the full existing-plus-additive test suite, production art and SFX gates stay green.",
+      "verify": "flutter analyze && flutter test test/exact_kill_clean_cut_test.dart && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24: analyzer 'No issues found!'; new test/exact_kill_clean_cut_test.dart 3/3 (exact->flourish, overkill->none as a negative control, widget lifecycle); full suite 1529/1529 (1526 inherited + 3 additive, no inherited test weakened); build_delvers.py --check 'pass'; sfx_headroom.py 'every reachable cascade clears the ceiling'. git diff touches only lib/ui/weapons.dart, lib/ui/screens/combat/fx.dart, lib/ui/screens/combat/stage.dart, lib/ui/screens/combat_screen.dart (zero lib/sim edits). Visual/aesthetic suitability is PROPOSED for owner review via the test APK, not human aesthetic approval; physical-device FPS and Play gates remain out of scope and open."
+    }
+  ]
+}

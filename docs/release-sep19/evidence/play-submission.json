@@ -1,0 +1,45 @@
+{
+  "verified_at": "2026-09-19T14:28:31.951586+00:00",
+  "source": "Authenticated Play Console, not a public availability inference",
+  "version_name": "0.184.0",
+  "version_code": 211,
+  "package": "com.tsorostudios.emberdelve",
+  "release_source": "84f973f3a28b043effefb6d0b0a9b6ea9a13e4b9",
+  "app_id": "4975656702157671885",
+  "production_track": "4697290488477961690",
+  "production_release": 8,
+  "final_send_at": "2026-09-19T14:24:21.508950+00:00",
+  "submission_accepted": true,
+  "overview_at": "2026-09-19T14:25:21.153813+00:00",
+  "overview_heading": "Changes in review",
+  "quick_checks_running": true,
+  "quick_check_caveat": "Play says changes will be sent for review as soon as checks complete successfully. The heading alone does not erase that queue.",
+  "production_read_at": "2026-09-19T14:26:47.346211+00:00",
+  "production_state": "211 (0.184.0) \u2014 In review",
+  "live_predecessor": "210 (0.183.0) \u2014 Available on Google Play",
+  "new_release_live": false,
+  "country_count": 177,
+  "rollout_percent": 100,
+  "rollout_evidence": "play-device-preview.json plus Start full rollout row",
+  "managed_publishing": "off",
+  "pending_changes_submitted": [
+    "Item changed\nDescription",
+    "rocket_launch\nProduction",
+    "211 (0.184.0)\nStart full rollout\nmore_vert"
+  ],
+  "release_details_at": "2026-09-19T14:27:03.638128+00:00",
+  "release_details_url": "https://play.google.com/console/u/0/developers/6318480192689304537/app/4975656702157671885/tracks/4697290488477961690/releases/8/details",
+  "release_notes_match": true,
+  "min_sdk": 24,
+  "target_sdk": 36,
+  "unrelated_changes_submitted": false,
+  "nonblocking_console_recommendations": [
+    "Edge-to-edge may not display for all users",
+    "Improve your app's memory and performance with R8 optimisation"
+  ],
+  "raw_readback_sha256": {
+    "publishing": "0a165a3317375218c7b7920baa1490d00b2564e73c4e2a61d6c3df49af5001d6",
+    "production": "2a39f1cd384c3a5cd17cda232d2ae7b46b9621ab6f050f8b4b6ad489b6744b5e",
+    "release8": "6f8a960bc0d25a156b3fd9285e7141f5ac68400537aa1024bacf515295d84b14"
+  }
+}

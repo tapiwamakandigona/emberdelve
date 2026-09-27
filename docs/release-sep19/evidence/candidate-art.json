@@ -1,0 +1,24 @@
+{
+  "models": 22,
+  "png_bytes": 40798,
+  "decoded_rgba_bytes": 675840,
+  "nearest_silhouette_iou": 0.8822,
+  "nearest_pair": [
+    "hearthkeeper",
+    "miller"
+  ],
+  "source_sha256": {
+    "atlas-1.png": "926aa3fc22114c4e230aaefa4a92b73b7e17d1a228b6274432e9fbe5f06b79cd",
+    "atlas-2.png": "8b9c2f90309092ac59fb7e9af302e7b7b16e3be649d16fa748d8599a171e22db",
+    "atlas-3.png": "64b018c52d9e62db28b0bf62a5be33165b63bcacf4cb30f49cb45b70aa14a6c3",
+    "atlas-4.png": "616c46709ee8ca7015bfbc39e9405d9d9c9aedb04310e01010d71a60ad9becc7",
+    "redesign-2026-09-18/source.png": "0983b3a1293d8e11d65cda7ddf3f448c5ca9b6f76a5c23510e1b65c6a0b47291",
+    "roster-2026-09-18/group-1/source.png": "2999ae2de79f4ed8cf01e286b0482fac45b452e176ba3ce5861a92ebe9a62b61",
+    "roster-2026-09-18/group-2/source.png": "f97e7bc6755e1ae89128e882a5a00ba3965e8186e71b42210f46b6894361d590",
+    "roster-2026-09-18/group-3/source.png": "0ba19df9c7d60f22a8c4ed834e2b05705ab5da824ee6f017b929f9fdeb60d8c4",
+    "roster-2026-09-18/group-4/source.png": "d2e59b308f21fe32cd054e31e9678f2203eb8d2044d4d36087b87cd71ce59a35",
+    "roster-2026-09-18/group-5/source.png": "66942f14274c4e3040baab26dec85d184f5b5fe3459c19ccfb604e2700b528b2"
+  },
+  "device_visual_qa": "NOT VERIFIED",
+  "check": "pass"
+}

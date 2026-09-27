@@ -168,6 +168,11 @@ class _CombatScreenState extends State<CombatScreen> {
   bool _playerKnock = false, _enemyKnock = false;
   bool _playerDying = false, _enemyDying = false;
   bool _playerSquash = false, _enemySquash = false;
+  // Experimental loop C0-01/C0-05: the foe lands on its strike mark
+  // (struck) with a contact squash (jolt); the delver's hit reaction is a
+  // white beat, then a red hurt tint, with a one-frame squash.
+  bool _enemyStruck = false, _enemyJolt = false;
+  bool _playerHurt = false, _playerJolt = false;
 
   // v0.183.0 Bodies in the Fight: the authored strike behind the flags
   // above. Frozen per swing so the body, weapon and contact FX all read the
@@ -192,6 +197,13 @@ class _CombatScreenState extends State<CombatScreen> {
   final Map<int, int> _reflyGen = {};
   final GlobalKey<ShakeBoxState> _shakeKey = GlobalKey<ShakeBoxState>();
   final List<_Pop> _pops = [];
+
+  /// The stage's current readout plan (lib/ui/readout_lanes.dart), kept so
+  /// spawns can pick a slot the stage actually has.
+  ReadoutPlan? _readoutPlan;
+
+  /// Largest intent badge laid out so far (see _planReadout).
+  Size _badgeSeen = Size.zero;
   int _popId = 0;
 
   // Contact FX on the stage: weapon smear on the enemy when the delver's
@@ -201,8 +213,18 @@ class _CombatScreenState extends State<CombatScreen> {
   final List<_Fx> _fx = [];
   int _fxId = 0;
 
-  // Boss kill moment: a full-screen white-hot flash held over the stage.
+  // Boss kill moment: a warm bloom from the boss, scoped to the stage
+  // (C1-01: it used to be a full-screen opaque white-out that hid the kill).
   bool _bossKillFlash = false;
+
+  // C2-02: the run-ending boss kill gets a victory beat — a stage banner,
+  // rising embers and the delver's raised-weapon pose — instead of a board
+  // that just goes still until the summary.
+  bool _victoryBeat = false;
+
+  // C1-01: set the frame a blow/turn ends the encounter — the tray and the
+  // action zone dim and stop taking taps until the screen moves on.
+  bool _encounterOver = false;
 
   // LFP-5: resolution pacing control. END TURN choreography is fixed-length
   // (~2.5–3.5s to next input; design-system §5 wants ≤400ms input blocks) —
@@ -283,8 +305,8 @@ class _CombatScreenState extends State<CombatScreen> {
   // strike (lib/ui/combat_pose.dart) — always 340 ms in total, the same as
   // the old 90 ms squash + 250 ms contact lead it replaces.
   // Enemy anticipation runs longer than the player's: their wind-up is the
-  // player's last cue to read the incoming hit.
-  static final _enemyWindupTime = _pace(190);
+  // player's last cue to read the incoming hit (EnemyStrikePlan.windupMs,
+  // never below the legacy 190 ms telegraph; it also times the wind-up heat).
   static final _hitStop = _pace(80);
   static final _knockTime = _pace(140);
   static final _flashTail = _pace(120);
@@ -356,11 +378,27 @@ class _CombatScreenState extends State<CombatScreen> {
   }
 
   void _spawnPop(int amount, {required bool onPlayer, bool blocked = false}) {
-    _fxUpdate(
-      () => _pops.add(
-        _Pop(_popId++, amount, onPlayer: onPlayer, blocked: blocked),
-      ),
-    );
+    _fxUpdate(() {
+      // Lowest lane free on this side (C0-03): numbers alive together sit
+      // side by side instead of printing over each other.
+      final used = {
+        for (final p in _pops)
+          if (p.onPlayer == onPlayer) p.lane,
+      };
+      var lane = 0;
+      while (used.contains(lane)) {
+        lane++;
+      }
+      _pops.add(
+        _Pop(
+          _popId++,
+          amount,
+          onPlayer: onPlayer,
+          blocked: blocked,
+          lane: lane,
+        ),
+      );
+    });
   }
 
   void _spawnFx(
@@ -438,9 +476,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// block is actually up — data-derived, so the pose and the number never
   /// disagree. Never during their own swing.
   bool get _playerBraced {
-    final player = _shownPlayer(
-      widget.c.state?['player'] as Map? ?? const {},
-    );
+    final player = _shownPlayer(widget.c.state?['player'] as Map? ?? const {});
     return ((player['block'] as int?) ?? 0) > 0;
   }
 
@@ -503,11 +539,36 @@ class _CombatScreenState extends State<CombatScreen> {
     final life = _resolving && _ffwd > 0
         ? const Duration(milliseconds: 1000)
         : _noteLife;
-    _fxUpdate(
-      () => _notes.add(
-        _Note(_noteId++, text, color, icon, onEnemy: onEnemy, life: life),
-      ),
-    );
+    _fxUpdate(() {
+      var slot = 0;
+      if (onEnemy) {
+        // Experimental loop C0-03: enemy call-outs own a fixed stage slot
+        // for life. With every slot busy the oldest yields its slot now —
+        // two call-outs never share one.
+        final slots = _readoutPlan?.slots.length ?? 1;
+        final live = _notes.where((n) => n.onEnemy).toList();
+        final used = {for (final n in live) n.slot};
+        slot = List.generate(slots, (i) => i).firstWhere(
+          (i) => !used.contains(i),
+          orElse: () {
+            final oldest = live.first;
+            _notes.remove(oldest);
+            return oldest.slot.clamp(0, slots - 1);
+          },
+        );
+      }
+      _notes.add(
+        _Note(
+          _noteId++,
+          text,
+          color,
+          icon,
+          onEnemy: onEnemy,
+          life: life,
+          slot: slot,
+        ),
+      );
+    });
   }
 
   /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
@@ -720,6 +781,11 @@ class _CombatScreenState extends State<CombatScreen> {
       _shakeKey.currentState?.shake(1.0);
       _choreo(() => _enemyFlash = true);
       _fxUpdate(() => _bossKillFlash = true);
+      // C2-02: the run-ending kill's banner lands with the blow.
+      if (events.any((e) => e['type'] == 'run_won')) {
+        _choreo(() => _victoryBeat = true);
+        _fxTick.value++;
+      }
       await _sleep(const Duration(milliseconds: 260));
       if (!mounted) return;
     }
@@ -769,6 +835,7 @@ class _CombatScreenState extends State<CombatScreen> {
       'action': 'attack',
     }, terminalHold: Duration(milliseconds: isBoss ? 1900 : 1300));
     selected = null;
+    if (encounterEnds(events)) _ui(() => _encounterOver = true);
     // LFP-2c: remember what the die actually contributed (incl. modifiers).
     final da = _find(events, 'die_assigned');
     if (da != null) {
@@ -857,16 +924,24 @@ class _CombatScreenState extends State<CombatScreen> {
     final exact = _find(events, 'exact_kill');
     if (exact != null) {
       _audio?.playSfx('ember_gain');
+      // v0.184.0 Clean Cut: the signature exact kill (a die spent for exactly
+      // lethal damage) earns a distinct contact read — a crisp ember-white
+      // ring + precise glint over the foe — so mastery is visible, not just a
+      // number. Presentation-only and non-blocking: the death choreography's
+      // timing is unchanged; overkills and ordinary kills are untouched.
+      _spawnFx(_FxKind.cleanCut, onPlayer: false, color: EmberColors.gold);
       _note(
         '+${exact['embers']} EMBERS — EXACT!',
         icon: Icons.local_fire_department,
         onEnemy: true,
       );
     }
-    final over = _find(events, 'overkill');
-    if (over != null) {
+    // C0-12: the surplus splashes into the NEXT foe — a run-ending kill
+    // has none, so it gets no promise.
+    final overText = overkillCallout(events, bossKill: isBoss);
+    if (overText != null) {
       _note(
-        'OVERKILL +${over['surplus']} → NEXT FOE',
+        overText,
         color: EmberColors.ember,
         icon: Icons.double_arrow,
         onEnemy: true,
@@ -992,6 +1067,7 @@ class _CombatScreenState extends State<CombatScreen> {
     final events = widget.c.apply({
       'type': 'end_turn',
     }, terminalHold: const Duration(milliseconds: 1450));
+    if (encounterEnds(events)) _ui(() => _encounterOver = true);
     final atk = _find(events, 'enemy_attacked');
     if (atk != null) {
       // Bodies in the Fight: the body type chooses the attack — a rat coils
@@ -1007,19 +1083,22 @@ class _CombatScreenState extends State<CombatScreen> {
       // Physical wind-up: the enemy leans back and darkens for a beat before
       // the lunge — the strike telegraphs in the body, not just the badge.
       _choreo(() => _enemySquash = true);
-      await _beat(_pace(plan.windupMs));
+      // C0-01: the dash itself is short (120-160 ms), so the whoosh starts
+      // inside the wind-up to keep its SYNC_POINTS lead (~250 ms before
+      // contact).
+      final whooshLead = math.max(0, 250 - plan.travelMs);
+      await _beat(_pace(plan.windupMs - whooshLead));
       if (!mounted) return;
       _audio?.playSfx('whoosh');
+      await _beat(_pace(whooshLead));
+      if (!mounted) return;
       _choreo(() {
         _enemySquash = false;
         _enemyLunge = true;
       });
       await _beat(_pace(plan.travelMs));
       if (!mounted) return;
-      _present([
-        atk,
-        ...events.where((e) => e['type'] == 'thorns_dealt'),
-      ]);
+      _present([atk, ...events.where((e) => e['type'] == 'thorns_dealt')]);
       final damage = atk['damage'] as int? ?? 0;
       final absorbed = atk['blocked'] as int? ?? 0;
       _audio?.playSfx(damage <= 0 ? 'block' : 'player_hit');
@@ -1055,21 +1134,44 @@ class _CombatScreenState extends State<CombatScreen> {
       final playerMax =
           ((widget.c.state?['player'] as Map?)?['max_hp'] as int?) ?? 1;
       final bigHit = _impact(damage, playerMax);
-      _choreo(() => _playerFlash = true);
-      if (bigHit) await _beat(_hitStop);
+      // Experimental loop C0-01/C0-05: contact. The foe lands on its mark
+      // with a two-frame squash; the delver snaps back 8 px with a
+      // one-frame squash under ONE white beat (~70 ms), then burns red for
+      // ~120 ms. It used to hold a frozen white silhouette for ~300 ms.
+      // A big hit (>= 25% max HP) holds the red beat for the old hit-stop.
+      _choreo(() {
+        _enemyStruck = true;
+        _enemyJolt = true;
+        _playerFlash = true;
+        _playerJolt = true;
+        _playerKnock = true;
+      });
+      await _beat(_pace(40));
       if (!mounted) return;
-      _choreo(() => _playerKnock = true);
-      await _beat(_knockTime);
+      _choreo(() => _playerJolt = false);
+      await _beat(_pace(30));
+      if (!mounted) return;
+      _choreo(() {
+        _playerFlash = false;
+        _playerHurt = true;
+      });
+      await _beat(_pace(16));
+      if (!mounted) return;
+      _choreo(() => _enemyJolt = false);
+      await _beat(_pace(104) + (bigHit ? _hitStop : Duration.zero));
       if (!mounted) return;
       _choreo(() {
         _enemyLunge = false;
+        _enemyStruck = false;
         _playerKnock = false;
+        _playerHurt = false;
       });
       if (_find(events, 'encounter_lost') != null) {
         _audio?.playSfx('defeat');
         Haptics.heavy();
         _choreo(() {
           _playerFlash = false;
+          _playerHurt = false;
           _playerDying = true;
         });
         // The run-ending moment keeps its full weight — never fast-forwarded.
@@ -1247,9 +1349,9 @@ class _CombatScreenState extends State<CombatScreen> {
         Expanded(child: _band(_stageBand, _stageSection)),
         _band(_vitalsBand, _playerVitals),
         SizedBox(height: compact ? Space.s : Space.m),
-        _band(_diceBand, _traySection),
+        _band(_diceBand, (c, h) => _inertIfOver(_traySection(c, h))),
         SizedBox(height: compact ? Space.s : Space.m),
-        _band(_diceBand, _actionZone),
+        _band(_diceBand, (c, h) => _inertIfOver(_actionZone(c, h))),
       ],
     );
 
@@ -1339,20 +1441,6 @@ class _CombatScreenState extends State<CombatScreen> {
                               );
                             },
                           ),
-                        // Boss kill flash: white-out that decays into the ember dissolve.
-                        IgnorePointer(
-                          child: AnimatedOpacity(
-                            opacity: _bossKillFlash ? 1.0 : 0.0,
-                            duration: Duration(
-                              milliseconds: _bossKillFlash ? 60 : 420,
-                            ),
-                            curve: Curves.easeOut,
-                            child: const ColoredBox(
-                              color: Color(0xFFFFE9C4),
-                              child: SizedBox.expand(),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -1418,6 +1506,21 @@ class _CombatScreenState extends State<CombatScreen> {
           },
         ),
       );
+
+  /// C1-01: once the encounter is decided the controls stop inviting input
+  /// — dimmed and inert from the same frame, so the kill reads as the end.
+  /// C2-02: the dim eases in over 200 ms (it used to snap) so the kill's
+  /// end reads as a beat, not a glitch.
+  Widget _inertIfOver(Widget child) => IgnorePointer(
+    ignoring: _encounterOver,
+    child: AnimatedOpacity(
+      opacity: _encounterOver ? dimmedControls : 1.0,
+      duration: Motion.instance.reduced
+          ? Duration.zero
+          : const Duration(milliseconds: 200),
+      child: child,
+    ),
+  );
 
   /// Layer of the node the delver stands on (for the boss name-plate).
   int _currentLayer(Map st) {

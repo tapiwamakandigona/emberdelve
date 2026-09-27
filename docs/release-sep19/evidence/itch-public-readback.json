@@ -1,0 +1,36 @@
+{
+  "verified_at": "2026-09-19T14:29:47.069072+00:00",
+  "source": "Unauthenticated public itch.io page, not editor access",
+  "url": "https://tsorostudios.itch.io/emberdelve",
+  "body_sha256": "fddcb9e9c36fac50e7bf4372e93703244ba23dbdc739742081b720e1666c6591",
+  "download_name": "emberdelve-v0.179.0.apk",
+  "download_size_display": "69 MB",
+  "download_version": "0.179.0",
+  "ai_disclosure_display": [
+    "AI Assisted",
+    "Code",
+    "Text"
+  ],
+  "links": [
+    {
+      "text": "Emberdelve on Play",
+      "href": "https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve"
+    },
+    {
+      "text": "GitHub releases",
+      "href": "https://github.com/tapiwamakandigona/emberdelve/releases/latest"
+    },
+    {
+      "text": "tapiwa.me/emberdelve",
+      "href": "https://tapiwa.me/emberdelve/"
+    },
+    {
+      "text": "",
+      "href": "https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve"
+    }
+  ],
+  "page_changed_by_this_task": false,
+  "authenticated_save": false,
+  "blocker": "Cloudflare before password form, including single proxy fallback",
+  "required": "Authorised publishing access. A usable Butler key can enable APK upload but does not by itself establish page-editor access."
+}

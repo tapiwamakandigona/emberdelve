@@ -152,6 +152,7 @@ extension _CombatTrayBand on _CombatScreenState {
                     for (final (idx, n)
                         in _notes.where((n) => !n.onEnemy).toList().indexed)
                       Positioned(
+                        key: ValueKey('tray-note-slot-${n.id}'),
                         top: -30.0 - idx * 24,
                         child: TextPop(
                           key: ValueKey('note-${n.id}'),

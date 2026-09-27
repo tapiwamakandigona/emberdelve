@@ -1,0 +1,53 @@
+VERIFIED 2026-09-19T14:34:01.824030+00:00; authenticated readback excerpts.
+Navigation and private install counts omitted.
+
+PUBLISHING
+Publishing overview
+See an overview of the changes made to your app and control when changes are sent for review or published. Show more
+sync_disabled
+Managed publishing off
+arrow_drop_down
+history
+Last published on 13 September 2026
+Submission activity
+arrow_right_alt
+Changes in review
+help
+Remove changes
+Hide
+expand_less
+Item changed
+Description
+rocket_launch
+Production
+211 (0.184.0)
+Start full rollout
+more_vert
+
+PRODUCTION
+Releases
+211 (0.184.0)
+Manage release
+
+schedule
+In review. Go to Publishing overview
+brightness_1
+1 version code
+
+Show summary
+expand_more
+210 (0.183.0)
+Manage release
+
+check_circle
+Available on Google Play
+brightness_1
+1 version code
+brightness_1
+Released on 13 Sept 00:56
+
+Show summary
+expand_more
+Release history
+Show
+expand_more

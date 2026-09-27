@@ -45,12 +45,23 @@ enum StrikeFamily {
 /// Which family a signature weapon belongs to. Unknown ids fall back to the
 /// Kindler's cut so a future weapon never swings blind.
 StrikeFamily familyForWeapon(String weaponId) => switch (weaponId) {
-  'ward_maul' || 'pin_wrench' || 'stone_maul' || 'planishing_hammer' ||
-  'grain_flail' || 'long_ladle' => StrikeFamily.crush,
-  'lucky_fang' || 'brand_iron' || 'steeling_rod' || 'fire_iron' ||
-  'stitching_awl' || 'glovers_needle' => StrikeFamily.stab,
+  'ward_maul' ||
+  'pin_wrench' ||
+  'stone_maul' ||
+  'planishing_hammer' ||
+  'grain_flail' ||
+  'long_ladle' => StrikeFamily.crush,
+  'lucky_fang' ||
+  'brand_iron' ||
+  'steeling_rod' ||
+  'fire_iron' ||
+  'stitching_awl' ||
+  'glovers_needle' => StrikeFamily.stab,
   'rune_chisel' || 'agate_burnisher' => StrikeFamily.stamp,
-  'coin_hook' || 'coal_rake' || 'hearth_hook' || 'lamp_pole' => StrikeFamily.hook,
+  'coin_hook' ||
+  'coal_rake' ||
+  'hearth_hook' ||
+  'lamp_pole' => StrikeFamily.hook,
   'knapping_pick' || 'shoeing_hammer' => StrikeFamily.pick,
   'ember_brand' || 'billhook' => StrikeFamily.cut,
   _ => StrikeFamily.cut,
@@ -325,13 +336,139 @@ EnemyStrikeStyle enemyStyleFor(
   for (final b in biters) {
     if (enemyId.contains(b)) return EnemyStrikeStyle.bite;
   }
+  // Experimental loop C0-01: heavy brutes hop in and drop their whole mass.
+  const hoppers = {'brute', 'ogre', 'hulk'};
+  for (final h in hoppers) {
+    if (enemyId.contains(h)) return EnemyStrikeStyle.slam;
+  }
   if (elite) return EnemyStrikeStyle.slam;
   return EnemyStrikeStyle.swipe;
 }
 
+/// How a body idles on the combat stage (2026-09-24 living foes). The
+/// sheets' idle rows are a few sub-pixel frames, so without this every foe
+/// breathed with the same 2px bob. [breathe] IS that original bob, and it is
+/// the default everywhere, so every non-combat call site is pixel-identical.
+enum IdleStyle {
+  /// The original LFP-4 breathing bob only.
+  breathe,
+
+  /// Floats clear of its shadow: a slow rise and fall, a lazy figure-eight
+  /// drift and a gentle tilt (wisps, moths, shades, wraiths).
+  hover,
+
+  /// A heavy body: one deep, slow breath that lifts the chest about the
+  /// feet each loop (brutes, golems, ogres, every boss and elite).
+  heave,
+
+  /// A small crawler: quick twitchy side-steps between held beats, low to
+  /// the ground (rats, beetles, crawlers, ticks, serpents).
+  scuttle,
+}
+
+/// The body's idle personality, from the same id vocabulary the strike
+/// styles use (whole `_`-separated words, never substrings).
+IdleStyle enemyIdleFor(
+  String enemyId, {
+  bool boss = false,
+  bool elite = false,
+}) {
+  const hover = {
+    'wisp',
+    'moth',
+    'mote',
+    'sprite',
+    'shade',
+    'wraith',
+    'widow',
+    'hag',
+  };
+  const scuttle = {
+    'rat',
+    'beetle',
+    'crawler',
+    'tick',
+    'snail',
+    'urchin',
+    'serpent',
+    'wyrm',
+  };
+  const heavy = {
+    'brute',
+    'golem',
+    'ogre',
+    'hulk',
+    'colossus',
+    'tyrant',
+    'maw',
+    'shell',
+    'sentinel',
+    'bellows',
+    'ram',
+    'king',
+    'regent',
+    'twins',
+    'matriarch',
+    'hierophant',
+  };
+  final words = enemyId.split('_').toSet();
+  if (words.any(hover.contains)) return IdleStyle.hover;
+  if (words.any(scuttle.contains)) return IdleStyle.scuttle;
+  if (boss || elite || words.any(heavy.contains)) return IdleStyle.heave;
+  return IdleStyle.breathe;
+}
+
+/// Near-square wave in -1..1: a quick step, then a held beat. tanh keeps
+/// the step smooth (a fractional power would cusp at every zero crossing).
+double _twitch(double x) => _tanh(4.0 * math.sin(x)) / _tanh(4.0);
+
+double _tanh(double x) {
+  final e = math.exp(2.0 * x);
+  return (e - 1.0) / (e + 1.0);
+}
+
+/// Idle-life offsets for [style] at loop phase [t] (radians; one loop is
+/// 2pi). Logical pixels / radians / scale about the feet, layered on the
+/// breathing bob. Pure, and periodic in [t], so the loop never seams.
+({double dx, double dy, double rot, double scaleY}) idleLife(
+  IdleStyle style,
+  double t,
+) => switch (style) {
+  IdleStyle.breathe => (dx: 0.0, dy: 0.0, rot: 0.0, scaleY: 1.0),
+  // Always 1..7px off the floor: the ground shadow stays put, so the gap
+  // reads as flight.
+  IdleStyle.hover => (
+    dx: math.sin(2 * t + 1.3) * 1.6,
+    dy: -4.0 + math.sin(t) * 3.0,
+    rot: math.sin(t + 0.8) * 0.03,
+    scaleY: 1.0,
+  ),
+  IdleStyle.heave => (
+    dx: 0.0,
+    dy: 0.0,
+    rot: 0.0,
+    scaleY: 1.0 + (0.5 - 0.5 * math.cos(t)) * 0.03,
+  ),
+  IdleStyle.scuttle => (
+    dx: _twitch(3 * t) * 1.5,
+    dy: -math.sin(6 * t).abs() * 0.6,
+    rot: 0.0,
+    scaleY: 1.0,
+  ),
+};
+
 /// Enemy body choreography per style. The wind-up is always the player's
 /// last read of the incoming hit, so it never gets shorter than the legacy
 /// 190 ms telegraph.
+///
+/// Experimental loop C0-01 (2026-09-25): [travelMs] is a 120-160 ms dash
+/// that the combat stage aims at a strike mark beside the delver (it
+/// measures the gap), so a foe crosses the floor to land its blow instead
+/// of swinging at air from where it stood. The wind-up grew by what the
+/// dash gave back, so wind-up + dash stays the 440 ms envelope that contact
+/// timing is pinned to (test/combat_contact_timeline_test.dart): a longer,
+/// easier-to-read telegraph, then a snap. [advance] only scales the legacy
+/// fallback when no strike distance is given.
 class EnemyStrikePlan {
   final EnemyStrikeStyle style;
   final int windupMs;
@@ -358,10 +495,11 @@ class EnemyStrikePlan {
 }
 
 EnemyStrikePlan planEnemyStrike(EnemyStrikeStyle style) => switch (style) {
+  // A crawler coils low and pounces: a short hop that lands on the delver.
   EnemyStrikeStyle.bite => const EnemyStrikePlan(
     style: EnemyStrikeStyle.bite,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 290,
+    travelMs: 150,
     windupLean: -0.06,
     windupCrouch: 0.84, // coils low
     strikeLean: 0.18,
@@ -370,40 +508,43 @@ EnemyStrikePlan planEnemyStrike(EnemyStrikeStyle style) => switch (style) {
     hop: 0.18,
     contact: ContactShape.claws,
   ),
+  // Bosses, elites and brutes hop in and drop their whole mass.
   EnemyStrikeStyle.slam => const EnemyStrikePlan(
     style: EnemyStrikeStyle.slam,
-    windupMs: 230,
-    travelMs: 210,
+    windupMs: 280,
+    travelMs: 160,
     windupLean: -0.12,
-    windupCrouch: 0.88,
+    windupCrouch: 0.86,
     strikeLean: 0.22,
     strikeStretch: 0.94, // lands compressed
     advance: 0.85,
-    hop: 0.10,
+    hop: 0.22,
     contact: ContactShape.crush,
   ),
+  // A wisp darts flat and fast, straight through the guard.
   EnemyStrikeStyle.dart => const EnemyStrikePlan(
     style: EnemyStrikeStyle.dart,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 320,
+    travelMs: 120,
     windupLean: -0.04,
     windupCrouch: 0.96,
     strikeLean: 0.10,
-    strikeStretch: 1.06,
-    advance: 1.3, // flickers right through the guard
+    strikeStretch: 1.08,
+    advance: 1.3,
     hop: 0.0,
     contact: ContactShape.claws,
   ),
+  // Everything else (maws, golems) lunges low along the floor.
   EnemyStrikeStyle.swipe => const EnemyStrikePlan(
     style: EnemyStrikeStyle.swipe,
-    windupMs: 190,
-    travelMs: 250,
+    windupMs: 300,
+    travelMs: 140,
     windupLean: -0.08,
-    windupCrouch: 0.90,
-    strikeLean: 0.14,
-    strikeStretch: 1.02,
+    windupCrouch: 0.86,
+    strikeLean: 0.16,
+    strikeStretch: 1.06,
     advance: 1.0,
-    hop: 0.05,
+    hop: 0.0,
     contact: ContactShape.claws,
   ),
 };

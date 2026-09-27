@@ -39,6 +39,28 @@ Future<void> loadRealFonts() async {
   }
 }
 
+/// Decode every bundled PNG before the first plate (same approach as
+/// tool/play_session_test.dart). Widget tests decode images asynchronously,
+/// so without this the plates showed blank map-node and boon-die art — a
+/// harness artifact, not a game defect (experimental loop, 2026-09-24).
+Future<void> precacheAllImages(WidgetTester tester) async {
+  final manifest = await tester.binding.runAsync(
+    () => AssetManifest.loadFromAssetBundle(rootBundle),
+  );
+  final keys = manifest!.listAssets().where((k) => k.endsWith('.png')).toList();
+  final context = tester.element(find.byType(MaterialApp));
+  await tester.binding.runAsync(() async {
+    for (final k in keys) {
+      try {
+        await precacheImage(AssetImage(k), context);
+      } catch (_) {
+        /* non-image or corrupt asset: ignore */
+      }
+    }
+  });
+  await tester.pump();
+}
+
 Future<void> pumpFor(WidgetTester tester, int ms) async {
   for (var t = 0; t < ms; t += 50) {
     await tester.pump(const Duration(milliseconds: 50));
@@ -100,6 +122,7 @@ void main() {
         home: RepaintBoundary(key: key, child: GameRoot(c)),
       ),
     );
+    await precacheAllImages(tester);
     await pumpFor(tester, 1500);
     await snap(tester, key, '01_title_fresh');
 
@@ -152,9 +175,11 @@ void main() {
     await pumpFor(tester, 900);
     // ignore: avoid_print
     print('stray END TURN under pick: turn $turnBefore → ${c.state!['turn']}');
-    final dieKeys = find.byWidgetPredicate(
-      (w) => w is GestureDetector && w.onTap != null,
-    );
+    // Tap a DIE, like a player. (Round-0 critic finding C0-02: the old loop
+    // tapped every live GestureDetector in tree order, and the second one
+    // was the tour's SKIP pill — the "tour dies after beat 2" plates were
+    // this harness skipping the tour, not the game.)
+    final dieKeys = find.byType(DieChip);
     for (
       var i = 0;
       i < dieKeys.evaluate().length && c.tour.active == 'tour_pick';
@@ -170,7 +195,12 @@ void main() {
     for (var b = 0; b < 3 && c.tour.running; b++) {
       await tester.tapAt(const Offset(180, 400));
       await pumpFor(tester, 700);
+      if (c.tour.running) {
+        await snap(tester, key, '05_tour_beat_next_${c.tour.active}');
+      }
     }
+    await pumpFor(tester, 900);
+    await snap(tester, key, '05_tour_after_done');
     // ignore: avoid_print
     print(
       'tour done: running=${c.tour.running} stamp=${c.meta.tourSeenVersion}',

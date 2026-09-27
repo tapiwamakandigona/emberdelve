@@ -1,0 +1,45 @@
+{
+  "$comment": "Scoped, adapted from templates/features.json. Presentation-only pass; acceptance frozen before each feature's edits. 'passes' flips true only with inspected command/artifact evidence. Root features.json is unchanged (worker protocol).",
+  "features": [
+    {
+      "id": "FOES-ASHFALL",
+      "title": "A slain foe crumbles into its own art pixels",
+      "acceptance": "On an enemy death the foe's sprite is replaced by a crumble of its own art pixels: heat runs in from the side the blow came from, pixels glow, tear loose, drift away from the delver and rise, and the whole body is gone before the unchanged _deathTime beat ends. Pure deterministic model; no per-frame allocation; stops painting when done. Reduce motion (or an undecoded sheet) keeps the legacy fade exactly. No sim or timing change.",
+      "verify": "flutter test test/ashfall_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24 at 5c4a2d4: 11/11 (timing contract, sweep direction, glow-before-break, drift/rise, still mode, determinism, meta scale parse for all 42 sheets, widget lifecycle + zero paints after completion, real fixture death shows SpriteAshfall, reduce motion shows none). Mutation-checked: disabling the stage wiring or the reduce gate fails the matching test. Real-render frames: tool/living_foes_frames_test.dart (flue_crawler, slag_brute, molten_maw)."
+    },
+    {
+      "id": "FOES-CHARGE",
+      "title": "Charging foes run their authored run cycle into the strike",
+      "acceptance": "While _enemyLunge is up the foe's SpriteView plays its sheet's run row at 14 fps and returns to idle at the sheet fps afterwards; sheets without a run row fall back to idle. Strike timing, sim and contact timeline unchanged.",
+      "verify": "flutter test test/charging_foes_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24 at ad51b5e: 1/1 in the real fixture fight (run@14fps observed during the enemy lunge, the foe really attacked, idle/null fps after). Mutation-checked: pinning state to idle fails it. 31 of 42 enemy sheets have a run row (sprite_meta.json)."
+    },
+    {
+      "id": "FOES-IDLES",
+      "title": "Each foe idles with its own body personality",
+      "acceptance": "Combat foes layer an idle personality on the original bob: hover (floats clear of its shadow), heave (deep slow breath about the feet; every boss/elite), scuttle (quick low side-steps). IdleStyle.breathe is the default and adds nothing, so every other SpriteView call site is pixel-identical. Loops are seamless; reduce motion still stops the life ticker; classification uses whole id words.",
+      "verify": "flutter test test/living_idles_test.dart test/reduced_motion_stillness_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24 at 508960b: 11/11 (envelopes, seamless loops, catalog mapping incl. every boss/elite, whole-word matching, reduce-motion paint census 0 vs >30, real-pixel check that the painter moves a hovering body, combat wiring). Mutation-checked: removing the painter block or the stage wiring fails the matching test. Inherited stillness tests unchanged and green in the full suite."
+    },
+    {
+      "id": "FOES-WINDUP-HEAT",
+      "title": "The enemy wind-up heats the body, not a box around it",
+      "acceptance": "During an enemy wind-up the foe's body pixels warm toward danger red with the old colour and duration, while the stage background inside the foe's box is unchanged (no translucent rectangle). Verified on actual rendered pixels.",
+      "verify": "flutter test test/windup_heat_test.dart",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24 at ed0f710: RED on the old code (empty-zone redness rise 41 >= 6) and GREEN with the fix (body rise > 10, empty zone < 6). Before/after real-render capture: windup-before-after.png."
+    },
+    {
+      "id": "FOES-GATES",
+      "title": "Regression and integrity gates stay green",
+      "acceptance": "Analyzer, full existing-plus-additive suite, production art and SFX pass. Protected paths (lib/sim, pubspec, android, workflows, assets) unchanged versus base 741b439; no inherited test edited.",
+      "verify": "flutter analyze && flutter test && python3 tool/art/build_delvers.py --check && python3 tool/sfx_headroom.py",
+      "passes": true,
+      "evidence": "VERIFIED 2026-09-24 at ed0f710: analyzer 'No issues found!'; full suite 1553/1553 (1526 inherited + 3 Clean Cut + 24 living foes); build_delvers.py --check pass; sfx_headroom.py 'Every reachable cascade clears the ceiling.'; git diff --stat 741b439 over protected paths empty. Physical-device FPS and owner aesthetic approval remain open by design."
+    }
+  ]
+}

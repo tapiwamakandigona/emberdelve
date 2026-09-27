@@ -7,26 +7,29 @@ and forge dice as you delve toward the ember at the bottom of the world.
 seeded and fully deterministic — share a seed, share the exact delve.
 
 <p align="center">
-  <img src="docs/store/screenshots/framed/01-combat-roll.png" width="19%" alt="Combat: roll dice and assign them to attack or block">
-  <img src="docs/store/screenshots/framed/02-boon-pick.png" width="19%" alt="Pick a boon to shape the run">
-  <img src="docs/store/screenshots/framed/03-map.png" width="19%" alt="Choose a path through the delve map">
-  <img src="docs/store/screenshots/framed/04-title.png" width="19%" alt="Title screen">
-  <img src="docs/store/screenshots/framed/05-ledger.png" width="19%" alt="The Delver's Ledger: lifetime stats">
+  <img src="docs/release-sep19/evidence/kindler-360-natural-ready.png" width="30%" alt="Kindler at the start of combat in the current Flutter game">
+  <img src="docs/release-sep19/evidence/warden-360-natural-ready.png" width="30%" alt="Warden at the start of combat in the current Flutter game">
+  <img src="docs/release-sep19/evidence/hedger-360-natural-ready.png" width="30%" alt="Hedger at the start of combat in the current Flutter game">
 </p>
+
+Actual headless Flutter encounter-entry captures at 360×640 logical pixels,
+not painted mockups or physical-device performance evidence.
+[Capture method and limits](docs/release-sep19/evidence/README.md).
 
 ## Download
 
 **[⬇ Latest release](https://github.com/tapiwamakandigona/emberdelve/releases/latest)** —
-grab `emberdelve-vX.Y.Z-arm64-v8a.apk` (most phones since ~2016).
+grab `app-arm64-v8a-release.apk` for a 64-bit Android phone.
 Every release ships SHA-256 checksums and is signed in CI with the
 permanent Tsoro Studios key; notes explain exactly what changed and why.
+Current builds require Android 7.0 or later.
 
 | Your device | File |
 | --- | --- |
-| Most Android phones | `...-arm64-v8a.apk` |
-| Older 32-bit phones | `...-armeabi-v7a.apk` |
-| Emulators / Chromebooks | `...-x86_64.apk` |
-| Not sure | `...-universal.apk` (bigger, works everywhere) |
+| 64-bit ARM Android phones | `app-arm64-v8a-release.apk` |
+| 32-bit ARM Android phones | `app-armeabi-v7a-release.apk` |
+| x86-64 Android emulators / compatible Chromebooks | `app-x86_64-release.apk` |
+| Not sure | `app-release.apk` (larger, all three supported ABIs) |
 
 Also on [Google Play](https://play.google.com/store/apps/details?id=com.tsorostudios.emberdelve) (out now, 177 countries) ·
 [download page](https://tapiwa.me/emberdelve/)
@@ -39,12 +42,15 @@ Also on [Google Play](https://play.google.com/store/apps/details?id=com.tsorostu
 - **Fair by construction.** The enemy's intent is always visible; the sim
   is a sealed, deterministic core with no hidden modifiers. When you die,
   it was the build — and the seed lets you prove it.
-- **Four characters** (Kindler, Warden, Gambler, Ascetic), 35 enemies,
-  6 bosses, 31 events, 26 relics, daily trials, ascension ladders.
+- **Twenty-two playable delvers**, each with a distinct kit and working
+  silhouette; enemies, bosses, events, relics, daily trials and ascension
+  ladders. All 22 have articulated combat bodies and hand-held tools.
 - **Respects you**: play offline, no account, TalkBack-friendly
   (v0.19.0), reduce-motion mode, colorblind-safe UI, saves stay on your
   device. The one paid unlock (Hard + Ascension) is a single purchase —
   never consumables, never a second currency.
+- **Your comfort, your choice:** a saved Blood effects switch hides blood,
+  ichor and wound marks while preserving damage, guard and fatigue cues.
 
 ## For developers (human or AI)
 

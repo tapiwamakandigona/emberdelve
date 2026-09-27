@@ -1,0 +1,928 @@
+{
+  "verified_at": "2026-09-19",
+  "render_cases": 72,
+  "phone_cases": 66,
+  "observations": 12540,
+  "png_count": 4608,
+  "reports": [
+    {
+      "character": "ascetic",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "ascetic",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "ascetic",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.161031364628563e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.161031364628563e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "bearer",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.842170943040401e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "brewster",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0048591735576161e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0048591735576161e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "collier",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "cutler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "farrier",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.161031364628563e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "flintwright",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.5618982671915014e-14,
+      "families": [
+        "cut",
+        "pick"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gambler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "gilder",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "glover",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hearthkeeper",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.7763568394002505e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.7763568394002505e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "hedger",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.5618982671915014e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "kindler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.5618982671915014e-14,
+      "families": [
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0658141036401503e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "lamplighter",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.0097183471152322e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "mender",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "miller",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.4210854715202004e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "peddler",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.1316282072803006e-14,
+      "families": [
+        "cut",
+        "hook"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.2809491335957507e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "runesmith",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "stamp"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "shieldwright",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.5618982671915014e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0048591735576161e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.0048591735576161e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "stoker",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "cut",
+        "stab"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "tinker",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 2.3832327871173822e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        320.0,
+        568.0
+      ],
+      "samples": 190,
+      "max_grip_error": 7.944109290391274e-15,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        360.0,
+        640.0
+      ],
+      "samples": 190,
+      "max_grip_error": 7.944109290391274e-15,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    },
+    {
+      "character": "warden",
+      "viewport": [
+        412.0,
+        892.0
+      ],
+      "samples": 190,
+      "max_grip_error": 1.5888218580782548e-14,
+      "families": [
+        "crush",
+        "cut"
+      ],
+      "device_fps": "NOT MEASURED"
+    }
+  ],
+  "caveat": "Actual headless Flutter controlled fixtures, not physical-device FPS, human aesthetic approval, or naturally earned playthrough."
+}
