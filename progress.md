@@ -6204,3 +6204,9 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   replacing the six experimental ones, release docs. Checks, signed build
   and publication are recorded in docs/release-0.185.0/progress.md.
 
+- 2026-09-27 06:47 UTC: VERIFIED CI run 36300015985 green on c08a0d5
+  (analyzer clean, 1598/1598 tests, SFX headroom pass, signed build with
+  cert pin). Downloaded artifacts re-verified independently. GitHub
+  v0.185.0 published as latest stable with 6 assets, SHA-256 readback
+  match. Play production and itch uploads remain open (browser session
+  needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
