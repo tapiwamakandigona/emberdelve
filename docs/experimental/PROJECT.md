@@ -72,3 +72,15 @@ C0-06+C1-03+C1-07 (child-facing copy), C0-07 (title screen), C0-03+C1-02 (call-o
 - Hard cap: 30 iterations, then pause for owner review. Credit floor enforced by the
   scheduler condition script.
 - Owner can stop, pause or redirect at any time; owner instructions override this file.
+
+## 2026-09-27 — superseded by stable 0.185.0
+
+The owner ordered a release ("go ahead and make a release"). Experimental builds
+1–6 ship as stable **0.185.0+218** from `release/0.185.0`
+(`docs/release-0.185.0/`). If this loop resumes, the old formula
+`0.184.(100+N)+(211+N)` no longer works: exp.7 would collide with code 218 and
+sort below 0.185.0 in the update checker and news. The next experimental build
+must use a name above 0.185.0 (for example `0.185.(100+N)`) and a code above
+218, and it must merge `release/0.185.0` (or `legacy/dice-builder` once that
+PR lands) first.
+

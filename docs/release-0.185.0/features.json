@@ -1,0 +1,53 @@
+{
+  "$comment": "Machine-readable definition of done for the 0.185.0 release. Only flip passes to true with evidence (a command that ran, an artifact that exists). Never edit verify commands or acceptance criteria — that's a spec change, report it.",
+  "features": [
+    {
+      "id": "REL185-AUDIT",
+      "title": "Correct source, version and prior release state",
+      "acceptance": "Release commit's parent is experimental/polish-loop 7d61e26; non-doc diff vs v0.184.0 source 84f973f leaves lib/sim, purchase code, android/, .github/ and dependencies unchanged and only adds tests; versionCode 218 unused by any GitHub release; /releases/latest before publish = v0.184.0.",
+      "verify": "git diff --stat 84f973f 7d61e26 -- . ':(exclude)docs' ':(exclude)progress.md'; git diff --numstat 84f973f 7d61e26 -- test; GitHub releases API",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL185-CHECKS",
+      "title": "Analyzer, full suite and SFX headroom green on the exact release commit",
+      "acceptance": "CI job 'Analyze + test (headless)' succeeds on the release commit (flutter analyze fatal on warnings, full flutter test, tool/sfx_headroom.py) with no test or check edited in the packaging commit.",
+      "verify": "GitHub Actions run for workflow_dispatch on release/0.185.0: job conclusions + log test totals; git diff --stat 7d61e26 <release commit>",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL185-BINARY",
+      "title": "Versioned, signed and independently verified artifacts",
+      "acceptance": "Signed CI job green; downloaded universal + 3 split APKs and the AAB are com.tsorostudios.emberdelve, versionName 0.185.0, versionCodes 218/1218/2218/4218 (AAB 218), minSdk 24, targetSdk 36, not debuggable, and signed by cert SHA-256 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d.",
+      "verify": "apksigner verify --print-certs; aapt2 dump badging; bundletool dump manifest; jar signature cert via openssl",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL185-GITHUB",
+      "title": "GitHub v0.185.0 published as latest stable",
+      "acceptance": "Release v0.185.0 exists, prerelease=false, tag points at the built commit, /releases/latest returns v0.185.0, and every asset downloaded back matches the published SHA-256 list.",
+      "verify": "GET /repos/tapiwamakandigona/emberdelve/releases/latest; download assets; sha256sum -c",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL185-PLAY",
+      "title": "Authorised Play production submission",
+      "acceptance": "AAB 218 uploaded to the Production track with the prepared en-GB notes; Console readback shows 218 submitted/in review (not claimed live until Console says Available).",
+      "verify": "Authenticated Play Console release-overview readback",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL185-ITCH",
+      "title": "itch.io page serves 0.185.0",
+      "acceptance": "tsorostudios/emberdelve Android download(s) replaced with the verified 0.185.0 ARM APKs; page readback confirms file names/sizes.",
+      "verify": "Authenticated itch dashboard + public page readback",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}

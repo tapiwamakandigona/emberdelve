@@ -6192,3 +6192,15 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - VERIFIED: new test/enemy_dash_test.dart red on old code, green on new;
   analyze clean; full suite 1598/1598; frames checked by eye.
 - ASSUMED: device feel. Critic round 5 on exp.6 pending (credit budget).
+
+## 2026-09-27 — 0.185.0 "Living Foes" release packaging (owner: "make a release")
+- The owner authorised a release in the Viktor app. Experimental builds 1–6
+  (PR #109 head 7d61e26, incl. #107 + #108) are packaged as stable
+  0.185.0+218 on `release/0.185.0`. Scoped state: docs/release-0.185.0/.
+- VERIFIED audit vs the v0.184.0 source 84f973f: lib/sim, purchase code,
+  android/, .github/ and dependencies are unchanged. Tests only grew (11 new
+  files, 3 files with additions only).
+- Packaging commit = version line, currentAppVersion, one news entry
+  replacing the six experimental ones, release docs. Checks, signed build
+  and publication are recorded in docs/release-0.185.0/progress.md.
+

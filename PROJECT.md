@@ -1,5 +1,17 @@
 # PROJECT.md — Emberdelve
 
+## September 27 — 0.185.0 "Living Foes" release (owner-authorised)
+
+Current scoped state: `docs/release-0.185.0/PROJECT.md`, `features.json` and
+append-only `progress.md`. The owner said "go ahead and make a release"
+(2026-09-27). That ends the experimental-only status of the polish loop.
+Source = `experimental/polish-loop` @ `7d61e26` (experimental builds 1–6, which
+include #107 and #108) plus a version/news/docs-only packaging commit on
+`release/0.185.0`. Version **0.185.0+218**. Future experimental builds must
+use a version name above 0.185.0 and a code above 218. Simulation, purchase,
+signing, workflow, dependency and test boundaries are unchanged. Physical
+device, purchase/restore and aesthetic-approval gates remain open.
+
 ## September 19 — owner-authorized production release
 
 Current scoped state: `docs/release-sep19/PROJECT.md`, `features.json` and
