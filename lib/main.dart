@@ -48,6 +48,11 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  // Explicit on older Android versions too. Gameplay and modal/manual
+  // controls keep their SafeArea insets; only the background reaches the edge.
+  final systemUiDone = SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+  );
   final settingsFuture = SettingsStore.load();
   // Must run before the first AudioPlayer exists — see initPlatformAudio.
   await AudioService.initPlatformAudio();
@@ -88,6 +93,7 @@ Future<void> main() async {
     updates.load(),
     initTelemetry(),
     orientationsDone,
+    systemUiDone,
   ]);
   // Ember Forge billing (v0.4.0, spec R8). Wired after boot so the
   // entitlement check reads the loaded profile; init is deliberately not

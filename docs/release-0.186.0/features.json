@@ -30,8 +30,8 @@
       "title": "German Play listing",
       "acceptance": "de-DE name, short/full description saved and read back with truthful language coverage and monetisation, within Play limits, preserving real assets and other locales.",
       "verify": "Play Console readback",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "2026-10-02 authenticated Play Console: de-DE added; name28/30, short73/80, full2283/4000; all three fields equal store-de-DE.json after reload; explicit no-German-gameplay disclosure; English and inherited graphic assets preserved. Publishing overview showed exactly the German Add language item, not a release. Submission/live status recorded separately in progress."
     },
     {
       "id": "SIGNED-RELEASE",

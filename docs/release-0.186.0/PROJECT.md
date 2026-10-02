@@ -31,3 +31,15 @@ or toolchain merely to make local setup pass.
 
 ## Current phase
 Regression-first engineering and German listing preparation. Eight-iteration cap.
+
+## Baseline-discovered release blockers
+CI37017234889 ran the unchanged original tests plus seven new regressions:
+1596 passed,9 failed. Besides the new expected failures, the returning title
+needs8px less vertical whitespace at412x915. Fix the production layout, not
+the existing no-scroll assertion.
+
+The original weekly-history test requires this week's short_road entry in
+`mutators`, then forbids it there. Production intentionally encodes it in
+`short` instead. Preserve the test and game behavior pending an explicit
+decision on this contradictory check; never change the clock or rotation to
+obtain a green build. A read-only reviewer will verify the diagnosis.

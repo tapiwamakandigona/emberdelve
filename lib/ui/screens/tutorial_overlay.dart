@@ -54,8 +54,9 @@ class _TutorialOverlay extends StatelessWidget {
     (
       Icons.casino,
       'ROLL, THEN SPEND',
-      'Roll your dice, tap one, then ATTACK or BLOCK with its value. Each '
-          'die is spent once per turn; a reroll can save a bad face.',
+      'Roll, then tap a die. ATTACK and BLOCK show a preview before you '
+          'spend it. Choose one: that die is used for this turn. When you are '
+          'ready, END TURN lets the enemy make the move shown above its head.',
     ),
     (
       Icons.local_fire_department,
@@ -213,8 +214,9 @@ class _ContextTip extends StatelessWidget {
     ContextTips.rollSpend: (
       Icons.casino,
       'ROLL, THEN SPEND',
-      'Roll your dice, tap one, then ATTACK or BLOCK with its value. Each '
-          'die is spent once per turn; a reroll can save a bad face.',
+      'Roll, then tap a die. ATTACK and BLOCK show a preview before you '
+          'spend it. Choose one: that die is used for this turn. When you are '
+          'ready, END TURN lets the enemy make the move shown above its head.',
       Alignment.bottomCenter,
     ),
     ContextTips.intentFair: (
@@ -278,13 +280,13 @@ class _ContextTip extends StatelessWidget {
                     Icon(icon, color: EmberColors.ember, size: 28),
                     const SizedBox(height: Space.s),
                     Text(
-                      title,
+                      tr(context, title),
                       style: EmberText.h2,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: Space.s),
                     Text(
-                      body,
+                      tr(context, body),
                       style: EmberText.bodyDim,
                       textAlign: TextAlign.center,
                     ),
@@ -325,23 +327,25 @@ class _PrimerScreenState extends State<PrimerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: EmberColors.bg,
-      body: Stack(
-        children: [
-          const Positioned.fill(child: Vignette(strength: 0.6)),
-          _TutorialOverlay(
-            key: const ValueKey('primer-overlay'),
-            step: _step,
-            centered: true,
-            onNext: () {
-              if (_step >= _TutorialOverlay.cardCount - 1) {
-                _close();
-              } else {
-                setState(() => _step++);
-              }
-            },
-            onSkip: _close,
-          ),
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            const Positioned.fill(child: Vignette(strength: 0.6)),
+            _TutorialOverlay(
+              key: const ValueKey('primer-overlay'),
+              step: _step,
+              centered: true,
+              onNext: () {
+                if (_step >= _TutorialOverlay.cardCount - 1) {
+                  _close();
+                } else {
+                  setState(() => _step++);
+                }
+              },
+              onSkip: _close,
+            ),
+          ],
+        ),
       ),
     );
   }
