@@ -6240,3 +6240,36 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   Reduced: no white, the body greys.
 - ASSUMED / not verified: how it looks and feels on a device. The strips still re-dress the
   seed-1 crawler instead of the real boss sprite (C4-05, open).
+
+## 2026-10-02 — PR #112, CI and the independent review
+- Logged at 2026-10-02 18:37 UTC. PR #112 (feat/boss-death-ember-20261002 → legacy/dice-builder).
+- VERIFIED CI run 37047730872 on the PR head: build-ios green; "Analyze + test
+  (headless)" red with exactly the two pre-existing failures and nothing else —
+  "1598 tests passed, 2 failed" (shorter_title 412x915 "Expected: <0> Actual: <8.0>"
+  and marked_week "Expected: equals ['short_road'] unordered, Actual: <null>").
+  The signed-build job is correctly skipped after a red test job. The same two
+  failures are red on the lane itself, so this PR adds no failure.
+- Merge is therefore blocked on the lane's own red, not on this change. I did not
+  merge, did not edit either test and did not touch the CI workflow.
+- VERIFIED independent read-only review (ultra tier, fresh context, range
+  535029b..4d9c957): PASS, no findings. It reproduced the red-on-old-code result in
+  its own throwaway copy (11 frames at 24-27 % bright in both motion modes on the
+  535029b lib files), re-ran the strips, and confirmed 64/64 nearby combat and
+  motion tests plus "no existing test modified, lib/sim/pubspec/android/.github
+  untouched". Non-blocking notes it raised, recorded so they are not lost:
+  1. Under reduced motion the boss keeps full colour for ~400 ms and then switches
+     to grey in one step, where the backlog asked for a 300 ms desaturation. The
+     measured acceptance (no white) is met.
+  2. The new test expresses its limits as a share of the foe rect (12 % ~ 9.6k px,
+     2.5 % ~ 2.0k px at 360x800 @2x) rather than the backlog's absolute px counts;
+     equivalent or stricter here, but it would drift at another size.
+  3. "At least 2 frames with sprite pixels and dissolve particles together" is
+     checked by eye on the strips, not automated.
+  4. The strips still re-dress the seed-1 crawler (C4-05 open), so no real boss
+     silhouette has been judged. C4-02 stays fixed_pending_review for that reason.
+  5. The ember tint also colours the shadow ellipse, the held weapon and the burst,
+     exactly as the existing flash and hurt wrappers do.
+  6. A boss-killing blow under 25 % of max HP gets no hit-stop, so it shows no white
+     at all — stricter than the cap.
+- Note 1 is the only one that is a behaviour gap against the written acceptance; it
+  is queued as the first item of the next iteration.
