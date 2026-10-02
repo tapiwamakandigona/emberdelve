@@ -498,7 +498,7 @@
    "fix_direction": "Emit the trail from the blade tip along the swing (3–4 fading samples), total life ≤120 ms. Remove the foe-side arc.",
    "acceptance": "Kill strips for 4 foes: trail pixels overlap the blade on 052–054 and are fully gone by 058.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 7,
    "history": [
@@ -516,6 +516,12 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "relisted"
+    },
+    {
+     "at": "2026-10-02T23:31:51+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/blade-trail-20261002",
+     "note": "the cut's trail now rides the blade: after the swing lands the blade's own smear lingers ~110 ms, its tail closing onto the edge and fading; the foe-side crescent is gone, replaced by a short contact nick along the swing that lives 120 ms. test/blade_trail_test.dart red on old code (blade smear 0.0 at contact+60 ms, foe-side cut 340 ms, 58 px stroke across the top quarter), green on new. Real CombatScreen kill strips for 4 foes: trail on the blade on 052-054, nick on 053-054, nothing from 055; only frames 052-060 differ from the old strips"
     }
    ],
    "rank_round": 2

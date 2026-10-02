@@ -600,6 +600,13 @@ class _WeaponPainter extends CustomPainter {
     // Smear trail: a fading arc sector swept behind the blade (GDQuest's
     // "smear" — makes the attack read faster than it is).
     final from = smearFrom;
+    // A combat figure reports the live smear: full plan strength while the
+    // blade travels, fading to nothing over the post-contact trail (C0-13).
+    final live = articulation?.value.smear;
+    final strength = live ?? smearIntensity;
+    final fade = live == null || smearIntensity <= 0
+        ? 1.0
+        : (live / smearIntensity).clamp(0.0, 1.0);
     if (from != null && (angle - from).abs() > 0.12) {
       final rect = Rect.fromCircle(center: grip, radius: reach * 0.98);
       _p
@@ -613,7 +620,7 @@ class _WeaponPainter extends CustomPainter {
           transform: GradientRotation(from - math.pi / 2),
           colors: [
             accent.withValues(alpha: 0.0),
-            accent.withValues(alpha: smearIntensity.clamp(0.0, 1.0)),
+            accent.withValues(alpha: strength.clamp(0.0, 1.0)),
           ],
           stops: const [0.0, 1.0],
         ).createShader(rect);
@@ -630,7 +637,7 @@ class _WeaponPainter extends CustomPainter {
       final coreSweep = (angle - from) * 0.45;
       _p
         ..strokeWidth = reach * 0.09
-        ..color = Colors.white.withValues(alpha: 0.35 + 0.45 * charge);
+        ..color = Colors.white.withValues(alpha: (0.35 + 0.45 * charge) * fade);
       canvas.drawArc(
         rect.deflate(reach * 0.15),
         angle - math.pi / 2 - coreSweep,
@@ -1662,24 +1669,33 @@ class _ImpactSlashPainter extends CustomPainter {
         }
         break;
       case ContactShape.cut:
-        // One clean crescent smear sweeping through the victim.
-        final rect = Rect.fromCircle(center: c, radius: r);
-        const start = -2.4; // upper-left
-        final sweep = 2.1 * grow;
+        // C0-13: the blade carries its own trail now, so the victim only
+        // gets the contact itself — a short, hard nick along the line of the
+        // swing (high-behind to low-ahead) with two sparks thrown forward.
+        // No crescent around the body: that read as a sticker on the foe.
+        const tilt = 0.35;
+        final dir = Offset(math.cos(tilt) * fx, math.sin(tilt));
+        final half = r * 0.45;
+        final a = c - dir * half;
+        final b = c + dir * half;
+        final end = Offset.lerp(a, b, grow)!;
         _p
-          ..strokeWidth = r * 0.16
-          ..color = color.withValues(alpha: 0.85 * fade);
-        canvas.drawArc(rect, start, sweep, false, _p);
+          ..strokeWidth = r * 0.11
+          ..color = color.withValues(alpha: 0.9 * fade);
+        canvas.drawLine(a, end, _p);
         _p
-          ..strokeWidth = r * 0.07
-          ..color = Colors.white.withValues(alpha: 0.8 * fade);
-        canvas.drawArc(
-          rect.deflate(r * 0.02),
-          start + 0.15,
-          sweep * 0.85,
-          false,
-          _p,
-        );
+          ..strokeWidth = r * 0.045
+          ..color = Colors.white.withValues(alpha: 0.95 * fade);
+        canvas.drawLine(Offset.lerp(a, end, 0.25)!, end, _p);
+        for (var i = 0; i < 2; i++) {
+          final ang = tilt + (i == 0 ? -0.55 : 0.35);
+          final dv = Offset(math.cos(ang) * fx, math.sin(ang));
+          final s0 = end + dv * r * (0.06 + 0.16 * grow);
+          _p
+            ..strokeWidth = r * 0.035
+            ..color = Colors.white.withValues(alpha: 0.8 * fade);
+          canvas.drawLine(s0, s0 + dv * r * 0.12, _p);
+        }
         break;
       case ContactShape.crush:
         // Blunt: a shock ring bursts outward from low on the body, the
@@ -1959,8 +1975,16 @@ class _CleanCutPainter extends CustomPainter {
       _p
         ..strokeWidth = maxR * 0.018
         ..color = color.withValues(alpha: 0.80 * glint);
-      canvas.drawLine(Offset(c.dx - d, c.dy - d), Offset(c.dx + d, c.dy + d), _p);
-      canvas.drawLine(Offset(c.dx - d, c.dy + d), Offset(c.dx + d, c.dy - d), _p);
+      canvas.drawLine(
+        Offset(c.dx - d, c.dy - d),
+        Offset(c.dx + d, c.dy + d),
+        _p,
+      );
+      canvas.drawLine(
+        Offset(c.dx - d, c.dy + d),
+        Offset(c.dx + d, c.dy - d),
+        _p,
+      );
     }
   }
 

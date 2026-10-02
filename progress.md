@@ -6210,3 +6210,28 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   v0.185.0 published as latest stable with 6 assets, SHA-256 readback
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
+
+## 2026-10-02 — iteration 6: the cut's trail rides the blade (C0-13)
+- Logged at 2026-10-02 23:32 UTC.
+- Why: the critic saw the slash trail drawn as a crescent around the FOE (C_*_kill 053-060),
+  far from the blade, so it read as a sticker on the victim. VERIFIED on the old code with
+  tool/living_foes_frames_test.dart (real CombatScreen, headless flutter_test, not a device):
+  the crescent sits over the foe on 053-060 and is gone on 061; the blade's own smear shows
+  only on 050-051 and is already off at contact (052).
+- Change (presentation only, lib/sim untouched): when the swing lands, the blade's own smear
+  now lingers for 110 ms, its tail closing up onto the edge while it fades (CombatFigure +
+  the weapon painter reading the live smear). The foe-side mark for a cut is no longer an arc:
+  it is a short nick along the line of the swing with two sparks, 120 ms total. Other contact
+  shapes (crush, stab, stamp, hook, pick, claws) are unchanged.
+- VERIFIED red -> green: new test/blade_trail_test.dart (3 tests). Old code: blade smear 0.0 at
+  contact + 60 ms; foe-side cut ImpactSlash 340 ms; a 58 px stroke across the top quarter of the
+  mark box. New code: smear > 0 at contact and +60 ms and 0 after +120 ms; cut contact 120 ms and
+  off the stage after it; longest run in the top quarter <= 8 px (spark dots only).
+- VERIFIED: flutter analyze clean; full suite 1599 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render: kill strips re-rendered for flue_crawler, cinder_wisp, slag_brute and
+  molten_maw on old and new code in the same run order; only frames 052-060 differ. I looked
+  at them: 052 the trail wraps the blade from the raise to the strike, 053 it has closed to a
+  thin stub on the edge, 054 a small remnant at the tip; the nick crosses the foe on 053-054;
+  from 055 nothing is left of either (the old crescent stayed until 060).
+- ASSUMED: how the 110 ms trail feels at 60 fps on a phone (strips are 40 ms frames).
