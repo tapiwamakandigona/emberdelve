@@ -30,7 +30,10 @@ Use the existing pinned GitHub Actions environment; do not change dependencies
 or toolchain merely to make local setup pass.
 
 ## Current phase
-Regression-first engineering and German listing preparation. Eight-iteration cap.
+Implementation verified with seven new red→green regressions. Full CI is
+blocked only by the inherited contradictory weekly test; draft PR111 is open.
+German listing is in review. No version bump, signed build or release.
+Eight-iteration cap; two engineering iterations used. See `verification.md`.
 
 ## Baseline-discovered release blockers
 CI37017234889 ran the unchanged original tests plus seven new regressions:

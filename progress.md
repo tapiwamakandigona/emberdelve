@@ -6210,3 +6210,26 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   v0.185.0 published as latest stable with 6 assets, SHA-256 readback
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
+
+## 2026-10-02 — Clear Choices candidate; release held
+- Owner requested German storefront, game improvements and releases.
+  Scoped state/evidence: docs/release-0.186.0/; draft PR111.
+- VERIFIED red baseline37017234889:1596passed/9failed, including7new
+  regressions and2original failures. Candidatef3ce6d7 / CI37018504673:
+  analyzer clean,1604passed/1failed. Forge320px/large-text, free/permanent
+  choice, pending/close, first-fight explanation, edge-to-edge guard and
+  original title-fit checks pass. Canonical95-message locale check passes.
+- VERIFIED all281original test files and protected sim/billing/Android/
+  CI/assets/dependencies unchanged. Original SFX/art checks pass locally.
+- Sole remaining original test requires short_road in the banked modifier
+  list and forbids it in the same list. Production encodes short:true
+  separately. No test/clock/rotation workaround; narrow authorization to
+  correct the contradictory check is needed. Signed job correctly skipped.
+- VERIFIED German listing added with explicit no-German-gameplay notice;
+  saved fields read back, sole change sent, Publishing overview reloaded
+  as Changes in review. Not a new binary or proof of live German metadata.
+- VERIFIED production remains218/0.185.0. No merge, version/news bump,
+  tag, new GitHub release or Play binary upload. Device/purchase gates open.
+- Independent ultra-tier read-only source review PASS; release explicitly
+  NOT allowed until the contradictory original test is resolved. Result
+  and non-blocking caveats: docs/release-0.186.0/evaluation.json.

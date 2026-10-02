@@ -6,24 +6,24 @@
       "title": "Readable and honest Forge choice",
       "acceptance": "Forge sheet fits 320px and enlarged text through scrolling; clearly distinguishes free play and one-time endgame unlock; localised Play price, close/not-now, restore and pending-state safety verified without billing changes.",
       "verify": "flutter test test/release_clarity_test.dart",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "CI37018504673 on f3ce6d7: all seven release_clarity tests pass after actual red CI37017234889; 320px at1.0/1.3/1.8x, real price display with fake gateway, no accidental purchase, pending/close flow. Original billing lifecycle tests pass; billing source unchanged. Headless/mocked evidence, not a real Play purchase."
     },
     {
       "id": "FIRST-FIGHTS",
       "title": "Teach existing preview and turn resolution",
       "acceptance": "Manual and contextual spending tip explicitly explain the existing attack/block preview and end-turn action; existing French/Spanish/Portuguese translations stay in sync; original guided-tour tests pass.",
       "verify": "flutter test test/release_clarity_test.dart test/interface_languages_test.dart test/tour_test.dart test/tips_test.dart",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "CI37018504673: manual preview/end-turn regression, original locale/manual/tour/tips tests pass. Canonical JSON updated and catalog regenerated; unchanged generator --check verifies95messages x3locales. Overall suite remains red only on the inherited weekly-history contradiction."
     },
     {
       "id": "ANDROID",
       "title": "Explicit edge-to-edge and preserved optimisation",
       "acceptance": "Edge-to-edge mode configured at startup; manual and Forge controls respect safe insets; existing R8/resource shrinking and bounded background decode preserved. No claim of physical-device QA or resolved Play warning.",
       "verify": "flutter test test/release_clarity_test.dart",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "CI37018504673: explicit-mode source guard and inset/scroll Forge regressions pass; source inspection verifies startup Future join and Primer SafeArea. Original Android R8/resource settings and bounded background decoding unchanged. No physical-device or Play-warning-cleared claim."
     },
     {
       "id": "GERMAN-STORE",
@@ -39,7 +39,7 @@
       "acceptance": "Unchanged full CI passes on exact release source; signed APK/AAB metadata, permanent certificate and SHA256 verified; v0.186.0 published with expected assets.",
       "verify": "GitHub Actions and downloaded binary verification",
       "passes": false,
-      "evidence": ""
+      "evidence": "BLOCKED: CI37018504673 analyzer clean,1604passed/1failed; original weekly-history test contradiction remains. Signed job correctly skipped. Draft PR111 committed; no version/news bump, binaries, tag or release."
     },
     {
       "id": "PLAY-SUBMISSION",
@@ -47,7 +47,7 @@
       "acceptance": "Correct higher-code signed AAB and intended listing changes alone submitted; release and publishing state reloaded and recorded. Availability is never inferred from submission.",
       "verify": "Play Console production and publishing readback",
       "passes": false,
-      "evidence": ""
+      "evidence": "German listing alone is verified Changes in review. Production remains218/0.185.0; candidate219 was not built or uploaded because the unchanged test gate is red."
     },
     {
       "id": "OUTREACH",
@@ -55,7 +55,7 @@
       "acceptance": "No duplicate standalone ads; release facts and availability accurate; authorised post/comment body, author and permalink read back.",
       "verify": "Live Reddit JSON",
       "passes": false,
-      "evidence": ""
+      "evidence": "No new release announcement: release is held. Existing game/recruitment posts remain published, and separate truthful tester-progress replies were verified. Do not announce a nonexistent0.186.0 release merely to complete this item."
     }
   ]
 }

@@ -57,3 +57,33 @@
   simulation, meta/billing, Android build files, CI or assets.
 - Flutter analyzer/full-suite verification is pending the next unchanged CI
   run. The contradictory weekly-history assertion remains a release blocker.
+
+## Iteration 2 result —1604passed, one inherited blocker
+- VERIFIED unchanged CI37018504673 onf3ce6d7: analyzer "No issues found!";
+ 1604tests passed,1failed. All7new regression tests and all3original title
+ tests pass. The sole failure is the same marked_week contradiction:
+ "Expected: equals ['short_road'] unordered / Actual: <null>".
+- Signed job skipped as intended. SFX was also skipped in CI after the
+ failing suite; the unchanged local SFX check passed (−0.90dBTP TIGHT
+ full-attack cascade, all reachable cascades below0dBTP). Original art
+ reproducibility check passed for all22models.
+- Draft PR111 opened against legacy/dice-builder. No merge, version/news
+ change, tag, release or production upload. Source/runtime remainsf3ce6d7.
+- VERIFIED German listing was sent, then reloaded as "Changes in review",
+ with exactly one de-DE Add language item. Managed publishing off. This
+ does not claim listing availability or a new binary.
+- VERIFIED production readback: latest218/0.185.0. Existing recommendation
+ cards still present; do not describe the source change as a cleared card.
+- Independent ultra-tier read-only review requested; publication stays
+ blocked regardless of a static review until the original gate is resolved.
+- Detailed evidence and proposed narrow check correction: verification.md.
+
+## Independent review result
+- Authorized ultra-tier read-only evaluator: source PASS, release NO.
+  It read the candidate CI log and confirmed the same sole contradiction.
+  No implementation defect found that should block release.
+- Non-blocking caveats: title-fit remains calendar-dependent; Forge copy
+  stays English-only; German "Schmieden" loosely describes forging at rest
+  stops. No physical-device or store-approval claim.
+- Evaluation retained in evaluation.json. The original test is unchanged;
+  no green-by-clock workaround and no release while the gate is red.

@@ -1,0 +1,37 @@
+{
+  "verdict": "PASS",
+  "scope": "Read-only source review, not release approval",
+  "release_allowed": false,
+  "reviewer_tier": "ultra",
+  "source_commit": "f3ce6d7a728cb3debff22653a7a9ed5fc5618048",
+  "ci_run": 37018504673,
+  "findings": [
+    {
+      "severity": "release-blocker",
+      "file": "test/marked_week_test.dart",
+      "lines": "66,69",
+      "issue": "Original assertions require and forbid short_road in the same saved list. Production's short:true representation matches the intended invariant.",
+      "next_action": "Ask for narrow authorization to correct only the contradictory expectations; retain the short assertion, current clock, rotation and game behavior."
+    },
+    {
+      "severity": "risk",
+      "file": "lib/ui/screens/title_screen.dart",
+      "issue": "The 412x915 title passes today with the recovered8px; rule/trial text is date-dependent, so other dates need separate coverage."
+    },
+    {
+      "severity": "minor",
+      "file": "lib/ui/forge_sheet.dart",
+      "issue": "New Forge copy remains English-only, like the existing sheet. Do not claim a fully localized purchase sheet."
+    },
+    {
+      "severity": "minor",
+      "file": "docs/release-0.186.0/store-de-DE.json",
+      "issue": "Schmieden is loose shorthand for forging at rest stops; refine at a later listing edit. Otherwise natural, accurate German within limits."
+    }
+  ],
+  "limits": [
+    "No physical-device, system-bar contrast, FPS, purchase/restore or aesthetic approval.",
+    "No claim that Google review has approved the listing.",
+    "Version/news, signed build, tag and release deliberately not performed while CI is red."
+  ]
+}
