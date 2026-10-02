@@ -1135,7 +1135,7 @@
    "fix_direction": "Apply the shake transform to the stage (actors + backdrop) only, or overscan the background by 16 dp so no edge is revealed. Keep the HUD and tray fixed.",
    "acceptance": "Boss strips t0440–t0840: top bar, enemy panel and tray rects have 0 px offset vs t1600; stage content may move. No frame shows a background sliver at any screen edge.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 4,
    "critic_rank": 4,
    "rank_round": 4,
@@ -1144,6 +1144,12 @@
      "at": "2026-09-25T04:30:35+00:00",
      "round": 4,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-02T21:39:05+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/stage-only-shake-20261002",
+     "note": "the hit/boss-kill shake now translates only the combat stage (fighters + cavern backdrop); top bar, enemy panel, HP bar, tray and buttons hold still and no screen edge is exposed. test/stage_only_shake_test.dart red on old code (top bar + enemy name drift up to 6.73 px), green on new; boss strips t0440-t0840: top bar/tray best-match offset 0 on 11/11 frames (was off on 8/11)"
     }
    ]
   },
