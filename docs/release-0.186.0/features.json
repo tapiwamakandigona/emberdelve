@@ -1,0 +1,61 @@
+{
+  "$comment": "Scoped release definition of done, adapted from canonical toolkit template. Existing root criteria and device gates are unchanged.",
+  "features": [
+    {
+      "id": "CLARITY",
+      "title": "Readable and honest Forge choice",
+      "acceptance": "Forge sheet fits 320px and enlarged text through scrolling; clearly distinguishes free play and one-time endgame unlock; localised Play price, close/not-now, restore and pending-state safety verified without billing changes.",
+      "verify": "flutter test test/release_clarity_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "FIRST-FIGHTS",
+      "title": "Teach existing preview and turn resolution",
+      "acceptance": "Manual and contextual spending tip explicitly explain the existing attack/block preview and end-turn action; existing French/Spanish/Portuguese translations stay in sync; original guided-tour tests pass.",
+      "verify": "flutter test test/release_clarity_test.dart test/interface_languages_test.dart test/tour_test.dart test/tips_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "ANDROID",
+      "title": "Explicit edge-to-edge and preserved optimisation",
+      "acceptance": "Edge-to-edge mode configured at startup; manual and Forge controls respect safe insets; existing R8/resource shrinking and bounded background decode preserved. No claim of physical-device QA or resolved Play warning.",
+      "verify": "flutter test test/release_clarity_test.dart",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "GERMAN-STORE",
+      "title": "German Play listing",
+      "acceptance": "de-DE name, short/full description saved and read back with truthful language coverage and monetisation, within Play limits, preserving real assets and other locales.",
+      "verify": "Play Console readback",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "SIGNED-RELEASE",
+      "title": "Verified signed GitHub release",
+      "acceptance": "Unchanged full CI passes on exact release source; signed APK/AAB metadata, permanent certificate and SHA256 verified; v0.186.0 published with expected assets.",
+      "verify": "GitHub Actions and downloaded binary verification",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "PLAY-SUBMISSION",
+      "title": "Production release submitted to Play",
+      "acceptance": "Correct higher-code signed AAB and intended listing changes alone submitted; release and publishing state reloaded and recorded. Availability is never inferred from submission.",
+      "verify": "Play Console production and publishing readback",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "OUTREACH",
+      "title": "Verified release update in appropriate existing Reddit discussion",
+      "acceptance": "No duplicate standalone ads; release facts and availability accurate; authorised post/comment body, author and permalink read back.",
+      "verify": "Live Reddit JSON",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}
