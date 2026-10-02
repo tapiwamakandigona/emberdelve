@@ -6235,3 +6235,25 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   thin stub on the edge, 054 a small remnant at the tip; the nick crosses the foe on 053-054;
   from 055 nothing is left of either (the old crescent stayed until 060).
 - ASSUMED: how the 110 ms trail feels at 60 fps on a phone (strips are 40 ms frames).
+
+## 2026-10-02 — iteration 6 follow-up: CI and the independent read-only review (C0-13, PR #117)
+- Logged at 2026-10-02 23:40 UTC.
+- VERIFIED CI run 37078060727 on 6c60ebf (pull_request, PR #117): exactly two failures —
+  test/shorter_title_test.dart 412x915 and test/marked_week_test.dart, the lane's own known
+  reds. The new test/blade_trail_test.dart passes on CI. The ios job (37078060691) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..6c60ebf: verdict PASS, no findings. It re-ran analyze (clean) and the suite
+  (+1599 -2, only the known reds), reverted lib/ to 535029b in a scratch copy and saw all 3
+  new tests fail there (smear 0.0 at contact, foe-side cut 340 ms, 58 px top-quarter stroke),
+  re-rendered the kill strips on old and new code for all 4 foes (only frames 052-060 differ;
+  trail on the blade 052-054, nothing from 055; the old crescent sat on the foe through 060),
+  ran the new test under Motion 'on' plus weapons_test and combat_bodies_test (30 pass), and
+  confirmed nothing in lib/sim, android/, .github/ or pubspec moved and no existing test was
+  edited.
+- Reviewer notes (non-blocking): (1) my "smear 0.0 at contact + 60 ms" wording understates the
+  old behaviour — it is already 0.0 at contact itself; (2) under Reduce Motion the 110 ms
+  fading trail still plays, exactly as the swing smear already did before this change — a
+  design call, not a regression; (3) test 1 measures the smear value handed to the painter,
+  the pixel evidence is the render strips; (4) if the hero's phase left 'swing' within 110 ms
+  of contact the trail would be cut short (does not happen in the rendered strips).
+- NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
