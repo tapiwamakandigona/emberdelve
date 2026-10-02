@@ -6210,3 +6210,33 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   v0.185.0 published as latest stable with 6 assets, SHA-256 readback
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
+
+## 2026-10-02 — games pass iteration 1: boss death without the white block (C4-02)
+- Logged at 2026-10-02 18:28 UTC. Branch feat/boss-death-ember-20261002 off legacy/dice-builder @ 535029b.
+- Baseline before any change (local, Flutter 3.44.9): analyzer clean; 1596 passed, 2 failed.
+  Both failures are pre-existing and not caused by this change. VERIFIED from the run log:
+  - test/marked_week_test.dart "a finished weekly banks its mark and its rule": during a
+    week whose rule contains short_road (this week is Short Road) the test wants short_road
+    in the saved list and then forbids it. Same contradiction as PR #111 records. It will
+    pass in the weeks of 2026-10-05 and 2026-10-12, then fail again in the weeks of
+    2026-10-19 and 2026-10-26 (Lean Road / Hard March). VERIFIED with weeklyRuleFor over
+    the next 8 weeks. I did not touch the test; the fix needs an explicit go.
+  - test/shorter_title_test.dart 412x915: the title scrolls by 8 px. PR #111 carries the
+    fix for this one ("recover 8 px of title whitespace").
+- Change: on the blow that kills a boss, the white contact flash now lasts only the
+  hit-stop. It then crossfades over 160 ms into an ember-tinted body, which the ashfall
+  dissolve crumbles from. Under reduced motion the boss is never flashed white; its
+  colour drains to grey as it fades. Files: lib/ui/screens/combat_screen.dart and
+  lib/ui/screens/combat/stage.dart. Presentation only; lib/sim is untouched.
+- VERIFIED: the new test/boss_death_ember_test.dart lands a real lethal blow through the
+  controls and counts luma>235 pixels inside the foe's own rect every 40 ms for 1.6 s.
+  On the old code it was red: 11 frames at 24–27 % bright in both normal and reduced
+  motion. On the new code it is green: at most 3 such frames in normal motion, 0 in reduced.
+- VERIFIED: the full suite gives 1598 passed and the same 2 pre-existing failures
+  (1596 + 2 new). Analyzer clean. sfx_headroom passes.
+  tool/boss_kill_frames_test.dart: the peak whole-frame luma>230 share is 2.1 % (normal)
+  and 0.3 % (reduced). I looked at the strips by eye (headless render at 2x, not a phone).
+  Two white frames, then an orange body, then the crumble starts from the tinted pixels.
+  Reduced: no white, the body greys.
+- ASSUMED / not verified: how it looks and feels on a device. The strips still re-dress the
+  seed-1 crawler instead of the real boss sprite (C4-05, open).
