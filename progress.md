@@ -6229,3 +6229,14 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   inside the full local run; still ASSUMED flaky/order-dependent, not reproduced.
 - Still queued from PR #112 review note 1: reduced-motion boss death should desaturate
   over ~300 ms instead of a one-step switch.
+- 2026-10-02 19:28 UTC. VERIFIED CI run 37053558780 on PR #113 head adf5e2e:
+  "1597 tests passed, 1 failed" — only marked_week_test ("Expected: equals ['short_road']
+  unordered / Actual: <null>"), the lane's own known failure. shorter_title_test is green
+  there, so the lane is down to one red test once this merges. Not merged (lane red).
+- VERIFIED independent read-only review (ultra tier, fresh context, range 535029b..adf5e2e):
+  PASS, no findings. It reproduced 8 → 0 / 123 → 115 px with the lane's title file swapped
+  back, confirmed the file is byte-identical to the #111 version, and re-ran the full suite
+  (1597 + the same 1 failure). Notes: the ported comment says "(0.186.0)" while pubspec is
+  0.185.0 (inherited from #111, fixed by the next bump); the captures are scratch renders,
+  regenerable by pumping GameRoot with the shorter_title_test profile and toImage on a
+  RepaintBoundary; the top-right icon row barely moves, so "every block 4 px higher" is loose.
