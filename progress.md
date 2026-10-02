@@ -6297,3 +6297,21 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   No white frame. Headless test render at 2x, not a phone.
 - ASSUMED / not verified: how it feels on a device. The strips still re-dress the seed-1
   crawler (C4-05 open).
+
+## 2026-10-02 — PR #114, CI and the independent review
+- Logged at 2026-10-02 20:43 UTC. PR #114 (feat/boss-death-desat-20261002, stacked on #112's branch).
+- VERIFIED CI run 37061517779 on ed54ff8: "1599 tests passed, 2 failed", exactly the two
+  known lane failures (shorter_title 412x915 "Expected: <0> Actual: <8.0>"; marked_week
+  "Expected: equals ['short_road'] unordered, Actual: <null>"). build-ios green
+  (37061517780). Signed build correctly skipped. Not merged: the lane is red and #112 goes first.
+- VERIFIED independent read-only review (ultra tier, fresh context, range d38039d..ed54ff8):
+  PASS, no findings. It reproduced red on the d38039d lib files ("Expected: <= 0.1494,
+  Actual: 0.3624") and green on ed54ff8, ran analyze, the strips (reduced: max 151 px
+  luma>235 in the boss rect vs the 2k line) and 101 nearby tests. Non-blocking notes:
+  1. The backlog wording says "desaturates and fades over 300 ms"; the fade stays 700 ms
+     (disclosed). Product call, left as is.
+  2. The test reads the filter/fade settings on the real path, not pixels; the strips back it.
+  3. The 0.04 → 0.03 → 0.05 wobble is the cool cast of pallorMatrix, not visible.
+  4. When the drain starts, the wrapper type changes, so the enemy sprite subtree rebuilds;
+     no glitch in the strips (sprites precached); device unverified.
+  5. C4-05 (crawler re-dress in the strips) still open.
