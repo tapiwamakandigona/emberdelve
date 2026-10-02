@@ -6237,3 +6237,23 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   twists on 001. Rotating pixel art at these small angles gives slightly stepped edges on those
   frames (same as the existing wisp hover tilt).
 - ASSUMED: feel on a phone, and whether one beat per 2.8 s reads as alive or as a metronome.
+
+## 2026-10-02 — iteration 5 follow-up: CI and the independent read-only review (C0-14, PR #116)
+- Logged at 2026-10-02 22:40 UTC.
+- VERIFIED CI run 37072576679 on bc39735 (pull_request, PR #116): 1602 tests pass, exactly two
+  failures — test/marked_week_test.dart and test/shorter_title_test.dart 412x915, the lane's own
+  known reds. The new test/idle_beats_test.dart passes on CI. The ios job (37072576674) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..bc39735: verdict PASS, no findings. It re-ran analyze (clean) and the tests, reverted
+  lib/ui/combat_pose.dart to 535029b in a scratch copy and saw the new test fail 4 ways there,
+  re-rendered the idle strips on old and new code (brute differs on frames 000-001, crawler on
+  000-002, 003-019 identical) and confirmed reduce motion stays at 0 px, breathe unchanged, the
+  only caller is the sprite painter path, and nothing in lib/sim, android/, .github/, pubspec or
+  features.json moved.
+- Reviewer notes (non-blocking, for the next pass): (1) the heave lean's dx and initial rotation
+  are applied before flipX, so a right-side foe facing left leans AWAY from the delver — confirm
+  the intended direction; (2) the test named "plain breathers and hovering bodies are unchanged"
+  only checks breathe; (3) C0-14's literal acceptance ("3 px bbox change over 18 frames") may
+  already have been met by the old bob, which is why this ships as fixed_pending_review for the
+  critic to rule on; (4) bigger boss sprites will show a visibly bigger tilt at 0.05 rad.
+- NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
