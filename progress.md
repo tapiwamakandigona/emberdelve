@@ -6273,3 +6273,27 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
      at all — stricter than the cap.
 - Note 1 is the only one that is a behaviour gap against the written acceptance; it
   is queued as the first item of the next iteration.
+
+## 2026-10-02 — Reduced-motion boss death drains its colour (C4-02, follow-up to #112)
+- Logged at 2026-10-02 20:35 UTC. Branch feat/boss-death-desat-20261002, built on the
+  PR #112 head (d38039d) because it finishes that item. The first note of the #112 review:
+  under Reduce Motion the slain boss kept full colour for ~400 ms and then went grey in a
+  single frame; the backlog asks for a desaturation over 300 ms.
+- Change (presentation only): a `_enemyDrain` flag is set on the hit-stop of the killing
+  blow (the same beat that starts the ember tint in normal motion) and again at the boss
+  kill moment. While it is set, the body's pallor filter tweens from its current pallor to
+  full grey over `_pace(300)` (ease-out). The existing 700 ms fade is unchanged. No sim,
+  test, asset or dependency change.
+- New test/boss_death_drain_test.dart (same lethal-blow fixture as boss_death_ember_test).
+  Each 40 ms frame it reads, from the widgets above the foe sprite, how much colour the
+  colour-matrix filters leave and the product of the fades. VERIFIED red on the old code:
+  "no one-frame grey cut … Expected: <= 0.149, Actual: 0.362" — the colour went from 0.42
+  to 0.05 in one frame at ~760 ms. VERIFIED green on the new code: 0.42 → 0.32 → 0.23 →
+  0.16 → 0.09 → 0.04 from ~480 ms, grey before the fade begins.
+- VERIFIED: flutter analyze clean; full suite 1599 pass + the 2 known lane failures
+  (shorter_title 412x915, fixed on PR #113; marked_week). boss_death_ember_test still green.
+  tool/boss_kill_frames_test.dart re-rendered; I looked at the reduced Ember Tyrant strip
+  (t0320–t0920, foe crop): red body, then muted, then grey over ~4 frames, then the fade.
+  No white frame. Headless test render at 2x, not a phone.
+- ASSUMED / not verified: how it feels on a device. The strips still re-dress the seed-1
+  crawler (C4-05 open).

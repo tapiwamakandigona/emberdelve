@@ -377,11 +377,8 @@ extension _CombatStageBand on _CombatScreenState {
                                   flash: _enemyFlash,
                                   ember: _enemyEmber,
                                   // C4-02: a boss slain under reduced
-                                  // motion drains to grey as it fades.
-                                  drain:
-                                      _enemyDying &&
-                                      Motion.instance.reduced &&
-                                      live['boss'] == true,
+                                  // motion drains to grey from the blow.
+                                  drain: _enemyDrain,
                                   dying: _enemyDying,
                                   squash: _enemySquash,
                                   braced: _enemyBraced,
@@ -895,7 +892,8 @@ extension _CombatStageBand on _CombatScreenState {
     /// the white beat over 160 ms; the dissolve inherits it).
     bool ember = false,
 
-    /// C4-02: full colour drain (reduced-motion boss death).
+    /// C4-02: colour drain to grey over ~300 ms (reduced-motion boss
+    /// death), starting from the body's current pallor.
     bool drain = false,
 
     /// C0-05: knockback in logical px, snapped in fast (null keeps the
@@ -911,11 +909,21 @@ extension _CombatStageBand on _CombatScreenState {
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if ((drain || condition.pallor > 0.01) && !dissolve) {
-      w = ColorFiltered(
-        colorFilter: ColorFilter.matrix(
-          pallorMatrix(drain ? 1.0 : condition.pallor),
+    if (drain && !dissolve) {
+      final from = condition.pallor;
+      w = TweenAnimationBuilder<double>(
+        tween: Tween(begin: from, end: 1.0),
+        duration: _CombatScreenState._pace(300),
+        curve: Curves.easeOut,
+        child: w,
+        builder: (context, amount, child) => ColorFiltered(
+          colorFilter: ColorFilter.matrix(pallorMatrix(amount)),
+          child: child,
         ),
+      );
+    } else if (condition.pallor > 0.01 && !dissolve) {
+      w = ColorFiltered(
+        colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
         child: w,
       );
     }

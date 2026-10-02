@@ -176,6 +176,9 @@ class _CombatScreenState extends State<CombatScreen> {
   // Backlog C4-02: a slain boss burns ember-hot after one short white beat
   // (instead of a ~400 ms flat white block) and crumbles from that tint.
   bool _enemyEmber = false;
+  // C4-02, reduced motion: the slain boss's colour drains over ~300 ms from
+  // the killing blow (no white, no ember tint) while it fades.
+  bool _enemyDrain = false;
 
   // v0.183.0 Bodies in the Fight: the authored strike behind the flags
   // above. Frozen per swing so the body, weapon and contact FX all read the
@@ -787,6 +790,7 @@ class _CombatScreenState extends State<CombatScreen> {
       _choreo(() {
         _enemyFlash = false;
         _enemyEmber = !Motion.instance.reduced;
+        _enemyDrain = Motion.instance.reduced;
       });
       _fxUpdate(() => _bossKillFlash = true);
       // C2-02: the run-ending kill's banner lands with the blow.
@@ -931,6 +935,9 @@ class _CombatScreenState extends State<CombatScreen> {
         _enemyFlash = false;
         _enemyEmber = true;
       });
+    } else if (calmKill) {
+      // Reduced motion: the colour starts draining on the same beat.
+      _choreo(() => _enemyDrain = true);
     }
     _choreo(() => _enemyKnock = true);
     await _sleep(_knockTime);
