@@ -1,5 +1,16 @@
 # PROJECT.md — Emberdelve
 
+## October2 — Clear Choices candidate, blocked (owner-authorized)
+
+Draft PR111 / `release/0.186.0`; scoped state in `docs/release-0.186.0/`.
+Runtimef3ce6d7: analyzer clean,1604tests pass/1original test fails. New
+Forge/first-fight/edge-to-edge regressions and original title-fit test pass.
+The remaining weekly-history check contradicts itself for Short Road weeks;
+no original test, clock or gameplay was changed to evade it. Needs a narrow
+test-correction decision before a signed release. German listing alone is
+verified **in review**. No version/news bump or0.186.0binary/tag/upload.
+Production still218/0.185.0; physical-device and purchase gates remain open.
+
 ## September 27 — 0.185.0 "Living Foes" release (owner-authorised)
 
 Current scoped state: `docs/release-0.185.0/PROJECT.md`, `features.json` and
