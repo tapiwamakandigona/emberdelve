@@ -6240,3 +6240,22 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   11. I looked at t0640 side by side: before the whole screen is shifted with a dark sliver at
   the right edge; after only the stage panel moves.
 - ASSUMED: feel on a phone. The stage band's own edge now moves up to ~6 dp inside its padding.
+
+## 2026-10-02 — iteration 4 follow-up: CI and the independent read-only review (C4-04, PR #115)
+- VERIFIED CI run 37068148694 on 9a38aee (pull_request, PR #115): exactly two failures,
+  test/marked_week_test.dart and test/shorter_title_test.dart 412x915 — the lane's own known
+  reds. The new test/stage_only_shake_test.dart and test/windup_heat_test.dart both pass on CI.
+  The ios job (37068148696) was still running when this was written.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..9a38aee: verdict PASS, no findings. It re-ran analyze (clean), the full suite
+  (1598 pass + the 2 known), reverted combat_screen.dart/fx.dart in a temp copy and saw the
+  new test fail there (12 frames of drift, up to 6.73 px), and swapped the root RepaintBoundary
+  for a KeyedSubtree in another temp copy and saw windup_heat_test fail at 6.5 — confirming
+  that boundary is a real layer-tree restoration, not a test workaround. It also re-rendered
+  the boss strips: top bar and tray unchanged on every sampled frame, the only enemy-panel
+  change is the HP bar draining, and no background sliver at either screen edge (the one
+  right-edge change at t0560 is the boss's floor shadow, which is stage content).
+- Reviewer notes (non-blocking, recorded for the next pass): root-Stack overlays (boss-kill
+  flash, name plate, tour, tips) no longer shake, which is intended; the stage band can now
+  paint a few px past its own vertical edge, hidden by the vitals band which paints later.
+- NOT merged: the lane's own CI is red, so nothing can merge today.
