@@ -6210,3 +6210,22 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   v0.185.0 published as latest stable with 6 assets, SHA-256 readback
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
+
+## 2026-10-02 — the returning title fits a 412x915 phone again (port from PR #111)
+- 2026-10-02 19:21 UTC. Owner-side decision 2026-10-02T18:44Z authorised porting only the title
+  hunk of PR #111 commit f3ce6d7 as its own PR: the title's outer vertical padding
+  goes from Space.l to Space.m. No text, font size or touch target changes; no test edited.
+- VERIFIED red on the lane (535029b): test/shorter_title_test.dart "412×915: the whole
+  title fits without scrolling" fails locally (scroll extent 8.0), matching CI 37047730872.
+- VERIFIED green after: that file 3/3; flutter analyze clean; full suite 1597 pass,
+  1 fail = test/marked_week_test.dart (the known Short Road week contradiction, still
+  waiting on the owner; not touched).
+- VERIFIED scroll extent on a returning profile with the shipped fonts:
+  412x915 8 → 0 px; 360x800 123 → 115 px.
+- VERIFIED render captures (flutter_test widget render at 1x, shipped Cinzel/Inter;
+  Material icons draw as boxes in the test renderer — a stand-in, not a device capture)
+  before/after at 412x915: same layout, every block 4 px higher, footer fully in view.
+- VERIFIED test/new_song_test.dart (red once on CI 37048681419) passed 3/3 alone and
+  inside the full local run; still ASSUMED flaky/order-dependent, not reproduced.
+- Still queued from PR #112 review note 1: reduced-motion boss death should desaturate
+  over ~300 ms instead of a one-step switch.
