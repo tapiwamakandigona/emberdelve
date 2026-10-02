@@ -6210,3 +6210,30 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   v0.185.0 published as latest stable with 6 assets, SHA-256 readback
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
+
+## 2026-10-02 — games pass iteration 5: foes act while they idle (C0-14)
+- Logged at 2026-10-02 22:27 UTC. Branch feat/living-idles-20261002 off legacy/dice-builder @ 535029b
+  (independent of PRs #112-#115; touches only lib/ui/combat_pose.dart idleLife).
+- Baseline (local, Flutter 3.44.9): analyzer clean; the same 2 known lane failures only.
+- Finding first: C0-14 said brute and crawler idles are near-static. On the current lane they are
+  not still (bob + heave/scuttle move the top edge ~27-32 px @2x over a loop, measured on a
+  headless render) — but the whole sprite moves as one block, so the body never does anything.
+  VERIFIED: over a full 2.8 s loop the brute's left edge moved 0 px and the crawler's footprint
+  width 0 px.
+- Change (presentation only, lib/sim untouched): once per idle loop heavies (brutes and every
+  boss/elite that heaves) roll their shoulders — lean into the stage, rock back past centre,
+  settle, ~420 ms after the exhale — and crawlers twitch: two quick wiggles (~280 ms) during a
+  held beat, still on the ground. Both are windows inside the loop, so it never seams and the
+  rest of the loop stays calm. Breathers and hovering bodies are unchanged. Reduce Motion still
+  stops the life ticker, so no beat plays.
+- VERIFIED red -> green: new test/idle_beats_test.dart. Old code: heave/scuttle rotation span 0,
+  brute left-edge range 0 px, crawler width range 0 px (4 red). New code: brute left edge range
+  5 px @2x, crawler width range 5 px @2x; the beat is active 15% (heave) / 10% (scuttle) of the
+  loop; reduce motion = 0 px. test/living_idles_test.dart unchanged and green.
+- VERIFIED: analyzer clean; full suite 1602 passed + the 2 known lane failures.
+- VERIFIED render (tool/living_foes_frames_test.dart, real CombatScreen, headless flutter_test,
+  not a device): before/after idle strips (20 frames, 100 ms) differ only on frames 000-002,
+  where the beat falls; I looked at them: the brute leans a few px and back, the crawler visibly
+  twists on 001. Rotating pixel art at these small angles gives slightly stepped edges on those
+  frames (same as the existing wisp hover tilt).
+- ASSUMED: feel on a phone, and whether one beat per 2.8 s reads as alive or as a metronome.
