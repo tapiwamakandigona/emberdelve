@@ -546,23 +546,23 @@ class _CombatScreenState extends State<CombatScreen> {
         ? const Duration(milliseconds: 1000)
         : _noteLife;
     _fxUpdate(() {
-      var slot = 0;
-      if (onEnemy) {
-        // Experimental loop C0-03: enemy call-outs own a fixed stage slot
-        // for life. With every slot busy the oldest yields its slot now —
-        // two call-outs never share one.
-        final slots = _readoutPlan?.slots.length ?? 1;
-        final live = _notes.where((n) => n.onEnemy).toList();
-        final used = {for (final n in live) n.slot};
-        slot = List.generate(slots, (i) => i).firstWhere(
-          (i) => !used.contains(i),
-          orElse: () {
-            final oldest = live.first;
-            _notes.remove(oldest);
-            return oldest.slot.clamp(0, slots - 1);
-          },
-        );
-      }
+      // Experimental loop C0-03: BOTH lanes assign a fixed slot at creation,
+      // so a call-out owns its slot for its whole life — it never jumps when
+      // a sibling expires, and two call-outs never share a slot. With every
+      // slot on a lane busy, the oldest on that lane yields its slot now. The
+      // stage lane's slot count comes from the live geometry plan; the tray
+      // lane has a small fixed budget that renders clear above the HP bar.
+      final slots = onEnemy ? (_readoutPlan?.slots.length ?? 1) : _trayNoteSlots;
+      final live = _notes.where((n) => n.onEnemy == onEnemy).toList();
+      final used = {for (final n in live) n.slot};
+      final slot = List.generate(slots, (i) => i).firstWhere(
+        (i) => !used.contains(i),
+        orElse: () {
+          final oldest = live.first;
+          _notes.remove(oldest);
+          return oldest.slot.clamp(0, slots - 1);
+        },
+      );
       _notes.add(
         _Note(
           _noteId++,
@@ -1258,6 +1258,18 @@ class _CombatScreenState extends State<CombatScreen> {
 
   /// Room for the fade/fold strip below the last visible tray row.
   static const _trayPeek = 26.0;
+
+  // Tray call-out lane (experimental loop C0-03). A small fixed budget of
+  // reserved slots so two combo call-outs never share a position and a
+  // call-out never jumps when a sibling expires. Slot 0 is lowest; each
+  // higher slot sits [_trayNoteStride] further up — a full line-height, so
+  // the two stacked slots never overlap each other. Placement is kept where
+  // it already sat (just over the tray): lifting the lane clear of BOTH the
+  // HP row and the hero sprite needs the top-of-stage relocation the critic
+  // specs, which is a separate, owner-visible change.
+  static const _trayNoteSlots = 2;
+  static const _trayNoteBaseTop = -32.0;
+  static const _trayNoteStride = 30.0;
 
   /// Everything the HUD reads, derived from LIVE sim state plus this frame's
   /// media metrics. Every scoped section calls this when it rebuilds, so no
