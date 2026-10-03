@@ -6513,3 +6513,41 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   the pixel evidence is the render strips; (4) if the hero's phase left 'swing' within 110 ms
   of contact the trail would be cut short (does not happen in the rendered strips).
 - NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
+
+## 2026-10-03 — iteration 7: the burn chip leaves with the dead foe (C1-05)
+- Logged at 2026-10-03 00:26 UTC.
+- Why: the critic saw the foe's burn chip ("11") still at the feet of a dead foe with a blood
+  stain painted over its digits (040, 021) and a "1" chip riding the dissolve (026). VERIFIED in
+  the code: the intent badge fades on the dead flag, the burn chip had no such rule, and the floor
+  stains lived in the transient FX stack, which paints after (above) the combatants.
+- Change (presentation only, lib/sim untouched, lib/ui/screens/combat/stage.dart): the burn chip
+  uses the badge's own dead flag (contact-timed HP 0 or dying) — 140 ms fade, instant under
+  Reduce Motion, no long-press once dead. The floor stains moved to their own layer under the
+  combatants (still scoped to the FX tick), so a stain can never cover the chip or any text.
+- VERIFIED red -> green: new test/burn_chip_death_test.dart (4 cases: 320x568 and 360x800, Reduce
+  Motion on/off) lands a real exact kill on a burning foe (hp/burn are fixtures). Old code: 4/4 red
+  — chip alpha 1.0 on every frame after the blow, and the stains render after the chip in paint
+  order. New code: 4/4 green.
+- VERIFIED: flutter analyze clean; full suite 1600 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render (headless flutter_test CombatScreen at 360x800, not a device; Material icons
+  draw as boxes in the test renderer): old frame +1080 ms after the attack shows the "11" chip at the
+  dead foe's feet with a dark stain across it; the new frame shows no chip and the stains on the floor.
+- ASSUMED: nothing visible changes for the hero (no hero status chip exists); stains still read
+  the same on the floor, now under the bodies instead of over them.
+
+### Iteration 7 — CI and independent review (logged 2026-10-03 00:35 UTC)
+- VERIFIED CI run 37082124700 on `feat/burn-chip-death-20261003`: 1600 tests passed, 2 failed —
+  `shorter_title_test` 412x915 and `marked_week_test`, the two already red on the lane itself
+  (the title fix is PR #113; the marked_week correction still waits on the owner). iOS job
+  37082124630 green. PR #118 opened against `legacy/dice-builder`; NOT merged, because the lane's
+  own CI is red.
+- VERIFIED independent read-only review (ultra, fresh context, range 535029b..7c08a18): PASS, 0
+  findings. It reproduced the red->green on a temp copy (4/4 red with the old stage.dart), ran
+  analyze and the full suite, re-rendered combat body frames old vs new (only the floor line
+  y~824-840 differs, stains stay visible), and checked the owner identity and that no "Viktor"
+  string was added.
+- Review notes carried forward (non-blocking): transient blood bursts and contact FX still paint
+  above status chips — only the permanent floor stains moved below them; the acceptance's "kill
+  strips for all 4 foes" is covered structurally here (one foe tested at 2 sizes x Reduce Motion),
+  since the chip shares the badge's dead flag.
