@@ -1,0 +1,45 @@
+{
+  "$comment": "Machine-readable definition of done for the 0.186.0 release (subagent-toolkit v3.2.0 template). Only flip passes to true with evidence (a command that ran, an artifact that exists). Never edit verify commands or acceptance criteria — that's a spec change, report it.",
+  "features": [
+    {
+      "id": "REL186-AUDIT",
+      "title": "Correct source, version and prior release state",
+      "acceptance": "The release commit descends from v0.185.0 (c08a0d5). The diff against c08a0d5 leaves lib/sim, lib/meta, lib/game, android/, ios/, .github/, assets/ and pubspec.lock unchanged, and pubspec.yaml changes only its version line. No test assertion is removed or loosened, except the owner-authorised marked_week_test correction. versionCode 219 is not used by any GitHub release. /releases/latest before publishing is v0.185.0.",
+      "verify": "git merge-base --is-ancestor c08a0d5 <release>; git diff --name-only c08a0d5 <release> -- lib/sim lib/meta lib/game android ios .github assets pubspec.lock; git diff c08a0d5 <release> -- pubspec.yaml; git diff --numstat c08a0d5 <release> -- test; GitHub releases API",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL186-CHECKS",
+      "title": "Analyzer, full suite, SFX headroom and iOS green on the exact release commit",
+      "acceptance": "The CI job 'Analyze + test (headless)' succeeds on the release commit: flutter analyze is fatal on warnings, the full flutter test suite runs, and tool/sfx_headroom.py passes. The iOS workflow succeeds on the same commit. The packaging commit edits no test or check.",
+      "verify": "GitHub Actions runs on the release commit: job conclusions plus the test totals in the log; git diff --name-only <lane before packaging> <release> -- test tool .github",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL186-BINARY",
+      "title": "Versioned, signed artifacts from the CI workflow_dispatch run",
+      "acceptance": "The signed CI job is green, and its in-CI apksigner step prints cert SHA-256 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d for all four APKs. The downloaded universal APK and the 3 split APKs are com.tsorostudios.emberdelve, versionName 0.186.0, versionCodes 219/1219/2219/4219, not debuggable, signed by that certificate. The AAB is signed by the same certificate.",
+      "verify": "gh run view <id> --log (Verify APK signing certificates step); gh run download <id>; independent manifest/signature check of the downloaded files; sha256sum",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL186-GITHUB",
+      "title": "GitHub v0.186.0 published as latest stable",
+      "acceptance": "Release v0.186.0 exists with prerelease=false, and its tag points at the built commit. /releases/latest returns v0.186.0. The body lists the SHA-256 of every asset, and an asset downloaded without authentication matches its published SHA-256.",
+      "verify": "GET /repos/tapiwamakandigona/emberdelve/releases/latest; git ls-remote --tags origin v0.186.0; curl -L (no token) the asset; sha256sum -c",
+      "passes": false,
+      "evidence": ""
+    },
+    {
+      "id": "REL186-PLAY",
+      "title": "Play: AAB 219 on internal, closed (alpha) and production at 100 %",
+      "acceptance": "Using the Play Developer API with the publishing service account, one edit uploads the hash-verified AAB 219. It sets internal, alpha and production (status completed) with the en-GB notes and the de-DE notes. The edit validates and commits. A readback of the tracks shows 219 on each one. It is not called live until Play shows it as available.",
+      "verify": "androidpublisher v3 edits.insert / bundles.upload / tracks.update / edits.validate / edits.commit; then tracks.list readback",
+      "passes": false,
+      "evidence": ""
+    }
+  ]
+}

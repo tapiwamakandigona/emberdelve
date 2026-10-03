@@ -6796,3 +6796,24 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   that same identity check.
 - Backlog: C4-01 → fixed_pending_review.
 - ASSUMED until CI: the full suite on 3.44.9.
+
+## 2026-10-03 — 0.186.0 "Clear Choices" packaging (iteration 16)
+- Logged at 2026-10-03 09:45 UTC. Branch `release/0.186.0-20261003` off the lane at c90c520.
+- VERIFIED #125 (C4-01) CI green on its head 73ad583: CI 37112767187 analyze+test and ios 37112767194. It merged
+  at 09:28 UTC as c90c520, whose tree equals 73ad583's. Lane push CI on c90c520 is green: 37113171978 and
+  37113171986.
+- The independent read-only review of #125 (fresh context, range fa60db2..c90c520) is running. Its verdict is
+  logged in the next entry, and a FAIL is fixed before this packaging merges.
+- Packaging (version, news, docs only):
+  - pubspec 0.185.0+218 → 0.186.0+219, and currentAppVersion matches.
+  - One 0.186.0 "Clear Choices" news entry.
+  - docs/releases/v0.186.0.md.
+  - docs/release-0.186.0/: PROJECT.md, features.json, progress.md, loop.sh (subagent-toolkit v3.2.0), and Play
+    notes en-GB (476 characters) and de-DE (464 characters).
+  - A PROJECT.md section.
+- The audit, with commands and outputs, is in docs/release-0.186.0/progress.md. Summary:
+  - lib/sim, lib/meta, lib/game, android, ios, .github, assets and pubspec.lock are unchanged since v0.185.0.
+  - Tests grew by 12 files.
+  - The only edited assertion is the authorised marked_week_test correction.
+- VERIFIED locally: test/news_test.dart passes 7/7 and test/news_ui_test.dart passes 3/3.
+- ASSUMED until CI: the full suite on 3.44.9.

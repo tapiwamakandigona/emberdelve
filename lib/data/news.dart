@@ -23,10 +23,28 @@ class NewsEntryDef {
 /// The version NAME this binary ships as. Single source of truth for the
 /// news panel; MUST equal pubspec.yaml's `version:` name — pinned by
 /// test/news_test.dart so the two can never drift apart.
-const String currentAppVersion = '0.185.0';
+const String currentAppVersion = '0.186.0';
 
 /// Newest first. Backfilled to v0.13.0 — older releases predate the Post.
 const List<NewsEntryDef> newsEntries = [
+  NewsEntryDef(
+    version: '0.186.0',
+    title: 'Clear Choices',
+    lines: [
+      'Call-outs like STRAIGHT! and EXACT! each get a spot of their own, '
+          'above the fighters or just under your HP bar. They never sit on '
+          'a hero, a foe or your health, and they stay big enough to read.',
+      'Bosses burn ember-hot as they fall instead of flashing a white '
+          'block, and the last one leaves VICTORY! standing alone, clear of '
+          'your hero. Hits now shake the cavern, not your buttons.',
+      'Brutes roll their shoulders and crawlers twitch while they wait, '
+          'your cut trails along the blade, and damage numbers stay sharp on '
+          'a white flash. The first fight and the Ember Forge explain your '
+          'choices more plainly.',
+      'Every roll and number is exactly what the dice said, and your saves '
+          'and unlocks stay as they were. Thank you for delving with us.',
+    ],
+  ),
   NewsEntryDef(
     version: '0.185.0',
     title: 'Living Foes',
