@@ -6660,3 +6660,17 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   gap is reserved for the foe's own number). The real enemy-turn flow passes at 320x568 because the stage is
   taller after End turn — but a hero hit landing while the stage is at its tightest rolled height would still
   use the old zone. Clearing that needs a reservation trade-off (owner/critic call).
+
+## 2026-10-03 — prep 0.186.0: Clear-Choices clarity + German listing (iteration 12)
+- By Viktor (AI, honest authorship). Branch `feat/0.186.0-clarity-de` off lane `a9a2df3`. Ports the SUBSTANTIVE
+  0.186.0 work from the conflicting draft PR #111 (commits 16dd061 test + f3ce6d7 fix) onto the current lane:
+  Forge-offer + first-fight readability, edge-to-edge insets, the German store-listing DATA (store-de-DE.json),
+  l10n catalog + interface.json, and the release_clarity regression test. (title_screen.dart hunk already on the
+  lane → no diff.)
+- DELIBERATELY DROPPED from the port: the release-TRACKING docs (docs/release-0.186.0/{PROJECT,features,progress,
+  evaluation,verification}.md and root PROJECT.md). Their features.json carried `GERMAN-STORE passes=true` with an
+  "authenticated Play Console" claim I did NOT perform or verify — not mine to vouch for. The actual Play listing /
+  release stays owner-gated.
+- VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): analyze clean; release_clarity_test +7,
+  interface_languages_test +13, forge/title/catalog parity (counted_forge, forge_unlock, forgelight, shorter_title,
+  earned_titles, attire, gramophone, shorter_road, trials) all green run serially.

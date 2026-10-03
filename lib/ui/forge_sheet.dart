@@ -22,6 +22,7 @@ Future<void> showForgeSheet(BuildContext context, GameController c) {
     context: context,
     backgroundColor: EmberColors.bg,
     isScrollControlled: true,
+    useSafeArea: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -45,7 +46,10 @@ class ForgeSheet extends StatelessWidget {
             store?.state ??
             (owned ? ForgeStoreState.owned : ForgeStoreState.unavailable);
         return SafeArea(
-          child: Padding(
+          // The offer must remain readable on short phones and at enlarged
+          // text sizes. Scroll the content, never shrink the words or hide
+          // the price, restore link or way back to the free game.
+          child: SingleChildScrollView(
             padding: EdgeInsets.only(
               left: Space.xl,
               right: Space.xl,
@@ -64,10 +68,12 @@ class ForgeSheet extends StatelessWidget {
                       size: 28,
                     ),
                     const SizedBox(width: Space.m),
-                    const Text('THE EMBER FORGE', style: EmberText.h2),
-                    const Spacer(),
+                    const Expanded(
+                      child: Text('THE EMBER FORGE', style: EmberText.h2),
+                    ),
                     IconButton(
                       key: const ValueKey('forge-close'),
+                      tooltip: 'Close',
                       icon: const Icon(Icons.close, color: EmberColors.textDim),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
@@ -84,9 +90,11 @@ class ForgeSheet extends StatelessWidget {
                     ),
                   ),
                 ] else ...[
+                  const Text('FREE TO PLAY', style: EmberText.micro),
+                  const SizedBox(height: Space.s),
                   const Text(
                     'Emberdelve is free, forever: full runs, every delver, '
-                    'the Daily Delve. No ads, no timers, no tricks.',
+                    'the Daily and Weekly Delves. No ads, no timers, no tricks.',
                     style: EmberText.bodyDim,
                   ),
                   const SizedBox(height: Space.l),
@@ -120,6 +128,12 @@ class ForgeSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: Space.l),
+                  const Text(
+                    'Pay once. Keep it. No subscription.',
+                    style: EmberText.body,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: Space.m),
                   ..._actionZone(context, state, store),
                   const SizedBox(height: Space.s),
                   Center(
@@ -148,6 +162,13 @@ class ForgeSheet extends StatelessWidget {
                     ),
                   ],
                 ],
+                const SizedBox(height: Space.m),
+                EmberButton(
+                  owned ? 'Back to the game' : 'Not now — keep playing',
+                  key: const ValueKey('forge-not-now'),
+                  ghost: true,
+                  onTap: () => Navigator.of(context).pop(),
+                ),
               ],
             ),
           ),
