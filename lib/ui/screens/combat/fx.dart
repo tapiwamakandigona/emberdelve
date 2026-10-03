@@ -66,17 +66,32 @@ class _Fx {
   });
 }
 
+/// Where a call-out is drawn (C0-03 + C1-02, one lane rule): the stage's
+/// planned slots above the actors' heads, or the tray lane — the strip
+/// between the player's HP bar and the dice.
+enum _NoteLane { stage, tray }
+
 class _Note {
   final int id;
   final String text;
   final Color color;
   final IconData? icon;
-  final bool onEnemy; // anchors near the enemy instead of the dice tray
+  final bool onEnemy; // home lane: the stage (foe events), not the tray
   final Duration life; // LFP-5: 1s while fast-forwarding, 2s otherwise
 
-  /// Stage call-out slot (enemy notes), fixed for the note's whole life so
-  /// it never jumps when another note expires (experimental loop C0-03).
+  /// Lane and slot, fixed for the note's whole life so it never jumps when
+  /// another note expires (experimental loop C0-03).
+  final _NoteLane lane;
   final int slot;
+
+  /// Last resort only: no slot anywhere fits this call-out at the 12 sp
+  /// floor, so it is drawn best-effort in the tray lane (never expected on a
+  /// supported phone; pinned by test/callout_lane_test.dart).
+  final bool squeezed;
+
+  /// Set once the note has been on screen long enough to read; from then on
+  /// it yields its slot to a waiting call-out (C1-02 queue).
+  bool readable = false;
   _Note(
     this.id,
     this.text,
@@ -84,8 +99,39 @@ class _Note {
     this.icon, {
     required this.onEnemy,
     this.life = const Duration(milliseconds: 2000),
+    this.lane = _NoteLane.tray,
     this.slot = 0,
+    this.squeezed = false,
   });
+}
+
+/// A call-out waiting for a free slot (C1-02: a burst on a small phone plays
+/// one after another instead of shrinking or stacking).
+class _NoteRequest {
+  final String text;
+  final Color color;
+  final IconData? icon;
+  final bool onEnemy;
+  final Duration life;
+  const _NoteRequest(
+    this.text,
+    this.color,
+    this.icon, {
+    required this.onEnemy,
+    required this.life,
+  });
+}
+
+/// A long-press / spoken explanation (C1-02): help the player asked for (or
+/// is being taught), shown as an opaque pill that wraps — never squeezed into
+/// a one-line call-out slot.
+class _Help {
+  final int id;
+  final String text;
+  final Color color;
+  final IconData? icon;
+  final Duration life;
+  const _Help(this.id, this.text, this.color, this.icon, {required this.life});
 }
 
 /// One floating damage number's spawn record.

@@ -100,7 +100,16 @@ class ReadoutPlan {
   final StageGeometry geometry;
   final ReadoutPlacement enemyPopZone;
   final ReadoutPlacement heroPopZone;
+
+  /// Call-out slots, all above the actors' heads (C1-02). EMPTY when the
+  /// stage has no room for a call-out at [minNoteScale] — a rolled 320x568
+  /// stage is 86 px with both actors standing 72 px tall — and the screen
+  /// then shows its call-outs in the tray lane instead.
   final List<NoteSlot> slots;
+
+  /// C1-02: the smallest fit scale a call-out may be drawn at
+  /// ([ReadoutLanes.minNoteSp] over the call-out's font size).
+  final double minNoteScale;
 
   /// False only when the stage is too small for a clean plan; the pieces are
   /// then placed best-effort (tests pin which phone sizes must be clean).
@@ -111,12 +120,17 @@ class ReadoutPlan {
     required this.heroPopZone,
     required this.slots,
     required this.clean,
+    this.minNoteScale = 0,
   });
 
   /// A call-out of natural [size] in [slot]: scaled down to fit the band
-  /// (overshoot included), centred, at the slot's resting top.
-  ReadoutPlacement placeNote(int slot, Size size) {
-    final s = slots[slot.clamp(0, slots.length - 1)];
+  /// (overshoot included), centred, at the slot's resting top. Null when
+  /// the slot does not exist or the call-out would have to shrink below
+  /// [minNoteScale] to fit it (C1-02: no call-out under 12 sp) — the caller
+  /// then gives it another lane.
+  ReadoutPlacement? placeNote(int slot, Size size) {
+    if (slot < 0 || slot >= slots.length) return null;
+    final s = slots[slot];
     final scale = math.min(
       1.0,
       math.min(
@@ -124,6 +138,7 @@ class ReadoutPlan {
         s.height / math.max(1, size.height),
       ),
     );
+    if (scale < minNoteScale - 1e-9) return null;
     final w = size.width * scale, h = size.height * scale;
     final box = Rect.fromLTWH(s.left + (s.width - w) / 2, s.top, w, h);
     return ReadoutPlacement(
@@ -171,6 +186,24 @@ class ReadoutPlan {
 class ReadoutLanes {
   static const double gap = 4;
   static const int maxSlots = 2;
+
+  /// C1-02: no call-out is ever drawn smaller than this (sp). Round-1 plates
+  /// caught "+5 EMBERS — EXACT!" squeezed to ~5 dp on a 320x568 stage.
+  static const double minNoteSp = 12;
+
+  /// Far enough to stand for "the whole stage width" in avoid rects.
+  static const double _far = 1e4;
+
+  /// C1-02: the band the two actors stand in and sweep through (lunges,
+  /// dashes, hit reactions) — from the taller head down past the floor,
+  /// across the whole stage. Call-out slots are planned ABOVE it, so a
+  /// call-out never prints over a sprite ([_clear] keeps [gap] of air).
+  static Rect actorsBand(StageGeometry g) => Rect.fromLTRB(
+    -_far,
+    math.min(g.heroBody.top, g.enemyBody.top),
+    _far,
+    g.stage.height + _far,
+  );
 
   static const _popRisesOver = [46.0, 36.0, 28.0, 20.0, 14.0];
   static const _popRisesBeside = [46.0, 32.0, 20.0, 12.0, 6.0, 0.0];
@@ -234,8 +267,9 @@ class ReadoutLanes {
     required Size typicalPop,
     required double noteHeight,
     required double typicalNoteWidth,
+    required double minNoteScale,
   }) {
-    final key = (g, typicalPop, noteHeight, typicalNoteWidth);
+    final key = (g, typicalPop, noteHeight, typicalNoteWidth, minNoteScale);
     final hit = _planCache[key];
     if (hit != null) return hit;
     if (_planCache.length > 64) _planCache.clear();
@@ -244,6 +278,7 @@ class ReadoutLanes {
       typicalPop,
       noteHeight,
       typicalNoteWidth,
+      minNoteScale,
     );
   }
 
@@ -333,6 +368,7 @@ class ReadoutLanes {
     StageGeometry g, {
     required double height,
     required double typicalWidth,
+    required double minScale,
     required List<Rect> avoid,
     required double minTop,
     required List<({double left, double right})> bands,
@@ -342,8 +378,9 @@ class ReadoutLanes {
         final width = b.right - b.left;
         // Only the full-width band can afford the big pop-in overshoot.
         for (final overshoot in i == 0 ? _overshoots : const [1.08]) {
-          // A long call-out must stay readable (>= 72% of its size).
-          if (width / (typicalWidth * overshoot) < 0.72) continue;
+          // C1-02: a long call-out must fit at the 12 sp floor (it used to
+          // be allowed down to 72%, and the fallback had no floor at all).
+          if ((width - 2) / (typicalWidth * overshoot) < minScale) continue;
           final head = sweptNote(
             Rect.fromLTWH(0, 0, width / overshoot, height),
             rise,
@@ -377,11 +414,16 @@ class ReadoutLanes {
     Size pop,
     double noteH,
     double noteW,
+    double minScale,
   ) {
     final w = g.stage.width;
-    ReadoutPlan? fallback;
+    // Best plan first: clean WITH call-out slots; then clean with none (the
+    // call-outs take the tray lane); then best effort.
+    ReadoutPlan? cleanNoSlots, fallback;
     for (final zone in _enemyPopCandidates(g, pop)) {
       final avoid = [g.badge, zone.swept];
+      // C1-02: call-outs live above the actors' heads, never on a sprite.
+      final slotAvoid = [...avoid, actorsBand(g)];
       final bands = [
         (left: 0.0, right: w),
         (left: 0.0, right: g.badge.left - gap),
@@ -391,21 +433,24 @@ class ReadoutLanes {
         g,
         height: noteH,
         typicalWidth: noteW,
-        avoid: avoid,
+        minScale: minScale,
+        avoid: slotAvoid,
         minTop: 0,
         bands: bands,
       );
-      if (first == null) continue;
-      final slots = [first];
-      final second = _firstSlot(
-        g,
-        height: noteH,
-        typicalWidth: noteW,
-        avoid: [...avoid, first.swept],
-        minTop: first.top + noteH + gap,
-        bands: bands,
-      );
-      if (second != null) slots.add(second);
+      final slots = <NoteSlot>[?first];
+      if (first != null) {
+        final second = _firstSlot(
+          g,
+          height: noteH,
+          typicalWidth: noteW,
+          minScale: minScale,
+          avoid: [...slotAvoid, first.swept],
+          minTop: first.top + noteH + gap,
+          bands: bands,
+        );
+        if (second != null) slots.add(second);
+      }
       final hero = _heroZone(g, pop, [
         ...avoid,
         for (final s in slots) s.swept,
@@ -416,12 +461,20 @@ class ReadoutLanes {
         heroPopZone: hero.$1,
         slots: slots,
         clean: hero.$2,
+        minNoteScale: minScale,
       );
-      if (plan.clean) return plan;
-      fallback ??= plan;
+      if (plan.clean && slots.isNotEmpty) return plan;
+      if (plan.clean) {
+        cleanNoSlots ??= plan;
+      } else {
+        fallback ??= plan;
+      }
     }
+    if (cleanNoSlots != null) return cleanNoSlots;
     if (fallback != null) return fallback;
-    // Nothing fits cleanly (a tiny stage): best effort, no motion.
+    // Nothing fits cleanly (a tiny stage): best effort, no motion, and no
+    // call-out slot at all — a squeezed slot is how "+5 EMBERS — EXACT!"
+    // ended up ~5 dp tall on the hero's helmet (C1-02).
     final zone =
         _enemyPopCandidates(g, pop).firstOrNull ??
         ReadoutPlacement(
@@ -439,21 +492,13 @@ class ReadoutLanes {
             pop.height,
           ),
         );
-    final slot = NoteSlot(
-      top: 0,
-      left: 0,
-      right: math.max(1, math.min(g.badge.left, zone.swept.left) - gap),
-      height: noteH,
-      rise: 0,
-      overshoot: 1.0,
-      swept: Rect.fromLTWH(0, 0, math.max(1, g.badge.left - gap), noteH),
-    );
     return ReadoutPlan(
       geometry: g,
       enemyPopZone: zone,
-      heroPopZone: _heroZone(g, pop, [g.badge, zone.swept, slot.swept]).$1,
-      slots: [slot],
+      heroPopZone: _heroZone(g, pop, [g.badge, zone.swept]).$1,
+      slots: const [],
       clean: false,
+      minNoteScale: minScale,
     );
   }
 
@@ -580,4 +625,103 @@ class ReadoutLanes {
   /// either side of the stage.
   static bool _onStage(Rect r, Size stage) =>
       _inside(r, stage) && r.left >= -0.5 && r.right <= stage.width + 0.5;
+}
+
+/// C0-03 + C1-02: the tray lane — ONE call-out slot in the strip between the
+/// player's HP bar and the dice, beside the HP caption ("YOUR HP"). Nothing
+/// else ever paints there: it is clear of the HP numerals, the bar, the
+/// caption, the dice and every sprite at every phone size (the round-1
+/// plates caught "STRAIGHT!" on the HP bar next to "21 / 30" and FREE REROLL
+/// across the hero's feet). Pure geometry in the tray's own coordinates
+/// (origin: the tray's top-left; the strip sits above it, so its top is
+/// negative). A call-out that cannot fit here at the 12 sp floor gets null.
+class TrayLane {
+  /// The strip a call-out's whole sweep (pop-in growth and rise) stays in.
+  final Rect band;
+
+  /// Where a call-out centres when it can: the tray's middle, over the dice.
+  final double centreX;
+
+  /// [ReadoutLanes.minNoteSp] over the tray call-outs' font size.
+  final double minNoteScale;
+  const TrayLane({
+    required this.band,
+    required this.centreX,
+    required this.minNoteScale,
+  });
+
+  /// [trayWidth]: the tray's inner width. [gapAbove]: the spacer between the
+  /// HP block and the tray. [caption]: the HP caption's laid-out size (it
+  /// sits left-aligned at the bottom of the HP block). [barGap]: the spacer
+  /// between the HP bar and the caption.
+  factory TrayLane.measure({
+    required double trayWidth,
+    required double gapAbove,
+    required Size caption,
+    required double barGap,
+    required double minNoteScale,
+  }) => TrayLane(
+    band: Rect.fromLTRB(
+      caption.width + 2 * ReadoutLanes.gap,
+      -(gapAbove + caption.height + barGap) + 1,
+      trayWidth,
+      -1,
+    ),
+    centreX: trayWidth / 2,
+    minNoteScale: minNoteScale,
+  );
+
+  static const _rises = [12.0, 8.0, 5.0, 3.0, 0.0];
+  static const _overshoots = [1.08, 1.0];
+
+  @override
+  bool operator ==(Object other) =>
+      other is TrayLane &&
+      other.band == band &&
+      other.centreX == centreX &&
+      other.minNoteScale == minNoteScale;
+
+  @override
+  int get hashCode => Object.hash(band, centreX, minNoteScale);
+
+  /// A call-out of natural [size] in this lane: scaled down only as far as
+  /// the strip needs (never below [minNoteScale] unless [squeeze] — the
+  /// last resort for a call-out that fits no slot anywhere), centred over
+  /// the dice when that clears the caption, resting low and rising as far
+  /// as the strip allows.
+  ReadoutPlacement? place(Size size, {bool squeeze = false}) {
+    for (final overshoot in _overshoots) {
+      var scale = math.min(
+        1.0,
+        math.min(
+          (band.width - 2) / (size.width * overshoot),
+          (band.height - 1) / (math.max(1, size.height) * overshoot),
+        ),
+      );
+      if (scale < minNoteScale - 1e-9) {
+        if (!squeeze || overshoot != _overshoots.last) continue;
+        scale = math.max(scale, 0.05);
+      }
+      final w = size.width * scale, h = size.height * scale;
+      final half = w * overshoot / 2;
+      final lo = band.left + half + 1, hi = band.right - half - 1;
+      final cx = lo > hi ? band.center.dx : centreX.clamp(lo, hi);
+      for (final rise in _rises) {
+        var box = Rect.fromLTWH(cx - w / 2, band.bottom - h, w, h);
+        var swept = ReadoutLanes.sweptNote(box, rise, overshoot);
+        box = box.shift(Offset(0, band.bottom - swept.bottom));
+        swept = ReadoutLanes.sweptNote(box, rise, overshoot);
+        if (swept.top >= band.top - 0.5 || (squeeze && rise == 0)) {
+          return ReadoutPlacement(
+            box: box,
+            rise: rise,
+            overshoot: overshoot,
+            scale: scale,
+            swept: swept,
+          );
+        }
+      }
+    }
+    return null;
+  }
 }

@@ -1,130 +1,56 @@
-// test/tray_readout_test.dart — experimental polish loop, critic round 1
-// issue C0-03 (rescoped): the dice-tray combo call-outs must never stack on
-// each other, and a surviving call-out must never JUMP when a sibling expires.
+// test/tray_readout_test.dart — experimental polish loop, critic rounds 1+4
+// issue C0-03 (with C1-02): the dice call-outs must never stack on each
+// other, jump, get lost, shrink under 12 sp, or print over the HP row or a
+// sprite.
 //
-// Round-1 plates showed "FREE REROLL NEXT TURN" and "STRAIGHT!" overprinting
-// each other over the tray, and a call-out sliding down into a freed slot the
-// moment its neighbour faded. The tray lane used the LIVE list index for its
-// vertical offset, so every note's position depended on how many other notes
-// happened to be alive — they overlapped when close together and jumped when
-// one expired.
+// Round-1 plates: "FREE REROLL NEXT TURN" ran across the hero's feet, the
+// foe ring and the burn chip; "STRAIGHT!" sat on the HP bar next to
+// "21 / 30"; call-outs overprinted each other and slid into a freed slot
+// when a sibling faded.
 //
-// The fix gives each tray call-out a FIXED reserved slot for its whole life
-// (the same mechanism the stage lane already uses), a small capped budget,
-// and a stride of a full line-height between slots. This test forces a real
-// straight — which emits BOTH "STRAIGHT!" and "FREE REROLL NEXT TURN" at once
-// — through the production reroll control at three phone sizes, samples every
-// 40 ms frame, and asserts:
-//   • no two tray call-outs ever overlap each other, and
-//   • no tray call-out ever jumps DOWN (its top only drifts up over its life).
+// HISTORY (independent review of 7ef6aed): the first version of this test
+// (PR #121) was NOT red on the code it claimed to fix — seed 6 fires both
+// straight call-outs in the same frame, so they expire together and nothing
+// can jump, and its "two at once" guard counted text runs (an icon is a run
+// of its own), so one call-out satisfied it. The review also found that
+// #121's cap-of-2 "oldest yields" rule evicted a third call-out in the
+// frame it was created. This version stages the case those rules break:
 //
-// SCOPE: this pins the mutual-overlap + no-jump invariant only. Lifting the
-// whole tray lane clear of the HP row AND the hero sprite needs the
-// top-of-stage relocation the critic specs (a separate, owner-visible change);
-// it is NOT asserted here. The dice pool is fixtured to a straight the same
-// way kill_readout_test fixtures a lethal blow; no simulation rule is touched.
+//   ROLL (seed 6's opening roll is a 3-4-5 straight: STRAIGHT! and FREE
+//   REROLL NEXT TURN at once) → while they show, spend a die on Attack and
+//   tap that spent die again → ALREADY ASSIGNED, a THIRD call-out that
+//   outlives the first two.
 //
-// The probe helpers mirror test/kill_readout_test.dart (kept local so that
-// known-good test is left untouched).
-import 'dart:io';
-
+// Sampled every 20 ms from the ROLL tap, at three phone sizes:
+//   • no two call-outs overlap; none jumps (its centre never moves sideways
+//     or down — a TextPop only rises);
+//   • every call-out rests at >= 12 sp and overlaps no other visible text
+//     (the HP numerals, the HP caption and the die labels included) and
+//     neither sprite box;
+//   • nothing is lost: each of the three is fully visible for >= 900 ms;
+//   • where the screen has room (360x800, 412x915) the two straight
+//     call-outs show TOGETHER. The rolled 320x568 screen has no room for two
+//     at >= 12 sp anywhere clear of the HP row and the sprites (the stage is
+//     86 px with both actors 72 px tall), so there they play one after
+//     another — the critic's own alternative ("or queue them").
+// No pool fixture and no simulation rule: seed 6's real opening roll.
 import 'package:emberdelve/game/controller.dart';
-import 'package:emberdelve/game/tips.dart';
-import 'package:emberdelve/game/tour.dart';
-import 'package:emberdelve/ui/fx.dart';
+import 'package:emberdelve/ui/fx.dart' show ShakeBox;
 import 'package:emberdelve/ui/motion.dart';
 import 'package:emberdelve/ui/screens.dart';
+import 'package:emberdelve/ui/sprites.dart';
 import 'package:emberdelve/ui/theme.dart';
 import 'package:emberdelve/ui/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart' show ByteData, FontLoader;
 import 'package:flutter_test/flutter_test.dart';
 
-Future<void> loadRealFonts() async {
-  Future<ByteData> asset(String path) async =>
-      ByteData.sublistView(File(path).readAsBytesSync());
-  await (FontLoader('Cinzel')
-        ..addFont(asset('assets/fonts/Cinzel-Variable.ttf')))
-      .load();
-  await (FontLoader('Inter')..addFont(asset('assets/fonts/Inter-Regular.ttf')))
-      .load();
-}
+import 'callout_lane_test.dart'
+    show Callout, foeRect, heroRect, hits, minSp, visibleCallouts;
+import 'kill_readout_test.dart'
+    show button, collisions, loadRealFonts, makeController, visibleTexts;
 
-Finder button(String label) => find.byWidgetPredicate(
-  (w) => w is EmberButton && w.label == label && w.onTap != null,
-);
-
-/// Product of every opacity between [e] and the root.
-double alphaOf(Element e) {
-  var a = 1.0;
-  e.visitAncestorElements((anc) {
-    final w = anc.widget;
-    if (w is Opacity) a *= w.opacity;
-    if (w is FadeTransition) a *= w.opacity.value;
-    if (w is Offstage && w.offstage) a = 0;
-    return a > 0.0;
-  });
-  return a;
-}
-
-/// Where the glyphs actually are, in global coordinates with every transform
-/// applied (a Text inside an Expanded has a box far wider than its ink).
-Rect paintedRect(RenderParagraph p) {
-  final len = p.text.toPlainText().length;
-  final boxes = p.getBoxesForSelection(
-    TextSelection(baseOffset: 0, extentOffset: len),
-  );
-  var local = Offset.zero & p.size;
-  if (boxes.isNotEmpty) {
-    local = boxes.map((b) => b.toRect()).reduce((a, b) => a.expandToInclude(b));
-  }
-  return MatrixUtils.transformRect(p.getTransformTo(null), local);
-}
-
-class NoteBox {
-  final String text;
-  final Rect rect;
-  final RenderObject owner;
-  NoteBox(this.text, this.rect, this.owner);
-  @override
-  String toString() => '"$text" $rect';
-}
-
-/// Every visible TRAY call-out (a TextPop) on screen right now.
-List<NoteBox> visibleNotes(WidgetTester tester) {
-  final out = <NoteBox>[];
-  for (final e in find.byType(RichText).evaluate()) {
-    final ro = e.renderObject;
-    if (ro is! RenderParagraph || !ro.attached || !ro.hasSize) continue;
-    if (ro.size.isEmpty) continue;
-    if (alphaOf(e) < 0.05) continue;
-    final text = ro.text.toPlainText().trim();
-    if (text.isEmpty) continue;
-    RenderObject? owner;
-    e.visitAncestorElements((anc) {
-      if (anc.widget is TextPop) {
-        owner = anc.renderObject;
-        return false;
-      }
-      return true;
-    });
-    if (owner != null) out.add(NoteBox(text, paintedRect(ro), owner!));
-  }
-  return out;
-}
-
-GameController makeController() {
-  final c = GameController();
-  c.meta.tutorialSeen = true;
-  c.meta.tipsSeen.addAll(ContextTips.all);
-  c.tipDirector = TipDirector(c.meta.tipsSeen);
-  c.meta.tourSeenVersion = tourVersion;
-  c.tour = TourDirector(seenVersion: tourVersion);
-  return c;
-}
-
-Future<void> toFight(WidgetTester tester, GameController c, {int seed = 1}) async {
+Future<void> toFight(WidgetTester tester, GameController c, int seed) async {
   c.startRun(character: 'kindler', boons: true, seed: seed, difficulty: 'easy');
   c.apply({'type': 'choose_boon', 'index': 0});
   c.apply({'type': 'choose_node', 'node': 2});
@@ -134,14 +60,20 @@ Future<void> toFight(WidgetTester tester, GameController c, {int seed = 1}) asyn
   expect(c.phase, 'player_turn');
 }
 
-/// Seed 6's kindler opening roll is a 3-4-5 straight, which emits BOTH
-/// "STRAIGHT!" and "FREE REROLL NEXT TURN" over the tray at once (the roll
-/// path announces combos ~550 ms after the tumble). No pool fixture needed.
-Future<void> openingStraight(WidgetTester tester, {required Size size}) async {
+const straight = 'STRAIGHT!', reroll = 'FREE REROLL NEXT TURN';
+const spent = 'ALREADY ASSIGNED';
+
+Future<void> trayCase(
+  WidgetTester tester, {
+  required Size size,
+  required bool together,
+}) async {
   tester.view.physicalSize = size * 2;
   tester.view.devicePixelRatio = 2;
   addTearDown(tester.view.reset);
+  addTearDown(() => Motion.instance.update(setting: 'off'));
   Motion.instance.update(setting: 'off');
+  await tester.runAsync(warmSpriteSheets);
   final c = makeController();
   await tester.pumpWidget(
     MaterialApp(
@@ -150,70 +82,145 @@ Future<void> openingStraight(WidgetTester tester, {required Size size}) async {
       home: GameRoot(c),
     ),
   );
-  await toFight(tester, c, seed: 6);
+  await toFight(tester, c, 6);
   await tester.tap(button('Roll'));
-  // Past the tumble and the ~550 ms combo-announce delay.
-  for (var ms = 0; ms < 900; ms += 40) {
-    await tester.pump(const Duration(milliseconds: 40));
-  }
-}
 
-Future<void> trayCase(WidgetTester tester, {required Size size}) async {
-  await openingStraight(tester, size: size);
-
-  var sawTwoAtOnce = false;
-  final firstTop = <RenderObject, double>{};
   final problems = <String>[];
+  final shown = <String, int>{}; // ms fully visible, per text
+  final last = <Element, Offset>{}; // previous centre, per call-out
+  var sawTogether = false, tapped = false;
+  int? straightAt;
 
-  for (var ms = 0; ms <= 2200; ms += 40) {
-    await tester.pump(const Duration(milliseconds: 40));
-    final notes = visibleNotes(tester);
-    if (notes.length >= 2) sawTwoAtOnce = true;
+  for (var ms = 20; ms <= 5200; ms += 20) {
+    await tester.pump(const Duration(milliseconds: 20));
+    final notes = visibleCallouts();
+    final texts = {for (final n in notes) n.text};
+    if (texts.contains(straight)) straightAt ??= ms;
+    final live = {for (final n in notes) n.element};
+    if (live.length >= 2 &&
+        notes.any((n) => n.text == straight) &&
+        notes.any((n) => n.text == reroll)) {
+      sawTogether = true;
+    }
+    // 400 ms into the straight, spend a die and tap it again: a third,
+    // later call-out that outlives the first two.
+    if (!tapped && straightAt != null && ms >= straightAt + 400) {
+      tapped = true;
+      final dice = find.byWidgetPredicate(
+        (w) => w is DieChip && w.value != null,
+      );
+      await tester.tap(dice.first);
+      await tester.pump();
+      await tester.tap(button('Attack'));
+      await tester.pump(const Duration(milliseconds: 40));
+      await tester.tap(dice.first, warnIfMissed: false);
+    }
 
-    // (a) no two tray call-outs overlap each other.
+    final hero = heroRect(tester), foe = foeRect(tester);
+    for (final n in notes) {
+      if (n.sp < minSp - 0.01) problems.add('t=${ms}ms  under 12 sp: $n');
+      if (hero != null && hits(n.rect, hero)) {
+        problems.add('t=${ms}ms  on the hero $hero: $n');
+      }
+      if (foe != null && hits(n.rect, foe)) {
+        problems.add('t=${ms}ms  on the foe $foe: $n');
+      }
+      // No jump: a call-out only ever rises in place — measured in its own
+      // lane, so the stage's impact shake (a translate of the whole stage,
+      // actors included) is not mistaken for a slot change.
+      final c0 = last[n.element];
+      final c1 = n.rect.center - (_inStage(n) ? _shake(tester) : Offset.zero);
+      if (c0 != null && ((c1.dx - c0.dx).abs() > 1.5 || c1.dy - c0.dy > 1.5)) {
+        problems.add('t=${ms}ms  jumped $c0 -> $c1: $n');
+      }
+      last[n.element] = c1;
+      if (_fullyVisible(n)) shown[n.text] = (shown[n.text] ?? 0) + 20;
+    }
     for (var i = 0; i < notes.length; i++) {
       for (var j = i + 1; j < notes.length; j++) {
-        if (identical(notes[i].owner, notes[j].owner)) continue;
-        final o = notes[i].rect.intersect(notes[j].rect);
-        if (o.width > 1.0 && o.height > 1.0) {
+        if (identical(notes[i].element, notes[j].element)) continue;
+        if (hits(notes[i].rect, notes[j].rect)) {
           problems.add('t=${ms}ms  stacked: ${notes[i]}  ×  ${notes[j]}');
         }
       }
     }
-    // (b) no call-out ever jumps DOWN: a fixed slot means its top only ever
-    // drifts up over its life, never slides into a freed lower slot.
-    for (final n in notes) {
-      final first = firstTop[n.owner];
-      if (first == null) {
-        firstTop[n.owner] = n.rect.top;
-      } else if (n.rect.top > first + 2.0) {
-        problems.add(
-          't=${ms}ms  jumped down: "${n.text}" '
-          'top ${n.rect.top.toStringAsFixed(1)} > first '
-          '${first.toStringAsFixed(1)}',
-        );
-      }
+    // Against every other visible text: HP numerals, HP caption, dice.
+    for (final hit in collisions(visibleTexts(tester))) {
+      problems.add('t=${ms}ms  $hit');
     }
+    last.removeWhere((e, _) => !live.contains(e));
   }
 
-  expect(
-    sawTwoAtOnce,
-    isTrue,
-    reason: 'the straight must show STRAIGHT! and FREE REROLL together',
-  );
+  expect(straightAt, isNotNull, reason: 'seed 6 must roll its straight');
+  expect(tapped, isTrue);
+  for (final text in const [straight, reroll, spent]) {
+    expect(
+      shown[text] ?? 0,
+      greaterThanOrEqualTo(900),
+      reason: '"$text" must be readable for 900 ms (shown: $shown)',
+    );
+  }
+  if (together) {
+    expect(
+      sawTogether,
+      isTrue,
+      reason: 'with room, STRAIGHT! and FREE REROLL show together',
+    );
+  }
   expect(problems, isEmpty, reason: problems.take(12).join('\n'));
+}
+
+/// Whether [n] is drawn inside the stage (which shakes on impact).
+bool _inStage(Callout n) {
+  var inside = false;
+  n.element.visitAncestorElements((anc) {
+    if (anc.widget is ShakeBox) inside = true;
+    return !inside;
+  });
+  return inside;
+}
+
+/// The stage's current shake translation (zero at rest).
+Offset _shake(WidgetTester tester) {
+  final f = find.byType(ShakeBox);
+  if (f.evaluate().isEmpty) return Offset.zero;
+  final box = tester.renderObject(f.first);
+  if (box is! RenderProxyBox || box.child == null) return Offset.zero;
+  return box.child!.localToGlobal(Offset.zero) - box.localToGlobal(Offset.zero);
+}
+
+/// Fully visible: opaque, past its pop-in (the alpha fade is the life's
+/// last 35%, after the 900 ms this test asks for).
+bool _fullyVisible(Callout n) {
+  var a = 1.0;
+  n.element.visitAncestorElements((anc) {
+    final w = anc.widget;
+    if (w is Opacity) a *= w.opacity;
+    return a > 0;
+  });
+  for (final e
+      in find
+          .descendant(
+            of: find.byElementPredicate((x) => identical(x, n.element)),
+            matching: find.byType(Opacity),
+          )
+          .evaluate()) {
+    a *= (e.widget as Opacity).opacity;
+  }
+  return a >= 0.9;
 }
 
 void main() {
   setUpAll(loadRealFonts);
   const sizes = {
-    '320x568': Size(320, 568),
-    '360x800': Size(360, 800),
-    '412x915': Size(412, 915),
+    '320x568': (Size(320, 568), false),
+    '360x800': (Size(360, 800), true),
+    '412x915': (Size(412, 915), true),
   };
   for (final entry in sizes.entries) {
-    testWidgets('tray call-outs never stack or jump at ${entry.key}', (t) async {
-      await trayCase(t, size: entry.value);
+    testWidgets('dice call-outs never stack, jump, shrink or get lost, and '
+        'stay off the HP row and the sprites at ${entry.key}', (t) async {
+      await trayCase(t, size: entry.value.$1, together: entry.value.$2);
     });
   }
 }

@@ -4,12 +4,31 @@
 // width, stage heights from the tightest rolled 320x568 stage (~86 px) to a
 // tall 412x915 one, normal/elite bodies, narrow-to-wide sprites and larger
 // text. test/kill_readout_test.dart checks the same promise on real kills.
+//
+// C1-02 (critic round 1): call-outs were squeezed to ~5 dp on a 320x568
+// stage and printed across the hero's helmet. This file used to pin the
+// planner with a hand-typed long call-out of 205x20 px — but the real
+// "OVERKILL +3 → NEXT FOE" (+ icon, 15 sp Inter w800) measures 240x18, so
+// the "every measured phone stage plans clean" check passed on a size the
+// game no longer has while the 320x568 stage fell back to a 91 px slot
+// (scale 0.37). The long call-out is now MEASURED with the shipped font, and
+// every slot must (a) sit above both actors' heads and (b) take the long
+// call-out at >= 12 sp ([ReadoutLanes.minNoteSp]). A stage with no room for
+// that has no slots at all — its call-outs take the tray lane, which is
+// pinned at the bottom of this file and on real screens by
+// test/callout_lane_test.dart.
 import 'dart:math' as math;
 
 import 'package:emberdelve/ui/fx.dart';
 import 'package:emberdelve/ui/readout_lanes.dart';
+import 'package:emberdelve/ui/theme.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'kill_readout_test.dart' show loadRealFonts;
+
+/// The 12 sp floor as a fit scale for the stage's 15 sp call-outs.
+const floor = ReadoutLanes.minNoteSp / 15;
 
 StageGeometry geometry({
   required double w,
@@ -44,7 +63,24 @@ bool within(Rect inner, Rect outer) =>
 
 void main() {
   const pop = Size(50, 32); // "-88" at 26 sp
-  const noteH = 20.0, noteW = 205.0; // "OVERKILL +3 → NEXT FOE" + icon, 15 sp
+  // The longest stage call-out, measured with the shipped font in setUpAll
+  // (it is 240x18; the old hand-typed 205x20 hid C1-02).
+  var noteW = 0.0, noteH = 0.0;
+  setUpAll(() async {
+    await loadRealFonts();
+    final long = TextPop.measure(
+      'OVERKILL +3 → NEXT FOE',
+      fontSize: 15,
+      hasIcon: true,
+    );
+    noteW = long.width;
+    noteH = long.height;
+  });
+
+  test('the long call-out is measured, not typed in', () {
+    expect(noteW, greaterThan(220), reason: 'measured ${noteW}x$noteH');
+    expect(noteH, inInclusiveRange(16, 24));
+  });
 
   test('the sweep bound really bounds the painted motion', () {
     // Spot-check the sampled bound against dense frames for both widgets.
@@ -108,6 +144,7 @@ void main() {
                   typicalPop: pop,
                   noteHeight: noteH,
                   typicalNoteWidth: noteW,
+                  minNoteScale: floor,
                 );
                 if (!p.clean) continue;
                 clean++;
@@ -115,28 +152,58 @@ void main() {
                 final zone = p.enemyPopZone.swept;
                 check(inside(zone, g.stage), '$tag zone leaves the stage');
                 check(apart(zone, g.badge), '$tag zone/badge');
+                // C1-02: every slot sits above both actors' heads.
+                final heads = math.min(g.heroBody.top, g.enemyBody.top);
                 for (final (i, s) in p.slots.indexed) {
                   check(
                     inside(s.swept, g.stage),
                     '$tag slot $i leaves the stage',
+                  );
+                  check(
+                    s.swept.bottom <= heads,
+                    '$tag slot $i reaches the actors (${s.swept} vs $heads)',
+                  );
+                  check(apart(s.swept, g.heroBody), '$tag slot $i/hero');
+                  check(apart(s.swept, g.enemyBody), '$tag slot $i/foe');
+                  // ...and takes the longest call-out at >= 12 sp.
+                  final long = p.placeNote(i, Size(noteW, noteH));
+                  check(
+                    long != null && long.scale >= floor - 1e-9,
+                    '$tag slot $i cannot take the long call-out at 12 sp',
                   );
                   check(apart(s.swept, g.badge), '$tag slot $i/badge');
                   check(apart(s.swept, zone), '$tag slot $i/zone');
                   for (final t in p.slots.skip(i + 1)) {
                     check(apart(s.swept, t.swept), '$tag slots overlap');
                   }
-                  // Any call-out, short or long, sweeps inside its slot.
-                  for (final size in const [
-                    Size(70, 18),
-                    Size(205, 20),
-                    Size(260, 24),
+                  // Any call-out that takes the slot sweeps inside it and
+                  // is never drawn under 12 sp (C1-02; it used to be any
+                  // scale over 0.5, i.e. 7.5 sp). Short and long ones up to
+                  // the measured longest always fit; a wider one (bigger
+                  // text) either fits at >= 12 sp or is refused, and the
+                  // screen gives it another lane.
+                  for (final size in [
+                    const Size(68, 18), // "BURN"
+                    Size(noteW * 0.87, noteH), // "+5 EMBERS — EXACT!"
+                    Size(noteW, noteH),
+                    Size(noteW * 1.3, noteH * 1.3), // 1.3x text
                   ]) {
                     final n = p.placeNote(i, size);
+                    if (n == null) {
+                      check(
+                        size.width > noteW,
+                        '$tag note $size refused by slot $i',
+                      );
+                      continue;
+                    }
                     check(
                       within(n.swept, s.swept),
                       '$tag note $size escapes slot $i',
                     );
-                    check(n.scale > 0.5, '$tag note $size unreadable');
+                    check(
+                      n.scale >= floor - 1e-9,
+                      '$tag note $size under 12 sp (${n.scale})',
+                    );
                   }
                 }
                 // Smaller numbers sweep inside the planned zone.
@@ -191,14 +258,24 @@ void main() {
         typicalPop: pop,
         noteHeight: noteH,
         typicalNoteWidth: noteW,
+        minNoteScale: floor,
       );
       expect(p.clean, isTrue, reason: 'stage ${w}x$h');
-      // A long call-out stays readable (>= 72% size) on every phone.
-      expect(
-        p.placeNote(0, const Size(noteW, noteH)).scale,
-        greaterThanOrEqualTo(0.72),
-        reason: 'stage ${w}x$h',
-      );
+      // C1-02: the long call-out is never drawn under 12 sp on any phone
+      // (it used to be allowed down to 72%, and 320x568 actually got 37%).
+      // The rolled 320x568 stage (86 px, both actors 72 px tall) has no room
+      // above the heads, so it plans NO stage slot: its call-outs take the
+      // tray lane. Every other measured phone keeps a stage slot.
+      if (h < 100) {
+        expect(p.slots, isEmpty, reason: 'stage ${w}x$h');
+      } else {
+        expect(p.slots, isNotEmpty, reason: 'stage ${w}x$h');
+        expect(
+          p.placeNote(0, Size(noteW, noteH))?.scale,
+          greaterThanOrEqualTo(floor),
+          reason: 'stage ${w}x$h',
+        );
+      }
       // Tall stages keep the full motion: the arc and the drift-up.
       if (h >= 250) {
         expect(p.enemyPopZone.rise, DamagePop.defaultRise);
@@ -206,5 +283,64 @@ void main() {
         expect(p.slots.length, 2);
       }
     }
+  });
+
+  // C0-03 + C1-02: the tray lane — the strip between the player's HP bar and
+  // the dice, beside the "YOUR HP" caption. On the tightest phone it is the
+  // ONLY lane (no stage slot), so every real call-out must fit it at >= 12 sp
+  // with its whole sweep inside the strip.
+  test('the tray lane takes every real call-out at >= 12 sp, clear of the '
+      'HP bar, the caption and the dice', () {
+    final caption = (TextPainter(
+      text: const TextSpan(text: 'YOUR HP', style: EmberText.micro),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout()).size;
+    const trayFloor = ReadoutLanes.minNoteSp / 16;
+    final broken = <String>[];
+    for (final (width, compact) in const [
+      (320.0, true), // 320x568 / 320x640
+      (360.0, false), // 360x800
+      (412.0, false), // 412x915
+    ]) {
+      final gapAbove = compact ? 8.0 : 16.0;
+      final lane = TrayLane.measure(
+        trayWidth: width - 32,
+        gapAbove: gapAbove,
+        caption: caption,
+        barGap: 4,
+        minNoteScale: trayFloor,
+      );
+      // The strip: under the bar, over the dice, right of the caption.
+      final barBottom = -(gapAbove + caption.height + 4);
+      if (lane.band.top < barBottom ||
+          lane.band.bottom > 0 ||
+          lane.band.left < caption.width) {
+        broken.add('$width: band ${lane.band} vs bar $barBottom / caption');
+      }
+      for (final text in const [
+        'STRAIGHT!',
+        'FREE REROLL NEXT TURN',
+        'ALREADY ASSIGNED',
+        'PAIR +2',
+        'RIPOSTE BLOCKED',
+        '+5 EMBERS — EXACT!',
+        'OVERKILL +3 → NEXT FOE',
+      ]) {
+        final size = TextPop.measure(text, fontSize: 16, hasIcon: true);
+        final at = lane.place(size);
+        if (at == null) {
+          broken.add('$width: "$text" ($size) does not fit at 12 sp');
+          continue;
+        }
+        if (at.scale < trayFloor - 1e-9) {
+          broken.add('$width: "$text" at ${at.scale} < 12 sp');
+        }
+        if (!within(at.swept, lane.band)) {
+          broken.add('$width: "$text" sweeps ${at.swept} out of ${lane.band}');
+        }
+      }
+    }
+    expect(broken, isEmpty, reason: broken.join('\n'));
   });
 }

@@ -157,9 +157,25 @@ class _CombatScreenState extends State<CombatScreen> {
   bool _rerollMode = false;
   final Set<int> _rerollSel = {};
 
-  // Combo / kill call-outs: transient TextPops over the tray or the enemy.
+  // Combo / kill call-outs: transient TextPops in the stage or tray lane.
   final List<_Note> _notes = [];
   int _noteId = 0;
+
+  /// C1-02: call-outs waiting for a free slot, oldest first, and the timers
+  /// that mark notes readable / retire them (cancelled in [dispose]).
+  final List<_NoteRequest> _noteQueue = [];
+  final Set<Timer> _noteTimers = {};
+
+  /// The tray lane's live geometry, measured where the tray builds.
+  TrayLane? _trayLane;
+
+  /// The text scaler the HUD really draws call-outs with (it is clamped
+  /// inside build, so the state's own context would read it wrong).
+  TextScaler _noteScaler = TextScaler.noScaling;
+
+  /// The explanation pill on screen (long-press / spoken badge), if any.
+  _Help? _help;
+  int _helpId = 0;
 
   // Choreography flags (attack = squash + lunge tween + hit-flash + knockback;
   // death = flash + ember-dissolve — the sheets have no attack/death frames).
@@ -363,6 +379,10 @@ class _CombatScreenState extends State<CombatScreen> {
 
   @override
   void dispose() {
+    for (final t in _noteTimers) {
+      t.cancel();
+    }
+    _noteTimers.clear();
     BloodEffects.enabled.removeListener(_onBloodEffectsChanged);
     _choreoTick.dispose();
     _fxTick.dispose();
@@ -533,6 +553,14 @@ class _CombatScreenState extends State<CombatScreen> {
     return null;
   }
 
+  /// One lane rule for every call-out (C0-03 + C1-02). A call-out takes a
+  /// slot for its whole life — its home lane first (foe events: the stage's
+  /// planned slots above the actors' heads; dice events: the tray lane under
+  /// the HP bar), else the other lane — and only a slot where it fits at
+  /// >= 12 sp ([ReadoutLanes.minNoteSp]). With every fitting slot taken it
+  /// waits its turn: the oldest call-out yields once it has been on screen
+  /// for half its life, so a burst on a small phone plays one after another
+  /// instead of shrinking to ~5 dp or printing over a sprite or the HP row.
   void _note(
     String text, {
     Color color = EmberColors.gold,
@@ -545,36 +573,167 @@ class _CombatScreenState extends State<CombatScreen> {
     final life = _resolving && _ffwd > 0
         ? const Duration(milliseconds: 1000)
         : _noteLife;
+    final req = _NoteRequest(text, color, icon, onEnemy: onEnemy, life: life);
     _fxUpdate(() {
-      // Experimental loop C0-03: BOTH lanes assign a fixed slot at creation,
-      // so a call-out owns its slot for its whole life — it never jumps when
-      // a sibling expires, and two call-outs never share a slot. With every
-      // slot on a lane busy, the oldest on that lane yields its slot now. The
-      // stage lane's slot count comes from the live geometry plan; the tray
-      // lane has a small fixed budget that renders clear above the HP bar.
-      final slots = onEnemy ? (_readoutPlan?.slots.length ?? 1) : _trayNoteSlots;
-      final live = _notes.where((n) => n.onEnemy == onEnemy).toList();
-      final used = {for (final n in live) n.slot};
-      final slot = List.generate(slots, (i) => i).firstWhere(
-        (i) => !used.contains(i),
-        orElse: () {
-          final oldest = live.first;
-          _notes.remove(oldest);
-          return oldest.slot.clamp(0, slots - 1);
-        },
-      );
-      _notes.add(
-        _Note(
-          _noteId++,
-          text,
-          color,
-          icon,
-          onEnemy: onEnemy,
-          life: life,
-          slot: slot,
-        ),
-      );
+      if (_noteQueue.isEmpty && _placeNote(req, takeOver: false)) return;
+      // The same words already showing or waiting add nothing worth a wait
+      // (a spent die tapped five times is one ALREADY ASSIGNED).
+      if (_notes.any((n) => n.text == text) ||
+          _noteQueue.any((q) => q.text == text)) {
+        return;
+      }
+      _noteQueue.add(req);
+      if (_noteQueue.length > _noteQueueCap) _noteQueue.removeAt(0);
+      _drainNotes();
     });
+  }
+
+  static const _noteQueueCap = 4;
+
+  /// The player HP caption. The tray lane measures it, so the lane can
+  /// never drift onto the caption it sits beside.
+  static const _playerHpLabel = 'YOUR HP';
+
+  /// Stage call-outs' and tray call-outs' natural font sizes.
+  static const double _stageNoteSize = 15;
+  static const double _trayNoteSize = 16;
+
+  Size _noteSize(String text, {required bool icon, required double fontSize}) =>
+      TextPop.measure(
+        text,
+        fontSize: fontSize,
+        hasIcon: icon,
+        textScaler: _noteScaler,
+      );
+
+  /// Every (lane, slot) where [r] fits at the floor, home lane first.
+  List<(_NoteLane, int)> _fittingSlots(_NoteRequest r) {
+    final out = <(_NoteLane, int)>[];
+    void stage() {
+      final plan = _readoutPlan;
+      if (plan == null) return;
+      final size = _noteSize(
+        r.text,
+        icon: r.icon != null,
+        fontSize: _stageNoteSize,
+      );
+      for (var i = 0; i < plan.slots.length; i++) {
+        if (plan.placeNote(i, size) != null) out.add((_NoteLane.stage, i));
+      }
+    }
+
+    void tray() {
+      final lane = _trayLane;
+      if (lane == null) return;
+      final size = _noteSize(
+        r.text,
+        icon: r.icon != null,
+        fontSize: _trayNoteSize,
+      );
+      if (lane.place(size) != null) out.add((_NoteLane.tray, 0));
+    }
+
+    if (r.onEnemy) {
+      stage();
+      tray();
+    } else {
+      tray();
+      stage();
+    }
+    return out;
+  }
+
+  /// Put [r] in a slot: a free fitting one, or — with [takeOver] — the slot
+  /// of the oldest fitting call-out that has been readable long enough.
+  bool _placeNote(_NoteRequest r, {required bool takeOver}) {
+    final fits = _fittingSlots(r);
+    if (fits.isEmpty) {
+      // Fits nowhere at 12 sp — never expected on a supported phone (the
+      // tray strip alone takes the longest call-out at >= 12 sp from 320 dp
+      // up). Rather than lose it, draw it best-effort in the tray lane.
+      final held = _notes.where((n) => n.lane == _NoteLane.tray).toList();
+      if (held.isNotEmpty && !(takeOver && held.first.readable)) return false;
+      _notes.removeWhere((n) => n.lane == _NoteLane.tray);
+      _addNote(r, _NoteLane.tray, 0, squeezed: true);
+      return true;
+    }
+    for (final (lane, slot) in fits) {
+      if (!_notes.any((n) => n.lane == lane && n.slot == slot)) {
+        _addNote(r, lane, slot);
+        return true;
+      }
+    }
+    if (!takeOver) return false;
+    // Every fitting slot is busy: the oldest call-out that has been on
+    // screen long enough to read yields its slot now (_notes is oldest-first).
+    final yielding = _notes
+        .where((n) => n.readable && fits.contains((n.lane, n.slot)))
+        .firstOrNull;
+    if (yielding == null) return false;
+    _notes.remove(yielding);
+    _addNote(r, yielding.lane, yielding.slot);
+    return true;
+  }
+
+  /// Place waiting call-outs in order while a slot is free or yieldable.
+  void _drainNotes() {
+    while (_noteQueue.isNotEmpty &&
+        _placeNote(_noteQueue.first, takeOver: true)) {
+      _noteQueue.removeAt(0);
+    }
+  }
+
+  void _addNote(
+    _NoteRequest r,
+    _NoteLane lane,
+    int slot, {
+    bool squeezed = false,
+  }) {
+    final n = _Note(
+      _noteId++,
+      r.text,
+      r.color,
+      r.icon,
+      onEnemy: r.onEnemy,
+      life: r.life,
+      lane: lane,
+      slot: slot,
+      squeezed: squeezed,
+    );
+    _notes.add(n);
+    // Readable after half its life (1 s; 0.5 s fast-forwarding): from then
+    // on a waiting call-out may take its slot.
+    _noteTimer(r.life * 0.5, () {
+      n.readable = true;
+      _drainNotes();
+    });
+    // Safety net: a note whose lane vanished under it (the stage shrinks on
+    // ROLL) never mounts its TextPop, so its onDone would never fire.
+    _noteTimer(r.life + const Duration(milliseconds: 120), () => _retire(n));
+  }
+
+  /// A call-out's life is over: free its slot for whoever is waiting.
+  void _retire(_Note n) {
+    _notes.remove(n);
+    _drainNotes();
+  }
+
+  void _noteTimer(Duration d, VoidCallback f) {
+    late final Timer t;
+    t = Timer(d, () {
+      _noteTimers.remove(t);
+      _fxUpdate(f);
+    });
+    _noteTimers.add(t);
+  }
+
+  /// C1-02: explanations are help, not combat call-outs — an opaque pill
+  /// that wraps instead of a one-line call-out squeezed under 12 sp.
+  void _explain(String text, {required Color color, IconData? icon}) {
+    if (!mounted) return;
+    _fxUpdate(
+      () => _help = _Help(_helpId++, text, color, icon, life: _noteLife),
+    );
   }
 
   /// Celebrate the sim's combo/reroll events (docs/m4-sim-contract.md §8):
@@ -679,23 +838,17 @@ class _CombatScreenState extends State<CombatScreen> {
       _ => 'NEXT MOVE — RESOLVES AS SHOWN',
     };
     Haptics.light();
-    _note(
-      text,
-      color: EmberColors.textPrimary,
-      icon: Icons.visibility,
-      onEnemy: true,
-    );
+    _explain(text, color: EmberColors.textPrimary, icon: Icons.visibility);
   }
 
   // Burn semantics VERIFIED against sim/combat.dart: damage = current stacks,
   // ticks at the end of the enemy's action, then stacks decay by 1.
   void _explainBurn(int stacks) {
     Haptics.light();
-    _note(
+    _explain(
       'BURN $stacks — $stacks DMG AFTER ITS MOVE, THEN −1',
       color: EmberColors.ember,
       icon: Icons.local_fire_department,
-      onEnemy: true,
     );
   }
 
@@ -1259,18 +1412,6 @@ class _CombatScreenState extends State<CombatScreen> {
   /// Room for the fade/fold strip below the last visible tray row.
   static const _trayPeek = 26.0;
 
-  // Tray call-out lane (experimental loop C0-03). A small fixed budget of
-  // reserved slots so two combo call-outs never share a position and a
-  // call-out never jumps when a sibling expires. Slot 0 is lowest; each
-  // higher slot sits [_trayNoteStride] further up — a full line-height, so
-  // the two stacked slots never overlap each other. Placement is kept where
-  // it already sat (just over the tray): lifting the lane clear of BOTH the
-  // HP row and the hero sprite needs the top-of-stage relocation the critic
-  // specs, which is a separate, owner-visible change.
-  static const _trayNoteSlots = 2;
-  static const _trayNoteBaseTop = -32.0;
-  static const _trayNoteStride = 30.0;
-
   /// Everything the HUD reads, derived from LIVE sim state plus this frame's
   /// media metrics. Every scoped section calls this when it rebuilds, so no
   /// section can render from another section's snapshot; null means there is
@@ -1395,7 +1536,28 @@ class _CombatScreenState extends State<CombatScreen> {
         ),
         _band(_vitalsBand, _playerVitals),
         SizedBox(height: compact ? Space.s : Space.m),
-        _band(_diceBand, (c, h) => _inertIfOver(_traySection(c, h))),
+        _band(
+          _diceBand,
+          (c, h) => Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Full width: the tray itself is only as wide as its row of
+              // dice (centred, exactly where it always sat), but its call-out
+              // lane spans the screen, like the HP block above it.
+              SizedBox(
+                width: double.infinity,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: _inertIfOver(_traySection(c, h)),
+                ),
+              ),
+              // C0-03 + C1-02: the tray lane's call-outs live OUTSIDE the
+              // inert dim — a reward read on the killing blow must not fade
+              // with the dice.
+              Positioned.fill(child: _trayCallouts(c, h)),
+            ],
+          ),
+        ),
         SizedBox(height: compact ? Space.s : Space.m),
         _band(_diceBand, (c, h) => _inertIfOver(_actionZone(c, h))),
       ],

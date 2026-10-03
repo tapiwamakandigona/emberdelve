@@ -190,7 +190,7 @@
    "fix_direction": "Give the tray lane the same ReadoutLanes slot plan as the stage: stack call-outs vertically in reserved slots above the HP label (or queue them 250 ms apart), never over sprites or the HP row. Include the assignment-preview chip in the plan.",
    "acceptance": "kill_readout-style rect test extended to tray-lane call-outs for 3 foes at 320x568/360x800/412x915: zero overlapping text rects, including against the HP label and the sprite bbox. Plate 026 equivalent shows both call-outs fully legible.",
    "effort": "S",
-   "status": "reopened",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 2,
    "history": [
@@ -219,6 +219,12 @@
      "at": "2026-09-24T18:47:56+00:00",
      "round": 1,
      "event": "relisted"
+    },
+    {
+     "at": "2026-10-03T08:23:01+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/callout-lanes-20261003",
+     "note": "PR #121 (fixed tray slots) shipped with a test that was not red on the code it fixed (independent review of 7ef6aed) and whose cap-of-2 rule evicted a third call-out in its first frame. This build replaces it with ONE call-out lane rule: the tray lane is the strip between the player's HP bar and the dice, beside the HP caption (measured from the caption, full screen width); stage call-outs sit above both actors' heads; every call-out is >= 12 sp, holds its slot for life, takes its home lane first then the other lane, and otherwise waits until the oldest has been readable for half its life (no stacking, no jump, no loss); the lane is drawn outside the tray's inert dim. Evidence: test/tray_readout_test.dart rebuilt around a staggered third call-out (STRAIGHT! + FREE REROLL on ROLL, ALREADY ASSIGNED 400 ms later), sampled every 20 ms from ROLL with distinct call-outs counted: red on 7ef6aed 3/3 (STRAIGHT! readable only 420 ms) and on a9a2df3 3/3 (FREE REROLL stacked on the third call-out), green 3/3; zero overlap with the HP numerals, the HP caption, the die labels and both sprite boxes. test/callout_lane_test.dart green 25/25 on three foes (flue_crawler, cinder_pup, slag_snail) plus ash_rat in the tray test. Plates: tool/callout_lane_frames_test.dart -> build/callout_lanes/: at 360x800 and 412x915 STRAIGHT! and FREE REROLL show together; at 320x568 there is no room for two at >= 12 sp clear of the HP row and the sprites, so they play one after another (the critic's 'or queue them'). The assignment-preview chip lives on the stage floor; stage slots are above the heads and the tray lane is under the HP bar, so neither lane can reach it (covered by the text-collision checks, not a dedicated assert)."
     }
    ],
    "fixed_in": "exp.2",
@@ -654,7 +660,7 @@
    "fix_direction": "Set a floor on call-out scale so text never goes below 12 sp. When the band cannot fit at that size, move the call-out to the top-bar/tray slot. Add the hero and foe sprite bboxes to the overlap test.",
    "acceptance": "At 320x568 every call-out renders >=12 sp and its rect does not intersect the hero or foe sprite bbox (test + t720/t1200 plates).",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 1,
    "critic_rank": 3,
    "rank_round": 1,
@@ -663,6 +669,12 @@
      "at": "2026-09-24T18:47:56+00:00",
      "round": 1,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T08:23:01+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/callout-lanes-20261003",
+     "note": "12 sp floor (ReadoutLanes.minNoteSp): a slot that cannot take a call-out at >= 12 sp refuses it and the call-out takes another lane; stage slots must sit above both actors' heads; the squeezed fallback slot is gone (a stage with no room plans NO slot and its call-outs take the tray lane); the planner test now MEASURES the long call-out (240x18) instead of the stale 205x20 that let it pass while 320x568 fell back to a 91 px slot at scale 0.37. Long-press/spoken explanations are help, not combat reads: an opaque HelpPill at 13 sp that wraps (<= 3 lines). Evidence: test/callout_lane_test.dart red on 7ef6aed at 320x568 (EXACT! 6.5 sp on the hero box, OVERKILL 5.7 sp, burn explanation 2.9 sp), green 25/25 (3 foes x 4 sizes x exact/overkill + explanation: >= 12 sp, off both sprite boxes, no text overlap, every 40 ms frame); readout_lanes_test strengthened (floor, above-the-heads, measured note): the old planner fails it (320x568 slot 0 at 6.8 sp over the heads; 320x640 slot 1 sweeping to the floor through the actors), green 11/11. Plates build/kill_readout/exact_320x568_t720/t1200 and overkill_320x568_t960 (tool/kill_readout_frames_test.dart): the call-out reads at ~15 sp beside YOUR HP, off the hero."
     }
    ]
   },
@@ -748,7 +760,7 @@
    "fix_direction": "Plan the player-side number with the same ReadoutLanes zone: above the hero bbox with >=6 dp clearance, not over the sprite.",
    "acceptance": "Enemy-turn strips: the '-N' rect does not intersect the hero sprite bbox on any frame 030-042 at 320x568/360x800/412x915.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 1,
    "critic_rank": 7,
    "rank_round": 1,
@@ -757,6 +769,12 @@
      "at": "2026-09-24T18:47:56+00:00",
      "round": 1,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T08:23:01+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/c1-06-hero-number-clearance (PR #122, merged f1fbe24)",
+     "note": "the hero's -N is planned ABOVE the head, else BESIDE the delver on the fight side, each >= 6 dp clear of the body and kept on the stage; only a stage with no room off the body keeps the old over-chest zone. test/hero_pop_clearance_test.dart (real enemy turn, no block, every 20 ms frame): red on the old planner 3/3 (e.g. 320x568 t=440-760 ms, number on the delver), green 3/3 at 320x568/360x800/412x915. Caveats: one foe (seed 1 flue_crawler), not the four the acceptance names; the tightest ROLLED stages (86/158 px) can still fall back to the over-body zone in the planner, though the real enemy turn is unaffected because the stage is taller after End turn. Independent review: PASS."
     }
    ]
   },

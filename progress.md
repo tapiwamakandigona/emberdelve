@@ -6674,3 +6674,60 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): analyze clean; release_clarity_test +7,
   interface_languages_test +13, forge/title/catalog parity (counted_forge, forge_unlock, forgelight, shorter_title,
   earned_titles, attire, gramophone, shorter_road, trials) all green run serially.
+
+## 2026-10-03 — the merge queue is empty again: #121, #122, #123 on the lane (iteration 13)
+- From here on every commit is in my own identity, as DEMAND.md 2026-09-02L requires. Commits 8e3bcae,
+  4b764fd, d7c601e, 47d8a95 and 98074b8 (and entries 10–12 above) were made under an assistant identity
+  earlier today; they stay as they are — history is never rewritten.
+- VERIFIED merges (merge commits, PR titles): #121 → 201d101; #122 after merging the lane into its branch
+  (progress.md append conflict only; CI 37107193184 analyze+test and 37107193158 ios green) → f1fbe24; #123
+  after merging #122's head into it (CI 37107259909 + ios 37107259940 green) → 7ef6aed. The lane's tree at
+  7ef6aed is byte-identical to the tree CI verified (`ac009c25c3`).
+- VERIFIED the #123 port reverted nothing: none of its seven files changed on the lane after #111's base
+  535029b, and its change set equals #111's file for file.
+- VERIFIED independent read-only review (fresh context, range a9a2df3..7ef6aed, evaluation.json): **FAIL on
+  #121**, PASS on #122 and #123. #121's test passes 3/3 on the pre-fix code — seed 6 fires both straight
+  call-outs in one frame, so they expire together and nothing can jump, and its "two at once" guard counted text
+  runs (an icon is its own run). The review also found #121's cap-of-2 "oldest yields" rule evicts a third
+  call-out in the frame it is created (PAIR +2 in a 3-4-5-5 roll is never painted), and that its 30 px stride
+  does not scale with text size. #122: red→green 3/3, covers one foe. #123: red 7/7 → green. Boundaries clean
+  (lib/sim untouched, no secrets). These findings are iteration 14's first task.
+
+## 2026-10-03 — one call-out lane rule: >= 12 sp, off the sprites and the HP row (iteration 14, C1-02 + C0-03)
+- Branch `feat/callout-lanes-20261003` off the lane at 7ef6aed.
+- Root cause of C1-02, VERIFIED with a probe on the real 320x568 kill: the rolled stage is 272x86 with both
+  actors 72 px tall; the real long call-out ("OVERKILL +3 → NEXT FOE" + icon at 15 sp) measures 240x18, so the
+  planner found no slot that kept it >= 72 % wide, fell back to a 91 px slot and drew it at scale 0.37
+  (~5.6 sp) on the hero's helmet. readout_lanes_test passed only because it pinned a hand-typed 205x20.
+- The rule: stage call-out slots sit ABOVE both actors' heads; nothing is drawn under 12 sp
+  (`ReadoutLanes.minNoteSp`) — a slot refuses a call-out it cannot hold at 12 sp; the squeezed fallback slot is
+  gone (a stage with no room plans no slot). The tray lane (`TrayLane`) is the strip between the HP bar and the
+  dice beside the "YOUR HP" caption, measured from the caption across the full screen width (the tray itself is
+  only as wide as its dice). Every call-out holds one slot for life, home lane first (foe events → stage, dice
+  events → tray), else the other lane, else it waits until the oldest has been readable for half its life — no
+  stacking, no jump, nothing lost. The tray lane is drawn outside the inert dim, so a reward read on the killing
+  blow no longer fades with the dice. Long-press / spoken explanations become an opaque `HelpPill` (13 sp, wraps
+  to three lines) — help, not a one-line combat read (they measured 247–324 px at 12 sp).
+- VERIFIED red before green (new tests run against the lane's code in a separate worktree):
+  - test/callout_lane_test.dart on 7ef6aed: 320x568 "+5 EMBERS — EXACT!" 6.5 sp on the hero's sprite box,
+    "OVERKILL +1 → NEXT FOE" 5.7 sp, the burn explanation 2.9 sp. Now green 25/25: three foes (flue_crawler,
+    cinder_pup, slag_snail) x 320x568/320x640/360x800/412x915 x exact/overkill, every 40 ms frame: >= 12 sp, off
+    both sprite boxes, no overlap with any visible text; plus the explanation whole at >= 12 sp.
+  - test/tray_readout_test.dart, rebuilt (staggered third call-out, sampled from ROLL, distinct call-outs):
+    on 7ef6aed 3/3 fail (STRAIGHT! readable only 420 ms — evicted); on a9a2df3 3/3 fail (FREE REROLL stacked
+    on the third call-out). Now green 3/3. Spec change, stated in the test: STRAIGHT! and FREE REROLL must show
+    together at 360x800 and 412x915; at 320x568 there is no room for two at >= 12 sp clear of the HP row and
+    the sprites, so they play one after another (each readable >= 900 ms) — the critic's "or queue them".
+  - test/readout_lanes_test.dart strengthened (measured note, floor, above-the-heads, tray-lane geometry): the
+    old planner fails the same assertions (320x568 slot 0 at 6.8 sp over the heads; 320x640 slot 1 sweeping to
+    the floor through the actors). Now green 11/11.
+- VERIFIED plates (headless, shipped fonts, precached art — not a device): build/kill_readout/
+  exact_320x568_t720/t1200 and overkill_320x568_t960 before vs after — the call-out goes from a ~5 dp speck on
+  the hero's helmet to ~15 sp beside "YOUR HP". New tool/callout_lane_frames_test.dart writes
+  build/callout_lanes/ (the plate-026 equivalent).
+- VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): `flutter analyze` clean; kill_readout 8/8,
+  hero_pop_clearance 3/3, combat_bodies 21/21, boss_kill_moment 6/6, combat_contact_timeline 12/12,
+  feel_pregate 5/5, spoken_badge 8/8, burn_chip_death 4/4 (its first two local runs died in setUpAll — the
+  known one-core loader artifact; third run green).
+- Backlog: C1-02 and C0-03 → fixed_pending_review (this build); C1-06 → fixed_pending_review (PR #122).
+- ASSUMED until CI: the full suite on 3.44.9.
