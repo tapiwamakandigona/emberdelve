@@ -6613,6 +6613,32 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   #102 (critique). Next: continue the backlog pin (C0-03 / C1-02 / C4-01 call-out pile-ups,
   C1-06, C4-05), then the 0.186.0 release per the program's release step.
 
+## 2026-10-03 — C0-03 (rescoped): tray call-outs get fixed reserved slots (iteration 10)
+- 2026-10-03, by Viktor (AI, honest authorship). Branch `feat/c0-03-tray-callout-slots` off the
+  lane head `a9a2df3`.
+- DIAGNOSIS (VERIFIED by reading the code): the dice-tray combo call-outs (non-enemy `_notes`,
+  rendered in lib/ui/screens/combat/tray.dart) were positioned by the LIVE list index
+  (`top: -30 - idx*24`), so a call-out's position depended on how many siblings were alive — two
+  could overlap and a survivor JUMPED into a freed slot when a neighbour expired. The STAGE lane
+  already solved this with a fixed per-life `slot` assigned at creation.
+- FIX: generalised the fixed-slot assignment in `_note()` to BOTH lanes (enemy lane behaviour is
+  byte-for-byte unchanged; the tray lane now gets a fixed slot for life, a capped budget of 2, and
+  oldest-eviction when full). Tray render positions by `n.slot` with a full line-height stride.
+  Placement is kept where it already sat (just over the tray); this commit does NOT move the lane.
+- NEW TEST test/tray_readout_test.dart: seed 6's kindler opening roll is a 3-4-5 straight, which
+  emits "STRAIGHT!" + "FREE REROLL NEXT TURN" together. At 320x568/360x800/412x915 it samples every
+  40 ms and asserts the two simultaneous tray call-outs never overlap each other and never jump down.
+- VERIFIED locally (Flutter 3.47.6, NOT the pinned 3.44.9 — CI is the authoritative gate):
+  `flutter analyze` clean (whole project); tray_readout_test +3; kill_readout_test +8 and
+  readout_lanes_test and combat_bodies_test all green (the enemy/stage lane is unaffected). The
+  full-suite single-process run showed ~27 unrelated "did not complete" entries that PASS when the
+  files are run on their own — a local isolate/resource artifact, not this change.
+- NOT done (deferred, needs the owner's call): lifting the tray lane clear of BOTH the HP row AND
+  the hero sprite. At every stage height the hero stands directly on the HP bar, so a centred,
+  tray-anchored call-out has no clean band between them; the critic's full fix ("same ReadoutLanes
+  slot plan as the stage") means relocating combo call-outs to the stage's top reserved slots — an
+  owner-visible placement change (and it overlaps C1-02). Flagged to the owner before doing it.
+
 ## 2026-10-03 — C1-06: the hero's damage number clears the delver (iteration 11)
 - By Viktor (AI, honest authorship). Branch `feat/c1-06-hero-number-clearance` off lane `a9a2df3`.
 - DIAGNOSIS (VERIFIED): `ReadoutLanes._heroZone` placed the hero's hit number OVER the delver's body by
