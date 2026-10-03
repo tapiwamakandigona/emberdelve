@@ -375,6 +375,13 @@ extension _CombatStageBand on _CombatScreenState {
                                   lunge: _enemyLunge,
                                   knock: _enemyKnock,
                                   flash: _enemyFlash,
+                                  ember: _enemyEmber,
+                                  // C4-02: a boss slain under reduced
+                                  // motion drains to grey as it fades.
+                                  drain:
+                                      _enemyDying &&
+                                      Motion.instance.reduced &&
+                                      live['boss'] == true,
                                   dying: _enemyDying,
                                   squash: _enemySquash,
                                   braced: _enemyBraced,
@@ -884,6 +891,13 @@ extension _CombatStageBand on _CombatScreenState {
     /// C0-05: the red hurt tint that follows the white contact flash.
     bool hurt = false,
 
+    /// C4-02: ember-hot body after a boss's killing blow (crossfades from
+    /// the white beat over 160 ms; the dissolve inherits it).
+    bool ember = false,
+
+    /// C4-02: full colour drain (reduced-motion boss death).
+    bool drain = false,
+
     /// C0-05: knockback in logical px, snapped in fast (null keeps the
     /// legacy 22%-of-width slide).
     double? knockDp,
@@ -897,9 +911,11 @@ extension _CombatStageBand on _CombatScreenState {
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if (condition.pallor > 0.01 && !dissolve) {
+    if ((drain || condition.pallor > 0.01) && !dissolve) {
       w = ColorFiltered(
-        colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
+        colorFilter: ColorFilter.matrix(
+          pallorMatrix(drain ? 1.0 : condition.pallor),
+        ),
         child: w,
       );
     }
@@ -963,7 +979,7 @@ extension _CombatStageBand on _CombatScreenState {
     );
     // Hit-flash: paint the sprite solid white for a beat.
     w = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 60),
+      duration: Duration(milliseconds: ember ? 160 : 60),
       child: flash
           ? ColorFiltered(
               key: const ValueKey('flash'),
@@ -975,6 +991,15 @@ extension _CombatStageBand on _CombatScreenState {
             )
           // C0-05: after one white beat the hurt body burns red, so the hit
           // reads as pain instead of a frozen white cut-out.
+          : ember
+          ? ColorFiltered(
+              key: const ValueKey('ember'),
+              colorFilter: ColorFilter.mode(
+                EmberColors.ember.withValues(alpha: 0.62),
+                BlendMode.srcATop,
+              ),
+              child: w,
+            )
           : hurt
           ? ColorFiltered(
               key: const ValueKey('hurt'),

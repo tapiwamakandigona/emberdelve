@@ -6211,6 +6211,69 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
 
+## 2026-10-02 — games pass iteration 1: boss death without the white block (C4-02)
+- Logged at 2026-10-02 18:28 UTC. Branch feat/boss-death-ember-20261002 off legacy/dice-builder @ 535029b.
+- Baseline before any change (local, Flutter 3.44.9): analyzer clean; 1596 passed, 2 failed.
+  Both failures are pre-existing and not caused by this change. VERIFIED from the run log:
+  - test/marked_week_test.dart "a finished weekly banks its mark and its rule": during a
+    week whose rule contains short_road (this week is Short Road) the test wants short_road
+    in the saved list and then forbids it. Same contradiction as PR #111 records. It will
+    pass in the weeks of 2026-10-05 and 2026-10-12, then fail again in the weeks of
+    2026-10-19 and 2026-10-26 (Lean Road / Hard March). VERIFIED with weeklyRuleFor over
+    the next 8 weeks. I did not touch the test; the fix needs an explicit go.
+  - test/shorter_title_test.dart 412x915: the title scrolls by 8 px. PR #111 carries the
+    fix for this one ("recover 8 px of title whitespace").
+- Change: on the blow that kills a boss, the white contact flash now lasts only the
+  hit-stop. It then crossfades over 160 ms into an ember-tinted body, which the ashfall
+  dissolve crumbles from. Under reduced motion the boss is never flashed white; its
+  colour drains to grey as it fades. Files: lib/ui/screens/combat_screen.dart and
+  lib/ui/screens/combat/stage.dart. Presentation only; lib/sim is untouched.
+- VERIFIED: the new test/boss_death_ember_test.dart lands a real lethal blow through the
+  controls and counts luma>235 pixels inside the foe's own rect every 40 ms for 1.6 s.
+  On the old code it was red: 11 frames at 24–27 % bright in both normal and reduced
+  motion. On the new code it is green: at most 3 such frames in normal motion, 0 in reduced.
+- VERIFIED: the full suite gives 1598 passed and the same 2 pre-existing failures
+  (1596 + 2 new). Analyzer clean. sfx_headroom passes.
+  tool/boss_kill_frames_test.dart: the peak whole-frame luma>230 share is 2.1 % (normal)
+  and 0.3 % (reduced). I looked at the strips by eye (headless render at 2x, not a phone).
+  Two white frames, then an orange body, then the crumble starts from the tinted pixels.
+  Reduced: no white, the body greys.
+- ASSUMED / not verified: how it looks and feels on a device. The strips still re-dress the
+  seed-1 crawler instead of the real boss sprite (C4-05, open).
+
+## 2026-10-02 — PR #112, CI and the independent review
+- Logged at 2026-10-02 18:37 UTC. PR #112 (feat/boss-death-ember-20261002 → legacy/dice-builder).
+- VERIFIED CI run 37047730872 on the PR head: build-ios green; "Analyze + test
+  (headless)" red with exactly the two pre-existing failures and nothing else —
+  "1598 tests passed, 2 failed" (shorter_title 412x915 "Expected: <0> Actual: <8.0>"
+  and marked_week "Expected: equals ['short_road'] unordered, Actual: <null>").
+  The signed-build job is correctly skipped after a red test job. The same two
+  failures are red on the lane itself, so this PR adds no failure.
+- Merge is therefore blocked on the lane's own red, not on this change. I did not
+  merge, did not edit either test and did not touch the CI workflow.
+- VERIFIED independent read-only review (ultra tier, fresh context, range
+  535029b..4d9c957): PASS, no findings. It reproduced the red-on-old-code result in
+  its own throwaway copy (11 frames at 24-27 % bright in both motion modes on the
+  535029b lib files), re-ran the strips, and confirmed 64/64 nearby combat and
+  motion tests plus "no existing test modified, lib/sim/pubspec/android/.github
+  untouched". Non-blocking notes it raised, recorded so they are not lost:
+  1. Under reduced motion the boss keeps full colour for ~400 ms and then switches
+     to grey in one step, where the backlog asked for a 300 ms desaturation. The
+     measured acceptance (no white) is met.
+  2. The new test expresses its limits as a share of the foe rect (12 % ~ 9.6k px,
+     2.5 % ~ 2.0k px at 360x800 @2x) rather than the backlog's absolute px counts;
+     equivalent or stricter here, but it would drift at another size.
+  3. "At least 2 frames with sprite pixels and dissolve particles together" is
+     checked by eye on the strips, not automated.
+  4. The strips still re-dress the seed-1 crawler (C4-05 open), so no real boss
+     silhouette has been judged. C4-02 stays fixed_pending_review for that reason.
+  5. The ember tint also colours the shadow ellipse, the held weapon and the burst,
+     exactly as the existing flash and hurt wrappers do.
+  6. A boss-killing blow under 25 % of max HP gets no hit-stop, so it shows no white
+     at all — stricter than the cap.
+- Note 1 is the only one that is a behaviour gap against the written acceptance; it
+  is queued as the first item of the next iteration.
+
 ## 2026-10-02 — the returning title fits a 412x915 phone again (port from PR #111)
 - 2026-10-02 19:21 UTC. Owner-side decision 2026-10-02T18:44Z authorised porting only the title
   hunk of PR #111 commit f3ce6d7 as its own PR: the title's outer vertical padding
@@ -6240,3 +6303,29 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   0.185.0 (inherited from #111, fixed by the next bump); the captures are scratch renders,
   regenerable by pumping GameRoot with the shorter_title_test profile and toImage on a
   RepaintBoundary; the top-right icon row barely moves, so "every block 4 px higher" is loose.
+
+## 2026-10-03 — the lane is green: marked_week corrected, PR #113 merged (iteration 9)
+- 2026-10-03 02:20 UTC. Owner authorization 2026-10-03 01:38 UTC (app thread) allowed ONE
+  narrow spec change: test/marked_week_test.dart required the banked mutators to equal the
+  week's declared rule AND to exclude 'short_road' — impossible in any week whose rule
+  contains short_road (weeks of 2026-09-28, 10-19, 10-26). The bank is correct:
+  controller._moddedMutators drops short_road and sorts, _runRecord writes 'mutators' only
+  when that list is non-empty and 'short': true for a short week.
+- VERIFIED red first: on 26191e8 the test fails today with
+  "Expected: equals ['short_road'] unordered / Actual: <null>" (matches CI 37047730872).
+- Commit d4acbec: line 66 compares `r['mutators'] ?? const []` with
+  `rule.mutators.where((m) => m != 'short_road')`; line 69 tolerates the absent key; the
+  'short' and 'weekly' assertions are untouched. Test-only, +8/-2, no lib/ change.
+- VERIFIED green after: marked_week 4/4, flutter analyze clean, full suite 1598 pass.
+- VERIFIED CI on d4acbec (PR #113 head): run 37089375789 "Analyze + test (headless)" pass,
+  ios 37089375788 pass — the first fully green head on this lane since 0.185.0.
+- Merged PR #113 into legacy/dice-builder as eaf651e (title fit + this correction).
+  The lane's two inherited red tests are now gone; the merge queue can proceed:
+  #112 -> #114 (stacked) -> #115 -> #116 -> #117 -> #118 -> #119, each after a green
+  rebased CI, then the 0.186.0 release.
+- VERIFIED independent read-only review (ultra tier, fresh context, range 26191e8..d4acbec):
+  PASS, 0 findings. It reproduced the red, re-ran the suite (1598), and mutation-tested the
+  check: leaking short_road into the bank, dropping a real mutator or dropping 'short' each
+  make the corrected test fail across leanRoad / hardMarch / doubledWeek / [short_road] /
+  [no_rests]. Notes: the test still reads DateTime.now(), so one run only covers the current
+  week's rule; the owner authorization itself was outside what the reviewer could check.
