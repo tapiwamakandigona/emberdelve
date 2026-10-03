@@ -6614,8 +6614,7 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   C1-06, C4-05), then the 0.186.0 release per the program's release step.
 
 ## 2026-10-03 — C0-03 (rescoped): tray call-outs get fixed reserved slots (iteration 10)
-- 2026-10-03, by Viktor (AI, honest authorship). Branch `feat/c0-03-tray-callout-slots` off the
-  lane head `a9a2df3`.
+- 2026-10-03. Branch `feat/c0-03-tray-callout-slots` off the lane head `a9a2df3`.
 - DIAGNOSIS (VERIFIED by reading the code): the dice-tray combo call-outs (non-enemy `_notes`,
   rendered in lib/ui/screens/combat/tray.dart) were positioned by the LIVE list index
   (`top: -30 - idx*24`), so a call-out's position depended on how many siblings were alive — two
@@ -6640,7 +6639,7 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   owner-visible placement change (and it overlaps C1-02). Flagged to the owner before doing it.
 
 ## 2026-10-03 — C1-06: the hero's damage number clears the delver (iteration 11)
-- By Viktor (AI, honest authorship). Branch `feat/c1-06-hero-number-clearance` off lane `a9a2df3`.
+- Branch `feat/c1-06-hero-number-clearance` off lane `a9a2df3`.
 - DIAGNOSIS (VERIFIED): `ReadoutLanes._heroZone` placed the hero's hit number OVER the delver's body by
   design (chest, lower, floor). New test/hero_pop_clearance_test.dart plays a real enemy turn (seed-1, no
   block) and was RED at 320x568 / 360x800 / 412x915 — the "-N" glyphs sat on the delver sprite.
@@ -6662,7 +6661,7 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   use the old zone. Clearing that needs a reservation trade-off (owner/critic call).
 
 ## 2026-10-03 — prep 0.186.0: Clear-Choices clarity + German listing (iteration 12)
-- By Viktor (AI, honest authorship). Branch `feat/0.186.0-clarity-de` off lane `a9a2df3`. Ports the SUBSTANTIVE
+- Branch `feat/0.186.0-clarity-de` off lane `a9a2df3`. Ports the SUBSTANTIVE
   0.186.0 work from the conflicting draft PR #111 (commits 16dd061 test + f3ce6d7 fix) onto the current lane:
   Forge-offer + first-fight readability, edge-to-edge insets, the German store-listing DATA (store-de-DE.json),
   l10n catalog + interface.json, and the release_clarity regression test. (title_screen.dart hunk already on the
@@ -6730,4 +6729,70 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   feel_pregate 5/5, spoken_badge 8/8, burn_chip_death 4/4 (its first two local runs died in setUpAll — the
   known one-core loader artifact; third run green).
 - Backlog: C1-02 and C0-03 → fixed_pending_review (this build); C1-06 → fixed_pending_review (PR #122).
+- ASSUMED until CI: the full suite on 3.44.9.
+
+## 2026-10-03 — the victory moment reads as one word (iteration 15, C4-01)
+- Branch `feat/victory-moment-20261003` off the lane at fa60db2 (#124 merged, lane CI 37110238481 analyze+test and
+  37110238384 ios green — VERIFIED).
+- First, iteration 14's independent read-only review (fresh context, range 7ef6aed..fa60db2, evaluation.json):
+  **PASS** — VERIFIED red→green for all three rebuilt tests on 7ef6aed's code, the regression set green, analyze
+  clean, every finding of the #121 review fixed, boundaries clean (lib/sim untouched, no secrets, c0ce642 in my
+  identity). Three minor findings, none blocking; triaged, deferred and listed here so they are not lost:
+  1. the last-resort "squeezed" path can still draw a call-out under 12 sp with large system text (320x640 at
+     1.3x: 11.95 sp; 360x800 at 2.0x: 10.2 sp); 320x568 is unaffected (the HUD caps text scale there);
+  2. a stage call-out alive when ROLL shrinks the stage can vanish (320x568) or jump 23 px up (320x640 — the
+     old code does the same); the tests' jump check only flags sideways or downward moves;
+  3. the opaque help pill sits in the stage's top call-out band and can hide a live stage call-out (FREE
+     REROLL covered in 69 of 101 frames at 360x800 and 412x915).
+- Root cause of C4-01 (VERIFIED with a probe on the real run-ending kill — seed 6, boss fixture): the banner was
+  centred in the stage at a fixed 34 sp, under every other stage readout. The rolled 320x568 stage is 272x86 with
+  both actors standing in all of it, so the 188 px banner covered the delver's sword arm (+600, +840..1200 ms) and
+  the killing blow's "-5" printed across it (+560..960). At 360x800 and 412x915 "+5 EMBERS — EXACT!", FREE
+  REROLL NEXT TURN and STRAIGHT! stayed up through the banner, and at 360x800 its corner touched the delver's
+  raised weapon at +1200.
+- What I changed (presentation only; lib/sim untouched):
+  - From the banner's first frame the stage's transient readouts — call-outs (the kill-readout line included),
+    damage numbers, the help pill — are gone at once, so nothing is ever drawn across the banner; the tray lane's
+    call-outs (never under it) fade out over 150 ms, instantly under Reduce Motion. Nothing new is called out or
+    explained after it, and the call-out queue is dropped. The burn chip and the intent badge already leave with
+    the slain foe (C1-05, C0-03).
+  - The banner is placed by rect (`VictoryBeat.place`): centred in the free band above both actors' heads (stage
+    top + 8 dp down to the bodies' tops − 4 dp), its font stepped from 34 down to 22 sp until it fits; failing
+    that, above the delver short of the boss; failing that, beside the delver over the boss's dissolving spot. The
+    delver's keep-out (`VictoryBeat.heroEnvelope`) covers the figure and its weapon box through the raised-weapon
+    pose (lift 10 dp, tilt 0.08 rad about the feet, ease-out-back overshoot) plus the last of the step back from
+    the lunge. Result: 34 sp above both heads at 360x800 and 412x915; 28 sp beside the delver at the rolled
+    320x568, which has no band above the heads.
+  - Spec note: the critic's direction fades everything over 150 ms, but its acceptance checks +600 ms, which in
+    this harness is 40 ms after the banner lands — a 150 ms fade would leave "-5" at ~73 % opacity on the banner
+    there. So the stage clears on the banner's first frame and only the tray lane fades.
+- VERIFIED red before green: new test/victory_moment_test.dart — 3 sizes x normal / Reduce Motion, every 40 ms
+  frame to +1200 ms: nothing visible (opacity > 0.1) crosses the banner from its first frame; at +600, +1200 and
+  every frame after its intro the banner is off the delver's figure + weapon box, inside the stage, >= 22 sp
+  (font x every scale it is drawn at); from 150 ms + one frame after it lands no call-out, damage number, help
+  pill, status chip or intent badge is visible and no other text sits in the stage. It asserts the pile-up's
+  ingredients were really on screen first (call-outs, burn chip, the blow's number). On fa60db2's code (separate
+  worktree): 6/6 fail for exactly those reasons. Now 6/6 green.
+- test/victory_beat_test.dart: +6 placement unit tests (full size above both heads; steps down to 28 sp in a
+  50 dp band; above the delver beside a tall boss; the rolled 320x568 stage → beside the delver; nowhere clear →
+  22 sp, never smaller; the keep-out covers the measured pose). Its C2-02 checks are unchanged and green (11/11).
+  The keep-out test caught my first envelope 0.03 dp short of the pose's peak (the tilt pivots on the figure's
+  feet, so the weapon box's far corner rises 0.6 heroH·sin(tilt), not 0.5); fixed in the envelope, not the test.
+- VERIFIED plates (headless, shipped fonts, precached art — not a device): new tool/victory_moment_frames_test.dart
+  writes build/victory_moment/<size>[_reduced]_t0600/0640/0800/1200. fa60db2 vs this build: from +800 only
+  "VICTORY!" and the HUD remain; at 320x568 the banner sits clear of the delver over the boss's ashes.
+- VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): `flutter analyze` "No issues found!"; serial
+  regression set green — victory_moment 6/6, victory_beat 11/11, boss_kill_moment 6/6, boss_death_drain 1/1,
+  boss_death_ember 2/2, kill_readout 8/8, callout_lane 25/25, tray_readout 3/3, readout_lanes 11/11,
+  hero_pop_clearance 3/3, combat_bodies 21/21, combat_contact_timeline 12/12, spoken_badge 8/8, eighth_cycle 7/7
+  (four files needed a second run after the known one-core loader artifacts — "did not complete" in setUpAll or
+  "Shell subprocess crashed with segmentation fault" while loading; no test failed on an assertion).
+- DEMAND.md 2026-09-02L: removed the assistant-author tags from the iteration 10–12 entries above (the iteration 13
+  entry still records that those were made under an assistant identity).
+- DEMAND.md 2026-09-02L.4 confirmation, VERIFIED after this commit: `git log -1 --format='%an <%ae> | %cn <%ce>'`
+  → "Tapiwa Makandigona <tapiwamakandigoner@gmail.com> | Tapiwa Makandigona <tapiwamakandigoner@gmail.com>";
+  the directive's case-insensitive `git grep` for the assistant's name → 15 lines, none naming an author: 5 are
+  DEMAND.md's own directive text, 10 are older notes naming the app an owner request came through, or describing
+  that same identity check.
+- Backlog: C4-01 → fixed_pending_review.
 - ASSUMED until CI: the full suite on 3.44.9.

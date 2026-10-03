@@ -244,6 +244,20 @@ class _CombatScreenState extends State<CombatScreen> {
   // that just goes still until the summary.
   bool _victoryBeat = false;
 
+  /// C4-01: the run-ending kill reads as one word. From the victory
+  /// banner's first frame the stage's transient readouts — call-outs (the
+  /// kill-readout line included), damage numbers and the help pill — are
+  /// gone at once, so nothing is ever drawn across the banner; the tray
+  /// lane's call-outs (never under it) fade out over [fade], instantly under
+  /// Reduce Motion. Status chips and the intent badge already leave with the
+  /// slain foe (C1-05, C0-03). Nothing new is called out after it (_note).
+  Widget _victoryClear(Widget child, {Duration fade = Duration.zero}) =>
+      AnimatedOpacity(
+        opacity: _victoryBeat ? 0 : 1,
+        duration: Motion.instance.reduced ? Duration.zero : fade,
+        child: child,
+      );
+
   // C1-01: set the frame a blow/turn ends the encounter — the tray and the
   // action zone dim and stop taking taps until the screen moves on.
   bool _encounterOver = false;
@@ -567,7 +581,8 @@ class _CombatScreenState extends State<CombatScreen> {
     IconData? icon,
     bool onEnemy = false,
   }) {
-    if (!mounted) return;
+    // C4-01: the victory banner owns the moment.
+    if (!mounted || _victoryBeat) return;
     // LFP-5: while fast-forwarding, call-outs hold 1s instead of 2s — same
     // information, matched pacing (the plan's "call-outs to 1s").
     final life = _resolving && _ffwd > 0
@@ -730,7 +745,7 @@ class _CombatScreenState extends State<CombatScreen> {
   /// C1-02: explanations are help, not combat call-outs — an opaque pill
   /// that wraps instead of a one-line call-out squeezed under 12 sp.
   void _explain(String text, {required Color color, IconData? icon}) {
-    if (!mounted) return;
+    if (!mounted || _victoryBeat) return;
     _fxUpdate(
       () => _help = _Help(_helpId++, text, color, icon, life: _noteLife),
     );
@@ -949,7 +964,8 @@ class _CombatScreenState extends State<CombatScreen> {
       // C2-02: the run-ending kill's banner lands with the blow.
       if (events.any((e) => e['type'] == 'run_won')) {
         _choreo(() => _victoryBeat = true);
-        _fxTick.value++;
+        // C4-01: and nothing still waiting for a slot lands after it.
+        _fxUpdate(_noteQueue.clear);
       }
       await _sleep(const Duration(milliseconds: 260));
       if (!mounted) return;

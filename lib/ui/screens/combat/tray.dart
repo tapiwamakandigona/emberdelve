@@ -202,19 +202,24 @@ extension _CombatTrayBand on _CombatScreenState {
                         top: at.box.top,
                         width: at.box.width,
                         height: at.box.height,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: TextPop(
-                            key: ValueKey('note-${n.id}'),
-                            text: n.text,
-                            color: n.color,
-                            icon: n.icon,
-                            fontSize: _CombatScreenState._trayNoteSize,
-                            duration: n.life,
-                            rise: at.rise,
-                            overshoot: at.overshoot,
-                            onDone: () => _fxUpdate(() => _retire(n)),
+                        // C4-01: on the victory banner's first frame the
+                        // lane fades out (it is never under the banner).
+                        child: _victoryClear(
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: TextPop(
+                              key: ValueKey('note-${n.id}'),
+                              text: n.text,
+                              color: n.color,
+                              icon: n.icon,
+                              fontSize: _CombatScreenState._trayNoteSize,
+                              duration: n.life,
+                              rise: at.rise,
+                              overshoot: at.overshoot,
+                              onDone: () => _fxUpdate(() => _retire(n)),
+                            ),
                           ),
+                          fade: VictoryBeat.clear,
                         ),
                       ),
                 ],
