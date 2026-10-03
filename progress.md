@@ -6237,3 +6237,20 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   planner (lib/ui/readout_lanes.dart, pinned by readout_lanes_test/kill_readout_test) puts it over
   the foe on purpose and short stages have no room above the badge. ASSUMED acceptable now that
   the number reads on white; the critic decides.
+
+### Iteration 8 — CI and independent review (logged 2026-10-03 01:34 UTC)
+- VERIFIED CI run 37086198639 on `feat/damage-number-ink-20261003`: 1600 tests passed, 2 failed —
+  `shorter_title_test` 412x915 and `marked_week_test`, the two already red on the lane itself
+  (title fix is PR #113; the marked_week correction still waits on the owner). iOS job 37086198555
+  still running at write time. PR #119 opened against `legacy/dice-builder`; NOT merged, because the
+  lane's own CI is red.
+- VERIFIED independent read-only review (ultra, fresh context, range 535029b..18c306c): PASS, 0
+  findings. It restored the old lib/ui/fx.dart in a temp copy and saw the new test fail 4/4
+  (1.84:1 and 1.54:1 matched exactly), ran analyze and the full suite (+1600 -2, the known two),
+  re-rendered the boss strips and read the "-5" rim on t0480, and checked identity, lib/sim and the
+  absence of any banned string.
+- Review notes carried forward (non-blocking): C2-04's rect half has no test — the critic should
+  rule on it rather than close the item; the outline paints ~2 dp (shadow ~3 dp + blur) outside
+  the measured text box, about the same overflow as the old blur-4 halo; the C2-03 re-measurement
+  added no artifact of its own (the behaviour is already pinned by
+  test/combat_contact_timeline_test.dart from 92373ee).
