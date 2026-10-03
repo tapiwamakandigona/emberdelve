@@ -322,6 +322,15 @@ void main() {
   // measured on the kindler only. The same blow, banner and checks for every
   // other playable delver, at every size, in normal and reduced motion.
   group('every delver', () {
+    // Seed 6 rolls no opening call-out with these delvers' dice (measured
+    // in the 0.186.0 review), so only their cases skip the pile-up check.
+    const noOpeningCallout = {
+      'runesmith',
+      'bearer',
+      'cutler',
+      'stoker',
+      'miller',
+    };
     for (final character in charactersOrder.skip(1)) {
       for (final reduced in const [false, true]) {
         for (final size in const [
@@ -338,7 +347,7 @@ void main() {
               size: size,
               reduced: reduced,
               character: character,
-              requireCallouts: false,
+              requireCallouts: !noOpeningCallout.contains(character),
             ),
           );
         }

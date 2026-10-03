@@ -61,7 +61,11 @@ class VictoryBeat extends StatefulWidget {
   );
 
   /// The banner keeps this far inside the stage's edges (critic: stage top
-  /// + 8 dp) and [gap] off either body's box (critic: bbox − 4 dp).
+  /// + 8 dp) and [gap] off either body's box (critic: bbox − 4 dp). One
+  /// exception: in a stage too short for the banner at [minFontSize] plus
+  /// both insets, [place] centres it in the stage's full height beside the
+  /// delver rather than draw it smaller (the gambler's 40 dp stage at
+  /// 320x568: about 2 dp above and below).
   static const double inset = 8;
   static const double gap = 4;
 

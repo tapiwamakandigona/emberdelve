@@ -12,6 +12,22 @@ area fitted and the banner fell back to the stage centre, on the gambler.
 vertical inset, before the centre. Presentation only: `lib/sim`, purchase,
 version and workflow are untouched. No build or release; Play stays on hold.
 
+A read-only review of that fix passed with minor findings, handled on the
+same branch (feature `REVIEW186-VICTORY-CRITIC-FOLLOWUPS`): a unit test now
+pins the short-stage fallback, and the every-delver cases require the
+opening call-outs except for the five delvers whose seed-6 roll shows none.
+Decisions:
+- In a stage too short for the 22 sp banner plus both 8 dp insets, the 22 sp
+  minimum wins over the inset (the gambler at 320x568: about 2 dp above and
+  below). Recorded at `VictoryBeat.inset`.
+- `stepBack` stays 0.15. The farthest measured reach, 0.114 heroH past the
+  envelope (11.9 dp at 104 dp), is inside the 4 dp gap plus the banner's
+  8 dp padding. Raising it would shrink the 320x568 banner area for every
+  delver; the every-delver test is the guard.
+- The test's delver box takes `figure-<id>` or `hero-<id>`, as the
+  acceptance says. A renamed `figure-<id>` on a rigged delver would fall
+  back to the sprite box instead of failing. Noted, not changed.
+
 ## October 3 — 0.186.0 "Clear Choices" release (owner-authorised)
 
 Current scoped state: `docs/release-0.186.0/PROJECT.md`, `features.json` and

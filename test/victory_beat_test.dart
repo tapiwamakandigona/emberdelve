@@ -298,6 +298,37 @@ void main() {
       inside(at.rect, stage);
     });
 
+    test('a stage too short for the inset: beside the delver at 22 sp', () {
+      // The gambler's rolled 320x568 stage is 40 dp, not 86 (0.186.0
+      // review): no area holds the banner at 22 sp inside the 8 dp inset.
+      // The band beside the delver is wide enough, so the banner goes there
+      // at 22 sp, centred in the stage's full height (the 22 sp minimum wins
+      // over the inset; about 2 dp above and below, as for the gambler), and
+      // never on the delver. The old fallback centred it on the delver.
+      const stage = Size(272, 44);
+      final hero = VictoryBeat.heroEnvelope(floorY: 36, heroH: 72);
+      const foe = Rect.fromLTWH(176, -60, 96, 96);
+      final min = box(VictoryBeat.minFontSize);
+      expect(
+        min.height,
+        greaterThan(stage.height - 2 * VictoryBeat.inset),
+        reason: 'the stage is too short for the banner plus both insets',
+      );
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'beside');
+      expect(at.fontSize, VictoryBeat.minFontSize);
+      expect(at.rect.size, min);
+      expect(at.rect.left, greaterThanOrEqualTo(hero.right + VictoryBeat.gap));
+      expect(at.rect.overlaps(hero), isFalse);
+      expect(at.rect.center.dy, closeTo(stage.height / 2, 0.01));
+      inside(at.rect, stage);
+    });
+
     test('nowhere clear: 22 sp in the middle, never smaller', () {
       const stage = Size(150, 40);
       final hero = VictoryBeat.heroEnvelope(floorY: 32, heroH: 30);

@@ -63,3 +63,30 @@ Feature `REVIEW186-VICTORY-EVERY-DELVER`, branch
   reachable cascade clears the ceiling."; `python3 tool/art/build_delvers.py
   --check` `"check": "pass"`.
 - ASSUMED: how it looks on a phone. Nothing was run on a device.
+
+## 2026-10-03 18:25 UTC — review of the every-delver fix: follow-ups
+
+- A read-only review of 38b0958..939f25b (PR #128) returned PASS: no
+  blocking or major findings. Its three minor findings for this repo are
+  handled here (feature `REVIEW186-VICTORY-CRITIC-FOLLOWUPS`).
+- VERIFIED red→green: a new unit test in test/victory_beat_test.dart, "a
+  stage too short for the inset: beside the delver at 22 sp", pins the
+  short-stage fallback directly (area beside, 22 sp, inside the stage,
+  centred in its height, clear of the delver). Against the 0.186.0
+  `place()` it failed: "Expected: beside Actual: centre".
+- VERIFIED: the every-delver cases now require the opening call-outs for
+  the 16 delvers whose seed-6 roll shows them. With the exemption list
+  emptied, exactly the 30 cases of runesmith, bearer, cutler, stoker and
+  miller failed ("00:40 +96 -30", reason "the opening roll's call-outs are
+  up"); with the list, all pass.
+- Docs: the `VictoryBeat.inset` doc comment and PROJECT.md record that in a
+  stage too short for the 22 sp banner plus both insets, 22 sp wins over
+  the 8 dp inset (the gambler at 320x568: about 2 dp above and below), and
+  why `stepBack` stays 0.15. No production logic changed in this step.
+- Gate, VERIFIED: targeted "00:43 +169: All tests passed!" (victory_beat,
+  victory_moment, callout_lane); `flutter analyze` "No issues found!"; full
+  `flutter test` "02:32 +1799: All tests passed!"; `python3
+  tool/sfx_headroom.py` "Every reachable cascade clears the ceiling.";
+  `python3 tool/art/build_delvers.py --check` `"check": "pass"`; `dart
+  format` 0 changed.
+- ASSUMED: how it looks on a phone. Nothing was run on a device.
