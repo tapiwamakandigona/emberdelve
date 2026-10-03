@@ -6371,3 +6371,52 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   4. When the drain starts, the wrapper type changes, so the enemy sprite subtree rebuilds;
      no glitch in the strips (sprites precached); device unverified.
   5. C4-05 (crawler re-dress in the strips) still open.
+
+## 2026-10-02 — games pass iteration 4: the hit shake moves the stage, not the HUD (C4-04)
+- Logged at 2026-10-02 21:39 UTC. Branch feat/stage-only-shake-20261002 off legacy/dice-builder @ 535029b
+  (independent of PRs #112-#114; touches a different part of combat_screen.dart).
+- Baseline (local, Flutter 3.44.9): analyzer clean; the same 2 known lane failures only
+  (marked_week_test, shorter_title_test 412x915). VERIFIED from the run log.
+- Change: the screen shake on a landed hit and on a boss kill used to translate the whole
+  combat screen, so the gold/embers bar, enemy panel, HP bar and tray jumped with every blow
+  and the boss kill pulled the top bar off the right screen edge. The ShakeBox now wraps only
+  the stage band (fighters + cavern backdrop). A plain RepaintBoundary stays at the screen
+  root where the old shake's boundary was, so the screen keeps the same layer layout.
+  Files: lib/ui/screens/combat_screen.dart, a comment in lib/ui/fx.dart. lib/sim untouched.
+- VERIFIED red -> green: new test/stage_only_shake_test.dart (360x800 and 412x915) lands the
+  foe's real blow through End turn and samples every 20 ms. Old code: top-bar pip and enemy
+  name drift on 12 frames, up to 6.73 px. New code: 0 drift; the HP bar and buttons sit outside
+  the shaken subtree; the shake still plays (>= 5 frames, > 2 px). Mutation: shake amplitude
+  set to 0 -> the test fails ("the hit must still shake the stage", Actual 0.0).
+- VERIFIED, and recorded honestly: test/windup_heat_test.dart failed (empty-area redness rise
+  6.5, limit < 6) with the first cut, which moved the shake but dropped the whole-screen
+  RepaintBoundary. That probe captures the largest repaint boundary above the foe; without the
+  root layer it captured the route layer with the opaque purple backdrop instead of the
+  transparent screen layer. The real frame does not change; restoring the root
+  RepaintBoundary (no test edit) made it green again (5.5 -> 0.5 absolute redness in the probe).
+- VERIFIED: full suite 1598 passed + the 2 known lane failures; analyzer clean.
+- VERIFIED render (flutter_test strips, tool/boss_kill_frames_test.dart, test fonts, not a
+  device): best-match offset vs t1600 for the top bar and tray over t0440-t0840 of both normal
+  boss strips — before: off on 8 of 11 frames (up to 12,8 px @2x at t0640); after: 0,0 on 11 of
+  11. I looked at t0640 side by side: before the whole screen is shifted with a dark sliver at
+  the right edge; after only the stage panel moves.
+- ASSUMED: feel on a phone. The stage band's own edge now moves up to ~6 dp inside its padding.
+
+## 2026-10-02 — iteration 4 follow-up: CI and the independent read-only review (C4-04, PR #115)
+- VERIFIED CI run 37068148694 on 9a38aee (pull_request, PR #115): exactly two failures,
+  test/marked_week_test.dart and test/shorter_title_test.dart 412x915 — the lane's own known
+  reds. The new test/stage_only_shake_test.dart and test/windup_heat_test.dart both pass on CI.
+  The ios job (37068148696) was still running when this was written.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..9a38aee: verdict PASS, no findings. It re-ran analyze (clean), the full suite
+  (1598 pass + the 2 known), reverted combat_screen.dart/fx.dart in a temp copy and saw the
+  new test fail there (12 frames of drift, up to 6.73 px), and swapped the root RepaintBoundary
+  for a KeyedSubtree in another temp copy and saw windup_heat_test fail at 6.5 — confirming
+  that boundary is a real layer-tree restoration, not a test workaround. It also re-rendered
+  the boss strips: top bar and tray unchanged on every sampled frame, the only enemy-panel
+  change is the HP bar draining, and no background sliver at either screen edge (the one
+  right-edge change at t0560 is the boss's floor shadow, which is stage content).
+- Reviewer notes (non-blocking, recorded for the next pass): root-Stack overlays (boss-kill
+  flash, name plate, tour, tips) no longer shake, which is intended; the stage band can now
+  paint a few px past its own vertical edge, hidden by the vitals band which paints later.
+- NOT merged: the lane's own CI is red, so nothing can merge today.

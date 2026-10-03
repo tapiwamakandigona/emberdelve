@@ -1372,7 +1372,15 @@ class _CombatScreenState extends State<CombatScreen> {
       children: [
         _band(_runBand, (context, h) => _TopBar(widget.c)),
         _band(_enemyBand, _enemyPanel),
-        Expanded(child: _band(_stageBand, _stageSection)),
+        // C4-04: only the stage (fighters + cavern backdrop) shakes. The
+        // top bar, the enemy panel, the HP bar and the tray hold still, so
+        // the UI never looks loose and no screen edge is ever exposed.
+        Expanded(
+          child: ShakeBox(
+            key: _shakeKey,
+            child: _band(_stageBand, _stageSection),
+          ),
+        ),
         _band(_vitalsBand, _playerVitals),
         SizedBox(height: compact ? Space.s : Space.m),
         _band(_diceBand, (c, h) => _inertIfOver(_traySection(c, h))),
@@ -1390,8 +1398,11 @@ class _CombatScreenState extends State<CombatScreen> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: _fastForwardTap,
-        child: ShakeBox(
-          key: _shakeKey,
+        // The full-screen layer the old whole-screen shake used to provide
+        // (C4-04 moved the shake onto the stage). Kept so the screen
+        // composites exactly as before: the overlays above still sit on one
+        // cached layer, and the pixel probes that read it are unchanged.
+        child: RepaintBoundary(
           child: Stack(
             key: _rootKey,
             fit: StackFit.expand,
