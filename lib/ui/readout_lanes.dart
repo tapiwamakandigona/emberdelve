@@ -457,14 +457,75 @@ class ReadoutLanes {
     );
   }
 
-  /// Hero number: over the hero, rising as far as the stage and the other
-  /// reservations allow. Returns (placement, clean).
+  /// C1-06: the hero's hit number keeps this much air from the delver's box,
+  /// so the number and the hit reaction never share pixels.
+  static const double heroClearance = 6;
+
+  /// Hero number. Returns (placement, clean).
+  ///
+  /// C1-06: the number must not sit ON the delver — the hit reaction (white
+  /// beat, jolt, red tint) plays there. It goes ABOVE the head when the stage
+  /// has room (the round-0 look), else BESIDE the delver on the fight side,
+  /// each clear of the body by [heroClearance] and kept on the stage (the
+  /// number drifts left, toward the delver at the stage's left edge). Only a
+  /// stage with no room off the body falls back to the old over-the-chest
+  /// zone, which is unchanged and still plans clean exactly as before.
   static (ReadoutPlacement, bool) _heroZone(
     StageGeometry g,
     Size pop,
     List<Rect> avoid,
   ) {
     final body = g.heroBody;
+    final offBody = [...avoid, body.inflate(heroClearance)];
+    // [_clear] pads both rects by gap/2, so a sweep must keep this far from
+    // the body's edge to pass the [offBody] check.
+    const apartBy = heroClearance + gap;
+    // 1) Above the head, rising as far as the stage and the slots allow. The
+    //    resting box is lifted until its WHOLE sweep (pop-in growth included)
+    //    ends above the head.
+    for (final rise in _popRisesBeside) {
+      var p = _heroPlacement(
+        g,
+        Rect.fromLTWH(
+          body.center.dx - pop.width / 2,
+          body.top - pop.height,
+          pop.width,
+          pop.height,
+        ),
+        rise,
+      );
+      final up = p.swept.bottom - (body.top - apartBy);
+      if (up > 0) p = _heroPlacement(g, p.box.shift(Offset(0, -up)), rise);
+      if (_onStage(p.swept, g.stage) && _clear(p.swept, offBody)) {
+        return (p, true);
+      }
+    }
+    // 2) Beside the delver on the fight side: chest height, lower, then
+    //    hugging the floor (short stages keep their top for call-outs).
+    for (final rise in _popRisesBeside) {
+      for (final lift in const [0.45, 0.30, 0.15, -1.0]) {
+        var box = Rect.fromLTWH(
+          body.right,
+          body.bottom - body.height * lift - pop.height,
+          pop.width,
+          pop.height,
+        );
+        if (lift < 0) {
+          final probe = sweptPop(box, rise, DamagePop.defaultDrift, true);
+          box = box.shift(Offset(0, g.stage.height - probe.bottom));
+        }
+        // It drifts LEFT (toward the delver): push the resting box right
+        // until the whole sweep clears the body.
+        var p = _heroPlacement(g, box, rise);
+        final push = body.right + apartBy - p.swept.left;
+        if (push > 0) p = _heroPlacement(g, p.box.shift(Offset(push, 0)), rise);
+        if (_onStage(p.swept, g.stage) && _clear(p.swept, offBody)) {
+          return (p, true);
+        }
+      }
+    }
+    // 3) No room off the body: the old zone, unchanged — over the chest, then
+    //    lower, then hugging the floor.
     ReadoutPlacement? first;
     for (final rise in _popRisesBeside) {
       // Over the chest, then lower, then hugging the floor (short stages
@@ -493,4 +554,30 @@ class ReadoutLanes {
     }
     return (first!, false);
   }
+
+  /// A hero-number placement resting at [box], shifted right if its leftward
+  /// drift would carry it past the stage's left edge (C1-06).
+  static ReadoutPlacement _heroPlacement(
+    StageGeometry g,
+    Rect box,
+    double rise,
+  ) {
+    var b = box;
+    var swept = sweptPop(b, rise, DamagePop.defaultDrift, true);
+    if (swept.left < 0) {
+      b = b.shift(Offset(-swept.left, 0));
+      swept = sweptPop(b, rise, DamagePop.defaultDrift, true);
+    }
+    return ReadoutPlacement(
+      box: b,
+      rise: rise,
+      drift: DamagePop.defaultDrift,
+      swept: swept,
+    );
+  }
+
+  /// [_inside] plus the horizontal bounds, for zones that must not slide off
+  /// either side of the stage.
+  static bool _onStage(Rect r, Size stage) =>
+      _inside(r, stage) && r.left >= -0.5 && r.right <= stage.width + 0.5;
 }

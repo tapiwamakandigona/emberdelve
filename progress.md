@@ -6612,3 +6612,25 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Open PRs left on the repo: #111 (draft 0.186.0 prep — cherry-pick source only) and
   #102 (critique). Next: continue the backlog pin (C0-03 / C1-02 / C4-01 call-out pile-ups,
   C1-06, C4-05), then the 0.186.0 release per the program's release step.
+
+## 2026-10-03 — C1-06: the hero's damage number clears the delver (iteration 11)
+- By Viktor (AI, honest authorship). Branch `feat/c1-06-hero-number-clearance` off lane `a9a2df3`.
+- DIAGNOSIS (VERIFIED): `ReadoutLanes._heroZone` placed the hero's hit number OVER the delver's body by
+  design (chest, lower, floor). New test/hero_pop_clearance_test.dart plays a real enemy turn (seed-1, no
+  block) and was RED at 320x568 / 360x800 / 412x915 — the "-N" glyphs sat on the delver sprite.
+- FIX: two new candidate passes BEFORE the unchanged legacy zone — (1) above the head, (2) beside the delver on
+  the fight side — each clear of the body by `heroClearance` (6 dp) and kept on the stage horizontally (the
+  number drifts left, toward the left-edge delver; `_inside` only checks vertical bounds, so added `_onStage`).
+  The legacy over-body zone is kept verbatim as the last resort, so plan cleanliness can only increase.
+- First attempt was a no-op (VERIFIED by identical rects): every new candidate was rejected because the pop-in
+  overshoot grows the sweep past the clearance line and `_clear` pads both rects by gap/2. Fixed by positioning
+  each candidate on its SWEPT edge (`apartBy = heroClearance + gap`).
+- VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): hero_pop_clearance_test RED -> GREEN at all three
+  sizes (asserts a number was actually seen); `flutter analyze` clean; serial regression set — readout_lanes,
+  kill_readout, enemy_dash, combat_bodies, boss_kill_moment, hero_pop_clearance — 53 pass; exact_kill_clean_cut
+  3/3 alone (its batch "loading" failure is the local isolate artifact).
+- Planner probe on the MEASURED ROLLED stages: ABOVE at 412x915, BESIDE at 360x800. CAVEAT: the tightest rolled
+  stages (320x568 = 86 px, 320x640 = 158 px) still fall back to the old on-body zone (6 px headroom; the floor
+  gap is reserved for the foe's own number). The real enemy-turn flow passes at 320x568 because the stage is
+  taller after End turn — but a hero hit landing while the stage is at its tightest rolled height would still
+  use the old zone. Clearing that needs a reservation trade-off (owner/critic call).
