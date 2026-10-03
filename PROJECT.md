@@ -10,6 +10,9 @@ builds must use a version name above 0.186.0 and a code above 219.
 Simulation, store/entitlement, signing, workflow and dependency code is
 unchanged; only the Forge offer's presentation changed (#123). The one test
 correction (marked_week_test) was authorised on 2026-10-03. Physical-device and real purchase/restore gates remain open.
+Published on GitHub as v0.186.0, the latest release (2026-10-03 14:47 UTC, tag
+→ `2a553ad`), with independently verified APKs and AAB. The Play upload is on
+hold (2026-10-03 14:33 UTC); AAB 219 is attached to the release.
 
 ## September 27 — 0.185.0 "Living Foes" release (owner-authorised)
 

@@ -57,5 +57,6 @@ and de-DE notes.
 
 ## Current phase
 
-release — packaging, then the signed build, the GitHub publication and the
-Play edit.
+released on GitHub — v0.186.0 is the latest release (2026-10-03 14:47 UTC,
+tag → `2a553ad`), with the verified AAB 219 attached. The Play edit is on hold
+by my decision of 2026-10-03 14:33 UTC.

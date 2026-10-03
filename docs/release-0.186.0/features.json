@@ -6,32 +6,32 @@
       "title": "Correct source, version and prior release state",
       "acceptance": "The release commit descends from v0.185.0 (c08a0d5). The diff against c08a0d5 leaves lib/sim, lib/meta, lib/game, android/, ios/, .github/, assets/ and pubspec.lock unchanged, and pubspec.yaml changes only its version line. No test assertion is removed or loosened, except the owner-authorised marked_week_test correction. versionCode 219 is not used by any GitHub release. /releases/latest before publishing is v0.185.0.",
       "verify": "git merge-base --is-ancestor c08a0d5 <release>; git diff --name-only c08a0d5 <release> -- lib/sim lib/meta lib/game android ios .github assets pubspec.lock; git diff c08a0d5 <release> -- pubspec.yaml; git diff --numstat c08a0d5 <release> -- test; GitHub releases API",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED 2026-10-03 (read-only review of fa60db2..2a553ad, PASS): `git merge-base --is-ancestor c08a0d5 2a553ad` exit 0; `git diff --name-only c08a0d5 2a553ad -- lib/sim lib/meta lib/game android ios .github assets pubspec.lock` empty; pubspec.yaml diff is only `0.185.0+218` -> `0.186.0+219`; test numstat 15 files: 12 new + victory_beat_test +114/-0 (0 deletions), marked_week_test 8/2 (the authorised correction), readout_lanes_test 149/13 (API move, reviewed: no weakened assertion). Before publishing, /releases/latest was v0.185.0 and no release or tag used 0.186 or code 219."
     },
     {
       "id": "REL186-CHECKS",
       "title": "Analyzer, full suite, SFX headroom and iOS green on the exact release commit",
       "acceptance": "The CI job 'Analyze + test (headless)' succeeds on the release commit: flutter analyze is fatal on warnings, the full flutter test suite runs, and tool/sfx_headroom.py passes. The iOS workflow succeeds on the same commit. The packaging commit edits no test or check.",
       "verify": "GitHub Actions runs on the release commit: job conclusions plus the test totals in the log; git diff --name-only <lane before packaging> <release> -- test tool .github",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED: on release commit 2a553ad, push CI 37114294396 ('Analyze + test (headless)': `No issues found!`, `1672 tests passed.`, sfx_headroom `Every reachable cascade clears the ceiling.`) and ios 37114294397 both success; the same on PR head 41b8695 (37113816006/37113816012). `git diff --name-only c90c520 2a553ad -- test tool .github` is empty."
     },
     {
       "id": "REL186-BINARY",
       "title": "Versioned, signed artifacts from the CI workflow_dispatch run",
       "acceptance": "The signed CI job is green, and its in-CI apksigner step prints cert SHA-256 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d for all four APKs. The downloaded universal APK and the 3 split APKs are com.tsorostudios.emberdelve, versionName 0.186.0, versionCodes 219/1219/2219/4219, not debuggable, signed by that certificate. The AAB is signed by the same certificate.",
       "verify": "gh run view <id> --log (Verify APK signing certificates step); gh run download <id>; independent manifest/signature check of the downloaded files; sha256sum",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED: signed workflow_dispatch run 37114318037 on 2a553ad, all jobs success; its 'Verify APK signing certificates' step prints 031acb42566a51d5b59ffd5deb173f1b0e817a9edff1bb6979f68564d44b7a0d for all four APKs. Downloaded artifacts checked independently (apksigner 37.0.0 verify, aapt2 badging, jarsigner -verify, bundletool 1.18.3 dump manifest): com.tsorostudios.emberdelve, versionName 0.186.0, versionCodes 219 (universal) / 1219 (armeabi-v7a) / 2219 (arm64-v8a) / 4219 (x86_64), AAB 219; minSdk 24, targetSdk 36; not debuggable; APKs v2-signed and AAB `jar verified.` by that certificate. SHA-256s are listed in progress.md and the v0.186.0 release body."
     },
     {
       "id": "REL186-GITHUB",
       "title": "GitHub v0.186.0 published as latest stable",
       "acceptance": "Release v0.186.0 exists with prerelease=false, and its tag points at the built commit. /releases/latest returns v0.186.0. The body lists the SHA-256 of every asset, and an asset downloaded without authentication matches its published SHA-256.",
       "verify": "GET /repos/tapiwamakandigona/emberdelve/releases/latest; git ls-remote --tags origin v0.186.0; curl -L (no token) the asset; sha256sum -c",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "VERIFIED 2026-10-03 14:47 UTC: https://github.com/tapiwamakandigona/emberdelve/releases/tag/v0.186.0 published, prerelease=false; unauthenticated GET /releases/latest -> v0.186.0; tag v0.186.0 -> commit 2a553ad7c0cf8c84d59fdad31f8b8482a40c3f9b (the built commit); body lists the SHA-256 of every asset; app-arm64-v8a-release.apk downloaded without authentication -> 68569264ad5b0536ed8dffd2ce0f62e51a36fecba6c90b169bbbca900a6f8c4b, matching, and emberdelve-SHA256SUMS byte-identical."
     },
     {
       "id": "REL186-PLAY",
@@ -39,7 +39,8 @@
       "acceptance": "Using the Play Developer API with the publishing service account, one edit uploads the hash-verified AAB 219. It sets internal, alpha and production (status completed) with the en-GB notes and the de-DE notes. The edit validates and commits. A readback of the tracks shows 219 on each one. It is not called live until Play shows it as available.",
       "verify": "androidpublisher v3 edits.insert / bundles.upload / tracks.update / edits.validate / edits.commit; then tracks.list readback",
       "passes": false,
-      "evidence": ""
+      "evidence": "Not done. 2026-10-03 14:33 UTC: I put Play on hold for now (\"no need for playstore now\"). The publishing service-account key is also not available to this session. AAB 219 is verified and attached to the GitHub release for when Play resumes.",
+      "blocked_reason": "Owner hold on Play work (2026-10-03 14:33 UTC); needs the publishing service-account key when resumed."
     }
   ]
 }
