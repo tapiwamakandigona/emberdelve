@@ -1,5 +1,16 @@
 # PROJECT.md — Emberdelve
 
+## October 3 — 0.186.0 "Clear Choices" release (owner-authorised)
+
+Current scoped state: `docs/release-0.186.0/PROJECT.md`, `features.json` and
+append-only `progress.md`. The map is `PLAN.md` (October 2026 pass). Source =
+the `legacy/dice-builder` lane: v0.185.0 (`c08a0d5`) plus PRs #112–#125 plus
+a version/news/docs-only packaging commit. Version **0.186.0+219**. Future
+builds must use a version name above 0.186.0 and a code above 219.
+Simulation, store/entitlement, signing, workflow and dependency code is
+unchanged; only the Forge offer's presentation changed (#123). The one test
+correction (marked_week_test) was authorised on 2026-10-03. Physical-device and real purchase/restore gates remain open.
+
 ## September 27 — 0.185.0 "Living Foes" release (owner-authorised)
 
 Current scoped state: `docs/release-0.185.0/PROJECT.md`, `features.json` and
