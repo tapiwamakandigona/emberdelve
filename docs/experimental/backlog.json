@@ -1091,7 +1091,7 @@
    "fix_direction": "Cap the white hold at ≤120 ms (3 frames at 40 ms), then over 160 ms lerp the silhouette from white to the sprite tinted ember orange (ColorFilter lerp), then start the dissolve from the tinted sprite. Reduced motion: no white; the sprite desaturates and fades over 300 ms. Presentation only.",
    "acceptance": "Boss strips (normal): ≤3 sampled frames with >10k px luma>235 in the boss rect, and ≥2 frames showing sprite pixels and dissolve particles together. Reduced strip: 0 frames with >2k px luma>235 in the boss rect.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 4,
    "critic_rank": 2,
    "rank_round": 4,
@@ -1100,6 +1100,18 @@
      "at": "2026-09-25T04:30:35+00:00",
      "round": 4,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-02T18:28:25+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/boss-death-ember-20261002",
+     "note": "white contact beat capped to the hit-stop, then a 160 ms crossfade to an ember-tinted body that the ashfall crumbles from; reduced motion: no white, colour drains. test/boss_death_ember_test.dart red on old code (11 white frames each mode), green on new"
+    },
+    {
+     "at": "2026-10-02T20:34:26+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/boss-death-desat-20261002",
+     "note": "reduced motion: the slain boss's colour now drains over ~300 ms from the hit-stop of the killing blow (was full colour ~400 ms, then grey in one frame), then the existing fade. test/boss_death_drain_test.dart red on old code (one-frame step 0.42 -> 0.05 of the colour), green on new"
     }
    ]
   },
