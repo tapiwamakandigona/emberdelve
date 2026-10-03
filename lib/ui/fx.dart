@@ -1225,3 +1225,92 @@ class _SmolderInState extends State<SmolderIn>
     );
   }
 }
+
+/// C1-02: a long-press / spoken explanation ("CHARGING 12 — DEAL 8 TO
+/// BREAK"). It is help the player asked for, or is being taught, so it
+/// never shrinks to fit one line the way a combat call-out squeezed into a
+/// slot used to (5–7 sp on a 320 dp phone): it wraps, up to three lines, at
+/// [fontSize] on an opaque pill, fading in and out over its [duration].
+class HelpPill extends StatefulWidget {
+  final String text;
+  final Color color;
+  final IconData? icon;
+  final Duration duration;
+  final VoidCallback onDone;
+  const HelpPill({
+    super.key,
+    required this.text,
+    required this.onDone,
+    this.color = EmberColors.textPrimary,
+    this.icon,
+    this.duration = const Duration(milliseconds: 2000),
+  });
+
+  /// Comfortably over the 12 sp floor; wraps instead of shrinking.
+  static const double fontSize = 13;
+  static const int maxLines = 3;
+
+  @override
+  State<HelpPill> createState() => _HelpPillState();
+}
+
+class _HelpPillState extends State<HelpPill>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _t = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+  )..forward().whenComplete(widget.onDone);
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _t,
+    builder: (context, child) {
+      final f = _t.value;
+      // Quick fade in, hold, fade out over the last 15% (a fade only, so it
+      // is the same under Reduce Motion).
+      final a = f < 0.06 ? f / 0.06 : (f > 0.85 ? (1 - f) / 0.15 : 1.0);
+      return Opacity(opacity: a.clamp(0.0, 1.0), child: child);
+    },
+    child: Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: EmberColors.raised,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: EmberColors.line),
+          boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 8)],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (widget.icon != null) ...[
+              Icon(
+                widget.icon,
+                size: HelpPill.fontSize + 3,
+                color: widget.color,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Flexible(
+              child: Text(
+                widget.text,
+                maxLines: HelpPill.maxLines,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextPop.styleFor(HelpPill.fontSize)
+                    .copyWith(color: widget.color, height: 1.25),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}

@@ -17,7 +17,7 @@ extension _CombatPlayerVitalsBand on _CombatScreenState {
           max: player['max_hp'] as int,
           block: player['block'] as int,
           color: EmberColors.hp,
-          label: 'YOUR HP',
+          label: _CombatScreenState._playerHpLabel,
         ),
       ),
     );

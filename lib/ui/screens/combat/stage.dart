@@ -593,37 +593,64 @@ extension _CombatStageBand on _CombatScreenState {
                               ),
                             ),
                           ),
-                        // Enemy-anchored call-outs: burn ticks, exact-kill,
-                        // overkill — each in its planned slot (C0-03).
-                        for (final n in _notes.where((n) => n.onEnemy))
-                          _placed(
-                            plan.placeNote(
-                              n.slot,
-                              TextPop.measure(
-                                n.text,
-                                fontSize: _enemyNoteSize,
-                                hasIcon: n.icon != null,
-                                textScaler: MediaQuery.textScalerOf(context),
+                        // Stage-lane call-outs (burn ticks, exact-kill,
+                        // overkill — and dice call-outs when the tray lane
+                        // is busy), each in its planned slot above the
+                        // actors' heads at >= 12 sp (C0-03 + C1-02). A slot
+                        // that vanished under a note (ROLL shrinks the
+                        // stage) simply stops drawing it.
+                        for (final n in _notes.where(
+                          (n) => n.lane == _NoteLane.stage,
+                        ))
+                          if (plan.placeNote(
+                                n.slot,
+                                _noteSize(
+                                  n.text,
+                                  icon: n.icon != null,
+                                  fontSize: _enemyNoteSize,
+                                ),
+                              )
+                              case final at?)
+                            _placed(
+                              at,
+                              (p) => FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: TextPop(
+                                  key: ValueKey('note-${n.id}'),
+                                  text: n.text,
+                                  color: n.color,
+                                  icon: n.icon,
+                                  fontSize: _enemyNoteSize,
+                                  duration: n.life,
+                                  rise: p.rise,
+                                  overshoot: p.overshoot,
+                                  onDone: () => _fxUpdate(() => _retire(n)),
+                                ),
+                              ),
+                              key: ValueKey('note-slot-${n.id}'),
+                              fitted: true,
+                            ),
+                        // C1-02: a long-press / spoken explanation — help,
+                        // not a combat read — on an opaque pill that wraps,
+                        // so it never shrinks below 12 sp to fit one line.
+                        if (_help case final help?)
+                          Positioned(
+                            key: ValueKey('help-slot-${help.id}'),
+                            left: Space.s,
+                            right: Space.s,
+                            top: Space.xs,
+                            child: IgnorePointer(
+                              child: HelpPill(
+                                key: ValueKey('help-${help.id}'),
+                                text: help.text,
+                                color: help.color,
+                                icon: help.icon,
+                                duration: help.life,
+                                onDone: () => _fxUpdate(() {
+                                  if (identical(_help, help)) _help = null;
+                                }),
                               ),
                             ),
-                            (p) => FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: TextPop(
-                                key: ValueKey('note-${n.id}'),
-                                text: n.text,
-                                color: n.color,
-                                icon: n.icon,
-                                fontSize: _enemyNoteSize,
-                                duration: n.life,
-                                rise: p.rise,
-                                overshoot: p.overshoot,
-                                onDone: () {
-                                  _fxUpdate(() => _notes.remove(n));
-                                },
-                              ),
-                            ),
-                            key: ValueKey('note-slot-${n.id}'),
-                            fitted: true,
                           ),
                         // Contact FX: weapon smear / claw rake / guard arc over the victim.
                         // Keyed at the Stack level: inserting a call-out or
@@ -731,7 +758,7 @@ extension _CombatStageBand on _CombatScreenState {
     );
   }
 
-  static const double _enemyNoteSize = 15;
+  static const double _enemyNoteSize = _CombatScreenState._stageNoteSize;
 
   /// A readout piece at its planned resting box (stage coordinates).
   /// Call-outs are fitted INTO the box (it may be a scaled-down band slot);
@@ -823,6 +850,7 @@ extension _CombatStageBand on _CombatScreenState {
       badgeSize.height,
     );
     final scaler = MediaQuery.textScalerOf(context);
+    _noteScaler = scaler;
     final longNote = TextPop.measure(
       'OVERKILL +3 → NEXT FOE',
       fontSize: _enemyNoteSize,
@@ -847,6 +875,7 @@ extension _CombatStageBand on _CombatScreenState {
       }(),
       noteHeight: longNote.height,
       typicalNoteWidth: longNote.width,
+      minNoteScale: ReadoutLanes.minNoteSp / _enemyNoteSize,
     );
     _readoutPlan = plan;
     return plan;
