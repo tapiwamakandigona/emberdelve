@@ -61,7 +61,11 @@ class VictoryBeat extends StatefulWidget {
   );
 
   /// The banner keeps this far inside the stage's edges (critic: stage top
-  /// + 8 dp) and [gap] off either body's box (critic: bbox − 4 dp).
+  /// + 8 dp) and [gap] off either body's box (critic: bbox − 4 dp). One
+  /// exception: in a stage too short for the banner at [minFontSize] plus
+  /// both insets, [place] centres it in the stage's full height beside the
+  /// delver rather than draw it smaller (the gambler's 40 dp stage at
+  /// 320x568: about 2 dp above and below).
   static const double inset = 8;
   static const double gap = 4;
 
@@ -135,6 +139,14 @@ class VictoryBeat extends StatefulWidget {
   /// ease-out-back overshoots by ~10 %. Measured on the shipped delver at
   /// 320x568, 360x800 and 412x915: x −0.084..1.0 heroH, rising up to 14.1 /
   /// 15.6 dp. Plus [stepBack].
+  ///
+  /// 0.186.0 review, all 22 playable delvers at the same three sizes, on the
+  /// frames test/victory_moment_test.dart checks (+600 ms, +1200 ms and every
+  /// frame after the intro): the box spans x −0.104..1.284 heroH and rises
+  /// at most 0.5 dp past the top. The farthest reach (gambler, ascetic,
+  /// cutler, glover) is 0.114 heroH past the right edge, 8.2 dp at 72 dp and
+  /// 11.9 dp at 104 dp, inside [gap] plus the banner's 8 dp padding; the
+  /// kindler's is 0.07 heroH.
   static Rect heroEnvelope({required double floorY, required double heroH}) {
     const overshoot = 1.1; // Curves.easeOutBack peaks at ~1.0999
     final rise =
@@ -154,9 +166,11 @@ class VictoryBeat extends StatefulWidget {
   /// its body dissolves under the banner (the rolled 320x568 stage is 86 dp
   /// with both actors standing in all of it). In the first area where the
   /// banner fits at [minFontSize] it takes the largest step of [fontSize]
-  /// down to [minFontSize] that fits, centred in that area. If none fits
-  /// (narrower than any supported phone) it is drawn at [minFontSize],
-  /// centred in the stage. [measure] gives the banner's box at a size.
+  /// down to [minFontSize] that fits, centred in that area. If none fits,
+  /// it is drawn at [minFontSize] in the band beside the delver without the
+  /// vertical inset when that band is wide enough (a stage shorter than the
+  /// banner plus both insets), else centred in the stage (narrower than any
+  /// supported phone). [measure] gives the banner's box at a size.
   static BannerPlacement place({
     required Size stage,
     required Rect hero,
@@ -205,6 +219,28 @@ class VictoryBeat extends StatefulWidget {
       }
     }
     final box = measure(minFontSize);
+    // A stage too short for the inset still has the band beside the
+    // delver: the gambler's rolled 320x568 stage is 40 dp, not 86, and
+    // centring there put the banner on the gambler (0.186.0 review).
+    // When the band is wide enough the banner is centred in it at
+    // [minFontSize], as tall as the stage allows.
+    final beside = Rect.fromLTRB(
+      hero.right + gap,
+      0,
+      stage.width - inset,
+      stage.height,
+    );
+    if (box.width <= beside.width) {
+      return BannerPlacement(
+        Rect.fromCenter(
+          center: beside.center,
+          width: box.width,
+          height: math.min(box.height, stage.height),
+        ),
+        minFontSize,
+        'beside',
+      );
+    }
     return BannerPlacement(
       Rect.fromCenter(
         center: Offset(stage.width / 2, stage.height / 2),

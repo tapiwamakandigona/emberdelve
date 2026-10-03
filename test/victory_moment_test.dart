@@ -24,7 +24,11 @@
 //     in either lane, damage number, help pill, status chip or intent badge
 //     is visible (opacity > 0.1), and no text but the banner sits in the
 //     stage: the moment reads "VICTORY!" plus the HUD numbers.
+// 0.186.0 review: the same blow and checks run for every other playable
+// delver at every size, and the delver's box lookup fails loudly when its
+// figure or weapon key is missing instead of skipping the check.
 // Nothing in lib/sim is touched.
+import 'package:emberdelve/data/characters.dart';
 import 'package:emberdelve/game/tour.dart';
 import 'package:emberdelve/sim/assignment.dart';
 import 'package:emberdelve/ui/fx.dart';
@@ -60,13 +64,26 @@ Rect? _boxOfKey(WidgetTester tester, String key) {
   return _screenBox(tester.renderObject(f.first) as RenderBox);
 }
 
-/// The delver's figure and its weapon, as one box.
-Rect? _heroBox(WidgetTester tester) {
-  Rect? out;
-  for (final k in const ['figure-kindler', 'hero-kindler', 'combat-weapon']) {
-    final r = _boxOfKey(tester, k);
-    if (r != null) out = out == null ? r : out.expandToInclude(r);
+/// The delver's figure and its weapon, as one box. A rigged delver draws a
+/// `figure-<id>` with its `hero-<id>` sprite and weapon inside; the others
+/// draw a `hero-<id>` sprite with the weapon beside it. Fails the test when
+/// the figure or the weapon is missing: a renamed key must not turn the
+/// banner-vs-delver check into a silent pass.
+Rect _heroBox(WidgetTester tester, String character) {
+  final figure = _boxOfKey(tester, 'figure-$character');
+  final sprite = _boxOfKey(tester, 'hero-$character');
+  final weapon = _boxOfKey(tester, 'combat-weapon');
+  if ((figure == null && sprite == null) || weapon == null) {
+    fail(
+      'no box for the delver $character: '
+      'figure-$character ${figure == null ? 'missing' : 'found'}, '
+      'hero-$character ${sprite == null ? 'missing' : 'found'}, '
+      'combat-weapon ${weapon == null ? 'missing' : 'found'}',
+    );
   }
+  var out = weapon;
+  if (figure != null) out = out.expandToInclude(figure);
+  if (sprite != null) out = out.expandToInclude(sprite);
   return out;
 }
 
@@ -143,6 +160,8 @@ Future<void> _victoryMoment(
   WidgetTester tester, {
   required Size size,
   required bool reduced,
+  String character = 'kindler',
+  bool requireCallouts = true,
 }) async {
   tester.view.physicalSize = size * 2;
   tester.view.devicePixelRatio = 2;
@@ -159,7 +178,7 @@ Future<void> _victoryMoment(
     ),
   );
   // Seed 6: the opening roll is a 3-4-5 straight (STRAIGHT! + FREE REROLL).
-  await toFight(tester, c, 6);
+  await toFight(tester, c, 6, character: character);
   await tester.tap(button('Roll'));
   for (var t = 0; t < 900; t += 40) {
     await tester.pump(const Duration(milliseconds: 40));
@@ -193,13 +212,17 @@ Future<void> _victoryMoment(
   c.notifyListeners();
   await tester.pump();
 
-  // The pile-up's ingredients are really on screen before the blow.
+  // The pile-up's ingredients are really on screen before the blow. Seed 6
+  // rolls the straight with the kindler's dice; several other delvers'
+  // dice roll no call-out there, so their cases don't require one.
   final before = _texts();
-  expect(
-    before.where((t) => t.kind == 'note'),
-    isNotEmpty,
-    reason: 'the opening roll\'s call-outs are up: $before',
-  );
+  if (requireCallouts) {
+    expect(
+      before.where((t) => t.kind == 'note'),
+      isNotEmpty,
+      reason: 'the opening roll\'s call-outs are up: $before',
+    );
+  }
   expect(
     before.where((t) => t.kind == 'chip'),
     isNotEmpty,
@@ -212,6 +235,7 @@ Future<void> _victoryMoment(
   await tester.tap(button('Attack'));
 
   final tag =
+      '${character == 'kindler' ? '' : '$character '}'
       '${size.width.toInt()}x${size.height.toInt()}'
       '${reduced ? ' reduced' : ''}';
   final problems = <String>[];
@@ -249,8 +273,8 @@ Future<void> _victoryMoment(
     // Size, stage and the delver, once the banner has landed.
     if (ms - first >= _introMs || ms == 600 || ms == 1200) {
       checked++;
-      final hero = _heroBox(tester);
-      if (hero != null && _hits(b, hero)) {
+      final hero = _heroBox(tester, character);
+      if (_hits(b, hero)) {
         problems.add('$tag +$ms ms: banner ${_r(b)} on the delver ${_r(hero)}');
       }
       if (ms - first >= _introMs) {
@@ -293,4 +317,41 @@ void main() {
       );
     }
   }
+
+  // 0.186.0 review: the banner's keep-out box (VictoryBeat.heroEnvelope) was
+  // measured on the kindler only. The same blow, banner and checks for every
+  // other playable delver, at every size, in normal and reduced motion.
+  group('every delver', () {
+    // Seed 6 rolls no opening call-out with these delvers' dice (measured
+    // in the 0.186.0 review), so only their cases skip the pile-up check.
+    const noOpeningCallout = {
+      'runesmith',
+      'bearer',
+      'cutler',
+      'stoker',
+      'miller',
+    };
+    for (final character in charactersOrder.skip(1)) {
+      for (final reduced in const [false, true]) {
+        for (final size in const [
+          Size(320, 568),
+          Size(360, 800),
+          Size(412, 915),
+        ]) {
+          testWidgets(
+            '$character victory at '
+            '${size.width.toInt()}x${size.height.toInt()}'
+            '${reduced ? ' (reduced motion)' : ''}: off the delver',
+            (t) => _victoryMoment(
+              t,
+              size: size,
+              reduced: reduced,
+              character: character,
+              requireCallouts: !noOpeningCallout.contains(character),
+            ),
+          );
+        }
+      }
+    }
+  });
 }

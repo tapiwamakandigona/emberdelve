@@ -121,8 +121,13 @@ bool hits(Rect a, Rect b) {
 }
 
 /// Into the first fight of [seed] (node 2), as the kill harness does.
-Future<void> toFight(WidgetTester tester, GameController c, int seed) async {
-  c.startRun(character: 'kindler', boons: true, seed: seed, difficulty: 'easy');
+Future<void> toFight(
+  WidgetTester tester,
+  GameController c,
+  int seed, {
+  String character = 'kindler',
+}) async {
+  c.startRun(character: character, boons: true, seed: seed, difficulty: 'easy');
   c.apply({'type': 'choose_boon', 'index': 0});
   c.apply({'type': 'choose_node', 'node': 2});
   for (var t = 0; t < 2600; t += 40) {
