@@ -173,6 +173,12 @@ class _CombatScreenState extends State<CombatScreen> {
   // white beat, then a red hurt tint, with a one-frame squash.
   bool _enemyStruck = false, _enemyJolt = false;
   bool _playerHurt = false, _playerJolt = false;
+  // Backlog C4-02: a slain boss burns ember-hot after one short white beat
+  // (instead of a ~400 ms flat white block) and crumbles from that tint.
+  bool _enemyEmber = false;
+  // C4-02, reduced motion: the slain boss's colour drains over ~300 ms from
+  // the killing blow (no white, no ember tint) while it fades.
+  bool _enemyDrain = false;
 
   // v0.183.0 Bodies in the Fight: the authored strike behind the flags
   // above. Frozen per swing so the body, weapon and contact FX all read the
@@ -776,10 +782,16 @@ class _CombatScreenState extends State<CombatScreen> {
     Haptics.heavy();
     if (!mounted) return;
     if (boss) {
-      // Boss kill moment: the frame holds white-hot for a beat (impact
-      // freeze), the screen rocks at full magnitude, then the dissolve.
+      // Boss kill moment: the body holds ember-hot for a beat (impact
+      // freeze), the screen rocks at full magnitude, then the dissolve
+      // crumbles from the tinted body. C4-02: no flat white block; reduced
+      // motion gets no tint either (the body drains and fades instead).
       _shakeKey.currentState?.shake(1.0);
-      _choreo(() => _enemyFlash = true);
+      _choreo(() {
+        _enemyFlash = false;
+        _enemyEmber = !Motion.instance.reduced;
+        _enemyDrain = Motion.instance.reduced;
+      });
       _fxUpdate(() => _bossKillFlash = true);
       // C2-02: the run-ending kill's banner lands with the blow.
       if (events.any((e) => e['type'] == 'run_won')) {
@@ -909,10 +921,24 @@ class _CombatScreenState extends State<CombatScreen> {
       _spawnFx(_FxKind.guard, onPlayer: false);
     }
     final bigHit = _impact(landed, enemyMax);
-    _choreo(() => _enemyFlash = true);
+    // C4-02: the blow that kills a boss keeps its white contact beat to the
+    // hit-stop (<= 120 ms), then the body turns ember-hot. Reduced motion
+    // never flashes the boss white at all.
+    final bossKill = isBoss && _find(events, 'encounter_won') != null;
+    final calmKill = bossKill && Motion.instance.reduced;
+    if (!calmKill) _choreo(() => _enemyFlash = true);
     // Hit-stop: the frame freezes on contact before the knockback releases.
     if (bigHit) await _sleep(_hitStop);
     if (!mounted) return;
+    if (bossKill && !calmKill) {
+      _choreo(() {
+        _enemyFlash = false;
+        _enemyEmber = true;
+      });
+    } else if (calmKill) {
+      // Reduced motion: the colour starts draining on the same beat.
+      _choreo(() => _enemyDrain = true);
+    }
     _choreo(() => _enemyKnock = true);
     await _sleep(_knockTime);
     if (!mounted) return;
@@ -1346,7 +1372,15 @@ class _CombatScreenState extends State<CombatScreen> {
       children: [
         _band(_runBand, (context, h) => _TopBar(widget.c)),
         _band(_enemyBand, _enemyPanel),
-        Expanded(child: _band(_stageBand, _stageSection)),
+        // C4-04: only the stage (fighters + cavern backdrop) shakes. The
+        // top bar, the enemy panel, the HP bar and the tray hold still, so
+        // the UI never looks loose and no screen edge is ever exposed.
+        Expanded(
+          child: ShakeBox(
+            key: _shakeKey,
+            child: _band(_stageBand, _stageSection),
+          ),
+        ),
         _band(_vitalsBand, _playerVitals),
         SizedBox(height: compact ? Space.s : Space.m),
         _band(_diceBand, (c, h) => _inertIfOver(_traySection(c, h))),
@@ -1364,8 +1398,11 @@ class _CombatScreenState extends State<CombatScreen> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: _fastForwardTap,
-        child: ShakeBox(
-          key: _shakeKey,
+        // The full-screen layer the old whole-screen shake used to provide
+        // (C4-04 moved the shake onto the stage). Kept so the screen
+        // composites exactly as before: the overlays above still sit on one
+        // cached layer, and the pixel probes that read it are unchanged.
+        child: RepaintBoundary(
           child: Stack(
             key: _rootKey,
             fit: StackFit.expand,

@@ -443,19 +443,44 @@ double _tanh(double x) {
     rot: math.sin(t + 0.8) * 0.03,
     scaleY: 1.0,
   ),
-  IdleStyle.heave => (
-    dx: 0.0,
-    dy: 0.0,
-    rot: 0.0,
-    scaleY: 1.0 + (0.5 - 0.5 * math.cos(t)) * 0.03,
-  ),
-  IdleStyle.scuttle => (
-    dx: _twitch(3 * t) * 1.5,
-    dy: -math.sin(6 * t).abs() * 0.6,
-    rot: 0.0,
-    scaleY: 1.0,
-  ),
+  // C0-14 idle beats: a breath alone moves the whole sprite as one block,
+  // which reads as paused on a strip. After each exhale the body rolls its
+  // shoulders: it leans into the stage, rocks back past centre and settles
+  // (~420 ms of the 2.8 s loop), shifting its bulk about the feet.
+  IdleStyle.heave => () {
+    final s = _window(t, 1.58 * math.pi, 0.3 * math.pi);
+    final lift = s == null ? 0.0 : math.sin(math.pi * s);
+    return (
+      dx: s == null ? 0.0 : lift * lift * lift * 1.2,
+      dy: 0.0,
+      // In, then a little back past centre, then still.
+      rot: s == null ? 0.0 : math.sin(2 * math.pi * s) * lift * 0.05,
+      scaleY: 1.0 + (0.5 - 0.5 * math.cos(t)) * 0.03,
+    );
+  }(),
+  // ...and a crawler twitches during one held beat between side-steps:
+  // two quick wiggles (~280 ms), never leaving the ground.
+  IdleStyle.scuttle => () {
+    final s = _window(t, 1.4 * math.pi, 0.2 * math.pi);
+    return (
+      dx: _twitch(3 * t) * 1.5,
+      dy: -math.sin(6 * t).abs() * 0.6,
+      rot: s == null
+          ? 0.0
+          : math.sin(4 * math.pi * s) * math.sin(math.pi * s) * 0.1,
+      scaleY: 1.0,
+    );
+  }(),
 };
+
+/// Progress 0..1 through the window [start, start + length) of the loop
+/// phase [t] (radians), or null outside it. Windows sit inside one loop, so
+/// every beat is periodic and the loop never seams.
+double? _window(double t, double start, double length) {
+  final phase = t % (2 * math.pi);
+  if (phase < start || phase >= start + length) return null;
+  return (phase - start) / length;
+}
 
 /// Enemy body choreography per style. The wind-up is always the player's
 /// last read of the incoming hit, so it never gets shorter than the legacy
