@@ -9,6 +9,10 @@ import 'motion.dart';
 import 'sprites.dart';
 import 'weapons.dart';
 
+/// C0-13: how long the blade's trail lingers on the edge after the swing
+/// lands (fading samples, then gone). The critic's ceiling is 120 ms.
+const int bladeTrailMs = 110;
+
 class CombatFigure extends StatefulWidget {
   final CombatRig rig;
   final double height, charge;
@@ -43,6 +47,15 @@ class _CombatFigureState extends State<CombatFigure>
     duration: const Duration(milliseconds: 2800),
   );
   late final _move = AnimationController(vsync: this);
+
+  /// C0-13: the blade's own trail outlives the swing by a breath. When the
+  /// strike lands, the smear keeps hugging the edge for [bladeTrailMs] —
+  /// its tail closing up onto the blade and fading — instead of the contact
+  /// read being a crescent stuck to the foe.
+  late final _trail = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: bladeTrailMs),
+  );
   late final ValueNotifier<CombatRigSample> _sample;
   late RigPose _from, _to;
   late double _angleFrom, _angleTo;
@@ -90,6 +103,8 @@ class _CombatFigureState extends State<CombatFigure>
     _sample = ValueNotifier(_solve());
     _life.addListener(_tick);
     _move.addListener(_tick);
+    _move.addStatusListener(_moveStatus);
+    _trail.addListener(_tick);
     Motion.instance.addListener(_motionChanged);
     _syncLife();
   }
@@ -112,14 +127,24 @@ class _CombatFigureState extends State<CombatFigure>
 
   CombatRigSample _solve() {
     final t = _curve.transform(_move.value);
+    final angle = _angleFrom + (_angleTo - _angleFrom) * t;
+    var smear = _swinging && _move.isAnimating ? widget.plan.smear : 0.0;
+    var tail = _angleFrom;
+    if (smear == 0 && _swinging && _trail.isAnimating) {
+      // After contact: the tail sweeps up behind the blade tip (the arc
+      // shrinks toward the edge) while the whole trail fades out.
+      final k = _trail.value;
+      smear = widget.plan.smear * (1 - k);
+      tail = _angleFrom + (angle - _angleFrom) * Curves.easeOut.transform(k);
+    }
     return CombatRigSample.solve(
       rig: widget.rig,
       pose: RigPose.lerp(_from, _to, t),
       condition: widget.condition,
       life: _life.value,
-      weaponAngle: _angleFrom + (_angleTo - _angleFrom) * t,
-      previousWeaponAngle: _angleFrom,
-      smear: _swinging && _move.isAnimating ? widget.plan.smear : 0,
+      weaponAngle: angle,
+      previousWeaponAngle: tail,
+      smear: smear,
       reduced: Motion.instance.reduced,
       striking:
           widget.phase == WeaponPhase.raise ||
@@ -128,6 +153,12 @@ class _CombatFigureState extends State<CombatFigure>
   }
 
   void _tick() => _sample.value = _solve();
+
+  void _moveStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed && _swinging) {
+      _trail.forward(from: 0);
+    }
+  }
 
   @override
   void didUpdateWidget(CombatFigure old) {
@@ -140,6 +171,9 @@ class _CombatFigureState extends State<CombatFigure>
       _to = RigPose.at(widget.rig, _beat, widget.plan);
       _angleTo = _targetAngle;
       _swinging = widget.phase == WeaponPhase.swing;
+      _trail
+        ..stop()
+        ..value = 0;
       final ms = widget.knock
           ? 140
           : switch (widget.phase) {
@@ -161,6 +195,7 @@ class _CombatFigureState extends State<CombatFigure>
     Motion.instance.removeListener(_motionChanged);
     _life.dispose();
     _move.dispose();
+    _trail.dispose();
     _sample.dispose();
     super.dispose();
   }

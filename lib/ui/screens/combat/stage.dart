@@ -637,9 +637,17 @@ extension _CombatStageBand on _CombatScreenState {
                                 // C0-05: the rake on the delver is gone
                                 // within ~130 ms instead of hanging through
                                 // the whole hit reaction.
+                                // C0-13: a blade's contact nick on the foe
+                                // is a flash (<=120 ms) — the trail itself
+                                // rides the blade now.
                                 duration:
                                     fx.onPlayer && fx.kind == _FxKind.claws
                                     ? const Duration(milliseconds: 130)
+                                    : !fx.onPlayer &&
+                                          fx.kind == _FxKind.slash &&
+                                          (fx.shape ?? ContactShape.cut) ==
+                                              ContactShape.cut
+                                    ? const Duration(milliseconds: 120)
                                     : const Duration(milliseconds: 340),
                                 shape: fx.shape,
                                 facing: fx.onPlayer ? -1 : 1,

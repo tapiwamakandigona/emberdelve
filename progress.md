@@ -6466,4 +6466,50 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   only checks breathe; (3) C0-14's literal acceptance ("3 px bbox change over 18 frames") may
   already have been met by the old bob, which is why this ships as fixed_pending_review for the
   critic to rule on; (4) bigger boss sprites will show a visibly bigger tilt at 0.05 rad.
+
+## 2026-10-02 — iteration 6: the cut's trail rides the blade (C0-13)
+- Logged at 2026-10-02 23:32 UTC.
+- Why: the critic saw the slash trail drawn as a crescent around the FOE (C_*_kill 053-060),
+  far from the blade, so it read as a sticker on the victim. VERIFIED on the old code with
+  tool/living_foes_frames_test.dart (real CombatScreen, headless flutter_test, not a device):
+  the crescent sits over the foe on 053-060 and is gone on 061; the blade's own smear shows
+  only on 050-051 and is already off at contact (052).
+- Change (presentation only, lib/sim untouched): when the swing lands, the blade's own smear
+  now lingers for 110 ms, its tail closing up onto the edge while it fades (CombatFigure +
+  the weapon painter reading the live smear). The foe-side mark for a cut is no longer an arc:
+  it is a short nick along the line of the swing with two sparks, 120 ms total. Other contact
+  shapes (crush, stab, stamp, hook, pick, claws) are unchanged.
+- VERIFIED red -> green: new test/blade_trail_test.dart (3 tests). Old code: blade smear 0.0 at
+  contact + 60 ms; foe-side cut ImpactSlash 340 ms; a 58 px stroke across the top quarter of the
+  mark box. New code: smear > 0 at contact and +60 ms and 0 after +120 ms; cut contact 120 ms and
+  off the stage after it; longest run in the top quarter <= 8 px (spark dots only).
+- VERIFIED: flutter analyze clean; full suite 1599 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render: kill strips re-rendered for flue_crawler, cinder_wisp, slag_brute and
+  molten_maw on old and new code in the same run order; only frames 052-060 differ. I looked
+  at them: 052 the trail wraps the blade from the raise to the strike, 053 it has closed to a
+  thin stub on the edge, 054 a small remnant at the tip; the nick crosses the foe on 053-054;
+  from 055 nothing is left of either (the old crescent stayed until 060).
+- ASSUMED: how the 110 ms trail feels at 60 fps on a phone (strips are 40 ms frames).
+
+## 2026-10-02 — iteration 6 follow-up: CI and the independent read-only review (C0-13, PR #117)
+- Logged at 2026-10-02 23:40 UTC.
+- VERIFIED CI run 37078060727 on 6c60ebf (pull_request, PR #117): exactly two failures —
+  test/shorter_title_test.dart 412x915 and test/marked_week_test.dart, the lane's own known
+  reds. The new test/blade_trail_test.dart passes on CI. The ios job (37078060691) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..6c60ebf: verdict PASS, no findings. It re-ran analyze (clean) and the suite
+  (+1599 -2, only the known reds), reverted lib/ to 535029b in a scratch copy and saw all 3
+  new tests fail there (smear 0.0 at contact, foe-side cut 340 ms, 58 px top-quarter stroke),
+  re-rendered the kill strips on old and new code for all 4 foes (only frames 052-060 differ;
+  trail on the blade 052-054, nothing from 055; the old crescent sat on the foe through 060),
+  ran the new test under Motion 'on' plus weapons_test and combat_bodies_test (30 pass), and
+  confirmed nothing in lib/sim, android/, .github/ or pubspec moved and no existing test was
+  edited.
+- Reviewer notes (non-blocking): (1) my "smear 0.0 at contact + 60 ms" wording understates the
+  old behaviour — it is already 0.0 at contact itself; (2) under Reduce Motion the 110 ms
+  fading trail still plays, exactly as the swing smear already did before this change — a
+  design call, not a regression; (3) test 1 measures the smear value handed to the painter,
+  the pixel evidence is the render strips; (4) if the hero's phase left 'swing' within 110 ms
+  of contact the trail would be cut short (does not happen in the rendered strips).
 - NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
