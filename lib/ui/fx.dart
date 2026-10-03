@@ -341,6 +341,29 @@ class DamagePop extends StatefulWidget {
     fontWeight: FontWeight.w800,
   );
 
+  /// C2-04: the number is drawn over whatever the hit just did to the
+  /// body — most often the foe's pure-white flash, where gold on white is
+  /// about 1.5:1. A hard 2 dp outline in the stage's darkest ink (eight
+  /// unblurred offsets, so it is one Text and one glyph run) keeps it
+  /// readable on any backdrop; the soft drop shadow still lifts it off the
+  /// floor. Shadows do not change layout, so [styleFor] still measures it.
+  static const Color outline = Color(0xFF1A1016);
+  static const double outlineWidth = 2;
+  static final List<Shadow> _ink = [
+    for (var i = 0; i < 8; i++)
+      Shadow(
+        color: outline,
+        offset: Offset(
+          outlineWidth * math.cos(i * math.pi / 4),
+          outlineWidth * math.sin(i * math.pi / 4),
+        ),
+      ),
+    const Shadow(color: Colors.black, offset: Offset(0, 3), blurRadius: 3),
+  ];
+
+  static TextStyle inkFor({required bool blocked, required Color color}) =>
+      styleFor(blocked: blocked).copyWith(color: color, shadows: _ink);
+
   /// The arc at progress [f] (0..1): offset, scale and opacity. The ONE
   /// definition of the motion — [build] paints it and [sweep] bounds it.
   static ({Offset offset, double scale, double alpha}) motion(
@@ -415,20 +438,7 @@ class _DamagePopState extends State<DamagePop>
             opacity: alpha.clamp(0.0, 1.0),
             child: Text(
               text,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: widget.blocked ? 14 : 26,
-                fontWeight: FontWeight.w800,
-                color: color,
-                shadows: const [
-                  Shadow(color: Colors.black, blurRadius: 4),
-                  Shadow(
-                    color: Colors.black,
-                    offset: Offset(0, 2),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
+              style: DamagePop.inkFor(blocked: widget.blocked, color: color),
             ),
           );
         }
@@ -446,20 +456,7 @@ class _DamagePopState extends State<DamagePop>
               opacity: m.alpha,
               child: Text(
                 text,
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: widget.blocked ? 14 : 26,
-                  fontWeight: FontWeight.w800,
-                  color: color,
-                  shadows: const [
-                    Shadow(color: Colors.black, blurRadius: 4),
-                    Shadow(
-                      color: Colors.black,
-                      offset: Offset(0, 2),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
+                style: DamagePop.inkFor(blocked: widget.blocked, color: color),
               ),
             ),
           ),
