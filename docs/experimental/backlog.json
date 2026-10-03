@@ -708,7 +708,7 @@
    "fix_direction": "Drive the burn chip from the same `dead` flag as the intent badge (140 ms fade, 0 under reduce), and make sure gore decals paint below status chips.",
    "acceptance": "Kill strips for all 4 foes with burn >0: the chip is gone by the frame the badge is gone. 040-equivalent plate has no chip and no decal over any text.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 1,
    "critic_rank": 6,
    "rank_round": 1,
@@ -717,6 +717,12 @@
      "at": "2026-09-24T18:47:56+00:00",
      "round": 1,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T00:26:45+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/burn-chip-death-20261003",
+     "note": "the burn chip now leaves with the intent badge (same dead flag: contact-timed HP 0 or dying; 140 ms fade, instant under Reduce Motion), and the floor stains moved out of the transient FX stack to a layer under the combatants, so no stain can paint over the chip or any status text. test/burn_chip_death_test.dart red on old code 4/4 (chip alpha 1.0 from the blow to the end of the screen; stains painted after the chip), green on new 4/4. Before/after CombatScreen captures at 360x800 (headless flutter_test): old frame +1080 ms shows the '11' chip at the dead foe's feet with a stain over its digits; new frame shows no chip, stains on the floor."
     }
    ]
   },

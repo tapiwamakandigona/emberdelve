@@ -137,6 +137,29 @@ extension _CombatStageBand on _CombatScreenState {
                   ),
                 ),
               ),
+              // Bodies in the Fight: what has been spilled so far this
+              // encounter stays on the floor. C1-05: the stains are floor,
+              // so they paint UNDER the combatants and their status chips
+              // (they used to sit in the transient FX stack above them and
+              // smear the burn chip's digits). Scoped to _fxTick like the
+              // overlay it came from.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: IgnorePointer(
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: _fxTick,
+                      builder: (context, _, _) => _stains.isEmpty
+                          ? const SizedBox.shrink()
+                          : CustomPaint(
+                              key: const ValueKey('stains'),
+                              painter: FloorStainsPainter(
+                                List.unmodifiable(_stains),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 left: 0,
                 right: 0,
@@ -445,18 +468,42 @@ extension _CombatStageBand on _CombatScreenState {
                           // what it is suffering, not what it will do. Small
                           // sprite-hugging pill, deliberately unlike the
                           // squared intent badge.
+                          //
+                          // C1-05: a slain foe is not burning any more — the
+                          // chip leaves with the intent badge (same dead flag,
+                          // same 140 ms fade, instant under Reduce Motion)
+                          // instead of riding the dissolve into the summary.
                           if ((enemy['burn'] as int? ?? 0) > 0)
                             Positioned(
                               bottom: -4,
                               right: -14,
-                              child: _StatusChip(
-                                icon: Icons.local_fire_department,
-                                color: EmberColors.ember,
-                                value: enemy['burn'] as int,
-                                semantics:
-                                    'Burning, ${enemy['burn']} stacks. Long press to explain.',
-                                onLongPress: () =>
-                                    _explainBurn(enemy['burn'] as int),
+                              child: ListenableBuilder(
+                                listenable: _foeBand,
+                                builder: (context, child) {
+                                  final live = _shownEnemy ?? enemy;
+                                  final dead =
+                                      _enemyDying ||
+                                      ((live['hp'] as int?) ?? 1) <= 0;
+                                  return IgnorePointer(
+                                    ignoring: dead,
+                                    child: AnimatedOpacity(
+                                      opacity: dead ? 0 : 1,
+                                      duration: Motion.instance.reduced
+                                          ? Duration.zero
+                                          : const Duration(milliseconds: 140),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: _StatusChip(
+                                  icon: Icons.local_fire_department,
+                                  color: EmberColors.ember,
+                                  value: enemy['burn'] as int,
+                                  semantics:
+                                      'Burning, ${enemy['burn']} stacks. Long press to explain.',
+                                  onLongPress: () =>
+                                      _explainBurn(enemy['burn'] as int),
+                                ),
                               ),
                             ),
                         ],
@@ -516,19 +563,6 @@ extension _CombatStageBand on _CombatScreenState {
                     builder: (context, _, _) => Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        // Bodies in the Fight: what has been spilled so far
-                        // this encounter stays on the floor.
-                        if (_stains.isNotEmpty)
-                          Positioned.fill(
-                            key: const ValueKey('stains'),
-                            child: IgnorePointer(
-                              child: CustomPaint(
-                                painter: FloorStainsPainter(
-                                  List.unmodifiable(_stains),
-                                ),
-                              ),
-                            ),
-                          ),
                         // C1-01 boss kill: a warm bloom from the boss,
                         // clipped to the stage and capped so the dissolve
                         // stays visible (a dim tint under reduced motion).
