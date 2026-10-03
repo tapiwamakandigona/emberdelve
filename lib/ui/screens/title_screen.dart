@@ -53,12 +53,12 @@ class TitleScreen extends StatelessWidget {
                         ),
                         child: IntrinsicHeight(
                           child: Padding(
-                            // v0.180.0 The Shorter Title: vertical padding
-                            // l (was xl) — every logical pixel here is
-                            // scroll on a 360×800 phone.
+                            // Keep the full returning title in view even
+                            // with a longer weekly rule. Trim outer whitespace,
+                            // not text size or touch targets (0.186.0).
                             padding: const EdgeInsets.symmetric(
                               horizontal: Space.xl,
-                              vertical: Space.l,
+                              vertical: Space.m,
                             ),
                             child: Column(
                               children: [
