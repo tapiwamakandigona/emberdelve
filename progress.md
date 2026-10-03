@@ -6232,3 +6232,19 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   dead foe's feet with a dark stain across it; the new frame shows no chip and the stains on the floor.
 - ASSUMED: nothing visible changes for the hero (no hero status chip exists); stains still read
   the same on the floor, now under the bodies instead of over them.
+
+### Iteration 7 — CI and independent review (logged 2026-10-03 00:35 UTC)
+- VERIFIED CI run 37082124700 on `feat/burn-chip-death-20261003`: 1600 tests passed, 2 failed —
+  `shorter_title_test` 412x915 and `marked_week_test`, the two already red on the lane itself
+  (the title fix is PR #113; the marked_week correction still waits on the owner). iOS job
+  37082124630 green. PR #118 opened against `legacy/dice-builder`; NOT merged, because the lane's
+  own CI is red.
+- VERIFIED independent read-only review (ultra, fresh context, range 535029b..7c08a18): PASS, 0
+  findings. It reproduced the red->green on a temp copy (4/4 red with the old stage.dart), ran
+  analyze and the full suite, re-rendered combat body frames old vs new (only the floor line
+  y~824-840 differs, stains stay visible), and checked the owner identity and that no "Viktor"
+  string was added.
+- Review notes carried forward (non-blocking): transient blood bursts and contact FX still paint
+  above status chips — only the permanent floor stains moved below them; the acceptance's "kill
+  strips for all 4 foes" is covered structurally here (one foe tested at 2 sizes x Reduce Motion),
+  since the chip shares the badge's dead flag.
