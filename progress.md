@@ -6595,3 +6595,20 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   the measured text box, about the same overflow as the old blur-4 halo; the C2-03 re-measurement
   added no artifact of its own (the behaviour is already pinned by
   test/combat_contact_timeline_test.dart from 92373ee).
+
+## 2026-10-03 — the merge queue is empty: seven reviewed PRs are on the lane (iteration 9, part 2)
+- 2026-10-03 03:45 UTC. With the lane green (eaf651e), the reviewed PRs were merged in the
+  planned dependency order, each on a head whose own CI (analyze+test and ios) was green
+  after merging the lane into its branch:
+  #113 eaf651e (title fit + marked_week correction), #112 7d67189 (boss death ember),
+  #114 f48826e (reduced-motion drain; re-based onto the lane after its base merged),
+  #115 0b5bfbd (stage-only shake), #116 afc5ebf (living idles), #117 e941094 (blade trail),
+  #118 fe7dfb2 (burn chip leaves with the dead foe), #119 14598e7 (damage-number ink).
+- Every conflict in those merges was progress.md append-vs-append; both sides were kept,
+  lane entries first. No code conflict occurred and no test was edited in any merge.
+- VERIFIED on the lane head 14598e7: flutter analyze "No issues found"; full suite
+  "+1620: All tests passed!" — the lane has no failing test for the first time since 0.185.0.
+- VERIFIED CI on 14598e7: run 37093919385 (Analyze + test) success, 37093919478 (ios) success.
+- Open PRs left on the repo: #111 (draft 0.186.0 prep — cherry-pick source only) and
+  #102 (critique). Next: continue the backlog pin (C0-03 / C1-02 / C4-01 call-out pile-ups,
+  C1-06, C4-05), then the 0.186.0 release per the program's release step.
