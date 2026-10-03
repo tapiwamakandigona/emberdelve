@@ -6329,3 +6329,45 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   make the corrected test fail across leanRoad / hardMarch / doubledWeek / [short_road] /
   [no_rests]. Notes: the test still reads DateTime.now(), so one run only covers the current
   week's rule; the owner authorization itself was outside what the reviewer could check.
+
+## 2026-10-02 — Reduced-motion boss death drains its colour (C4-02, follow-up to #112)
+- Logged at 2026-10-02 20:35 UTC. Branch feat/boss-death-desat-20261002, built on the
+  PR #112 head (d38039d) because it finishes that item. The first note of the #112 review:
+  under Reduce Motion the slain boss kept full colour for ~400 ms and then went grey in a
+  single frame; the backlog asks for a desaturation over 300 ms.
+- Change (presentation only): a `_enemyDrain` flag is set on the hit-stop of the killing
+  blow (the same beat that starts the ember tint in normal motion) and again at the boss
+  kill moment. While it is set, the body's pallor filter tweens from its current pallor to
+  full grey over `_pace(300)` (ease-out). The existing 700 ms fade is unchanged. No sim,
+  test, asset or dependency change.
+- New test/boss_death_drain_test.dart (same lethal-blow fixture as boss_death_ember_test).
+  Each 40 ms frame it reads, from the widgets above the foe sprite, how much colour the
+  colour-matrix filters leave and the product of the fades. VERIFIED red on the old code:
+  "no one-frame grey cut … Expected: <= 0.149, Actual: 0.362" — the colour went from 0.42
+  to 0.05 in one frame at ~760 ms. VERIFIED green on the new code: 0.42 → 0.32 → 0.23 →
+  0.16 → 0.09 → 0.04 from ~480 ms, grey before the fade begins.
+- VERIFIED: flutter analyze clean; full suite 1599 pass + the 2 known lane failures
+  (shorter_title 412x915, fixed on PR #113; marked_week). boss_death_ember_test still green.
+  tool/boss_kill_frames_test.dart re-rendered; I looked at the reduced Ember Tyrant strip
+  (t0320–t0920, foe crop): red body, then muted, then grey over ~4 frames, then the fade.
+  No white frame. Headless test render at 2x, not a phone.
+- ASSUMED / not verified: how it feels on a device. The strips still re-dress the seed-1
+  crawler (C4-05 open).
+
+## 2026-10-02 — PR #114, CI and the independent review
+- Logged at 2026-10-02 20:43 UTC. PR #114 (feat/boss-death-desat-20261002, stacked on #112's branch).
+- VERIFIED CI run 37061517779 on ed54ff8: "1599 tests passed, 2 failed", exactly the two
+  known lane failures (shorter_title 412x915 "Expected: <0> Actual: <8.0>"; marked_week
+  "Expected: equals ['short_road'] unordered, Actual: <null>"). build-ios green
+  (37061517780). Signed build correctly skipped. Not merged: the lane is red and #112 goes first.
+- VERIFIED independent read-only review (ultra tier, fresh context, range d38039d..ed54ff8):
+  PASS, no findings. It reproduced red on the d38039d lib files ("Expected: <= 0.1494,
+  Actual: 0.3624") and green on ed54ff8, ran analyze, the strips (reduced: max 151 px
+  luma>235 in the boss rect vs the 2k line) and 101 nearby tests. Non-blocking notes:
+  1. The backlog wording says "desaturates and fades over 300 ms"; the fade stays 700 ms
+     (disclosed). Product call, left as is.
+  2. The test reads the filter/fade settings on the real path, not pixels; the strips back it.
+  3. The 0.04 → 0.03 → 0.05 wobble is the cool cast of pallorMatrix, not visible.
+  4. When the drain starts, the wrapper type changes, so the enemy sprite subtree rebuilds;
+     no glitch in the strips (sprites precached); device unverified.
+  5. C4-05 (crawler re-dress in the strips) still open.

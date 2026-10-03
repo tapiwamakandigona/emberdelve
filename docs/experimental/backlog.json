@@ -1106,6 +1106,12 @@
      "event": "maker:fixed_pending_review",
      "build": "feat/boss-death-ember-20261002",
      "note": "white contact beat capped to the hit-stop, then a 160 ms crossfade to an ember-tinted body that the ashfall crumbles from; reduced motion: no white, colour drains. test/boss_death_ember_test.dart red on old code (11 white frames each mode), green on new"
+    },
+    {
+     "at": "2026-10-02T20:34:26+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/boss-death-desat-20261002",
+     "note": "reduced motion: the slain boss's colour now drains over ~300 ms from the hit-stop of the killing blow (was full colour ~400 ms, then grey in one frame), then the existing fade. test/boss_death_drain_test.dart red on old code (one-frame step 0.42 -> 0.05 of the colour), green on new"
     }
    ]
   },
