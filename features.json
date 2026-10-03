@@ -2,6 +2,13 @@
   "_protocol": "Workers may ONLY flip 'passes' to true and fill 'evidence' with a real proof-artifact path or URL. Never edit id/title/acceptance. Orchestrator adds features at milestone planning.",
   "features": [
     {
+      "id": "REVIEW186-VICTORY-CRITIC-FOLLOWUPS",
+      "title": "Review of the every-delver victory fix: pin the short-stage banner fallback, require call-outs where seed 6 rolls them, record the inset exception",
+      "acceptance": "test/victory_beat_test.dart has a unit test for VictoryBeat.place on a stage too short for the banner plus both insets but with a wide enough band beside the delver: area 'beside', minFontSize, rect inside the stage and vertically centred in it, rect.left >= hero.right + gap; it fails against the 0.186.0 place() (38b0958). The every-delver victory cases in test/victory_moment_test.dart require the opening call-outs for every delver except the ones measured to roll none on seed 6; with that exemption list emptied, exactly those delvers' cases fail. The inset doc comment in lib/ui/victory_beat.dart and PROJECT.md record the short-stage exception (the 22 sp minimum wins over the 8 dp inset) and why stepBack stays. lib/sim, purchase, version and workflow untouched; no existing test weakened. flutter analyze is clean; the full flutter test, python3 tool/sfx_headroom.py and python3 tool/art/build_delvers.py --check pass.",
+      "passes": false,
+      "evidence": ""
+    },
+    {
       "id": "REVIEW186-VICTORY-EVERY-DELVER",
       "title": "0.186.0 review findings: the victory banner is checked against every delver, and a missing delver key fails the check",
       "acceptance": "test/victory_moment_test.dart's banner-vs-delver check fails loudly when the delver's figure (figure-<id> or hero-<id>) or weapon (combat-weapon) key is missing; a temporary key rename shows the old test passing and the new one failing. The same victory moment (seed 6, run-ending EXACT blow on a burning boss) runs for every playable delver in charactersOrder at 320x568, in normal and reduced motion (and at 360x800 and 412x915 if the runtime stays reasonable): on the checked frames the banner never touches the delver's figure+weapon box, stays inside the stage and is drawn at >= 22 sp. Any failure is fixed presentation-only in lib/ui (never lib/sim), with the measured numbers recorded next to the constant's doc comment. No existing test is weakened. flutter analyze is clean; the full flutter test, python3 tool/sfx_headroom.py and python3 tool/art/build_delvers.py --check pass.",
