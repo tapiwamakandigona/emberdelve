@@ -6612,3 +6612,17 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Open PRs left on the repo: #111 (draft 0.186.0 prep — cherry-pick source only) and
   #102 (critique). Next: continue the backlog pin (C0-03 / C1-02 / C4-01 call-out pile-ups,
   C1-06, C4-05), then the 0.186.0 release per the program's release step.
+
+## 2026-10-03 — prep 0.186.0: Clear-Choices clarity + German listing (iteration 12)
+- By Viktor (AI, honest authorship). Branch `feat/0.186.0-clarity-de` off lane `a9a2df3`. Ports the SUBSTANTIVE
+  0.186.0 work from the conflicting draft PR #111 (commits 16dd061 test + f3ce6d7 fix) onto the current lane:
+  Forge-offer + first-fight readability, edge-to-edge insets, the German store-listing DATA (store-de-DE.json),
+  l10n catalog + interface.json, and the release_clarity regression test. (title_screen.dart hunk already on the
+  lane → no diff.)
+- DELIBERATELY DROPPED from the port: the release-TRACKING docs (docs/release-0.186.0/{PROJECT,features,progress,
+  evaluation,verification}.md and root PROJECT.md). Their features.json carried `GERMAN-STORE passes=true` with an
+  "authenticated Play Console" claim I did NOT perform or verify — not mine to vouch for. The actual Play listing /
+  release stays owner-gated.
+- VERIFIED locally (Flutter 3.47.6; CI 3.44.9 is the gate): analyze clean; release_clarity_test +7,
+  interface_languages_test +13, forge/title/catalog parity (counted_forge, forge_unlock, forgelight, shorter_title,
+  earned_titles, attire, gramophone, shorter_road, trials) all green run serially.
