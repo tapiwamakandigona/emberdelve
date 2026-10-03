@@ -149,11 +149,17 @@ extension _CombatTrayBand on _CombatScreenState {
                   clipBehavior: Clip.none,
                   alignment: Alignment.topCenter,
                   children: [
-                    for (final (idx, n)
-                        in _notes.where((n) => !n.onEnemy).toList().indexed)
+                    for (final n in _notes.where((n) => !n.onEnemy).toList())
                       Positioned(
                         key: ValueKey('tray-note-slot-${n.id}'),
-                        top: -30.0 - idx * 24,
+                        // Fixed reserved slot (not the live index): a call-out
+                        // keeps its slot for life, so it never jumps when a
+                        // sibling expires, and the stack floats clear above the
+                        // HP bar. Slot 0 is lowest; each higher slot is a full
+                        // line-height further up (experimental loop C0-03).
+                        top:
+                            _CombatScreenState._trayNoteBaseTop -
+                            n.slot * _CombatScreenState._trayNoteStride,
                         child: TextPop(
                           key: ValueKey('note-${n.id}'),
                           text: n.text,
