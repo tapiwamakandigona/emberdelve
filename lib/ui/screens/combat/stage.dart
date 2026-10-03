@@ -201,8 +201,13 @@ extension _CombatStageBand on _CombatScreenState {
                               builder: (context, v, child) => Transform(
                                 alignment: Alignment.bottomCenter,
                                 transform: Matrix4.identity()
-                                  ..translateByDouble(0, -10 * v, 0, 1)
-                                  ..rotateZ(-0.08 * v),
+                                  ..translateByDouble(
+                                    0,
+                                    -VictoryBeat.poseLift * v,
+                                    0,
+                                    1,
+                                  )
+                                  ..rotateZ(-VictoryBeat.poseTilt * v),
                                 child: child,
                               ),
                               child: _combatant(
@@ -583,12 +588,18 @@ extension _CombatStageBand on _CombatScreenState {
                         ),
                         // C2-02: the run-ending kill's victory beat —
                         // banner + rising embers, scoped to the stage.
+                        // C4-01: the banner is placed clear of the delver's
+                        // victory pose (and of the boss while there's room).
                         if (_victoryBeat)
                           Positioned.fill(
                             key: const ValueKey('victory-beat'),
                             child: ClipRect(
                               child: VictoryBeat(
                                 source: plan.geometry.enemyBody,
+                                hero: VictoryBeat.heroEnvelope(
+                                  floorY: box.maxHeight - Space.s,
+                                  heroH: heroH,
+                                ),
                                 reduced: Motion.instance.reduced,
                               ),
                             ),
@@ -613,18 +624,20 @@ extension _CombatStageBand on _CombatScreenState {
                               case final at?)
                             _placed(
                               at,
-                              (p) => FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: TextPop(
-                                  key: ValueKey('note-${n.id}'),
-                                  text: n.text,
-                                  color: n.color,
-                                  icon: n.icon,
-                                  fontSize: _enemyNoteSize,
-                                  duration: n.life,
-                                  rise: p.rise,
-                                  overshoot: p.overshoot,
-                                  onDone: () => _fxUpdate(() => _retire(n)),
+                              (p) => _victoryClear(
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: TextPop(
+                                    key: ValueKey('note-${n.id}'),
+                                    text: n.text,
+                                    color: n.color,
+                                    icon: n.icon,
+                                    fontSize: _enemyNoteSize,
+                                    duration: n.life,
+                                    rise: p.rise,
+                                    overshoot: p.overshoot,
+                                    onDone: () => _fxUpdate(() => _retire(n)),
+                                  ),
                                 ),
                               ),
                               key: ValueKey('note-slot-${n.id}'),
@@ -640,15 +653,17 @@ extension _CombatStageBand on _CombatScreenState {
                             right: Space.s,
                             top: Space.xs,
                             child: IgnorePointer(
-                              child: HelpPill(
-                                key: ValueKey('help-${help.id}'),
-                                text: help.text,
-                                color: help.color,
-                                icon: help.icon,
-                                duration: help.life,
-                                onDone: () => _fxUpdate(() {
-                                  if (identical(_help, help)) _help = null;
-                                }),
+                              child: _victoryClear(
+                                HelpPill(
+                                  key: ValueKey('help-${help.id}'),
+                                  text: help.text,
+                                  color: help.color,
+                                  icon: help.icon,
+                                  duration: help.life,
+                                  onDone: () => _fxUpdate(() {
+                                    if (identical(_help, help)) _help = null;
+                                  }),
+                                ),
                               ),
                             ),
                           ),
@@ -734,16 +749,18 @@ extension _CombatStageBand on _CombatScreenState {
                                   : plan.placeEnemyPop(size, lane: p.lane);
                             }(),
                             key: ValueKey('pop-slot-${p.id}'),
-                            (at) => DamagePop(
-                              key: ValueKey('pop-${p.id}'),
-                              amount: p.amount,
-                              blocked: p.blocked,
-                              onPlayer: p.onPlayer,
-                              rise: at.rise,
-                              drift: at.drift,
-                              onDone: () {
-                                _fxUpdate(() => _pops.remove(p));
-                              },
+                            (at) => _victoryClear(
+                              DamagePop(
+                                key: ValueKey('pop-${p.id}'),
+                                amount: p.amount,
+                                blocked: p.blocked,
+                                onPlayer: p.onPlayer,
+                                rise: at.rise,
+                                drift: at.drift,
+                                onDone: () {
+                                  _fxUpdate(() => _pops.remove(p));
+                                },
+                              ),
                             ),
                           ),
                       ],

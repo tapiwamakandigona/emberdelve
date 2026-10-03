@@ -208,8 +208,122 @@ void main() {
 
   test('the banner is big, plain and short', () {
     expect(VictoryBeat.fontSize, greaterThanOrEqualTo(22));
+    expect(VictoryBeat.minFontSize, greaterThanOrEqualTo(22));
     expect(VictoryBeat.text.split(' ').length, 1);
     expect(VictoryBeat.intro, const Duration(milliseconds: 250));
+  });
+
+  // C4-01: the banner is placed by rect (critic round 4). A stand-in for
+  // its measured box keeps these font-free: it matches the real one at 34
+  // and 22 sp (205x58 and 145x40 with the shipped Inter);
+  // test/victory_moment_test.dart measures for real on the live screen.
+  group('C4-01 banner placement', () {
+    Size box(double sp) => Size(5 * sp + 35, 1.5 * sp + 7);
+    void inside(Rect r, Size stage) {
+      expect(r.left, greaterThanOrEqualTo(0));
+      expect(r.top, greaterThanOrEqualTo(0));
+      expect(r.right, lessThanOrEqualTo(stage.width));
+      expect(r.bottom, lessThanOrEqualTo(stage.height));
+    }
+
+    test('a stage with room: full size, centred above both heads', () {
+      // 412x915: stage 364x365, delver 104 tall, boss 128 tall.
+      const stage = Size(364, 365);
+      final hero = VictoryBeat.heroEnvelope(floorY: 357, heroH: 104);
+      const foe = Rect.fromLTWH(236, 229, 128, 128);
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'above');
+      expect(at.fontSize, VictoryBeat.fontSize);
+      expect(at.rect.overlaps(hero), isFalse);
+      expect(at.rect.overlaps(foe), isFalse);
+      expect(at.rect.top, greaterThanOrEqualTo(VictoryBeat.inset));
+      expect(at.rect.center.dx, closeTo(stage.width / 2, 0.01));
+      inside(at.rect, stage);
+    });
+
+    test('a short band above the heads: the font steps down to fit', () {
+      // The band above both heads is 50 dp: 34-30 sp are too tall, 28 fits.
+      const stage = Size(364, 190);
+      final hero = VictoryBeat.heroEnvelope(floorY: 182, heroH: 104);
+      const foe = Rect.fromLTWH(244, 62, 120, 120);
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'above');
+      expect(at.fontSize, 28);
+      expect(at.rect.overlaps(hero), isFalse);
+      expect(at.rect.overlaps(foe), isFalse);
+    });
+
+    test('a tall boss: above the delver only, short of the boss', () {
+      const stage = Size(364, 150);
+      final hero = VictoryBeat.heroEnvelope(floorY: 142, heroH: 72);
+      const foe = Rect.fromLTWH(224, 2, 140, 140);
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'above-hero');
+      expect(at.fontSize, 24);
+      expect(at.rect.overlaps(hero), isFalse);
+      expect(at.rect.right, lessThanOrEqualTo(foe.left));
+    });
+
+    test('the rolled 320x568 stage: beside the delver, never on it', () {
+      // 272x86 with a 72 dp delver and a 96 dp boss standing in all of it:
+      // there is no band above the heads, so the banner takes the boss's
+      // (dissolving) spot beside the delver, at >= 22 sp.
+      const stage = Size(272, 86);
+      final hero = VictoryBeat.heroEnvelope(floorY: 78, heroH: 72);
+      const foe = Rect.fromLTWH(176, -18, 96, 96);
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'beside');
+      expect(at.fontSize, inInclusiveRange(22, 34));
+      expect(at.rect.left, greaterThanOrEqualTo(hero.right + VictoryBeat.gap));
+      inside(at.rect, stage);
+    });
+
+    test('nowhere clear: 22 sp in the middle, never smaller', () {
+      const stage = Size(150, 40);
+      final hero = VictoryBeat.heroEnvelope(floorY: 32, heroH: 30);
+      const foe = Rect.fromLTWH(100, 2, 50, 30);
+      final at = VictoryBeat.place(
+        stage: stage,
+        hero: hero,
+        foe: foe,
+        measure: box,
+      );
+      expect(at.area, 'centre');
+      expect(at.fontSize, VictoryBeat.minFontSize);
+    });
+
+    test(
+      'the delver keep-out covers the pose and the last of the step back',
+      () {
+        final r = VictoryBeat.heroEnvelope(floorY: 242, heroH: 104);
+        // Measured on the shipped delver at 360x800 (stage coordinates): the
+        // pose's figure + weapon box spans x -8.7..103.8, top 122.4.
+        expect(r.left, lessThanOrEqualTo(-8.7));
+        expect(r.right, greaterThanOrEqualTo(103.8 + 0.1 * 104));
+        expect(r.top, lessThanOrEqualTo(122.4));
+        expect(r.bottom, 242);
+      },
+    );
   });
 
   for (final size in const [Size(320, 568), Size(360, 800), Size(412, 915)]) {

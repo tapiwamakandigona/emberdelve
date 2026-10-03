@@ -1116,7 +1116,7 @@
    "fix_direction": "When _victoryBeat turns on: fade out over 150 ms, on the banner's first frame, the damage number, the tray-lane call-outs (_noteLife pops), the kill-readout line and every status chip. Place the banner by rect: centre it in the free stage area above the actors' heads (stage top + 8 dp to hero bbox top − 4 dp), and step the font down from 34 to 22 sp until it fits without intersecting the hero or boss bbox. Presentation only.",
    "acceptance": "Rect test at 320x568/360x800/412x915 at +600 and +1200 ms: the banner rect intersects no other visible Text rect (opacity >0.1) and not the hero sprite bbox. Re-shot 039/020 show only 'VICTORY!' plus the HUD numbers. Reduced-motion variant passes the same test.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 4,
    "critic_rank": 1,
    "rank_round": 4,
@@ -1125,6 +1125,12 @@
      "at": "2026-09-25T04:30:35+00:00",
      "round": 4,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T09:30:00+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/victory-moment-20261003",
+     "note": "The victory moment reads as one word. From the banner's first frame the stage's transient readouts (call-outs incl. the kill-readout line, damage numbers, the help pill) are gone at once, so nothing is drawn across the banner; the tray lane's call-outs fade out over 150 ms (instant under Reduce Motion); nothing new is called out after it and the call-out queue is dropped (burn chip and intent badge already leave with the foe: C1-05/C0-03). The banner is placed by rect (VictoryBeat.place): centred in the free band above both actors' heads (stage top + 8 dp to the bodies' tops - 4 dp), font stepped 34 -> 22 sp until it fits; else above the delver short of the boss; else beside the delver over the boss's dissolving spot. The delver keep-out (VictoryBeat.heroEnvelope) covers figure + weapon box through the raised-weapon pose and the last of the step back from the lunge. Result: 34 sp above both heads at 360x800/412x915; 28 sp beside the delver at the rolled 320x568 (no band above the heads there). Spec note: the stage's readouts clear on the banner's first frame rather than fading 150 ms, because the acceptance's +600 ms is 40 ms after the banner lands in this harness. Evidence: test/victory_moment_test.dart (3 sizes x normal/reduced, every 40 ms to +1200 ms) red 6/6 on fa60db2 (320x568 banner on the delver at +600 and +840..1200, '-5' across the banner +560..960; FREE REROLL/STRAIGHT!/EXACT!/'-5' still up at all sizes), green 6/6; victory_beat_test +6 placement unit tests; plates tool/victory_moment_frames_test.dart -> build/victory_moment/ (before fa60db2 vs after)."
     }
    ]
   },
