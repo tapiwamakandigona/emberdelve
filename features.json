@@ -5,8 +5,8 @@
       "id": "REVIEW186-VICTORY-EVERY-DELVER",
       "title": "0.186.0 review findings: the victory banner is checked against every delver, and a missing delver key fails the check",
       "acceptance": "test/victory_moment_test.dart's banner-vs-delver check fails loudly when the delver's figure (figure-<id> or hero-<id>) or weapon (combat-weapon) key is missing; a temporary key rename shows the old test passing and the new one failing. The same victory moment (seed 6, run-ending EXACT blow on a burning boss) runs for every playable delver in charactersOrder at 320x568, in normal and reduced motion (and at 360x800 and 412x915 if the runtime stays reasonable): on the checked frames the banner never touches the delver's figure+weapon box, stays inside the stage and is drawn at >= 22 sp. Any failure is fixed presentation-only in lib/ui (never lib/sim), with the measured numbers recorded next to the constant's doc comment. No existing test is weakened. flutter analyze is clean; the full flutter test, python3 tool/sfx_headroom.py and python3 tool/art/build_delvers.py --check pass.",
-      "passes": false,
-      "evidence": ""
+      "passes": true,
+      "evidence": "progress.md (2026-10-03 18:06 UTC entry); test/victory_moment_test.dart; lib/ui/victory_beat.dart. VERIFIED 2026-10-03: with the delver's production keys renamed for one run, the old test passed (00:02 +1: All tests passed!) and the new one failed ('no box for the delver kindler: figure-kindler missing, hero-kindler missing, combat-weapon missing'). The 126 new cases (21 delvers x 3 sizes x normal/reduced) failed twice on the old placement (00:44 +130 -2: 'gambler 320x568 +600 ms: banner (101.5, 174.0, 109.2x22.9) on the delver (36.4, 117.2, 75.2x75.2)' and the reduced-motion twin) and pass after the beside-band fallback (00:45 +143: All tests passed!, with victory_beat_test). Gate: flutter analyze 'No issues found!'; full flutter test '02:25 +1798: All tests passed!'; sfx_headroom 'Every reachable cascade clears the ceiling.'; build_delvers --check '\"check\": \"pass\"'."
     },
     {
       "id": "BLOOD-COMFORT-20260913",

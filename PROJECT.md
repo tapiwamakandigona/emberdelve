@@ -1,5 +1,17 @@
 # PROJECT.md — Emberdelve
 
+## October 3 — 0.186.0 review follow-up (source PR only)
+
+The two minor findings the 0.186.0 review deferred are fixed on
+`fix/victory-every-delver-20261003` (feature `REVIEW186-VICTORY-EVERY-DELVER`):
+the victory test checks the banner against all 22 playable delvers at the
+three sizes, and it fails when the delver's figure or weapon key is missing.
+That found one real defect: at 320x568 the gambler's stage is 40 dp, so no
+area fitted and the banner fell back to the stage centre, on the gambler.
+`VictoryBeat.place` now tries the band beside the delver, without the
+vertical inset, before the centre. Presentation only: `lib/sim`, purchase,
+version and workflow are untouched. No build or release; Play stays on hold.
+
 ## October 3 — 0.186.0 "Clear Choices" release (owner-authorised)
 
 Current scoped state: `docs/release-0.186.0/PROJECT.md`, `features.json` and
