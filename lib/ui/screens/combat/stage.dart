@@ -137,6 +137,29 @@ extension _CombatStageBand on _CombatScreenState {
                   ),
                 ),
               ),
+              // Bodies in the Fight: what has been spilled so far this
+              // encounter stays on the floor. C1-05: the stains are floor,
+              // so they paint UNDER the combatants and their status chips
+              // (they used to sit in the transient FX stack above them and
+              // smear the burn chip's digits). Scoped to _fxTick like the
+              // overlay it came from.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: IgnorePointer(
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: _fxTick,
+                      builder: (context, _, _) => _stains.isEmpty
+                          ? const SizedBox.shrink()
+                          : CustomPaint(
+                              key: const ValueKey('stains'),
+                              painter: FloorStainsPainter(
+                                List.unmodifiable(_stains),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
                 left: 0,
                 right: 0,
@@ -375,6 +398,10 @@ extension _CombatStageBand on _CombatScreenState {
                                   lunge: _enemyLunge,
                                   knock: _enemyKnock,
                                   flash: _enemyFlash,
+                                  ember: _enemyEmber,
+                                  // C4-02: a boss slain under reduced
+                                  // motion drains to grey from the blow.
+                                  drain: _enemyDrain,
                                   dying: _enemyDying,
                                   squash: _enemySquash,
                                   braced: _enemyBraced,
@@ -445,18 +472,42 @@ extension _CombatStageBand on _CombatScreenState {
                           // what it is suffering, not what it will do. Small
                           // sprite-hugging pill, deliberately unlike the
                           // squared intent badge.
+                          //
+                          // C1-05: a slain foe is not burning any more — the
+                          // chip leaves with the intent badge (same dead flag,
+                          // same 140 ms fade, instant under Reduce Motion)
+                          // instead of riding the dissolve into the summary.
                           if ((enemy['burn'] as int? ?? 0) > 0)
                             Positioned(
                               bottom: -4,
                               right: -14,
-                              child: _StatusChip(
-                                icon: Icons.local_fire_department,
-                                color: EmberColors.ember,
-                                value: enemy['burn'] as int,
-                                semantics:
-                                    'Burning, ${enemy['burn']} stacks. Long press to explain.',
-                                onLongPress: () =>
-                                    _explainBurn(enemy['burn'] as int),
+                              child: ListenableBuilder(
+                                listenable: _foeBand,
+                                builder: (context, child) {
+                                  final live = _shownEnemy ?? enemy;
+                                  final dead =
+                                      _enemyDying ||
+                                      ((live['hp'] as int?) ?? 1) <= 0;
+                                  return IgnorePointer(
+                                    ignoring: dead,
+                                    child: AnimatedOpacity(
+                                      opacity: dead ? 0 : 1,
+                                      duration: Motion.instance.reduced
+                                          ? Duration.zero
+                                          : const Duration(milliseconds: 140),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: _StatusChip(
+                                  icon: Icons.local_fire_department,
+                                  color: EmberColors.ember,
+                                  value: enemy['burn'] as int,
+                                  semantics:
+                                      'Burning, ${enemy['burn']} stacks. Long press to explain.',
+                                  onLongPress: () =>
+                                      _explainBurn(enemy['burn'] as int),
+                                ),
                               ),
                             ),
                         ],
@@ -516,19 +567,6 @@ extension _CombatStageBand on _CombatScreenState {
                     builder: (context, _, _) => Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        // Bodies in the Fight: what has been spilled so far
-                        // this encounter stays on the floor.
-                        if (_stains.isNotEmpty)
-                          Positioned.fill(
-                            key: const ValueKey('stains'),
-                            child: IgnorePointer(
-                              child: CustomPaint(
-                                painter: FloorStainsPainter(
-                                  List.unmodifiable(_stains),
-                                ),
-                              ),
-                            ),
-                          ),
                         // C1-01 boss kill: a warm bloom from the boss,
                         // clipped to the stage and capped so the dissolve
                         // stays visible (a dim tint under reduced motion).
@@ -633,9 +671,17 @@ extension _CombatStageBand on _CombatScreenState {
                                 // C0-05: the rake on the delver is gone
                                 // within ~130 ms instead of hanging through
                                 // the whole hit reaction.
+                                // C0-13: a blade's contact nick on the foe
+                                // is a flash (<=120 ms) — the trail itself
+                                // rides the blade now.
                                 duration:
                                     fx.onPlayer && fx.kind == _FxKind.claws
                                     ? const Duration(milliseconds: 130)
+                                    : !fx.onPlayer &&
+                                          fx.kind == _FxKind.slash &&
+                                          (fx.shape ?? ContactShape.cut) ==
+                                              ContactShape.cut
+                                    ? const Duration(milliseconds: 120)
                                     : const Duration(milliseconds: 340),
                                 shape: fx.shape,
                                 facing: fx.onPlayer ? -1 : 1,
@@ -884,6 +930,14 @@ extension _CombatStageBand on _CombatScreenState {
     /// C0-05: the red hurt tint that follows the white contact flash.
     bool hurt = false,
 
+    /// C4-02: ember-hot body after a boss's killing blow (crossfades from
+    /// the white beat over 160 ms; the dissolve inherits it).
+    bool ember = false,
+
+    /// C4-02: colour drain to grey over ~300 ms (reduced-motion boss
+    /// death), starting from the body's current pallor.
+    bool drain = false,
+
     /// C0-05: knockback in logical px, snapped in fast (null keeps the
     /// legacy 22%-of-width slide).
     double? knockDp,
@@ -897,7 +951,19 @@ extension _CombatStageBand on _CombatScreenState {
     final width = spriteWidth ?? spriteHeight;
     // Pallor: the colour drains as the body is hurt. Only wraps when there
     // is something to show, so a fresh sprite renders pixel-identical.
-    if (condition.pallor > 0.01 && !dissolve) {
+    if (drain && !dissolve) {
+      final from = condition.pallor;
+      w = TweenAnimationBuilder<double>(
+        tween: Tween(begin: from, end: 1.0),
+        duration: _CombatScreenState._pace(300),
+        curve: Curves.easeOut,
+        child: w,
+        builder: (context, amount, child) => ColorFiltered(
+          colorFilter: ColorFilter.matrix(pallorMatrix(amount)),
+          child: child,
+        ),
+      );
+    } else if (condition.pallor > 0.01 && !dissolve) {
       w = ColorFiltered(
         colorFilter: ColorFilter.matrix(pallorMatrix(condition.pallor)),
         child: w,
@@ -963,7 +1029,7 @@ extension _CombatStageBand on _CombatScreenState {
     );
     // Hit-flash: paint the sprite solid white for a beat.
     w = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 60),
+      duration: Duration(milliseconds: ember ? 160 : 60),
       child: flash
           ? ColorFiltered(
               key: const ValueKey('flash'),
@@ -975,6 +1041,15 @@ extension _CombatStageBand on _CombatScreenState {
             )
           // C0-05: after one white beat the hurt body burns red, so the hit
           // reads as pain instead of a frozen white cut-out.
+          : ember
+          ? ColorFiltered(
+              key: const ValueKey('ember'),
+              colorFilter: ColorFilter.mode(
+                EmberColors.ember.withValues(alpha: 0.62),
+                BlendMode.srcATop,
+              ),
+              child: w,
+            )
           : hurt
           ? ColorFiltered(
               key: const ValueKey('hurt'),

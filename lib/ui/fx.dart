@@ -269,7 +269,8 @@ class ShakeBoxState extends State<ShakeBox>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _t,
-      // Perf (2026-07-25): the shake translates the ENTIRE screen, and
+      // Perf (2026-07-25): the shake translated the ENTIRE screen (since
+      // C4-04 only the combat stage), and
       // without a boundary the translation repainted every render object
       // under it on all ~14 frames of the shake — the single most expensive
       // thing in a hit. As a repaint boundary the shaken content is a cached

@@ -6211,6 +6211,347 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   match. Play production and itch uploads remain open (browser session
   needed). Evidence: docs/release-0.185.0/progress.md iteration 2.
 
+## 2026-10-02 — games pass iteration 1: boss death without the white block (C4-02)
+- Logged at 2026-10-02 18:28 UTC. Branch feat/boss-death-ember-20261002 off legacy/dice-builder @ 535029b.
+- Baseline before any change (local, Flutter 3.44.9): analyzer clean; 1596 passed, 2 failed.
+  Both failures are pre-existing and not caused by this change. VERIFIED from the run log:
+  - test/marked_week_test.dart "a finished weekly banks its mark and its rule": during a
+    week whose rule contains short_road (this week is Short Road) the test wants short_road
+    in the saved list and then forbids it. Same contradiction as PR #111 records. It will
+    pass in the weeks of 2026-10-05 and 2026-10-12, then fail again in the weeks of
+    2026-10-19 and 2026-10-26 (Lean Road / Hard March). VERIFIED with weeklyRuleFor over
+    the next 8 weeks. I did not touch the test; the fix needs an explicit go.
+  - test/shorter_title_test.dart 412x915: the title scrolls by 8 px. PR #111 carries the
+    fix for this one ("recover 8 px of title whitespace").
+- Change: on the blow that kills a boss, the white contact flash now lasts only the
+  hit-stop. It then crossfades over 160 ms into an ember-tinted body, which the ashfall
+  dissolve crumbles from. Under reduced motion the boss is never flashed white; its
+  colour drains to grey as it fades. Files: lib/ui/screens/combat_screen.dart and
+  lib/ui/screens/combat/stage.dart. Presentation only; lib/sim is untouched.
+- VERIFIED: the new test/boss_death_ember_test.dart lands a real lethal blow through the
+  controls and counts luma>235 pixels inside the foe's own rect every 40 ms for 1.6 s.
+  On the old code it was red: 11 frames at 24–27 % bright in both normal and reduced
+  motion. On the new code it is green: at most 3 such frames in normal motion, 0 in reduced.
+- VERIFIED: the full suite gives 1598 passed and the same 2 pre-existing failures
+  (1596 + 2 new). Analyzer clean. sfx_headroom passes.
+  tool/boss_kill_frames_test.dart: the peak whole-frame luma>230 share is 2.1 % (normal)
+  and 0.3 % (reduced). I looked at the strips by eye (headless render at 2x, not a phone).
+  Two white frames, then an orange body, then the crumble starts from the tinted pixels.
+  Reduced: no white, the body greys.
+- ASSUMED / not verified: how it looks and feels on a device. The strips still re-dress the
+  seed-1 crawler instead of the real boss sprite (C4-05, open).
+
+## 2026-10-02 — PR #112, CI and the independent review
+- Logged at 2026-10-02 18:37 UTC. PR #112 (feat/boss-death-ember-20261002 → legacy/dice-builder).
+- VERIFIED CI run 37047730872 on the PR head: build-ios green; "Analyze + test
+  (headless)" red with exactly the two pre-existing failures and nothing else —
+  "1598 tests passed, 2 failed" (shorter_title 412x915 "Expected: <0> Actual: <8.0>"
+  and marked_week "Expected: equals ['short_road'] unordered, Actual: <null>").
+  The signed-build job is correctly skipped after a red test job. The same two
+  failures are red on the lane itself, so this PR adds no failure.
+- Merge is therefore blocked on the lane's own red, not on this change. I did not
+  merge, did not edit either test and did not touch the CI workflow.
+- VERIFIED independent read-only review (ultra tier, fresh context, range
+  535029b..4d9c957): PASS, no findings. It reproduced the red-on-old-code result in
+  its own throwaway copy (11 frames at 24-27 % bright in both motion modes on the
+  535029b lib files), re-ran the strips, and confirmed 64/64 nearby combat and
+  motion tests plus "no existing test modified, lib/sim/pubspec/android/.github
+  untouched". Non-blocking notes it raised, recorded so they are not lost:
+  1. Under reduced motion the boss keeps full colour for ~400 ms and then switches
+     to grey in one step, where the backlog asked for a 300 ms desaturation. The
+     measured acceptance (no white) is met.
+  2. The new test expresses its limits as a share of the foe rect (12 % ~ 9.6k px,
+     2.5 % ~ 2.0k px at 360x800 @2x) rather than the backlog's absolute px counts;
+     equivalent or stricter here, but it would drift at another size.
+  3. "At least 2 frames with sprite pixels and dissolve particles together" is
+     checked by eye on the strips, not automated.
+  4. The strips still re-dress the seed-1 crawler (C4-05 open), so no real boss
+     silhouette has been judged. C4-02 stays fixed_pending_review for that reason.
+  5. The ember tint also colours the shadow ellipse, the held weapon and the burst,
+     exactly as the existing flash and hurt wrappers do.
+  6. A boss-killing blow under 25 % of max HP gets no hit-stop, so it shows no white
+     at all — stricter than the cap.
+- Note 1 is the only one that is a behaviour gap against the written acceptance; it
+  is queued as the first item of the next iteration.
+
+## 2026-10-02 — the returning title fits a 412x915 phone again (port from PR #111)
+- 2026-10-02 19:21 UTC. Owner-side decision 2026-10-02T18:44Z authorised porting only the title
+  hunk of PR #111 commit f3ce6d7 as its own PR: the title's outer vertical padding
+  goes from Space.l to Space.m. No text, font size or touch target changes; no test edited.
+- VERIFIED red on the lane (535029b): test/shorter_title_test.dart "412×915: the whole
+  title fits without scrolling" fails locally (scroll extent 8.0), matching CI 37047730872.
+- VERIFIED green after: that file 3/3; flutter analyze clean; full suite 1597 pass,
+  1 fail = test/marked_week_test.dart (the known Short Road week contradiction, still
+  waiting on the owner; not touched).
+- VERIFIED scroll extent on a returning profile with the shipped fonts:
+  412x915 8 → 0 px; 360x800 123 → 115 px.
+- VERIFIED render captures (flutter_test widget render at 1x, shipped Cinzel/Inter;
+  Material icons draw as boxes in the test renderer — a stand-in, not a device capture)
+  before/after at 412x915: same layout, every block 4 px higher, footer fully in view.
+- VERIFIED test/new_song_test.dart (red once on CI 37048681419) passed 3/3 alone and
+  inside the full local run; still ASSUMED flaky/order-dependent, not reproduced.
+- Still queued from PR #112 review note 1: reduced-motion boss death should desaturate
+  over ~300 ms instead of a one-step switch.
+- 2026-10-02 19:28 UTC. VERIFIED CI run 37053558780 on PR #113 head adf5e2e:
+  "1597 tests passed, 1 failed" — only marked_week_test ("Expected: equals ['short_road']
+  unordered / Actual: <null>"), the lane's own known failure. shorter_title_test is green
+  there, so the lane is down to one red test once this merges. Not merged (lane red).
+- VERIFIED independent read-only review (ultra tier, fresh context, range 535029b..adf5e2e):
+  PASS, no findings. It reproduced 8 → 0 / 123 → 115 px with the lane's title file swapped
+  back, confirmed the file is byte-identical to the #111 version, and re-ran the full suite
+  (1597 + the same 1 failure). Notes: the ported comment says "(0.186.0)" while pubspec is
+  0.185.0 (inherited from #111, fixed by the next bump); the captures are scratch renders,
+  regenerable by pumping GameRoot with the shorter_title_test profile and toImage on a
+  RepaintBoundary; the top-right icon row barely moves, so "every block 4 px higher" is loose.
+
+## 2026-10-03 — the lane is green: marked_week corrected, PR #113 merged (iteration 9)
+- 2026-10-03 02:20 UTC. Owner authorization 2026-10-03 01:38 UTC (app thread) allowed ONE
+  narrow spec change: test/marked_week_test.dart required the banked mutators to equal the
+  week's declared rule AND to exclude 'short_road' — impossible in any week whose rule
+  contains short_road (weeks of 2026-09-28, 10-19, 10-26). The bank is correct:
+  controller._moddedMutators drops short_road and sorts, _runRecord writes 'mutators' only
+  when that list is non-empty and 'short': true for a short week.
+- VERIFIED red first: on 26191e8 the test fails today with
+  "Expected: equals ['short_road'] unordered / Actual: <null>" (matches CI 37047730872).
+- Commit d4acbec: line 66 compares `r['mutators'] ?? const []` with
+  `rule.mutators.where((m) => m != 'short_road')`; line 69 tolerates the absent key; the
+  'short' and 'weekly' assertions are untouched. Test-only, +8/-2, no lib/ change.
+- VERIFIED green after: marked_week 4/4, flutter analyze clean, full suite 1598 pass.
+- VERIFIED CI on d4acbec (PR #113 head): run 37089375789 "Analyze + test (headless)" pass,
+  ios 37089375788 pass — the first fully green head on this lane since 0.185.0.
+- Merged PR #113 into legacy/dice-builder as eaf651e (title fit + this correction).
+  The lane's two inherited red tests are now gone; the merge queue can proceed:
+  #112 -> #114 (stacked) -> #115 -> #116 -> #117 -> #118 -> #119, each after a green
+  rebased CI, then the 0.186.0 release.
+- VERIFIED independent read-only review (ultra tier, fresh context, range 26191e8..d4acbec):
+  PASS, 0 findings. It reproduced the red, re-ran the suite (1598), and mutation-tested the
+  check: leaking short_road into the bank, dropping a real mutator or dropping 'short' each
+  make the corrected test fail across leanRoad / hardMarch / doubledWeek / [short_road] /
+  [no_rests]. Notes: the test still reads DateTime.now(), so one run only covers the current
+  week's rule; the owner authorization itself was outside what the reviewer could check.
+
+## 2026-10-02 — Reduced-motion boss death drains its colour (C4-02, follow-up to #112)
+- Logged at 2026-10-02 20:35 UTC. Branch feat/boss-death-desat-20261002, built on the
+  PR #112 head (d38039d) because it finishes that item. The first note of the #112 review:
+  under Reduce Motion the slain boss kept full colour for ~400 ms and then went grey in a
+  single frame; the backlog asks for a desaturation over 300 ms.
+- Change (presentation only): a `_enemyDrain` flag is set on the hit-stop of the killing
+  blow (the same beat that starts the ember tint in normal motion) and again at the boss
+  kill moment. While it is set, the body's pallor filter tweens from its current pallor to
+  full grey over `_pace(300)` (ease-out). The existing 700 ms fade is unchanged. No sim,
+  test, asset or dependency change.
+- New test/boss_death_drain_test.dart (same lethal-blow fixture as boss_death_ember_test).
+  Each 40 ms frame it reads, from the widgets above the foe sprite, how much colour the
+  colour-matrix filters leave and the product of the fades. VERIFIED red on the old code:
+  "no one-frame grey cut … Expected: <= 0.149, Actual: 0.362" — the colour went from 0.42
+  to 0.05 in one frame at ~760 ms. VERIFIED green on the new code: 0.42 → 0.32 → 0.23 →
+  0.16 → 0.09 → 0.04 from ~480 ms, grey before the fade begins.
+- VERIFIED: flutter analyze clean; full suite 1599 pass + the 2 known lane failures
+  (shorter_title 412x915, fixed on PR #113; marked_week). boss_death_ember_test still green.
+  tool/boss_kill_frames_test.dart re-rendered; I looked at the reduced Ember Tyrant strip
+  (t0320–t0920, foe crop): red body, then muted, then grey over ~4 frames, then the fade.
+  No white frame. Headless test render at 2x, not a phone.
+- ASSUMED / not verified: how it feels on a device. The strips still re-dress the seed-1
+  crawler (C4-05 open).
+
+## 2026-10-02 — PR #114, CI and the independent review
+- Logged at 2026-10-02 20:43 UTC. PR #114 (feat/boss-death-desat-20261002, stacked on #112's branch).
+- VERIFIED CI run 37061517779 on ed54ff8: "1599 tests passed, 2 failed", exactly the two
+  known lane failures (shorter_title 412x915 "Expected: <0> Actual: <8.0>"; marked_week
+  "Expected: equals ['short_road'] unordered, Actual: <null>"). build-ios green
+  (37061517780). Signed build correctly skipped. Not merged: the lane is red and #112 goes first.
+- VERIFIED independent read-only review (ultra tier, fresh context, range d38039d..ed54ff8):
+  PASS, no findings. It reproduced red on the d38039d lib files ("Expected: <= 0.1494,
+  Actual: 0.3624") and green on ed54ff8, ran analyze, the strips (reduced: max 151 px
+  luma>235 in the boss rect vs the 2k line) and 101 nearby tests. Non-blocking notes:
+  1. The backlog wording says "desaturates and fades over 300 ms"; the fade stays 700 ms
+     (disclosed). Product call, left as is.
+  2. The test reads the filter/fade settings on the real path, not pixels; the strips back it.
+  3. The 0.04 → 0.03 → 0.05 wobble is the cool cast of pallorMatrix, not visible.
+  4. When the drain starts, the wrapper type changes, so the enemy sprite subtree rebuilds;
+     no glitch in the strips (sprites precached); device unverified.
+  5. C4-05 (crawler re-dress in the strips) still open.
+
+## 2026-10-02 — games pass iteration 4: the hit shake moves the stage, not the HUD (C4-04)
+- Logged at 2026-10-02 21:39 UTC. Branch feat/stage-only-shake-20261002 off legacy/dice-builder @ 535029b
+  (independent of PRs #112-#114; touches a different part of combat_screen.dart).
+- Baseline (local, Flutter 3.44.9): analyzer clean; the same 2 known lane failures only
+  (marked_week_test, shorter_title_test 412x915). VERIFIED from the run log.
+- Change: the screen shake on a landed hit and on a boss kill used to translate the whole
+  combat screen, so the gold/embers bar, enemy panel, HP bar and tray jumped with every blow
+  and the boss kill pulled the top bar off the right screen edge. The ShakeBox now wraps only
+  the stage band (fighters + cavern backdrop). A plain RepaintBoundary stays at the screen
+  root where the old shake's boundary was, so the screen keeps the same layer layout.
+  Files: lib/ui/screens/combat_screen.dart, a comment in lib/ui/fx.dart. lib/sim untouched.
+- VERIFIED red -> green: new test/stage_only_shake_test.dart (360x800 and 412x915) lands the
+  foe's real blow through End turn and samples every 20 ms. Old code: top-bar pip and enemy
+  name drift on 12 frames, up to 6.73 px. New code: 0 drift; the HP bar and buttons sit outside
+  the shaken subtree; the shake still plays (>= 5 frames, > 2 px). Mutation: shake amplitude
+  set to 0 -> the test fails ("the hit must still shake the stage", Actual 0.0).
+- VERIFIED, and recorded honestly: test/windup_heat_test.dart failed (empty-area redness rise
+  6.5, limit < 6) with the first cut, which moved the shake but dropped the whole-screen
+  RepaintBoundary. That probe captures the largest repaint boundary above the foe; without the
+  root layer it captured the route layer with the opaque purple backdrop instead of the
+  transparent screen layer. The real frame does not change; restoring the root
+  RepaintBoundary (no test edit) made it green again (5.5 -> 0.5 absolute redness in the probe).
+- VERIFIED: full suite 1598 passed + the 2 known lane failures; analyzer clean.
+- VERIFIED render (flutter_test strips, tool/boss_kill_frames_test.dart, test fonts, not a
+  device): best-match offset vs t1600 for the top bar and tray over t0440-t0840 of both normal
+  boss strips — before: off on 8 of 11 frames (up to 12,8 px @2x at t0640); after: 0,0 on 11 of
+  11. I looked at t0640 side by side: before the whole screen is shifted with a dark sliver at
+  the right edge; after only the stage panel moves.
+- ASSUMED: feel on a phone. The stage band's own edge now moves up to ~6 dp inside its padding.
+
+## 2026-10-02 — iteration 4 follow-up: CI and the independent read-only review (C4-04, PR #115)
+- VERIFIED CI run 37068148694 on 9a38aee (pull_request, PR #115): exactly two failures,
+  test/marked_week_test.dart and test/shorter_title_test.dart 412x915 — the lane's own known
+  reds. The new test/stage_only_shake_test.dart and test/windup_heat_test.dart both pass on CI.
+  The ios job (37068148696) was still running when this was written.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..9a38aee: verdict PASS, no findings. It re-ran analyze (clean), the full suite
+  (1598 pass + the 2 known), reverted combat_screen.dart/fx.dart in a temp copy and saw the
+  new test fail there (12 frames of drift, up to 6.73 px), and swapped the root RepaintBoundary
+  for a KeyedSubtree in another temp copy and saw windup_heat_test fail at 6.5 — confirming
+  that boundary is a real layer-tree restoration, not a test workaround. It also re-rendered
+  the boss strips: top bar and tray unchanged on every sampled frame, the only enemy-panel
+  change is the HP bar draining, and no background sliver at either screen edge (the one
+  right-edge change at t0560 is the boss's floor shadow, which is stage content).
+- Reviewer notes (non-blocking, recorded for the next pass): root-Stack overlays (boss-kill
+  flash, name plate, tour, tips) no longer shake, which is intended; the stage band can now
+  paint a few px past its own vertical edge, hidden by the vitals band which paints later.
+- NOT merged: the lane's own CI is red, so nothing can merge today.
+
+## 2026-10-02 — games pass iteration 5: foes act while they idle (C0-14)
+- Logged at 2026-10-02 22:27 UTC. Branch feat/living-idles-20261002 off legacy/dice-builder @ 535029b
+  (independent of PRs #112-#115; touches only lib/ui/combat_pose.dart idleLife).
+- Baseline (local, Flutter 3.44.9): analyzer clean; the same 2 known lane failures only.
+- Finding first: C0-14 said brute and crawler idles are near-static. On the current lane they are
+  not still (bob + heave/scuttle move the top edge ~27-32 px @2x over a loop, measured on a
+  headless render) — but the whole sprite moves as one block, so the body never does anything.
+  VERIFIED: over a full 2.8 s loop the brute's left edge moved 0 px and the crawler's footprint
+  width 0 px.
+- Change (presentation only, lib/sim untouched): once per idle loop heavies (brutes and every
+  boss/elite that heaves) roll their shoulders — lean into the stage, rock back past centre,
+  settle, ~420 ms after the exhale — and crawlers twitch: two quick wiggles (~280 ms) during a
+  held beat, still on the ground. Both are windows inside the loop, so it never seams and the
+  rest of the loop stays calm. Breathers and hovering bodies are unchanged. Reduce Motion still
+  stops the life ticker, so no beat plays.
+- VERIFIED red -> green: new test/idle_beats_test.dart. Old code: heave/scuttle rotation span 0,
+  brute left-edge range 0 px, crawler width range 0 px (4 red). New code: brute left edge range
+  5 px @2x, crawler width range 5 px @2x; the beat is active 15% (heave) / 10% (scuttle) of the
+  loop; reduce motion = 0 px. test/living_idles_test.dart unchanged and green.
+- VERIFIED: analyzer clean; full suite 1602 passed + the 2 known lane failures.
+- VERIFIED render (tool/living_foes_frames_test.dart, real CombatScreen, headless flutter_test,
+  not a device): before/after idle strips (20 frames, 100 ms) differ only on frames 000-002,
+  where the beat falls; I looked at them: the brute leans a few px and back, the crawler visibly
+  twists on 001. Rotating pixel art at these small angles gives slightly stepped edges on those
+  frames (same as the existing wisp hover tilt).
+- ASSUMED: feel on a phone, and whether one beat per 2.8 s reads as alive or as a metronome.
+
+## 2026-10-02 — iteration 5 follow-up: CI and the independent read-only review (C0-14, PR #116)
+- Logged at 2026-10-02 22:40 UTC.
+- VERIFIED CI run 37072576679 on bc39735 (pull_request, PR #116): 1602 tests pass, exactly two
+  failures — test/marked_week_test.dart and test/shorter_title_test.dart 412x915, the lane's own
+  known reds. The new test/idle_beats_test.dart passes on CI. The ios job (37072576674) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..bc39735: verdict PASS, no findings. It re-ran analyze (clean) and the tests, reverted
+  lib/ui/combat_pose.dart to 535029b in a scratch copy and saw the new test fail 4 ways there,
+  re-rendered the idle strips on old and new code (brute differs on frames 000-001, crawler on
+  000-002, 003-019 identical) and confirmed reduce motion stays at 0 px, breathe unchanged, the
+  only caller is the sprite painter path, and nothing in lib/sim, android/, .github/, pubspec or
+  features.json moved.
+- Reviewer notes (non-blocking, for the next pass): (1) the heave lean's dx and initial rotation
+  are applied before flipX, so a right-side foe facing left leans AWAY from the delver — confirm
+  the intended direction; (2) the test named "plain breathers and hovering bodies are unchanged"
+  only checks breathe; (3) C0-14's literal acceptance ("3 px bbox change over 18 frames") may
+  already have been met by the old bob, which is why this ships as fixed_pending_review for the
+  critic to rule on; (4) bigger boss sprites will show a visibly bigger tilt at 0.05 rad.
+
+## 2026-10-02 — iteration 6: the cut's trail rides the blade (C0-13)
+- Logged at 2026-10-02 23:32 UTC.
+- Why: the critic saw the slash trail drawn as a crescent around the FOE (C_*_kill 053-060),
+  far from the blade, so it read as a sticker on the victim. VERIFIED on the old code with
+  tool/living_foes_frames_test.dart (real CombatScreen, headless flutter_test, not a device):
+  the crescent sits over the foe on 053-060 and is gone on 061; the blade's own smear shows
+  only on 050-051 and is already off at contact (052).
+- Change (presentation only, lib/sim untouched): when the swing lands, the blade's own smear
+  now lingers for 110 ms, its tail closing up onto the edge while it fades (CombatFigure +
+  the weapon painter reading the live smear). The foe-side mark for a cut is no longer an arc:
+  it is a short nick along the line of the swing with two sparks, 120 ms total. Other contact
+  shapes (crush, stab, stamp, hook, pick, claws) are unchanged.
+- VERIFIED red -> green: new test/blade_trail_test.dart (3 tests). Old code: blade smear 0.0 at
+  contact + 60 ms; foe-side cut ImpactSlash 340 ms; a 58 px stroke across the top quarter of the
+  mark box. New code: smear > 0 at contact and +60 ms and 0 after +120 ms; cut contact 120 ms and
+  off the stage after it; longest run in the top quarter <= 8 px (spark dots only).
+- VERIFIED: flutter analyze clean; full suite 1599 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render: kill strips re-rendered for flue_crawler, cinder_wisp, slag_brute and
+  molten_maw on old and new code in the same run order; only frames 052-060 differ. I looked
+  at them: 052 the trail wraps the blade from the raise to the strike, 053 it has closed to a
+  thin stub on the edge, 054 a small remnant at the tip; the nick crosses the foe on 053-054;
+  from 055 nothing is left of either (the old crescent stayed until 060).
+- ASSUMED: how the 110 ms trail feels at 60 fps on a phone (strips are 40 ms frames).
+
+## 2026-10-02 — iteration 6 follow-up: CI and the independent read-only review (C0-13, PR #117)
+- Logged at 2026-10-02 23:40 UTC.
+- VERIFIED CI run 37078060727 on 6c60ebf (pull_request, PR #117): exactly two failures —
+  test/shorter_title_test.dart 412x915 and test/marked_week_test.dart, the lane's own known
+  reds. The new test/blade_trail_test.dart passes on CI. The ios job (37078060691) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..6c60ebf: verdict PASS, no findings. It re-ran analyze (clean) and the suite
+  (+1599 -2, only the known reds), reverted lib/ to 535029b in a scratch copy and saw all 3
+  new tests fail there (smear 0.0 at contact, foe-side cut 340 ms, 58 px top-quarter stroke),
+  re-rendered the kill strips on old and new code for all 4 foes (only frames 052-060 differ;
+  trail on the blade 052-054, nothing from 055; the old crescent sat on the foe through 060),
+  ran the new test under Motion 'on' plus weapons_test and combat_bodies_test (30 pass), and
+  confirmed nothing in lib/sim, android/, .github/ or pubspec moved and no existing test was
+  edited.
+- Reviewer notes (non-blocking): (1) my "smear 0.0 at contact + 60 ms" wording understates the
+  old behaviour — it is already 0.0 at contact itself; (2) under Reduce Motion the 110 ms
+  fading trail still plays, exactly as the swing smear already did before this change — a
+  design call, not a regression; (3) test 1 measures the smear value handed to the painter,
+  the pixel evidence is the render strips; (4) if the hero's phase left 'swing' within 110 ms
+  of contact the trail would be cut short (does not happen in the rendered strips).
+- NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
+
+## 2026-10-03 — iteration 7: the burn chip leaves with the dead foe (C1-05)
+- Logged at 2026-10-03 00:26 UTC.
+- Why: the critic saw the foe's burn chip ("11") still at the feet of a dead foe with a blood
+  stain painted over its digits (040, 021) and a "1" chip riding the dissolve (026). VERIFIED in
+  the code: the intent badge fades on the dead flag, the burn chip had no such rule, and the floor
+  stains lived in the transient FX stack, which paints after (above) the combatants.
+- Change (presentation only, lib/sim untouched, lib/ui/screens/combat/stage.dart): the burn chip
+  uses the badge's own dead flag (contact-timed HP 0 or dying) — 140 ms fade, instant under
+  Reduce Motion, no long-press once dead. The floor stains moved to their own layer under the
+  combatants (still scoped to the FX tick), so a stain can never cover the chip or any text.
+- VERIFIED red -> green: new test/burn_chip_death_test.dart (4 cases: 320x568 and 360x800, Reduce
+  Motion on/off) lands a real exact kill on a burning foe (hp/burn are fixtures). Old code: 4/4 red
+  — chip alpha 1.0 on every frame after the blow, and the stains render after the chip in paint
+  order. New code: 4/4 green.
+- VERIFIED: flutter analyze clean; full suite 1600 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render (headless flutter_test CombatScreen at 360x800, not a device; Material icons
+  draw as boxes in the test renderer): old frame +1080 ms after the attack shows the "11" chip at the
+  dead foe's feet with a dark stain across it; the new frame shows no chip and the stains on the floor.
+- ASSUMED: nothing visible changes for the hero (no hero status chip exists); stains still read
+  the same on the floor, now under the bodies instead of over them.
+
+### Iteration 7 — CI and independent review (logged 2026-10-03 00:35 UTC)
+- VERIFIED CI run 37082124700 on `feat/burn-chip-death-20261003`: 1600 tests passed, 2 failed —
+  `shorter_title_test` 412x915 and `marked_week_test`, the two already red on the lane itself
+  (the title fix is PR #113; the marked_week correction still waits on the owner). iOS job
+  37082124630 green. PR #118 opened against `legacy/dice-builder`; NOT merged, because the lane's
+  own CI is red.
+- VERIFIED independent read-only review (ultra, fresh context, range 535029b..7c08a18): PASS, 0
+  findings. It reproduced the red->green on a temp copy (4/4 red with the old stage.dart), ran
+  analyze and the full suite, re-rendered combat body frames old vs new (only the floor line
+  y~824-840 differs, stains stay visible), and checked the owner identity and that no "Viktor"
+  string was added.
+- Review notes carried forward (non-blocking): transient blood bursts and contact FX still paint
+  above status chips — only the permanent floor stains moved below them; the acceptance's "kill
+  strips for all 4 foes" is covered structurally here (one foe tested at 2 sizes x Reduce Motion),
+  since the chip shares the badge's dead flag.
+
 ## 2026-10-03 — iteration 8: damage numbers read on the white hit flash (C2-04)
 - Logged at 2026-10-03 01:27 UTC.
 - Why: the critic saw the yellow "-6"/"-5" printed on the foe's pure-white hit-flash body (020,
