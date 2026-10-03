@@ -902,6 +902,11 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T01:27:29+00:00",
+     "event": "maker:remeasured",
+     "note": "re-measured on legacy/dice-builder 535029b through the real controls (360x800, exact kill and a non-lethal hit, Reduce Motion on and off, 20 ms sampling): the enemy panel holds the pre-hit HP (5 / 19, 19 / 19) until the contact frame and changes on the same frame the damage number appears (+320 ms after Attack) — the contact-timed presentation ledger from 92373ee already does this. The 0 / 19 seen at t360 is that contact frame. Status left open for the critic; no code change."
     }
    ]
   },
@@ -915,7 +920,7 @@
    "fix_direction": "Give damage numerals a 2 dp dark outline or shadow (#1a1016) and anchor them above the sprite bbox top + 8 dp, the same lane as the kill readout.",
    "acceptance": "Rect test on the kill strips for 4 foes + boss: the damage-number rect does not intersect the sprite bbox on any frame. A contrast sample of the number's fill vs its local background is ≥3:1 on 020/039 equivalents.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 2,
    "critic_rank": 5,
    "rank_round": 2,
@@ -924,6 +929,12 @@
      "at": "2026-09-24T20:42:10+00:00",
      "round": 2,
      "event": "opened"
+    },
+    {
+     "at": "2026-10-03T01:27:29+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/damage-number-ink-20261003",
+     "note": "damage numbers (hit and BLOCKED, both pop paths) now carry a hard 2 dp outline in #1a1016 (eight unblurred shadow offsets on the one Text) plus a soft drop shadow. test/damage_number_outline_test.dart renders the real DamagePop over pure white and measures fill vs the pixels 1 dp around the glyphs: old 1.75/1.43/1.84/1.54:1 (reduce off -6, BLOCKED; reduce on -6, BLOCKED) -> new 7.46/5.54/9.67/5.54:1. Boss kill strips (2 bosses x Reduce Motion, headless 360x800) old vs new: only the frames carrying a number (t0360 on) change. NOT done: the rect half of the acceptance (number above the sprite bbox) — the readout planner deliberately puts the enemy number over the foe low and the short-stage fallbacks have no room above the badge; left for the critic to rule on now that the number reads on white."
     }
    ]
   },

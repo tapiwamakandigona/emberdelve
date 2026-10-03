@@ -6551,3 +6551,47 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   above status chips — only the permanent floor stains moved below them; the acceptance's "kill
   strips for all 4 foes" is covered structurally here (one foe tested at 2 sizes x Reduce Motion),
   since the chip shares the badge's dead flag.
+
+## 2026-10-03 — iteration 8: damage numbers read on the white hit flash (C2-04)
+- Logged at 2026-10-03 01:27 UTC.
+- Why: the critic saw the yellow "-6"/"-5" printed on the foe's pure-white hit-flash body (020,
+  039, brute/maw kills 054-056), about 1.5:1. VERIFIED in the pixels: rendering the real DamagePop
+  over pure white, the gold fill vs the ring 1 dp around its glyphs measured 1.75:1 (-6) and
+  1.43:1 (BLOCKED) with motion, 1.84:1 / 1.54:1 under Reduce Motion — the soft black blur did not
+  reach the glyph edge.
+- Change (presentation only, lib/sim untouched, lib/ui/fx.dart): both DamagePop paths draw the
+  number with one shared ink — a hard 2 dp outline in #1a1016 (eight unblurred shadow offsets on
+  the same Text, so layout and find.text are unchanged) plus a soft drop shadow.
+- VERIFIED red -> green: new test/damage_number_outline_test.dart (4 cases: -6 and BLOCKED x
+  Reduce Motion on/off). Old code 4/4 red (ratios above); new code 7.46:1, 5.54:1, 9.67:1, 5.54:1.
+- VERIFIED: flutter analyze clean; full suite 1600 passed + the 2 known lane failures
+  (marked_week_test, shorter_title_test 412x915). No existing test edited.
+- VERIFIED render (headless flutter_test, tool/boss_kill_frames_test.dart, 360x800, 2 bosses x
+  Reduce Motion; the strips re-dress the seed-1 crawler, C4-05): old vs new differ only on frames
+  from t0360 on, where a number is up; at t0480 the "-5" over the white flash body has a dark rim
+  and reads clearly, before it was gold on white.
+- C2-03 re-measured, no change made: through the real controls (360x800, exact kill and a normal
+  hit, Reduce Motion on/off, 20 ms steps) the enemy panel keeps the pre-hit HP until the contact
+  frame and changes on the same frame the damage number appears (+320 ms). VERIFIED; the critic's
+  t360 plate is that contact frame. Left open for the critic.
+- NOT done (descoped): C2-04's rect half — moving the number above the sprite box. The readout
+  planner (lib/ui/readout_lanes.dart, pinned by readout_lanes_test/kill_readout_test) puts it over
+  the foe on purpose and short stages have no room above the badge. ASSUMED acceptable now that
+  the number reads on white; the critic decides.
+
+### Iteration 8 — CI and independent review (logged 2026-10-03 01:34 UTC)
+- VERIFIED CI run 37086198639 on `feat/damage-number-ink-20261003`: 1600 tests passed, 2 failed —
+  `shorter_title_test` 412x915 and `marked_week_test`, the two already red on the lane itself
+  (title fix is PR #113; the marked_week correction still waits on the owner). iOS job 37086198555
+  still running at write time. PR #119 opened against `legacy/dice-builder`; NOT merged, because the
+  lane's own CI is red.
+- VERIFIED independent read-only review (ultra, fresh context, range 535029b..18c306c): PASS, 0
+  findings. It restored the old lib/ui/fx.dart in a temp copy and saw the new test fail 4/4
+  (1.84:1 and 1.54:1 matched exactly), ran analyze and the full suite (+1600 -2, the known two),
+  re-rendered the boss strips and read the "-5" rim on t0480, and checked identity, lib/sim and the
+  absence of any banned string.
+- Review notes carried forward (non-blocking): C2-04's rect half has no test — the critic should
+  rule on it rather than close the item; the outline paints ~2 dp (shadow ~3 dp + blur) outside
+  the measured text box, about the same overflow as the old blur-4 halo; the C2-03 re-measurement
+  added no artifact of its own (the behaviour is already pinned by
+  test/combat_contact_timeline_test.dart from 92373ee).
