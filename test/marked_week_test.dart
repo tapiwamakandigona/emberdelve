@@ -63,10 +63,16 @@ void main() {
     // compare as a set, not in declared order. Latent until 2026-08-31,
     // when the real clock first hit a doubled week whose declared order
     // ('no_shops','no_rests') is not alphabetical.
-    expect(r['mutators'], unorderedEquals(rule.mutators));
+    expect(
+      r['mutators'] ?? const [],
+      unorderedEquals(rule.mutators.where((m) => m != 'short_road')),
+    );
     // short_road is not among the banked mutators even on a short week —
     // it encodes, and banks as 'short'.
-    expect((r['mutators'] as List).contains('short_road'), isFalse);
+    expect(
+      ((r['mutators'] as List?) ?? const []).contains('short_road'),
+      isFalse,
+    );
     expect(r['short'], rule.mutators.contains('short_road') ? isTrue : isNull);
   });
 

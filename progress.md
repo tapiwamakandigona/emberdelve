@@ -6274,6 +6274,62 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
 - Note 1 is the only one that is a behaviour gap against the written acceptance; it
   is queued as the first item of the next iteration.
 
+## 2026-10-02 — the returning title fits a 412x915 phone again (port from PR #111)
+- 2026-10-02 19:21 UTC. Owner-side decision 2026-10-02T18:44Z authorised porting only the title
+  hunk of PR #111 commit f3ce6d7 as its own PR: the title's outer vertical padding
+  goes from Space.l to Space.m. No text, font size or touch target changes; no test edited.
+- VERIFIED red on the lane (535029b): test/shorter_title_test.dart "412×915: the whole
+  title fits without scrolling" fails locally (scroll extent 8.0), matching CI 37047730872.
+- VERIFIED green after: that file 3/3; flutter analyze clean; full suite 1597 pass,
+  1 fail = test/marked_week_test.dart (the known Short Road week contradiction, still
+  waiting on the owner; not touched).
+- VERIFIED scroll extent on a returning profile with the shipped fonts:
+  412x915 8 → 0 px; 360x800 123 → 115 px.
+- VERIFIED render captures (flutter_test widget render at 1x, shipped Cinzel/Inter;
+  Material icons draw as boxes in the test renderer — a stand-in, not a device capture)
+  before/after at 412x915: same layout, every block 4 px higher, footer fully in view.
+- VERIFIED test/new_song_test.dart (red once on CI 37048681419) passed 3/3 alone and
+  inside the full local run; still ASSUMED flaky/order-dependent, not reproduced.
+- Still queued from PR #112 review note 1: reduced-motion boss death should desaturate
+  over ~300 ms instead of a one-step switch.
+- 2026-10-02 19:28 UTC. VERIFIED CI run 37053558780 on PR #113 head adf5e2e:
+  "1597 tests passed, 1 failed" — only marked_week_test ("Expected: equals ['short_road']
+  unordered / Actual: <null>"), the lane's own known failure. shorter_title_test is green
+  there, so the lane is down to one red test once this merges. Not merged (lane red).
+- VERIFIED independent read-only review (ultra tier, fresh context, range 535029b..adf5e2e):
+  PASS, no findings. It reproduced 8 → 0 / 123 → 115 px with the lane's title file swapped
+  back, confirmed the file is byte-identical to the #111 version, and re-ran the full suite
+  (1597 + the same 1 failure). Notes: the ported comment says "(0.186.0)" while pubspec is
+  0.185.0 (inherited from #111, fixed by the next bump); the captures are scratch renders,
+  regenerable by pumping GameRoot with the shorter_title_test profile and toImage on a
+  RepaintBoundary; the top-right icon row barely moves, so "every block 4 px higher" is loose.
+
+## 2026-10-03 — the lane is green: marked_week corrected, PR #113 merged (iteration 9)
+- 2026-10-03 02:20 UTC. Owner authorization 2026-10-03 01:38 UTC (app thread) allowed ONE
+  narrow spec change: test/marked_week_test.dart required the banked mutators to equal the
+  week's declared rule AND to exclude 'short_road' — impossible in any week whose rule
+  contains short_road (weeks of 2026-09-28, 10-19, 10-26). The bank is correct:
+  controller._moddedMutators drops short_road and sorts, _runRecord writes 'mutators' only
+  when that list is non-empty and 'short': true for a short week.
+- VERIFIED red first: on 26191e8 the test fails today with
+  "Expected: equals ['short_road'] unordered / Actual: <null>" (matches CI 37047730872).
+- Commit d4acbec: line 66 compares `r['mutators'] ?? const []` with
+  `rule.mutators.where((m) => m != 'short_road')`; line 69 tolerates the absent key; the
+  'short' and 'weekly' assertions are untouched. Test-only, +8/-2, no lib/ change.
+- VERIFIED green after: marked_week 4/4, flutter analyze clean, full suite 1598 pass.
+- VERIFIED CI on d4acbec (PR #113 head): run 37089375789 "Analyze + test (headless)" pass,
+  ios 37089375788 pass — the first fully green head on this lane since 0.185.0.
+- Merged PR #113 into legacy/dice-builder as eaf651e (title fit + this correction).
+  The lane's two inherited red tests are now gone; the merge queue can proceed:
+  #112 -> #114 (stacked) -> #115 -> #116 -> #117 -> #118 -> #119, each after a green
+  rebased CI, then the 0.186.0 release.
+- VERIFIED independent read-only review (ultra tier, fresh context, range 26191e8..d4acbec):
+  PASS, 0 findings. It reproduced the red, re-ran the suite (1598), and mutation-tested the
+  check: leaking short_road into the bank, dropping a real mutator or dropping 'short' each
+  make the corrected test fail across leanRoad / hardMarch / doubledWeek / [short_road] /
+  [no_rests]. Notes: the test still reads DateTime.now(), so one run only covers the current
+  week's rule; the owner authorization itself was outside what the reviewer could check.
+
 ## 2026-10-02 — Reduced-motion boss death drains its colour (C4-02, follow-up to #112)
 - Logged at 2026-10-02 20:35 UTC. Branch feat/boss-death-desat-20261002, built on the
   PR #112 head (d38039d) because it finishes that item. The first note of the #112 review:
