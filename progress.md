@@ -6303,3 +6303,29 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   0.185.0 (inherited from #111, fixed by the next bump); the captures are scratch renders,
   regenerable by pumping GameRoot with the shorter_title_test profile and toImage on a
   RepaintBoundary; the top-right icon row barely moves, so "every block 4 px higher" is loose.
+
+## 2026-10-03 — the lane is green: marked_week corrected, PR #113 merged (iteration 9)
+- 2026-10-03 02:20 UTC. Owner authorization 2026-10-03 01:38 UTC (app thread) allowed ONE
+  narrow spec change: test/marked_week_test.dart required the banked mutators to equal the
+  week's declared rule AND to exclude 'short_road' — impossible in any week whose rule
+  contains short_road (weeks of 2026-09-28, 10-19, 10-26). The bank is correct:
+  controller._moddedMutators drops short_road and sorts, _runRecord writes 'mutators' only
+  when that list is non-empty and 'short': true for a short week.
+- VERIFIED red first: on 26191e8 the test fails today with
+  "Expected: equals ['short_road'] unordered / Actual: <null>" (matches CI 37047730872).
+- Commit d4acbec: line 66 compares `r['mutators'] ?? const []` with
+  `rule.mutators.where((m) => m != 'short_road')`; line 69 tolerates the absent key; the
+  'short' and 'weekly' assertions are untouched. Test-only, +8/-2, no lib/ change.
+- VERIFIED green after: marked_week 4/4, flutter analyze clean, full suite 1598 pass.
+- VERIFIED CI on d4acbec (PR #113 head): run 37089375789 "Analyze + test (headless)" pass,
+  ios 37089375788 pass — the first fully green head on this lane since 0.185.0.
+- Merged PR #113 into legacy/dice-builder as eaf651e (title fit + this correction).
+  The lane's two inherited red tests are now gone; the merge queue can proceed:
+  #112 -> #114 (stacked) -> #115 -> #116 -> #117 -> #118 -> #119, each after a green
+  rebased CI, then the 0.186.0 release.
+- VERIFIED independent read-only review (ultra tier, fresh context, range 26191e8..d4acbec):
+  PASS, 0 findings. It reproduced the red, re-ran the suite (1598), and mutation-tested the
+  check: leaking short_road into the bank, dropping a real mutator or dropping 'short' each
+  make the corrected test fail across leanRoad / hardMarch / doubledWeek / [short_road] /
+  [no_rests]. Notes: the test still reads DateTime.now(), so one run only covers the current
+  week's rule; the owner authorization itself was outside what the reviewer could check.
