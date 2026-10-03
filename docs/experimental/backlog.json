@@ -530,7 +530,7 @@
    "fix_direction": "2-frame breath scale (1.00→1.04 y) at 1.2 s plus a 3–4 s random micro-action.",
    "acceptance": "Idle strip shows ≥3 px bbox change over 18 frames for all 4 foes.",
    "effort": "S",
-   "status": "open",
+   "status": "fixed_pending_review",
    "round_opened": 0,
    "critic_rank": 14,
    "history": [
@@ -543,6 +543,12 @@
      "at": "2026-09-24T17:42:58+00:00",
      "round": 0,
      "event": "relisted"
+    },
+    {
+     "at": "2026-10-02T22:26:53+00:00",
+     "event": "maker:fixed_pending_review",
+     "build": "feat/living-idles-20261002",
+     "note": "idle beats: once per 2.8 s idle loop heavies (brutes, every boss/elite) roll their shoulders (lean in, rock back past centre, settle, ~420 ms) and crawlers twitch (two quick wiggles, ~280 ms, still on the ground). test/idle_beats_test.dart red on old code (brute left edge 0 px change over a loop, crawler footprint width 0 px), green on new (5 px and 5 px @2x). Real CombatScreen idle strips: the beat shows on frames 000-002 of the 20-frame 100 ms strip, rest identical"
     }
    ]
   },

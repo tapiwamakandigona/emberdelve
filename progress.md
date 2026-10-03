@@ -6420,3 +6420,50 @@ Base `b8b24a7`; version stays `0.183.0+210`; prior PR #102 stays open.
   flash, name plate, tour, tips) no longer shake, which is intended; the stage band can now
   paint a few px past its own vertical edge, hidden by the vitals band which paints later.
 - NOT merged: the lane's own CI is red, so nothing can merge today.
+
+## 2026-10-02 — games pass iteration 5: foes act while they idle (C0-14)
+- Logged at 2026-10-02 22:27 UTC. Branch feat/living-idles-20261002 off legacy/dice-builder @ 535029b
+  (independent of PRs #112-#115; touches only lib/ui/combat_pose.dart idleLife).
+- Baseline (local, Flutter 3.44.9): analyzer clean; the same 2 known lane failures only.
+- Finding first: C0-14 said brute and crawler idles are near-static. On the current lane they are
+  not still (bob + heave/scuttle move the top edge ~27-32 px @2x over a loop, measured on a
+  headless render) — but the whole sprite moves as one block, so the body never does anything.
+  VERIFIED: over a full 2.8 s loop the brute's left edge moved 0 px and the crawler's footprint
+  width 0 px.
+- Change (presentation only, lib/sim untouched): once per idle loop heavies (brutes and every
+  boss/elite that heaves) roll their shoulders — lean into the stage, rock back past centre,
+  settle, ~420 ms after the exhale — and crawlers twitch: two quick wiggles (~280 ms) during a
+  held beat, still on the ground. Both are windows inside the loop, so it never seams and the
+  rest of the loop stays calm. Breathers and hovering bodies are unchanged. Reduce Motion still
+  stops the life ticker, so no beat plays.
+- VERIFIED red -> green: new test/idle_beats_test.dart. Old code: heave/scuttle rotation span 0,
+  brute left-edge range 0 px, crawler width range 0 px (4 red). New code: brute left edge range
+  5 px @2x, crawler width range 5 px @2x; the beat is active 15% (heave) / 10% (scuttle) of the
+  loop; reduce motion = 0 px. test/living_idles_test.dart unchanged and green.
+- VERIFIED: analyzer clean; full suite 1602 passed + the 2 known lane failures.
+- VERIFIED render (tool/living_foes_frames_test.dart, real CombatScreen, headless flutter_test,
+  not a device): before/after idle strips (20 frames, 100 ms) differ only on frames 000-002,
+  where the beat falls; I looked at them: the brute leans a few px and back, the crawler visibly
+  twists on 001. Rotating pixel art at these small angles gives slightly stepped edges on those
+  frames (same as the existing wisp hover tilt).
+- ASSUMED: feel on a phone, and whether one beat per 2.8 s reads as alive or as a metronome.
+
+## 2026-10-02 — iteration 5 follow-up: CI and the independent read-only review (C0-14, PR #116)
+- Logged at 2026-10-02 22:40 UTC.
+- VERIFIED CI run 37072576679 on bc39735 (pull_request, PR #116): 1602 tests pass, exactly two
+  failures — test/marked_week_test.dart and test/shorter_title_test.dart 412x915, the lane's own
+  known reds. The new test/idle_beats_test.dart passes on CI. The ios job (37072576674) is green.
+- VERIFIED by an independent read-only reviewer (fresh context, no write access) over
+  535029b..bc39735: verdict PASS, no findings. It re-ran analyze (clean) and the tests, reverted
+  lib/ui/combat_pose.dart to 535029b in a scratch copy and saw the new test fail 4 ways there,
+  re-rendered the idle strips on old and new code (brute differs on frames 000-001, crawler on
+  000-002, 003-019 identical) and confirmed reduce motion stays at 0 px, breathe unchanged, the
+  only caller is the sprite painter path, and nothing in lib/sim, android/, .github/, pubspec or
+  features.json moved.
+- Reviewer notes (non-blocking, for the next pass): (1) the heave lean's dx and initial rotation
+  are applied before flipX, so a right-side foe facing left leans AWAY from the delver — confirm
+  the intended direction; (2) the test named "plain breathers and hovering bodies are unchanged"
+  only checks breathe; (3) C0-14's literal acceptance ("3 px bbox change over 18 frames") may
+  already have been met by the old bob, which is why this ships as fixed_pending_review for the
+  critic to rule on; (4) bigger boss sprites will show a visibly bigger tilt at 0.05 rad.
+- NOT merged: the lane's own CI is still red (marked_week + shorter_title), so nothing can merge.
