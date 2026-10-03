@@ -1,5 +1,11 @@
 # Emberdelve
 
+> **Repo layout (2026-10-03):** `main` is Emberdelve, the dice roguelite on Google Play
+> (same tree as `legacy/dice-builder`). The pixel action-platformer formerly
+> developed here (Emberwood, v1.0.0-alpha.*) moved to the private repo
+> [`pyregrove`](https://github.com/tapiwamakandigona/pyregrove) on 2026-08-31.
+> GitHub Pages serves `docs/` from `main` (privacy policy, `/test/` tester hub).
+
 A dark, turn-based **dice-builder roguelite** for Android. Roll, assign,
 and forge dice as you delve toward the ember at the bottom of the world.
 

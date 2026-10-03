@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Emberdelve — Privacy Policy</title>
-<meta name="description" content="Emberdelve collects no personal data. Optional, opt-in anonymous gameplay analytics only — off by default. No ads, no tracking.">
+<title>Tsoro Studios Games — Privacy Policy</title>
+<meta name="description" content="Privacy policy for Tsoro Studios games (Emberdelve, Pyregrove, Emberwood). No personal data collected. Optional, opt-in anonymous gameplay analytics only — off by default. No ads, no third-party trackers, no data sales.">
 <style>
   :root {
     --bg: #14101e;
@@ -63,13 +63,23 @@
 </head>
 <body>
 <main>
-  <h1>Emberdelve — Privacy Policy</h1>
-  <div class="updated">Last updated: 2026-07-25 · <code>com.tsorostudios.emberdelve</code></div>
+  <h1>Tsoro Studios Games — Privacy Policy</h1>
+  <div class="updated">Last updated: 2026-09-01 · <code>com.tsorostudios.emberdelve</code> · <code>com.tsorostudios.pyregrove</code> · <code>com.tsorostudios.emberwood</code></div>
 
-  <p>Emberdelve (“the app”) is a single-player pixel action-platformer
-  by Tsoro Studios (Tapiwa Makandigona).</p>
+  <p>This policy covers every game published by Tsoro Studios
+  (Tapiwa Makandigona). All of them are single-player and behave identically
+  with regard to your data:</p>
 
-  <div class="promise"><b>The short version: Emberdelve collects no personal
+  <ul>
+    <li><b>Emberdelve: Dice Roguelite</b> (<code>com.tsorostudios.emberdelve</code>)
+      — a turn-based dice roguelite dungeon crawl, on Google Play.</li>
+    <li><b>Pyregrove</b> (<code>com.tsorostudios.pyregrove</code>)
+      — a pixel action-platformer.</li>
+    <li><b>Emberwood</b> / “Emberdelve v2” (<code>com.tsorostudios.emberwood</code>)
+      — the earlier alpha builds of Pyregrove.</li>
+  </ul>
+
+  <div class="promise"><b>The short version: these apps collect no personal
   data.</b> The only thing it can ever send is anonymous gameplay statistics,
   and only if you explicitly opt in — off by default, revocable any time in
   Settings.</div>
@@ -97,10 +107,16 @@
     <li><b>Permissions.</b> <code>VIBRATE</code> (optional in-game haptics)
       and <code>INTERNET</code>/<code>ACCESS_NETWORK_STATE</code> (used solely
       for the optional analytics above; if you never opt in, nothing is
-      transmitted). The Google Analytics library also adds <code>WAKE_LOCK</code>
-      and a Play Store install-referrer binding of its own; the advertising-ID
-      permissions it would normally add are removed from our build. No
-      permission requires a runtime prompt.</li>
+      transmitted). The Google Analytics
+      library also merges in several permissions of its own:
+      <code>WAKE_LOCK</code>, <code>RECEIVE_BOOT_COMPLETED</code> (shown by
+      Google Play as &ldquo;run at startup&rdquo;), <code>BIND_JOB_SERVICE</code>,
+      <code>POST_NOTIFICATIONS</code>, <code>DUMP</code> and a Play Store
+      install-referrer binding. They are used by that library to schedule and
+      batch uploads; the game itself sends no notifications and starts nothing
+      at boot, and if you never opt in, nothing is transmitted at all. The
+      advertising-ID permissions the library would normally add are removed
+      from our build. No permission requires a runtime prompt.</li>
     <li><b>Children.</b> The app collects no personal data from anyone,
       including children. Analytics, when enabled, are anonymous gameplay
       statistics only.</li>
@@ -127,10 +143,12 @@
   cloud save), this policy will be updated first and the change called out in
   the release notes.</p>
   <p>Questions: contact the developer via the Google Play listing for
-  Emberdelve.</p>
+  Emberdelve, or via GitHub (<code>tapiwamakandigona</code>).</p>
 
-  <footer>© Tsoro Studios. This page is served from the Emberdelve repository
-  (<code>docs/store/privacy-policy.html</code>).</footer>
+  <footer>© Tsoro Studios. This page is served from the public Emberdelve
+  repository’s GitHub Pages (<code>docs/store/privacy-policy.html</code>) and is the
+  privacy policy URL declared on the Google Play listing for Emberdelve. Its address
+  must stay stable — do not narrow this page to a single game.</footer>
 </main>
 </body>
 </html>
